@@ -31,21 +31,21 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<V> valSerde,
             ITimestampExtractor timestampExtractor,
             AutoOffsetReset? offsetReset)
-            : this(with(keySerde, valSerde, timestampExtractor, offsetReset))
+            : this(Consumed.With(keySerde, valSerde, timestampExtractor, offsetReset))
         {
         }
 
         public ConsumedInternal()
-            : this(with(null, null))
+            : this(Consumed.With<K, V>(null, null))
         {
         }
 
-        public IDeserializer<K> keyDeserializer()
+        public IDeserializer<K> KeyDeserializer()
         {
             return keySerde?.Deserializer;
         }
 
-        public IDeserializer<V> valueDeserializer()
+        public IDeserializer<V> ValueDeserializer()
         {
             return valueSerde?.Deserializer;
         }

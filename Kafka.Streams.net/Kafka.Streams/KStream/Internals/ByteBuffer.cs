@@ -20,57 +20,52 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class ByteBuffer
     {
-        internal ByteBuffer add(byte[] serializedKey)
+        public ByteBuffer Add(byte[] serializedKey)
         {
             return this;
         }
 
-        internal byte[] array()
+        internal byte[] Array()
         {
             throw new NotImplementedException();
         }
 
-        internal ByteBuffer allocate(int v)
+        public ByteBuffer Allocate(int v)
         {
             return this;
         }
 
-        internal void add(byte v)
+        internal void Add(byte v)
         {
             throw new NotImplementedException();
         }
 
-        internal void putInt(int oldSize)
+        internal void PutInt(int oldSize)
         {
             throw new NotImplementedException();
         }
 
-        internal ByteBuffer Add(byte[] oldValue)
+        internal ByteBuffer Wrap(byte[] data)
         {
             return this;
         }
 
-        internal ByteBuffer wrap(byte[] data)
-        {
-            return this;
-        }
-
-        internal int getInt()
+        internal int GetInt()
         {
             throw new NotImplementedException();
         }
 
-        internal void get(byte[] oldBytes)
+        internal void Get(byte[] oldBytes)
         {
             throw new NotImplementedException();
         }
 
-        internal ByteBuffer putLong(long timestamp)
+        internal ByteBuffer PutLong(long timestamp)
         {
             return this;
         }
 
-        internal long getLong()
+        internal long GetLong()
         {
             throw new NotImplementedException();
         }

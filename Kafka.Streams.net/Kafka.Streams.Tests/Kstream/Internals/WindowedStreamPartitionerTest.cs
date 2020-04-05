@@ -14,7 +14,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        private string topicName = "topic";
 
 //        private IntegerSerializer intSerializer = Serdes.Int();
-//        private StringSerializer stringSerializer = Serdes.String();
+//        private Serdes.String().Serializer stringSerializer = Serdes.String();
 
 //        private List<PartitionInfo> infos = Array.AsReadOnly(
 //                new PartitionInfo(topicName, 0, Node.noNode(), new Node[0], new Node[0]),
@@ -39,10 +39,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            for (var k = 0; k < 10; k++)
 //            {
 //                int key = rand.nextInt();
-//                byte[] keyBytes = intSerializer.serialize(topicName, key);
+//                byte[] keyBytes = intSerializer.Serialize(topicName, key);
 
 //                var value = key.ToString();
-//                byte[] valueBytes = stringSerializer.serialize(topicName, value);
+//                byte[] valueBytes = stringSerializer.Serialize(topicName, value);
 
 //                int expected = defaultPartitioner.partition("topic", key, keyBytes, value, valueBytes, cluster);
 

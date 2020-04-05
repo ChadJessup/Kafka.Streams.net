@@ -23,7 +23,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //    private ProcessorTopology topology;
     //    private InternalMockProcessorContext processorContext;
 
-    //    static ProcessorTopology withGlobalStores(List<StateStore> stateStores,
+    //    static ProcessorTopology withGlobalStores(List<IStateStore> stateStores,
     //                                              Dictionary<string, string> storeToChangelogTopic) {
     //        return new ProcessorTopology(Collections.emptyList(),
     //                                     Collections.emptyMap(),
@@ -38,10 +38,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //    public void before() {
     //        Dictionary<string, string> storeToTopic = new HashMap<>();
 
-    //        storeToTopic.put(storeName1, t1.topic());
-    //        storeToTopic.put(storeName2, t2.topic());
-    //        storeToTopic.put(storeName3, t3.topic());
-    //        storeToTopic.put(storeName4, t4.topic());
+    //        storeToTopic.put(storeName1, t1.Topic);
+    //        storeToTopic.put(storeName2, t2.Topic);
+    //        storeToTopic.put(storeName3, t3.Topic);
+    //        storeToTopic.put(storeName4, t4.Topic);
 
     //        store1 = new NoOpReadOnlyStore<>(storeName1, true);
     //        store2 = new ConverterStore<>(storeName2, true);
@@ -50,11 +50,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
     //        topology = withGlobalStores(asList(store1, store2, store3, store4), storeToTopic);
 
-    //        streamsConfig = new StreamsConfig(new Properties() {
+    //        streamsConfig = new StreamsConfig(new StreamsConfig() {
     //            {
     //                put(StreamsConfig.APPLICATION_ID_CONFIG, "appId");
     //                put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-    //                put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory().getPath());
+    //                put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
     //            }
     //        });
     //        stateDirectory = new StateDirectory(streamsConfig, time, true);
@@ -79,7 +79,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //    [Xunit.Fact]
     //    public void shouldLockGlobalStateDirectory() {
     //        stateManager.initialize();
-    //        Assert.True(new File(stateDirectory.globalStateDir(), ".Lock").exists());
+    //        Assert.True(new File(stateDirectory.globalStateDir(), ".Lock").Exists);
     //    }
 
     //    [Xunit.Fact]// (expected = LockException)
@@ -106,7 +106,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //    public void shouldNotDeleteCheckpointFileAfterLoaded(){ //throws IOException
     //        writeCheckpoint();
     //        stateManager.initialize();
-    //        Assert.True(checkpointFile.exists());
+    //        Assert.True(checkpointFile.Exists);
     //    }
 
     //    [Xunit.Fact]// (expected = StreamsException)
@@ -135,7 +135,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        try {
     //            stateManager.register(new NoOpReadOnlyStore<>("not-in-topology"), stateRestoreCallback);
     //            Assert.True(false, "should have raised an illegal argument exception as store is not in the topology");
-    //        } catch (IllegalArgumentException e) {
+    //        } catch (ArgumentException e) {
     //            // pass
     //        }
     //    }
@@ -148,7 +148,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        try {
     //            stateManager.register(store1, stateRestoreCallback);
     //            Assert.True(false, "should have raised an illegal argument exception as store has already been registered");
-    //        } catch (IllegalArgumentException e) {
+    //        } catch (ArgumentException e) {
     //            // pass
     //        }
     //    }
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        stateManager.initialize();
     //        stateManager.register(store1, stateRestoreCallback);
 
-    //        KeyValuePair<byte[], byte[]> restoredRecord = stateRestoreCallback.restored.get(0);
+    //        KeyValuePair<byte[], byte[]> restoredRecord = stateRestoreCallback.restored.Get(0);
     //        Assert.Equal(3, restoredRecord.key.Length);
     //        Assert.Equal(5, restoredRecord.value.Length);
     //    }
@@ -187,7 +187,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //            stateRestoreCallback
     //        );
 
-    //        KeyValuePair<byte[], byte[]> restoredRecord = stateRestoreCallback.restored.get(0);
+    //        KeyValuePair<byte[], byte[]> restoredRecord = stateRestoreCallback.restored.Get(0);
     //        Assert.Equal(3, restoredRecord.key.Length);
     //        Assert.Equal(5, restoredRecord.value.Length);
     //    }
@@ -199,7 +199,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        stateManager.initialize();
     //        stateManager.register(store2, stateRestoreCallback);
 
-    //        KeyValuePair<byte[], byte[]> restoredRecord = stateRestoreCallback.restored.get(0);
+    //        KeyValuePair<byte[], byte[]> restoredRecord = stateRestoreCallback.restored.Get(0);
     //        Assert.Equal(3, restoredRecord.key.Length);
     //        Assert.Equal(13, restoredRecord.value.Length);
     //    }
@@ -215,7 +215,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //            stateRestoreCallback
     //        );
 
-    //        KeyValuePair<byte[], byte[]> restoredRecord = stateRestoreCallback.restored.get(0);
+    //        KeyValuePair<byte[], byte[]> restoredRecord = stateRestoreCallback.restored.Get(0);
     //        Assert.Equal(3, restoredRecord.key.Length);
     //        Assert.Equal(13, restoredRecord.value.Length);
     //    }
@@ -257,9 +257,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(stateRestoreListener.totalNumRestored, (5L));
 
 
-    //        Assert.Equal(stateRestoreListener.storeNameCalledStates.get(RESTORE_START), (store1.name()));
-    //        Assert.Equal(stateRestoreListener.storeNameCalledStates.get(RESTORE_BATCH), (store1.name()));
-    //        Assert.Equal(stateRestoreListener.storeNameCalledStates.get(RESTORE_END), (store1.name()));
+    //        Assert.Equal(stateRestoreListener.storeNameCalledStates.Get(RESTORE_START), (store1.name()));
+    //        Assert.Equal(stateRestoreListener.storeNameCalledStates.Get(RESTORE_BATCH), (store1.name()));
+    //        Assert.Equal(stateRestoreListener.storeNameCalledStates.Get(RESTORE_END), (store1.name()));
     //    }
 
     //    [Xunit.Fact]
@@ -339,7 +339,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        try {
     //            stateManager.register(store1, null);
     //            Assert.True(false, "should have thrown due to null callback");
-    //        } catch (IllegalArgumentException e) {
+    //        } catch (ArgumentException e) {
     //            //pass
     //        }
     //    }
@@ -441,8 +441,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        stateManager.checkpoint(Collections.singletonMap(t1, 101L));
 
     //        Dictionary<TopicPartition, long> updatedCheckpoint = stateManager.checkpointed();
-    //        Assert.Equal(updatedCheckpoint.get(t2), (initialCheckpoint.get(t2)));
-    //        Assert.Equal(updatedCheckpoint.get(t1), (101L));
+    //        Assert.Equal(updatedCheckpoint.Get(t2), (initialCheckpoint.Get(t2)));
+    //        Assert.Equal(updatedCheckpoint.Get(t1), (101L));
     //    }
 
     //    [Xunit.Fact]
@@ -451,18 +451,18 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        startOffsets.put(t1, 1L);
     //        HashDictionary<TopicPartition, long> endOffsets = new HashMap<>();
     //        endOffsets.put(t1, 3L);
-    //        consumer.updatePartitions(t1.topic(), Collections.singletonList(new PartitionInfo(t1.topic(), t1.partition(), null, null, null)));
+    //        consumer.updatePartitions(t1.Topic, Collections.singletonList(new PartitionInfo(t1.Topic, t1.Partition, null, null, null)));
     //        consumer.assign(Collections.singletonList(t1));
     //        consumer.updateEndOffsets(endOffsets);
     //        consumer.updateBeginningOffsets(startOffsets);
-    //        consumer.addRecord(new ConsumeResult<>(t1.topic(), t1.partition(), 1, null, "null".getBytes()));
+    //        consumer.addRecord(new ConsumeResult<>(t1.Topic, t1.Partition, 1, null, "null".getBytes()));
     //        byte[] expectedKey = "key".getBytes();
     //        byte[] expectedValue = "value".getBytes();
-    //        consumer.addRecord(new ConsumeResult<>(t1.topic(), t1.partition(), 2, expectedKey, expectedValue));
+    //        consumer.addRecord(new ConsumeResult<>(t1.Topic, t1.Partition, 2, expectedKey, expectedValue));
 
     //        stateManager.initialize();
     //        stateManager.register(store1, stateRestoreCallback);
-    //        KeyValuePair<byte[], byte[]> restoredKv = stateRestoreCallback.restored.get(0);
+    //        KeyValuePair<byte[], byte[]> restoredKv = stateRestoreCallback.restored.Get(0);
     //        Assert.Equal(stateRestoreCallback.restored, (Collections.singletonList(KeyValuePair.Create(restoredKv.key, restoredKv.value))));
     //    }
 
@@ -525,16 +525,16 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        AtomicInteger numberOfCalls = new AtomicInteger(0);
     //        consumer = new MockConsumer<byte[], byte[]>(OffsetResetStrategy.EARLIEST) {
 
-    //            public synchronized Dictionary<TopicPartition, long> endOffsets(Collection<org.apache.kafka.common.TopicPartition> partitions) {
+    //            public Dictionary<TopicPartition, long> endOffsets(Collection<org.apache.kafka.common.TopicPartition> partitions) {
     //                numberOfCalls.incrementAndGet();
     //                throw new TimeoutException();
     //            }
     //        };
-    //        streamsConfig = new StreamsConfig(new Properties() {
+    //        streamsConfig = new StreamsConfig(new StreamsConfig() {
     //            {
     //                put(StreamsConfig.APPLICATION_ID_CONFIG, "appId");
     //                put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-    //                put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory().getPath());
+    //                put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
     //                put(StreamsConfig.RETRIES_CONFIG, retries);
     //            }
     //        });
@@ -548,7 +548,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //                stateRestoreListener,
     //                streamsConfig);
     //        } catch (StreamsException expected) {
-    //            Assert.Equal(numberOfCalls.get(), retries);
+    //            Assert.Equal(numberOfCalls.Get(), retries);
     //        }
     //    }
 
@@ -558,16 +558,16 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        AtomicInteger numberOfCalls = new AtomicInteger(0);
     //        consumer = new MockConsumer<byte[], byte[]>(OffsetResetStrategy.EARLIEST) {
 
-    //            public synchronized List<PartitionInfo> partitionsFor(string topic) {
+    //            public List<PartitionInfo> partitionsFor(string topic) {
     //                numberOfCalls.incrementAndGet();
     //                throw new TimeoutException();
     //            }
     //        };
-    //        streamsConfig = new StreamsConfig(new Properties() {
+    //        streamsConfig = new StreamsConfig(new StreamsConfig() {
     //            {
     //                put(StreamsConfig.APPLICATION_ID_CONFIG, "appId");
     //                put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-    //                put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory().getPath());
+    //                put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
     //                put(StreamsConfig.RETRIES_CONFIG, retries);
     //            }
     //        });
@@ -581,31 +581,31 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //                stateRestoreListener,
     //                streamsConfig);
     //        } catch (StreamsException expected) {
-    //            Assert.Equal(numberOfCalls.get(), retries);
+    //            Assert.Equal(numberOfCalls.Get(), retries);
     //        }
     //    }
 
     //    [Xunit.Fact]
     //    public void shouldDeleteAndRecreateStoreDirectoryOnReinitialize(){ //throws IOException
-    //        File storeDirectory1 = new File(stateDirectory.globalStateDir().getAbsolutePath()
-    //                                                  + File.separator + "rocksdb"
-    //                                                  + File.separator + storeName1);
-    //        File storeDirectory2 = new File(stateDirectory.globalStateDir().getAbsolutePath()
-    //                                                  + File.separator + "rocksdb"
-    //                                                  + File.separator + storeName2);
-    //        File storeDirectory3 = new File(stateDirectory.globalStateDir().getAbsolutePath()
-    //                                                  + File.separator + storeName3);
-    //        File storeDirectory4 = new File(stateDirectory.globalStateDir().getAbsolutePath()
-    //                                                  + File.separator + storeName4);
-    //        File testFile1 = new File(storeDirectory1.getAbsolutePath() + File.separator + "testFile");
-    //        File testFile2 = new File(storeDirectory2.getAbsolutePath() + File.separator + "testFile");
-    //        File testFile3 = new File(storeDirectory3.getAbsolutePath() + File.separator + "testFile");
-    //        File testFile4 = new File(storeDirectory4.getAbsolutePath() + File.separator + "testFile");
+    //        File storeDirectory1 = new File(stateDirectory.globalStateDir().FullName
+    //                                                  + Path.DirectorySeparatorChar + "rocksdb"
+    //                                                  + Path.DirectorySeparatorChar + storeName1);
+    //        File storeDirectory2 = new File(stateDirectory.globalStateDir().FullName
+    //                                                  + Path.DirectorySeparatorChar + "rocksdb"
+    //                                                  + Path.DirectorySeparatorChar + storeName2);
+    //        File storeDirectory3 = new File(stateDirectory.globalStateDir().FullName
+    //                                                  + Path.DirectorySeparatorChar + storeName3);
+    //        File storeDirectory4 = new File(stateDirectory.globalStateDir().FullName
+    //                                                  + Path.DirectorySeparatorChar + storeName4);
+    //        File testFile1 = new File(storeDirectory1.FullName + Path.DirectorySeparatorChar + "testFile");
+    //        File testFile2 = new File(storeDirectory2.FullName + Path.DirectorySeparatorChar + "testFile");
+    //        File testFile3 = new File(storeDirectory3.FullName + Path.DirectorySeparatorChar + "testFile");
+    //        File testFile4 = new File(storeDirectory4.FullName + Path.DirectorySeparatorChar + "testFile");
 
-    //        consumer.updatePartitions(t1.topic(), Collections.singletonList(new PartitionInfo(t1.topic(), t1.partition(), null, null, null)));
-    //        consumer.updatePartitions(t2.topic(), Collections.singletonList(new PartitionInfo(t2.topic(), t2.partition(), null, null, null)));
-    //        consumer.updatePartitions(t3.topic(), Collections.singletonList(new PartitionInfo(t3.topic(), t3.partition(), null, null, null)));
-    //        consumer.updatePartitions(t4.topic(), Collections.singletonList(new PartitionInfo(t4.topic(), t4.partition(), null, null, null)));
+    //        consumer.updatePartitions(t1.Topic, Collections.singletonList(new PartitionInfo(t1.Topic, t1.Partition, null, null, null)));
+    //        consumer.updatePartitions(t2.Topic, Collections.singletonList(new PartitionInfo(t2.Topic, t2.Partition, null, null, null)));
+    //        consumer.updatePartitions(t3.Topic, Collections.singletonList(new PartitionInfo(t3.Topic, t3.Partition, null, null, null)));
+    //        consumer.updatePartitions(t4.Topic, Collections.singletonList(new PartitionInfo(t4.Topic, t4.Partition, null, null, null)));
     //        consumer.updateBeginningOffsets(new HashDictionary<TopicPartition, long>() {
     //            {
     //                put(t1, 0L);
@@ -630,21 +630,21 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        stateManager.register(store4, stateRestoreCallback);
 
     //        testFile1.createNewFile();
-    //        Assert.True(testFile1.exists());
+    //        Assert.True(testFile1.Exists);
     //        testFile2.createNewFile();
-    //        Assert.True(testFile2.exists());
+    //        Assert.True(testFile2.Exists);
     //        testFile3.createNewFile();
-    //        Assert.True(testFile3.exists());
+    //        Assert.True(testFile3.Exists);
     //        testFile4.createNewFile();
-    //        Assert.True(testFile4.exists());
+    //        Assert.True(testFile4.Exists);
 
     //        // only delete and recreate store 1 and 3 -- 2 and 4 must be untouched
     //        stateManager.reinitializeStateStoresForPartitions(asList(t1, t3), processorContext);
 
-    //        Assert.False(testFile1.exists());
-    //        Assert.True(testFile2.exists());
-    //        Assert.False(testFile3.exists());
-    //        Assert.True(testFile4.exists());
+    //        Assert.False(testFile1.Exists);
+    //        Assert.True(testFile2.Exists);
+    //        Assert.False(testFile3.Exists);
+    //        Assert.True(testFile4.Exists);
     //    }
 
     //    private void writeCorruptCheckpoint(){ //throws IOException
@@ -660,13 +660,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        startOffsets.put(topicPartition, startOffset);
     //        HashDictionary<TopicPartition, long> endOffsets = new HashMap<>();
     //        endOffsets.put(topicPartition, startOffset + numRecords);
-    //        consumer.updatePartitions(topicPartition.topic(), Collections.singletonList(new PartitionInfo(topicPartition.topic(), topicPartition.partition(), null, null, null)));
+    //        consumer.updatePartitions(topicPartition.Topic, Collections.singletonList(new PartitionInfo(topicPartition.Topic, topicPartition.Partition, null, null, null)));
     //        consumer.assign(Collections.singletonList(topicPartition));
     //        consumer.updateEndOffsets(endOffsets);
     //        consumer.updateBeginningOffsets(startOffsets);
 
     //        for (int i = 0; i < numRecords; i++) {
-    //            consumer.addRecord(new ConsumeResult<>(topicPartition.topic(), topicPartition.partition(), startOffset + i, "key".getBytes(), "value".getBytes()));
+    //            consumer.addRecord(new ConsumeResult<>(topicPartition.Topic, topicPartition.Partition, startOffset + i, "key".getBytes(), "value".getBytes()));
     //        }
     //    }
 
@@ -682,7 +682,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 
     //        public void restore(byte[] key, byte[] value) {
-    //            restored.add(KeyValuePair.Create(key, value));
+    //            restored.Add(KeyValuePair.Create(key, value));
     //        }
     //    }
 

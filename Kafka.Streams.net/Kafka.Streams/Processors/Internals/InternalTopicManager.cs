@@ -52,7 +52,7 @@ namespace Kafka.Streams.Processors.Internals
          * If a topic with the correct number of partitions exists ignores it.
          * If a topic exists already but has different number of partitions we fail and throw exception requesting user to reset the app before restarting again.
          */
-        public void makeReady(Dictionary<string, InternalTopicConfig> topics)
+        public void MakeReady(Dictionary<string, InternalTopicConfig> topics)
         {
             // we will do the validation / topic-creation in a loop, until we have confirmed all topics
             // have existed with the expected number of partitions, or some create topic returns fatal errors.
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Processors.Internals
                 //        try
                 //        {
 
-                //            createTopicResult.Value.get();
+                //            createTopicResult.Value.Get();
                 //            topicsNotReady.Remove(topicName);
                 //        }
                 //        catch (Exception fatalException)
@@ -152,7 +152,7 @@ namespace Kafka.Streams.Processors.Internals
          * Topics that were not able to get its description will simply not be returned
          */
         // visible for testing
-        protected Dictionary<string, int> getNumPartitions(HashSet<string> topics)
+        protected Dictionary<string, int> GetNumPartitions(HashSet<string> topics)
         {
             log.LogDebug("Trying to check if topics {} have been created with expected number of partitions.", topics);
 
@@ -165,7 +165,7 @@ namespace Kafka.Streams.Processors.Internals
             //    string topicName = topicFuture.Key;
             //    try
             //    {
-            //        TopicDescription topicDescription = topicFuture.Value.get();
+            //        TopicDescription topicDescription = topicFuture.Value.Get();
             //        existedTopicPartition.Add(
             //            topicFuture.Key,
             //            topicDescription.partitions().size());
@@ -208,7 +208,7 @@ namespace Kafka.Streams.Processors.Internals
             Dictionary<string, InternalTopicConfig> topicsMap)
         {
 
-            Dictionary<string, int> existedTopicPartition = getNumPartitions(topicsToValidate);
+            Dictionary<string, int> existedTopicPartition = GetNumPartitions(topicsToValidate);
 
             var topicsToCreate = new HashSet<string>();
             foreach (KeyValuePair<string, InternalTopicConfig> entry in topicsMap)

@@ -33,6 +33,6 @@ namespace Kafka.Streams.KStream
          * @param aggTwo    the second aggregate
          * @return          the new aggregate value
          */
-        V apply(K aggKey, V aggOne, V aggTwo);
+        V Apply(K aggKey, V aggOne, V aggTwo);
     }
 }

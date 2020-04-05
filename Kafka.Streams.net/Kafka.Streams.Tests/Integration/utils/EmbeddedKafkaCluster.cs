@@ -54,26 +54,26 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    private EmbeddedZookeeper zookeeper = null;
 //    private KafkaEmbedded[] brokers;
 
-//    private Properties brokerConfig;
+//    private StreamsConfig brokerConfig;
 //    public MockTime time;
 
 //    public EmbeddedKafkaCluster(int numBrokers) {
-//        this(numBrokers, new Properties());
+//        this(numBrokers, new StreamsConfig());
 //    }
 
 //    public EmbeddedKafkaCluster(int numBrokers,
-//                                Properties brokerConfig) {
+//                                StreamsConfig brokerConfig) {
 //        this(numBrokers, brokerConfig, System.currentTimeMillis());
 //    }
 
 //    public EmbeddedKafkaCluster(int numBrokers,
-//                                Properties brokerConfig,
+//                                StreamsConfig brokerConfig,
 //                                long mockTimeMillisStart) {
 //        this(numBrokers, brokerConfig, mockTimeMillisStart, System.nanoTime());
 //    }
 
 //    public EmbeddedKafkaCluster(int numBrokers,
-//                                Properties brokerConfig,
+//                                StreamsConfig brokerConfig,
 //                                long mockTimeMillisStart,
 //                                long mockTimeNanoStart) {
 //        brokers = new KafkaEmbedded[numBrokers];
@@ -101,7 +101,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //        for (int i = 0; i < brokers.Length; i++) {
 //            brokerConfig.put(KafkaConfig$.MODULE$.BrokerIdProp(), i);
-//            log.debug("Starting a Kafka instance on port {} ...", brokerConfig.get(KafkaConfig$.MODULE$.PortProp()));
+//            log.debug("Starting a Kafka instance on port {} ...", brokerConfig.Get(KafkaConfig$.MODULE$.PortProp()));
 //            brokers[i] = new KafkaEmbedded(brokerConfig, time);
 
 //            log.debug("Kafka instance is running at {}, connected to ZooKeeper at {}",
@@ -109,7 +109,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        }
 //    }
 
-//    private void putIfAbsent(Properties props, string propertyKey, object propertyValue) {
+//    private void putIfAbsent(StreamsConfig props, string propertyKey, object propertyValue) {
 //        if (!props.containsKey(propertyKey)) {
 //            brokerConfig.put(propertyKey, propertyValue);
 //        }
@@ -200,7 +200,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        brokers[0].createTopic(topic, partitions, replication, topicConfig);
 //        List<TopicPartition> topicPartitions = new ArrayList<>();
 //        for (int partition = 0; partition < partitions; partition++) {
-//            topicPartitions.add(new TopicPartition(topic, partition));
+//            topicPartitions.Add(new TopicPartition(topic, partition));
 //        }
 //        IntegrationTestUtils.waitForTopicPartitions(brokers(), topicPartitions, TOPIC_CREATION_TIMEOUT);
 //    }
@@ -265,7 +265,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        }
 
 //        if (timeoutMs > 0) {
-//            TestUtils.waitForCondition(new TopicsDeletedCondition(topics), timeoutMs, "Topics not deleted after " + timeoutMs + " milli seconds.");
+//            TestUtils.WaitForCondition(new TopicsDeletedCondition(topics), timeoutMs, "Topics not deleted after " + timeoutMs + " milli seconds.");
 //        }
 //    }
 
@@ -283,7 +283,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        }
 
 //        if (timeoutMs > 0) {
-//            TestUtils.waitForCondition(new TopicsDeletedCondition(topics), timeoutMs, "Topics not deleted after " + timeoutMs + " milli seconds.");
+//            TestUtils.WaitForCondition(new TopicsDeletedCondition(topics), timeoutMs, "Topics not deleted after " + timeoutMs + " milli seconds.");
 //        }
 //    }
 
@@ -298,7 +298,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    }
 
 //    public void waitForRemainingTopics(long timeoutMs, string... topics) {// throws InterruptedException
-//        TestUtils.waitForCondition(new TopicsRemainingCondition(topics), timeoutMs, "Topics are not expected after " + timeoutMs + " milli seconds.");
+//        TestUtils.WaitForCondition(new TopicsRemainingCondition(topics), timeoutMs, "Topics are not expected after " + timeoutMs + " milli seconds.");
 //    }
 
 //    private class TopicsDeletedCondition : TestCondition {
@@ -337,7 +337,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    private List<KafkaServer> brokers() {
 //        List<KafkaServer> servers = new ArrayList<>();
 //        foreach (KafkaEmbedded broker in brokers) {
-//            servers.add(broker.kafkaServer());
+//            servers.Add(broker.kafkaServer());
 //        }
 //        return servers;
 //    }

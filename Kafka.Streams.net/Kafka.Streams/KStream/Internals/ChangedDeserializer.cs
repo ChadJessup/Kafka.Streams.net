@@ -33,7 +33,7 @@
 
 //            System.arraycopy(data, 0, bytes, 0, bytes.Length);
 
-//            if (ByteBuffer.wrap(data)[data.Length - NEWFLAG_SIZE] != 0)
+//            if (ByteBuffer.Wrap(data)[data.Length - NEWFLAG_SIZE] != 0)
 //            {
 //                return new Change<>(inner.Deserialize(topic, headers, bytes), null);
 //            }

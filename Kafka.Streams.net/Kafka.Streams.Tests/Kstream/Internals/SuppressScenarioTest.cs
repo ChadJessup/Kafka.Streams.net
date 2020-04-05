@@ -20,8 +20,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //{
 //    public class SuppressScenarioTest
 //    {
-//        private static StringDeserializer STRING_DESERIALIZER = new StringDeserializer();
-//        private static StringSerializer STRING_SERIALIZER = Serdes.String();
+//        private static Serdes.String().Deserializer STRING_DESERIALIZER = new Serdes.String().Deserializer();
+//        private static Serdes.String().Serializer STRING_SERIALIZER = Serdes.String();
 //        private static ISerde<string> STRING_SERDE = Serdes.String();
 //        private static LongDeserializer LONG_DESERIALIZER = new LongDeserializer();
 //        private StreamsConfig config = Utils.mkProperties(Utils.mkMap(
@@ -38,22 +38,22 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<string, long> valueCounts = builder
 //                .Table(
 //                    "input",
-//                    Consumed.with(STRING_SERDE, STRING_SERDE),
+//                    Consumed.With(STRING_SERDE, STRING_SERDE),
 //                    Materialized.with<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
 //                        .withCachingDisabled()
 //                        .withLoggingDisabled()
 //                )
-//                .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
+//                .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //                .count();
 
 //            valueCounts
-//                .suppress(untilTimeLimit(ZERO, unbounded()))
+//                .suppress(untilTimeLimit(TimeSpan.Zero, unbounded()))
 //                .toStream()
-//                .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//                .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 
 //            valueCounts
 //                .toStream()
-//                .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
+//                .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 
 //            Topology topology = builder.Build();
 
@@ -62,9 +62,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
 //            var driver = new TopologyTestDriver(topology, config);
-//            driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//            driver.pipeInput(recordFactory.create("input", "k1", "v2", 1L));
-//            driver.pipeInput(recordFactory.create("input", "k2", "v1", 2L));
+//            driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//            driver.PipeInput(recordFactory.Create("input", "k1", "v2", 1L));
+//            driver.PipeInput(recordFactory.Create("input", "k2", "v1", 2L));
 //            verify(
 //            drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //           asList(
@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>("v1", 1L, 2L)
 //            )
 //            );
-//            driver.pipeInput(recordFactory.create("input", "x", "x", 3L));
+//            driver.PipeInput(recordFactory.Create("input", "x", "x", 3L));
 //            verify(
 //            drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //            singletonList(
@@ -96,7 +96,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>("x", 1L, 3L)
 //            )
 //            );
-//            driver.pipeInput(recordFactory.create("input", "x", "x", 4L));
+//            driver.PipeInput(recordFactory.Create("input", "x", "x", 4L));
 //            verify(
 //            drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //           asList(
@@ -121,28 +121,28 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        IKTable<string, long> valueCounts = builder
 //            .Table(
 //                "input",
-//                Consumed.with(STRING_SERDE, STRING_SERDE),
+//                Consumed.With(STRING_SERDE, STRING_SERDE),
 //                Materialized.with<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
 //                    .withCachingDisabled()
 //                    .withLoggingDisabled()
 //            )
-//            .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
+//            .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //            .count();
 //        valueCounts
 //            .suppress(untilTimeLimit(Duration.FromMilliseconds(2L), unbounded()))
 //            .toStream()
-//            .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //        valueCounts
 //            .toStream()
-//            .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
+//            .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //        Topology topology = builder.Build();
 //        ConsumerRecordFactory<string, string> recordFactory =
 //            new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
 //        var driver = new TopologyTestDriver(topology, config);
-//        driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//        driver.pipeInput(recordFactory.create("input", "k1", "v2", 1L));
-//        driver.pipeInput(recordFactory.create("input", "k2", "v1", 2L));
+//        driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//        driver.PipeInput(recordFactory.Create("input", "k1", "v2", 1L));
+//        driver.PipeInput(recordFactory.Create("input", "k2", "v1", 2L));
 
 //        verify(
 //        drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
@@ -159,7 +159,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        singletonList(new KeyValueTimestamp<>("v1", 1L, 2L))
 //        );
 //        // inserting a dummy "tick" record just to advance stream time
-//        driver.pipeInput(recordFactory.create("input", "tick", "tick", 3L));
+//        driver.PipeInput(recordFactory.Create("input", "tick", "tick", 3L));
 
 //        verify(
 //        drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
@@ -173,7 +173,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        );
 
 
-//        driver.pipeInput(recordFactory.create("input", "tick", "tick", 4L));
+//        driver.PipeInput(recordFactory.Create("input", "tick", "tick", 4L));
 //        verify(
 //        drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //       asList(
@@ -196,29 +196,29 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKTable<string, long> valueCounts = builder
 //        .Table(
 //            "input",
-//            Consumed.with(STRING_SERDE, STRING_SERDE),
+//            Consumed.With(STRING_SERDE, STRING_SERDE),
 //            Materialized..with<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
 //                .withCachingDisabled()
 //                .withLoggingDisabled()
 //        )
-//        .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
+//        .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .count(Materialized.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .suppress(untilTimeLimit(Duration.FromMilliseconds(long.MaxValue), maxRecords(1L).emitEarlyWhenFull()))
 //        .toStream()
-//        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
 //    var driver = new TopologyTestDriver(topology, config);
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v2", 1L));
-//    driver.pipeInput(recordFactory.create("input", "k2", "v1", 2L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v2", 1L));
+//    driver.PipeInput(recordFactory.Create("input", "k2", "v1", 2L));
 //    verify(
 //      drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //     asList(
@@ -238,7 +238,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    // the .Ast update won't be evicted until another key comes along.
 //    )
 //    );
-//    driver.pipeInput(recordFactory.create("input", "x", "x", 3L));
+//    driver.PipeInput(recordFactory.Create("input", "x", "x", 3L));
 
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
@@ -263,30 +263,30 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKTable<string, long> valueCounts = builder
 //        .Table(
 //            "input",
-//            Consumed.with(STRING_SERDE, STRING_SERDE),
+//            Consumed.With(STRING_SERDE, STRING_SERDE),
 //            Materialized.with<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
 //                .withCachingDisabled()
 //                .withLoggingDisabled()
 //        )
-//        .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
+//        .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .count();
 //    valueCounts
 //        // this is a bit brittle, but I happen to know that the entries are a little over 100 bytes in size.
 //        .suppress(untilTimeLimit(Duration.FromMilliseconds(long.MaxValue), maxBytes(200L).emitEarlyWhenFull()))
 //        .toStream()
-//        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
 //    var driver = new TopologyTestDriver(topology, config);
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v2", 1L));
-//    driver.pipeInput(recordFactory.create("input", "k2", "v1", 2L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v2", 1L));
+//    driver.PipeInput(recordFactory.Create("input", "k2", "v1", 2L));
 
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
@@ -306,7 +306,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    // the .Ast update won't be evicted until another key comes along.
 //    )
 //    );
-//    driver.pipeInput(recordFactory.create("input", "x", "x", 3L));
+//    driver.PipeInput(recordFactory.Create("input", "x", "x", 3L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //    singletonList(
@@ -329,33 +329,33 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //{
 //    var builder = new StreamsBuilder();
 //    IKTable<Windowed<string>, long> valueCounts = builder
-//        .Stream("input", Consumed.with(STRING_SERDE, STRING_SERDE))
+//        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .windowedBy(TimeWindows.of(Duration.FromMilliseconds(2L)).grace(Duration.FromMilliseconds(1L)))
 //        .count(Materialize.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled());
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
-//        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
-//        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
 //    var driver = new TopologyTestDriver(topology, config);
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 1L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 2L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 1L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 5L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 1L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 2L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 1L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 5L));
 //    // note this .Ast record gets dropped because it is out of the grace period
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //               asList(
@@ -382,35 +382,35 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //{
 //    var builder = new StreamsBuilder();
 //    IKTable<Windowed<string>, long> valueCounts = builder
-//        .Stream("input", Consumed.with(STRING_SERDE, STRING_SERDE))
+//        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .windowedBy(TimeWindows.of(Duration.FromMilliseconds(2L)).grace(Duration.FromMilliseconds(2L)))
-//        .count(Materialize.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled().withKeySerde(STRING_SERDE));
+//        .count(Materialize.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled().WithKeySerde(STRING_SERDE));
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
-//        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
-//        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
 //    var driver = new TopologyTestDriver(topology, config);
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 1L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 2L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 3L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 4L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 1L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 2L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 3L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 4L));
 //    // this update should get dropped, since the previous event advanced the stream time and closed the window.
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 30L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 30L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //   asList(
@@ -439,19 +439,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //{
 //    var builder = new StreamsBuilder();
 //    IKTable<Windowed<string>, long> valueCounts = builder
-//        .Stream("input", Consumed.with(STRING_SERDE, STRING_SERDE))
+//        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .windowedBy(SessionWindows.with(Duration.FromMilliseconds(5L)).grace(Duration.FromMilliseconds(0L)))
 //        .count(Materialize.As < string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled());
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
-//        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
-//        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
+//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
@@ -459,16 +459,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    var driver = new TopologyTestDriver(topology, config);
 //    // first window
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 0L));
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 5L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 5L));
 //    // arbitrarily disordered records are admitted, because the *window* is not closed until stream-time > window-end + grace
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 1L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 1L));
 //    // any record in the same partition advances stream time (note the key is different)
-//    driver.pipeInput(recordFactory.create("input", "k2", "v1", 6L));
+//    driver.PipeInput(recordFactory.Create("input", "k2", "v1", 6L));
 //    // late event for first window - this should get dropped from all streams, since the first window is now closed.
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 5L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 5L));
 //    // just pushing stream time forward to flush the other events through.
-//    driver.pipeInput(recordFactory.create("input", "k1", "v1", 30L));
+//    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 30L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
 //               asList(
@@ -496,19 +496,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    var builder = new StreamsBuilder();
 
 //    builder
-//        .Table("topic", Consumed.with(Serdes.String(), Serdes.String()))
+//        .Table("topic", Consumed.With(Serdes.String(), Serdes.String()))
 //        .suppress(untilTimeLimit(Duration.FromMilliseconds(10), unbounded()))
 //        .groupBy(KeyValuePair.Create, Grouped.with(Serdes.String(), Serdes.String()))
 //        .count()
 //        .toStream()
-//        .to("output", Produced.with(Serdes.String(), Serdes.Long()));
+//        .To("output", Produced.With(Serdes.String(), Serdes.Long()));
 
 //    var driver = new TopologyTestDriver(builder.Build(), config);
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
-//    driver.pipeInput(recordFactory.create("topic", "A", "a", 0L));
-//    driver.pipeInput(recordFactory.create("topic", "tick", "tick", 10L));
+//    driver.PipeInput(recordFactory.Create("topic", "A", "a", 0L));
+//    driver.PipeInput(recordFactory.Create("topic", "tick", "tick", 10L));
 
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, LONG_DESERIALIZER),
@@ -522,23 +522,23 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    var builder = new StreamsBuilder();
 
 //    IKTable<string, string> left = builder
-//        .Table("left", Consumed.with(Serdes.String(), Serdes.String()));
+//        .Table("left", Consumed.With(Serdes.String(), Serdes.String()));
 
 //    IKTable<string, string> right = builder
-//        .Table("right", Consumed.with(Serdes.String(), Serdes.String()))
+//        .Table("right", Consumed.With(Serdes.String(), Serdes.String()))
 //        .suppress(untilTimeLimit(Duration.FromMilliseconds(10), unbounded()));
 
 //    left
 //        .outerJoin(right, (l, r) => string.Format("(%s,%s)", l, r))
 //        .toStream()
-//        .to("output", Produced.with(Serdes.String(), Serdes.String()));
+//        .To("output", Produced.With(Serdes.String(), Serdes.String()));
 
 //    var driver = new TopologyTestDriver(builder.Build(), config);
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
-//    driver.pipeInput(recordFactory.create("right", "B", "1", 0L));
-//    driver.pipeInput(recordFactory.create("right", "A", "1", 0L));
+//    driver.PipeInput(recordFactory.Create("right", "B", "1", 0L));
+//    driver.PipeInput(recordFactory.Create("right", "A", "1", 0L));
 //    // buffered, no output
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -546,7 +546,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //);
 
 
-//            driver.pipeInput(recordFactory.create("right", "tick", "tick", 10L));
+//            driver.PipeInput(recordFactory.Create("right", "tick", "tick", 10L));
 //    // flush buffer
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -557,7 +557,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                        );
 
 
-//    driver.pipeInput(recordFactory.create("right", "A", "2", 11L));
+//    driver.PipeInput(recordFactory.Create("right", "A", "2", 11L));
 //    // buffered, no output
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -565,7 +565,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //            );
 
 
-//            driver.pipeInput(recordFactory.create("left", "A", "a", 12L));
+//            driver.PipeInput(recordFactory.Create("left", "A", "a", 12L));
 //    // should join with previously emitted right side
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -573,7 +573,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                        );
 
 
-//    driver.pipeInput(recordFactory.create("left", "B", "b", 12L));
+//    driver.PipeInput(recordFactory.Create("left", "B", "b", 12L));
 //    // should view through to the parent IKTable, since B is no longer buffered
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -581,7 +581,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                        );
 
 
-//    driver.pipeInput(recordFactory.create("left", "A", "b", 13L));
+//    driver.PipeInput(recordFactory.Create("left", "A", "b", 13L));
 //    // should join with previously emitted right side
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -589,7 +589,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                        );
 
 
-//    driver.pipeInput(recordFactory.create("right", "tick", "tick", 21L));
+//    driver.PipeInput(recordFactory.Create("right", "tick", "tick", 21L));
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
 //               asList(
@@ -599,7 +599,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                        );
 //}
 
-//private void drainProducerRecords(var driver, string v, StringDeserializer sTRING_DESERIALIZER1, StringDeserializer sTRING_DESERIALIZER2)
+//private void drainProducerRecords(var driver, string v, Serdes.String().Deserializer sTRING_DESERIALIZER1, Serdes.String().Deserializer sTRING_DESERIALIZER2)
 //{
 //    throw new NotImplementedException();
 //}
@@ -612,16 +612,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    var builder = new StreamsBuilder();
 
 //    IKTable<string, string> left = builder
-//        .Table("left", Consumed.with(Serdes.String(), Serdes.String()))
+//        .Table("left", Consumed.With(Serdes.String(), Serdes.String()))
 //        .suppress(untilTimeLimit(Duration.FromMilliseconds(10), unbounded()));
 
 //    IKTable<string, string> right = builder
-//        .Table("right", Consumed.with(Serdes.String(), Serdes.String()));
+//        .Table("right", Consumed.With(Serdes.String(), Serdes.String()));
 
 //    left
 //        .outerJoin(right, (l, r) => string.Format("(%s,%s)", l, r))
 //        .toStream()
-//        .to("output", Produced.with(Serdes.String(), Serdes.String()));
+//        .To("output", Produced.With(Serdes.String(), Serdes.String()));
 
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
@@ -631,8 +631,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            ConsumerRecordFactory<string, string> recordFactory =
 //                new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
-//        driver.pipeInput(recordFactory.create("left", "B", "1", 0L));
-//        driver.pipeInput(recordFactory.create("left", "A", "1", 0L));
+//        driver.PipeInput(recordFactory.Create("left", "B", "1", 0L));
+//        driver.PipeInput(recordFactory.Create("left", "A", "1", 0L));
 //        // buffered, no output
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -640,7 +640,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //            );
 
 
-//            driver.pipeInput(recordFactory.create("left", "tick", "tick", 10L));
+//            driver.PipeInput(recordFactory.Create("left", "tick", "tick", 10L));
 //        // flush buffer
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -651,7 +651,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    );
 
 
-//        driver.pipeInput(recordFactory.create("left", "A", "2", 11L));
+//        driver.PipeInput(recordFactory.Create("left", "A", "2", 11L));
 //        // buffered, no output
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -659,7 +659,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //            );
 
 
-//            driver.pipeInput(recordFactory.create("right", "A", "a", 12L));
+//            driver.PipeInput(recordFactory.Create("right", "A", "a", 12L));
 //        // should join with previously emitted left side
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -667,7 +667,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    );
 
 
-//        driver.pipeInput(recordFactory.create("right", "B", "b", 12L));
+//        driver.PipeInput(recordFactory.Create("right", "B", "b", 12L));
 //        // should view through to the parent IKTable, since B is no longer buffered
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -675,7 +675,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    );
 
 
-//        driver.pipeInput(recordFactory.create("right", "A", "b", 13L));
+//        driver.PipeInput(recordFactory.Create("right", "A", "b", 13L));
 //        // should join with previously emitted left side
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
@@ -683,7 +683,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    );
 
 
-//        driver.pipeInput(recordFactory.create("left", "tick", "tick", 21L));
+//        driver.PipeInput(recordFactory.Create("left", "tick", "tick", 21L));
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
 //               asList(
@@ -706,7 +706,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    Iterator<KeyValueTimestamp<K, V>> expectedIterator = expectedResults.iterator();
 //    foreach (Message<K, V> result in results)
 //    {
-//        KeyValueTimestamp<K, V> expected = expectedIterator.next();
+//        KeyValueTimestamp<K, V> expected = expectedIterator.MoveNext();
 //        try
 //        {
 //            OutputVerifier.compareKeyValueTimestamp(result, expected.Key, expected.Value, expected.Timestamp);
@@ -728,7 +728,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //         next != null;
 //         next = driver.readOutput(topic, keyDeserializer, valueDeserializer))
 //    {
-//        result.add(next);
+//        result.Add(next);
 //    }
 //    return new List<>(result);
 //}

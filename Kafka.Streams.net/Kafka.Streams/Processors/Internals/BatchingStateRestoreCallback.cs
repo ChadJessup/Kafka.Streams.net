@@ -14,12 +14,12 @@ namespace Kafka.Streams.Processors.Internals
             this.restoreCallback = restoreCallback;
         }
 
-        public void restore(byte[] key, byte[] value)
+        public void Restore(byte[] key, byte[] value)
         {
             throw new NotImplementedException();
         }
 
-        public void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
+        public void RestoreAll(List<KeyValuePair<byte[], byte[]>> records)
         {
             var keyValues = new List<KeyValuePair<byte[], byte[]>>();
             foreach (var record in records)
@@ -27,10 +27,10 @@ namespace Kafka.Streams.Processors.Internals
                 keyValues.Add(new KeyValuePair<byte[], byte[]>(record.Key, record.Value));
             }
 
-            ((IBatchingStateRestoreCallback)restoreCallback).restoreAll(keyValues);
+            ((IBatchingStateRestoreCallback)restoreCallback).RestoreAll(keyValues);
         }
 
-        public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
+        public void RestoreBatch(List<ConsumeResult<byte[], byte[]>> records)
         {
             throw new NotImplementedException();
         }

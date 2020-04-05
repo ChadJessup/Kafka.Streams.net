@@ -59,13 +59,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            int[] expectedKeys = { 1, 10, 100, 1000 };
 
-//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            stream.mapValues(CharSequence).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, expectedKey.ToString(), expectedKey / 2L));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, expectedKey.ToString(), expectedKey / 2L));
 //            }
 
 //            var expected = new KeyValueTimestamp[]
@@ -89,13 +89,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            int[] expectedKeys = { 1, 10, 100, 1000 };
 
-//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            stream.mapValues(mapper).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, int.ToString(expectedKey), expectedKey / 2L));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, int.ToString(expectedKey), expectedKey / 2L));
 //            }
 
 //            KeyValueTimestamp[] expected = {new KeyValueTimestamp<>(1, 2, 0),

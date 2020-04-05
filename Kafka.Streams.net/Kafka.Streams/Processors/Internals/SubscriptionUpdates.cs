@@ -24,18 +24,18 @@ public class SubscriptionUpdates
 {
     private readonly HashSet<string> updatedTopicSubscriptions = new HashSet<string>();
 
-    public void updateTopics(List<string> topicNames)
+    public void UpdateTopics(List<string> topicNames)
     {
         updatedTopicSubscriptions.Clear();
         updatedTopicSubscriptions.UnionWith(topicNames);
     }
 
-    public List<string> getUpdates()
+    public List<string> GetUpdates()
     {
         return updatedTopicSubscriptions.ToList();
     }
 
-    public bool hasUpdates()
+    public bool HasUpdates()
     {
         return updatedTopicSubscriptions.Any();
     }

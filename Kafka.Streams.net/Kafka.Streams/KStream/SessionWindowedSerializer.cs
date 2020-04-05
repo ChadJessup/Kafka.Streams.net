@@ -57,7 +57,7 @@ namespace Kafka.Streams.KStream
             }
         }
 
-        public byte[]? serialize(string topic, Windowed<T> data)
+        public byte[]? Serialize(string topic, Windowed<T> data)
         {
             // WindowedSerdes.verifyInnerSerializerNotNull<T>(inner, this);
 
@@ -70,7 +70,7 @@ namespace Kafka.Streams.KStream
             return null; // SessionKeySchema.toBinary(data, inner, topic);
         }
 
-        public void close()
+        public void Close()
         {
             if (inner != null)
             {
@@ -80,13 +80,13 @@ namespace Kafka.Streams.KStream
 
         public byte[] SerializeBaseKey(string topic, Windowed<T> data)
         {
-            WindowedSerdes.verifyInnerSerializerNotNull<T>(inner, (ISerializer<T>)this);
+            WindowedSerdes.VerifyInnerSerializerNotNull<T>(inner, (ISerializer<T>)this);
 
             return inner.Serialize(data.Key, new SerializationContext(MessageComponentType.Key, topic));
         }
 
         // Only for testing
-        public ISerializer<T> innerSerializer()
+        public ISerializer<T> InnerSerializer()
         {
             return inner;
         }

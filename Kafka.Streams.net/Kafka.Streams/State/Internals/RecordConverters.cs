@@ -23,12 +23,12 @@ namespace Kafka.Streams.State.Internals
         private static readonly IRecordConverter IDENTITY_INSTANCE = new IdentityRecordConverter();
         private static readonly IRecordConverter RAW_TO_TIMESTAMED_INSTANCE = new RawToTimeStampInstance();
     
-        public static IRecordConverter rawValueToTimestampedValue()
+        public static IRecordConverter RawValueToTimestampedValue()
         {
             return RAW_TO_TIMESTAMED_INSTANCE;
         }
 
-        public static IRecordConverter identity()
+        public static IRecordConverter Identity()
         {
             return IDENTITY_INSTANCE;
         }

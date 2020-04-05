@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Internals
             this.headers = headers;
         }
 
-        public long residentMemorySizeEstimate()
+        public long ResidentMemorySizeEstimate()
         {
             long size = 0;
             size += sizeof(long); // value.context.timestamp
@@ -94,58 +94,58 @@ namespace Kafka.Streams.Processors.Internals
                 }
             }
 
-            ByteBuffer buffer = new ByteBuffer().allocate(size);
-            buffer.putLong(timestamp);
-            buffer.putLong(offset);
+            ByteBuffer buffer = new ByteBuffer().Allocate(size);
+            buffer.PutLong(timestamp);
+            buffer.PutLong(offset);
 
             // not handling the null condition because we believe topic will never be null in cases where we serialize
-            buffer.putInt(topicBytes.Length);
+            buffer.PutInt(topicBytes.Length);
             buffer.Add(topicBytes);
 
-            buffer.putInt(partition);
+            buffer.PutInt(partition);
             if (headers == null)
             {
-                buffer.putInt(-1);
+                buffer.PutInt(-1);
             }
             else
             {
 
-                buffer.putInt(headerKeysBytes.Length);
+                buffer.PutInt(headerKeysBytes.Length);
                 for (var i = 0; i < headerKeysBytes.Length; i++)
                 {
-                    buffer.putInt(headerKeysBytes[i].Length);
+                    buffer.PutInt(headerKeysBytes[i].Length);
                     buffer.Add(headerKeysBytes[i]);
 
                     if (headerValuesBytes[i] != null)
                     {
-                        buffer.putInt(headerValuesBytes[i].Length);
+                        buffer.PutInt(headerValuesBytes[i].Length);
                         buffer.Add(headerValuesBytes[i]);
                     }
                     else
                     {
 
-                        buffer.putInt(-1);
+                        buffer.PutInt(-1);
                     }
                 }
             }
 
-            return buffer.array();
+            return buffer.Array();
         }
 
         public static ProcessorRecordContext Deserialize(ByteBuffer buffer)
         {
-            var timestamp = buffer.getLong();
-            var offset = buffer.getLong();
-            var topicSize = buffer.getInt();
+            var timestamp = buffer.GetLong();
+            var offset = buffer.GetLong();
+            var topicSize = buffer.GetInt();
             string topic;
             {
                 // not handling the null topic condition, because we believe the topic will never be null when we serialize
                 var topicBytes = new byte[topicSize];
-                buffer.get(topicBytes);
+                buffer.Get(topicBytes);
                 topic = new string(topicBytes.Cast<char>().ToArray());
             }
-            var partition = buffer.getInt();
-            var headerCount = buffer.getInt();
+            var partition = buffer.GetInt();
+            var headerCount = buffer.GetInt();
             Headers headers;
             if (headerCount == -1)
             {
@@ -157,11 +157,11 @@ namespace Kafka.Streams.Processors.Internals
 
                 for (var i = 0; i < headerCount; i++)
                 {
-                    var keySize = buffer.getInt();
+                    var keySize = buffer.GetInt();
                     var keyBytes = new byte[keySize];
-                    buffer.get(keyBytes);
+                    buffer.Get(keyBytes);
 
-                    var valueSize = buffer.getInt();
+                    var valueSize = buffer.GetInt();
                     byte[] valueBytes;
                     if (valueSize == -1)
                     {
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Processors.Internals
                     {
 
                         valueBytes = new byte[valueSize];
-                        buffer.get(valueBytes);
+                        buffer.Get(valueBytes);
                     }
 
                     headerArr[i] = new Header(new string(keyBytes.Cast<char>().ToArray()), valueBytes);

@@ -26,7 +26,7 @@ namespace Kafka.Streams.State.Window
          *              if the serialized bytes are also null it is interpreted as deletes
          * @throws ArgumentNullException if the given key is {@code null}
          */
-        void put(K key, V value);
+        void Put(K key, V value);
 
         /**
          * Put a key-value pair into the window with given window start timestamp
@@ -35,7 +35,7 @@ namespace Kafka.Streams.State.Window
          * @param windowStartTimestamp The timestamp of the beginning of the window to put the key/value into
          * @throws ArgumentNullException if the given key is {@code null}
          */
-        void put(K key, V value, long windowStartTimestamp);
+        void Put(K key, V value, long windowStartTimestamp);
 
         /**
          * Get all the key-value pairs with the given key and the time range from all the existing windows.
@@ -57,7 +57,7 @@ namespace Kafka.Streams.State.Window
          * |   A   |     25     |    35    |
          * +--------------------------------
          * </pre>
-         * And we call {@code store.fetch("A", 10, 20)} then the results will contain the first
+         * And we call {@code store.Fetch("A", 10, 20)} then the results will contain the first
          * three windows from the table above, i.e., all those where 10 &lt;= start time &lt;= 20.
          * <p>
          * For each key, the iterator guarantees ordering of windows, starting from the oldest/earliest
@@ -70,7 +70,7 @@ namespace Kafka.Streams.State.Window
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException if the given key is {@code null}
          */
-        IWindowStoreIterator<V> fetch(
+        IWindowStoreIterator<V> Fetch(
             K key,
             long timeFrom,
             long timeTo);
@@ -96,7 +96,7 @@ namespace Kafka.Streams.State.Window
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException if one of the given keys is {@code null}
          */
-        IKeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo);
+        IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
 
         //public IKeyValueIterator<Windowed<K>, V> fetch(
         //    K from,
@@ -119,7 +119,7 @@ namespace Kafka.Streams.State.Window
          * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          */
-        IKeyValueIterator<Windowed<K>, V> fetchAll(
+        IKeyValueIterator<Windowed<K>, V> FetchAll(
             long timeFrom,
             long timeTo);
 

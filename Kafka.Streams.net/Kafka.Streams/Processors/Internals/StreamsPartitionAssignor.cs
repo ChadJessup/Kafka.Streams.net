@@ -6,8 +6,8 @@ namespace Kafka.Streams.Processors.Internals
     public class StreamsPartitionAssignor : IConsumerPartitionAssignor//, Configurable
     {
         public static int UNKNOWN = -1;
-        private static readonly int VERSION_THREE = 3;
-        private static readonly int EARLIEST_PROBEABLE_VERSION = VERSION_THREE;
+        private const int VERSION_THREE = 3;
+        private const int EARLIEST_PROBEABLE_VERSION = VERSION_THREE;
         protected HashSet<int> supportedVersions = new HashSet<int>();
 
         public enum Error
@@ -17,7 +17,7 @@ namespace Kafka.Streams.Processors.Internals
             VERSION_PROBING = 2,
         }
 
-        public static Error fromCode(int code)
+        public static Error FromCode(int code)
         {
             return code switch
             {

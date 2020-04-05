@@ -19,7 +19,7 @@ namespace Kafka.Streams.Processors
          * or {@link StateRestoreCallback} instead for single action restores.
          */
 
-        public virtual void restore(byte[] key, byte[] value)
+        public virtual void Restore(byte[] key, byte[] value)
         {
             throw new InvalidOperationException("Single restore not supported");
         }
@@ -66,7 +66,7 @@ namespace Kafka.Streams.Processors
 
         }
 
-        public virtual void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
+        public virtual void RestoreAll(List<KeyValuePair<byte[], byte[]>> records)
         {
         }
     }

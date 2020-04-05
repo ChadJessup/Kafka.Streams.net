@@ -37,7 +37,7 @@
 
 //        public override KeyValuePair<long, V> next()
 //        {
-//            KeyValuePair<long, byte[]> next = iter.next();
+//            KeyValuePair<long, byte[]> next = iter.MoveNext();
 //            return KeyValuePair.pair(next.key, serdes.valueFrom(next.value));
 //        }
 

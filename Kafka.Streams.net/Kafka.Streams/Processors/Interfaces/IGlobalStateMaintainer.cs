@@ -8,9 +8,9 @@ namespace Kafka.Streams.Processors.Internals
      */
     public interface IGlobalStateMaintainer
     {
-        Dictionary<TopicPartition, long?> initialize();
-        void flushState();
-        void close();
-        void update(ConsumeResult<byte[], byte[]> record);
+        Dictionary<TopicPartition, long?> Initialize();
+        void FlushState();
+        void Close();
+        void Update(ConsumeResult<byte[], byte[]> record);
     }
 }

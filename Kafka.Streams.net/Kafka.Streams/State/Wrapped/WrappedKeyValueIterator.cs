@@ -20,7 +20,7 @@
 
 //        public Windowed<Bytes> peekNextKey()
 //        {
-//            byte[] nextKey = bytesIterator.peekNextKey().get();
+//            byte[] nextKey = bytesIterator.peekNextKey().Get();
 //            return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
 //        }
 
@@ -33,7 +33,7 @@
 
 //        public KeyValuePair<Windowed<Bytes>, byte[]> next()
 //        {
-//            KeyValuePair<Bytes, byte[]> next = bytesIterator.next();
+//            KeyValuePair<Bytes, byte[]> next = bytesIterator.MoveNext();
 //            return KeyValuePair.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value);
 //        }
 

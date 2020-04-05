@@ -32,14 +32,14 @@ namespace Kafka.Streams.State.Internals
             this.returnTimestampedStore = returnTimestampedStore;
         }
 
-        public IKeyValueStore<Bytes, byte[]> get()
+        public IKeyValueStore<Bytes, byte[]> Get()
         {
             return returnTimestampedStore
                 ? new RocksDbTimestampedStore(name)
                 : new RocksDbStore(name);
         }
 
-        public string metricsScope()
+        public string MetricsScope()
         {
             return "rocksdb-state";
         }

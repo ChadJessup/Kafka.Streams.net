@@ -20,9 +20,9 @@ namespace Kafka.Streams.State.RocksDbState
             Bytes to)
             : base(storeName, iterWithTimestamp, iterNoTimestamp)
         {
-            iterWithTimestamp.Seek(from.get());
-            iterNoTimestamp.Seek(from.get());
-            upperBoundKey = to.get();
+            iterWithTimestamp.Seek(from.Get());
+            iterNoTimestamp.Seek(from.Get());
+            upperBoundKey = to.Get();
             if (upperBoundKey == null)
             {
                 throw new ArgumentNullException("RocksDbDualCFRangeIterator: upperBoundKey is null for key " + to);
@@ -30,9 +30,9 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
 
-        public override KeyValuePair<Bytes, byte[]> makeNext()
+        public override KeyValuePair<Bytes, byte[]> MakeNext()
         {
-            KeyValuePair<Bytes, byte[]>? next = base.makeNext();
+            KeyValuePair<Bytes, byte[]>? next = base.MakeNext();
 
             if (next == null)
             {
@@ -40,7 +40,7 @@ namespace Kafka.Streams.State.RocksDbState
             }
             else
             {
-                if (comparator.Compare(next.Value.Key.get(), upperBoundKey) <= 0)
+                if (comparator.Compare(next.Value.Key.Get(), upperBoundKey) <= 0)
                 {
                     return next.Value;
                 }

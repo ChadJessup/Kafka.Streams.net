@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests.Tests
 //            return started;
 //        }
 
-//        public void start(Properties streamsProperties)
+//        public void start(StreamsConfig streamsProperties)
 //        {
 //            streams = createKafkaStreams(streamsProperties);
 //            streams.setUncaughtExceptionHandler((t, e) =>
@@ -45,7 +45,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        public void closeAsync()
 //        {
-//            streams.close(Duration.ZERO);
+//            streams.close(Duration.TimeSpan.Zero);
 //        }
 
 //        public void close()
@@ -68,9 +68,9 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //        }
 
-//        private Properties getStreamsConfig(Properties props)
+//        private StreamsConfig getStreamsConfig(StreamsConfig props)
 //        {
-//            Properties fullProps = new Properties(props);
+//            StreamsConfig fullProps = new StreamsConfig(props);
 //            fullProps.put(StreamsConfig.APPLICATION_ID_CONFIG, "SmokeTest");
 //            fullProps.put(StreamsConfig.CLIENT_ID_CONFIG, "SmokeTest-" + name);
 //            fullProps.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 3);
@@ -80,12 +80,12 @@ namespace Kafka.Streams.Tests.Tests
 //            fullProps.put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 3);
 //            fullProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 //            fullProps.put(ProducerConfig.ACKS_CONFIG, "all");
-//            fullProps.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory().getAbsolutePath());
+//            fullProps.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
 //            fullProps.putAll(props);
 //            return fullProps;
 //        }
 
-//        private KafkaStreams createKafkaStreams(Properties props)
+//        private KafkaStreams createKafkaStreams(StreamsConfig props)
 //        {
 //            Topology build = getTopology();
 //            KafkaStreams streamsClient = new KafkaStreams(build, getStreamsConfig(props));
@@ -109,10 +109,10 @@ namespace Kafka.Streams.Tests.Tests
 //        public Topology getTopology()
 //        {
 //            StreamsBuilder builder = new StreamsBuilder();
-//            Consumed<string, int> stringIntConsumed = Consumed.with(stringSerde, intSerde);
-//            KStream<string, int> source = builder.stream("data", stringIntConsumed);
+//            Consumed<string, int> stringIntConsumed = Consumed.With(stringSerde, intSerde);
+//            KStream<string, int> source = builder.Stream("data", stringIntConsumed);
 //            source.filterNot((k, v) => k.equals("flush"))
-//                  .to("echo", Produced.with(stringSerde, intSerde));
+//                  .To("echo", Produced.With(stringSerde, intSerde));
 //            KStream<string, int> data = source.filter((key, value) => value == null || value != END);
 //            data.process(SmokeTestUtil.printProcessorSupplier("data", name));
 
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    () => int.MaxValue,
 //                    (aggKey, value, aggregate) => (value < aggregate) ? value : aggregate,
 //                    Materialized
-//                        .< string, int, WindowStore<Bytes, byte[]> >as ("uwin-min")
+//                        .< string, int, IWindowStore<Bytes, byte[]> >as ("uwin-min")
 //                        .withValueSerde(intSerde)
 //                        .withRetention(Duration.ofHours(25))
 //                );
@@ -137,7 +137,7 @@ namespace Kafka.Streams.Tests.Tests
 //            minAggregation
 //                .toStream(new Unwindow<>())
 //                .filterNot((k, v) => k.equals("flush"))
-//                .to("min", Produced.with(stringSerde, intSerde));
+//                .To("min", Produced.With(stringSerde, intSerde));
 
 //            KTable<Windowed<string>, int> smallWindowSum = groupedData
 //                .windowedBy(TimeWindows.of(Duration.ofSeconds(2)).advanceBy(Duration.ofSeconds(1)).grace(Duration.ofSeconds(30)))
@@ -148,7 +148,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            KTable<string, int> minTable = builder.table(
 //                "min",
-//                Consumed.with(stringSerde, intSerde),
+//                Consumed.With(stringSerde, intSerde),
 //                Materialized.As ("minStoreName"));
 
 //            minTable.toStream().process(SmokeTestUtil.printProcessorSupplier("min", name));
@@ -159,14 +159,14 @@ namespace Kafka.Streams.Tests.Tests
 //                .aggregate(
 //                    () => int.MIN_VALUE,
 //                    (aggKey, value, aggregate) => (value > aggregate) ? value : aggregate,
-//                    Materialized< string, int, WindowStore<Bytes, byte[]> >.As ("uwin-max").withValueSerde(intSerde))
+//                    Materialized< string, int, IWindowStore<Bytes, byte[]> >.As ("uwin-max").withValueSerde(intSerde))
 //            .toStream(new Unwindow<>())
 //            .filterNot((k, v) => k.equals("flush"))
-//            .to("max", Produced.with(stringSerde, intSerde));
+//            .To("max", Produced.With(stringSerde, intSerde));
 
 //            KTable<string, int> maxTable = builder.table(
 //                "max",
-//                Consumed.with(stringSerde, intSerde),
+//                Consumed.With(stringSerde, intSerde),
 //                Materialized.As ("maxStoreName"));
 //            maxTable.toStream().process(SmokeTestUtil.printProcessorSupplier("max", name));
 
@@ -176,12 +176,12 @@ namespace Kafka.Streams.Tests.Tests
 //                .aggregate(
 //                    () => 0L,
 //                    (aggKey, value, aggregate) => (long)value + aggregate,
-//                    Materialized< string, long, WindowStore<Bytes, byte[]> >.As ("win-sum").withValueSerde(longSerde))
+//                    Materialized< string, long, IWindowStore<Bytes, byte[]> >.As ("win-sum").withValueSerde(longSerde))
 //            .toStream(new Unwindow<>())
 //            .filterNot((k, v) => k.equals("flush"))
-//            .to("sum", Produced.with(stringSerde, longSerde));
+//            .To("sum", Produced.With(stringSerde, longSerde));
 
-//            Consumed<string, long> stringLongConsumed = Consumed.with(stringSerde, longSerde);
+//            Consumed<string, long> stringLongConsumed = Consumed.With(stringSerde, longSerde);
 //            KTable<string, long> sumTable = builder.table("sum", stringLongConsumed);
 //            sumTable.toStream().process(SmokeTestUtil.printProcessorSupplier("sum", name));
 
@@ -191,11 +191,11 @@ namespace Kafka.Streams.Tests.Tests
 //                .count(Materialized.As ("uwin-cnt"))
 //            .toStream(new Unwindow<>())
 //            .filterNot((k, v) => k.equals("flush"))
-//            .to("cnt", Produced.with(stringSerde, longSerde));
+//            .To("cnt", Produced.With(stringSerde, longSerde));
 
 //            KTable<string, long> cntTable = builder.table(
 //                "cnt",
-//                Consumed.with(stringSerde, longSerde),
+//                Consumed.With(stringSerde, longSerde),
 //                Materialized.As ("cntStoreName"));
 //            cntTable.toStream().process(SmokeTestUtil.printProcessorSupplier("cnt", name));
 
@@ -206,7 +206,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    (value1, value2) => value1 - value2)
 //                .toStream()
 //                .filterNot((k, v) => k.equals("flush"))
-//                .to("dif", Produced.with(stringSerde, intSerde));
+//                .To("dif", Produced.With(stringSerde, intSerde));
 
 //            // avg
 //            sumTable
@@ -215,19 +215,19 @@ namespace Kafka.Streams.Tests.Tests
 //                    (value1, value2) => (double)value1 / (double)value2)
 //                .toStream()
 //                .filterNot((k, v) => k.equals("flush"))
-//                .to("avg", Produced.with(stringSerde, doubleSerde));
+//                .To("avg", Produced.With(stringSerde, doubleSerde));
 
 //            // test repartition
 //            Agg agg = new Agg();
 //            cntTable.groupBy(agg.selector(), Grouped.with(stringSerde, longSerde))
-//                    .aggregate(agg.init(), agg.adder(), agg.remover(),
-//                               Materialized< string, long >.As (Stores.inMemoryKeyValueStore("cntByCnt"))
-//                                   .withKeySerde(Serdes.String())
+//                    .aggregate(agg.Init(), agg.adder(), agg.remover(),
+//                               Materialized< string, long >.As (Stores.InMemoryKeyValueStore("cntByCnt"))
+//                                   .WithKeySerde(Serdes.String())
 //                                   .withValueSerde(Serdes.Long()))
 //                .toStream()
-//                .to("tagg", Produced.with(stringSerde, longSerde));
+//                .To("tagg", Produced.With(stringSerde, longSerde));
 
-//            return builder.build();
+//            return builder.Build();
 //        }
 
 //        private static void streamify(KTable<Windowed<string>, int> windowedTable, string topic)
@@ -235,8 +235,8 @@ namespace Kafka.Streams.Tests.Tests
 //            windowedTable
 //                .toStream()
 //                .filterNot((k, v) => k.Key.equals("flush"))
-//                .map((key, value) => new KeyValuePair<>(key.toString(), value))
-//                .to(topic, Produced.with(stringSerde, intSerde));
+//                .map((key, value) => KeyValuePair.Create(key.ToString(), value))
+//                .To(topic, Produced.With(stringSerde, intSerde));
 //        }
 //    }
 //}

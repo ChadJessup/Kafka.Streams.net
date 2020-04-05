@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.Queryable
          * @param stateStore    The stateStore
          * @return true if it is a match
          */
-        bool accepts(IStateStore stateStore);
+        bool Accepts(IStateStore stateStore);
 
         /**
          * Create an instance of {@code T} (usually a facade) that developers can use
@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Queryable
          * @return a read-only interface over a {@code IStateStore}
          *        (cf. {@link org.apache.kafka.streams.state.QueryableStoreTypes.KeyValueStoreType})
          */
-        T create(IStateStoreProvider storeProvider,
+        T Create(IStateStoreProvider storeProvider,
                  string storeName);
     }
 }

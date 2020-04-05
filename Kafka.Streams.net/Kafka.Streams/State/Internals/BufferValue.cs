@@ -56,7 +56,7 @@
 //            else
 //            {
 //                oldValue = new byte[oldValueLength];
-//                buffer.get(oldValue);
+//                buffer.Get(oldValue);
 //            }
 
 //            byte[] newValue = extractValue(buffer);
@@ -90,7 +90,7 @@
 
 //            byte[] serializedContext = recordContext.Serialize;
 
-//            ByteBuffer buffer = ByteBuffer.allocate(
+//            ByteBuffer buffer = new ByteBuffer().Allocate(
 //                serializedContext.Length
 //                    + sizeOfValueLength + sizeOfPriorValue
 //                    + sizeOfValueLength + sizeOfOldValue
@@ -134,12 +134,12 @@
 //            }
 //        }
 
-//        public long residentMemorySizeEstimate()
+//        public long ResidentMemorySizeEstimate()
 //        {
 //            return (priorValue == null ? 0 : priorValue.Length)
 //                + (oldValue == null || priorValue == oldValue ? 0 : oldValue.Length)
 //                + (newValue == null ? 0 : newValue.Length)
-//                + recordContext.residentMemorySizeEstimate();
+//                + recordContext.ResidentMemorySizeEstimate();
 //        }
 
 //        public override bool Equals(object o)

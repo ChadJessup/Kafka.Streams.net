@@ -24,7 +24,7 @@ namespace Kafka.Streams.Processors.Internals
          * Return a map from topic partition to futures which can be used to check the status of
          * individual deletions.
          */
-        public Dictionary<TopicPartition, Task<DeletedRecords>> lowWatermarks()
+        public Dictionary<TopicPartition, Task<DeletedRecords>> LowWatermarks()
         {
             return tasks;
         }
@@ -32,7 +32,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * Return a future which succeeds only if all the records deletions succeed.
          */
-        public Task all()
+        public Task All()
         {
             return Task.WhenAll(tasks.Values.ToArray());
         }

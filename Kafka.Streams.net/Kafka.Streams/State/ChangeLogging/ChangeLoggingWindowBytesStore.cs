@@ -20,7 +20,7 @@
 //                         IStateStore root)
 //        {
 //            this.context = context;
-//            base.init(context, root);
+//            base.Init(context, root);
 //            string topic = ProcessorStateManager<Bytes, byte[]>.storeChangelogTopic(context.applicationId(), name);
 //            changeLogger = new StoreChangeLogger<Bytes, byte[]>(
 //                name,
@@ -31,7 +31,7 @@
 //        public override byte[] fetch(Bytes key,
 //                            long timestamp)
 //        {
-//            return wrapped.fetch(key, timestamp);
+//            return wrapped.Fetch(key, timestamp);
 //        }
 
 
@@ -39,7 +39,7 @@
 //                                                 long from,
 //                                                 long to)
 //        {
-//            return wrapped.fetch(key, from, to);
+//            return wrapped.Fetch(key, from, to);
 //        }
 
 
@@ -48,7 +48,7 @@
 //                                                               long from,
 //                                                               long to)
 //        {
-//            return wrapped.fetch(keyFrom, keyTo, from, to);
+//            return wrapped.Fetch(keyFrom, keyTo, from, to);
 //        }
 
 //        public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()

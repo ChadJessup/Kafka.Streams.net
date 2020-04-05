@@ -80,7 +80,7 @@
 //            if (bytesLength != 0)
 //            {
 //                byte[] bytes = new byte[bytesLength];
-//                data.get(bytes);
+//                data.Get(bytes);
 //                subscriptionInfo.userEndPoint = new string(bytes, System.Text.Encoding.UTF8);
 //            }
 //        }

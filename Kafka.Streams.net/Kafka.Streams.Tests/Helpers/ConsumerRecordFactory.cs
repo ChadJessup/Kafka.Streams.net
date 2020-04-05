@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Kafka.Streams.Tests.Helpers
 {
     /**
-     * Factory to create {@link ConsumeResult consumer records} for a single single-partitioned topic with given Key and
+     * Factory to Create {@link ConsumeResult consumer records} for a single single-partitioned topic with given Key and
      * value {@link Serializer serializers}.
      *
      * @deprecated Since 2.4 use methods of {@link TestInputTopic} instead
@@ -242,7 +242,7 @@ namespace Kafka.Streams.Tests.Helpers
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, K Key, V value, long timestampMs) instead.");
+                    "Use #Create(string topicName, K Key, V value, long timestampMs) instead.");
             }
 
             return Create(topicName, Key, value, headers, timestampMs);
@@ -320,7 +320,7 @@ namespace Kafka.Streams.Tests.Helpers
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, K Key, V value) instead.");
+                    "Use #Create(string topicName, K Key, V value) instead.");
             }
 
             return Create(topicName, Key, value, headers);
@@ -392,7 +392,7 @@ namespace Kafka.Streams.Tests.Helpers
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, V value, long timestampMs) instead.");
+                    "Use #Create(string topicName, V value, long timestampMs) instead.");
             }
             return Create(topicName, value, headers, timestampMs);
         }
@@ -452,7 +452,7 @@ namespace Kafka.Streams.Tests.Helpers
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, V value, long timestampMs) instead.");
+                    "Use #Create(string topicName, V value, long timestampMs) instead.");
             }
             return Create(topicName, value, headers);
         }
@@ -490,7 +490,7 @@ namespace Kafka.Streams.Tests.Helpers
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues) instead.");
+                    "Use #Create(string topicName, List<KeyValuePair<K, V>> keyValues) instead.");
             }
 
             return Create(topicName, keyValues);
@@ -544,7 +544,7 @@ namespace Kafka.Streams.Tests.Helpers
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp, long advanceMs) instead.");
+                    "Use #Create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp, long advanceMs) instead.");
             }
 
             return Create(topicName, keyValues, startTimestamp, advanceMs);
@@ -582,7 +582,7 @@ namespace Kafka.Streams.Tests.Helpers
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp) instead.");
+                    "Use #Create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp) instead.");
             }
 
             return Create(topicName, keyValues, startTimestamp, 1);

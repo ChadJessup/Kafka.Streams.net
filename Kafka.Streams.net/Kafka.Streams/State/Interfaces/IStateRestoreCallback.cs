@@ -7,6 +7,6 @@ namespace Kafka.Streams.State.Interfaces
 
     public interface IStateRestoreCallback
     {
-        void restore(byte[] key, byte[] value);
+        void Restore(byte[] key, byte[] value);
     }
 }

@@ -32,7 +32,7 @@ namespace Kafka.Streams.Processors.Internals
         public long approximateNumEntries
             => wrapped.approximateNumEntries;
 
-        public void put(K key, V value)
+        public void Put(K key, V value)
         {
             wrapped.Add(key, value);
         }

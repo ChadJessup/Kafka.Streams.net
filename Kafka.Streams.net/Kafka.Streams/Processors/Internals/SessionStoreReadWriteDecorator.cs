@@ -13,21 +13,21 @@ namespace Kafka.Streams.Processors.Internals
         {
         }
 
-        public IKeyValueIterator<Windowed<K>, AGG> findSessions(
+        public IKeyValueIterator<Windowed<K>, AGG> FindSessions(
             K key,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            return wrapped.findSessions(key, earliestSessionEndTime, latestSessionStartTime);
+            return wrapped.FindSessions(key, earliestSessionEndTime, latestSessionStartTime);
         }
 
-        public IKeyValueIterator<Windowed<K>, AGG> findSessions(
+        public IKeyValueIterator<Windowed<K>, AGG> FindSessions(
             K keyFrom,
             K keyTo,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            return wrapped.findSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
+            return wrapped.FindSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
         }
 
         public void Remove(Windowed<K> sessionKey)
@@ -35,24 +35,24 @@ namespace Kafka.Streams.Processors.Internals
             wrapped.Remove(sessionKey);
         }
 
-        public void put(Windowed<K> sessionKey, AGG aggregate)
+        public void Put(Windowed<K> sessionKey, AGG aggregate)
         {
-            wrapped.put(sessionKey, aggregate);
+            wrapped.Put(sessionKey, aggregate);
         }
 
-        public AGG fetchSession(K key, long startTime, long endTime)
+        public AGG FetchSession(K key, long startTime, long endTime)
         {
-            return wrapped.fetchSession(key, startTime, endTime);
+            return wrapped.FetchSession(key, startTime, endTime);
         }
 
-        public IKeyValueIterator<Windowed<K>, AGG> fetch(K key)
+        public IKeyValueIterator<Windowed<K>, AGG> Fetch(K key)
         {
-            return wrapped.fetch(key);
+            return wrapped.Fetch(key);
         }
 
-        public IKeyValueIterator<Windowed<K>, AGG> fetch(K from, K to)
+        public IKeyValueIterator<Windowed<K>, AGG> Fetch(K from, K to)
         {
-            return wrapped.fetch(from, to);
+            return wrapped.Fetch(from, to);
         }
     }
 }

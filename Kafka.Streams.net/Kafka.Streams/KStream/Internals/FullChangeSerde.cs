@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         private readonly ISerde<T> inner;
 
-        public static FullChangeSerde<T> wrap(ISerde<T> serde)
+        public static FullChangeSerde<T> Wrap(ISerde<T> serde)
         {
             if (serde == null)
             {
@@ -41,19 +41,19 @@ namespace Kafka.Streams.KStream.Internals
             this.inner = inner ?? throw new ArgumentNullException(nameof(inner));
         }
 
-        public ISerde<T> innerSerde()
+        public ISerde<T> InnerSerde()
         {
             return inner;
         }
 
-        public Change<byte[]> serializeParts(string topic, Change<T> data)
+        public Change<byte[]> SerializeParts(string topic, Change<T> data)
         {
             if (data == null)
             {
                 return null;
             }
 
-            ISerializer<T> innerSerializer = innerSerde().Serializer;
+            ISerializer<T> innerSerializer = InnerSerde().Serializer;
 
             var oldBytes = data.oldValue == null ? null : innerSerializer.Serialize(data.oldValue, new SerializationContext(MessageComponentType.Key, topic));
             var newBytes = data.newValue == null ? null : innerSerializer.Serialize(data.newValue, new SerializationContext(MessageComponentType.Key, topic));
@@ -61,14 +61,14 @@ namespace Kafka.Streams.KStream.Internals
             return new Change<byte[]>(newBytes, oldBytes);
         }
 
-        public Change<T> deserializeParts(string topic, Change<byte[]> serialChange)
+        public Change<T> DeserializeParts(string topic, Change<byte[]> serialChange)
         {
             if (serialChange == null)
             {
                 return null;
             }
 
-            IDeserializer<T> innerDeserializer = innerSerde().Deserializer;
+            IDeserializer<T> innerDeserializer = InnerSerde().Deserializer;
 
             var oldValue = innerDeserializer.Deserialize(serialChange.oldValue, isNull: serialChange.oldValue == null, new SerializationContext(MessageComponentType.Key, topic));
             var newValue = innerDeserializer.Deserialize(serialChange.newValue, isNull: serialChange.newValue == null, new SerializationContext(MessageComponentType.Key, topic));
@@ -80,7 +80,7 @@ namespace Kafka.Streams.KStream.Internals
          * We used to serialize a Change into a single byte[]. Now, we don't anymore, but we still keep this logic here
          * so that we can produce the legacy string.Format to test that we can still deserialize it.
          */
-        public static byte[] mergeChangeArraysIntoSingleLegacyFormattedArray(Change<byte[]> serialChange)
+        public static byte[] MergeChangeArraysIntoSingleLegacyFormattedArray(Change<byte[]> serialChange)
         {
             if (serialChange == null)
             {
@@ -90,51 +90,51 @@ namespace Kafka.Streams.KStream.Internals
             var oldSize = serialChange.oldValue == null ? -1 : serialChange.oldValue.Length;
             var newSize = serialChange.newValue == null ? -1 : serialChange.newValue.Length;
 
-            ByteBuffer buffer = new ByteBuffer().allocate(sizeof(int) * 2 + Math.Max(0, oldSize) + Math.Max(0, newSize));
+            ByteBuffer buffer = new ByteBuffer().Allocate(sizeof(int) * 2 + Math.Max(0, oldSize) + Math.Max(0, newSize));
 
-            buffer.putInt(oldSize);
+            buffer.PutInt(oldSize);
 
             if (serialChange.oldValue != null)
             {
                 buffer.Add(serialChange.oldValue);
             }
 
-            buffer.putInt(newSize);
+            buffer.PutInt(newSize);
             if (serialChange.newValue != null)
             {
                 buffer.Add(serialChange.newValue);
             }
-            return buffer.array();
+            return buffer.Array();
         }
 
         /**
          * We used to serialize a Change into a single byte[]. Now, we don't anymore, but we still
          * need to be able to read it (so that we can load the state store from previously-written changelog records).
          */
-        public static Change<byte[]> decomposeLegacyFormattedArrayIntoChangeArrays(byte[] data)
+        public static Change<byte[]> DecomposeLegacyFormattedArrayIntoChangeArrays(byte[] data)
         {
             if (data == null)
             {
                 return null;
             }
 
-            ByteBuffer buffer = new ByteBuffer().wrap(data);
+            ByteBuffer buffer = new ByteBuffer().Wrap(data);
 
-            var oldSize = buffer.getInt();
+            var oldSize = buffer.GetInt();
             var oldBytes = oldSize == -1
                 ? null
                 : new byte[oldSize];
 
             if (oldBytes != null)
             {
-                buffer.get(oldBytes);
+                buffer.Get(oldBytes);
             }
 
-            var newSize = buffer.getInt();
+            var newSize = buffer.GetInt();
             var newBytes = newSize == -1 ? null : new byte[newSize];
             if (newBytes != null)
             {
-                buffer.get(newBytes);
+                buffer.Get(newBytes);
             }
 
             return new Change<byte[]>(newBytes, oldBytes);

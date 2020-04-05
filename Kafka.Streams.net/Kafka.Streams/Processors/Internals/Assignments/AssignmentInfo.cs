@@ -116,7 +116,7 @@
 //                    @out.flush();
 //                    @out.close();
 
-//                    return ByteBuffer.wrap(baos.toByteArray());
+//                    return ByteBuffer.Wrap(baos.toByteArray());
 //                }
 //            }
 //            catch (IOException ex)
@@ -179,7 +179,7 @@
 //            foreach (TopicPartition partition in partitions)
 //            {
 //                @out.writeUTF(partition.Topic);
-//                @out.writeInt(partition.partition());
+//                @out.writeInt(partition.Partition);
 //            }
 //        }
 

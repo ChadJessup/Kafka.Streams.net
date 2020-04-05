@@ -39,9 +39,9 @@ namespace Kafka.Streams.KStream.Internals
             int[] expectedKeys = { 0, 1, 2, 3 };
 
             var supplier = new MockProcessorSupplier<string, string>();
-            IKStream<int, string> stream = builder.Stream(topicName, Consumed<int, string>.with(Serdes.Int(), Serdes.String()));
+            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With<int, string>(Serdes.Int(), Serdes.String()));
 
-            stream.flatMap(mapper).Process(supplier);
+            stream.FlatMap(mapper).Process(supplier);
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             foreach (var expectedKey in expectedKeys)

@@ -70,7 +70,7 @@ namespace Kafka.Streams.KStream
          * @throws ArgumentException if {@code inactivityGapMs} is zero or negative
          * @deprecated Use {@link #with(Duration)} instead.
          */
-        public static SessionWindows with(TimeSpan inactivityGap)
+        public static SessionWindows With(TimeSpan inactivityGap)
         {
             if (inactivityGap.TotalMilliseconds <= 0)
             {
@@ -88,10 +88,10 @@ namespace Kafka.Streams.KStream
          *
          * @throws ArgumentException if {@code inactivityGap} is zero or negative or can't be represented as {@code long milliseconds}
          */
-        public static SessionWindows with(Duration inactivityGap)
+        public static SessionWindows With(Duration inactivityGap)
         {
-            String msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(inactivityGap, "inactivityGap");
-            return with(ApiUtils.validateMillisecondDuration(inactivityGap.ToTimeSpan(), msgPrefix));
+            String msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(inactivityGap, "inactivityGap");
+            return With(ApiUtils.ValidateMillisecondDuration(inactivityGap.ToTimeSpan(), msgPrefix));
         }
 
         /**
@@ -105,7 +105,7 @@ namespace Kafka.Streams.KStream
          *             or directly configure the retention in a store supplier and use
          *             {@link Materialized#as(SessionBytesStoreSupplier)}.
          */
-        public SessionWindows until(TimeSpan duration)// throws ArgumentException
+        public SessionWindows Until(TimeSpan duration)// throws ArgumentException
         {
             if (duration < gap)
             {
@@ -127,10 +127,10 @@ namespace Kafka.Streams.KStream
          * @return this updated builder
          * @throws ArgumentException if the {@code afterWindowEnd} is negative of can't be represented as {@code long milliseconds}
          */
-        public SessionWindows grace(Duration afterWindowEnd)// throws ArgumentException
+        public SessionWindows Grace(Duration afterWindowEnd)// throws ArgumentException
         {
-            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
-            var afterWindow = ApiUtils.validateMillisecondDuration(afterWindowEnd.ToTimeSpan(), msgPrefix);
+            var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
+            var afterWindow = ApiUtils.ValidateMillisecondDuration(afterWindowEnd.ToTimeSpan(), msgPrefix);
 
             if (afterWindow.TotalMilliseconds < 0)
             {
@@ -143,14 +143,14 @@ namespace Kafka.Streams.KStream
                 afterWindow);
         }
 
-        public TimeSpan gracePeriod()
+        public TimeSpan GracePeriod()
         {
             // NOTE: in the future, when we remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,
             // or we can default to (24h - gapMs) if you want to be super accurate.
             return graceWindow != TimeSpan.FromMilliseconds(-1)
                 ? graceWindow
-                : maintain() - inactivityGap();
+                : Maintain() - InactivityGap();
         }
 
         /**
@@ -158,7 +158,7 @@ namespace Kafka.Streams.KStream
          *
          * @return the inactivity gap of the specified windows
          */
-        public TimeSpan inactivityGap()
+        public TimeSpan InactivityGap()
         {
             return this.gap;
         }
@@ -171,7 +171,7 @@ namespace Kafka.Streams.KStream
          * @return the window maintain duration
          * @deprecated since 2.1. Use {@link Materialized#retention} instead.
          */
-        public TimeSpan maintain()
+        public TimeSpan Maintain()
         {
             if (maintainDuration > gap)
             {

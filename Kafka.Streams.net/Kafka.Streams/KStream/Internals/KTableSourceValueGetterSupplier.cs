@@ -9,12 +9,12 @@ namespace Kafka.Streams.KStream.Internals
             this.storeName = storeName;
         }
 
-        public IKTableValueGetter<K, V> get()
+        public IKTableValueGetter<K, V> Get()
         {
             return new KTableSourceValueGetter<K, V>();
         }
 
-        public string[] storeNames()
+        public string[] StoreNames()
         {
             return new string[] { storeName ?? string.Empty };
         }

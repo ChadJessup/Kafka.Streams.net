@@ -20,15 +20,15 @@
 
 //        public void init(IProcessorContext context)
 //        {
-//            parentGetter.init(context);
-//            valueTransformer.init(new ForwardingDisabledProcessorContext(context));
+//            parentGetter.Init(context);
+//            valueTransformer.Init(new ForwardingDisabledProcessorContext(context));
 //        }
 
 
 //        public ValueAndTimestamp<V1> get(K key)
 //        {
 //            ValueAndTimestamp<V> valueAndTimestamp = parentGetter[key];
-//            return ValueAndTimestamp.make(
+//            return ValueAndTimestamp.Make(
 //                valueTransformer.transform(key, ValueAndTimestamp.GetValueOrNull(valueAndTimestamp)),
 //                valueAndTimestamp == null ? UNKNOWN : valueAndTimestamp.timestamp());
 //        }

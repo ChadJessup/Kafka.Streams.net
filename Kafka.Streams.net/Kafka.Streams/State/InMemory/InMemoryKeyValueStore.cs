@@ -32,11 +32,11 @@
 //        // this is a delete
 //        if (value == null)
 //        {
-//            delete(Bytes.wrap(key));
+//            delete(Bytes.Wrap(key));
 //        }
 //        else
 //        {
-//            put(Bytes.wrap(key), value);
+//            put(Bytes.Wrap(key), value);
 //        }
 //    });
 //            }
@@ -117,7 +117,7 @@
 //                new InMemoryKeyValueIterator(map.iterator()));
 //        }
 
-//        public override long approximateNumEntries()
+//        public override long approximateNumEntries
 //        {
 //            return map.size();
 //        }

@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             this.parentKTable = parentKTable ?? throw new ArgumentNullException(nameof(parentKTable));
 
             // The suppress buffer requires seeing the old values, to support the prior value view.
-            parentKTable.enableSendingOldValues();
+            parentKTable.EnableSendingOldValues();
         }
 
         public IKeyValueProcessor<K, Change<V>> Get()
@@ -30,9 +30,9 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         }
 
 
-        public IKTableValueGetterSupplier<K, V> view()
+        public IKTableValueGetterSupplier<K, V> View()
         {
-            return parentKTable.valueGetterSupplier<V>();
+            return parentKTable.ValueGetterSupplier<V>();
         }
 
         //public IKTableValueGetter<K, V> get()
@@ -42,12 +42,12 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         //    return null;
         //    //            return new KTableValueGetter<K, V>()
         //    //            {
-        //    //                    private TimeOrderedKeyValueBuffer<K, V> buffer;
+        //    //                    private ITimeOrderedKeyValueBuffer<K, V> buffer;
         //    //        public void init(IProcessorContext<K, V> context)
         //    //        {
-        //    //            parentGetter.init(context);
+        //    //            parentGetter.Init(context);
         //    //            // the main processor is responsible for the buffer's lifecycle
-        //    //            buffer = requireNonNull((TimeOrderedKeyValueBuffer<K, V>)context.getStateStore(storeName));
+        //    //            buffer = requireNonNull((ITimeOrderedKeyValueBuffer<K, V>)context.getStateStore(storeName));
         //    //        }
 
 
@@ -88,9 +88,9 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         //}
 
 
-        public void enableSendingOldValues()
+        public void EnableSendingOldValues()
         {
-            parentKTable.enableSendingOldValues();
+            parentKTable.EnableSendingOldValues();
         }
     }
 }

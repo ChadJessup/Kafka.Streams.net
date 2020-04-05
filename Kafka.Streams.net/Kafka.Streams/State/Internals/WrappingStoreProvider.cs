@@ -39,17 +39,17 @@ namespace Kafka.Streams.State.Internals
          * by {@link QueryableStoreType#accepts(IStateStore)}
          * @param storeName  name of the store
          * @param type      The {@link QueryableStoreType}
-         * @param       The type of the Store, for example, {@link org.apache.kafka.streams.state.ReadOnlyKeyValueStore}
+         * @param       The type of the Store, for example, {@link org.apache.kafka.streams.state.IReadOnlyKeyValueStore}
          * @return  a List of all the stores with the storeName and are accepted by {@link QueryableStoreType#accepts(IStateStore)}
          */
-        public List<T> stores<T>(
+        public List<T> Stores<T>(
             string storeName,
             IQueryableStoreType<T> type)
         {
             var allStores = new List<T>();
             foreach (IStateStoreProvider provider in storeProviders)
             {
-                List<T> stores = provider.stores(storeName, type);
+                List<T> stores = provider.Stores(storeName, type);
                 allStores.AddRange(stores);
             }
             if (!allStores.Any())

@@ -37,16 +37,16 @@ namespace Kafka.Streams.KStream.Internals
         {
             this.clock = clock;
             this.builder = builder;
-            this.keySerde = groupedInternal.keySerde;
-            this.valueSerde = groupedInternal.valueSerde;
+            this.keySerde = groupedInternal.KeySerde;
+            this.valueSerde = groupedInternal.ValueSerde;
             this.repartitionRequired = repartitionRequired;
             this.sourceNodes = sourceNodes;
             this.name = name;
             this.streamsGraphNode = streamsGraphNode;
-            this.userProvidedRepartitionTopicName = groupedInternal.name;
+            this.userProvidedRepartitionTopicName = groupedInternal.Name;
         }
 
-        public IKTable<KR, VR> build<KR, VR>(
+        public IKTable<KR, VR> Build<KR, VR>(
             string functionName,
             IStoreBuilder<IStateStore> storeBuilder,
             IKStreamAggProcessorSupplier<K, KR, V, VR> aggregateSupplier,
@@ -73,7 +73,7 @@ namespace Kafka.Streams.KStream.Internals
                     ? userProvidedRepartitionTopicName
                     : storeBuilder.name;
 
-                sourceName = createRepartitionSource(repartitionTopicPrefix, repartitionNodeBuilder);
+                sourceName = CreateRepartitionSource(repartitionTopicPrefix, repartitionNodeBuilder);
 
                 // First time through we need to create a repartition node.
                 // Any subsequent calls to GroupedStreamAggregateBuilder#build we check if
@@ -111,7 +111,7 @@ namespace Kafka.Streams.KStream.Internals
         /**
          * @return the new sourceName of the repartitioned source
          */
-        private string createRepartitionSource(
+        private string CreateRepartitionSource(
             string repartitionTopicNamePrefix,
             OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder)
             => KStream<K, V>.CreateRepartitionedSource(

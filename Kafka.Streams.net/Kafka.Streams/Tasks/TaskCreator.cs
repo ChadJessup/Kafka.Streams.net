@@ -42,7 +42,7 @@ namespace Kafka.Streams.Tasks
             this.threadProducer = threadProducer;
         }
 
-        public override StreamTask createTask(
+        public override StreamTask CreateTask(
             ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             TaskId taskId,
@@ -81,7 +81,7 @@ namespace Kafka.Streams.Tasks
         private string GetTaskProducerClientId(string threadClientId, TaskId taskId)
             => $"{threadClientId}-{taskId}-producer";
 
-        public override void close()
+        public override void Close()
         {
             if (threadProducer != null)
             {

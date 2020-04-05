@@ -31,26 +31,26 @@ namespace Kafka.Streams.State.Internals
          * @param                The expected type of the returned store
          * @return A composite object that wraps the store instances.
          */
-        public T getStore<T>(
+        public T GetStore<T>(
             string storeName,
             IQueryableStoreType<T> queryableStoreType)
         {
-            List<T> globalStore = globalStoreProvider.stores<T>(storeName, queryableStoreType);
+            List<T> globalStore = globalStoreProvider.Stores<T>(storeName, queryableStoreType);
             if (globalStore.Any())
             {
-                return queryableStoreType.create(new WrappingStoreProvider(new List<IStateStoreProvider> { globalStoreProvider }), storeName);
+                return queryableStoreType.Create(new WrappingStoreProvider(new List<IStateStoreProvider> { globalStoreProvider }), storeName);
             }
 
             var allStores = new List<T>();
             foreach (IStateStoreProvider storeProvider in storeProviders)
             {
-                allStores.AddRange(storeProvider.stores(storeName, queryableStoreType));
+                allStores.AddRange(storeProvider.Stores(storeName, queryableStoreType));
             }
             if (!allStores.Any())
             {
                 throw new InvalidStateStoreException("The state store, " + storeName + ", may have migrated to another instance.");
             }
-            return queryableStoreType.create(
+            return queryableStoreType.Create(
                     new WrappingStoreProvider(storeProviders),
                     storeName);
         }

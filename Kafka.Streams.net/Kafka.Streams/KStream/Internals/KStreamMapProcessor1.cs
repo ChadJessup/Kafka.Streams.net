@@ -9,7 +9,7 @@
 //        public override void process(K readOnlyKey, V value)
 //        {
 //            //V1 newValue = mapper.apply(readOnlyKey, value);
-//            //context.forward(readOnlyKey, newValue);
+//            //context.Forward(readOnlyKey, newValue);
 //        }
 //    }
 //}

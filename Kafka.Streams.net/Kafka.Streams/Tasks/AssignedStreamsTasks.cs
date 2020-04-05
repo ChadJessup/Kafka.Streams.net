@@ -20,34 +20,34 @@ namespace Kafka.Streams.Tasks
         }
 
 
-        public StreamTask restoringTaskFor(TopicPartition partition)
+        public StreamTask RestoringTaskFor(TopicPartition partition)
         {
             return restoringByPartition[partition];
         }
 
-        public override List<StreamTask> allTasks()
+        public override List<StreamTask> AllTasks()
         {
-            List<StreamTask> tasks = base.allTasks();
+            List<StreamTask> tasks = base.AllTasks();
             tasks.AddRange(restoring.Values);
 
             return tasks;
         }
 
 
-        public override HashSet<TaskId> allAssignedTaskIds()
+        public override HashSet<TaskId> AllAssignedTaskIds()
         {
-            HashSet<TaskId> taskIds = base.allAssignedTaskIds();
+            HashSet<TaskId> taskIds = base.AllAssignedTaskIds();
             taskIds.UnionWith(restoring.Keys);
             return taskIds;
         }
 
 
-        public override bool allTasksRunning()
+        public override bool AllTasksRunning()
         {
-            return base.allTasksRunning() && !restoring.Any();
+            return base.AllTasksRunning() && !restoring.Any();
         }
 
-        public RuntimeException closeAllRestoringTasks()
+        public RuntimeException CloseAllRestoringTasks()
         {
             RuntimeException exception = null;
 
@@ -60,7 +60,7 @@ namespace Kafka.Streams.Tasks
                 try
                 {
 
-                    task.closeStateManager(true);
+                    task.CloseStateManager(true);
                 }
                 catch (RuntimeException e)
                 {
@@ -119,13 +119,13 @@ namespace Kafka.Streams.Tasks
                     }
                 }
             }
-            if (allTasksRunning())
+            if (AllTasksRunning())
             {
                 restoredPartitions.Clear();
             }
         }
 
-        public void addToRestoring(StreamTask task)
+        public void AddToRestoring(StreamTask task)
         {
             restoring.Add(task.id, task);
             foreach (TopicPartition topicPartition in task.partitions)
@@ -143,7 +143,7 @@ namespace Kafka.Streams.Tasks
          * @throws TaskMigratedException if committing offsets failed (non-EOS)
          *                               or if the task producer got fenced (EOS)
          */
-        public int maybeCommitPerUserRequested()
+        public int MaybeCommitPerUserRequested()
         {
             var committed = 0;
             RuntimeException firstException = null;
@@ -156,7 +156,7 @@ namespace Kafka.Streams.Tasks
 
                     if (task.commitRequested && task.commitNeeded)
                     {
-                        task.commit();
+                        task.Commit();
                         committed++;
                         logger.LogDebug("Committed active task {} per user request in", task.id);
                     }
@@ -165,7 +165,7 @@ namespace Kafka.Streams.Tasks
                 {
                     logger.LogInformation(e, "Failed to commit {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
-                    RuntimeException fatalException = closeZombieTask(task);
+                    RuntimeException fatalException = CloseZombieTask(task);
                     if (fatalException != null)
                     {
                         throw fatalException;
@@ -199,7 +199,7 @@ namespace Kafka.Streams.Tasks
          * Returns a map of offsets up to which the records can be deleted; this function should only be called
          * after the commit call to make sure all consumed offsets are actually committed as well
          */
-        public Dictionary<TopicPartition, long> recordsToDelete()
+        public Dictionary<TopicPartition, long> RecordsToDelete()
         {
             var recordsToDelete = new Dictionary<TopicPartition, long>();
             foreach (var task in running.Values)
@@ -216,7 +216,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public int process(long now)
+        public int Process(long now)
         {
             var processed = 0;
 
@@ -236,7 +236,7 @@ namespace Kafka.Streams.Tasks
                 {
                     logger.LogInformation(e, "Failed to process stream task {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
-                    RuntimeException fatalException = closeZombieTask(task);
+                    RuntimeException fatalException = CloseZombieTask(task);
                     if (fatalException != null)
                     {
                         throw fatalException;
@@ -260,7 +260,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public int punctuate()
+        public int Punctuate()
         {
             var punctuated = 0;
             IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.GetEnumerator();
@@ -284,7 +284,7 @@ namespace Kafka.Streams.Tasks
                     logger.LogInformation(e, "Failed to punctuate stream task {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
 
-                    RuntimeException fatalException = closeZombieTask(task);
+                    RuntimeException fatalException = CloseZombieTask(task);
                     if (fatalException != null)
                     {
                         throw fatalException;
@@ -304,9 +304,9 @@ namespace Kafka.Streams.Tasks
             return punctuated;
         }
 
-        public override void clear()
+        public override void Clear()
         {
-            base.clear();
+            base.Clear();
             restoring.Clear();
             restoringByPartition.Clear();
             restoredPartitions.Clear();
@@ -316,7 +316,7 @@ namespace Kafka.Streams.Tasks
         {
             var builder = new StringBuilder();
             builder.Append(base.ToString(indent));
-            describe(builder, restoring.Values.ToList(), indent, "Restoring:");
+            Describe(builder, restoring.Values.ToList(), indent, "Restoring:");
             return builder.ToString();
         }
     }

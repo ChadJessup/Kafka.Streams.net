@@ -4,6 +4,6 @@ namespace Kafka.Streams.Tasks
 {
     public interface IRestoringTasks
     {
-        StreamTask restoringTaskFor(TopicPartition partition);
+        StreamTask RestoringTaskFor(TopicPartition partition);
     }
 }

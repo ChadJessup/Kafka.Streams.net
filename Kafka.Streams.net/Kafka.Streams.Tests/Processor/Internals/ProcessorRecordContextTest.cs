@@ -1,33 +1,13 @@
+using Confluent.Kafka;
+using Kafka.Streams.Processors.Internals;
+using Xunit;
+
 namespace Kafka.Streams.Tests.Processor.Internals
 {
-    /*
-
-
-
-
-
-
-    *
-
-    *
-
-
-
-
-
-    */
-
-
-
-
-
-
-
-
     public class ProcessorRecordContextTest
     {
         // timestamp + offset + partition: 8 + 8 + 4
-        private static readonly long MIN_SIZE = 20L;
+        private const long MIN_SIZE = 20L;
 
         [Xunit.Fact]
         public void ShouldEstimateNullTopicAndNullHeadersAsZeroLength()
@@ -41,7 +21,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 null
             );
 
-            Assert.Equal(MIN_SIZE, context.residentMemorySizeEstimate());
+            Assert.Equal(MIN_SIZE, context.ResidentMemorySizeEstimate());
         }
 
         [Xunit.Fact]
@@ -55,7 +35,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 new Headers()
             );
 
-            Assert.Equal(MIN_SIZE, context.residentMemorySizeEstimate());
+            Assert.Equal(MIN_SIZE, context.ResidentMemorySizeEstimate());
         }
 
         [Xunit.Fact]
@@ -69,14 +49,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 null
             );
 
-            Assert.Equal(MIN_SIZE + 5L, context.residentMemorySizeEstimate());
+            Assert.Equal(MIN_SIZE + 5L, context.ResidentMemorySizeEstimate());
         }
 
         [Xunit.Fact]
         public void ShouldEstimateHeadersLength()
         {
             Headers headers = new Headers();
-            headers.add("header-key", "header-value".getBytes());
+            //headers.Add("header-key", "header-value");
             ProcessorRecordContext context = new ProcessorRecordContext(
                 42L,
                 73L,
@@ -85,14 +65,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 headers
             );
 
-            Assert.Equal(MIN_SIZE + 10L + 12L, context.residentMemorySizeEstimate());
+            Assert.Equal(MIN_SIZE + 10L + 12L, context.ResidentMemorySizeEstimate());
         }
 
         [Xunit.Fact]
         public void ShouldEstimateNullValueInHeaderAsZero()
         {
             Headers headers = new Headers();
-            headers.add("header-key", null);
+            headers.Add("header-key", null);
             ProcessorRecordContext context = new ProcessorRecordContext(
                 42L,
                 73L,
@@ -101,31 +81,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 headers
             );
 
-            Assert.Equal(MIN_SIZE + 10L, context.residentMemorySizeEstimate());
+            Assert.Equal(MIN_SIZE + 10L, context.ResidentMemorySizeEstimate());
         }
     }
 }
-/*
-
-
-
-
-
-
-*
-
-*
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-

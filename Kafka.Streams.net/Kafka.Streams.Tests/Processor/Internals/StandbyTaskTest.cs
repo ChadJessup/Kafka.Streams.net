@@ -115,8 +115,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 //    private HashSet<TopicPartition> topicPartitions = Collections.emptySet();
 //    private ProcessorTopology topology = ProcessorTopologyFactories.withLocalStores(
-//        asList(new MockKeyValueStoreBuilder(storeName1, false).build(),
-//               new MockKeyValueStoreBuilder(storeName2, true).build()),
+//        asList(new MockKeyValueStoreBuilder(storeName1, false).Build(),
+//               new MockKeyValueStoreBuilder(storeName2, true).Build()),
 //        mkMap(
 //            mkEntry(storeName1, storeChangelogTopicName1),
 //            mkEntry(storeName2, storeChangelogTopicName2)
@@ -125,10 +125,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    private TopicPartition globalTopicPartition = new TopicPartition(globalStoreName, 0);
 //    private HashSet<TopicPartition> ktablePartitions = Utils.mkSet(globalTopicPartition);
 //    private ProcessorTopology ktableTopology = ProcessorTopologyFactories.withLocalStores(
-//        singletonList(new MockKeyValueStoreBuilder(globalTopicPartition.topic(), true)
-//                          .withLoggingDisabled().build()),
+//        singletonList(new MockKeyValueStoreBuilder(globalTopicPartition.Topic, true)
+//                          .withLoggingDisabled().Build()),
 //        mkMap(
-//            mkEntry(globalStoreName, globalTopicPartition.topic())
+//            mkEntry(globalStoreName, globalTopicPartition.Topic)
 //        )
 //    );
 
@@ -152,13 +152,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    );
 //    private StoreChangelogReader changelogReader = new StoreChangelogReader(
 //        restoreStateConsumer,
-//        Duration.ZERO,
+//        Duration.TimeSpan.Zero,
 //        stateRestoreListener,
 //        new LogContext("standby-task-test ")
 //    );
 
-//    private byte[] recordValue = intSerializer.serialize(null, 10);
-//    private byte[] recordKey = intSerializer.serialize(null, 1);
+//    private byte[] recordValue = intSerializer.Serialize(null, 10);
+//    private byte[] recordKey = intSerializer.Serialize(null, 1);
 
 //    private string threadName = "threadName";
 //    private StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), threadName);
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //            new PartitionInfo(storeChangelogTopicName2, 1, Node.noNode(), new Node[0], new Node[0]),
 //            new PartitionInfo(storeChangelogTopicName2, 2, Node.noNode(), new Node[0], new Node[0])
 //        ));
-//        baseDir = TestUtils.tempDirectory();
+//        baseDir = TestUtils.GetTempDirectory();
 //        stateDirectory = new StateDirectory(createConfig(baseDir), new MockTime(), true);
 //    }
 
@@ -224,8 +224,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //            task.update(partition1,
 //                        singletonList(
 //                            new ConsumeResult<>(
-//                                partition1.topic(),
-//                                partition1.partition(),
+//                                partition1.Topic,
+//                                partition1.Partition,
 //                                10,
 //                                0L,
 //                                TimestampType.CreateTime,
@@ -257,8 +257,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        HashSet<TopicPartition> partition = Collections.singleton(partition2);
 //        restoreStateConsumer.assign(partition);
 
-//        foreach (ConsumeResult<int, int> record in asList(new ConsumeResult<>(partition2.topic(),
-//                                                                                         partition2.partition(),
+//        foreach (ConsumeResult<int, int> record in asList(new ConsumeResult<>(partition2.Topic,
+//                                                                                         partition2.Partition,
 //                                                                                         10,
 //                                                                                         0L,
 //                                                                                         TimestampType.CreateTime,
@@ -267,8 +267,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //                                                                                         0,
 //                                                                                         1,
 //                                                                                         100),
-//                                                                    new ConsumeResult<>(partition2.topic(),
-//                                                                                         partition2.partition(),
+//                                                                    new ConsumeResult<>(partition2.Topic,
+//                                                                                         partition2.Partition,
 //                                                                                         20,
 //                                                                                         0L,
 //                                                                                         TimestampType.CreateTime,
@@ -277,8 +277,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //                                                                                         0,
 //                                                                                         2,
 //                                                                                         100),
-//                                                                    new ConsumeResult<>(partition2.topic(),
-//                                                                                         partition2.partition(),
+//                                                                    new ConsumeResult<>(partition2.Topic,
+//                                                                                         partition2.Partition,
 //                                                                                         30,
 //                                                                                         0L,
 //                                                                                         TimestampType.CreateTime,
@@ -291,9 +291,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        }
 
 //        restoreStateConsumer.seekToBeginning(partition);
-//        task.update(partition2, restoreStateConsumer.poll(ofMillis(100)).records(partition2));
+//        task.update(partition2, restoreStateConsumer.poll(FromMilliseconds(100)).records(partition2));
 
-//        StandbyContextImpl context = (StandbyContextImpl) task.context();
+//        StandbyContextImpl context = (StandbyContextImpl) task.context;
 //        MockKeyValueStore store1 = (MockKeyValueStore) context.getStateMgr().getStore(storeName1);
 //        MockKeyValueStore store2 = (MockKeyValueStore) context.getStateMgr().getStore(storeName2);
 
@@ -317,21 +317,21 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        InternalStreamsBuilder builder = new InternalStreamsBuilder(internalTopologyBuilder);
 
 //        builder
-//            .stream(Collections.singleton("topic"), new ConsumedInternal<>())
+//            .Stream(Collections.singleton("topic"), new ConsumedInternal<>())
 //            .groupByKey()
-//            .windowedBy(TimeWindows.of(ofMillis(60_000)).grace(ofMillis(0L)))
-//            .count(Materialized<object, long, WindowStore<Bytes, byte[]>>.As(storeName).withRetention(ofMillis(120_000L)));
+//            .windowedBy(TimeWindows.of(FromMilliseconds(60_000)).grace(FromMilliseconds(0L)))
+//            .count(Materialized<object, long, IWindowStore<Bytes, byte[]>>.As(storeName).withRetention(FromMilliseconds(120_000L)));
 
 //        builder.buildAndOptimizeTopology();
 
 //        task = new StandbyTask(
 //            taskId,
 //            partitions,
-//            internalTopologyBuilder.build(0),
+//            internalTopologyBuilder.Build(0),
 //            consumer,
 //            new StoreChangelogReader(
 //                restoreStateConsumer,
-//                Duration.ZERO,
+//                Duration.TimeSpan.Zero,
 //                stateRestoreListener,
 //                new LogContext("standby-task-test ")
 //            ),
@@ -357,9 +357,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 //        Assert.Equal(
 //            asList(
-//                new KeyValuePair<>(new Windowed<>(1, new TimeWindow(0, 60_000)), ValueAndTimestamp.make(100L, 60_000L)),
-//                new KeyValuePair<>(new Windowed<>(2, new TimeWindow(60_000, 120_000)), ValueAndTimestamp.make(100L, 120_000L)),
-//                new KeyValuePair<>(new Windowed<>(3, new TimeWindow(120_000, 180_000)), ValueAndTimestamp.make(100L, 180_000L))
+//                KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0, 60_000)), ValueAndTimestamp.Make(100L, 60_000L)),
+//                KeyValuePair.Create(new Windowed<>(2, new TimeWindow(60_000, 120_000)), ValueAndTimestamp.Make(100L, 120_000L)),
+//                KeyValuePair.Create(new Windowed<>(3, new TimeWindow(120_000, 180_000)), ValueAndTimestamp.Make(100L, 180_000L))
 //            ),
 //            getWindowedStoreContents(storeName, task)
 //        );
@@ -373,9 +373,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        // the first record's window should have expired.
 //        Assert.Equal(
 //            asList(
-//                new KeyValuePair<>(new Windowed<>(2, new TimeWindow(60_000, 120_000)), ValueAndTimestamp.make(100L, 120_000L)),
-//                new KeyValuePair<>(new Windowed<>(3, new TimeWindow(120_000, 180_000)), ValueAndTimestamp.make(100L, 180_000L)),
-//                new KeyValuePair<>(new Windowed<>(4, new TimeWindow(180_000, 240_000)), ValueAndTimestamp.make(100L, 240_000L))
+//                KeyValuePair.Create(new Windowed<>(2, new TimeWindow(60_000, 120_000)), ValueAndTimestamp.Make(100L, 120_000L)),
+//                KeyValuePair.Create(new Windowed<>(3, new TimeWindow(120_000, 180_000)), ValueAndTimestamp.Make(100L, 180_000L)),
+//                KeyValuePair.Create(new Windowed<>(4, new TimeWindow(180_000, 240_000)), ValueAndTimestamp.Make(100L, 240_000L))
 //            ),
 //            getWindowedStoreContents(storeName, task)
 //        );
@@ -387,8 +387,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //                                                                      long start,
 //                                                                      long end) {
 //        Windowed<int> data = new Windowed<>(key, new TimeWindow(start, end));
-//        Bytes wrap = Bytes.wrap(new IntegerSerializer().serialize(null, data.Key));
-//        byte[] keyBytes = WindowKeySchema.toStoreKeyBinary(new Windowed<>(wrap, data.window()), 1).get();
+//        Bytes wrap = Bytes.Wrap(new IntegerSerializer().Serialize(null, data.Key));
+//        byte[] keyBytes = WindowKeySchema.toStoreKeyBinary(new Windowed<>(wrap, data.window()), 1).Get();
 //        return new ConsumeResult<>(
 //            changelogName,
 //            1,
@@ -399,7 +399,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //            0,
 //            0,
 //            keyBytes,
-//            new LongSerializer().serialize(null, 100L)
+//            new Serdes.Long().Serializer().Serialize(null, 100L)
 //        );
 //    }
 
@@ -414,7 +414,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        InternalTopologyBuilder internalTopologyBuilder = new InternalTopologyBuilder().setApplicationId(applicationId);
 
 //        InternalStreamsBuilder builder = new InternalStreamsBuilder(internalTopologyBuilder);
-//        builder.stream(Collections.singleton("topic"), new ConsumedInternal<>())
+//        builder.Stream(Collections.singleton("topic"), new ConsumedInternal<>())
 //            .groupByKey()
 //            .count(Materialized.As(storeName));
 
@@ -425,7 +425,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        task = new StandbyTask(
 //            taskId,
 //            partitions,
-//            internalTopologyBuilder.build(0),
+//            internalTopologyBuilder.Build(0),
 //            consumer,
 //            changelogReader,
 //            createConfig(baseDir),
@@ -450,23 +450,23 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        Dictionary<TopicPartition, long> offsets = checkpoint.read();
 
 //        Assert.Equal(1, offsets.Count);
-//        Assert.Equal(new long(11L), offsets.get(topicPartition));
+//        Assert.Equal(new long(11L), offsets.Get(topicPartition));
 //    }
 
 
 //    private List<KeyValuePair<Windowed<int>, ValueAndTimestamp<long>>> getWindowedStoreContents(string storeName,
 //                                                                                                StandbyTask task) {
-//        StandbyContextImpl context = (StandbyContextImpl) task.context();
+//        StandbyContextImpl context = (StandbyContextImpl) task.context;
 
 //        List<KeyValuePair<Windowed<int>, ValueAndTimestamp<long>>> result = new ArrayList<>();
 
-//        try (KeyValueIterator<Windowed<byte[]>, ValueAndTimestamp<long>> iterator =
-//                 ((TimestampedWindowStore) context.getStateMgr().getStore(storeName)).all()) {
+//        try (IKeyValueIterator<Windowed<byte[]>, ValueAndTimestamp<long>> iterator =
+//                 ((ITimestampedWindowStore) context.getStateMgr().getStore(storeName)).all()) {
 
 //            while (iterator.hasNext()) {
-//                KeyValuePair<Windowed<byte[]>, ValueAndTimestamp<long>> next = iterator.next();
+//                KeyValuePair<Windowed<byte[]>, ValueAndTimestamp<long>> next = iterator.MoveNext();
 //                int deserializedKey = Serializers.Int32.deserialize(null, next.key.Key);
-//                result.add(new KeyValuePair<>(new Windowed<>(deserializedKey, next.key.window()), next.value));
+//                result.Add(KeyValuePair.Create(new Windowed<>(deserializedKey, next.key.window()), next.value));
 //            }
 //        }
 
@@ -544,23 +544,23 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //                                                              int key) {
 //        IntegerSerializer integerSerializer = new IntegerSerializer();
 //        return new ConsumeResult<>(
-//            topicPartition.topic(),
-//            topicPartition.partition(),
+//            topicPartition.Topic,
+//            topicPartition.Partition,
 //            offset,
 //            0L,
 //            TimestampType.CreateTime,
 //            0L,
 //            0,
 //            0,
-//            integerSerializer.serialize(null, key),
-//            integerSerializer.serialize(null, 100)
+//            integerSerializer.Serialize(null, key),
+//            integerSerializer.Serialize(null, 100)
 //        );
 //    }
 
 //    [Xunit.Fact]
 //    public void shouldInitializeStateStoreWithoutException(){ //throws IOException
 //        InternalStreamsBuilder builder = new InternalStreamsBuilder(new InternalTopologyBuilder());
-//        builder.stream(Collections.singleton("topic"), new ConsumedInternal<>()).groupByKey().count();
+//        builder.Stream(Collections.singleton("topic"), new ConsumedInternal<>()).groupByKey().count();
 
 //        initializeStandbyStores(builder);
 //    }
@@ -568,8 +568,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    [Xunit.Fact]
 //    public void shouldInitializeWindowStoreWithoutException(){ //throws IOException
 //        InternalStreamsBuilder builder = new InternalStreamsBuilder(new InternalTopologyBuilder());
-//        builder.stream(Collections.singleton("topic"),
-//                       new ConsumedInternal<>()).groupByKey().windowedBy(TimeWindows.of(ofMillis(100))).count();
+//        builder.Stream(Collections.singleton("topic"),
+//                       new ConsumedInternal<>()).groupByKey().windowedBy(TimeWindows.of(FromMilliseconds(100))).count();
 
 //        initializeStandbyStores(builder);
 //    }
@@ -578,7 +578,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        StreamsConfig config = createConfig(baseDir);
 //        builder.buildAndOptimizeTopology();
 //        InternalTopologyBuilder internalTopologyBuilder = InternalStreamsBuilderTest.internalTopologyBuilder(builder);
-//        ProcessorTopology topology = internalTopologyBuilder.setApplicationId(applicationId).build(0);
+//        ProcessorTopology topology = internalTopologyBuilder.setApplicationId(applicationId).Build(0);
 
 //        task = new StandbyTask(
 //            taskId,
@@ -600,7 +600,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    public void shouldCheckpointStoreOffsetsOnCommit(){ //throws IOException
 //        consumer.assign(Collections.singletonList(globalTopicPartition));
 //        Dictionary<TopicPartition, OffsetAndMetadata> committedOffsets = new HashMap<>();
-//        committedOffsets.put(new TopicPartition(globalTopicPartition.topic(), globalTopicPartition.partition()),
+//        committedOffsets.put(new TopicPartition(globalTopicPartition.Topic, globalTopicPartition.Partition),
 //                             new OffsetAndMetadata(100L));
 //        consumer.commitSync(committedOffsets);
 
@@ -626,11 +626,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 //        restoreStateConsumer.assign(new ArrayList<>(task.checkpointedOffsets().keySet()));
 
-//        byte[] serializedValue = Serdes.Int().Serializer.serialize("", 1);
+//        byte[] serializedValue = Serdes.Int().Serializer.Serialize("", 1);
 //        task.update(
 //            globalTopicPartition,
-//            singletonList(new ConsumeResult<>(globalTopicPartition.topic(),
-//                                               globalTopicPartition.partition(),
+//            singletonList(new ConsumeResult<>(globalTopicPartition.Topic,
+//                                               globalTopicPartition.Partition,
 //                                        50L,
 //                                               serializedValue,
 //                                               serializedValue))
@@ -650,7 +650,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    public void shouldCloseStateMangerOnTaskCloseWhenCommitFailed() {// throws Exception
 //        consumer.assign(Collections.singletonList(globalTopicPartition));
 //        Dictionary<TopicPartition, OffsetAndMetadata> committedOffsets = new HashMap<>();
-//        committedOffsets.put(new TopicPartition(globalTopicPartition.topic(), globalTopicPartition.partition()),
+//        committedOffsets.put(new TopicPartition(globalTopicPartition.Topic, globalTopicPartition.Partition),
 //                             new OffsetAndMetadata(100L));
 //        consumer.commitSync(committedOffsets);
 
@@ -689,20 +689,20 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //            // expected
 //            task = null;
 //        }
-//        Assert.True(closedStateManager.get());
+//        Assert.True(closedStateManager.Get());
 //    }
 
 //    private MetricName setupCloseTaskMetric() {
 //        MetricName metricName = new MetricName("name", "group", "description", Collections.emptyMap());
 //        Sensor sensor = streamsMetrics.threadLevelSensor("task-closed", Sensor.RecordingLevel.INFO);
-//        sensor.add(metricName, new CumulativeSum());
+//        sensor.Add(metricName, new CumulativeSum());
 //        return metricName;
 //    }
 
 //    private void verifyCloseTaskMetric(double expected,
 //                                       StreamsMetricsImpl streamsMetrics,
 //                                       MetricName metricName) {
-//        KafkaMetric metric = (KafkaMetric) streamsMetrics.metrics().get(metricName);
+//        KafkaMetric metric = (KafkaMetric) streamsMetrics.metrics().Get(metricName);
 //        double totalCloses = metric.measurable().measure(metric.config(), System.currentTimeMillis());
 //        Assert.Equal(totalCloses, (expected));
 //    }

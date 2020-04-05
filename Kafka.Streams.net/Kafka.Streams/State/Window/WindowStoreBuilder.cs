@@ -30,9 +30,9 @@ namespace Kafka.Streams.State.Window
             //    valueSerde);
         }
 
-        public long retentionPeriod()
+        public long RetentionPeriod()
         {
-            return storeSupplier.retentionPeriod();
+            return storeSupplier.RetentionPeriod();
         }
     }
 }

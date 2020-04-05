@@ -22,18 +22,18 @@ namespace Kafka.Streams.State.RocksDbState
             Bytes to)
             : base(storeName, iter, openIterators)
         {
-            iter.Seek(from.get());
+            iter.Seek(from.Get());
 
-            rawToKey = to.get();
+            rawToKey = to.Get();
             if (rawToKey == null)
             {
                 throw new ArgumentNullException("RocksDbRangeIterator: RawToKey is null for key " + to);
             }
         }
 
-        public override KeyValuePair<Bytes, byte[]> makeNext()
+        public override KeyValuePair<Bytes, byte[]> MakeNext()
         {
-            KeyValuePair<Bytes, byte[]>? next = base.makeNext();
+            KeyValuePair<Bytes, byte[]>? next = base.MakeNext();
 
             if (next == null)
             {
@@ -41,7 +41,7 @@ namespace Kafka.Streams.State.RocksDbState
             }
             else
             {
-                if (comparator.Compare(next.Value.Key.get(), rawToKey) <= 0)
+                if (comparator.Compare(next.Value.Key.Get(), rawToKey) <= 0)
                 {
                     return next.Value;
                 }

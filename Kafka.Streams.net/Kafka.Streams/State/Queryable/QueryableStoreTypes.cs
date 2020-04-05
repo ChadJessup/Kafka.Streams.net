@@ -13,49 +13,49 @@ namespace Kafka.Streams.State.Queryable
     public class QueryableStoreTypes
     {
         /**
-         * A {@link QueryableStoreType} that accepts {@link ReadOnlyKeyValueStore}.
+         * A {@link QueryableStoreType} that accepts {@link IReadOnlyKeyValueStore}.
          *
          * @param key type of the store
          * @param value type of the store
          * @return {@link QueryableStoreTypes.KeyValueStoreType}
          */
-        public static IQueryableStoreType<IReadOnlyKeyValueStore<K, V>> keyValueStore<K, V>()
+        public static IQueryableStoreType<IReadOnlyKeyValueStore<K, V>> KeyValueStore<K, V>()
         {
             return new KeyValueStoreType<K, V>();
         }
 
         /**
-         * A {@link QueryableStoreType} that accepts {@link ReadOnlyKeyValueStore ReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>}.
+         * A {@link QueryableStoreType} that accepts {@link IReadOnlyKeyValueStore IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>}.
          *
          * @param key type of the store
          * @param value type of the store
          * @return {@link QueryableStoreTypes.TimestampedKeyValueStoreType}
          */
-        public static IQueryableStoreType<IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>> timestampedKeyValueStore<K, V>()
+        public static IQueryableStoreType<IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>> TimestampedKeyValueStore<K, V>()
         {
             return new TimestampedKeyValueStoreType<K, V>();
         }
 
         /**
-         * A {@link QueryableStoreType} that accepts {@link ReadOnlyWindowStore}.
+         * A {@link QueryableStoreType} that accepts {@link IReadOnlyWindowStore}.
          *
          * @param key type of the store
          * @param value type of the store
          * @return {@link QueryableStoreTypes.WindowStoreType}
          */
-        public static IQueryableStoreType<IReadOnlyWindowStore<K, V>> windowStore<K, V>()
+        public static IQueryableStoreType<IReadOnlyWindowStore<K, V>> WindowStore<K, V>()
         {
             return new WindowStoreType<K, V>();
         }
 
         /**
-         * A {@link QueryableStoreType} that accepts {@link ReadOnlyWindowStore ReadOnlyWindowStore<K, ValueAndTimestamp<V>>}.
+         * A {@link QueryableStoreType} that accepts {@link IReadOnlyWindowStore IReadOnlyWindowStore<K, ValueAndTimestamp<V>>}.
          *
          * @param key type of the store
          * @param value type of the store
          * @return {@link QueryableStoreTypes.TimestampedWindowStoreType}
          */
-        public static IQueryableStoreType<IReadOnlyWindowStore<K, ValueAndTimestamp<V>>> timestampedWindowStore<K, V>()
+        public static IQueryableStoreType<IReadOnlyWindowStore<K, ValueAndTimestamp<V>>> TimestampedWindowStore<K, V>()
         {
             return new TimestampedWindowStoreType<K, V>();
         }
@@ -67,7 +67,7 @@ namespace Kafka.Streams.State.Queryable
          * @param value type of the store
          * @return {@link QueryableStoreTypes.SessionStoreType}
          */
-        public static IQueryableStoreType<IReadOnlySessionStore<K, V>> sessionStore<K, V>()
+        public static IQueryableStoreType<IReadOnlySessionStore<K, V>> SessionStore<K, V>()
         {
             return new SessionStoreType<K, V>();
         }

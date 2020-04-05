@@ -17,6 +17,6 @@ namespace Kafka.Streams.Processors
          *
          * @param records the records to restore.
          */
-        void restoreAll(List<KeyValuePair<byte[], byte[]>> records);
+        void RestoreAll(List<KeyValuePair<byte[], byte[]>> records);
     }
 }

@@ -21,9 +21,9 @@ namespace Kafka.Streams.State.Internals
             this.underlying = underlying;
         }
 
-        public Bytes? peekNextKey()
+        public Bytes? PeekNextKey()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<Bytes, LRUCacheEntry>? PeekNext()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -42,7 +42,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public bool hasNext()
+        public bool HasNext()
         {
             if (nextEntry != null)
             {
@@ -51,7 +51,7 @@ namespace Kafka.Streams.State.Internals
 
             while (underlying.MoveNext() && nextEntry == null)
             {
-                internalNext();
+                InternalNext();
             }
 
             return nextEntry != null;
@@ -59,7 +59,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<Bytes, LRUCacheEntry>? Next()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -70,7 +70,7 @@ namespace Kafka.Streams.State.Internals
             return result;
         }
 
-        private void internalNext()
+        private void InternalNext()
         {
             KeyValuePair<Bytes, LRUNode> mapEntry = underlying.Current;
             Bytes cacheKey = mapEntry.Key;
@@ -89,7 +89,7 @@ namespace Kafka.Streams.State.Internals
             throw new InvalidOperationException("Remove not supported by MemoryLRUCacheBytesIterator");
         }
 
-        public void close()
+        public void Close()
         {
             // do nothing
         }

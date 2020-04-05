@@ -14,56 +14,56 @@ namespace Kafka.Streams.Processors.Internals
         {
         }
 
-        public void put(K key, V value)
+        public void Put(K key, V value)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public void put(K key, V value, long windowStartTimestamp)
+        public void Put(K key, V value, long windowStartTimestamp)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public V fetch(K key, long time)
+        public V Fetch(K key, long time)
         {
-            return wrapped.fetch(key, time);
+            return wrapped.Fetch(key, time);
         }
 
         [Obsolete]
-        public IWindowStoreIterator<V> fetch(
+        public IWindowStoreIterator<V> Fetch(
             K key,
             long timeFrom,
             long timeTo)
         {
-            return wrapped.fetch(key, timeFrom, timeTo);
+            return wrapped.Fetch(key, timeFrom, timeTo);
         }
 
-        public IKeyValueIterator<Windowed<K>, V> all()
+        public IKeyValueIterator<Windowed<K>, V> All()
         {
-            return wrapped.all();
+            return wrapped.All();
         }
 
-        public IKeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom, long timeTo)
+        public IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo)
         {
             throw new NotImplementedException();
         }
 
-        public IWindowStoreIterator<V> fetch(K key, DateTime from, DateTime to)
+        public IKeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo)
         {
             throw new NotImplementedException();
         }
 
-        public IKeyValueIterator<Windowed<K>, V> fetch(K from, K to, DateTime fromTime, DateTime toTime)
+        public IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to)
         {
             throw new NotImplementedException();
         }
 
-        public IKeyValueIterator<Windowed<K>, V> fetchAll(DateTime from, DateTime to)
+        public IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, DateTime fromTime, DateTime toTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IKeyValueIterator<Windowed<K>, V> FetchAll(DateTime from, DateTime to)
         {
             throw new NotImplementedException();
         }

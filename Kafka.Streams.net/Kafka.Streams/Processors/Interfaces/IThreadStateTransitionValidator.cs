@@ -5,6 +5,6 @@ namespace Kafka.Streams.Processors.Interfaces
      */
     public interface IThreadStateTransitionValidator<States>
     {
-        bool isValidTransition(States newState);
+        bool IsValidTransition(States newState);
     }
 }

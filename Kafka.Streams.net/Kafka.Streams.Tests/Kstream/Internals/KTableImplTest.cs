@@ -73,9 +73,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 
 //public class KTableImplTest {
-//    private Consumed<string, string> stringConsumed = Consumed.with(Serdes.String(), Serdes.String());
-//    private Consumed<string, string> consumed = Consumed.with(Serdes.String(), Serdes.String());
-//    private Produced<string, string> produced = Produced.with(Serdes.String(), Serdes.String());
+//    private Consumed<string, string> stringConsumed = Consumed.With(Serdes.String(), Serdes.String());
+//    private Consumed<string, string> consumed = Consumed.With(Serdes.String(), Serdes.String());
+//    private Produced<string, string> produced = Produced.With(Serdes.String(), Serdes.String());
 //    private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
 //    private ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L);
@@ -105,19 +105,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        IKTable<string, int> table3 = table2.filter((key, value) => (value % 2) == 0);
 //        table3.toStream().process(supplier);
-//        table1.toStream().to(topic2, produced);
+//        table1.toStream().To(topic2, produced);
 
 //        IKTable<string, string> table4 = builder.Table(topic2, consumed);
 //        table4.toStream().process(supplier);
 
 //        try {
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "01", 5L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "02", 100L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "03", 0L));
-//            driver.pipeInput(recordFactory.create(topic1, "D", "04", 0L));
-//            driver.pipeInput(recordFactory.create(topic1, "A", "05", 10L));
-//            driver.pipeInput(recordFactory.create(topic1, "A", "06", 8L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "01", 5L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "02", 100L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "03", 0L));
+//            driver.PipeInput(recordFactory.Create(topic1, "D", "04", 0L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "05", 10L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "06", 8L));
 //        }
 
 //        List<MockProcessor<string, object>> processors = supplier.capturedProcessors(4);
@@ -126,25 +126,25 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>("C", "03", 0),
 //                new KeyValueTimestamp<>("D", "04", 0),
 //                new KeyValueTimestamp<>("A", "05", 10),
-//                new KeyValueTimestamp<>("A", "06", 8)), processors.get(0).processed);
+//                new KeyValueTimestamp<>("A", "06", 8)), processors.Get(0).processed);
 //       Assert.EqualasList(new KeyValueTimestamp<>("A", 1, 5),
 //                new KeyValueTimestamp<>("B", 2, 100),
 //                new KeyValueTimestamp<>("C", 3, 0),
 //                new KeyValueTimestamp<>("D", 4, 0),
 //                new KeyValueTimestamp<>("A", 5, 10),
-//                new KeyValueTimestamp<>("A", 6, 8)), processors.get(1).processed);
+//                new KeyValueTimestamp<>("A", 6, 8)), processors.Get(1).processed);
 //       Assert.EqualasList(new KeyValueTimestamp<>("A", null, 5),
 //                new KeyValueTimestamp<>("B", 2, 100),
 //                new KeyValueTimestamp<>("C", null, 0),
 //                new KeyValueTimestamp<>("D", 4, 0),
 //                new KeyValueTimestamp<>("A", null, 10),
-//                new KeyValueTimestamp<>("A", 6, 8)), processors.get(2).processed);
+//                new KeyValueTimestamp<>("A", 6, 8)), processors.Get(2).processed);
 //       Assert.EqualasList(new KeyValueTimestamp<>("A", "01", 5),
 //                new KeyValueTimestamp<>("B", "02", 100),
 //                new KeyValueTimestamp<>("C", "03", 0),
 //                new KeyValueTimestamp<>("D", "04", 0),
 //                new KeyValueTimestamp<>("A", "05", 10),
-//                new KeyValueTimestamp<>("A", "06", 8)), processors.get(3).processed);
+//                new KeyValueTimestamp<>("A", "06", 8)), processors.Get(3).processed);
 //    }
 
 //    [Fact]
@@ -338,7 +338,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                topic1,
 //                consumed,
 //                Materialize.As<string, string, IKeyValueStore<Bytes, byte[]>(storeName1)
-//                    .withKeySerde(Serdes.String())
+//                    .WithKeySerde(Serdes.String())
 //                    .withValueSerde(Serdes.String())
 //            );
 
@@ -375,10 +375,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            valSerializerField.setAccessible(true);
 //            valDeserializerField.setAccessible(true);
 
-//           Assert.NotNull(((ChangedSerializer) valSerializerField.get(driver.getProcessor("KSTREAM-SINK-0000000003"))).inner());
-//           Assert.NotNull(((ChangedDeserializer) valDeserializerField.get(driver.getProcessor("KSTREAM-SOURCE-0000000004"))).inner());
-//           Assert.NotNull(((ChangedSerializer) valSerializerField.get(driver.getProcessor("KSTREAM-SINK-0000000007"))).inner());
-//           Assert.NotNull(((ChangedDeserializer) valDeserializerField.get(driver.getProcessor("KSTREAM-SOURCE-0000000008"))).inner());
+//           Assert.NotNull(((ChangedSerializer) valSerializerField.Get(driver.getProcessor("KSTREAM-SINK-0000000003"))).inner());
+//           Assert.NotNull(((ChangedDeserializer) valDeserializerField.Get(driver.getProcessor("KSTREAM-SOURCE-0000000004"))).inner());
+//           Assert.NotNull(((ChangedSerializer) valSerializerField.Get(driver.getProcessor("KSTREAM-SINK-0000000007"))).inner());
+//           Assert.NotNull(((ChangedDeserializer) valDeserializerField.Get(driver.getProcessor("KSTREAM-SOURCE-0000000008"))).inner());
 //        }
 //    }
 

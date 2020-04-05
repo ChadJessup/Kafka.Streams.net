@@ -27,7 +27,7 @@ namespace Kafka.Streams.State.Internals
             this.v = v;
         }
 
-        internal void setTimeZone(SimpleTimeZone simpleTimeZone)
+        internal void SetTimeZone(SimpleTimeZone simpleTimeZone)
         {
             throw new NotImplementedException();
         }

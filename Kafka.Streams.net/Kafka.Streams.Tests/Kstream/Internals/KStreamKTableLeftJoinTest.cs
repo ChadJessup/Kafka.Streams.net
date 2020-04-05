@@ -31,7 +31,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<int, string> table;
 
 //            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
-//            Consumed<int, string> consumed = Consumed.with(Serdes.Int(), Serdes.String());
+//            Consumed<int, string> consumed = Consumed.With(Serdes.Int(), Serdes.String());
 //            stream = builder.Stream(streamTopic, consumed);
 //            table = builder.Table(tableTopic, consumed);
 //            stream.leftJoin(table, MockValueJoiner.TOSTRING_JOINER).process(supplier);
@@ -52,7 +52,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            for (var i = 0; i < messageCount; i++)
 //            {
-//                driver.pipeInput(recordFactory.create(streamTopic, expectedKeys[i], valuePrefix + expectedKeys[i], i));
+//                driver.PipeInput(recordFactory.Create(streamTopic, expectedKeys[i], valuePrefix + expectedKeys[i], i));
 //            }
 //        }
 
@@ -61,7 +61,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var r = new Random(System.currentTimeMillis());
 //            for (var i = 0; i < messageCount; i++)
 //            {
-//                driver.pipeInput(recordFactory.create(
+//                driver.PipeInput(recordFactory.Create(
 //                    tableTopic,
 //                    expectedKeys[i],
 //                    valuePrefix + expectedKeys[i],
@@ -73,7 +73,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            for (var i = 0; i < messageCount; i++)
 //            {
-//                driver.pipeInput(recordFactory.create(tableTopic, expectedKeys[i], null));
+//                driver.PipeInput(recordFactory.Create(tableTopic, expectedKeys[i], null));
 //            }
 //        }
 
@@ -84,7 +84,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
 
 //            Assert.Equal(1, copartitionGroups.Count);
-//            Assert.Equal(new HashSet<>(new List<string> { streamTopic, tableTopic }), copartitionGroups.iterator().next());
+//            Assert.Equal(new HashSet<>(new List<string> { streamTopic, tableTopic }), copartitionGroups.iterator().MoveNext());
 //        }
 
 //        [Fact]

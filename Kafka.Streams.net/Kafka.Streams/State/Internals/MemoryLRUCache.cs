@@ -60,7 +60,7 @@
 //            //    context.register(root, (key, value) =>
 //            //{
 //            //restoring = true;
-//            //put(Bytes.wrap(key), value);
+//            //put(Bytes.Wrap(key), value);
 //            //restoring = false;
 //            //});
 //            //}
@@ -136,7 +136,7 @@
 //            //        throw new InvalidOperationException("MemoryLRUCache does not support all() function.");
 //            //    }
 
-//            //    public override long approximateNumEntries()
+//            //    public override long approximateNumEntries
 //            //{
 //            //        return this.map.size();
 //            //    }
@@ -224,7 +224,7 @@
 //            throw new System.NotImplementedException();
 //        }
 
-//        public long approximateNumEntries()
+//        public long approximateNumEntries
 //        {
 //            throw new System.NotImplementedException();
 //        }

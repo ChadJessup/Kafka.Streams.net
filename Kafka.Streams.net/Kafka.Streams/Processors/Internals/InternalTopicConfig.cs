@@ -37,9 +37,9 @@ namespace Kafka.Streams.Processors.Internals
          * @param.AdditionalRetentionMs -.Added to retention to allow for clock drift etc
          * @return Properties to be used when creating the topic
          */
-        public abstract Dictionary<string, string?> getProperties(Dictionary<string, string?> defaultProperties, long? additionalRetentionMs);
+        public abstract Dictionary<string, string?> GetProperties(Dictionary<string, string?> defaultProperties, long? additionalRetentionMs);
 
-        public void setNumberOfPartitions(int numberOfPartitions)
+        public void SetNumberOfPartitions(int numberOfPartitions)
         {
             if (numberOfPartitions < 1)
             {

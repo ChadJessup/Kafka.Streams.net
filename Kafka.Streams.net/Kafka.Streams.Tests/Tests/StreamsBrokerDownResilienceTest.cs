@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests.Tests
 //        string propFileName = args[0];
 //    string additionalConfigs = args[1];
 
-//    Properties streamsProperties = Utils.loadProps(propFileName);
+//    StreamsConfig streamsProperties = Utils.loadProps(propFileName);
 //    string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 
 //        if (kafka == null) {
@@ -62,7 +62,7 @@ namespace Kafka.Streams.Tests.Tests
 //        StreamsBuilder builder = new StreamsBuilder();
 //Serde<string> stringSerde = Serdes.String();
 
-//builder.stream(Collections.singletonList(SOURCE_TOPIC_1), Consumed.with(stringSerde, stringSerde))
+//builder.Stream(Collections.singletonList(SOURCE_TOPIC_1), Consumed.With(stringSerde, stringSerde))
 //            .peek(new ForeachAction<string, string>() {
 //                int messagesProcessed = 0;
 
@@ -73,9 +73,9 @@ namespace Kafka.Streams.Tests.Tests
 //    System.Console.Out.WriteLine("processed" + messagesProcessed + "messages");
 //    System.Console.Out.flush();
 //}
-//            }).to(SINK_TOPIC);
+//            }).To(SINK_TOPIC);
 
-//KafkaStreams streams = new KafkaStreams(builder.build(), streamsProperties);
+//KafkaStreams streams = new KafkaStreams(builder.Build(), streamsProperties);
 
 //streams.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
@@ -103,7 +103,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //    }
 
-//    private static bool confirmCorrectConfigs(Properties properties)
+//    private static bool confirmCorrectConfigs(StreamsConfig properties)
 //{
 //    return properties.containsKey(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG)) &&
 //           properties.containsKey(StreamsConfig.producerPrefix(ProducerConfig.RETRIES_CONFIG)) &&
@@ -120,11 +120,11 @@ namespace Kafka.Streams.Tests.Tests
 // */
 //private static Dictionary<string, string> updatedConfigs(string formattedConfigs)
 //{
-//    string[] parts = formattedConfigs.split(",");
+//    string[] parts = formattedConfigs.Split(",");
 //    Dictionary<string, string> updatedConfigs = new HashMap<>();
 //    foreach (string part in parts)
 //    {
-//        string[] keyValue = part.split("=");
+//        string[] keyValue = part.Split("=");
 //        updatedConfigs.put(keyValue[KEY], keyValue[VALUE]);
 //    }
 //    return updatedConfigs;

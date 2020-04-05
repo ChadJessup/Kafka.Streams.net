@@ -46,16 +46,16 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override bool hasNext()
+        public override bool HasNext()
         {
             if (!open)
             {
                 throw new InvalidStateStoreException(string.Format("RocksDb iterator for store %s has closed", storeName));
             }
-            return base.hasNext();
+            return base.HasNext();
         }
 
-        public override KeyValuePair<Bytes, byte[]> makeNext()
+        public override KeyValuePair<Bytes, byte[]> MakeNext()
         {
             if (!iter.Valid())
             {
@@ -63,28 +63,28 @@ namespace Kafka.Streams.State.RocksDbState
             }
             else
             {
-                next = getKeyValue();
+                next = GetKeyValue();
                 iter.Next();
                 return next;
             }
         }
 
-        private KeyValuePair<Bytes, byte[]> getKeyValue()
+        private KeyValuePair<Bytes, byte[]> GetKeyValue()
         {
             return new KeyValuePair<Bytes, byte[]>(new Bytes(iter.Key()), iter.Value());
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void close()
+        public void Close()
         {
             openIterators.Remove(this);
             //iter.close();
             open = false;
         }
 
-        public Bytes peekNextKey()
+        public Bytes PeekNextKey()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }

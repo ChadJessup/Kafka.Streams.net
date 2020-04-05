@@ -8,16 +8,16 @@ namespace Kafka.Streams.KStream.Internals
     {
         private ITimestampedKeyValueStore<K, V> store;
 
-        public void init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext context, string storeName)
         {
-            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(storeName);
         }
 
-        public ValueAndTimestamp<V> get(K key)
+        public ValueAndTimestamp<V> Get(K key)
         {
             return store.Get(key);
         }
 
-        public void close() { }
+        public void Close() { }
     }
 }

@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        private InternalNameProvider nameProvider;
 
 //        (type = MockType.NICE)
-//        private KeyValueBytesStoreSupplier supplier;
+//        private IKeyValueBytesStoreSupplier supplier;
 //        private string prefix = "prefix";
 
 //        [Fact]
@@ -59,7 +59,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            EasyMock.replay(nameProvider);
 
-//            MaterializedInternal<object, object, StateStore> materialized =
+//            MaterializedInternal<object, object, IStateStore> materialized =
 //                new MaterializedInternal<>(Materialized.with(null, null), nameProvider, prefix);
 
 //            Assert.Equal(materialized.StoreName, (generatedName));
@@ -70,7 +70,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldUseProvidedStoreNameWhenSet()
 //        {
 //            var storeName = "store-name";
-//            MaterializedInternal<object, object, StateStore> materialized =
+//            MaterializedInternal<object, object, IStateStore> materialized =
 //                new MaterializedInternal<>(Materialized.As(storeName), nameProvider, prefix);
 //            Assert.Equal(materialized.StoreName, (storeName));
 //        }

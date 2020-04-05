@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void apply(K key, V value)
+        public void Apply(K key, V value)
         {
             var data = string.Format("[%s]: %s", label, mapper.Apply(key, value));
             //printWriter.println(data);
@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public void close()
+        public void Close()
         {
             if (closable)
             {

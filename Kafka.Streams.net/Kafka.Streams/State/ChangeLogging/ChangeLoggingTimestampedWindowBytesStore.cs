@@ -17,7 +17,7 @@
 //        {
 //            if (valueAndTimestamp != null)
 //            {
-//                changeLogger.logChange(key, rawValue(valueAndTimestamp), timestamp(valueAndTimestamp));
+//                changeLogger.logChange(key, RawValue(valueAndTimestamp), timestamp(valueAndTimestamp));
 //            }
 //            else
 //            {

@@ -18,8 +18,8 @@
 
 //        public void init(IProcessorContext context)
 //        {
-//            valueGetter1.init(context);
-//            valueGetter2.init(context);
+//            valueGetter1.Init(context);
+//            valueGetter2.Init(context);
 //        }
 
 
@@ -42,7 +42,7 @@
 
 //                    resultTimestamp = Math.Max(valueAndTimestamp1.timestamp(), valueAndTimestamp2.timestamp());
 //                }
-//                return ValueAndTimestamp.make(joiner.apply(value1, value2), resultTimestamp);
+//                return ValueAndTimestamp.Make(joiner.apply(value1, value2), resultTimestamp);
 //            }
 //            else
 //            {

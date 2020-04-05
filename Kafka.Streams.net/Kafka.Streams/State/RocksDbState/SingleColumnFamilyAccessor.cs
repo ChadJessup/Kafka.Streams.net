@@ -27,7 +27,7 @@ namespace Kafka.Streams.State.RocksDbState
             this.columnFamily = columnFamily;
         }
 
-        public void put(byte[] key,
+        public void Put(byte[] key,
                         byte[] value)
         {
             if (value == null)
@@ -56,27 +56,27 @@ namespace Kafka.Streams.State.RocksDbState
             }
         }
 
-        public void prepareBatch(
+        public void PrepareBatch(
             List<KeyValuePair<Bytes, byte[]>> entries,
             WriteBatch batch)
         {
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
-                addToBatch(entry.Key.get(), entry.Value, batch);
+                AddToBatch(entry.Key.Get(), entry.Value, batch);
             }
         }
 
-        public byte[] get(byte[] key)
+        public byte[] Get(byte[] key)
         {
             return db.Get(key, columnFamily);
         }
 
-        public byte[] getOnly(byte[] key)
+        public byte[] GetOnly(byte[] key)
         {
             return db.Get(key, columnFamily);
         }
 
-        public IKeyValueIterator<Bytes, byte[]> range(
+        public IKeyValueIterator<Bytes, byte[]> Range(
             Bytes from,
             Bytes to)
         {
@@ -89,7 +89,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
 
-        public IKeyValueIterator<Bytes, byte[]> all()
+        public IKeyValueIterator<Bytes, byte[]> All()
         {
             Iterator innerIterWithTimestamp = db.NewIterator(columnFamily);
             innerIterWithTimestamp.SeekToFirst();
@@ -100,28 +100,28 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
 
-        public long approximateNumEntries()
+        public long ApproximateNumEntries()
         {
             return long.Parse(db.GetProperty("rocksdb.estimate-num-keys", columnFamily));
         }
 
 
-        public void flush()
+        public void Flush()
         {
             //db.flush(fOptions, columnFamily);
         }
 
 
-        public void prepareBatchForRestore(List<KeyValuePair<byte[], byte[]>> records,
+        public void PrepareBatchForRestore(List<KeyValuePair<byte[], byte[]>> records,
                                            WriteBatch batch)
         {
             foreach (KeyValuePair<byte[], byte[]> record in records)
             {
-                addToBatch(record.Key, record.Value, batch);
+                AddToBatch(record.Key, record.Value, batch);
             }
         }
 
-        public void addToBatch(
+        public void AddToBatch(
             byte[] key,
             byte[] value,
             WriteBatch batch)
@@ -137,12 +137,12 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
 
-        public void close()
+        public void Close()
         {
             //columnFamily.Close();
         }
 
-        public void toggleDbForBulkLoading()
+        public void ToggleDbForBulkLoading()
         {
             try
             {

@@ -62,11 +62,11 @@ namespace Kafka.Streams.Processors.Internals
                     {
                         Timestamp = rawRecord.Timestamp,
                         //TimestampType.CREATE_TIME,
-                        //rawRecord.checksum(),
+                        //rawRecord.Checksum,
                         //rawRecord.serializedKeySize(),
                         //rawRecord.serializedValueSize(),
                         //sourceNode.deserializeKey(rawRecord.Topic, rawRecord.Headers, rawRecord.Key),
-                        //sourceNode.deserializeValue(rawRecord.Topic, rawRecord.headers(), rawRecord.value()), rawRecord.headers(),
+                        //sourceNode.deserializeValue(rawRecord.Topic, rawRecord.Headers, rawRecord.value()), rawRecord.Headers,
                     }
                 };
             }
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Processors.Internals
                 DeserializationHandlerResponses response;
                 try
                 {
-                    response = deserializationExceptionHandler.handle<K, V>(processorContext, rawRecord, deserializationException);
+                    response = deserializationExceptionHandler.Handle<K, V>(processorContext, rawRecord, deserializationException);
                 }
                 catch (Exception fatalUserException)
                 {

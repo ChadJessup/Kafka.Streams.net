@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<K, V>(
                     store,
                     context,
@@ -71,14 +71,14 @@ namespace Kafka.Streams.KStream.Internals
                     oldValue = default;
                 }
 
-                store.Add(key, ValueAndTimestamp<V>.make(value, context.timestamp));
+                store.Add(key, ValueAndTimestamp.Make(value, context.timestamp));
 
-                tupleForwarder.maybeForward(key, value, oldValue);
+                tupleForwarder.MaybeForward(key, value, oldValue);
             }
             else
             {
 
-                context.forward(key, new Change<V>(value, default));
+                context.Forward(key, new Change<V>(value, default));
             }
         }
     }

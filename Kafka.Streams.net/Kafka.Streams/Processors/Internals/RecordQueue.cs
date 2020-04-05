@@ -46,16 +46,16 @@ namespace Kafka.Streams.Processors.Internals
          * @param rawRecords the raw records
          * @return the size of this queue
          */
-        public int addRawRecords(IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
+        public int AddRawRecords(IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
         {
             foreach (var rawRecord in rawRecords)
             {
                 fifoQueue.Enqueue(rawRecord);
             }
 
-            updateHead();
+            UpdateHead();
 
-            return size();
+            return Size();
         }
 
         /**
@@ -63,12 +63,12 @@ namespace Kafka.Streams.Processors.Internals
          *
          * @return StampedRecord
          */
-        public StampedRecord poll()
+        public StampedRecord Poll()
         {
             StampedRecord recordToReturn = headRecord;
             headRecord = null;
 
-            updateHead();
+            UpdateHead();
 
             return recordToReturn;
         }
@@ -78,7 +78,7 @@ namespace Kafka.Streams.Processors.Internals
          *
          * @return the number of records
          */
-        public int size()
+        public int Size()
         {
             // plus one deserialized head record for timestamp tracking
             return fifoQueue.Count + (headRecord == null ? 0 : 1);
@@ -89,7 +89,7 @@ namespace Kafka.Streams.Processors.Internals
          *
          * @return true if the queue is empty, otherwise false
          */
-        public bool isEmpty()
+        public bool IsEmpty()
         {
             return !fifoQueue.Any() && headRecord == null;
         }
@@ -98,7 +98,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * Clear the fifo queue of its elements, also clear the time tracker's kept stamped elements
          */
-        public void clear()
+        public void Clear()
         {
             fifoQueue.Clear();
             headRecord = null;
@@ -106,7 +106,7 @@ namespace Kafka.Streams.Processors.Internals
         }
 
         // protected abstract RecordDeserializer<K, V> GetRecordDeserializer<K, V>();
-        private void updateHead()
+        private void UpdateHead()
         {
             while (headRecord == null && fifoQueue.Any())
             {

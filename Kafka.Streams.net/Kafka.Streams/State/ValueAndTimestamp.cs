@@ -21,6 +21,22 @@ namespace Kafka.Streams.State
 
             return valueAndTimestamp.value;
         }
+
+        /**
+         * Create a new {@link ValueAndTimestamp} instance if the provide {@code value} is not {@code null}.
+         *
+         * @param value      the value
+         * @param timestamp  the timestamp
+         * @param the type of the value
+         * @return a new {@link ValueAndTimestamp} instance if the provide {@code value} is not {@code null};
+         *         otherwise {@code null} is returned
+         */
+        public static ValueAndTimestamp<V>? Make<V>(V value, long timestamp)
+        {
+            return value == null
+                ? null
+                : new ValueAndTimestamp<V>(value, timestamp);
+        }
     }
 
     /**
@@ -39,22 +55,6 @@ namespace Kafka.Streams.State
 
             this.value = value;
             this.timestamp = timestamp;
-        }
-
-        /**
-         * Create a new {@link ValueAndTimestamp} instance if the provide {@code value} is not {@code null}.
-         *
-         * @param value      the value
-         * @param timestamp  the timestamp
-         * @param the type of the value
-         * @return a new {@link ValueAndTimestamp} instance if the provide {@code value} is not {@code null};
-         *         otherwise {@code null} is returned
-         */
-        public static ValueAndTimestamp<V>? make(V value, long timestamp)
-        {
-            return value == null
-                ? null
-                : new ValueAndTimestamp<V>(value, timestamp);
         }
 
         public override string ToString()
@@ -80,7 +80,7 @@ namespace Kafka.Streams.State
 
         public override int GetHashCode()
         {
-            return (value, timestamp).GetHashCode();
+            return HashCode.Combine(this.value, this.timestamp);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             this.Name = name;
 
             this.timeToWaitForMoreEvents = suppressionTime ?? TimeSpan.FromMilliseconds(long.MaxValue); ;
-            this.timeDefinition = timeDefinition ?? RecordTimeDefintion<K>.instance();
+            this.timeDefinition = timeDefinition ?? RecordTimeDefintion<K>.Instance();
             this.bufferConfig = bufferConfig ?? DEFAULT_BUFFER_CONFIG;
             this.safeToDropTombstones = safeToDropTombstones;
         }

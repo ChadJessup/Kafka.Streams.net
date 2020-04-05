@@ -4,8 +4,8 @@ namespace Kafka.Streams.KStream.Internals
 {
     public interface IKTableProcessorSupplier<K, V, T> : IProcessorSupplier<K, Change<V>>
     {
-        IKTableValueGetterSupplier<K, T> view();
+        IKTableValueGetterSupplier<K, T> View();
 
-        void enableSendingOldValues();
+        void EnableSendingOldValues();
     }
 }

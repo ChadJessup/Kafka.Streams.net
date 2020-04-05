@@ -13,7 +13,7 @@ namespace Kafka.Streams.State.Sessions
         {
         }
 
-        public override IReadOnlySessionStore<K, V> create(IStateStoreProvider storeProvider, string storeName)
+        public override IReadOnlySessionStore<K, V> Create(IStateStoreProvider storeProvider, string storeName)
         {
             return null;// new CompositeReadOnlySessionStore<>(storeProvider, this, storeName);
         }

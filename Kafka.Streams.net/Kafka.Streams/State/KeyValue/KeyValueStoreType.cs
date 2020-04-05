@@ -13,7 +13,7 @@ namespace Kafka.Streams.State
         {
         }
 
-        public override IReadOnlyKeyValueStore<K, V> create(IStateStoreProvider storeProvider, string storeName)
+        public override IReadOnlyKeyValueStore<K, V> Create(IStateStoreProvider storeProvider, string storeName)
         {
             return null; // new CompositeReadOnlyKeyValueStore<K, V>(storeProvider, this, storeName);
         }

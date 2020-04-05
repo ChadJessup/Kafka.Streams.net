@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Tasks;
@@ -32,14 +33,14 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * @return the key serializer
          */
-        //ISerde<K> keySerde { get; }
+        ISerde keySerde { get; }
 
         /**
          * Returns the default value serde
          *
          * @return the value serializer
          */
-        //ISerde<V> valueSerde { get; }
+        ISerde valueSerde { get; }
 
         /**
          * Returns the state directory for the partition.
@@ -72,7 +73,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * @param name The store name
          * @return The state store instance
          */
-        IStateStore getStateStore(string name);
+        IStateStore GetStateStore(string name);
 
         /**
          * Schedules a periodic operation for processors. A processor may call this method during
@@ -105,12 +106,12 @@ namespace Kafka.Streams.Processors.Interfaces
          * @param callback a function consuming timestamps representing the current stream or system time
          * @return a handle allowing cancellation of the punctuation schedule established by this method
          */
-        ICancellable schedule(
+        ICancellable Schedule(
             TimeSpan interval,
             PunctuationType type,
             IPunctuator callback);
 
-        ICancellable schedule(
+        ICancellable Schedule(
             TimeSpan interval,
             PunctuationType type,
             Action<long> callback);
@@ -122,7 +123,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * @param key key
          * @param value value
          */
-        void forward<K1, V1>(K1 key, V1 value);
+        void Forward<K1, V1>(K1 key, V1 value);
 
         /**
          * Forwards a key/value pair to the specified downstream processors.
@@ -132,7 +133,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * @param value value
          * @param to the options to use when forwarding
          */
-        void forward<K1, V1>(K1 key, V1 value, To to);
+        void Forward<K1, V1>(K1 key, V1 value, To to);
 
         /**
          * Forwards a key/value pair to one of the downstream processors designated by the downstream processor name
@@ -141,12 +142,12 @@ namespace Kafka.Streams.Processors.Interfaces
          * @param childName name of downstream processor
          * @deprecated please use {@link #forward(object, object, To)} instead
          */
-        void forward<K1, V1>(K1 key, V1 value, string childName);
+        void Forward<K1, V1>(K1 key, V1 value, string childName);
 
         /**
          * Requests a commit
          */
-        void commit();
+        void Commit();
 
         /**
          * Returns the topic name of the current input record; could be null if it is not
@@ -205,7 +206,7 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * @return all the key/values from the StreamsConfig properties
          */
-        Dictionary<string, object> appConfigs();
+        Dictionary<string, object> AppConfigs();
 
         /**
          * Returns all the application config properties with the given key prefix, as key/value pairs
@@ -218,6 +219,6 @@ namespace Kafka.Streams.Processors.Interfaces
          * @return the key/values matching the given prefix from the StreamsConfig properties.
          *
          */
-        Dictionary<string, object> appConfigsWithPrefix(string prefix);
+        Dictionary<string, object> AppConfigsWithPrefix(string prefix);
     }
 }

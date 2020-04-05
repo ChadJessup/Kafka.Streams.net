@@ -1,4 +1,6 @@
 using Confluent.Kafka;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Tools
@@ -8,10 +10,11 @@ namespace Kafka.Streams.Tests.Tools
      * System tests
      */
 
-    public class SystemTestUtil {
+    public class SystemTestUtil
+    {
 
-        private static readonly int KEY = 0;
-        private static readonly int VALUE = 1;
+        private const int KEY = 0;
+        private const int VALUE = 1;
 
         /**
          * Takes a string with keys and values separated by '=' and each key value pair
@@ -22,22 +25,31 @@ namespace Kafka.Streams.Tests.Tools
          * @param formattedConfigs the formatted config string
          * @return HashMap with keys and values inserted
          */
-        public static Dictionary<string, string> ParseConfigs(string formattedConfigs) {
-            Objects.requireNonNull(formattedConfigs, "Formatted config string can't be null");
-
-            if (formattedConfigs.indexOf('=') == -1) {
-                throw new IllegalStateException(string.format("Provided string [ %s ] does not have expected key-value separator of '='", formattedConfigs));
+        public static Dictionary<string, string> ParseConfigs(string formattedConfigs)
+        {
+            if (string.IsNullOrWhiteSpace(formattedConfigs))
+            {
+                throw new System.ArgumentException("message", nameof(formattedConfigs));
             }
 
-            string[] parts = formattedConfigs.split(",");
-            Dictionary<string, string> configs = new HashMap<>();
-            foreach (string part in parts) {
-                string[] keyValue = part.split("=");
-                if (keyValue.Length > 2) {
-                    throw new IllegalStateException(
-                        string.format("Provided string [ %s ] does not have expected key-value pair separator of ','", formattedConfigs));
+            if (formattedConfigs.IndexOf('=') == -1)
+            {
+                throw new System.InvalidOperationException(string.Format("Provided string [ %s ] does not have expected key-value separator of '='", formattedConfigs));
+            }
+
+            string[] parts = formattedConfigs.Split(",");
+            var configs = new Dictionary<string, string>();
+
+            foreach (string part in parts)
+            {
+                string[] keyValue = part.Split("=");
+                if (keyValue.Length > 2)
+                {
+                    throw new InvalidOperationException(
+                        string.Format("Provided string [ %s ] does not have expected key-value pair separator of ','", formattedConfigs));
                 }
-                configs.put(keyValue[KEY], keyValue[VALUE]);
+
+                configs.Add(keyValue[KEY], keyValue[VALUE]);
             }
             return configs;
         }

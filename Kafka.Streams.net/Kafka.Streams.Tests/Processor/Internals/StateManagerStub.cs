@@ -1,107 +1,48 @@
+using Confluent.Kafka;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
+using System.Collections.Generic;
+using System.IO;
+
 namespace Kafka.Streams.Tests.Processor.Internals
 {
-    /*
-
-
-
-
-
-
-    *
-
-    *
-
-
-
-
-
-    */
-
-
-
-
-
-
-
-
-
-
-
-
-    public class StateManagerStub : StateManager
+    public class StateManagerStub : IStateManager
     {
+        public DirectoryInfo BaseDir { get; }
 
+        public void Register(IStateStore store, IStateRestoreCallback stateRestoreCallback)
+        { }
 
-        public File BaseDir()
+        public void ReinitializeStateStoresForPartitions(
+            List<TopicPartition> partitions,
+            IInternalProcessorContext processorContext)
+        { }
+
+        public void Flush() { }
+
+        public void Close(bool clean)
+        { //throws IOException}
+
+        }
+
+        public IStateStore GetGlobalStore(string name)
         {
             return null;
         }
 
 
-        public void Register(StateStore store,
-                             StateRestoreCallback stateRestoreCallback)
-        { }
-
-
-        public void ReinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
-                                                         InternalProcessorContext processorContext)
-        { }
-
-
-        public void Flush() { }
-
-
-        public void Close(bool clean)
-        { //throws IOException}
-
-
-            public StateStore getGlobalStore(string name)
-            {
-                return null;
-            }
-
-
-            public StateStore getStore(string name)
-            {
-                return null;
-            }
-
-
-            public Dictionary<TopicPartition, long> checkpointed()
-            {
-                return null;
-            }
-
-
-            public void checkpoint(Dictionary<TopicPartition, long> offsets) { }
-
+        public IStateStore GetStore(string name)
+        {
+            return null;
         }
+
+
+        public Dictionary<TopicPartition, long?> Checkpointed()
+        {
+            return null;
+        }
+
+        public void Checkpoint(Dictionary<TopicPartition, long> offsets) { }
+    }
 }
-/*
-
-
-
-
-
-
-*
-
-*
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-

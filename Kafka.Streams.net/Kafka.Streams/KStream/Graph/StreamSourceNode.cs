@@ -60,8 +60,8 @@ namespace Kafka.Streams.KStream.Graph
                     consumedInternal.OffsetResetPolicy(),
                     NodeName,
                     consumedInternal.timestampExtractor,
-                    consumedInternal.keyDeserializer(),
-                    consumedInternal.valueDeserializer(),
+                    consumedInternal.KeyDeserializer(),
+                    consumedInternal.ValueDeserializer(),
                     topicPattern.ToString());
             }
             else
@@ -70,8 +70,8 @@ namespace Kafka.Streams.KStream.Graph
                     consumedInternal.OffsetResetPolicy(),
                     NodeName,
                     consumedInternal.timestampExtractor,
-                    consumedInternal.keyDeserializer(),
-                    consumedInternal.valueDeserializer(),
+                    consumedInternal.KeyDeserializer(),
+                    consumedInternal.ValueDeserializer(),
                     topicNames.ToArray());
             }
         }

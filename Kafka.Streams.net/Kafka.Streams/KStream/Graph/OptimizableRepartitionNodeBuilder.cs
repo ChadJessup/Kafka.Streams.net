@@ -6,8 +6,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
     {
         private string nodeName;
         private ProcessorParameters<K, V> processorParameters;
-        private ISerde<K> keySerde;
-        private ISerde<V> valueSerde;
+        private ISerde<K>? keySerde;
+        private ISerde<V>? valueSerde;
         private string sinkName;
         private string sourceName;
         private string repartitionTopic;
@@ -20,14 +20,14 @@ namespace Kafka.Streams.KStream.Internals.Graph
             return this;
         }
 
-        public OptimizableRepartitionNodeBuilder<K, V> WithKeySerde(ISerde<K> keySerde)
+        public OptimizableRepartitionNodeBuilder<K, V> WithKeySerde(ISerde<K>? keySerde)
         {
             this.keySerde = keySerde;
 
             return this;
         }
 
-        public OptimizableRepartitionNodeBuilder<K, V> WithValueSerde(ISerde<V> valueSerde)
+        public OptimizableRepartitionNodeBuilder<K, V> WithValueSerde(ISerde<V>? valueSerde)
         {
             this.valueSerde = valueSerde;
 

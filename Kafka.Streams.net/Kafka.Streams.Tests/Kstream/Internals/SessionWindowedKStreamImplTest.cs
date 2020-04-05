@@ -26,7 +26,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        public void before()
 //        {
-//            IKStream<string, string> stream = builder.Stream(TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
+//            IKStream<string, string> stream = builder.Stream(TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
 //            this.Stream = stream.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //                    .windowedBy(SessionWindows.with(Duration.FromMilliseconds(500)));
 //        }
@@ -59,16 +59,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.get(new Windowed<>("1", new SessionWindow(10L, 15L))),
-//                equalTo(ValueAndTimestamp.make(2L, 15L)));
+//                result.Get(new Windowed<>("1", new SessionWindow(10L, 15L))),
+//                equalTo(ValueAndTimestamp.Make(2L, 15L)));
 
 //            Assert.Equal(
-//                result.get(new Windowed<>("2", new SessionWindow(599L, 600L))),
-//                equalTo(ValueAndTimestamp.make(2L, 600L)));
+//                result.Get(new Windowed<>("2", new SessionWindow(599L, 600L))),
+//                equalTo(ValueAndTimestamp.Make(2L, 600L)));
 
 //            Assert.Equal(
-//                result.get(new Windowed<>("1", new SessionWindow(600L, 600L))),
-//                equalTo(ValueAndTimestamp.make(1L, 600L)));
+//                result.Get(new Windowed<>("1", new SessionWindow(600L, 600L))),
+//                equalTo(ValueAndTimestamp.Make(1L, 600L)));
 //        }
 
 //        [Fact]
@@ -87,14 +87,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.get(new Windowed<>("1", new SessionWindow(10, 15))),
-//                equalTo(ValueAndTimestamp.make("1+2", 15L)));
+//                result.Get(new Windowed<>("1", new SessionWindow(10, 15))),
+//                equalTo(ValueAndTimestamp.Make("1+2", 15L)));
 //            Assert.Equal(
-//                result.get(new Windowed<>("2", new SessionWindow(599L, 600))),
-//                equalTo(ValueAndTimestamp.make("1+2", 600L)));
+//                result.Get(new Windowed<>("2", new SessionWindow(599L, 600))),
+//                equalTo(ValueAndTimestamp.Make("1+2", 600L)));
 //            Assert.Equal(
-//                result.get(new Windowed<>("1", new SessionWindow(600, 600))),
-//                equalTo(ValueAndTimestamp.make("3", 600L)));
+//                result.Get(new Windowed<>("1", new SessionWindow(600, 600))),
+//                equalTo(ValueAndTimestamp.Make("3", 600L)));
 //        }
 
 //        [Fact]
@@ -115,14 +115,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.get(new Windowed<>("1", new SessionWindow(10, 15))),
-//                equalTo(ValueAndTimestamp.make("0+0+1+2", 15L)));
+//                result.Get(new Windowed<>("1", new SessionWindow(10, 15))),
+//                equalTo(ValueAndTimestamp.Make("0+0+1+2", 15L)));
 //            Assert.Equal(
-//                result.get(new Windowed<>("2", new SessionWindow(599, 600))),
-//                equalTo(ValueAndTimestamp.make("0+0+1+2", 600L)));
+//                result.Get(new Windowed<>("2", new SessionWindow(599, 600))),
+//                equalTo(ValueAndTimestamp.Make("0+0+1+2", 600L)));
 //            Assert.Equal(
-//                result.get(new Windowed<>("1", new SessionWindow(600, 600))),
-//                equalTo(ValueAndTimestamp.make("0+3", 600L)));
+//                result.Get(new Windowed<>("1", new SessionWindow(600, 600))),
+//                equalTo(ValueAndTimestamp.Make("0+3", 600L)));
 //        }
 
 //        [Fact]
@@ -135,7 +135,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                var driver = new TopologyTestDriver(builder.Build(), props);
 //                processData(driver);
 //                ISessionStore<string, long> store = driver.getSessionStore("count-store");
-//                List<KeyValuePair<Windowed<string>, long>> data = StreamsTestUtils.toList(store.fetch("1", "2"));
+//                List<KeyValuePair<Windowed<string>, long>> data = StreamsTestUtils.toList(store.Fetch("1", "2"));
 //                Assert.Equal(
 //                    data,
 //                    equalTo(Array.AsReadOnly(
@@ -153,7 +153,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 //            ISessionStore<string, string> sessionStore = driver.getSessionStore("reduced");
-//            List<KeyValuePair<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.fetch("1", "2"));
+//            List<KeyValuePair<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.Fetch("1", "2"));
 
 //            Assert.Equal(
 //                data,
@@ -176,7 +176,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        var driver = new TopologyTestDriver(builder.Build(), props);
 //        processData(driver);
 //        ISessionStore<string, string> sessionStore = driver.getSessionStore("aggregated");
-//        List<KeyValuePair<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.fetch("1", "2"));
+//        List<KeyValuePair<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.Fetch("1", "2"));
 //        Assert.Equal(
 //            data,
 //            Array.AsReadOnly(
@@ -272,10 +272,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //private void processData(var driver)
 //{
-//    driver.pipeInput(recordFactory.create(TOPIC, "1", "1", 10));
-//    driver.pipeInput(recordFactory.create(TOPIC, "1", "2", 15));
-//    driver.pipeInput(recordFactory.create(TOPIC, "1", "3", 600));
-//    driver.pipeInput(recordFactory.create(TOPIC, "2", "1", 600));
-//    driver.pipeInput(recordFactory.create(TOPIC, "2", "2", 599));
+//    driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 10));
+//    driver.PipeInput(recordFactory.Create(TOPIC, "1", "2", 15));
+//    driver.PipeInput(recordFactory.Create(TOPIC, "1", "3", 600));
+//    driver.PipeInput(recordFactory.Create(TOPIC, "2", "1", 600));
+//    driver.PipeInput(recordFactory.Create(TOPIC, "2", "2", 599));
 //}
 //}

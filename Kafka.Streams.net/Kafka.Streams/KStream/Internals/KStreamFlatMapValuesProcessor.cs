@@ -13,10 +13,10 @@ namespace Kafka.Streams.KStream.Internals
 
         public override void Process(K key, V value)
         {
-            var newValues = this.mapper.apply(key, value);
+            var newValues = this.mapper.Apply(key, value);
             foreach (VR newValue in newValues)
             {
-                context.forward(key, newValue);
+                context.Forward(key, newValue);
             }
         }
     }

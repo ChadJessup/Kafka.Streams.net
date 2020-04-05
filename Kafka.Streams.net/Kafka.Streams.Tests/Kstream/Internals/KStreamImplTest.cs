@@ -17,7 +17,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public class KStreamImplTest
 //    {
 
-//        private Consumed<string, string> stringConsumed = Consumed.with(Serdes.String(), Serdes.String());
+//        private Consumed<string, string> stringConsumed = Consumed.With(Serdes.String(), Serdes.String());
 //        private MockProcessorSupplier<string, string> processorSupplier = new MockProcessorSupplier<>();
 
 //        private IKStream<string, string> testStream;
@@ -71,7 +71,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            streams2[1].join(streams3[1], (value1, value2) => value1 + value2,
 //                JoinWindows.of(Duration.FromMilliseconds(anyWindowSize)), joined);
 
-//            stream4.to("topic-5");
+//            stream4.To("topic-5");
 
 //            streams2[1].through("topic-6").process(new MockProcessorSupplier<>());
 
@@ -98,7 +98,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            ConsumedInternal<string, string> consumedInternal = new ConsumedInternal<>(stringConsumed);
 
 //            IKeyValueMapper<string, string, string> selector = (key, value) => key;
-//            IKeyValueMapper<string, string, Iterable<KeyValuePair<string, string>>> flatSelector = (key, value) => Collections.singleton(new KeyValuePair<>(key, value));
+//            IKeyValueMapper<string, string, Iterable<KeyValuePair<string, string>>> flatSelector = (key, value) => Collections.singleton(KeyValuePair.Create(key, value));
 //            IValueMapper<string, string> mapper = value => value;
 //            IValueMapper<string, Iterable<string>> flatMapper = Collections::singleton;
 //            ValueJoiner<string, string, string> joiner = (value1, value2) => value1;
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            public KeyValuePair<string, string> transform(string key, string value)
 //            {
-//                return new KeyValuePair<>(key, value);
+//                return KeyValuePair.Create(key, value);
 //            }
 
 
@@ -165,8 +165,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //       Assert.Equal(((AbstractStream) stream1.through("topic-3")).keySerde(), consumedInternal.keySerde());
 //       Assert.Equal(((AbstractStream) stream1.through("topic-3")).valueSerde(), consumedInternal.valueSerde());
-//       Assert.Equal(((AbstractStream) stream1.through("topic-3", Produced.with(mySerde, mySerde))).keySerde(), mySerde);
-//       Assert.Equal(((AbstractStream) stream1.through("topic-3", Produced.with(mySerde, mySerde))).valueSerde(), mySerde);
+//       Assert.Equal(((AbstractStream) stream1.through("topic-3", Produced.With(mySerde, mySerde))).keySerde(), mySerde);
+//       Assert.Equal(((AbstractStream) stream1.through("topic-3", Produced.With(mySerde, mySerde))).valueSerde(), mySerde);
 
 //       Assert.Equal(((AbstractStream) stream1.groupByKey()).keySerde(), consumedInternal.keySerde());
 //       Assert.Equal(((AbstractStream) stream1.groupByKey()).valueSerde(), consumedInternal.valueSerde());
@@ -217,7 +217,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKStream<string, string> stream1 = builder.Stream(new List<string> { "topic-1", "topic-2" }, stringConsumed);
 //    IKStream<string, string> stream2 = builder.Stream(new List<string> { "topic-3", "topic-4" }, stringConsumed);
 
-//    stream1.to("topic-5");
+//    stream1.To("topic-5");
 //    stream2.through("topic-6");
 
 //    ProcessorTopology processorTopology = TopologyWrapper.getInternalTopologyBuilder(builder.Build()).setApplicationId("X").Build(null);
@@ -234,11 +234,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    StreamsBuilder builder = new StreamsBuilder();
 //    string input = "topic";
 //    IKStream<string, string> stream = builder.Stream(input, stringConsumed);
-//    stream.through("through-topic", Produced.with(Serdes.String(), Serdes.String())).process(processorSupplier);
+//    stream.through("through-topic", Produced.With(Serdes.String(), Serdes.String())).process(processorSupplier);
 
 //    try {
 //var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create(input, "a", "b"));
+//        driver.PipeInput(recordFactory.Create(input, "a", "b"));
 //    }
 //    Assert.Equal(processorSupplier.theCapturedProcessor().processed, (Collections.singletonList(new KeyValueTimestamp<>("a", "b", 0))));
 //    }
@@ -249,12 +249,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    StreamsBuilder builder = new StreamsBuilder();
 //    string input = "topic";
 //    IKStream<string, string> stream = builder.Stream(input, stringConsumed);
-//    stream.to("to-topic", Produced.with(Serdes.String(), Serdes.String()));
+//    stream.To("to-topic", Produced.With(Serdes.String(), Serdes.String()));
 //    builder.Stream("to-topic", stringConsumed).process(processorSupplier);
 
 //    try {
 //var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create(input, "e", "f"));
+//        driver.PipeInput(recordFactory.Create(input, "e", "f"));
 //    }
 //    Assert.Equal(processorSupplier.theCapturedProcessor().processed, (Collections.singletonList(new KeyValueTimestamp<>("e", "f", 0))));
 //    }
@@ -265,21 +265,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    StreamsBuilder builder = new StreamsBuilder();
 //    string input = "topic";
 //    IKStream<string, string> stream = builder.Stream(input, stringConsumed);
-//    stream.to((key, value, context) => context.Topic + "-" + key + "-" + value.substring(0, 1),
-//              Produced.with(Serdes.String(), Serdes.String()));
+//    stream.To((key, value, context) => context.Topic + "-" + key + "-" + value.substring(0, 1),
+//              Produced.With(Serdes.String(), Serdes.String()));
 //    builder.Stream(input + "-a-v", stringConsumed).process(processorSupplier);
 //    builder.Stream(input + "-b-v", stringConsumed).process(processorSupplier);
 
 //    try {
 //var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create(input, "a", "v1"));
-//        driver.pipeInput(recordFactory.create(input, "a", "v2"));
-//        driver.pipeInput(recordFactory.create(input, "b", "v1"));
+//        driver.PipeInput(recordFactory.Create(input, "a", "v1"));
+//        driver.PipeInput(recordFactory.Create(input, "a", "v2"));
+//        driver.PipeInput(recordFactory.Create(input, "b", "v1"));
 //    }
 //    List<MockProcessor<string, string>> mockProcessors = processorSupplier.capturedProcessors(2);
-//    Assert.Equal(mockProcessors.get(0).processed, equalToasList(new KeyValueTimestamp<>("a", "v1", 0),
+//    Assert.Equal(mockProcessors.Get(0).processed, equalToasList(new KeyValueTimestamp<>("a", "v1", 0),
 //            new KeyValueTimestamp<>("a", "v2", 0))));
-//    Assert.Equal(mockProcessors.get(1).processed, (Collections.singletonList(new KeyValueTimestamp<>("b", "v1", 0))));
+//    Assert.Equal(mockProcessors.Get(1).processed, (Collections.singletonList(new KeyValueTimestamp<>("b", "v1", 0))));
 //    }
 
 //     // specifically testing the deprecated variant
@@ -298,7 +298,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                Joined.with(Serdes.String(),
 //                            Serdes.String(),
 //                            Serdes.String()))
-//          .to("output-topic", Produced.with(Serdes.String(), Serdes.String()));
+//          .To("output-topic", Produced.With(Serdes.String(), Serdes.String()));
 
 //    ProcessorTopology topology = TopologyWrapper.getInternalTopologyBuilder(builder.Build()).setApplicationId("X").Build();
 
@@ -332,7 +332,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        JoinWindows.of(Duration.FromMilliseconds(windowSize)).grace(Duration.FromMilliseconds(3L * windowSize)),
 //        Joined.with(Serdes.String(), Serdes.String(), Serdes.String())
 //    )
-//          .to("output-topic", Produced.with(Serdes.String(), Serdes.String()));
+//          .To("output-topic", Produced.With(Serdes.String(), Serdes.String()));
 
 //    ProcessorTopology topology = TopologyWrapper.getInternalTopologyBuilder(builder.Build()).setApplicationId("X").Build();
 
@@ -376,10 +376,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //public void testToWithNullValueSerdeDoesntNPE()
 //{
 //    StreamsBuilder builder = new StreamsBuilder();
-//    Consumed<string, string> consumed = Consumed.with(Serdes.String(), Serdes.String());
+//    Consumed<string, string> consumed = Consumed.With(Serdes.String(), Serdes.String());
 //    IKStream<string, string> inputStream = builder.Stream(Collections.singleton("input"), consumed);
 
-//    inputStream.to("output", Produced.with(Serdes.String(), Serdes.String()));
+//    inputStream.To("output", Produced.With(Serdes.String(), Serdes.String()));
 //}
 
 //[Fact] (typeof(expected = NullPointerException))
@@ -457,27 +457,27 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //[Fact] (typeof(expected = NullPointerException))
 //    public void shouldNotAllowNullTopicOnTo()
 //{
-//    testStream.to((string)null);
+//    testStream.To((string)null);
 //}
 
 //[Fact] (typeof(expected = NullPointerException))
 //    public void shouldNotAllowNullTopicChooserOnTo()
 //{
-//    testStream.to((TopicNameExtractor<string, string>)null);
+//    testStream.To((TopicNameExtractor<string, string>)null);
 //}
 
 //[Fact]
 //public void shouldNotAllowNullTransformerSupplierOnTransform()
 //{
-//    Exception e =Assert.Throws(NullPointerException, () => testStream.transform(null));
-//       Assert.Equal("transformerSupplier can't be null", e.getMessage());
+//    Exception e =Assert.Throws<NullReferenceException>(() => testStream.transform(null));
+//       Assert.Equal("transformerSupplier can't be null", e.ToString());
 //    }
 
 //    [Fact]
 //public void shouldNotAllowNullTransformerSupplierOnFlatTransform()
 //{
-//    Exception e =Assert.Throws(NullPointerException, () => testStream.flatTransform(null));
-//       Assert.Equal("transformerSupplier can't be null", e.getMessage());
+//    Exception e =Assert.Throws<NullReferenceException>(() => testStream.flatTransform(null));
+//       Assert.Equal("transformerSupplier can't be null", e.ToString());
 //    }
 
 //    [Fact]
@@ -485,8 +485,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //{
 //    Exception e =
 
-//       Assert.Throws(NullPointerException, () => testStream.transformValues((ValueTransformerWithKeySupplier) null));
-//       Assert.Equal("valueTransformerSupplier can't be null", e.getMessage());
+//       Assert.Throws<NullReferenceException>(() => testStream.transformValues((ValueTransformerWithKeySupplier) null));
+//       Assert.Equal("valueTransformerSupplier can't be null", e.ToString());
 //    }
 
 //    [Fact]
@@ -494,8 +494,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //{
 //    Exception e =
 
-//       Assert.Throws(NullPointerException, () => testStream.transformValues((ValueTransformerSupplier) null));
-//       Assert.Equal("valueTransformerSupplier can't be null", e.getMessage());
+//       Assert.Throws<NullReferenceException>(() => testStream.transformValues((ValueTransformerSupplier) null));
+//       Assert.Equal("valueTransformerSupplier can't be null", e.ToString());
 //    }
 
 //    [Fact]
@@ -503,8 +503,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //{
 //    Exception e =
 
-//       Assert.Throws(NullPointerException, () => testStream.flatTransformValues((ValueTransformerWithKeySupplier) null));
-//       Assert.Equal("valueTransformerSupplier can't be null", e.getMessage());
+//       Assert.Throws<NullReferenceException>(() => testStream.flatTransformValues((ValueTransformerWithKeySupplier) null));
+//       Assert.Equal("valueTransformerSupplier can't be null", e.ToString());
 //    }
 
 //    [Fact]
@@ -512,8 +512,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //{
 //    Exception e =
 
-//       Assert.Throws(NullPointerException, () => testStream.flatTransformValues((ValueTransformerSupplier) null));
-//       Assert.Equal("valueTransformerSupplier can't be null", e.getMessage());
+//       Assert.Throws<NullReferenceException>(() => testStream.flatTransformValues((ValueTransformerSupplier) null));
+//       Assert.Equal("valueTransformerSupplier can't be null", e.ToString());
 //    }
 
 //    [Fact] (typeof(expected = NullPointerException))
@@ -627,7 +627,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //[Fact] (typeof(expected = NullPointerException))
 //    public void shouldThrowNullPointerOnToWhenProducedIsNull()
 //{
-//    testStream.to("topic", null);
+//    testStream.To("topic", null);
 //}
 
 //[Fact]
@@ -690,10 +690,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    try {
 //var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create(topic1, "A", "aa"));
-//        driver.pipeInput(recordFactory.create(topic2, "B", "bb"));
-//        driver.pipeInput(recordFactory.create(topic2, "C", "cc"));
-//        driver.pipeInput(recordFactory.create(topic1, "D", "dd"));
+//        driver.PipeInput(recordFactory.Create(topic1, "A", "aa"));
+//        driver.PipeInput(recordFactory.Create(topic2, "B", "bb"));
+//        driver.PipeInput(recordFactory.Create(topic2, "C", "cc"));
+//        driver.PipeInput(recordFactory.Create(topic1, "D", "dd"));
 //    }
 
 //    Assert.EqualasList(new KeyValueTimestamp<>("A", "aa", 0),
@@ -720,14 +720,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    try {
 //var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create(topic1, "A", "aa", 1L));
-//        driver.pipeInput(recordFactory.create(topic2, "B", "bb", 9L));
-//        driver.pipeInput(recordFactory.create(topic3, "C", "cc", 2L));
-//        driver.pipeInput(recordFactory.create(topic4, "D", "dd", 8L));
-//        driver.pipeInput(recordFactory.create(topic4, "E", "ee", 3L));
-//        driver.pipeInput(recordFactory.create(topic3, "F", "ff", 7L));
-//        driver.pipeInput(recordFactory.create(topic2, "G", "gg", 4L));
-//        driver.pipeInput(recordFactory.create(topic1, "H", "hh", 6L));
+//        driver.PipeInput(recordFactory.Create(topic1, "A", "aa", 1L));
+//        driver.PipeInput(recordFactory.Create(topic2, "B", "bb", 9L));
+//        driver.PipeInput(recordFactory.Create(topic3, "C", "cc", 2L));
+//        driver.PipeInput(recordFactory.Create(topic4, "D", "dd", 8L));
+//        driver.PipeInput(recordFactory.Create(topic4, "E", "ee", 3L));
+//        driver.PipeInput(recordFactory.Create(topic3, "F", "ff", 7L));
+//        driver.PipeInput(recordFactory.Create(topic2, "G", "gg", 4L));
+//        driver.PipeInput(recordFactory.Create(topic1, "H", "hh", 6L));
 //    }
 
 //    Assert.EqualasList(new KeyValueTimestamp<>("A", "aa", 1),
@@ -750,11 +750,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    try {
 //var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create("topic-3", "A", "aa", 1L));
-//        driver.pipeInput(recordFactory.create("topic-4", "B", "bb", 5L));
-//        driver.pipeInput(recordFactory.create("topic-5", "C", "cc", 10L));
-//        driver.pipeInput(recordFactory.create("topic-6", "D", "dd", 8L));
-//        driver.pipeInput(recordFactory.create("topic-7", "E", "ee", 3L));
+//        driver.PipeInput(recordFactory.Create("topic-3", "A", "aa", 1L));
+//        driver.PipeInput(recordFactory.Create("topic-4", "B", "bb", 5L));
+//        driver.PipeInput(recordFactory.Create("topic-5", "C", "cc", 10L));
+//        driver.PipeInput(recordFactory.Create("topic-6", "D", "dd", 8L));
+//        driver.PipeInput(recordFactory.Create("topic-7", "E", "ee", 3L));
 //    }
 
 //    Assert.EqualasList(new KeyValueTimestamp<>("A", "aa", 1),
@@ -779,11 +779,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    try {
 //var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create("topic-3", "A", "aa", 1L));
-//        driver.pipeInput(recordFactory.create("topic-4", "B", "bb", 5L));
-//        driver.pipeInput(recordFactory.create("topic-A", "C", "cc", 10L));
-//        driver.pipeInput(recordFactory.create("topic-Z", "D", "dd", 8L));
-//        driver.pipeInput(recordFactory.create(topic3, "E", "ee", 3L));
+//        driver.PipeInput(recordFactory.Create("topic-3", "A", "aa", 1L));
+//        driver.PipeInput(recordFactory.Create("topic-4", "B", "bb", 5L));
+//        driver.PipeInput(recordFactory.Create("topic-A", "C", "cc", 10L));
+//        driver.PipeInput(recordFactory.Create("topic-Z", "D", "dd", 8L));
+//        driver.PipeInput(recordFactory.Create(topic3, "E", "ee", 3L));
 //    }
 
 //    Assert.EqualasList(new KeyValueTimestamp<>("A", "aa", 1),

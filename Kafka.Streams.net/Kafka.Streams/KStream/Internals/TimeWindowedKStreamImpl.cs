@@ -189,10 +189,10 @@
 //                                                               + " retention=[" + retentionPeriod + "]");
 //                    }
 
-//                    supplier = Stores.persistentTimestampedWindowStore(
+//                    supplier = Stores.PersistentTimestampedWindowStore(
 //                        materialized.storeName(),
-//                        Duration.ofMillis(retentionPeriod),
-//                        Duration.ofMillis(windows.size()),
+//                        Duration.FromMilliseconds(retentionPeriod),
+//                        Duration.FromMilliseconds(windows.size()),
 //                        false
 //                    );
 

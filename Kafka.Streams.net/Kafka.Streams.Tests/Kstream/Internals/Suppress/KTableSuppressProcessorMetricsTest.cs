@@ -142,7 +142,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //        {
 //            var storeName = "test-store";
 
-//            StateStore buffer = new InMemoryTimeOrderedKeyValueBuffer.Builder<>(
+//            IStateStore buffer = new InMemoryTimeOrderedKeyValueBuffer.Builder<>(
 //                storeName, Serdes.String(),
 //                Serdes.Long()
 //            )
@@ -155,13 +155,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                    (SuppressedInternal<string>)Suppressed.< string > untilTimeLimit(Duration.ofDays(100), maxRecords(1)),
 //                    storeName,
 //                    mock
-//                ).get();
+//                ).Get();
 
 //            var context = new MockInternalProcessorContext();
 //            context.setCurrentNode(new ProcessorNode("testNode"));
 
-//            buffer.init(context, buffer);
-//            processor.init(context);
+//            buffer.Init(context, buffer);
+//            processor.Init(context);
 
 //            var timestamp = 100L;
 //            context.setRecordMetadata("", 0, 0L, null, timestamp);
@@ -204,8 +204,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                                             MetricName metricName,
 //                                             Matcher<T> matcher)
 //        {
-//            Assert.Equal(metrics.get(metricName).metricName().description(), (metricName.description()));
-//            Assert.Equal((T)metrics.get(metricName).metricValue(), matcher);
+//            Assert.Equal(metrics.Get(metricName).metricName().description(), (metricName.description()));
+//            Assert.Equal((T)metrics.Get(metricName).metricValue(), matcher);
 
 //        }
 //    }

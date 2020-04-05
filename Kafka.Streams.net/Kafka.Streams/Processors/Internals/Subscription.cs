@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processors.Internals
         {
         }
 
-        public void setGroupInstanceId(string? groupInstanceId)
+        public void SetGroupInstanceId(string? groupInstanceId)
         {
             this.groupInstanceId = groupInstanceId;
         }

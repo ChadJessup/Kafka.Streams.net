@@ -36,6 +36,6 @@ namespace Kafka.Streams.KStream
          *
          * @return a new {@link Transformer} instance
          */
-        ITransformer<K, V, R> get();
+        ITransformer<K, V, R> Get();
     }
 }

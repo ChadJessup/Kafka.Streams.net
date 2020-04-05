@@ -18,7 +18,7 @@ namespace Kafka.Streams.KStream.Interfaces
      * <pre>{@code
      * builder.globalTable("topic-name", "queryable-store-name");
      * }</pre>
-     * all {@code GlobalKTable}s are backed by a {@link ReadOnlyKeyValueStore} and are therefore queryable via the
+     * all {@code GlobalKTable}s are backed by a {@link IReadOnlyKeyValueStore} and are therefore queryable via the
      * interactive queries API.
      * For example:
      * <pre>{@code
@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Interfaces
      *  KafkaStreams streams = ...;
      * streams.start()
      * ...
-     * ReadOnlyKeyValueStore view = streams.store("g1-store", QueryableStoreTypes.keyValueStore());
+     * IReadOnlyKeyValueStore view = streams.store("g1-store", QueryableStoreTypes.KeyValueStore());
      * view[key]; // can be done on any key, as all keys are present
      *}</pre>
      * Note that in contrast to {@link KTable} a {@code GlobalKTable}'s state holds a full copy of the underlying topic,

@@ -19,7 +19,7 @@
 //                                          string topic)
 //        {
 //            byte[] bytes = serializer.Serialize(topic, timeKey.key);
-//            ByteBuffer buf = ByteBuffer.allocate(bytes.Length + TIMESTAMP_SIZE);
+//            ByteBuffer buf = new ByteBuffer().Allocate(bytes.Length + TIMESTAMP_SIZE);
 //            buf.Add(bytes);
 //            buf.putLong(timeKey.window.start());
 
@@ -41,7 +41,7 @@
 //        private static Window extractWindow(byte[] binaryKey,
 //                                            long windowSize)
 //        {
-//            ByteBuffer buffer = ByteBuffer.wrap(binaryKey);
+//            ByteBuffer buffer = ByteBuffer.Wrap(binaryKey);
 //            long start = buffer.getLong(binaryKey.Length - TIMESTAMP_SIZE);
 //            return timeWindowForSize(start, windowSize);
 //        }
@@ -52,7 +52,7 @@
 //                                             long timestamp,
 //                                             int seqnum)
 //        {
-//            byte[] serializedKey = key.get();
+//            byte[] serializedKey = key.Get();
 //            return toStoreKeyBinary(serializedKey, timestamp, seqnum);
 //        }
 
@@ -68,7 +68,7 @@
 //        public static Bytes toStoreKeyBinary(Windowed<Bytes> timeKey,
 //                                             int seqnum)
 //        {
-//            byte[] bytes = timeKey.key.get();
+//            byte[] bytes = timeKey.key.Get();
 //            return toStoreKeyBinary(bytes, timeKey.window.start(), seqnum);
 //        }
 
@@ -85,12 +85,12 @@
 //                                      long timestamp,
 //                                      int seqnum)
 //        {
-//            ByteBuffer buf = ByteBuffer.allocate(serializedKey.Length + TIMESTAMP_SIZE + SEQNUM_SIZE);
+//            ByteBuffer buf = new ByteBuffer().Allocate(serializedKey.Length + TIMESTAMP_SIZE + SEQNUM_SIZE);
 //            buf.Add(serializedKey);
 //            buf.putLong(timestamp);
 //            buf.putInt(seqnum);
 
-//            return Bytes.wrap(buf.array());
+//            return Bytes.Wrap(buf.array());
 //        }
 
 //        static byte[] extractStoreKeyBytes(byte[] binaryKey)
@@ -110,12 +110,12 @@
 
 //        public static long extractStoreTimestamp(byte[] binaryKey)
 //        {
-//            return ByteBuffer.wrap(binaryKey).getLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE);
+//            return ByteBuffer.Wrap(binaryKey).getLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE);
 //        }
 
 //        static int extractStoreSequence(byte[] binaryKey)
 //        {
-//            return ByteBuffer.wrap(binaryKey).getInt(binaryKey.Length - SEQNUM_SIZE);
+//            return ByteBuffer.Wrap(binaryKey).getInt(binaryKey.Length - SEQNUM_SIZE);
 //        }
 
 //        public static Windowed<K> fromStoreKey<K>(byte[] binaryKey,
@@ -133,14 +133,14 @@
 //            IDeserializer<K> deserializer,
 //            string topic)
 //        {
-//            var key = deserializer.Deserialize(topic, windowedKey.key.get());
+//            var key = deserializer.Deserialize(topic, windowedKey.key.Get());
 //            return new Windowed<K>(key, windowedKey.window);
 //        }
 
 //        public static Windowed<Bytes> fromStoreBytesKey(byte[] binaryKey,
 //                                                        long windowSize)
 //        {
-//            Bytes key = Bytes.wrap(extractStoreKeyBytes(binaryKey));
+//            Bytes key = Bytes.Wrap(extractStoreKeyBytes(binaryKey));
 //            Window window = extractStoreWindow(binaryKey, windowSize);
 //            return new Windowed<Bytes>(key, window);
 //        }
@@ -148,7 +148,7 @@
 //        static Window extractStoreWindow(byte[] binaryKey,
 //                                         long windowSize)
 //        {
-//            ByteBuffer buffer = ByteBuffer.wrap(binaryKey);
+//            ByteBuffer buffer = ByteBuffer.Wrap(binaryKey);
 //            long start = buffer.getLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE);
 //            return timeWindowForSize(start, windowSize);
 //        }

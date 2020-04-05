@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream
          *
          * @param context the context
          */
-        void init(IProcessorContext context);
+        void Init(IProcessorContext context);
 
         /**
          * Transform the record with the given key and value.
@@ -72,6 +72,6 @@ namespace Kafka.Streams.KStream
          * To generate new {@link KeyValuePair} pairs {@link IProcessorContext#forward(object, object)} and
          * {@link IProcessorContext#forward(object, object, To)} can be used.
          */
-        void close();
+        void Close();
     }
 }

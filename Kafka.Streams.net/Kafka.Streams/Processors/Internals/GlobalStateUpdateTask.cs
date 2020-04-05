@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Internals
             this.deserializationExceptionHandler = deserializationExceptionHandler;
         }
 
-        public Dictionary<TopicPartition, long?> initialize()
+        public Dictionary<TopicPartition, long?> Initialize()
         {
             HashSet<string> storeNames = stateMgr.Initialize();
             Dictionary<string, string> storeNameToTopic = topology.StoreToChangelogTopic;
@@ -45,12 +45,12 @@ namespace Kafka.Streams.Processors.Internals
                 );
             }
 
-            initTopology();
-            processorContext.initialize();
-            return stateMgr.checkpointed();
+            InitTopology();
+            processorContext.Initialize();
+            return stateMgr.Checkpointed();
         }
 
-        public void update(ConsumeResult<byte[], byte[]> record)
+        public void Update(ConsumeResult<byte[], byte[]> record)
         {
             var sourceNodeAndDeserializer = deserializers[record.Topic];
             ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.Deserialize<object, object>(processorContext, record);
@@ -63,7 +63,7 @@ namespace Kafka.Streams.Processors.Internals
                         deserialized.Partition,
                         deserialized.Topic,
                         deserialized.Headers);
-                processorContext.setRecordContext(recordContext);
+                processorContext.SetRecordContext(recordContext);
                 processorContext.SetCurrentNode(sourceNodeAndDeserializer.SourceNode);
 
                 sourceNodeAndDeserializer.SourceNode.Process(deserialized.Key, deserialized.Value);
@@ -72,20 +72,20 @@ namespace Kafka.Streams.Processors.Internals
             this.offsets.Add(new TopicPartition(record.Topic, record.Partition), record.Offset + 1);
         }
 
-        public void flushState()
+        public void FlushState()
         {
             stateMgr.Flush();
-            stateMgr.checkpoint(offsets);
+            stateMgr.Checkpoint(offsets);
         }
 
-        public void close()
+        public void Close()
         {
             stateMgr.Close(true);
         }
 
-        private void initTopology()
+        private void InitTopology()
         {
-            foreach (ProcessorNode node in this.topology.processors())
+            foreach (ProcessorNode node in this.topology.Processors())
             {
                 processorContext.SetCurrentNode(node);
 

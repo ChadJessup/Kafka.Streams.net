@@ -12,20 +12,20 @@ namespace Kafka.Streams.KStream.Internals
             this.parentGetter = parentGetter;
         }
 
-        public void init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext context, string storeName)
         {
-            parentGetter.init(context, storeName);
+            parentGetter.Init(context, storeName);
         }
 
-        public ValueAndTimestamp<V> get(K key)
+        public ValueAndTimestamp<V> Get(K key)
         {
             return null; // computeValue(key, parentGetter[key]);
         }
 
 
-        public void close()
+        public void Close()
         {
-            parentGetter.close();
+            parentGetter.Close();
         }
     }
 }

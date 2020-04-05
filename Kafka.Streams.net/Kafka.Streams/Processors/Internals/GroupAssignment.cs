@@ -10,10 +10,5 @@ namespace Kafka.Streams.Processors.Internals
         {
             this.assignments = assignments;
         }
-
-        public Dictionary<string, Assignment> groupAssignment()
-        {
-            return assignments;
-        }
     }
 }

@@ -26,12 +26,12 @@ namespace Kafka.Streams.KStream.Internals
             // forward oldPair first, to be consistent with reduce and aggregate
 //            if (oldPair != null && oldPair.key != null && oldPair.value != null)
             {
-                //context.forward(oldPair.key, new Change<K>(null, oldPair.value));
+                //context.Forward(oldPair.key, new Change<K>(null, oldPair.value));
             }
 
             //if (newPair != null && newPair.key != null && newPair.value != null)
             //{
-            //    context.forward(newPair.key, new Change<K>(newPair.value, null));
+            //    context.Forward(newPair.key, new Change<K>(newPair.value, null));
             //}
 
         }

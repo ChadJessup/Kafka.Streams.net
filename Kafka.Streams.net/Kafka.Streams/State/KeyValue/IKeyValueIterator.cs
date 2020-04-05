@@ -14,12 +14,12 @@ namespace Kafka.Streams.State.KeyValues
      */
     public interface IKeyValueIterator<K, V> : IEnumerator<KeyValuePair<K, V>>, IDisposable
     {
-        abstract void close();
+        abstract void Close();
 
         /**
          * Peek at the next key without advancing the iterator
          * @return the key of the next value that would be returned from the next call to next
          */
-        K peekNextKey();
+        K PeekNextKey();
     }
 }

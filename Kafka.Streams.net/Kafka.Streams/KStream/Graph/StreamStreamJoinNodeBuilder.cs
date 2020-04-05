@@ -16,68 +16,68 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private IStoreBuilder<IWindowStore<K, V2>> otherWindowStoreBuilder;
         private Joined<K, V1, V2> joined;
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withValueJoiner(IValueJoiner<V1, V2, VR> valueJoiner)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithValueJoiner(IValueJoiner<V1, V2, VR> valueJoiner)
         {
             this.valueJoiner = valueJoiner;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withJoinThisProcessorParameters(ProcessorParameters<K, V1> joinThisProcessorParameters)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithJoinThisProcessorParameters(ProcessorParameters<K, V1> joinThisProcessorParameters)
         {
             this.joinThisProcessorParameters = joinThisProcessorParameters;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withNodeName(string nodeName)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithNodeName(string nodeName)
         {
             this.nodeName = nodeName;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withJoinOtherProcessorParameters(ProcessorParameters<K, V2> joinOtherProcessParameters)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithJoinOtherProcessorParameters(ProcessorParameters<K, V2> joinOtherProcessParameters)
         {
             this.joinOtherProcessorParameters = joinOtherProcessParameters;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withJoinMergeProcessorParameters(ProcessorParameters<K, VR> joinMergeProcessorParameters)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithJoinMergeProcessorParameters(ProcessorParameters<K, VR> joinMergeProcessorParameters)
         {
             this.joinMergeProcessorParameters = joinMergeProcessorParameters;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withThisWindowedStreamProcessorParameters(ProcessorParameters<K, V1> thisWindowedStreamProcessorParameters)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithThisWindowedStreamProcessorParameters(ProcessorParameters<K, V1> thisWindowedStreamProcessorParameters)
         {
             this.thisWindowedStreamProcessorParameters = thisWindowedStreamProcessorParameters;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withOtherWindowedStreamProcessorParameters(
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithOtherWindowedStreamProcessorParameters(
              ProcessorParameters<K, V2> otherWindowedStreamProcessorParameters)
         {
             this.otherWindowedStreamProcessorParameters = otherWindowedStreamProcessorParameters;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withThisWindowStoreBuilder(IStoreBuilder<IWindowStore<K, V1>> thisWindowStoreBuilder)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithThisWindowStoreBuilder(IStoreBuilder<IWindowStore<K, V1>> thisWindowStoreBuilder)
         {
             this.thisWindowStoreBuilder = thisWindowStoreBuilder;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withOtherWindowStoreBuilder(IStoreBuilder<IWindowStore<K, V2>> otherWindowStoreBuilder)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithOtherWindowStoreBuilder(IStoreBuilder<IWindowStore<K, V2>> otherWindowStoreBuilder)
         {
             this.otherWindowStoreBuilder = otherWindowStoreBuilder;
             return this;
         }
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withJoined(Joined<K, V1, V2> joined)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> WithJoined(Joined<K, V1, V2> joined)
         {
             this.joined = joined;
             return this;
         }
 
-        public StreamStreamJoinNode<K, V1, V2, VR> build()
+        public StreamStreamJoinNode<K, V1, V2, VR> Build()
         {
 
             return new StreamStreamJoinNode<K, V1, V2, VR>(

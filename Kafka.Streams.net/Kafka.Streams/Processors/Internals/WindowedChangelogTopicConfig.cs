@@ -33,7 +33,7 @@ namespace Kafka.Streams.Processors.Internals
          * @param.AdditionalRetentionMs - added to retention to allow for clock drift etc
          * @return Properties to be used when creating the topic
          */
-        public override Dictionary<string, string?> getProperties(Dictionary<string, string> defaultProperties, long? additionalRetentionMs)
+        public override Dictionary<string, string?> GetProperties(Dictionary<string, string> defaultProperties, long? additionalRetentionMs)
         {
             // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
             var topicConfig = new Dictionary<string, string?>(WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
@@ -60,7 +60,7 @@ namespace Kafka.Streams.Processors.Internals
             return topicConfig;
         }
 
-        public void setRetentionMs(long retentionMs)
+        public void SetRetentionMs(long retentionMs)
         {
             //if (!topicConfigs.ContainsKey(TopicConfig.RETENTION_MS_CONFIG))
             {

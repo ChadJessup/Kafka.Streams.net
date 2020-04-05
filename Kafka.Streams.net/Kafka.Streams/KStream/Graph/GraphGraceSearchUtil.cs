@@ -34,12 +34,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         private GraphGraceSearchUtil() { }
 
-        public static long findAndVerifyWindowGrace(StreamsGraphNode streamsGraphNode)
+        public static long FindAndVerifyWindowGrace(StreamsGraphNode streamsGraphNode)
         {
-            return findAndVerifyWindowGrace(streamsGraphNode, "");
+            return FindAndVerifyWindowGrace(streamsGraphNode, "");
         }
 
-        private static long findAndVerifyWindowGrace(StreamsGraphNode streamsGraphNode, string chain)
+        private static long FindAndVerifyWindowGrace(StreamsGraphNode streamsGraphNode, string chain)
         {
             // error base case: we traversed off the end of the graph without finding a window definition
             if (streamsGraphNode == null)
@@ -71,7 +71,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             long inheritedGrace = -1;
             foreach (StreamsGraphNode parentNode in streamsGraphNode.ParentNodes)
             {
-                var parentGrace = findAndVerifyWindowGrace(parentNode, newChain);
+                var parentGrace = FindAndVerifyWindowGrace(parentNode, newChain);
                 inheritedGrace = Math.Max(inheritedGrace, parentGrace);
             }
 

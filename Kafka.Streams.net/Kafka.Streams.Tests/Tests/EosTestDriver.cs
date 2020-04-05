@@ -16,7 +16,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        private static int numRecordsProduced = 0;
 
-//        private static synchronized void updateNumRecordsProduces(int delta)
+//        private static void updateNumRecordsProduces(int delta)
 //        {
 //            numRecordsProduced += delta;
 //        }
@@ -31,10 +31,10 @@ namespace Kafka.Streams.Tests.Tests
 //                isRunning = false;
 //            }));
 
-//            Properties producerProps = new Properties();
+//            StreamsConfig producerProps = new StreamsConfig();
 //            producerProps.put(ProducerConfig.CLIENT_ID_CONFIG, "EosTest");
 //            producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//            producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer);
+//            producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, IntegerSerializer);
 //        producerProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
@@ -55,7 +55,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    if (exception is TimeoutException) {
 //                        try {
 //                            // message == org.apache.kafka.common.errors.TimeoutException: Expiring 4 record(s) for data-0: 30004 ms has passed since last attempt plus backoff time
-//                            int expired = int.parseInt(exception.getMessage().split(" ")[2]);
+//                            int expired = int.parseInt(exception.getMessage().Split(" ")[2]);
 //        updateNumRecordsProduces(-expired);
 //    } catch (Exception ignore) { }
 //                    }
@@ -72,12 +72,12 @@ namespace Kafka.Streams.Tests.Tests
 //        producer.close();
 //        System.Console.Out.WriteLine("Producer closed: " + numRecordsProduced + " records produced");
 
-//        Properties props = new Properties();
+//        StreamsConfig props = new StreamsConfig();
 //props.put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
 //        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
 //        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
 //        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
-//        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.toString().toLowerCase(Locale.ROOT));
+//        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.ToString().toLowerCase(Locale.ROOT));
 
 //        try { 
 // (KafkaConsumer<byte[], byte[]> consumer = new KafkaConsumer<>(props));
@@ -95,16 +95,16 @@ namespace Kafka.Streams.Tests.Tests
 
 //    public static void verify(string kafka, bool withRepartitioning)
 //{
-//    Properties props = new Properties();
+//    StreamsConfig props = new StreamsConfig();
 //    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
 //    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
 //    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
 //        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
-//        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.toString().toLowerCase(Locale.ROOT));
+//        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.ToString().toLowerCase(Locale.ROOT));
 
 //        Dictionary<TopicPartition, long> committedOffsets;
 //        try { 
-// (Admin adminClient = Admin.create(props));
+// (Admin adminClient = Admin.Create(props));
 //            ensureStreamsApplicationDown(adminClient);
 
 //committedOffsets = getCommittedOffsets(adminClient, withRepartitioning);
@@ -148,17 +148,17 @@ namespace Kafka.Streams.Tests.Tests
 //            return;
 //        }
 
-//        verifyReceivedAllRecords(inputRecordsPerTopicPerPartition.get("data"), outputRecordsPerTopicPerPartition.get("echo"));
+//        verifyReceivedAllRecords(inputRecordsPerTopicPerPartition.Get("data"), outputRecordsPerTopicPerPartition.Get("echo"));
 //        if (withRepartitioning) {
-//            verifyReceivedAllRecords(inputRecordsPerTopicPerPartition.get("data"), outputRecordsPerTopicPerPartition.get("repartition"));
+//            verifyReceivedAllRecords(inputRecordsPerTopicPerPartition.Get("data"), outputRecordsPerTopicPerPartition.Get("repartition"));
 //        }
 
-//        verifyMin(inputRecordsPerTopicPerPartition.get("data"), outputRecordsPerTopicPerPartition.get("min"));
-//        verifySum(inputRecordsPerTopicPerPartition.get("data"), outputRecordsPerTopicPerPartition.get("sum"));
+//        verifyMin(inputRecordsPerTopicPerPartition.Get("data"), outputRecordsPerTopicPerPartition.Get("min"));
+//        verifySum(inputRecordsPerTopicPerPartition.Get("data"), outputRecordsPerTopicPerPartition.Get("sum"));
 
 //        if (withRepartitioning) {
-//            verifyMax(inputRecordsPerTopicPerPartition.get("repartition"), outputRecordsPerTopicPerPartition.get("max"));
-//            verifyCnt(inputRecordsPerTopicPerPartition.get("repartition"), outputRecordsPerTopicPerPartition.get("cnt"));
+//            verifyMax(inputRecordsPerTopicPerPartition.Get("repartition"), outputRecordsPerTopicPerPartition.Get("max"));
+//            verifyCnt(inputRecordsPerTopicPerPartition.Get("repartition"), outputRecordsPerTopicPerPartition.Get("cnt"));
 //        }
 
 //        try { 
@@ -208,7 +208,7 @@ namespace Kafka.Streams.Tests.Tests
 //    try
 //    {
 //        ListConsumerGroupOffsetsResult listConsumerGroupOffsetsResult = adminClient.listConsumerGroupOffsets(EosTestClient.APP_ID);
-//        topicPartitionOffsetAndMetadataMap = listConsumerGroupOffsetsResult.partitionsToOffsetAndMetadata().get(10, TimeUnit.SECONDS);
+//        topicPartitionOffsetAndMetadataMap = listConsumerGroupOffsetsResult.partitionsToOffsetAndMetadata().Get(10, TimeUnit.SECONDS);
 //    }
 //    catch (InterruptedException | ExecutionException | java.util.concurrent.TimeoutException e) {
 //        e.printStackTrace();
@@ -219,7 +219,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //    foreach (Map.Entry<TopicPartition, OffsetAndMetadata> entry in topicPartitionOffsetAndMetadataMap.entrySet())
 //    {
-//        string topic = entry.getKey().topic();
+//        string topic = entry.getKey().Topic;
 //        if (topic.equals("data") || withRepartitioning && topic.equals("repartition"))
 //        {
 //            committedOffsets.put(entry.getKey(), entry.getValue().Offset);
@@ -243,14 +243,14 @@ namespace Kafka.Streams.Tests.Tests
 //        bool allRecordsReceived = false;
 //        while (!allRecordsReceived && System.currentTimeMillis() < maxWaitTime)
 //        {
-//            ConsumerRecords<byte[], byte[]> receivedRecords = consumer.poll(Duration.ofMillis(100));
+//            ConsumeResult<byte[], byte[]> receivedRecords = consumer.poll(Duration.FromMilliseconds(100));
 
 //            foreach (ConsumeResult<byte[], byte[]> record in receivedRecords)
 //            {
 //                maxWaitTime = System.currentTimeMillis() + MAX_IDLE_TIME_MS;
-//                TopicPartition tp = new TopicPartition(record.topic(), record.partition());
+//                TopicPartition tp = new TopicPartition(record.Topic, record.Partition);
 //                maxReceivedOffsetPerPartition.put(tp, record.Offset);
-//                long readEndOffset = readEndOffsets.get(tp);
+//                long readEndOffset = readEndOffsets.Get(tp);
 //                if (record.Offset < readEndOffset)
 //                {
 //                    addRecord(record, recordPerTopicPerPartition, withRepartitioning);
@@ -265,7 +265,7 @@ namespace Kafka.Streams.Tests.Tests
 //            foreach (TopicPartition tp in readEndOffsets.keySet())
 //            {
 //                maxConsumerPositionPerPartition.put(tp, consumer.position(tp));
-//                if (consumer.position(tp) >= readEndOffsets.get(tp))
+//                if (consumer.position(tp) >= readEndOffsets.Get(tp))
 //                {
 //                    consumer.pause(Collections.singletonList(tp));
 //                }
@@ -290,8 +290,8 @@ namespace Kafka.Streams.Tests.Tests
 //                                  bool withRepartitioning)
 //    {
 
-//        string topic = record.topic();
-//        TopicPartition partition = new TopicPartition(topic, record.partition());
+//        string topic = record.Topic;
+//        TopicPartition partition = new TopicPartition(topic, record.Partition);
 
 //        if (verifyTopic(topic, withRepartitioning))
 //        {
@@ -301,7 +301,7 @@ namespace Kafka.Streams.Tests.Tests
 //            List<ConsumeResult<byte[], byte[]>> records =
 //                topicRecordsPerPartition.computeIfAbsent(partition, k => new ArrayList<>());
 
-//            records.add(record);
+//            records.Add(record);
 //        }
 //        else
 //        {
@@ -330,21 +330,21 @@ namespace Kafka.Streams.Tests.Tests
 //            throw new RuntimeException("Result verification failed. Received " + receivedRecords.Count + " records but expected " + expectedRecords.Count);
 //        }
 
-//        StringDeserializer stringDeserializer = new StringDeserializer();
+//        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 //        IntegerDeserializer integerDeserializer = Serializers.Int32;
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in receivedRecords.entrySet())
 //        {
-//            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.getKey().partition());
-//            Iterator<ConsumeResult<byte[], byte[]>> expectedRecord = expectedRecords.get(inputTopicPartition).iterator();
+//            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.getKey().Partition);
+//            Iterator<ConsumeResult<byte[], byte[]>> expectedRecord = expectedRecords.Get(inputTopicPartition).iterator();
 
 //            foreach (ConsumeResult<byte[], byte[]> receivedRecord in partitionRecords.getValue())
 //            {
-//                ConsumeResult<byte[], byte[]> expected = expectedRecord.next();
+//                ConsumeResult<byte[], byte[]> expected = expectedRecord.MoveNext();
 
-//                string receivedKey = stringDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Key);
-//                int receivedValue = integerDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Value);
-//                string expectedKey = stringDeserializer.deserialize(expected.topic(), expected.Key);
-//                int expectedValue = integerDeserializer.deserialize(expected.topic(), expected.Value);
+//                string receivedKey = stringDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Key);
+//                int receivedValue = integerDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Value);
+//                string expectedKey = stringDeserializer.deserialize(expected.Topic, expected.Key);
+//                int expectedValue = integerDeserializer.deserialize(expected.Topic, expected.Value);
 
 //                if (!receivedKey.equals(expectedKey) || receivedValue != expectedValue)
 //                {
@@ -357,14 +357,14 @@ namespace Kafka.Streams.Tests.Tests
 //    private static void verifyMin(Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> inputPerTopicPerPartition,
 //                                  Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> minPerTopicPerPartition)
 //    {
-//        StringDeserializer stringDeserializer = new StringDeserializer();
+//        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 //        IntegerDeserializer integerDeserializer = Serializers.Int32;
 
 //        HashDictionary<string, int> currentMinPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in minPerTopicPerPartition.entrySet())
 //        {
-//            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.getKey().partition());
-//            List<ConsumeResult<byte[], byte[]>> partitionInput = inputPerTopicPerPartition.get(inputTopicPartition);
+//            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.getKey().Partition);
+//            List<ConsumeResult<byte[], byte[]>> partitionInput = inputPerTopicPerPartition.Get(inputTopicPartition);
 //            List<ConsumeResult<byte[], byte[]>> partitionMin = partitionRecords.getValue();
 
 //            if (partitionInput.Count != partitionMin.Count)
@@ -377,14 +377,14 @@ namespace Kafka.Streams.Tests.Tests
 
 //            foreach (ConsumeResult<byte[], byte[]> receivedRecord in partitionMin)
 //            {
-//                ConsumeResult<byte[], byte[]> input = inputRecords.next();
+//                ConsumeResult<byte[], byte[]> input = inputRecords.MoveNext();
 
-//                string receivedKey = stringDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Key);
-//                int receivedValue = integerDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Value);
-//                string key = stringDeserializer.deserialize(input.topic(), input.Key);
-//                int value = integerDeserializer.deserialize(input.topic(), input.Value);
+//                string receivedKey = stringDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Key);
+//                int receivedValue = integerDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Value);
+//                string key = stringDeserializer.deserialize(input.Topic, input.Key);
+//                int value = integerDeserializer.deserialize(input.Topic, input.Value);
 
-//                int min = currentMinPerKey.get(key);
+//                int min = currentMinPerKey.Get(key);
 //                if (min == null)
 //                {
 //                    min = value;
@@ -406,15 +406,15 @@ namespace Kafka.Streams.Tests.Tests
 //    private static void verifySum(Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> inputPerTopicPerPartition,
 //                                  Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> minPerTopicPerPartition)
 //    {
-//        StringDeserializer stringDeserializer = new StringDeserializer();
+//        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 //        IntegerDeserializer integerDeserializer = Serializers.Int32;
 //        LongDeserializer longDeserializer = new LongDeserializer();
 
 //        HashDictionary<string, long> currentSumPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in minPerTopicPerPartition.entrySet())
 //        {
-//            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.getKey().partition());
-//            List<ConsumeResult<byte[], byte[]>> partitionInput = inputPerTopicPerPartition.get(inputTopicPartition);
+//            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.getKey().Partition);
+//            List<ConsumeResult<byte[], byte[]>> partitionInput = inputPerTopicPerPartition.Get(inputTopicPartition);
 //            List<ConsumeResult<byte[], byte[]>> partitionSum = partitionRecords.getValue();
 
 //            if (partitionInput.Count != partitionSum.Count)
@@ -427,14 +427,14 @@ namespace Kafka.Streams.Tests.Tests
 
 //            foreach (ConsumeResult<byte[], byte[]> receivedRecord in partitionSum)
 //            {
-//                ConsumeResult<byte[], byte[]> input = inputRecords.next();
+//                ConsumeResult<byte[], byte[]> input = inputRecords.MoveNext();
 
-//                string receivedKey = stringDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Key);
-//                long receivedValue = longDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Value);
-//                string key = stringDeserializer.deserialize(input.topic(), input.Key);
-//                int value = integerDeserializer.deserialize(input.topic(), input.Value);
+//                string receivedKey = stringDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Key);
+//                long receivedValue = longDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Value);
+//                string key = stringDeserializer.deserialize(input.Topic, input.Key);
+//                int value = integerDeserializer.deserialize(input.Topic, input.Value);
 
-//                long sum = currentSumPerKey.get(key);
+//                long sum = currentSumPerKey.Get(key);
 //                if (sum == null)
 //                {
 //                    sum = (long)value;
@@ -456,14 +456,14 @@ namespace Kafka.Streams.Tests.Tests
 //    private static void verifyMax(Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> inputPerTopicPerPartition,
 //                                  Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> maxPerTopicPerPartition)
 //    {
-//        StringDeserializer stringDeserializer = new StringDeserializer();
+//        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 //        IntegerDeserializer integerDeserializer = Serializers.Int32;
 
 //        HashDictionary<string, int> currentMinPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in maxPerTopicPerPartition.entrySet())
 //        {
-//            TopicPartition inputTopicPartition = new TopicPartition("repartition", partitionRecords.getKey().partition());
-//            List<ConsumeResult<byte[], byte[]>> partitionInput = inputPerTopicPerPartition.get(inputTopicPartition);
+//            TopicPartition inputTopicPartition = new TopicPartition("repartition", partitionRecords.getKey().Partition);
+//            List<ConsumeResult<byte[], byte[]>> partitionInput = inputPerTopicPerPartition.Get(inputTopicPartition);
 //            List<ConsumeResult<byte[], byte[]>> partitionMax = partitionRecords.getValue();
 
 //            if (partitionInput.Count != partitionMax.Count)
@@ -476,15 +476,15 @@ namespace Kafka.Streams.Tests.Tests
 
 //            foreach (ConsumeResult<byte[], byte[]> receivedRecord in partitionMax)
 //            {
-//                ConsumeResult<byte[], byte[]> input = inputRecords.next();
+//                ConsumeResult<byte[], byte[]> input = inputRecords.MoveNext();
 
-//                string receivedKey = stringDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Key);
-//                int receivedValue = integerDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Value);
-//                string key = stringDeserializer.deserialize(input.topic(), input.Key);
-//                int value = integerDeserializer.deserialize(input.topic(), input.Value);
+//                string receivedKey = stringDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Key);
+//                int receivedValue = integerDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Value);
+//                string key = stringDeserializer.deserialize(input.Topic, input.Key);
+//                int value = integerDeserializer.deserialize(input.Topic, input.Value);
 
 
-//                int max = currentMinPerKey.get(key);
+//                int max = currentMinPerKey.Get(key);
 //                if (max == null)
 //                {
 //                    max = int.MIN_VALUE;
@@ -503,14 +503,14 @@ namespace Kafka.Streams.Tests.Tests
 //    private static void verifyCnt(Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> inputPerTopicPerPartition,
 //                                  Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> cntPerTopicPerPartition)
 //    {
-//        StringDeserializer stringDeserializer = new StringDeserializer();
+//        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 //        LongDeserializer longDeserializer = new LongDeserializer();
 
 //        HashDictionary<string, long> currentSumPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in cntPerTopicPerPartition.entrySet())
 //        {
-//            TopicPartition inputTopicPartition = new TopicPartition("repartition", partitionRecords.getKey().partition());
-//            List<ConsumeResult<byte[], byte[]>> partitionInput = inputPerTopicPerPartition.get(inputTopicPartition);
+//            TopicPartition inputTopicPartition = new TopicPartition("repartition", partitionRecords.getKey().Partition);
+//            List<ConsumeResult<byte[], byte[]>> partitionInput = inputPerTopicPerPartition.Get(inputTopicPartition);
 //            List<ConsumeResult<byte[], byte[]>> partitionCnt = partitionRecords.getValue();
 
 //            if (partitionInput.Count != partitionCnt.Count)
@@ -523,13 +523,13 @@ namespace Kafka.Streams.Tests.Tests
 
 //            foreach (ConsumeResult<byte[], byte[]> receivedRecord in partitionCnt)
 //            {
-//                ConsumeResult<byte[], byte[]> input = inputRecords.next();
+//                ConsumeResult<byte[], byte[]> input = inputRecords.MoveNext();
 
-//                string receivedKey = stringDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Key);
-//                long receivedValue = longDeserializer.deserialize(receivedRecord.topic(), receivedRecord.Value);
-//                string key = stringDeserializer.deserialize(input.topic(), input.Key);
+//                string receivedKey = stringDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Key);
+//                long receivedValue = longDeserializer.deserialize(receivedRecord.Topic, receivedRecord.Value);
+//                string key = stringDeserializer.deserialize(input.Topic, input.Key);
 
-//                long cnt = currentSumPerKey.get(key);
+//                long cnt = currentSumPerKey.Get(key);
 //                if (cnt == null)
 //                {
 //                    cnt = 0L;
@@ -566,17 +566,17 @@ namespace Kafka.Streams.Tests.Tests
 //            System.Console.Out.WriteLine(tp + " at position " + consumer.position(tp));
 //        }
 
-//        Properties producerProps = new Properties();
+//        StreamsConfig producerProps = new StreamsConfig();
 //        producerProps.put(ProducerConfig.CLIENT_ID_CONFIG, "VerifyProducer");
 //        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer);
-//        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer);
+//        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //        producerProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
 //        try { 
 // (KafkaProducer<string, string> producer = new KafkaProducer<>(producerProps));
 //            foreach (TopicPartition tp in partitions) {
-//                ProducerRecord<string, string> record = new ProducerRecord<>(tp.topic(), tp.partition(), "key", "value");
+//                ProducerRecord<string, string> record = new ProducerRecord<>(tp.Topic, tp.Partition, "key", "value");
 
 //producer.send(record, (metadata, exception) => {
 //                    if (exception != null) {
@@ -588,11 +588,11 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //        }
 
-//        StringDeserializer stringDeserializer = new StringDeserializer();
+//        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 
 //long maxWaitTime = System.currentTimeMillis() + MAX_IDLE_TIME_MS;
 //        while (!partitions.isEmpty() && System.currentTimeMillis() < maxWaitTime) {
-//            ConsumerRecords<byte[], byte[]> records = consumer.poll(Duration.ofMillis(100));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(100));
 //            if (records.isEmpty()) {
 //                System.Console.Out.WriteLine("No data received.");
 //                foreach (TopicPartition tp in partitions) {
@@ -601,8 +601,8 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //            foreach (ConsumeResult<byte[], byte[]> record in records) {
 //                maxWaitTime = System.currentTimeMillis() + MAX_IDLE_TIME_MS;
-//                string topic = record.topic();
-//TopicPartition tp = new TopicPartition(topic, record.partition());
+//                string topic = record.Topic;
+//TopicPartition tp = new TopicPartition(topic, record.Partition);
 
 //                try {
 //                    string key = stringDeserializer.deserialize(topic, record.Key);
@@ -611,7 +611,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    if (!("key".equals(key) && "value".equals(value) && partitions.remove(tp))) {
 //                        throw new RuntimeException("Post transactions verification failed. Received unexpected verification record: " +
 //                            "Expected record <'key','value'> from one of " + partitions + " but got"
-//                            + " <" + key + "," + value + "> [" + record.topic() + ", " + record.partition() + "]");
+//                            + " <" + key + "," + value + "> [" + record.Topic + ", " + record.Partition + "]");
 //                    } else {
 //                        System.Console.Out.WriteLine("Verifying " + tp + " successful.");
 //                    }
@@ -636,7 +636,7 @@ namespace Kafka.Streams.Tests.Tests
 //    {
 //        foreach (PartitionInfo info in consumer.partitionsFor(topic))
 //        {
-//            partitions.add(new TopicPartition(info.topic(), info.partition()));
+//            partitions.Add(new TopicPartition(info.Topic, info.Partition));
 //        }
 //    }
 //    return partitions;
@@ -650,8 +650,8 @@ namespace Kafka.Streams.Tests.Tests
 //    {
 //        description = adminClient.describeConsumerGroups(Collections.singleton(EosTestClient.APP_ID))
 //            .describedGroups()
-//            .get(EosTestClient.APP_ID)
-//            .get(10, TimeUnit.SECONDS);
+//            .Get(EosTestClient.APP_ID)
+//            .Get(10, TimeUnit.SECONDS);
 //    }
 //    catch (InterruptedException | ExecutionException | java.util.concurrent.TimeoutException e) {
 //        e.printStackTrace();

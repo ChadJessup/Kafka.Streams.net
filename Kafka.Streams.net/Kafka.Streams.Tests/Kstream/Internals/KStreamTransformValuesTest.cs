@@ -48,13 +48,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            int[] expectedKeys = { 1, 10, 100, 1000 };
 
 //            IKStream<int, int> stream;
-//            stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.Int()));
+//            stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.Int()));
 //            stream.transformValues(valueTransformerSupplier).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, expectedKey * 10, expectedKey / 2L));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, expectedKey * 10, expectedKey / 2L));
 //            }
 //            //}
 
@@ -96,13 +96,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            int[] expectedKeys = { 1, 10, 100, 1000 };
 
 //            IKStream<int, int> stream;
-//            stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.Int()));
+//            stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.Int()));
 //            stream.transformValues(valueTransformerSupplier).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, expectedKey * 10, expectedKey / 2L));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, expectedKey * 10, expectedKey / 2L));
 //            }
 //            //}
 
@@ -123,9 +123,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            SingletonNoOpValueTransformer<string, string> transformer = new SingletonNoOpValueTransformer<>();
 //            KStreamTransformValues<string, string, string> transformValues = new KStreamTransformValues<>(transformer);
-//            Processor<string, string> processor = transformValues.get();
+//            Processor<string, string> processor = transformValues.Get();
 
-//            processor.init(context);
+//            processor.Init(context);
 
 //            Assert.Equal(transformer.context, typeof(ForwardingDisabledProcessorContext<string, string>));
 //        }

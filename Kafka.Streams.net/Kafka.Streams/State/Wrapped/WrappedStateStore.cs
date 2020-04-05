@@ -9,7 +9,7 @@ namespace Kafka.Streams.State.Internals
      */
     public abstract class WrappedStateStore : IStateStore, ICachedStateStore
     {
-        public static bool isTimestamped(IStateStore stateStore)
+        public static bool IsTimestamped(IStateStore stateStore)
         {
             if (stateStore is ITimestampedBytesStore)
             {
@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.Internals
             }
             else if (stateStore is WrappedStateStore)
             {
-                return isTimestamped(((WrappedStateStore)stateStore).GetWrappedStateStore());
+                return IsTimestamped(((WrappedStateStore)stateStore).GetWrappedStateStore());
             }
             else
             {
@@ -31,14 +31,14 @@ namespace Kafka.Streams.State.Internals
         public abstract void Flush();
         public abstract void Init(IProcessorContext context, IStateStore root);
         public abstract bool IsOpen();
-        public abstract bool persistent();
+        public abstract bool Persistent();
 
         public bool IsPresent()
         {
             throw new System.NotImplementedException();
         }
 
-        public abstract bool setFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues);
+        public abstract bool SetFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues);
     }
 
     public abstract class WrappedStateStore<S> : WrappedStateStore
@@ -56,11 +56,11 @@ namespace Kafka.Streams.State.Internals
             wrapped.Init(context, root);
         }
 
-        public override bool setFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues)
+        public override bool SetFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues)
         {
             if (wrapped is ICachedStateStore)
             {
-                return ((ICachedStateStore)wrapped).setFlushListener(listener, sendOldValues);
+                return ((ICachedStateStore)wrapped).SetFlushListener(listener, sendOldValues);
             }
 
             return false;
@@ -71,9 +71,9 @@ namespace Kafka.Streams.State.Internals
         public override IStateStore GetWrappedStateStore()
             => this.wrapped;
 
-        public override bool persistent()
+        public override bool Persistent()
         {
-            return wrapped.persistent();
+            return wrapped.Persistent();
         }
 
         public override bool IsOpen()
@@ -81,7 +81,7 @@ namespace Kafka.Streams.State.Internals
             return wrapped.IsOpen();
         }
 
-        protected void validateStoreOpen()
+        protected void ValidateStoreOpen()
         {
             if (!wrapped.IsOpen())
             {

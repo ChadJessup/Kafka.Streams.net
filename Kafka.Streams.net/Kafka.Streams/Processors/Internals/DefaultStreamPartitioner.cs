@@ -17,10 +17,10 @@ namespace Kafka.Streams.Processors.Internals
             this.keySerializer = keySerializer;
         }
 
-        public int partition(string topic, K key, V value, int numPartitions)
+        public int Partition(string topic, K key, V value, int numPartitions)
         {
             var keyBytes = this.keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
-            return defaultPartitioner.partition(topic, key, keyBytes, value, null, cluster);
+            return defaultPartitioner.Partition(topic, key, keyBytes, value, null, cluster);
         }
     }
 }

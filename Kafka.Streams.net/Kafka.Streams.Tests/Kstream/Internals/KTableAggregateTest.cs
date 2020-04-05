@@ -17,7 +17,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public class KTableAggregateTest
 //    {
 //        private ISerde<string> stringSerde = Serdes.String();
-//        private Consumed<string, string> consumed = null; // Consumed.with(stringSerde, stringSerde);
+//        private Consumed<string, string> consumed = null; // Consumed.With(stringSerde, stringSerde);
 //        private Grouped<string, string> stringSerialized = null;// Grouped.with(stringSerde, stringSerde);
 //        private MockProcessorSupplier<string, object> supplier = new MockProcessorSupplier<>();
 
@@ -53,14 +53,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            ConsumerRecordFactory<string, string> recordFactory =
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L, 0L);
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 10L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 15L));
-//            driver.pipeInput(recordFactory.create(topic1, "A", "3", 20L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "4", 18L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "5", 5L));
-//            driver.pipeInput(recordFactory.create(topic1, "D", "6", 25L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "7", 15L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "8", 10L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 10L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 15L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "3", 20L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "4", 18L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "5", 5L));
+//            driver.PipeInput(recordFactory.Create(topic1, "D", "6", 25L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "7", 15L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "8", 10L));
 
 //            Assert.Equal(
 //       asList(
@@ -121,14 +121,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            ConsumerRecordFactory<string, string> recordFactory =
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L, 0L);
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 10L));
-//            driver.pipeInput(recordFactory.create(topic1, "A", (string)null, 15L));
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 12L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 20L));
-//            driver.pipeInput(recordFactory.create(topic1, "null", "3", 25L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "4", 23L));
-//            driver.pipeInput(recordFactory.create(topic1, "NULL", "5", 24L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "7", 22L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 10L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 15L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 12L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 20L));
+//            driver.PipeInput(recordFactory.Create(topic1, "null", "3", 25L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "4", 23L));
+//            driver.PipeInput(recordFactory.Create(topic1, "NULL", "5", 24L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "7", 22L));
 
 //            Assert.Equal(
 //       asList(
@@ -158,11 +158,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            ConsumerRecordFactory<string, string> recordFactory =
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L, 0L);
 
-//            driver.pipeInput(recordFactory.create(input, "A", "green", 10L));
-//            driver.pipeInput(recordFactory.create(input, "B", "green", 9L));
-//            driver.pipeInput(recordFactory.create(input, "A", "blue", 12L));
-//            driver.pipeInput(recordFactory.create(input, "C", "yellow", 15L));
-//            driver.pipeInput(recordFactory.create(input, "D", "green", 11L));
+//            driver.PipeInput(recordFactory.Create(input, "A", "green", 10L));
+//            driver.PipeInput(recordFactory.Create(input, "B", "green", 9L));
+//            driver.PipeInput(recordFactory.Create(input, "A", "blue", 12L));
+//            driver.PipeInput(recordFactory.Create(input, "C", "yellow", 15L));
+//            driver.PipeInput(recordFactory.Create(input, "D", "green", 11L));
 
 //            Assert.Equal(
 //           asList(
@@ -245,10 +245,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            MockProcessor<string, string> proc = supplier.theCapturedProcessor();
 
-//            driver.pipeInput(recordFactory.create(input, "11", "A", 10L));
-//            driver.pipeInput(recordFactory.create(input, "12", "B", 8L));
-//            driver.pipeInput(recordFactory.create(input, "11", (string)null, 12L));
-//            driver.pipeInput(recordFactory.create(input, "12", "C", 6L));
+//            driver.PipeInput(recordFactory.Create(input, "11", "A", 10L));
+//            driver.PipeInput(recordFactory.Create(input, "12", "B", 8L));
+//            driver.PipeInput(recordFactory.Create(input, "11", (string)null, 12L));
+//            driver.PipeInput(recordFactory.Create(input, "12", "C", 6L));
 
 //            Assert.Equal(
 //       asList(

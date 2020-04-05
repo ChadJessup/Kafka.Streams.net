@@ -23,7 +23,7 @@ namespace Kafka.Streams.Factories
             this.supplier = supplier;
         }
 
-        public void addStateStore(string stateStoreName)
+        public void AddStateStore(string stateStoreName)
         {
             stateStoreNames.Add(stateStoreName);
         }

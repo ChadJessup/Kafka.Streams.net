@@ -24,7 +24,7 @@ namespace Kafka.Streams.Tests.Tests
 //        string command = args[1];
 //        bool disableAutoTerminate = args.Length > 2;
 
-//        Properties streamsProperties = Utils.loadProps(propFileName);
+//        StreamsConfig streamsProperties = Utils.loadProps(propFileName);
 //        string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 
 //        if (kafka == null) {
@@ -54,12 +54,12 @@ namespace Kafka.Streams.Tests.Tests
 //                break;
 //            case "process":
 //                // this starts the stream processing app
-//                new SmokeTestClient(UUID.randomUUID().toString()).start(streamsProperties);
+//                new SmokeTestClient(UUID.randomUUID().ToString()).start(streamsProperties);
 //                break;
 //            case "process-eos":
 //                // this starts the stream processing app with EOS
 //                streamsProperties.setProperty(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
-//                new SmokeTestClient(UUID.randomUUID().toString()).start(streamsProperties);
+//                new SmokeTestClient(UUID.randomUUID().ToString()).start(streamsProperties);
 //                break;
 //            case "close-deadlock-test":
 //                ShutdownDeadlockTest test = new ShutdownDeadlockTest(kafka);

@@ -24,7 +24,7 @@
 
 //        public void init(IProcessorContext context)
 //        {
-//            base.init(context);
+//            base.Init(context);
 //            internalProcessorContext = (IInternalProcessorContext)context;
 //            metrics = (StreamsMetricsImpl)context.metrics;
 //            lateRecordDropSensor = Sensors.lateRecordDropSensor(internalProcessorContext);
@@ -43,7 +43,7 @@
 //            {
 //                LOG.LogWarning(
 //                    "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-//                    value, context.Topic, context.partition(), context.offset()
+//                    value, context.Topic, context.Partition, context.offset()
 //                );
 //                skippedRecordsSensor.record();
 //                return;
@@ -68,7 +68,7 @@
 //            {
 //                while (iterator.hasNext())
 //                {
-//                    KeyValuePair<Windowed<K>, Agg> next = iterator.next();
+//                    KeyValuePair<Windowed<K>, Agg> next = iterator.MoveNext();
 //                    merged.Add(next);
 //                    agg = sessionMerger.apply(key, agg, next.value);
 //                    mergedWindow = mergeSessionWindow(mergedWindow, next.key.window);
@@ -89,7 +89,7 @@
 //                        "streamTime=[{}]",
 //                    key,
 //                    context.Topic,
-//                    context.partition(),
+//                    context.Partition,
 //                    context.offset(),
 //                    timestamp,
 //                    mergedWindow.start(),

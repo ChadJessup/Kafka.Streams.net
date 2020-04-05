@@ -19,8 +19,8 @@
 
 //        public void init(IProcessorContext context)
 //        {
-//            base.init(context);
-//            valueTransformer.init(new ForwardingDisabledProcessorContext<K, V>(context));
+//            base.Init(context);
+//            valueTransformer.Init(new ForwardingDisabledProcessorContext<K, V>(context));
 //            if (queryableName != null)
 //            {
 //                store = (TimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
@@ -40,13 +40,13 @@
 //            if (queryableName == null)
 //            {
 //                V1 oldValue = sendOldValues ? valueTransformer.transform(key, change.oldValue) : null;
-//                context.forward(key, new Change<>(newValue, oldValue));
+//                context.Forward(key, new Change<>(newValue, oldValue));
 //            }
 //            else
 //            {
 
 //                V1 oldValue = sendOldValues ? ValueAndTimestamp.GetValueOrNull(store[key]) : null;
-//                store.Add(key, ValueAndTimestamp.make(newValue, context.timestamp()));
+//                store.Add(key, ValueAndTimestamp.Make(newValue, context.timestamp()));
 //                tupleForwarder.maybeForward(key, newValue, oldValue);
 //            }
 //        }

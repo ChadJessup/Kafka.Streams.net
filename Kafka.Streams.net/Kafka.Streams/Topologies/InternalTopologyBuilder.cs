@@ -196,7 +196,7 @@ namespace Kafka.Streams.Topologies
             foreach (var topic in topics.Where(t => t != null))
             {
                 ValidateTopicNotAlreadyRegistered(topic);
-                maybeAddToResetList(earliestResetTopics, latestResetTopics, offsetReset, topic);
+                MaybeAddToResetList(earliestResetTopics, latestResetTopics, offsetReset, topic);
                 sourceTopicNames.Add(topic);
             }
 
@@ -260,7 +260,7 @@ namespace Kafka.Streams.Topologies
                 }
             }
 
-            maybeAddToResetList(earliestResetPatterns, latestResetPatterns, offsetReset, topicPattern);
+            MaybeAddToResetList(earliestResetPatterns, latestResetPatterns, offsetReset, topicPattern);
 
             nodeFactories.Add(name, new SourceNodeFactory<K, V>(
                 this.Clock,
@@ -299,9 +299,9 @@ namespace Kafka.Streams.Topologies
         public void AddSink<K, V>(
             string name,
             string topic,
-            ISerializer<K> keySerializer,
-            ISerializer<V> valSerializer,
-            IStreamPartitioner<K, V> partitioner,
+            ISerializer<K>? keySerializer,
+            ISerializer<V>? valSerializer,
+            IStreamPartitioner<K, V>? partitioner,
             string[] predecessorNames)
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
@@ -439,18 +439,18 @@ namespace Kafka.Streams.Topologies
             _nodeGroups = null;
         }
 
-        public void addStateStore<K, V, T>(
+        public void AddStateStore<K, V, T>(
             IStoreBuilder<T> storeBuilder,
             string[] processorNames)
             where T : IStateStore
         {
-            addStateStore<K, V, T>(
+            AddStateStore<K, V, T>(
                 storeBuilder,
                 false,
                 processorNames);
         }
 
-        public void addStateStore<K, V, T>(
+        public void AddStateStore<K, V, T>(
             IStoreBuilder<T> storeBuilder,
             bool allowOverride,
             string[] processorNames)
@@ -473,14 +473,14 @@ namespace Kafka.Streams.Topologies
                         throw new ArgumentNullException(nameof(processorName));
                     }
 
-                    connectProcessorAndStateStore<K, V>(processorName, storeBuilder.name);
+                    ConnectProcessorAndStateStore<K, V>(processorName, storeBuilder.name);
                 }
             }
 
             _nodeGroups = null;
         }
 
-        public void addGlobalStore<K, V, T>(
+        public void AddGlobalStore<K, V, T>(
             IStoreBuilder<T> storeBuilder,
             string sourceName,
             ITimestampExtractor timestampExtractor,
@@ -528,11 +528,11 @@ namespace Kafka.Streams.Topologies
                     valueDeserializer));
 
             globalStateBuilders.Add(storeBuilder.name, (IStoreBuilder<IStateStore>)storeBuilder);
-            connectSourceStoreAndTopic(storeBuilder.name, topic);
+            ConnectSourceStoreAndTopic(storeBuilder.name, topic);
             nodeToSourceTopics.Add(sourceName, topics.ToList());
             nodeGrouper.Unite(processorName, predecessors);
             nodeFactories.Add(processorName, nodeFactory);
-            nodeFactory.addStateStore(storeBuilder.name);
+            nodeFactory.AddStateStore(storeBuilder.name);
             nodeGrouper.Add(processorName);
             nodeGrouper.Add(sourceName);
             _nodeGroups = null;
@@ -574,7 +574,7 @@ namespace Kafka.Streams.Topologies
             _nodeGroups = null;
         }
 
-        public void connectSourceStoreAndTopic(
+        public void ConnectSourceStoreAndTopic(
             string sourceStoreName,
             string topic)
         {
@@ -586,13 +586,13 @@ namespace Kafka.Streams.Topologies
             storeToChangelogTopic.Add(sourceStoreName, topic);
         }
 
-        public void addInternalTopic(string topicName)
+        public void AddInternalTopic(string topicName)
         {
             topicName = topicName ?? throw new ArgumentNullException(nameof(topicName));
             internalTopicNames.Add(topicName);
         }
 
-        public void copartitionSources(HashSet<string> sourceNodes)
+        public void CopartitionSources(HashSet<string> sourceNodes)
         {
             copartitionSourceGroups.Add(new HashSet<string>(sourceNodes));
         }
@@ -631,7 +631,7 @@ namespace Kafka.Streams.Topologies
             }
         }
 
-        private void connectProcessorAndStateStore<K, V>(
+        private void ConnectProcessorAndStateStore<K, V>(
             string processorName,
             string stateStoreName)
         {
@@ -663,7 +663,7 @@ namespace Kafka.Streams.Topologies
             var nodeFactory = nodeFactories[processorName];
             if (nodeFactory is ProcessorNodeFactory<K, V> processorNodeFactory)
             {
-                processorNodeFactory.addStateStore(stateStoreName);
+                processorNodeFactory.AddStateStore(stateStoreName);
                 ConnectStateStoreNameToSourceTopicsOrPattern(stateStoreName, processorNodeFactory);
             }
             else
@@ -672,7 +672,7 @@ namespace Kafka.Streams.Topologies
             }
         }
 
-        private HashSet<SourceNodeFactory<K, V>> findSourcesForProcessorPredecessors<K, V>(IEnumerable<string> predecessors)
+        private HashSet<SourceNodeFactory<K, V>> FindSourcesForProcessorPredecessors<K, V>(IEnumerable<string> predecessors)
         {
             var sourceNodes = new HashSet<SourceNodeFactory<K, V>>();
             foreach (var predecessor in predecessors)
@@ -684,7 +684,7 @@ namespace Kafka.Streams.Topologies
                 }
                 else if (nodeFactory is ProcessorNodeFactory<K, V>)
                 {
-                    sourceNodes.AddRange(findSourcesForProcessorPredecessors<K, V>(((ProcessorNodeFactory<K, V>)nodeFactory).Predecessors));
+                    sourceNodes.AddRange(FindSourcesForProcessorPredecessors<K, V>(((ProcessorNodeFactory<K, V>)nodeFactory).Predecessors));
                 }
             }
 
@@ -707,7 +707,7 @@ namespace Kafka.Streams.Topologies
             var sourceTopics = new HashSet<string>();
             var sourcePatterns = new HashSet<Regex>();
             var sourceNodesForPredecessor =
-                findSourcesForProcessorPredecessors<K, V>(processorNodeFactory.Predecessors);
+                FindSourcesForProcessorPredecessors<K, V>(processorNodeFactory.Predecessors);
 
             foreach (var sourceNodeFactory in sourceNodesForPredecessor)
             {
@@ -736,7 +736,7 @@ namespace Kafka.Streams.Topologies
             }
         }
 
-        private void maybeAddToResetList<T>(
+        private void MaybeAddToResetList<T>(
                 ICollection<T> earliestResets,
                 ICollection<T> latestResets,
                 AutoOffsetReset? offsetReset,
@@ -857,7 +857,7 @@ namespace Kafka.Streams.Topologies
          * @return ProcessorTopology
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public ProcessorTopology BuildGlobalStateTopology()
+        public ProcessorTopology? BuildGlobalStateTopology()
         {
             applicationId = applicationId ?? throw new ArgumentNullException(nameof(applicationId));
 
@@ -878,7 +878,7 @@ namespace Kafka.Streams.Topologies
                 HashSet<string> nodes = nodeGroup.Value;
                 foreach (var node in nodes)
                 {
-                    if (isGlobalSource(node))
+                    if (IsGlobalSource(node))
                     {
                         globalGroups.AddRange(nodes);
                     }
@@ -981,7 +981,7 @@ namespace Kafka.Streams.Topologies
             ISourceNode node)
         {
             List<string> topics = (sourceNodeFactory.Pattern != null)
-                ? sourceNodeFactory.GetTopics(SubscriptionUpdates.getUpdates())
+                ? sourceNodeFactory.GetTopics(SubscriptionUpdates.GetUpdates())
                 : sourceNodeFactory.Topics;
 
             foreach (string topic in topics)
@@ -1163,7 +1163,7 @@ namespace Kafka.Streams.Topologies
 
         private void SetRegexMatchedTopicsToSourceNodes()
         {
-            if (SubscriptionUpdates.hasUpdates())
+            if (SubscriptionUpdates.HasUpdates())
             {
                 foreach (var stringPatternEntry in nodeToSourcePatterns)
                 {
@@ -1172,7 +1172,7 @@ namespace Kafka.Streams.Topologies
                     //need to update nodeToSourceTopics with topics matched from given regex
                     nodeToSourceTopics.Add(
                         stringPatternEntry.Key,
-                        sourceNode.GetTopics(SubscriptionUpdates.getUpdates()));
+                        sourceNode.GetTopics(SubscriptionUpdates.GetUpdates()));
 
                     logger.LogDebug($"nodeToSourceTopics {nodeToSourceTopics}");
                 }
@@ -1181,12 +1181,12 @@ namespace Kafka.Streams.Topologies
 
         private void SetRegexMatchedTopicToStateStore()
         {
-            if (SubscriptionUpdates.hasUpdates())
+            if (SubscriptionUpdates.HasUpdates())
             {
                 foreach (var storePattern in stateStoreNameToSourceRegex)
                 {
                     var updatedTopicsForStateStore = new HashSet<string>();
-                    foreach (var subscriptionUpdateTopic in SubscriptionUpdates.getUpdates())
+                    foreach (var subscriptionUpdateTopic in SubscriptionUpdates.GetUpdates())
                     {
                         foreach (Regex pattern in storePattern.Value)
                         {
@@ -1292,7 +1292,7 @@ namespace Kafka.Streams.Topologies
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public List<HashSet<string>> copartitionGroups()
+        public List<HashSet<string>> CopartitionGroups()
         {
             var list = new List<HashSet<string>>(copartitionSourceGroups.Count);
             foreach (HashSet<string> nodeNames in copartitionSourceGroups)
@@ -1377,7 +1377,7 @@ namespace Kafka.Streams.Topologies
             SetRegexMatchedTopicToStateStore();
         }
 
-        private bool isGlobalSource(string nodeName)
+        private bool IsGlobalSource(string nodeName)
         {
             var nodeFactory = nodeFactories[nodeName];
 
@@ -1391,14 +1391,14 @@ namespace Kafka.Streams.Topologies
             return false;
         }
 
-        public TopologyDescription describe()
+        public TopologyDescription Describe()
         {
             var description = new TopologyDescription();
 
             foreach (var nodeGroup in MakeNodeGroups())
             {
                 HashSet<string> allNodesOfGroups = nodeGroup.Value;
-                var isNodeGroupOfGlobalStores = nodeGroupContainsGlobalSourceNode(allNodesOfGroups);
+                var isNodeGroupOfGlobalStores = NodeGroupContainsGlobalSourceNode(allNodesOfGroups);
 
                 if (!isNodeGroupOfGlobalStores)
                 {
@@ -1423,13 +1423,13 @@ namespace Kafka.Streams.Topologies
             {
                 var node = it.Current;
 
-                if (isGlobalSource(node))
+                if (IsGlobalSource(node))
                 {
                     // we found a GlobalStore node group; those contain exactly two node: {sourceNode,processorNode}
                     // it.Remove(); // Remove sourceNode from group
                     var processorNode = nodes.GetEnumerator().Current; // get remaining processorNode
 
-                    description.addGlobalStore(new GlobalStore(
+                    description.AddGlobalStore(new GlobalStore(
                         sourceName: node,
                         processorName: processorNode,
                         storeName: (nodeFactories[processorNode] as IProcessorNodeFactory)?.stateStoreNames.GetEnumerator().Current ?? "",
@@ -1441,11 +1441,11 @@ namespace Kafka.Streams.Topologies
             }
         }
 
-        private bool nodeGroupContainsGlobalSourceNode(HashSet<string> allNodesOfGroups)
+        private bool NodeGroupContainsGlobalSourceNode(HashSet<string> allNodesOfGroups)
         {
             foreach (var node in allNodesOfGroups)
             {
-                if (isGlobalSource(node))
+                if (IsGlobalSource(node))
                 {
                     return true;
                 }
@@ -1491,7 +1491,7 @@ namespace Kafka.Streams.Topologies
                 }
             }
 
-            description.addSubtopology(
+            description.AddSubtopology(
                 new Subtopology(
                     subtopologyId,
                     new HashSet<INode>(nodesByName.Values)));
@@ -1541,7 +1541,7 @@ namespace Kafka.Streams.Topologies
             var subscriptionUpdates = new SubscriptionUpdates();
             logger.LogDebug($"{logPrefix}found {topics.Count} topics possibly matching regex");
             // update the topic groups with the returned subscription set for regex pattern subscriptions
-            subscriptionUpdates.updateTopics(topics.ToList());
+            subscriptionUpdates.UpdateTopics(topics.ToList());
 
             UpdateSubscriptions(subscriptionUpdates, logPrefix);
         }
@@ -1549,13 +1549,13 @@ namespace Kafka.Streams.Topologies
 
         // following functions are for test only
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public HashSet<string> getSourceTopicNames()
+        public HashSet<string> GetSourceTopicNames()
         {
             return sourceTopicNames;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Dictionary<string, IStateStoreFactory<IStateStore>> getStateStores()
+        public Dictionary<string, IStateStoreFactory<IStateStore>> GetStateStores()
         {
             return stateFactories;
         }

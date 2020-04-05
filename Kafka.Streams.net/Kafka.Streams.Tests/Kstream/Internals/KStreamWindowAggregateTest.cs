@@ -23,7 +23,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var topic1 = "topic1";
 
 //            IKTable<Windowed<string>, string> table2 = builder
-//                .Stream(topic1, Consumed.with(Serdes.String(), Serdes.String()))
+//                .Stream(topic1, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonized").withValueSerde(Serdes.String()));
@@ -32,27 +32,27 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table2.toStream().process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 0L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 1L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "3", 2L));
-//            driver.pipeInput(recordFactory.create(topic1, "D", "4", 3L));
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 4L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 0L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 1L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "3", 2L));
+//            driver.PipeInput(recordFactory.Create(topic1, "D", "4", 3L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 4L));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 5L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 6L));
-//            driver.pipeInput(recordFactory.create(topic1, "D", "4", 7L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 8L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "3", 9L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 5L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 6L));
+//            driver.PipeInput(recordFactory.Create(topic1, "D", "4", 7L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 8L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "3", 9L));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 10L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 11L));
-//            driver.pipeInput(recordFactory.create(topic1, "D", "4", 12L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 13L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "3", 14L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 10L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 11L));
+//            driver.PipeInput(recordFactory.Create(topic1, "D", "4", 12L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 13L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "3", 14L));
 
-//            driver.pipeInput(recordFactory.create(topic1, "B", "1", 3L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 2L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "3", 9L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "1", 3L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 2L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "3", 9L));
 
 //            Assert.Equal(
 //                asList(
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var topic2 = "topic2";
 
 //            IKTable<Windowed<string>, string> table1 = builder
-//                .Stream(topic1, Consumed.with(Serdes.String(), Serdes.String()))
+//                .Stream(topic1, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonized").withValueSerde(Serdes.String()));
@@ -108,7 +108,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table1.toStream().process(supplier);
 
 //            IKTable<Windowed<string>, string> table2 = builder
-//                .Stream(topic2, Consumed.with(Serdes.String(), Serdes.String()))
+//                .Stream(topic2, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic2-Canonized").withValueSerde(Serdes.String()));
@@ -117,15 +117,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table1.join(table2, (p1, p2) => p1 + "%" + p2).toStream().process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 0L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 1L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "3", 2L));
-//            driver.pipeInput(recordFactory.create(topic1, "D", "4", 3L));
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 9L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 0L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 1L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "3", 2L));
+//            driver.PipeInput(recordFactory.Create(topic1, "D", "4", 3L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 9L));
 
 //            List<MockProcessor<Windowed<string>, string>> processors = supplier.capturedProcessors(3);
 
-//            processors.get(0).checkAndClearProcessResult(
+//            processors.Get(0).checkAndClearProcessResult(
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1", 0),
 //                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2", 1),
 //                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+3", 2),
@@ -133,16 +133,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1", 9),
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+1", 9)
 //            );
-//            processors.get(1).checkAndClearProcessResult(new KeyValueTimestamp[0]);
-//            processors.get(2).checkAndClearProcessResult(new KeyValueTimestamp[0]);
+//            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp[0]);
+//            processors.Get(2).checkAndClearProcessResult(new KeyValueTimestamp[0]);
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "1", 5L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 6L));
-//            driver.pipeInput(recordFactory.create(topic1, "D", "4", 7L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "2", 8L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "3", 9L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 5L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 6L));
+//            driver.PipeInput(recordFactory.Create(topic1, "D", "4", 7L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "2", 8L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "3", 9L));
 
-//            processors.get(0).checkAndClearProcessResult(
+//            processors.Get(0).checkAndClearProcessResult(
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1+1", 9),
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+1+1", 9),
 //                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2", 6),
@@ -154,17 +154,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+3+3", 9),
 //                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(5, 15)), "0+3", 9)
 //            );
-//            processors.get(1).checkAndClearProcessResult(new KeyValueTimestamp[0]);
-//            processors.get(2).checkAndClearProcessResult(new KeyValueTimestamp[0]);
+//            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp[0]);
+//            processors.Get(2).checkAndClearProcessResult(new KeyValueTimestamp[0]);
 
-//            driver.pipeInput(recordFactory.create(topic2, "A", "a", 0L));
-//            driver.pipeInput(recordFactory.create(topic2, "B", "b", 1L));
-//            driver.pipeInput(recordFactory.create(topic2, "C", "c", 2L));
-//            driver.pipeInput(recordFactory.create(topic2, "D", "d", 20L));
-//            driver.pipeInput(recordFactory.create(topic2, "A", "a", 20L));
+//            driver.PipeInput(recordFactory.Create(topic2, "A", "a", 0L));
+//            driver.PipeInput(recordFactory.Create(topic2, "B", "b", 1L));
+//            driver.PipeInput(recordFactory.Create(topic2, "C", "c", 2L));
+//            driver.PipeInput(recordFactory.Create(topic2, "D", "d", 20L));
+//            driver.PipeInput(recordFactory.Create(topic2, "A", "a", 20L));
 
-//            processors.get(0).checkAndClearProcessResult(new KeyValueTimestamp[0]);
-//            processors.get(1).checkAndClearProcessResult(
+//            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp[0]);
+//            processors.Get(1).checkAndClearProcessResult(
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+a", 0),
 //                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+b", 1),
 //                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+c", 2),
@@ -173,19 +173,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(15, 25)), "0+a", 20),
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(20, 30)), "0+a", 20)
 //            );
-//            processors.get(2).checkAndClearProcessResult(
+//            processors.Get(2).checkAndClearProcessResult(
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1+1%0+a", 9),
 //                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2%0+b", 8),
 //                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+3+3%0+c", 9));
 
-//            driver.pipeInput(recordFactory.create(topic2, "A", "a", 5L));
-//            driver.pipeInput(recordFactory.create(topic2, "B", "b", 6L));
-//            driver.pipeInput(recordFactory.create(topic2, "D", "d", 7L));
-//            driver.pipeInput(recordFactory.create(topic2, "D", "d", 18L));
-//            driver.pipeInput(recordFactory.create(topic2, "A", "a", 21L));
+//            driver.PipeInput(recordFactory.Create(topic2, "A", "a", 5L));
+//            driver.PipeInput(recordFactory.Create(topic2, "B", "b", 6L));
+//            driver.PipeInput(recordFactory.Create(topic2, "D", "d", 7L));
+//            driver.PipeInput(recordFactory.Create(topic2, "D", "d", 18L));
+//            driver.PipeInput(recordFactory.Create(topic2, "A", "a", 21L));
 
-//            processors.get(0).checkAndClearProcessResult(new KeyValueTimestamp[0]);
-//            processors.get(1).checkAndClearProcessResult(
+//            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp[0]);
+//            processors.Get(1).checkAndClearProcessResult(
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+a+a", 5),
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+a", 5),
 //                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+b+b", 6),
@@ -197,7 +197,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(15, 25)), "0+a+a", 21),
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(20, 30)), "0+a+a", 21)
 //            );
-//            processors.get(2).checkAndClearProcessResult(
+//            processors.Get(2).checkAndClearProcessResult(
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1+1%0+a+a", 9),
 //                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+1+1%0+a", 9),
 //                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2%0+b+b", 8),
@@ -215,7 +215,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        var topic = "topic";
 
 //        builder
-//            .Stream(topic, Consumed.with(Serdes.String(), Serdes.String()))
+//            .Stream(topic, Consumed.With(Serdes.String(), Serdes.String()))
 //            .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //            .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)))
 //            .aggregate(
@@ -226,7 +226,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 //        var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create(topic, null, "1"));
+//        driver.PipeInput(recordFactory.Create(topic, null, "1"));
 //        LogCaptureAppender.unregister(appender);
 
 //        Assert.Equal(1.0, getMetricByName(driver.metrics(), "skipped-records-total", "stream-metrics").metricValue());
@@ -240,7 +240,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        var builder = new StreamsBuilder();
 //        var topic = "topic";
 
-//        IKStream<string, string> stream1 = builder.Stream(topic, Consumed.with(Serdes.String(), Serdes.String()));
+//        IKStream<string, string> stream1 = builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()));
 //        stream1.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //               .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)).until(100))
 //               .aggregate(
@@ -249,21 +249,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                   Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonicalized").withValueSerde(Serdes.String()).withCachingDisabled().withLoggingDisabled()
 //               )
 //               .toStream()
-//               .map((key, value) => new KeyValuePair<>(key.ToString(), value))
-//               .to("output");
+//               .map((key, value) => KeyValuePair.Create(key.ToString(), value))
+//               .To("output");
 
 //        LogCaptureAppender.setClassLoggerToDebug(KStreamWindowAggregate));
 //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 
 //        var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create(topic, "k", "100", 100L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "0", 0L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "1", 1L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "2", 2L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "3", 3L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "4", 4L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "5", 5L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "6", 6L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "100", 100L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "0", 0L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "1", 1L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "2", 2L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "3", 3L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "4", 4L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "5", 5L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "6", 6L));
 //        LogCaptureAppender.unregister(appender);
 
 //           //.AssertLatenessMetrics(
@@ -296,7 +296,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        var builder = new StreamsBuilder();
 //        var topic = "topic";
 
-//        IKStream<string, string> stream1 = builder.Stream(topic, Consumed.with(Serdes.String(), Serdes.String()));
+//        IKStream<string, string> stream1 = builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()));
 //        stream1.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //               .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(10)).grace(Duration.FromMilliseconds(90L)))
 //               .aggregate(
@@ -305,21 +305,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                   Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonicalized").withValueSerde(Serdes.String()).withCachingDisabled().withLoggingDisabled()
 //               )
 //               .toStream()
-//               .map((key, value) => new KeyValuePair<>(key.ToString(), value))
-//               .to("output");
+//               .map((key, value) => KeyValuePair.Create(key.ToString(), value))
+//               .To("output");
 
 //        LogCaptureAppender.setClassLoggerToDebug(KStreamWindowAggregate));
 //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 
 //        var driver = new TopologyTestDriver(builder.Build(), props);
-//        driver.pipeInput(recordFactory.create(topic, "k", "100", 200L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "0", 100L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "1", 101L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "2", 102L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "3", 103L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "4", 104L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "5", 105L));
-//        driver.pipeInput(recordFactory.create(topic, "k", "6", 6L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "100", 200L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "0", 100L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "1", 101L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "2", 102L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "3", 103L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "4", 104L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "5", 105L));
+//        driver.PipeInput(recordFactory.Create(topic, "k", "6", 6L));
 //        LogCaptureAppender.unregister(appender);
 
 //           //.AssertLatenessMetrics(driver, (7.0), (194.0), (97.375));
@@ -353,7 +353,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                mkEntry("processor-node-id", "KSTREAM-AGGREGATE-0000000001")
 //            )
 //        );
-//        Assert.Equal(driver.metrics().get(dropMetric).metricValue(), dropTotal);
+//        Assert.Equal(driver.metrics().Get(dropMetric).metricValue(), dropTotal);
 
 //        var dropRate = new MetricName(
 //            "late-record-drop-rate",
@@ -365,7 +365,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                mkEntry("processor-node-id", "KSTREAM-AGGREGATE-0000000001")
 //            )
 //        );
-//        Assert.Equal(driver.metrics().get(dropRate).metricValue(), not(0.0));
+//        Assert.Equal(driver.metrics().Get(dropRate).metricValue(), not(0.0));
 
 //        var latenessMaxMetric = new MetricName(
 //            "record-lateness-max",
@@ -376,7 +376,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                mkEntry("Task-id", "0_0")
 //            )
 //        );
-//        Assert.Equal(driver.metrics().get(latenessMaxMetric).metricValue(), maxLateness);
+//        Assert.Equal(driver.metrics().Get(latenessMaxMetric).metricValue(), maxLateness);
 
 //        var latenessAvgMetric = new MetricName(
 //            "record-lateness-avg",
@@ -387,11 +387,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                mkEntry("Task-id", "0_0")
 //            )
 //        );
-//        Assert.Equal(driver.metrics().get(latenessAvgMetric).metricValue(), avgLateness);
+//        Assert.Equal(driver.metrics().Get(latenessAvgMetric).metricValue(), avgLateness);
 //    }
 
 //    private Message<string, string> getOutput(var driver)
 //    {
-//        return driver.readOutput("output", new StringDeserializer(), new StringDeserializer());
+//        return driver.readOutput("output", new Serdes.String().Deserializer(), new Serdes.String().Deserializer());
 //    }
 //}

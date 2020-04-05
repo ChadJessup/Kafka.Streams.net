@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 ? null
                 : producedInternal.valueSerde.Serializer;
 
-            IStreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
+            IStreamPartitioner<K, V> partitioner = producedInternal.StreamPartitioner();
             var parentNames = ParentNodeNames();
 
             if (partitioner == null && keySerializer is IWindowedSerializer<K>)

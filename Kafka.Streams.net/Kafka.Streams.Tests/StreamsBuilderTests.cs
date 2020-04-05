@@ -14,13 +14,13 @@ namespace Kafka.Streams.Tests
     public class StreamsBuilderTest
     {
 
-        private static readonly string STREAM_TOPIC = "stream-topic";
+        private const string STREAM_TOPIC = "stream-topic";
 
-        private static readonly string STREAM_OPERATION_NAME = "stream-operation";
+        private const string STREAM_OPERATION_NAME = "stream-operation";
 
-        private static readonly string STREAM_TOPIC_TWO = "stream-topic-two";
+        private const string STREAM_TOPIC_TWO = "stream-topic-two";
 
-        private static readonly string TABLE_TOPIC = "table-topic";
+        private const string TABLE_TOPIC = "table-topic";
 
         private readonly StreamsBuilder builder = new StreamsBuilder();
 
@@ -40,7 +40,7 @@ namespace Kafka.Streams.Tests
         {
             IKTable<Bytes, string> filteredKTable = builder
                 .Table<Bytes, string>(TABLE_TOPIC)
-                .filter(MockPredicate.AllGoodPredicate<Bytes, string>());
+                .Filter(MockPredicate.AllGoodPredicate<Bytes, string>());
 
             builder
                 .Stream<Bytes, string>(STREAM_TOPIC)
@@ -54,10 +54,10 @@ namespace Kafka.Streams.Tests
             Assert.Single(topology.StateStores);
 
             Assert.Equal(
-                topology.processorConnectedStateStores("KSTREAM-JOIN-0000000005"),
+                topology.ProcessorConnectedStateStores("KSTREAM-JOIN-0000000005"),
                 new HashSet<string> { topology.StateStores[0].name });
 
-            Assert.False(topology.processorConnectedStateStores("KTABLE-FILTER-0000000003").Any());
+            Assert.False(topology.ProcessorConnectedStateStores("KTABLE-FILTER-0000000003").Any());
         }
 
         /*
@@ -105,7 +105,7 @@ namespace Kafka.Streams.Tests
                         1);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000005"),
-                        Collections.singleton(topology.StateStores.get(0).name()));
+                        Collections.singleton(topology.StateStores.Get(0).name()));
                     Assert.True(
                         topology.processorConnectedStateStores("KTABLE-MAPVALUES-0000000003").isEmpty());
                 }
@@ -153,7 +153,7 @@ namespace Kafka.Streams.Tests
                         2);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000010"),
-                        Utils.mkSet(topology.StateStores.get(0).name(), topology.StateStores.get(1).name()));
+                        Utils.mkSet(topology.StateStores.Get(0).name(), topology.StateStores.Get(1).name()));
                     Assert.True(
                         topology.processorConnectedStateStores("KTABLE-MERGE-0000000007").isEmpty());
                 }
@@ -199,17 +199,17 @@ namespace Kafka.Streams.Tests
                         1);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KTABLE-SOURCE-0000000002"),
-                        Collections.singleton(topology.StateStores.get(0).name()));
+                        Collections.singleton(topology.StateStores.Get(0).name()));
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000004"),
-                        Collections.singleton(topology.StateStores.get(0).name()));
+                        Collections.singleton(topology.StateStores.Get(0).name()));
                 }
 
                 [Fact]
                 public void shouldProcessingFromSinkTopic()
                 {
                     IKStream<string, string> source = builder.Stream("topic-source");
-                    source.to("topic-sink");
+                    source.To("topic-sink");
 
                     MockProcessorSupplier<string, string> processorSupplier = new MockProcessorSupplier<>();
                     source.process(processorSupplier);
@@ -220,7 +220,7 @@ namespace Kafka.Streams.Tests
                     try
                     {
                         var driver = new TopologyTestDriver(builder.Build(), props)) {
-                            driver.pipeInput(recordFactory.create("topic-source", "A", "aa"));
+                            driver.PipeInput(recordFactory.Create("topic-source", "A", "aa"));
                         }
 
                         // no exception .As thrown
@@ -245,7 +245,7 @@ namespace Kafka.Streams.Tests
 
                     try {
 var driver = new TopologyTestDriver(builder.Build(), props);
-                        driver.pipeInput(recordFactory.create("topic-source", "A", "aa"));
+                        driver.PipeInput(recordFactory.Create("topic-source", "A", "aa"));
                     }
 
                     Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), sourceProcessorSupplier.theCapturedProcessor().processed);
@@ -270,10 +270,10 @@ var driver = new TopologyTestDriver(builder.Build(), props);
 
                     try {
 var driver = new TopologyTestDriver(builder.Build(), props);
-                        driver.pipeInput(recordFactory.create(topic1, "A", "aa"));
-                        driver.pipeInput(recordFactory.create(topic2, "B", "bb"));
-                        driver.pipeInput(recordFactory.create(topic2, "C", "cc"));
-                        driver.pipeInput(recordFactory.create(topic1, "D", "dd"));
+                        driver.PipeInput(recordFactory.Create(topic1, "A", "aa"));
+                        driver.PipeInput(recordFactory.Create(topic2, "B", "bb"));
+                        driver.PipeInput(recordFactory.Create(topic2, "C", "cc"));
+                        driver.PipeInput(recordFactory.Create(topic1, "D", "dd"));
                     }
 
                     Assert.EqualsasList(new KeyValueTimestamp<>("A", "aa", 0),
@@ -289,23 +289,23 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     string topic = "topic";
                     ForeachAction<long, string> action = results.Add;
                     builder.Table(topic, Materialized.< long, string, IKeyValueStore<Bytes, byte[]> > As("store")
-                            .withKeySerde(Serdes.Long())
+                            .WithKeySerde(Serdes.Long())
                             .withValueSerde(Serdes.String()))
                     .toStream().ForEach (action) ;
 
                     ConsumerRecordFactory<long, string> recordFactory =
-                        new ConsumerRecordFactory<>(new LongSerializer(), Serdes.String());
+                        new ConsumerRecordFactory<>(new Serdes.Long().Serializer(), Serdes.String());
 
                     try {
 var driver = new TopologyTestDriver(builder.Build(), props);
-                        driver.pipeInput(recordFactory.create(topic, 1L, "value1"));
-                        driver.pipeInput(recordFactory.create(topic, 2L, "value2"));
+                        driver.PipeInput(recordFactory.Create(topic, 1L, "value1"));
+                        driver.PipeInput(recordFactory.Create(topic, 2L, "value2"));
 
                         IKeyValueStore<long, string> store = driver.getKeyValueStore("store");
-                        Assert.Equal("value1", store.get(1L));
-                        Assert.Equal("value2", store.get(2L));
-                        Assert.Equal("value1", results.get(1L));
-                        Assert.Equal("value2", results.get(2L));
+                        Assert.Equal("value1", store.Get(1L));
+                        Assert.Equal("value2", store.Get(2L));
+                        Assert.Equal("value1", results.Get(1L));
+                        Assert.Equal("value2", results.Get(2L));
                     }
                     }
 
@@ -314,21 +314,21 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 {
                     string topic = "topic";
                     builder.globalTable(topic, Materialized.< long, string, IKeyValueStore<Bytes, byte[]> > As("store")
-                            .withKeySerde(Serdes.Long())
+                            .WithKeySerde(Serdes.Long())
                             .withValueSerde(Serdes.String()));
 
                     ConsumerRecordFactory<long, string> recordFactory =
-                        new ConsumerRecordFactory<>(new LongSerializer(), Serdes.String());
+                        new ConsumerRecordFactory<>(new Serdes.Long().Serializer(), Serdes.String());
 
                     try
                     {
                         var driver = new TopologyTestDriver(builder.Build(), props);
-                        driver.pipeInput(recordFactory.create(topic, 1L, "value1"));
-                        driver.pipeInput(recordFactory.create(topic, 2L, "value2"));
+                        driver.PipeInput(recordFactory.Create(topic, 1L, "value1"));
+                        driver.PipeInput(recordFactory.Create(topic, 2L, "value2"));
                         IKeyValueStore<long, string> store = driver.getKeyValueStore("store");
 
-                        Assert.Equal("value1", store.get(1L));
-                        Assert.Equal("value2", store.get(2L));
+                        Assert.Equal("value1", store.Get(1L));
+                        Assert.Equal("value2", store.Get(2L));
                     }
                     }
 
@@ -363,10 +363,10 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         InternalTopologyBuilder.getStateStores().keySet(),
                         Collections.singleton("store"));
                     Assert.Equal(
-                        InternalTopologyBuilder.getStateStores().get("store").loggingEnabled(),
+                        InternalTopologyBuilder.getStateStores().Get("store").loggingEnabled(),
                         false);
                     Assert.Equal(
-                        InternalTopologyBuilder.topicGroups().get(0).stateChangelogTopics.isEmpty(),
+                        InternalTopologyBuilder.topicGroups().Get(0).stateChangelogTopics.isEmpty(),
                         true);
                 }
 
@@ -386,10 +386,10 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         InternalTopologyBuilder.getStateStores().keySet(),
                         Collections.singleton("store"));
                     Assert.Equal(
-                        InternalTopologyBuilder.getStateStores().get("store").loggingEnabled(),
+                        InternalTopologyBuilder.getStateStores().Get("store").loggingEnabled(),
                         true);
                     Assert.Equal(
-                        InternalTopologyBuilder.topicGroups().get(0).stateChangelogTopics.keySet(),
+                        InternalTopologyBuilder.topicGroups().Get(0).stateChangelogTopics.keySet(),
                         Collections.singleton("appId-store-changelog"));
                 }
 
@@ -457,8 +457,8 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 {
                     string expected = "sink-processor";
                     IKStream<object, object> stream = builder.Stream(STREAM_TOPIC);
-                    stream.to(STREAM_TOPIC_TWO, Produced.As(expected));
-                    stream.to(STREAM_TOPIC_TWO);
+                    stream.To(STREAM_TOPIC_TWO, Produced.As(expected));
+                    stream.To(STREAM_TOPIC_TWO);
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForOperation(topology, "KSTREAM-SOURCE-0000000000", expected, "KSTREAM-SINK-0000000002");
@@ -747,7 +747,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     Assert.Equal("Invalid number of expected processors", expected.Length, processors.Count);
                     for (int i = 0; i < expected.Length; i++)
                     {
-                        Assert.Equal(expected[i], processors.get(i).name());
+                        Assert.Equal(expected[i], processors.Get(i).name());
                     }
                 }
 
@@ -756,7 +756,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     Assert.Equal("Invalid number of expected state stores", expected.Length, stores.Count);
                     for (int i = 0; i < expected.Length; i++)
                     {
-                        Assert.Equal(expected[i], stores.get(i).name());
+                        Assert.Equal(expected[i], stores.Get(i).name());
                     }
                 }
                 */

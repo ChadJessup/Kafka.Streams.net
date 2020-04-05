@@ -29,11 +29,11 @@ namespace Kafka.Streams.State.TimeStamped
 
         public override ITimestampedKeyValueStore<K, V> Build()
         {
-            IKeyValueStore<Bytes, byte[]> store = storeSupplier.get();
+            IKeyValueStore<Bytes, byte[]> store = storeSupplier.Get();
 
             if (!(store is ITimestampedBytesStore))
             {
-                if (store.persistent())
+                if (store.Persistent())
                 {
                     store = null; // new KeyValueToTimestampedKeyValueByteStoreAdapter(store);
                 }

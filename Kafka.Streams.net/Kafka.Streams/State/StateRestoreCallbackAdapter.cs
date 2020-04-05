@@ -9,7 +9,7 @@ namespace Kafka.Streams.Processors.Internals
     {
         private StateRestoreCallbackAdapter() { }
 
-        public static IRecordBatchingStateRestoreCallback adapt(IStateRestoreCallback restoreCallback)
+        public static IRecordBatchingStateRestoreCallback Adapt(IStateRestoreCallback restoreCallback)
         {
             restoreCallback = restoreCallback ?? throw new ArgumentNullException(nameof(restoreCallback));
 
@@ -36,21 +36,21 @@ namespace Kafka.Streams.Processors.Internals
                 this.restoreCallback = restoreCallback;
             }
 
-            public void restore(byte[] key, byte[] value)
+            public void Restore(byte[] key, byte[] value)
             {
                 throw new NotImplementedException();
             }
 
-            public void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
+            public void RestoreAll(List<KeyValuePair<byte[], byte[]>> records)
             {
                 throw new NotImplementedException();
             }
 
-            public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
+            public void RestoreBatch(List<ConsumeResult<byte[], byte[]>> records)
             {
                 foreach (ConsumeResult<byte[], byte[]> record in records)
                 {
-                    this.restoreCallback.restore(record.Key, record.Value);
+                    this.restoreCallback.Restore(record.Key, record.Value);
                 }
             }
         }

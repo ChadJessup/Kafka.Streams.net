@@ -22,7 +22,7 @@ namespace Kafka.Streams.State.Internals
             this.streamThread = streamThread;
         }
 
-        public List<T> stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
+        public List<T> Stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
         {
             if (streamThread.State.CurrentState == StreamThreadStates.DEAD)
             {
@@ -38,8 +38,8 @@ namespace Kafka.Streams.State.Internals
             var stores = new List<T>();
             foreach (ITask streamTask in streamThread.Tasks().Values)
             {
-                IStateStore store = streamTask.getStore(storeName);
-                if (store != null && queryableStoreType.accepts(store))
+                IStateStore store = streamTask.GetStore(storeName);
+                if (store != null && queryableStoreType.Accepts(store))
                 {
                     if (!store.IsOpen())
                     {

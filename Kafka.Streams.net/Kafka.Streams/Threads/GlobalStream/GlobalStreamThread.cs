@@ -93,7 +93,7 @@ namespace Kafka.Streams.Threads.GlobalStream
             {
                 while (IsRunning())
                 {
-                    stateConsumer.pollAndUpdate();
+                    stateConsumer.PollAndUpdate();
                 }
             }
             finally
@@ -107,7 +107,7 @@ namespace Kafka.Streams.Threads.GlobalStream
 
                 try
                 {
-                    stateConsumer?.close();
+                    stateConsumer?.Close();
                 }
                 catch (IOException e)
                 {
@@ -156,7 +156,7 @@ namespace Kafka.Streams.Threads.GlobalStream
                     TimeSpan.FromMilliseconds((double)this.config.PollMs),
                     this.config.CommitIntervalMs);
 
-                stateConsumer.initialize();
+                stateConsumer.Initialize();
 
                 return stateConsumer;
             }

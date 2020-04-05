@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Internals
             this.topicPattern = pattern;
         }
 
-        public HashSet<string>? topicSet()
+        public HashSet<string>? TopicSet()
         {
             return topics;
         }

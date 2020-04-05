@@ -25,7 +25,7 @@
 
 //        public KeyValuePair<K, byte[]> next()
 //        {
-//            KeyValuePair<K, byte[]> plainKeyValue = innerIterator.next();
+//            KeyValuePair<K, byte[]> plainKeyValue = innerIterator.MoveNext();
 //            return KeyValuePair<K, byte[]>.pair(plainKeyValue.key, convertToTimestampedFormat(plainKeyValue.value));
 //        }
 //    }

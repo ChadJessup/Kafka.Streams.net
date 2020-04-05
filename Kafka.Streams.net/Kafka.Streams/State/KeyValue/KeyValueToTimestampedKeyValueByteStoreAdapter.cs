@@ -17,7 +17,7 @@
 //        {
 //            store.Add(key, valueWithTimestamp == null
 //                ? null
-//                : rawValue(valueWithTimestamp));
+//                : RawValue(valueWithTimestamp));
 //        }
 
 //        public byte[] putIfAbsent(Bytes key,
@@ -27,7 +27,7 @@
 //                key,
 //                valueWithTimestamp == null
 //                ? null
-//                : rawValue(valueWithTimestamp)));
+//                : RawValue(valueWithTimestamp)));
 //        }
 
 //        public void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
@@ -35,7 +35,7 @@
 //            foreach (KeyValuePair<Bytes, byte[]> entry in entries)
 //            {
 //                byte[] valueWithTimestamp = entry.value;
-//                store.Add(entry.key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
+//                store.Add(entry.key, valueWithTimestamp == null ? null : RawValue(valueWithTimestamp));
 //            }
 //        }
 
@@ -47,7 +47,7 @@
 //        public void init(IProcessorContext<Bytes, byte[]> context,
 //                         IStateStore root)
 //        {
-//            store.init(context, root);
+//            store.Init(context, root);
 //        }
 
 //        public void flush()
@@ -78,7 +78,7 @@
 //        public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
 //                                                     Bytes to)
 //        {
-//            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.range(from, to));
+//            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.Range(from, to));
 //        }
 
 //        public IKeyValueIterator<Bytes, byte[]> all()
@@ -86,9 +86,9 @@
 //            return new KeyValueToTimestampedKeyValueIteratorAdapter<Bytes, byte[]>(store.all());
 //        }
 
-//        public override long approximateNumEntries()
+//        public override long approximateNumEntries
 //        {
-//            return store.approximateNumEntries();
+//            return store.approximateNumEntries;
 //        }
 
 //    }

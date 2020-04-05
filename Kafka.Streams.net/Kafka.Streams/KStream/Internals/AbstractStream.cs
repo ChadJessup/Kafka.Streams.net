@@ -82,10 +82,10 @@ namespace Kafka.Streams.KStream.Internals
 
         // This method allows to expose the InternalTopologyBuilder instance
         // to uses that extend AbstractStream.
-        protected InternalTopologyBuilder internalTopologyBuilder()
+        protected InternalTopologyBuilder InternalTopologyBuilder()
             => builder.InternalTopologyBuilder;
 
-        public HashSet<string> ensureJoinableWith<VO>(AbstractStream<K, VO> other)
+        public HashSet<string> EnsureJoinableWith<VO>(AbstractStream<K, VO> other)
         {
             if (other is null)
             {
@@ -96,31 +96,31 @@ namespace Kafka.Streams.KStream.Internals
             allSourceNodes.UnionWith(sourceNodes);
             allSourceNodes.UnionWith(other.sourceNodes);
 
-            builder.InternalTopologyBuilder.copartitionSources(allSourceNodes);
+            builder.InternalTopologyBuilder.CopartitionSources(allSourceNodes);
 
             return allSourceNodes;
         }
 
-        public static IValueJoiner<T2, T1, R> reverseJoiner<T1, T2, R>(IValueJoiner<T1, T2, R> joiner)
+        public static IValueJoiner<T2, T1, R> ReverseJoiner<T1, T2, R>(IValueJoiner<T1, T2, R> joiner)
         {
             return null;// (value2, value1)=>joiner.apply(value1, value2);
         }
 
-        protected static IValueMapperWithKey<K, V, VR> withKey<VR>(Func<V, VR> valueMapper)
+        protected static IValueMapperWithKey<K, V, VR> WithKey<VR>(Func<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
 
             return new ValueMapperWithKey<K, V, VR>((readOnlyKey, value) => valueMapper(value));
         }
 
-        protected static IValueMapperWithKey<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
+        protected static IValueMapperWithKey<K, V, VR> WithKey<VR>(IValueMapper<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
 
             return new ValueMapperWithKey<K, V, VR>((readOnlyKey, value) => valueMapper.Apply(value));
         }
 
-        public static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
+        public static IValueTransformerWithKeySupplier<K, V, VR> ToValueTransformerWithKeySupplier<VR>(
              IValueTransformerSupplier<V, VR> valueTransformerSupplier)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
@@ -133,7 +133,7 @@ namespace Kafka.Streams.KStream.Internals
 
             //        public void init(IProcessorContext<K, V> context)
             //        {
-            //            valueTransformer.init(context);
+            //            valueTransformer.Init(context);
             //        }
 
 

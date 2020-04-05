@@ -16,21 +16,21 @@ namespace Kafka.Streams.State.Window
             innerIterator = iterator;
         }
 
-        public void close()
+        public void Close()
         {
-            innerIterator.close();
+            innerIterator.Close();
         }
-        public long peekNextKey()
+        public long PeekNextKey()
         {
-            return innerIterator.peekNextKey();
+            return innerIterator.PeekNextKey();
         }
 
-        public bool hasNext()
+        public bool HasNext()
         {
             return innerIterator.MoveNext();
         }
 
-        public KeyValuePair<long, V> next()
+        public KeyValuePair<long, V> Next()
         {
             KeyValuePair<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.Current;
 

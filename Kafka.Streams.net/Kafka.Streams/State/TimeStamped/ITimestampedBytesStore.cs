@@ -10,7 +10,7 @@ namespace Kafka.Streams.State.TimeStamped
         //    }
 
         //    return new ByteBuffer()
-        //        .allocate(8 + plainValue.Length)
+        //        .Allocate(8 + plainValue.Length)
         //        .putLong(-1)
         //        .Add(plainValue)
         //        .array();

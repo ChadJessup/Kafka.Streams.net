@@ -31,7 +31,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        public void init(ProcessorContext context)
 //        {
-//            base.init(context);
+//            base.Init(context);
 //            System.Console.Out.WriteLine("[DEV] initializing processor: topic=" + topic + " taskId=" + context.taskId());
 //            numRecordsProcessed = 0;
 //        }
@@ -70,7 +70,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //                public KeyValuePair<string, long> apply(string key, long value)
 //        {
-//            return new KeyValuePair<>(value == null ? null : long.toString(value), 1L);
+//            return KeyValuePair.Create(value == null ? null : long.toString(value), 1L);
 //        }
 //    };
 //}

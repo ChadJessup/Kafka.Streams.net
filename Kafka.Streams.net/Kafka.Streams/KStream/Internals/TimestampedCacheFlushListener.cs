@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
             myNode = (IProcessorNode<K, V>)this.context.GetCurrentNode();
         }
 
-        public void apply(
+        public void Apply(
             K key,
             ValueAndTimestamp<V> newValue,
             ValueAndTimestamp<V> oldValue,
@@ -32,10 +32,10 @@ namespace Kafka.Streams.KStream.Internals
             context.SetCurrentNode(myNode);
             try
             {
-                //context.forward(
+                //context.Forward(
                 //    key,
                 //    new Change<ValueAndTimestamp<V>>(newValue, oldValue),
-                //    To.all().withTimestamp(newValue != null ? newValue.timestamp : timestamp));
+                //    To.All().WithTimestamp(newValue != null ? newValue.timestamp : timestamp));
             }
             finally
             {

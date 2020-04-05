@@ -63,10 +63,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldInitialiseFlatTransformProcessor()
 //        {
-//            transformer.init(context);
+//            transformer.Init(context);
 //            replayAll();
 
-//            processor.init(context);
+//            processor.Init(context);
 
 //            //verifyAll();
 //        }
@@ -78,13 +78,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    KeyValuePair.Create(2, 20),
 //                    KeyValuePair.Create(3, 30),
 //                    KeyValuePair.Create(4, 40));
-//            processor.init(context);
+//            processor.Init(context);
 //            EasyMock.reset(transformer);
 
 //            EasyMock.expect(transformer.transform(inputKey, inputValue)).andReturn(outputRecords);
 //            foreach (KeyValuePair<int, int> outputRecord in outputRecords)
 //            {
-//                context.forward(outputRecord.key, outputRecord.value);
+//                context.Forward(outputRecord.key, outputRecord.value);
 //            }
 //            replayAll();
 
@@ -96,7 +96,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldAllowEmptyListAsResultOfTransform()
 //        {
-//            processor.init(context);
+//            processor.Init(context);
 //            EasyMock.reset(transformer);
 
 //            EasyMock.expect(transformer.transform(inputKey, inputValue))
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldAllowNullAsResultOfTransform()
 //        {
-//            processor.init(context);
+//            processor.Init(context);
 //            EasyMock.reset(transformer);
 
 //            EasyMock.expect(transformer.transform(inputKey, inputValue))
@@ -142,10 +142,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            KStreamFlatTransform<int, int, int, int> processorSupplier =
 //                new KStreamFlatTransform<>(transformerSupplier);
 
-//            EasyMock.expect(transformerSupplier.get()).andReturn(transformer);
+//            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer);
 //            replayAll();
 
-//            Processor<int, int> processor = processorSupplier.get();
+//            Processor<int, int> processor = processorSupplier.Get();
 
 //            //verifyAll();
 //            Assert.True(processor is KStreamFlatTransformProcessor);

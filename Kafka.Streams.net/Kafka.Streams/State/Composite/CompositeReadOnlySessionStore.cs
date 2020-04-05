@@ -22,7 +22,7 @@
 //            {
 //                try
 //                {
-//                    IKeyValueIterator<Windowed<K>, V> result = store.fetch(key);
+//                    IKeyValueIterator<Windowed<K>, V> result = store.Fetch(key);
 //                    if (!result.hasNext())
 //                    {
 //                        result.close();
@@ -47,7 +47,7 @@
 //        {
 //            from = from ?? throw new ArgumentNullException(nameof(from));
 //            to = to ?? throw new ArgumentNullException(nameof(to));
-//            INextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.fetch(from, to);
+//            INextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.Fetch(from, to);
 //            return new DelegatingPeekingKeyValueIterator<>(storeName,
 //                                                           new CompositeKeyValueIterator<>(
 //                                                                   storeProvider.stores(storeName, queryableStoreType).iterator(),

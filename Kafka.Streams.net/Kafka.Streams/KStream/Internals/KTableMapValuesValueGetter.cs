@@ -17,7 +17,7 @@
 
 //        public void init(IProcessorContext context)
 //        {
-//            parentGetter.init(context);
+//            parentGetter.Init(context);
 //        }
 
 

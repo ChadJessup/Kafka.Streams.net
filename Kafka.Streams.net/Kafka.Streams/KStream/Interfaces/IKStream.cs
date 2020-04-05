@@ -1,7 +1,9 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Topologies;
 using System;
 using System.Collections.Generic;
 
@@ -41,7 +43,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKStream<K, V> filter(Func<K, V, bool> predicate);
+        IKStream<K, V> Filter(Func<K, V, bool> predicate);
 
         /**
          * Create a new {@code KStream} that consists of all records of this stream which satisfy the given predicate.
@@ -53,7 +55,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKStream<K, V> filter(Func<K, V, bool> predicate, Named named);
+        IKStream<K, V> Filter(Func<K, V, bool> predicate, Named named);
 
         /**
          * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
@@ -65,7 +67,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKStream<K, V> filterNot(Func<K, V, bool> predicate);
+        IKStream<K, V> FilterNot(Func<K, V, bool> predicate);
 
         /**
          * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
@@ -78,7 +80,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKStream<K, V> filterNot(Func<K, V, bool> predicate, Named named);
+        IKStream<K, V> FilterNot(Func<K, V, bool> predicate, Named named);
 
         /**
          * Set a new key (with possibly new type) for each input record.
@@ -111,7 +113,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatMapValues(ValueMapper)
          * @see #flatMapValues(ValueMapperWithKey)
          */
-        IKStream<KR, V> selectKey<KR>(IKeyValueMapper<K, V, KR> mapper);
+        IKStream<KR, V> SelectKey<KR>(IKeyValueMapper<K, V, KR> mapper);
 
         /**
          * Set a new key (with possibly new type) for each input record.
@@ -145,7 +147,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatMapValues(ValueMapper)
          * @see #flatMapValues(ValueMapperWithKey)
          */
-        IKStream<KR, V> selectKey<KR>(
+        IKStream<KR, V> SelectKey<KR>(
             IKeyValueMapper<K, V, KR> mapper,
             Named named);
 
@@ -163,7 +165,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValuePair<string, int>> {
          *     KeyValuePair<string, int> apply(string key, string value)
 {
-         *         return new KeyValuePair<>(key.toUpperCase(), value.split(" ").Length);
+         *         return KeyValuePair.Create(key.toUpperCase(), value.Split(" ").Length);
          *     }
          * });
          * }</pre>
@@ -186,7 +188,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> map<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
+        IKStream<KR, VR> Map<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
+
+        IKStream<KR, VR> Map<KR, VR>(Func<K, V, KeyValuePair<KR, VR>> mapper)
+            => Map(new KeyValueMapper<K, V, KeyValuePair<KR, VR>>(mapper));
 
         /**
          * Transform each record of the input stream into a new record in the output stream (both key and value type can be
@@ -202,7 +207,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValuePair<string, int>> {
          *     KeyValuePair<string, int> apply(string key, string value)
 {
-         *         return new KeyValuePair<>(key.toUpperCase(), value.split(" ").Length);
+         *         return KeyValuePair.Create(key.toUpperCase(), value.Split(" ").Length);
          *     }
          * });
          * }</pre>
@@ -226,7 +231,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> map<KR, VR>(
+        IKStream<KR, VR> Map<KR, VR>(
             IKeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper,
             Named named);
 
@@ -243,7 +248,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapper<string, int> {
          *     int apply(string value)
 {
-         *         return value.split(" ").Length;
+         *         return value.Split(" ").Length;
          *     }
          * });
          * }</pre>
@@ -263,8 +268,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> mapValues<VR>(IValueMapper<V, VR> mapper);
+        IKStream<K, VR> MapValues<VR>(IValueMapper<V, VR> mapper);
 
+        IKStream<K, VR> MapValues<VR>(Func<V, VR> mapper);
 
         /**
          * Transform the value of each input record into a new value (with possible new type) of the output record.
@@ -279,7 +285,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapper<string, int> {
          *     int apply(string value)
 {
-         *         return value.split(" ").Length;
+         *         return value.Split(" ").Length;
          *     }
          * });
          * }</pre>
@@ -300,7 +306,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> mapValues<VR>(
+        IKStream<K, VR> MapValues<VR>(
             IValueMapper<V, VR> mapper,
             Named named);
 
@@ -317,7 +323,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, int> {
          *     int apply(string readOnlyKey, string value)
 {
-         *         return readOnlyKey.split(" ").Length + value.split(" ").Length;
+         *         return readOnlyKey.Split(" ").Length + value.Split(" ").Length;
          *     }
          * });
          * }</pre>
@@ -338,7 +344,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper);
+        IKStream<K, VR> MapValues<VR>(IValueMapperWithKey<K, V, VR> mapper);
 
         /**
          * Transform the value of each input record into a new value (with possible new type) of the output record.
@@ -353,7 +359,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, int> {
          *     int apply(string readOnlyKey, string value)
 {
-         *         return readOnlyKey.split(" ").Length + value.split(" ").Length;
+         *         return readOnlyKey.Split(" ").Length + value.Split(" ").Length;
          *     }
          * });
          * }</pre>
@@ -375,7 +381,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> mapValues<VR>(
+        IKStream<K, VR> MapValues<VR>(
             IValueMapperWithKey<K, V, VR> mapper,
             Named named);
 
@@ -395,12 +401,12 @@ namespace Kafka.Streams.KStream.Interfaces
          *     new KeyValueMapper<byte[], string, IEnumerable<KeyValuePair<string, int>>> {
          *         IEnumerable<KeyValuePair<string, int>> apply(byte[] key, string value)
 {
-         *             string[] tokens = value.split(" ");
+         *             string[] tokens = value.Split(" ");
          *             List<KeyValuePair<string, int>> result = new List<>(tokens.Length);
          *
          *             for(string token : tokens)
 {
-         *                 result.Add(new KeyValuePair<>(token, 1));
+         *                 result.Add(KeyValuePair.Create(token, 1));
          *             }
          *
          *             return result;
@@ -430,7 +436,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> flatMap<KR, VR>(IKeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper);
+        IKStream<KR, VR> FlatMap<KR, VR>(IKeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper);
 
         /**
          * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -448,12 +454,12 @@ namespace Kafka.Streams.KStream.Interfaces
          *     new KeyValueMapper<byte[], string, IEnumerable<KeyValuePair<string, int>>> {
          *         IEnumerable<KeyValuePair<string, int>> apply(byte[] key, string value)
 {
-         *             string[] tokens = value.split(" ");
+         *             string[] tokens = value.Split(" ");
          *             List<KeyValuePair<string, int>> result = new List<>(tokens.Length);
          *
          *             for(string token : tokens)
 {
-         *                 result.Add(new KeyValuePair<>(token, 1));
+         *                 result.Add(KeyValuePair.Create(token, 1));
          *             }
          *
          *             return result;
@@ -484,7 +490,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> flatMap<KR, VR>(
+        IKStream<KR, VR> FlatMap<KR, VR>(
             IKeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper,
             Named named);
 
@@ -504,7 +510,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KStream<byte[], string> outputStream = inputStream.flatMapValues(new ValueMapper<string, IEnumerable<string>> {
          *     IEnumerable<string> apply(string value)
 {
-         *         return Arrays.asList(value.split(" "));
+         *         return Arrays.asList(value.Split(" "));
          *     }
          * });
          * }</pre>
@@ -530,7 +536,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper);
+        IKStream<K, VR> FlatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper);
 
         //IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
         //    where VR : IEnumerable<VR>;
@@ -551,7 +557,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KStream<byte[], string> outputStream = inputStream.flatMapValues(new ValueMapper<string, IEnumerable<string>> {
          *     IEnumerable<string> apply(string value)
 {
-         *         return Arrays.asList(value.split(" "));
+         *         return Arrays.asList(value.Split(" "));
          *     }
          * });
          * }</pre>
@@ -578,7 +584,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper, Named named);
+        IKStream<K, VR> FlatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper, Named named);
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -599,7 +605,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *         if(readOnlyKey == 1)
 {
-         *             return Arrays.asList(value.split(" "));
+         *             return Arrays.asList(value.Split(" "));
          *         } else
 {
 
@@ -653,7 +659,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *         if(readOnlyKey == 1)
 {
-         *             return Arrays.asList(value.split(" "));
+         *             return Arrays.asList(value.Split(" "));
          *         } else
 {
 
@@ -780,7 +786,13 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return multiple distinct substreams of this {@code KStream}
          */
 
-        IKStream<K, V>[] branch(Named named, Func<K, V, bool>[] predicates);
+        IKStream<K, V>[] Branch(Named named, Func<K, V, bool>[] predicates);
+
+        IKStream<K, VR> DoStreamTableJoin<VR, VO>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Joined<K, V, VO> joined,
+            bool leftJoin);
 
         /**
          * Merge this stream and the given stream into one larger stream.
@@ -793,7 +805,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param stream a stream which is to be merged into this stream
          * @return a merged stream containing all records from this and the provided {@code KStream}
          */
-        IKStream<K, V> merge(IKStream<K, V> stream);
+        IKStream<K, V> Merge(IKStream<K, V> stream);
 
         /**
          * Merge this stream and the given stream into one larger stream.
@@ -807,7 +819,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param named  a {@link Named} config used to name the processor in the topology
          * @return a merged stream containing all records from this and the provided {@code KStream}
          */
-        IKStream<K, V> merge(IKStream<K, V> stream, Named named);
+        IKStream<K, V> Merge(IKStream<K, V> stream, Named named);
 
         /**
          * Materialize this stream to a topic and creates a new {@code KStream} from the topic using default serializers,
@@ -823,7 +835,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param topic the topic name
          * @return a {@code KStream} that contains the exact same (and potentially repartitioned) records as this {@code KStream}
          */
-        IKStream<K, V> through(string topic);
+        IKStream<K, V> Through(string topic);
 
         /**
          * Materialize this stream to a topic and creates a new {@code KStream} from the topic using the
@@ -832,8 +844,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
          * started).
          * <p>
-         * This is similar to calling {@link #to(string, Produced) to(someTopic, Produced.with(keySerde, valueSerde)}
-         * and {@link StreamsBuilder#stream(string, Consumed) StreamsBuilder#stream(someTopicName, Consumed.with(keySerde, valueSerde))}.
+         * This is similar to calling {@link #to(string, Produced) to(someTopic, Produced.With(keySerde, valueSerde)}
+         * and {@link StreamsBuilder#stream(string, Consumed) StreamsBuilder#stream(someTopicName, Consumed.With(keySerde, valueSerde))}.
          * Note that {@code through()} uses a hard coded {@link org.apache.kafka.streams.processor.FailOnInvalidTimestamp
          * timestamp extractor} and does not allow to customize it, to ensure correct timestamp propagation.
          *
@@ -841,7 +853,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param produced  the options to use when producing to the topic
          * @return a {@code KStream} that contains the exact same (and potentially repartitioned) records as this {@code KStream}
          */
-        IKStream<K, V> through(
+        IKStream<K, V> Through(
             string topic,
             Produced<K, V> produced);
 
@@ -898,7 +910,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -996,7 +1008,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1097,7 +1109,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1197,7 +1209,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1297,7 +1309,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1312,7 +1324,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is {@code null},
          * no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()}, no.Additional {@link KeyValuePair}
-         * pairs can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
+         * pairs can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.Forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
          * emit a {@link KeyValuePair} pair.
          * <pre>{@code
@@ -1379,7 +1391,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1394,7 +1406,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is {@code null}, no
          * records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()}, no.Additional {@link KeyValuePair}
-         * pairs can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
+         * pairs can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.Forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
          * emit a {@link KeyValuePair} pair.
          * <pre>{@code
@@ -1464,7 +1476,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1481,7 +1493,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * is {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
          * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
-         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
+         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.Forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
          * to emit a {@link KeyValuePair} pair.
          * <pre>{@code
@@ -1550,7 +1562,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1567,7 +1579,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * is {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
          * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
-         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
+         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.Forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
          * to emit a {@link KeyValuePair} pair.
          * <pre>{@code
@@ -1638,7 +1650,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1656,7 +1668,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
          * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
-         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
+         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.Forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
          * emit a {@link KeyValuePair} pair.
          * <pre>{@code
@@ -1731,7 +1743,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1749,7 +1761,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
          * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
-         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
+         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.Forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
          * emit a {@link KeyValuePair} pair.
          * <pre>{@code
@@ -1826,7 +1838,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1844,7 +1856,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * is an empty {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
          * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
-         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
+         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.Forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
          * to emit a {@link KeyValuePair} pair.
          * <pre>{@code
@@ -1921,7 +1933,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1939,7 +1951,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * is an empty {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
          * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
-         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
+         * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.Forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
          * to emit a {@link KeyValuePair} pair.
          * <pre>{@code
@@ -2017,7 +2029,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myProcessorState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myProcessorState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -2067,7 +2079,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          */
         void Process(IProcessorSupplier<K, V> IProcessorSupplier, params string[] stateStoreNames);
-
+        void Process(Func<IKeyValueProcessor<K, V>> processor);
         /**
          * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
          * {@link IProcessorSupplier}).
@@ -2081,7 +2093,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myProcessorState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myProcessorState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store

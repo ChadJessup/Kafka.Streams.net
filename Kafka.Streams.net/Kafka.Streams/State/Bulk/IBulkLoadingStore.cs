@@ -5,8 +5,8 @@ namespace Kafka.Streams.State.Interfaces
 {
     public interface IBulkLoadingStore
     {
-        void toggleDbForBulkLoading(bool prepareForBulkload);
-        void addToBatch(KeyValuePair<byte[], byte[]> record, WriteBatch batch);
-        void write(WriteBatch batch);
+        void ToggleDbForBulkLoading(bool prepareForBulkload);
+        void AddToBatch(KeyValuePair<byte[], byte[]> record, WriteBatch batch);
+        void Write(WriteBatch batch);
     }
 }

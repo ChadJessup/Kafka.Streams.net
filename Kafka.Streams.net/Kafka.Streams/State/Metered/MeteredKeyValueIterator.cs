@@ -25,7 +25,7 @@
 
 //        public KeyValuePair<K, V> next()
 //        {
-//            KeyValuePair<Bytes, byte[]> keyValue = iter.next();
+//            KeyValuePair<Bytes, byte[]> keyValue = iter.MoveNext();
 //            return KeyValuePair.pair(
 //                serdes.keyFrom(keyValue.Key),
 //                outerValue(keyValue.Value));

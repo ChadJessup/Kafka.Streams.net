@@ -47,7 +47,7 @@
 //                    && segments.hasNext())
 //            {
 //                close();
-//                currentSegment = segments.next();
+//                currentSegment = segments.MoveNext();
 //                try
 //                {
 //                    if (from == null || to == null)
@@ -56,7 +56,7 @@
 //                    }
 //                    else
 //                    {
-//                        currentIterator = currentSegment.range(from, to);
+//                        currentIterator = currentSegment.Range(from, to);
 //                    }
 //                }
 //                catch (InvalidStateStoreException e)
@@ -87,7 +87,7 @@
 //            {
 //                throw new NoSuchElementException();
 //            }
-//            return currentIterator.next();
+//            return currentIterator.MoveNext();
 //        }
 
 //        public void Remove()

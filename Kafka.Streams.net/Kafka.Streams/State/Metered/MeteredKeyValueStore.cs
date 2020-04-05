@@ -65,14 +65,14 @@
 //                //            measureLatency(
 //                //                () =>
 //                //{
-//                //    base.init(context, root);
+//                //    base.Init(context, root);
 //                //    return null;
 //                //},
 //                //            restoreTime);
 //            }
 //            else
 //            {
-//                base.init(context, root);
+//                base.Init(context, root);
 //            }
 //        }
 
@@ -120,7 +120,7 @@
 //            }
 //            catch (ProcessorStateException e)
 //            {
-//                string message = string.Format(e.getMessage(), key);
+//                string message = string.Format(e.ToString(), key);
 //                throw new ProcessorStateException(message, e);
 //            }
 //        }
@@ -133,18 +133,18 @@
 //                {
 //                    //                measureLatency(() =>
 //                    //{
-//                    //    wrapped.Add(keyBytes(key), serdes.rawValue(value));
+//                    //    wrapped.Add(keyBytes(key), serdes.RawValue(value));
 //                    //    return null;
 //                    //}, putTime);
 //                }
 //                else
 //                {
-//                    wrapped.Add(keyBytes(key), serdes.rawValue(value));
+//                    wrapped.Add(keyBytes(key), serdes.RawValue(value));
 //                }
 //            }
 //            catch (ProcessorStateException e)
 //            {
-//                string message = string.Format(e.getMessage(), key, value);
+//                string message = string.Format(e.ToString(), key, value);
 //                throw new ProcessorStateException(message, e);
 //            }
 //        }
@@ -154,12 +154,12 @@
 //            if (putIfAbsentTime.shouldRecord())
 //            {
 //                return measureLatency(
-//                    () => outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.rawValue(value))),
+//                    () => outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.RawValue(value))),
 //                    putIfAbsentTime);
 //            }
 //            else
 //            {
-//                return outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.rawValue(value)));
+//                return outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.RawValue(value)));
 //            }
 //        }
 
@@ -196,7 +196,7 @@
 //            }
 //            catch (ProcessorStateException e)
 //            {
-//                string message = string.Format(e.getMessage(), key);
+//                string message = string.Format(e.ToString(), key);
 //                throw new ProcessorStateException(message, e);
 //            }
 //        }
@@ -204,7 +204,7 @@
 //        public IKeyValueIterator<K, V> range(K from, K to)
 //        {
 //            return new MeteredKeyValueIterator(
-//                wrapped.range(Bytes.wrap(serdes.rawKey(from)), Bytes.wrap(serdes.rawKey(to))),
+//                wrapped.Range(Bytes.Wrap(serdes.rawKey(from)), Bytes.Wrap(serdes.rawKey(to))),
 //                rangeTime);
 //        }
 
@@ -265,7 +265,7 @@
 
 //        private Bytes keyBytes(K key)
 //        {
-//            return Bytes.wrap(serdes.rawKey(key));
+//            return Bytes.Wrap(serdes.rawKey(key));
 //        }
 
 //        private List<KeyValuePair<Bytes, byte[]>> innerEntries(List<KeyValuePair<K, V>> from)
@@ -273,7 +273,7 @@
 //            List<KeyValuePair<Bytes, byte[]>> byteEntries = new List<KeyValuePair<Bytes, byte[]>>();
 //            foreach (KeyValuePair<K, V> entry in from)
 //            {
-//                byteEntries.Add(KeyValuePair<K, V>.Pair(Bytes.wrap(serdes.rawKey(entry.Key)), serdes.rawValue(entry.Value)));
+//                byteEntries.Add(KeyValuePair<K, V>.Pair(Bytes.Wrap(serdes.rawKey(entry.Key)), serdes.RawValue(entry.Value)));
 //            }
 //            return byteEntries;
 //        }

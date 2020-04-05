@@ -27,8 +27,8 @@ namespace Kafka.Streams.Processors
                 stateManager,
                 cache)
         {
-            keySerde = (ISerde<K>)config.defaultKeySerde();
-            valueSerde = (ISerde<V>)config.defaultValueSerde();
+            keySerde = (ISerde<K>)config.GetDefaultKeySerde();
+            valueSerde = (ISerde<V>)config.GetDefaultValueSerde();
         }
 
         public ISerde<K> keySerde { get; }
@@ -66,7 +66,7 @@ namespace Kafka.Streams.Processors
             this.cache = cache;
         }
 
-        public DirectoryInfo stateDir => stateManager.baseDir;
+        public DirectoryInfo stateDir => stateManager.BaseDir;
 
         public virtual void Register(
             IStateStore store,
@@ -114,7 +114,7 @@ namespace Kafka.Streams.Processors
             {
                 if (recordContext == null)
                 {
-                    throw new InvalidOperationException("This should not happen as partition() should only be called while a record is processed");
+                    throw new InvalidOperationException("This should not happen as Partition should only be called while a record is processed");
                 }
 
                 return recordContext.partition;
@@ -143,7 +143,7 @@ namespace Kafka.Streams.Processors
             {
                 if (recordContext == null)
                 {
-                    throw new InvalidOperationException("This should not happen as headers() should only be called while a record is processed");
+                    throw new InvalidOperationException("This should not happen as Headers should only be called while a record is processed");
                 }
 
                 return recordContext.headers;
@@ -166,7 +166,10 @@ namespace Kafka.Streams.Processors
             }
         }
 
-        public Dictionary<string, object> appConfigs()
+        public ISerde keySerde { get; }
+        public ISerde valueSerde { get; }
+
+        public Dictionary<string, object> AppConfigs()
         {
             var combined = new Dictionary<string, object>();
             //combined.putAll(config.originals());
@@ -174,12 +177,12 @@ namespace Kafka.Streams.Processors
             return combined;
         }
 
-        public Dictionary<string, object> appConfigsWithPrefix(string prefix)
+        public Dictionary<string, object> AppConfigsWithPrefix(string prefix)
         {
             return null; // config.originalsWithPrefix(prefix);
         }
 
-        public virtual void setRecordContext(ProcessorRecordContext recordContext)
+        public virtual void SetRecordContext(ProcessorRecordContext recordContext)
         {
             this.recordContext = recordContext;
         }
@@ -187,52 +190,52 @@ namespace Kafka.Streams.Processors
         public virtual void SetCurrentNode(IProcessorNode? current)
             => this.currentNode = current;
 
-        public ThreadCache getCache()
+        public ThreadCache GetCache()
         {
             return cache;
         }
 
-        public void initialize()
+        public void Initialize()
         {
             initialized = true;
         }
 
-        public void uninitialize()
+        public void Uninitialize()
         {
             initialized = false;
         }
 
-        public virtual IStateStore getStateStore(string name)
+        public virtual IStateStore GetStateStore(string name)
         {
             throw new NotImplementedException();
         }
 
-        public virtual ICancellable schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
+        public virtual ICancellable Schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void forward<K1, V1>(K1 key, V1 value)
+        public virtual void Forward<K1, V1>(K1 key, V1 value)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void forward<K1, V1>(K1 key, V1 value, To to)
+        public virtual void Forward<K1, V1>(K1 key, V1 value, To to)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void forward<K1, V1>(K1 key, V1 value, string childName)
+        public virtual void Forward<K1, V1>(K1 key, V1 value, string childName)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void commit()
+        public virtual void Commit()
         {
             throw new NotImplementedException();
         }
 
-        public ICancellable schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
+        public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
         {
             throw new NotImplementedException();
         }

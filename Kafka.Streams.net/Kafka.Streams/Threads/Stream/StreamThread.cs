@@ -179,7 +179,7 @@ namespace Kafka.Streams.Threads.Stream
         {
             IProducer<byte[], byte[]>? threadProducer = null;
 
-            var eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(config.getString(StreamsConfigPropertyNames.ProcessingGuarantee));
+            var eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(config.GetString(StreamsConfigPropertyNames.ProcessingGuarantee));
             if (!eosEnabled)
             {
                 var producerConfigs = config.GetProducerConfigs(StreamsBuilder.GetThreadProducerClientId(threadClientId));
@@ -456,7 +456,7 @@ namespace Kafka.Streams.Threads.Stream
 
             // TODO: we will process some tasks even if the state is not RUNNING, i.e. some other
             // tasks are still being restored.
-            if (this.TaskManager.hasActiveRunningTasks())
+            if (this.TaskManager.HasActiveRunningTasks())
             {
                 // Within an iteration, after N (N initialized as 1 upon start up) round of processing one-record-each on the applicable tasks, check the current time:
                 // 1. If it is time to commit, do it;
@@ -471,7 +471,7 @@ namespace Kafka.Streams.Threads.Stream
                 {
                     for (var i = 0; i < numIterations; i++)
                     {
-                        processed = this.TaskManager.process(now);
+                        processed = this.TaskManager.Process(now);
 
                         if (processed > 0)
                         {
@@ -479,7 +479,7 @@ namespace Kafka.Streams.Threads.Stream
                             // processSensor.record(processLatency / (double)processed, now);
 
                             // commit any tasks that have requested a commit
-                            var committed = this.TaskManager.maybeCommitActiveTasksPerUserRequested();
+                            var committed = this.TaskManager.MaybeCommitActiveTasksPerUserRequested();
 
                             if (committed > 0)
                             {
@@ -563,7 +563,7 @@ namespace Kafka.Streams.Threads.Stream
 
         private void ResetInvalidOffsets(InvalidOffsetException e)
         {
-            HashSet<TopicPartition> partitions = e.partitions();
+            HashSet<TopicPartition> partitions = e.Partitions();
             var loggedTopics = new HashSet<string>();
             var seekToBeginning = new HashSet<TopicPartition>();
             var seekToEnd = new HashSet<TopicPartition>();
@@ -584,7 +584,7 @@ namespace Kafka.Streams.Threads.Stream
                     {
                         var errorMessage = "No valid committed offset found for input topic %s (partition %s) and no valid reset policy configured." +
                             " You need to set configuration parameter \"auto.offset.reset\" or specify a topic specific reset " +
-                            "policy via StreamsBuilder#stream(..., Consumed.with(Topology.AutoOffsetReset)) or StreamsBuilder#table(..., Consumed.with(Topology.AutoOffsetReset))";
+                            "policy via StreamsBuilder#stream(..., Consumed.With(Topology.AutoOffsetReset)) or StreamsBuilder#table(..., Consumed.With(Topology.AutoOffsetReset))";
 
                         throw new StreamsException(string.Format(errorMessage, partition.Topic, partition.Partition), e);
                     }
@@ -637,7 +637,7 @@ namespace Kafka.Streams.Threads.Stream
         {
             foreach (TopicPartition partition in records.Partitions)
             {
-                StreamTask task = this.TaskManager.activeTask(partition);
+                StreamTask task = this.TaskManager.ActiveTask(partition);
 
                 if (task == null)
                 {
@@ -645,7 +645,7 @@ namespace Kafka.Streams.Threads.Stream
                         $"Unable to locate active task for received-record partition {partition}. Current tasks: {this.TaskManager.ToString(">")}");
                     throw new NullReferenceException("Task was unexpectedly missing for partition " + partition);
                 }
-                else if (task.isClosed())
+                else if (task.IsClosed())
                 {
                     this.logger.LogInformation($"Stream task {task.id} is already closed, probably because it got unexpectedly migrated to another thread already. " +
                                  "Notifying the thread to trigger a new rebalance immediately.");
@@ -662,7 +662,7 @@ namespace Kafka.Streams.Threads.Stream
          */
         private bool MaybePunctuate()
         {
-            var punctuated = this.TaskManager.punctuate();
+            var punctuated = this.TaskManager.Punctuate();
             if (punctuated > 0)
             {
                 var punctuateLatency = AdvanceNowAndComputeLatency();
@@ -688,21 +688,21 @@ namespace Kafka.Streams.Threads.Stream
             {
                 if (this.logger.IsEnabled(LogLevel.Trace))
                 {
-                    this.logger.LogTrace($"Committing all active tasks {this.TaskManager.activeTaskIds().ToJoinedString()} and standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} since {now - lastCommitMs}ms has elapsed (commit interval is {commitTimeMs}ms)");
+                    this.logger.LogTrace($"Committing all active tasks {this.TaskManager.ActiveTaskIds().ToJoinedString()} and standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} since {now - lastCommitMs}ms has elapsed (commit interval is {commitTimeMs}ms)");
                 }
 
-                committed += this.TaskManager.commitAll();
+                committed += this.TaskManager.CommitAll();
                 if (committed > 0)
                 {
                     var intervalCommitLatency = AdvanceNowAndComputeLatency();
                     // commitSensor.record(intervalCommitLatency / (double)committed, now);
 
                     // try to purge the committed records for repartition topics if possible
-                    this.TaskManager.maybePurgeCommitedRecords();
+                    this.TaskManager.MaybePurgeCommitedRecords();
 
                     if (this.logger.IsEnabled(LogLevel.Debug))
                     {
-                        this.logger.LogDebug($"Committed all active tasks {this.TaskManager.activeTaskIds()} and standby tasks {this.TaskManager.StandbyTaskIds()} in {intervalCommitLatency} ms");
+                        this.logger.LogDebug($"Committed all active tasks {this.TaskManager.ActiveTaskIds()} and standby tasks {this.TaskManager.StandbyTaskIds()} in {intervalCommitLatency} ms");
                     }
                 }
 
@@ -711,7 +711,7 @@ namespace Kafka.Streams.Threads.Stream
             }
             else
             {
-                var commitPerRequested = this.TaskManager.maybeCommitActiveTasksPerUserRequested();
+                var commitPerRequested = this.TaskManager.MaybeCommitActiveTasksPerUserRequested();
                 if (commitPerRequested > 0)
                 {
                     var requestCommitLatency = AdvanceNowAndComputeLatency();
@@ -726,7 +726,7 @@ namespace Kafka.Streams.Threads.Stream
         private void MaybeUpdateStandbyTasks()
         {
             if (this.State.CurrentState == StreamThreadStates.RUNNING
-                && this.TaskManager.hasStandbyRunningTasks())
+                && this.TaskManager.HasStandbyRunningTasks())
             {
                 if (processStandbyRecords)
                 {
@@ -742,7 +742,7 @@ namespace Kafka.Streams.Threads.Stream
                             {
                                 StandbyTask task = this.TaskManager.StandbyTask(partition);
 
-                                if (task.isClosed())
+                                if (task.IsClosed())
                                 {
                                     this.logger.LogInformation($"Standby task {task.id} is already closed," +
                                         $"probably because it got unexpectedly migrated to another thread already. " +
@@ -751,7 +751,7 @@ namespace Kafka.Streams.Threads.Stream
                                     throw new TaskMigratedException(task);
                                 }
 
-                                remaining = task.update(partition, remaining);
+                                remaining = task.Update(partition, remaining);
                                 if (remaining.Any())
                                 {
                                     remainingStandbyRecords.Add(partition, remaining);
@@ -792,7 +792,7 @@ namespace Kafka.Streams.Threads.Stream
                                 throw new StreamsException(logPrefix + "Missing standby task for partition " + partition);
                             }
 
-                            if (task.isClosed())
+                            if (task.IsClosed())
                             {
                                 this.logger.LogInformation("Standby task {} is already closed, probably because it got unexpectedly migrated to another thread already. " +
                                     "Notifying the thread to trigger a new rebalance immediately.", task.id);
@@ -800,7 +800,7 @@ namespace Kafka.Streams.Threads.Stream
                                 throw new TaskMigratedException(task);
                             }
 
-                            List<ConsumeResult<byte[], byte[]>> remaining = task.update(partition, records.GetRecords(partition));
+                            List<ConsumeResult<byte[], byte[]>> remaining = task.Update(partition, records.GetRecords(partition));
                             if (remaining.Any())
                             {
                                 RestoreConsumer.Pause(new[] { partition });
@@ -813,12 +813,12 @@ namespace Kafka.Streams.Threads.Stream
                 {
                     this.logger.LogWarning(recoverableException, "Updating StandbyTasks failed. Deleting StandbyTasks stores to recreate from scratch.");
 
-                    HashSet<TopicPartition> partitions = recoverableException.partitions();
+                    HashSet<TopicPartition> partitions = recoverableException.Partitions();
                     foreach (TopicPartition partition in partitions)
                     {
                         StandbyTask task = this.TaskManager.StandbyTask(partition);
 
-                        if (task.isClosed())
+                        if (task.IsClosed())
                         {
                             this.logger.LogInformation($"Standby task {task.id} is already closed, probably because it got " +
                                 $"unexpectedly migrated to another thread already. " +
@@ -828,9 +828,9 @@ namespace Kafka.Streams.Threads.Stream
                         }
 
                         this.logger.LogInformation($"Reinitializing StandbyTask {task} from changelogs " +
-                            $"{recoverableException.partitions().ToJoinedString()}");
+                            $"{recoverableException.Partitions().ToJoinedString()}");
 
-                        task.reinitializeStateStoresForPartitions(recoverableException.partitions().ToList());
+                        task.ReinitializeStateStoresForPartitions(recoverableException.Partitions().ToList());
                     }
 
                     RestoreConsumer.SeekToBeginning(partitions);
@@ -921,7 +921,7 @@ namespace Kafka.Streams.Threads.Stream
 
         public Dictionary<TaskId, StreamTask> Tasks()
         {
-            return this.TaskManager.activeTasks();
+            return this.TaskManager.ActiveTasks();
         }
 
         /**

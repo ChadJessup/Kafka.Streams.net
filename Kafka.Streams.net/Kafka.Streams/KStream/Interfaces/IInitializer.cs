@@ -36,6 +36,6 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return the initial value for an aggregation
          */
-        VA apply();
+        VA Apply();
     }
 }

@@ -36,7 +36,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            ProcessorSupplier<string, int> processorSupplier = new PrintedInternal<>(
 //                    Printed.< string, int > toFile(file.getPath()))
 //                    .Build("processor");
-//            Processor<string, int> processor = processorSupplier.get();
+//            Processor<string, int> processor = processorSupplier.Get();
 //            processor.process("hi", 1);
 //            processor.close();
 //            try
@@ -56,7 +56,7 @@ namespace Kafka.Streams.Tests.Kstream
 
 //        {
 //            ProcessorSupplier<string, int> supplier = new PrintedInternal<>(sysOutPrinter).Build("processor");
-//            Processor<string, int> processor = supplier.get();
+//            Processor<string, int> processor = supplier.Get();
 
 //            processor.process("good", 2);
 //            processor.close();
@@ -69,7 +69,7 @@ namespace Kafka.Streams.Tests.Kstream
 //        {
 //            Processor<string, int> processor = new PrintedInternal<>(sysOutPrinter.withLabel("label"))
 //                        .Build("processor")
-//                        .get();
+//                        .Get();
 
 //            processor.process("hello", 3);
 //            processor.close();
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            //return string.Format("%s => %d", key, value);
 //            //}
 //            //})).Build("processor")
-//            //.get();
+//            //.Get();
 //            processor.process("hello", 1);
 //            processor.close();
 //            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), ("[processor]: hello => 1\n"));

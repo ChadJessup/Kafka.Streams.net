@@ -38,10 +38,10 @@
 //                // advance the store iterator if the key is the same as the deleted cache key
 //                if (compare(cacheIterator.peekNextKey(), nextStoreKey) == 0)
 //{
-//                    storeIterator.next();
+//                    storeIterator.MoveNext();
 //                }
 //            }
-//            cacheIterator.next();
+//            cacheIterator.MoveNext();
 //        }
 
 //        return cacheIterator.hasNext() || storeIterator.hasNext();
@@ -77,14 +77,14 @@
 //        } else
 //{
 //            // skip the same keyed element
-//            storeIterator.next();
+//            storeIterator.MoveNext();
 //            return nextCacheValue(nextCacheKey);
 //        }
 //    }
 
 //    private KeyValuePair<K, V> nextStoreValue(KS nextStoreKey)
 //{
-//        KeyValuePair<KS, VS> next = storeIterator.next();
+//        KeyValuePair<KS, VS> next = storeIterator.MoveNext();
 
 //        if (!next.key.Equals(nextStoreKey))
 //{
@@ -96,7 +96,7 @@
 
 //    private KeyValuePair<K, V> nextCacheValue(Bytes nextCacheKey)
 //{
-//        KeyValuePair<Bytes, LRUCacheEntry> next = cacheIterator.next();
+//        KeyValuePair<Bytes, LRUCacheEntry> next = cacheIterator.MoveNext();
 
 //        if (!next.key.Equals(nextCacheKey))
 //{
@@ -136,7 +136,7 @@
 //        } else
 //{
 //            // skip the same keyed element
-//            storeIterator.next();
+//            storeIterator.MoveNext();
 //            return deserializeCacheKey(nextCacheKey);
 //        }
 //    }

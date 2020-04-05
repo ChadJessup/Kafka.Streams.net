@@ -153,14 +153,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public void shouldUseNumberingForAnonymousFinalSuppressionNode() {
 //        var anonymousNodeBuilder = new StreamsBuilder();
 //        anonymousNodeBuilder
-//            .Stream("input", Consumed.with(STRING_SERDE, STRING_SERDE))
+//            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
 //            .windowedBy(SessionWindows.with(Duration.FromMilliseconds(5L)).grace(Duration.FromMilliseconds(5L)))
 //            .count(Materialize.As<string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()))
 //            .toStream()
-//            .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
-//            .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//            .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //        string anonymousNodeTopology = anonymousNodeBuilder.Build().describe().ToString();
 
 //        // without the name, the suppression node increments the topology index
@@ -171,14 +171,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public void shouldApplyNameToFinalSuppressionNode() {
 //        var namedNodeBuilder = new StreamsBuilder();
 //        namedNodeBuilder
-//            .Stream("input", Consumed.with(STRING_SERDE, STRING_SERDE))
+//            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
 //            .windowedBy(SessionWindows.with(Duration.FromMilliseconds(5L)).grace(Duration.FromMilliseconds(5L)))
 //            .count(Materialize.As<string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()).withName("myname"))
 //            .toStream()
-//            .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
-//            .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
+//            .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //        string namedNodeTopology = namedNodeBuilder.Build().describe().ToString();
 
 //        // without the name, the suppression node does not increment the topology index
@@ -189,12 +189,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public void shouldUseNumberingForAnonymousSuppressionNode() {
 //        var anonymousNodeBuilder = new StreamsBuilder();
 //        anonymousNodeBuilder
-//            .Stream("input", Consumed.with(STRING_SERDE, STRING_SERDE))
+//            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .groupByKey()
 //            .count()
 //            .suppress(untilTimeLimit(Duration.FromSeconds(1), unbounded()))
 //            .toStream()
-//            .to("output", Produced.with(STRING_SERDE, Serdes.Long()));
+//            .To("output", Produced.With(STRING_SERDE, Serdes.Long()));
 //        string anonymousNodeTopology = anonymousNodeBuilder.Build().describe().ToString();
 
 //        // without the name, the suppression node increments the topology index
@@ -205,12 +205,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public void shouldApplyNameToSuppressionNode() {
 //        var namedNodeBuilder = new StreamsBuilder();
 //        namedNodeBuilder
-//            .Stream("input", Consumed.with(STRING_SERDE, STRING_SERDE))
+//            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .groupByKey()
 //            .count()
 //            .suppress(untilTimeLimit(Duration.ofSeconds(1), unbounded()).withName("asdf"))
 //            .toStream()
-//            .to("output", Produced.with(STRING_SERDE, Serdes.Long()));
+//            .To("output", Produced.With(STRING_SERDE, Serdes.Long()));
 //        string namedNodeTopology = namedNodeBuilder.Build().describe().ToString();
 
 //        // without the name, the suppression node does not increment the topology index

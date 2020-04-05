@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream
             this.services = services;
         }
 
-        public long getWindowSize()
+        public long GetWindowSize()
         {
             return this.windowSize;
         }
@@ -97,7 +97,7 @@ namespace Kafka.Streams.KStream
             return null; // WindowKeySchema.from(data, windowSize, inner, topic);
         }
 
-        public void close()
+        public void Close()
         {
             if (inner != null)
             {
@@ -105,13 +105,13 @@ namespace Kafka.Streams.KStream
             }
         }
 
-        public void setIsChangelogTopic(bool isChangelogTopic)
+        public void SetIsChangelogTopic(bool isChangelogTopic)
         {
             this.isChangelogTopic = isChangelogTopic;
         }
 
         // Only for testing
-        public IDeserializer<T> innerDeserializer()
+        public IDeserializer<T> InnerDeserializer()
         {
             return this.inner;
         }

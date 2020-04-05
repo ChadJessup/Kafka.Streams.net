@@ -1,68 +1,30 @@
+using Confluent.Kafka;
+using Kafka.Streams.Errors.Interfaces;
+using System;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.Tests.Errors
 {
-    /*
-
-
-
-
-
-
-    *
-
-    *
-
-
-
-
-
-    */
-
-
-
-
-
     /**
      * Production exception handler that always instructs streams to continue when an exception
      * happens while attempting to produce result records.
      */
-    public class AlwaysContinueProductionExceptionHandler : ProductionExceptionHandler
+    public class AlwaysContinueProductionExceptionHandler : IProductionExceptionHandler
     {
+        public string name { get; }
+        public int id { get; }
 
-        public ProductionExceptionHandlerResponse Handle(ProducerRecord<byte[], byte[]> record,
-                                                         Exception exception)
+        public ProductionExceptionHandlerResponse Handle(
+            DeliveryResult<byte[], byte[]> record,
+            Exception exception)
         {
             return ProductionExceptionHandlerResponse.CONTINUE;
         }
 
 
-        public void Configure(Dictionary<string, ?> configs)
+        public void Configure(Dictionary<string, string?> configs)
         {
             // ignore
         }
     }
 }
-/*
-
-
-
-
-
-
-*
-
-*
-
-
-
-
-
-*/
-
-
-
-
-
-/**
- * Production exception handler that always instructs streams to continue when an exception
- * happens while attempting to produce result records.
- */

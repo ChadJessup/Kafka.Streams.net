@@ -58,7 +58,7 @@ namespace Kafka.Streams.KStream
          * @param        the value type
          * @return a new instance of {@link Serialized} configured with the provided serdes
          */
-        public static Serialized<K, V> with(ISerde<K> keySerde,
+        public static Serialized<K, V> With(ISerde<K> keySerde,
                                                     ISerde<V> valueSerde)
         {
             return new Serialized<K, V>(keySerde, valueSerde);
@@ -72,7 +72,7 @@ namespace Kafka.Streams.KStream
          *                 if not specified the default serdes defined in the configs will be used
          * @return a new instance of {@link Serialized} configured with the provided key serde
          */
-        public Serialized<K, V> withKeySerde(ISerde<K> keySerde)
+        public Serialized<K, V> WithKeySerde(ISerde<K> keySerde)
         {
             return new Serialized<K, V>(keySerde, null);
         }
@@ -85,7 +85,7 @@ namespace Kafka.Streams.KStream
          *                   if not specified the default serdes defined in the configs will be used
          * @return a new instance of {@link Serialized} configured with the provided key serde
          */
-        public Serialized<K, V> withValueSerde(ISerde<V> valueSerde)
+        public Serialized<K, V> WithValueSerde(ISerde<V> valueSerde)
         {
             return new Serialized<K, V>(null, valueSerde);
         }

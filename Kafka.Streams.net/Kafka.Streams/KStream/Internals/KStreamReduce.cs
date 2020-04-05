@@ -19,13 +19,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void enableSendingOldValues()
+        public void EnableSendingOldValues()
         {
             sendOldValues = true;
         }
 
 
-        public IKTableValueGetterSupplier<K, V> view()
+        public IKTableValueGetterSupplier<K, V> View()
         {
             return null;
             //    return new KTableValueGetterSupplier<K, V>()

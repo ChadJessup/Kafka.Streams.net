@@ -1,57 +1,64 @@
-using Confluent.Kafka;
-using Xunit;
-using System;
+//using Confluent.Kafka;
+//using Xunit;
+//using System;
+//using Kafka.Streams.KStream;
+//using Kafka.Streams.State;
+//using Kafka.Streams.State.Internals;
+//using System.Collections.Generic;
+//using Kafka.Streams.State.Interfaces;
+//using Kafka.Streams.State.ReadOnly;
+//using Kafka.Streams.State.Queryable;
 
-namespace Kafka.Streams.Tests.State
-{
-    public class WrappingStoreProviderTest
-    {
+//namespace Kafka.Streams.Tests.State
+//{
+//    public class WrappingStoreProviderTest
+//    {
+//        private WrappingStoreProvider wrappingStoreProvider;
 
-        private WrappingStoreProvider wrappingStoreProvider;
+//        public void Before()
+//        {
+//            StateStoreProviderStub stubProviderOne = new StateStoreProviderStub(false);
+//            StateStoreProviderStub stubProviderTwo = new StateStoreProviderStub(false);
 
+//            stubProviderOne.addStore("kv", Stores.KeyValueStoreBuilder(Stores.InMemoryKeyValueStore("kv"),
+//                    Serdes.SerdeFrom<string>(),
+//                    Serdes.SerdeFrom<string>())
+//                    .Build());
+//            stubProviderOne.addStore("window", new NoOpWindowStore());
+//            stubProviderTwo.addStore("kv", Stores.KeyValueStoreBuilder(Stores.InMemoryKeyValueStore("kv"),
+//                    Serdes.SerdeFrom<string>(),
+//                    Serdes.SerdeFrom<string>())
+//                    .Build());
+//            stubProviderTwo.addStore("window", new NoOpWindowStore());
 
-        public void Before()
-        {
-            StateStoreProviderStub stubProviderOne = new StateStoreProviderStub(false);
-            StateStoreProviderStub stubProviderTwo = new StateStoreProviderStub(false);
+//            wrappingStoreProvider = new WrappingStoreProvider(
+//                    new List<IStateStoreProvider> { stubProviderOne, stubProviderTwo });
+//        }
 
+//        [Xunit.Fact]
+//        public void ShouldFindKeyValueStores()
+//        {
+//            List<IReadOnlyKeyValueStore<string, string>> results =
+//                    wrappingStoreProvider.Stores(
+//                        "kv",
+//                        QueryableStoreTypes.KeyValueStore<string, string>());
 
-            stubProviderOne.addStore("kv", Stores.keyValueStoreBuilder(Stores.inMemoryKeyValueStore("kv"),
-                    Serdes.serdeFrom(string),
-                    Serdes.serdeFrom(string))
-                    .build());
-            stubProviderOne.addStore("window", new NoOpWindowStore());
-            stubProviderTwo.addStore("kv", Stores.keyValueStoreBuilder(Stores.inMemoryKeyValueStore("kv"),
-                    Serdes.serdeFrom(string),
-                    Serdes.serdeFrom(string))
-                    .build());
-            stubProviderTwo.addStore("window", new NoOpWindowStore());
+//            Assert.Equal(2, results.Count);
+//        }
 
-            wrappingStoreProvider = new WrappingStoreProvider(
-                    Array.< StateStoreProvider > asList(stubProviderOne, stubProviderTwo));
-        }
+//        [Xunit.Fact]
+//        public void ShouldFindWindowStores()
+//        {
+//            List<IReadOnlyWindowStore<object, object>>
+//                    windowStores =
+//                    wrappingStoreProvider.Stores("window", windowStore());
+//            Assert.Equal(2, windowStores.Count);
+//        }
 
-        [Xunit.Fact]
-        public void ShouldFindKeyValueStores()
-        {
-            List<ReadOnlyKeyValueStore<string, string>> results =
-                    wrappingStoreProvider.stores("kv", QueryableStoreTypes.< string, string > keyValueStore());
-            Assert.Equal(2, results.Count);
-        }
-
-        [Xunit.Fact]
-        public void ShouldFindWindowStores()
-        {
-            List<ReadOnlyWindowStore<object, object>>
-                    windowStores =
-                    wrappingStoreProvider.stores("window", windowStore());
-            Assert.Equal(2, windowStores.Count);
-        }
-
-        [Xunit.Fact]// (expected = InvalidStateStoreException)
-        public void ShouldThrowInvalidStoreExceptionIfNoStoreOfTypeFound()
-        {
-            wrappingStoreProvider.stores("doesn't exist", QueryableStoreTypes.keyValueStore());
-        }
-    }
-}
+//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        public void ShouldThrowInvalidStoreExceptionIfNoStoreOfTypeFound()
+//        {
+//            wrappingStoreProvider.Stores("doesn't exist", QueryableStoreTypes.KeyValueStore<string, string>());
+//        }
+//    }
+//}

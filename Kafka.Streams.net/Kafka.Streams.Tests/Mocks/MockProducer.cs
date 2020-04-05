@@ -167,7 +167,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     if (offsets.Count == 0) {
         //         return;
         //     }
-        //     Dictionary<TopicPartition, OffsetAndMetadata> uncommittedOffsets = this.uncommittedConsumerGroupOffsets.get(consumerGroupId);
+        //     Dictionary<TopicPartition, OffsetAndMetadata> uncommittedOffsets = this.uncommittedConsumerGroupOffsets.Get(consumerGroupId);
         //     if (uncommittedOffsets == null)
         //     {
         //         uncommittedOffsets = new HashMap<>();
@@ -188,7 +188,7 @@ namespace Kafka.Streams.Tests.Mocks
         // 
         //     this.sent.addAll(this.uncommittedSends);
         //     if (!this.uncommittedConsumerGroupOffsets.isEmpty())
-        //         this.consumerGroupOffsets.add(this.uncommittedConsumerGroupOffsets);
+        //         this.consumerGroupOffsets.Add(this.uncommittedConsumerGroupOffsets);
         // 
         //     this.uncommittedSends.Clear();
         //     this.uncommittedConsumerGroupOffsets = new HashMap<>();
@@ -213,7 +213,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     this.transactionInFlight = false;
         // }
         // 
-        // private synchronized void verifyProducerState()
+        // private void verifyProducerState()
         // {
         //     if (this.closed)
         //     {
@@ -247,7 +247,7 @@ namespace Kafka.Streams.Tests.Mocks
         //  * @see #history()
         //  */
         // 
-        // public synchronized Future<RecordMetadata> send(Message<K, V> record) {
+        // public Future<RecordMetadata> send(Message<K, V> record) {
         //     return send(record, null);
         // }
         // 
@@ -257,7 +257,7 @@ namespace Kafka.Streams.Tests.Mocks
         //  * @see #history()
         //  */
         // 
-        // public synchronized Future<RecordMetadata> send(Message<K, V> record, Callback callback) {
+        // public Future<RecordMetadata> send(Message<K, V> record, Callback callback) {
         //     if (this.closed)
         //     {
         //         throw new IllegalStateException("MockProducer is already closed.");
@@ -267,9 +267,9 @@ namespace Kafka.Streams.Tests.Mocks
         //         throw new KafkaException("MockProducer is fenced.", new ProducerFencedException("Fenced"));
         //     }
         //     int partition = 0;
-        //     if (!this.cluster.partitionsForTopic(record.topic()).isEmpty())
+        //     if (!this.cluster.partitionsForTopic(record.Topic).isEmpty())
         //         partition = partition(record, this.cluster);
-        //     TopicPartition topicPartition = new TopicPartition(record.topic(), partition);
+        //     TopicPartition topicPartition = new TopicPartition(record.Topic, partition);
         //     ProduceRequestResult result = new ProduceRequestResult(topicPartition);
         //     FutureRecordMetadata future = new FutureRecordMetadata(result, 0, RecordBatch.NO_TIMESTAMP,
         //             0L, 0, 0, Time.SYSTEM);
@@ -278,9 +278,9 @@ namespace Kafka.Streams.Tests.Mocks
         //             RecordBatch.NO_TIMESTAMP, long.valueOf(0L), 0, 0), result, callback);
         // 
         //     if (!this.transactionInFlight)
-        //         this.sent.add(record);
+        //         this.sent.Add(record);
         //     else
-        //         this.uncommittedSends.add(record);
+        //         this.uncommittedSends.Add(record);
         // 
         //     if (autoComplete)
         //         completion.complete(null);
@@ -295,7 +295,7 @@ namespace Kafka.Streams.Tests.Mocks
         //  */
         // private long nextOffset(TopicPartition tp)
         // {
-        //     long offset = this.offsets.get(tp);
+        //     long offset = this.offsets.Get(tp);
         //     if (offset == null)
         //     {
         //         this.offsets.put(tp, 1L);
@@ -309,7 +309,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     }
         // }
         // 
-        // public synchronized void flush()
+        // public void flush()
         // {
         //     verifyProducerState();
         //     while (!this.completions.isEmpty())
@@ -337,7 +337,7 @@ namespace Kafka.Streams.Tests.Mocks
         // 
         // public void close()
         // {
-        //     close(Duration.ofMillis(0));
+        //     close(Duration.FromMilliseconds(0));
         // }
         // 
         // 
@@ -355,7 +355,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     return this.closed;
         // }
         // 
-        // public synchronized void fenceProducer()
+        // public void fenceProducer()
         // {
         //     verifyProducerState();
         //     verifyTransactionsInitialized();
@@ -407,21 +407,21 @@ namespace Kafka.Streams.Tests.Mocks
         // /**
         //  * Get the list of sent records since the last call to {@link #clear()}
         //  */
-        // public synchronized List<Message<K, V>> history() {
+        // public List<Message<K, V>> history() {
         //     return new ArrayList<>(this.sent);
         // }
         // 
         // /**
         //  * Get the list of committed consumer group offsets since the last call to {@link #clear()}
         //  */
-        // public synchronized List<Dictionary<string, Map<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsetsHistory() {
+        // public List<Dictionary<string, Map<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsetsHistory() {
         //     return new ArrayList<>(this.consumerGroupOffsets);
         // }
         // /**
         //  *
         //  * Clear the stored history of sent records, consumer group offsets, and transactional state
         //  */
-        // public synchronized void clear()
+        // public void clear()
         // {
         //     this.sent.Clear();
         //     this.uncommittedSends.Clear();
@@ -440,7 +440,7 @@ namespace Kafka.Streams.Tests.Mocks
          *
          * @return true if there was an uncompleted call to complete
          */
-        // public synchronized bool completeNext()
+        // public bool completeNext()
         // {
         //     return errorNext(null);
         // }
@@ -450,7 +450,7 @@ namespace Kafka.Streams.Tests.Mocks
          *
          * @return true if there was an uncompleted call to complete
          */
-        // public synchronized bool errorNext(RuntimeException e)
+        // public bool errorNext(RuntimeException e)
         // {
         //     Completion completion = this.completions.pollFirst();
         //     if (completion != null)
@@ -469,22 +469,22 @@ namespace Kafka.Streams.Tests.Mocks
          */
         //private int partition(Message<K, V> record, Cluster cluster)
         //{
-        //    int partition = record.partition();
-        //    string topic = record.topic();
+        //    int partition = record.Partition;
+        //    string topic = record.Topic;
         //    if (partition != null)
         //    {
         //        List<PartitionInfo> partitions = cluster.partitionsForTopic(topic);
         //        int numPartitions = partitions.Count;
         //        // they have given us a partition, use it
         //        if (partition < 0 || partition >= numPartitions)
-        //            throw new IllegalArgumentException("Invalid partition given with record: " + partition
+        //            throw new ArgumentException("Invalid partition given with record: " + partition
         //                                               + " is not in the range [0..."
         //                                               + numPartitions
         //                                               + "].");
         //        return partition;
         //    }
-        //    byte[] keyBytes = keySerializer.serialize(topic, record.headers(), record.Key);
-        //    byte[] valueBytes = valueSerializer.serialize(topic, record.headers(), record.Value);
+        //    byte[] keyBytes = keySerializer.Serialize(topic, record.Headers, record.Key);
+        //    byte[] valueBytes = valueSerializer.Serialize(topic, record.Headers, record.Value);
         //    return this.partitioner.partition(topic, record.Key, keyBytes, record.Value, valueBytes, cluster);
         //}
         //

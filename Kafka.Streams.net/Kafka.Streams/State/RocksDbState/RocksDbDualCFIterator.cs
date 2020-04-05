@@ -38,17 +38,17 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override bool hasNext()
+        public override bool HasNext()
         {
             if (!open)
             {
                 throw new InvalidStateStoreException(string.Format("RocksDb iterator for store %s has closed", storeName));
             }
 
-            return base.hasNext();
+            return base.HasNext();
         }
 
-        public override KeyValuePair<Bytes, byte[]> makeNext()
+        public override KeyValuePair<Bytes, byte[]> MakeNext()
         {
             if (nextNoTimestamp == null && iterNoTimestamp.Valid())
             {
@@ -77,7 +77,7 @@ namespace Kafka.Streams.State.RocksDbState
             {
                 if (nextWithTimestamp == null)
                 {
-                    next = KeyValuePair.Create(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
+                    next = KeyValuePair.Create(new Bytes(nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(iterNoTimestamp.Value()));
                     nextNoTimestamp = null;
                     iterNoTimestamp.Next();
                 }
@@ -85,7 +85,7 @@ namespace Kafka.Streams.State.RocksDbState
                 {
                     if (comparator.Compare(nextNoTimestamp, nextWithTimestamp) <= 0)
                     {
-                        next = KeyValuePair.Create(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
+                        next = KeyValuePair.Create(new Bytes(nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(iterNoTimestamp.Value()));
                         nextNoTimestamp = null;
                         iterNoTimestamp.Next();
                     }
@@ -107,7 +107,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void close()
+        public void Close()
         {
             //openIterators.Remove(this);
             //iterNoTimestamp.close();
@@ -115,9 +115,9 @@ namespace Kafka.Streams.State.RocksDbState
             open = false;
         }
 
-        public Bytes peekNextKey()
+        public Bytes PeekNextKey()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }

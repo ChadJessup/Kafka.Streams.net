@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private bool sendOldValues = false;
 
-        public void enableSendingOldValues()
+        public void EnableSendingOldValues()
         {
             sendOldValues = true;
         }
@@ -38,7 +38,7 @@ namespace Kafka.Streams.KStream.Internals
             return null;// new KTableAggregateProcessor();
         }
 
-        public IKTableValueGetterSupplier<K, T> view()
+        public IKTableValueGetterSupplier<K, T> View()
         {
             return null;// new KTableMaterializedValueGetterSupplier<>(storeName);
         }

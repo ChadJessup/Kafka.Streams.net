@@ -61,7 +61,7 @@ namespace Kafka.Streams.Tests.Tests
 //                                        int numKeys,
 //                                        int maxRecordsPerKey)
 //        {
-//            Properties producerProps = generatorProperties(kafka);
+//            StreamsConfig producerProps = generatorProperties(kafka);
 
 //            int numRecordsProduced = 0;
 
@@ -80,13 +80,13 @@ namespace Kafka.Streams.Tests.Tests
 //                {
 //                    int index = rand.nextInt(numKeys);
 //                    string key = data[index].key;
-//                    int value = data[index].next();
+//                    int value = data[index].MoveNext();
 
 //                    ProducerRecord<byte[], byte[]> record =
 //                        new ProducerRecord<>(
 //                            "data",
-//                            stringSerde.Serializer.serialize("", key),
-//                            intSerde.Serializer.serialize("", value)
+//                            stringSerde.Serializer.Serialize("", key),
+//                            intSerde.Serializer.Serialize("", value)
 //                        );
 
 //                    producer.send(record);
@@ -106,7 +106,7 @@ namespace Kafka.Streams.Tests.Tests
 //                                                         int maxRecordsPerKey,
 //                                                         Duration timeToSpend)
 //        {
-//            Properties producerProps = generatorProperties(kafka);
+//            StreamsConfig producerProps = generatorProperties(kafka);
 
 
 //            int numRecordsProduced = 0;
@@ -122,7 +122,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            int remaining = data.Length;
 
-//            long recordPauseTime = timeToSpend.toMillis() / numKeys / maxRecordsPerKey;
+//            long recordPauseTime = timeToSpend.TotalMilliseconds / numKeys / maxRecordsPerKey;
 
 //            List<ProducerRecord<byte[], byte[]>> needRetry = new ArrayList<>();
 
@@ -133,7 +133,7 @@ namespace Kafka.Streams.Tests.Tests
 //                {
 //                    int index = rand.nextInt(remaining);
 //                    string key = data[index].key;
-//                    int value = data[index].next();
+//                    int value = data[index].MoveNext();
 
 //                    if (value < 0)
 //                    {
@@ -146,14 +146,14 @@ namespace Kafka.Streams.Tests.Tests
 //                        ProducerRecord<byte[], byte[]> record =
 //                            new ProducerRecord<>(
 //                                "data",
-//                                stringSerde.Serializer.serialize("", key),
-//                                intSerde.Serializer.serialize("", value)
+//                                stringSerde.Serializer.Serialize("", key),
+//                                intSerde.Serializer.Serialize("", value)
 //                            );
 
 //                        producer.send(record, new TestCallback(record, needRetry));
 
 //                        numRecordsProduced++;
-//                        allData.get(key).add(value);
+//                        allData.Get(key).Add(value);
 //                        if (numRecordsProduced % 100 == 0)
 //                        {
 //                            System.Console.Out.WriteLine(Instant.now() + " " + numRecordsProduced + " records produced");
@@ -188,20 +188,20 @@ namespace Kafka.Streams.Tests.Tests
 //                foreach (PartitionInfo partition in partitions)
 //                {
 //                    producer.send(new ProducerRecord<>(
-//                        partition.topic(),
-//                        partition.partition(),
-//                        System.currentTimeMillis() + Duration.ofDays(2).toMillis(),
-//                        stringSerde.Serializer.serialize("", "flush"),
-//                        intSerde.Serializer.serialize("", 0)
+//                        partition.Topic,
+//                        partition.Partition,
+//                        System.currentTimeMillis() + Duration.ofDays(2).TotalMilliseconds,
+//                        stringSerde.Serializer.Serialize("", "flush"),
+//                        intSerde.Serializer.Serialize("", 0)
 //                    ));
 //                }
 //            }
 //        return Collections.unmodifiableMap(allData);
 //        }
 
-//        private static Properties generatorProperties(string kafka)
+//        private static StreamsConfig generatorProperties(string kafka)
 //        {
-//            Properties producerProps = new Properties();
+//            StreamsConfig producerProps = new StreamsConfig();
 //            producerProps.put(ProducerConfig.CLIENT_ID_CONFIG, "SmokeTest");
 //            producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
 //            producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
@@ -229,7 +229,7 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            if (exception is TimeoutException)
 //            {
-//                needRetry.add(originalRecord);
+//                needRetry.Add(originalRecord);
 //            }
 //            else
 //            {
@@ -292,10 +292,10 @@ namespace Kafka.Streams.Tests.Tests
 //                                            Dictionary<string, HashSet<int>> inputs,
 //                                            int maxRecordsPerKey)
 //{
-//    Properties props = new Properties();
+//    StreamsConfig props = new StreamsConfig();
 //    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
 //    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer);
+//    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
 //        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, NumberDeserializer);
 //        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
 
@@ -316,7 +316,7 @@ namespace Kafka.Streams.Tests.Tests
 //int retry = 0;
 //long start = System.currentTimeMillis();
 //        while (System.currentTimeMillis() - start<TimeUnit.MINUTES.toMillis(6)) {
-//            ConsumerRecords<string, Number> records = consumer.poll(Duration.ofSeconds(1));
+//            ConsumeResult<string, Number> records = consumer.poll(Duration.ofSeconds(1));
 //            if (records.isEmpty() && recordsProcessed >= recordsGenerated) {
 //                verificationResult = verifyAll(inputs, events);
 //                if (verificationResult.passed()) {
@@ -332,8 +332,8 @@ namespace Kafka.Streams.Tests.Tests
 //                foreach (ConsumeResult<string, Number> record in records) {
 //                    string key = record.Key;
 
-//string topic = record.topic();
-//processed.get(topic).incrementAndGet();
+//string topic = record.Topic;
+//processed.Get(topic).incrementAndGet();
 
 //                    if (topic.equals("echo")) {
 //                        recordsProcessed++;
@@ -344,7 +344,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //                    events.computeIfAbsent(topic, t => new HashMap<>())
 //                          .computeIfAbsent(key, k => new LinkedList<>())
-//                          .add(record);
+//                          .Add(record);
 //                }
 
 //                System.Console.Out.WriteLine(processed);
@@ -368,12 +368,12 @@ namespace Kafka.Streams.Tests.Tests
 //        bool success;
 
 //Dictionary<string, HashSet<Number>> received =
-//    events.get("echo")
+//    events.Get("echo")
 //          .entrySet()
-//          .stream()
+//          .Stream()
 //          .map(entry => mkEntry(
 //              entry.getKey(),
-//              entry.getValue().stream().map(ConsumeResult::value).collect(Collectors.toSet()))
+//              entry.getValue().Stream().map(ConsumeResult::value).collect(Collectors.toSet()))
 //          )
 //          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
@@ -384,7 +384,7 @@ namespace Kafka.Streams.Tests.Tests
 //        } else {
 //            int missedCount = 0;
 //            foreach (Map.Entry<string, HashSet<int>> entry in inputs.entrySet()) {
-//                missedCount += received.get(entry.getKey()).Count;
+//                missedCount += received.Get(entry.getKey()).Count;
 //            }
 //            System.Console.Out.WriteLine("missedRecords=" + missedCount);
 //        }
@@ -431,7 +431,7 @@ namespace Kafka.Streams.Tests.Tests
 //    try
 //    {
 //        (PrintStream resultStream = new PrintStream(byteArrayOutputStream));
-//        pass = verifyTAgg(resultStream, inputs, events.get("tagg"));
+//        pass = verifyTAgg(resultStream, inputs, events.Get("tagg"));
 //        pass &= verifySuppressed(resultStream, "min-suppressed", events);
 //        pass &= verify(resultStream, "min-suppressed", inputs, events, windowedKey =>
 //        {
@@ -455,7 +455,7 @@ namespace Kafka.Streams.Tests.Tests
 //                              Dictionary<string, Map<string, LinkedList<ConsumeResult<string, Number>>>> events,
 //                              Function<string, Number> keyToExpectation)
 //{
-//    Dictionary<string, LinkedList<ConsumeResult<string, Number>>> observedInputEvents = events.get("data");
+//    Dictionary<string, LinkedList<ConsumeResult<string, Number>>> observedInputEvents = events.Get("data");
 //    Dictionary<string, LinkedList<ConsumeResult<string, Number>>> outputEvents = events.getOrDefault(topic, emptyMap());
 //    if (outputEvents.isEmpty())
 //    {
@@ -484,7 +484,7 @@ namespace Kafka.Streams.Tests.Tests
 //                                    key,
 //                                    actual,
 //                                    expected,
-//                                    indent("\t\t", observedInputEvents.get(key)),
+//                                    indent("\t\t", observedInputEvents.Get(key)),
 //                                    indent("\t\t", entry.getValue()));
 //                return false;
 //            }
@@ -510,8 +510,8 @@ namespace Kafka.Streams.Tests.Tests
 //            resultStream.printf("fail: key=%s%n\tnon-unique result:%n%s%n\traw results:%n%s%n\tinput data:%n%s%n",
 //                                key,
 //                                indent("\t\t", entry.getValue()),
-//                                indent("\t\t", events.get(unsuppressedTopic).get(key)),
-//                                indent("\t\t", events.get("data").get(unwindowedKey))
+//                                indent("\t\t", events.Get(unsuppressedTopic).Get(key)),
+//                                indent("\t\t", events.Get("data").Get(unwindowedKey))
 //            );
 //            return false;
 //        }
@@ -527,7 +527,7 @@ namespace Kafka.Streams.Tests.Tests
 //    {
 //        stringBuilder.append(prefix).append(record).append('\n');
 //    }
-//    return stringBuilder.toString();
+//    return stringBuilder.ToString();
 //}
 
 //private static long getSum(string key)
@@ -586,7 +586,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            if (entry.getValue().getLast().Value.longValue() != expectedCount)
 //            {
-//                resultStream.println("fail: key=" + key + " tagg=" + entry.getValue() + " expected=" + expected.get(key));
+//                resultStream.println("fail: key=" + key + " tagg=" + entry.getValue() + " expected=" + expected.Get(key));
 //                resultStream.println("\t outputEvents: " + entry.getValue());
 //                return false;
 //            }
@@ -598,12 +598,12 @@ namespace Kafka.Streams.Tests.Tests
 
 //private static Number getMin(string key)
 //{
-//    return int.parseInt(key.split("-")[0]);
+//    return int.parseInt(key.Split("-")[0]);
 //}
 
 //private static Number getMax(string key)
 //{
-//    return int.parseInt(key.split("-")[1]);
+//    return int.parseInt(key.Split("-")[1]);
 //}
 
 //private static List<TopicPartition> getAllPartitions(KafkaConsumer<?, ?> consumer, string... topics)
@@ -614,7 +614,7 @@ namespace Kafka.Streams.Tests.Tests
 //    {
 //        foreach (PartitionInfo info in consumer.partitionsFor(topic))
 //        {
-//            partitions.add(new TopicPartition(info.topic(), info.partition()));
+//            partitions.Add(new TopicPartition(info.Topic, info.Partition));
 //        }
 //    }
 //    return partitions;

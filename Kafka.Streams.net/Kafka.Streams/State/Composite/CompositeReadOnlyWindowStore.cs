@@ -8,7 +8,7 @@
 //namespace Kafka.Streams.State.Internals
 //{
 //    /**
-//     * Wrapper over the underlying {@link ReadOnlyWindowStore}s found in a {@link
+//     * Wrapper over the underlying {@link IReadOnlyWindowStore}s found in a {@link
 //     * org.apache.kafka.streams.processor.Internals.ProcessorTopology}
 //     */
 //    public class CompositeReadOnlyWindowStore<K, V> : IReadOnlyWindowStore<K, V>
@@ -37,7 +37,7 @@
 //            {
 //                try
 //                {
-//                    V result = windowStore.fetch(key, time);
+//                    V result = windowStore.Fetch(key, time);
 //                    if (result != null)
 //                    {
 //                        return result;
@@ -63,7 +63,7 @@
 //            {
 //                try
 //                {
-//                    IWindowStoreIterator<V> result = windowStore.fetch(key, timeFrom, timeTo);
+//                    IWindowStoreIterator<V> result = windowStore.Fetch(key, timeFrom, timeTo);
 //                    if (!result.MoveNext())
 //                    {
 //                        result.close();
@@ -104,7 +104,7 @@
 //            to = to ?? throw new ArgumentNullException(nameof(to));
 
 //            INextIteratorFunction<K, V, IReadOnlyWindowStore<K, V>> nextIteratorFunction = null;
-//            //                store => store.fetch(from, to, timeFrom, timeTo);
+//            //                store => store.Fetch(from, to, timeFrom, timeTo);
 
 //            var enumerator = provider.stores(storeName, windowStoreType).GetEnumerator();
 //            var compositeKVIterator = new CompositeKeyValueIterator<K, V, IReadOnlyWindowStore<K, V>>(

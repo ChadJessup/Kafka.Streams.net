@@ -181,9 +181,9 @@
 //                                                           + " retention=[" + retentionPeriod + "]");
 //                }
 
-//                supplier = Stores.persistentSessionStore(
+//                supplier = Stores.PersistentSessionStore(
 //                    materialized.storeName(),
-//                    Duration.ofMillis(retentionPeriod)
+//                    Duration.FromMilliseconds(retentionPeriod)
 //                );
 //            }
 //            IStoreBuilder<ISessionStore<K, VR>> builder = Stores.sessionStoreBuilder(

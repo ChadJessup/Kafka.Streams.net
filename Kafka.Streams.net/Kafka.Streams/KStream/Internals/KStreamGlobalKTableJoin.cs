@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
             return new KStreamKTableJoinProcessor<K1, K2, V1, V2, R>(
                 null,
                 string.Empty,
-                valueGetterSupplier.get(),
+                valueGetterSupplier.Get(),
                 mapper,
                 joiner,
                 leftJoin);

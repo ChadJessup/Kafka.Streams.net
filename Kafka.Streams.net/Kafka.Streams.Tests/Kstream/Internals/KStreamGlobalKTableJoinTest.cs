@@ -31,13 +31,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKeyValueMapper<int, string, string> keyMapper;
 
 //            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
-//            Consumed<int, string> streamConsumed = Consumed.with(Serdes.Int(), Serdes.String());
-//            Consumed<string, string> tableConsumed = Consumed.with(Serdes.String(), Serdes.String());
+//            Consumed<int, string> streamConsumed = Consumed.With(Serdes.Int(), Serdes.String());
+//            Consumed<string, string> tableConsumed = Consumed.With(Serdes.String(), Serdes.String());
 //            stream = builder.Stream(streamTopic, streamConsumed);
 //            table = builder.globalTable(globalTableTopic, tableConsumed);
 //            keyMapper = (key, value) =>
 //            {
-//                string[] tokens = value.split(",");
+//                string[] tokens = value.Split(",");
 //                // Value is comma delimited. If second token is present, it's the key to the global ktable.
 //                // If not present, use null to indicate no match
 //                return tokens.Length > 1 ? tokens[1] : null;
@@ -67,7 +67,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                {
 //                    value = value + ",FKey" + expectedKeys[i];
 //                }
-//                driver.pipeInput(recordFactory.create(streamTopic, expectedKeys[i], value));
+//                driver.PipeInput(recordFactory.Create(streamTopic, expectedKeys[i], value));
 //            }
 //        }
 
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String());
 //            for (var i = 0; i < messageCount; i++)
 //            {
-//                driver.pipeInput(recordFactory.create(globalTableTopic, "FKey" + expectedKeys[i], valuePrefix + expectedKeys[i]));
+//                driver.PipeInput(recordFactory.Create(globalTableTopic, "FKey" + expectedKeys[i], valuePrefix + expectedKeys[i]));
 //            }
 //        }
 
@@ -87,7 +87,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String());
 //            for (var i = 0; i < messageCount; i++)
 //            {
-//                driver.pipeInput(recordFactory.create(globalTableTopic, "FKey" + expectedKeys[i], (string)null));
+//                driver.PipeInput(recordFactory.Create(globalTableTopic, "FKey" + expectedKeys[i], (string)null));
 //            }
 //        }
 

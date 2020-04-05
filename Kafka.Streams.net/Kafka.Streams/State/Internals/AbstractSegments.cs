@@ -80,7 +80,7 @@
 //            try
 //            {
 //                FileInfo dir = new FileInfo(context.stateDir(), name);
-//                if (dir.exists())
+//                if (dir.Exists)
 //                {
 //                    string[] list = dir.list();
 //                    if (list != null)
@@ -174,13 +174,13 @@
 
 //            while (toRemove.hasNext())
 //            {
-//                var next = toRemove.next();
+//                var next = toRemove.MoveNext();
 //                toRemove.Remove();
 //                S segment = next.Value;
 //                segment.close();
 //                try
 //                {
-//                    segment.destroy();
+//                    segment.Destroy();
 //                }
 //                catch (IOException e)
 //                {

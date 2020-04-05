@@ -80,16 +80,16 @@ namespace Kafka.Streams.Tests.Helpers
             return thread;
         }
 
-        public static string GetTempDirectory()
+        public static DirectoryInfo GetTempDirectory()
         {
-            return Path.GetTempPath();
+            return new DirectoryInfo(Path.GetTempPath());
         }
 
         internal static Mock<ITaskManager> GetMockTaskManagerCommit(int commits)
         {
             var mockTaskManager = GetMockTaskManager();
             mockTaskManager
-                .SetupSequence(tm => tm.commitAll())
+                .SetupSequence(tm => tm.CommitAll())
                 .Returns(commits);
 
             return mockTaskManager;

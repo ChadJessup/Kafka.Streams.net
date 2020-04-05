@@ -12,7 +12,7 @@ namespace Kafka.Streams.Topologies
          * The topic names this source node is reading from.
          * @return a set of topic names
          */
-        HashSet<string>? topicSet();
+        HashSet<string>? TopicSet();
 
         /**
          * The pattern used to match topic names that is reading from.

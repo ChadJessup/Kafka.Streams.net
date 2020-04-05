@@ -24,16 +24,16 @@ namespace Kafka.Streams.Processors.Internals
         private PunctuationSchedule schedule;
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void setSchedule(PunctuationSchedule schedule)
+        public void SetSchedule(PunctuationSchedule schedule)
         {
             this.schedule = schedule;
         }
 
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void cancel()
+        public void Cancel()
         {
-            schedule.markCancelled();
+            schedule.MarkCancelled();
         }
     }
 }

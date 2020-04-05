@@ -58,7 +58,7 @@
 
 //            if (root != null)
 //            {
-//                context.register(root, (key, value) => put(SessionKeySchema.from(Bytes.wrap(key)), value));
+//                context.register(root, (key, value) => put(SessionKeySchema.from(Bytes.Wrap(key)), value));
 //            }
 //            open = true;
 //        }

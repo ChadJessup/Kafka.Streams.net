@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void before()
 //        {
 //            groupedTable = builder
-//                .Table("blah", Consumed.with(Serdes.String(), Serdes.String()))
+//                .Table("blah", Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupBy(MockMapper.selectValueKeyValueMapper());
 //        }
 
@@ -113,19 +113,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            ConsumerRecordFactory<string, double> recordFactory =
 //                new ConsumerRecordFactory<>(Serdes.String(), new DoubleSerializer());
-//            driver.pipeInput(recordFactory.create(topic, "A", 1.1, 10));
-//            driver.pipeInput(recordFactory.create(topic, "B", 2.2, 11));
+//            driver.PipeInput(recordFactory.Create(topic, "A", 1.1, 10));
+//            driver.PipeInput(recordFactory.Create(topic, "B", 2.2, 11));
 
-//            Assert.Equal(ValueAndTimestamp.make(1, 10L), reducedResults["A"]);
-//            Assert.Equal(ValueAndTimestamp.make(2, 11L), reducedResults["B"]);
+//            Assert.Equal(ValueAndTimestamp.Make(1, 10L), reducedResults["A"]);
+//            Assert.Equal(ValueAndTimestamp.Make(2, 11L), reducedResults["B"]);
 
-//            driver.pipeInput(recordFactory.create(topic, "A", 2.6, 30));
-//            driver.pipeInput(recordFactory.create(topic, "B", 1.3, 30));
-//            driver.pipeInput(recordFactory.create(topic, "A", 5.7, 50));
-//            driver.pipeInput(recordFactory.create(topic, "B", 6.2, 20));
+//            driver.PipeInput(recordFactory.Create(topic, "A", 2.6, 30));
+//            driver.PipeInput(recordFactory.Create(topic, "B", 1.3, 30));
+//            driver.PipeInput(recordFactory.Create(topic, "A", 5.7, 50));
+//            driver.PipeInput(recordFactory.Create(topic, "B", 6.2, 20));
 
-//            Assert.Equal(ValueAndTimestamp.make(5, 50L), reducedResults["A"]);
-//            Assert.Equal(ValueAndTimestamp.make(6, 30L), reducedResults["B"]);
+//            Assert.Equal(ValueAndTimestamp.Make(5, 50L), reducedResults["A"]);
+//            Assert.Equal(ValueAndTimestamp.Make(6, 30L), reducedResults["B"]);
 //        }
 
 //        [Fact]
@@ -137,9 +137,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<string, int> reduced = builder
 //                .Table(
 //                    topic,
-//                    Consumed.with(Serdes.String(), Serdes.Double()),
+//                    Consumed.With(Serdes.String(), Serdes.Double()),
 //                    Materialize.As < string, double, IKeyValueStore<Bytes, byte[]>("store")
-//                        .withKeySerde(Serdes.String())
+//                        .WithKeySerde(Serdes.String())
 //                        .withValueSerde(Serdes.Double()))
 //                .groupBy(intProjection)
 //                .reduce(
@@ -165,9 +165,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<string, int> reduced = builder
 //                .Table(
 //                    topic,
-//                    Consumed.with(Serdes.String(), Serdes.Double()),
+//                    Consumed.With(Serdes.String(), Serdes.Double()),
 //                    Materialize.As < string, double, IKeyValueStore<Bytes, byte[]>("store")
-//                        .withKeySerde(Serdes.String())
+//                        .WithKeySerde(Serdes.String())
 //                        .withValueSerde(Serdes.Double()))
 //                .groupBy(intProjection)
 //                .reduce(MockReducer.INTEGER_ADDER, MockReducer.INTEGER_SUBTRACTOR);
@@ -193,13 +193,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<string, int> reduced = builder
 //                .Table(
 //                    topic,
-//                    Consumed.with(Serdes.String(), Serdes.Double()))
+//                    Consumed.With(Serdes.String(), Serdes.Double()))
 //                .groupBy(intProjection)
 //                .reduce(
 //                    MockReducer.INTEGER_ADDER,
 //                    MockReducer.INTEGER_SUBTRACTOR,
 //                    Materialize.As<string, int, IKeyValueStore<Bytes, byte[]>>("reduce")
-//                        .withKeySerde(Serdes.String())
+//                        .WithKeySerde(Serdes.String())
 //                        .withValueSerde(Serdes.Int()));
 
 //            MockProcessorSupplier<string, int> supplier = getReducedResults(reduced);
@@ -209,13 +209,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //           assertReduced(supplier.theCapturedProcessor().lastValueAndTimestampPerKey, topic, driver);
 //                {
 //                    IKeyValueStore<string, int> reduce = driver.getKeyValueStore("reduce");
-//                    Assert.Equal(reduce.get("A"), (5));
-//                    Assert.Equal(reduce.get("B"), (6));
+//                    Assert.Equal(reduce.Get("A"), (5));
+//                    Assert.Equal(reduce.Get("B"), (6));
 //                }
 //                {
 //                    IKeyValueStore<string, ValueAndTimestamp<int>> reduce = driver.getTimestampedKeyValueStore("reduce");
-//                    Assert.Equal(reduce.get("A"), (ValueAndTimestamp.make(5, 50L)));
-//                    Assert.Equal(reduce.get("B"), (ValueAndTimestamp.make(6, 30L)));
+//                    Assert.Equal(reduce.Get("A"), (ValueAndTimestamp.Make(5, 50L)));
+//                    Assert.Equal(reduce.Get("B"), (ValueAndTimestamp.Make(6, 30L)));
 //                }
 //            }
 //    }
@@ -227,13 +227,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            builder
 //                .Table(
 //                    topic,
-//                    Consumed.with(Serdes.String(), Serdes.String()))
+//                    Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupBy(
 //                    MockMapper.selectValueKeyValueMapper(),
 //                    Grouped.with(Serdes.String(), Serdes.String()))
 //                .count(
 //                    Materialize.As < string, long, IKeyValueStore<Bytes, byte[]>("count")
-//                        .withKeySerde(Serdes.String())
+//                        .WithKeySerde(Serdes.String())
 //                        .withValueSerde(Serdes.Long()));
 
 //            try
@@ -242,13 +242,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            processData(topic, driver);
 //                {
 //                    IKeyValueStore<string, long> counts = driver.getKeyValueStore("count");
-//                    Assert.Equal(counts.get("1"), (3L));
-//                    Assert.Equal(counts.get("2"), (2L));
+//                    Assert.Equal(counts.Get("1"), (3L));
+//                    Assert.Equal(counts.Get("2"), (2L));
 //                }
 //                {
 //                    IKeyValueStore<string, ValueAndTimestamp<long>> counts = driver.getTimestampedKeyValueStore("count");
-//                    Assert.Equal(counts.get("1"), (ValueAndTimestamp.make(3L, 50L)));
-//                    Assert.Equal(counts.get("2"), (ValueAndTimestamp.make(2L, 60L)));
+//                    Assert.Equal(counts.Get("1"), (ValueAndTimestamp.Make(3L, 50L)));
+//                    Assert.Equal(counts.Get("2"), (ValueAndTimestamp.Make(2L, 60L)));
 //                }
 //            }
 //    }
@@ -260,7 +260,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            builder
 //                .Table(
 //                    topic,
-//                    Consumed.with(Serdes.String(), Serdes.String()))
+//                    Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupBy(
 //                    MockMapper.selectValueKeyValueMapper(),
 //                    Grouped.with(Serdes.String(), Serdes.String()))
@@ -270,7 +270,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    MockAggregator.TOSTRING_REMOVER,
 //                    Materialize.As < string, string, IKeyValueStore<Bytes, byte[]>("aggregate")
 //                        .withValueSerde(Serdes.String())
-//                        .withKeySerde(Serdes.String()));
+//                        .WithKeySerde(Serdes.String()));
 
 //            try
 //            {
@@ -279,13 +279,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                {
 //                    {
 //                        IKeyValueStore<string, string> aggregate = driver.getKeyValueStore("aggregate");
-//                        Assert.Equal(aggregate.get("1"), ("0+1+1+1"));
-//                        Assert.Equal(aggregate.get("2"), ("0+2+2"));
+//                        Assert.Equal(aggregate.Get("1"), ("0+1+1+1"));
+//                        Assert.Equal(aggregate.Get("2"), ("0+2+2"));
 //                    }
 //                    {
 //                        IKeyValueStore<string, ValueAndTimestamp<string>> aggregate = driver.getTimestampedKeyValueStore("aggregate");
-//                        Assert.Equal(aggregate.get("1"), (ValueAndTimestamp.make("0+1+1+1", 50L)));
-//                        Assert.Equal(aggregate.get("2"), (ValueAndTimestamp.make("0+2+2", 60L)));
+//                        Assert.Equal(aggregate.Get("1"), (ValueAndTimestamp.Make("0+1+1+1", 50L)));
+//                        Assert.Equal(aggregate.Get("2"), (ValueAndTimestamp.Make("0+2+2", 60L)));
 //                    }
 //                }
 //            }
@@ -372,10 +372,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            ConsumerRecordFactory<string, string> recordFactory =
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String());
-//            driver.pipeInput(recordFactory.create(topic, "A", "1", 10L));
-//            driver.pipeInput(recordFactory.create(topic, "B", "1", 50L));
-//            driver.pipeInput(recordFactory.create(topic, "C", "1", 30L));
-//            driver.pipeInput(recordFactory.create(topic, "D", "2", 40L));
-//            driver.pipeInput(recordFactory.create(topic, "E", "2", 60L));
+//            driver.PipeInput(recordFactory.Create(topic, "A", "1", 10L));
+//            driver.PipeInput(recordFactory.Create(topic, "B", "1", 50L));
+//            driver.PipeInput(recordFactory.Create(topic, "C", "1", 30L));
+//            driver.PipeInput(recordFactory.Create(topic, "D", "2", 40L));
+//            driver.PipeInput(recordFactory.Create(topic, "E", "2", 60L));
 //        }
 //    }

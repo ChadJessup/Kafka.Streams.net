@@ -10,19 +10,18 @@ namespace Kafka.Streams.Tests
 {
     public class MaterializedTest
     {
-
         [Fact]
         public void ShouldAllowValidTopicNamesAsStoreName()
         {
-            Materialized<string, string>.As("valid-name");
-            Materialized<string, string>.As("valid.name");
-            Materialized<string, string>.As("valid_name");
+            Materialized.As<string, string>("valid-name");
+            Materialized.As<string, string>("valid.name");
+            Materialized.As<string, string>("valid_name");
         }
 
         [Fact]
         public void ShouldNotAllowInvalidTopicNames()
         {
-            Assert.Throws<TopologyException>(() => Materialized<string, string>.As("not:valid"));
+            Assert.Throws<TopologyException>(() => Materialized.As<string, string>("not:valid"));
         }
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -31,19 +30,19 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void ShouldThrowNullPointerIfWindowBytesStoreSupplierIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => Materialized<string, string, IWindowStore<Bytes, byte[]>>.As((IWindowBytesStoreSupplier)null));
+            Assert.Throws<ArgumentNullException>(() => Materialized.As<string, string, IWindowStore<Bytes, byte[]>>(null));
         }
 
         [Fact]
         public void ShouldThrowNullPointerIfKeyValueBytesStoreSupplierIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As((IKeyValueBytesStoreSupplier)null));
+            Assert.Throws<ArgumentNullException>(() => Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(null));
         }
 
         [Fact]
         public void ShouldThrowNullPointerIfSessionBytesStoreSupplierIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => Materialized<string, string, ISessionStore<Bytes, byte[]>>.As((ISessionBytesStoreSupplier)null));
+            Assert.Throws<ArgumentNullException>(() => Materialized.As<string, string, ISessionStore<Bytes, byte[]>>(null));
         }
 
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.

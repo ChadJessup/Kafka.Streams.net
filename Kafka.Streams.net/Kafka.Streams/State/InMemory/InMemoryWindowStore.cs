@@ -70,7 +70,7 @@
 //            {
 //    //            context.register(root, (key, value) =>
 //    //{
-//    //    put(Bytes.wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
+//    //    put(Bytes.Wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
 //    //});
 //            }
 //            open = true;
@@ -267,18 +267,18 @@
 
 //        private static Bytes wrapForDups(Bytes key, int seqnum)
 //        {
-//            ByteBuffer buf = ByteBuffer.allocate(key.get().Length + SEQNUM_SIZE);
-//            buf.Add(key.get());
+//            ByteBuffer buf = new ByteBuffer().Allocate(key.Get().Length + SEQNUM_SIZE);
+//            buf.Add(key.Get());
 //            buf.putInt(seqnum);
 
-//            return Bytes.wrap(buf.array());
+//            return Bytes.Wrap(buf.array());
 //        }
 
 //        private static Bytes getKey(Bytes keyBytes)
 //        {
-//            byte[] bytes = new byte[keyBytes.get().Length - SEQNUM_SIZE];
-//            System.arraycopy(keyBytes.get(), 0, bytes, 0, bytes.Length);
-//            return Bytes.wrap(bytes);
+//            byte[] bytes = new byte[keyBytes.Get().Length - SEQNUM_SIZE];
+//            System.arraycopy(keyBytes.Get(), 0, bytes, 0, bytes.Length);
+//            return Bytes.Wrap(bytes);
 
 //        }
 
@@ -402,8 +402,8 @@
 //                        return null;
 //                    }
 //                }
-//                KeyValuePair<Bytes, byte[]> nextRecord = recordIterator.next();
-//                return new KeyValuePair<>(nextRecord.Key, nextRecord.Value);
+//                KeyValuePair<Bytes, byte[]> nextRecord = recordIterator.MoveNext();
+//                return KeyValuePair.Create(nextRecord.Key, nextRecord.Value);
 //            }
 
 //            // Resets recordIterator to point to the next segment and returns null if there are no more segments
@@ -415,7 +415,7 @@
 //                    return null;
 //                }
 
-//                KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>> currentSegment = segmentIterator.next();
+//                KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>> currentSegment = segmentIterator.MoveNext();
 //                currentTime = currentSegment.Key;
 
 //                if (allKeys)

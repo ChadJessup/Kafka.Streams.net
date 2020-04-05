@@ -1,9 +1,6 @@
 ﻿using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Mappers;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kafka.Streams.Tests.Mocks
 {
@@ -57,32 +54,32 @@ namespace Kafka.Streams.Tests.Mocks
             }
         }
 
-        public static IKeyValueMapper<K, V, K> SelectKeyKeyValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, K> GetSelectKeyKeyValueMapper<K, V>()
         {
             return new SelectKeyMapper<K, V>();
         }
 
-        public static IKeyValueMapper<K, V, IEnumerable<KeyValuePair<K, V>>> NoOpFlatKeyValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, IEnumerable<KeyValuePair<K, V>>> GetNoOpFlatKeyValueMapper<K, V>()
         {
             return new NoOpFlatKeyValueMapper<K, V>();
         }
 
-        public static IKeyValueMapper<K, V, KeyValuePair<K, V>> NoOpKeyValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, KeyValuePair<K, V>> GetNoOpKeyValueMapper<K, V>()
         {
             return new NoOpKeyValueMapper<K, V>();
         }
 
-        public static IKeyValueMapper<K, V, KeyValuePair<V, V>> SelectValueKeyValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, KeyValuePair<V, V>> GetSelectValueKeyValueMapper<K, V>()
         {
             return new SelectValueKeyValueMapper<K, V>();
         }
 
-        public static IKeyValueMapper<K, V, V> SelectValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, V> GetSelectValueMapper<K, V>()
         {
             return new SelectValueMapper<K, V>();
         }
 
-        public static IValueMapper<V, V> NoOpValueMapper<K, V>()
+        public static IValueMapper<V, V> GetNoOpValueMapper<K, V>()
         {
             return new NoOpValueMapper<V>();
         }

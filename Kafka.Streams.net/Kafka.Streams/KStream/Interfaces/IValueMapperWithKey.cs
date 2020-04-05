@@ -32,6 +32,6 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param value       the value to be mapped
          * @return the new value
          */
-        VR apply(K readOnlyKey, V value);
+        VR Apply(K readOnlyKey, V value);
     }
 }

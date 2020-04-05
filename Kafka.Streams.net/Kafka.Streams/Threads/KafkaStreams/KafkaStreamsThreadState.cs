@@ -57,7 +57,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
                 || this.CurrentState == KafkaStreamsThreadStates.REBALANCING;
         }
 
-        public bool isValidTransition(KafkaStreamsThreadStates newState)
+        public bool IsValidTransition(KafkaStreamsThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
                 ? this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState)
                 : false;
@@ -97,7 +97,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
                     // when the state is already in ERROR, it should not transit to ERROR again
                     return false;
                 }
-                else if (!this.isValidTransition(newState))
+                else if (!this.IsValidTransition(newState))
                 {
                     // throw new IllegalStateException("Stream-client " + clientId + ": Unexpected state transition from " + oldState + " to " + newState);
                 }

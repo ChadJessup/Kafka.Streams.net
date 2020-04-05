@@ -17,7 +17,7 @@
 
 //        public long peekNextKey()
 //        {
-//            return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey().get());
+//            return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey().Get());
 //        }
 
 
@@ -29,7 +29,7 @@
 
 //        public KeyValuePair<long, byte[]> next()
 //        {
-//            KeyValuePair<Bytes, byte[]> next = bytesIterator.next();
+//            KeyValuePair<Bytes, byte[]> next = bytesIterator.MoveNext();
 //            long timestamp = WindowKeySchema.extractStoreTimestamp(next.key());
 //            return KeyValuePair.pair(timestamp, next.value);
 //        }

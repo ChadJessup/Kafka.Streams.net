@@ -20,7 +20,7 @@ namespace Kafka.Streams.Processors.Interfaces
         /**
          * @param recordContext the {@link ProcessorRecordContext} for the record about to be processes
          */
-        void setRecordContext(ProcessorRecordContext recordContext);
+        void SetRecordContext(ProcessorRecordContext recordContext);
 
         /**
          * @param currentNode the current {@link ProcessorNode}
@@ -33,16 +33,16 @@ namespace Kafka.Streams.Processors.Interfaces
         /**
          * Get the thread-global cache
          */
-        ThreadCache getCache();
+        ThreadCache GetCache();
 
         /**
          * Mark this context as being initialized
          */
-        void initialize();
+        void Initialize();
 
         /**
          * Mark this context as being uninitialized
          */
-        void uninitialize();
+        void Uninitialize();
     }
 }

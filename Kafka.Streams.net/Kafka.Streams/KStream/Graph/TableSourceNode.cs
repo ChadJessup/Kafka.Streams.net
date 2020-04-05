@@ -55,7 +55,7 @@ namespace Kafka.Streams.Nodes
                    "} " + base.ToString();
         }
 
-        public static TableSourceNodeBuilder<K, V> tableSourceNodeBuilder<T>(IClock clock)
+        public static TableSourceNodeBuilder<K, V> TableSourceNodeBuilder<T>(IClock clock)
             where T : IStateStore
         {
             return new TableSourceNodeBuilder<K, V>(clock);
@@ -81,16 +81,16 @@ namespace Kafka.Streams.Nodes
             IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder =
                new TimestampedKeyValueStoreMaterializer<K, V>(
                    this.clock,
-                   materializedInternal).materialize();
+                   materializedInternal).Materialize();
 
             if (isGlobalKTable)
             {
-                topologyBuilder.addGlobalStore(
+                topologyBuilder.AddGlobalStore(
                     storeBuilder,
                     sourceName,
                     consumedInternal.timestampExtractor,
-                    consumedInternal.keyDeserializer(),
-                    consumedInternal.valueDeserializer(),
+                    consumedInternal.KeyDeserializer(),
+                    consumedInternal.ValueDeserializer(),
                     topicName,
                     processorParameters.ProcessorName,
                     processorParameters.ProcessorSupplier);
@@ -101,8 +101,8 @@ namespace Kafka.Streams.Nodes
                     consumedInternal.OffsetResetPolicy(),
                     sourceName,
                     consumedInternal.timestampExtractor,
-                    consumedInternal.keyDeserializer(),
-                    consumedInternal.valueDeserializer(),
+                    consumedInternal.KeyDeserializer(),
+                    consumedInternal.ValueDeserializer(),
                     new[] { topicName });
 
                 topologyBuilder.AddProcessor(processorParameters.ProcessorName, processorParameters.ProcessorSupplier, sourceName);
@@ -111,12 +111,12 @@ namespace Kafka.Streams.Nodes
                 var ktableSource = (KTableSource<K, V>)processorParameters.ProcessorSupplier;
                 if (ktableSource.queryableName != null)
                 {
-                    topologyBuilder.addStateStore<K, V, ITimestampedKeyValueStore<K, V>>(storeBuilder, new[] { this.NodeName });
+                    topologyBuilder.AddStateStore<K, V, ITimestampedKeyValueStore<K, V>>(storeBuilder, new[] { this.NodeName });
 
                     if (ShouldReuseSourceTopicForChangelog)
                     {
                         storeBuilder.WithLoggingDisabled();
-                        topologyBuilder.connectSourceStoreAndTopic(storeBuilder.name, topicName);
+                        topologyBuilder.ConnectSourceStoreAndTopic(storeBuilder.name, topicName);
                     }
                 }
             }

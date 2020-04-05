@@ -44,7 +44,7 @@ namespace Kafka.Streams.Threads.GlobalStream
                 validTransitions.ToDictionary(k => k.StartingState, v => v);
         }
 
-        public bool isValidTransition(GlobalStreamThreadStates newState)
+        public bool IsValidTransition(GlobalStreamThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
                 ? this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState)
                 : false;
@@ -68,7 +68,7 @@ namespace Kafka.Streams.Threads.GlobalStream
                     // will be refused but we do not throw exception here
                     return false;
                 }
-                else if (!this.isValidTransition(newState))
+                else if (!this.IsValidTransition(newState))
                 {
                     this.logger.LogError("Unexpected state transition from {} to {}", oldState, newState);
                     throw new StreamsException(logPrefix + "Unexpected state transition from " + oldState + " to " + newState);

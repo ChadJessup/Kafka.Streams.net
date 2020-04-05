@@ -20,7 +20,7 @@ namespace Kafka.Streams.State
      * in-memory store with custom key/value serdes and caching disabled:
      * <pre>{@code
      * StreamsBuilder builder = new StreamsBuilder();
-     * KeyValueBytesStoreSupplier storeSupplier = Stores.inMemoryKeyValueStore("queryable-store-name");
+     * KeyValueBytesStoreSupplier storeSupplier = Stores.InMemoryKeyValueStore("queryable-store-name");
      * KTable<long,string> table = builder.table(
      *   "topicName",
      *   Materialized.<long,string>As(storeSupplier)
@@ -39,7 +39,7 @@ namespace Kafka.Streams.State
      * Dictionary<string,string> topicConfig = new Dictionary<>();
      * StoreBuilder<WindowStore<int, long>> storeBuilder = Stores
      *   .windowStoreBuilder(
-     *     Stores.persistentWindowStore("queryable-store-name", ...),
+     *     Stores.PersistentWindowStore("queryable-store-name", ...),
      *     Serdes.int(),
      *     Serdes.Long())
      *   .withLoggingEnabled(topicConfig);
@@ -55,13 +55,13 @@ namespace Kafka.Streams.State
          * <p>
          * This store supplier can be passed into a {@link #keyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
          * If you want to create a {@link TimestampedKeyValueStore} you should use
-         * {@link #persistentTimestampedKeyValueStore(string)} to create a store supplier instead.
+         * {@link #PersistentTimestampedKeyValueStore(string)} to create a store supplier instead.
          *
          * @param name  name of the store (cannot be {@code null})
          * @return an instance of a {@link KeyValueBytesStoreSupplier} that can be used
          * to build a persistent key-value store
          */
-        public static IKeyValueBytesStoreSupplier persistentKeyValueStore(string name)
+        public static IKeyValueBytesStoreSupplier PersistentKeyValueStore(string name)
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
 
@@ -72,15 +72,15 @@ namespace Kafka.Streams.State
          * Create a persistent {@link KeyValueBytesStoreSupplier}.
          * <p>
          * This store supplier can be passed into a
-         * {@link #timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
+         * {@link #TimestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
          * If you want to create a {@link KeyValueStore} you should use
-         * {@link #persistentKeyValueStore(string)} to create a store supplier instead.
+         * {@link #PersistentKeyValueStore(string)} to create a store supplier instead.
          *
          * @param name  name of the store (cannot be {@code null})
          * @return an instance of a {@link KeyValueBytesStoreSupplier} that can be used
          * to build a persistent key-(timestamp/value) store
          */
-        public static IKeyValueBytesStoreSupplier persistentTimestampedKeyValueStore(string name)
+        public static IKeyValueBytesStoreSupplier PersistentTimestampedKeyValueStore(string name)
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
 
@@ -91,13 +91,13 @@ namespace Kafka.Streams.State
         //         * Create an in-memory {@link KeyValueBytesStoreSupplier}.
         //         * <p>
         //         * This store supplier can be passed into a {@link #keyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}
-        //         * or {@link #timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
+        //         * or {@link #TimestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
         //         *
         //         * @param name  name of the store (cannot be {@code null})
         //         * @return an instance of a {@link KeyValueBytesStoreSupplier} than can be used to
         //         * build an in-memory store
         //         */
-        //        public static KeyValueBytesStoreSupplier inMemoryKeyValueStore(string name)
+        //        public static KeyValueBytesStoreSupplier InMemoryKeyValueStore(string name)
         //        {
         //            name = name ?? throw new ArgumentNullException(nameof(name));
         //            return new KeyValueBytesStoreSupplier()
@@ -127,7 +127,7 @@ namespace Kafka.Streams.State
         //     * Create a LRU Map {@link KeyValueBytesStoreSupplier}.
         //     * <p>
         //     * This store supplier can be passed into a {@link #keyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}
-        //     * or {@link #timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
+        //     * or {@link #TimestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
         //     *
         //     * @param name          name of the store (cannot be {@code null})
         //     * @param maxCacheSize  maximum number of items in the LRU (cannot be negative)
@@ -179,10 +179,10 @@ namespace Kafka.Streams.State
          *                              careful to set it the same as the windowed keys you're actually storing.
          * @param retainDuplicates      whether or not to retain duplicates.
          * @return an instance of {@link WindowBytesStoreSupplier}
-         * @deprecated since 2.1 Use {@link Stores#persistentWindowStore(string, Duration, Duration, bool)} instead
+         * @deprecated since 2.1 Use {@link Stores#PersistentWindowStore(string, Duration, Duration, bool)} instead
          */
         [Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
-        public static IWindowBytesStoreSupplier persistentWindowStore(
+        public static IWindowBytesStoreSupplier PersistentWindowStore(
             string name,
             TimeSpan retentionPeriod,
             int numSegments,
@@ -196,7 +196,7 @@ namespace Kafka.Streams.State
 
             var legacySegmentInterval = TimeSpan.FromMilliseconds(Math.Max(retentionPeriod.TotalMilliseconds / (numSegments - 1), 60_000L));
 
-            return persistentWindowStore(
+            return PersistentWindowStore(
                 name,
                 retentionPeriod,
                 windowSize,
@@ -210,7 +210,7 @@ namespace Kafka.Streams.State
          * <p>
          * This store supplier can be passed into a {@link #windowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
          * If you want to create a {@link TimestampedWindowStore} you should use
-         * {@link #persistentTimestampedWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
+         * {@link #PersistentTimestampedWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
          *
          * @param name                  name of the store (cannot be {@code null})
          * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
@@ -222,13 +222,13 @@ namespace Kafka.Streams.State
          * @return an instance of {@link WindowBytesStoreSupplier}
          * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
          */
-        public static IWindowBytesStoreSupplier persistentWindowStore(
+        public static IWindowBytesStoreSupplier PersistentWindowStore(
             string name,
             TimeSpan retentionPeriod,
             TimeSpan windowSize,
             bool retainDuplicates)
         {
-            return persistentWindowStore(
+            return PersistentWindowStore(
                 name,
                 retentionPeriod,
                 windowSize,
@@ -242,7 +242,7 @@ namespace Kafka.Streams.State
          * This store supplier can be passed into a
          * {@link #timestampedWindowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
          * If you want to create a {@link WindowStore} you should use
-         * {@link #persistentWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
+         * {@link #PersistentWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
          *
          * @param name                  name of the store (cannot be {@code null})
          * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
@@ -254,19 +254,19 @@ namespace Kafka.Streams.State
          * @return an instance of {@link WindowBytesStoreSupplier}
          * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
          */
-        public static IWindowBytesStoreSupplier persistentTimestampedWindowStore(
+        public static IWindowBytesStoreSupplier PersistentTimestampedWindowStore(
             string name,
             TimeSpan retentionPeriod,
             TimeSpan windowSize,
             bool retainDuplicates)
-            => persistentWindowStore(
+            => PersistentWindowStore(
                 name,
                 retentionPeriod,
                 windowSize,
                 retainDuplicates,
                 timestampedStore: true);
 
-        private static IWindowBytesStoreSupplier persistentWindowStore(
+        private static IWindowBytesStoreSupplier PersistentWindowStore(
             string name,
             TimeSpan retentionPeriod,
             TimeSpan windowSize,
@@ -275,14 +275,14 @@ namespace Kafka.Streams.State
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
 
-            var rpMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-            var retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, rpMsgPrefix);
-            var wsMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
-            var windowSizeMs = ApiUtils.validateMillisecondDuration(windowSize, wsMsgPrefix);
+            var rpMsgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var retentionMs = ApiUtils.ValidateMillisecondDuration(retentionPeriod, rpMsgPrefix);
+            var wsMsgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
+            var windowSizeMs = ApiUtils.ValidateMillisecondDuration(windowSize, wsMsgPrefix);
 
             var defaultSegmentInterval = TimeSpan.FromMilliseconds(Math.Max(retentionMs.TotalMilliseconds / 2, 60_000L));
 
-            return persistentWindowStore(
+            return PersistentWindowStore(
                 name,
                 retentionMs,
                 windowSizeMs,
@@ -291,7 +291,7 @@ namespace Kafka.Streams.State
                 timestampedStore);
         }
 
-        private static IWindowBytesStoreSupplier persistentWindowStore(
+        private static IWindowBytesStoreSupplier PersistentWindowStore(
             string name,
             TimeSpan retentionPeriod,
             TimeSpan windowSize,
@@ -389,10 +389,10 @@ namespace Kafka.Streams.State
          *                          windowed data's entire life cycle, from window-start through window-end,
          *                          and for the entire grace period)
          * @return an instance of a {@link  SessionBytesStoreSupplier}
-         * @deprecated since 2.1 Use {@link Stores#persistentSessionStore(string, Duration)} instead
+         * @deprecated since 2.1 Use {@link Stores#PersistentSessionStore(string, Duration)} instead
          */
         [Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
-        public static ISessionBytesStoreSupplier persistentSessionStore(
+        public static ISessionBytesStoreSupplier PersistentSessionStore(
             string name,
             long retentionPeriodMs)
         {
@@ -416,13 +416,13 @@ namespace Kafka.Streams.State
          *                          and for the entire grace period.
          * @return an instance of a {@link  SessionBytesStoreSupplier}
          */
-        public static ISessionBytesStoreSupplier persistentSessionStore(
+        public static ISessionBytesStoreSupplier PersistentSessionStore(
             string name,
             TimeSpan retentionPeriod)
         {
-            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
 
-            return persistentSessionStore(name, ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix));
+            return PersistentSessionStore(name, ApiUtils.ValidateMillisecondDuration(retentionPeriod, msgPrefix));
         }
 
         /**
@@ -435,12 +435,12 @@ namespace Kafka.Streams.State
          *                          and for the entire grace period.
          * @return an instance of a {@link  SessionBytesStoreSupplier}
          */
-        public static ISessionBytesStoreSupplier inMemorySessionStore(string name, TimeSpan retentionPeriod)
+        public static ISessionBytesStoreSupplier InMemorySessionStore(string name, TimeSpan retentionPeriod)
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
 
-            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-            var retentionPeriodMs = ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix);
+            var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var retentionPeriodMs = ApiUtils.ValidateMillisecondDuration(retentionPeriod, msgPrefix);
 
             if (retentionPeriodMs < TimeSpan.Zero)
             {
@@ -464,7 +464,7 @@ namespace Kafka.Streams.State
          * @param           value type
          * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
          */
-        public static IStoreBuilder<IKeyValueStore<K, V>> keyValueStoreBuilder<K, V>(
+        public static IStoreBuilder<IKeyValueStore<K, V>> KeyValueStoreBuilder<K, V>(
             IClock clock,
             IKeyValueBytesStoreSupplier supplier,
             ISerde<K> keySerde,
@@ -494,7 +494,7 @@ namespace Kafka.Streams.State
          * @param           value type
          * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
          */
-        public static IStoreBuilder<ITimestampedKeyValueStore<K, V>> timestampedKeyValueStoreBuilder<K, V>(
+        public static IStoreBuilder<ITimestampedKeyValueStore<K, V>> TimestampedKeyValueStoreBuilder<K, V>(
             IClock clock,
             IKeyValueBytesStoreSupplier supplier,
             ISerde<K> keySerde,
@@ -523,7 +523,7 @@ namespace Kafka.Streams.State
          * @param           value type
          * @return an instance of {@link StoreBuilder} than can build a {@link WindowStore}
          */
-        public static IStoreBuilder<IWindowStore<K, V>> windowStoreBuilder<K, V>(
+        public static IStoreBuilder<IWindowStore<K, V>> WindowStoreBuilder<K, V>(
             IClock clock,
             IWindowBytesStoreSupplier supplier,
             ISerde<K> keySerde,
@@ -553,7 +553,7 @@ namespace Kafka.Streams.State
          * @param           value type
          * @return an instance of {@link StoreBuilder} that can build a {@link TimestampedWindowStore}
          */
-        public static IStoreBuilder<ITimestampedWindowStore<K, V>> timestampedWindowStoreBuilder<K, V>(
+        public static IStoreBuilder<ITimestampedWindowStore<K, V>> TimestampedWindowStoreBuilder<K, V>(
             IClock clock,
             IWindowBytesStoreSupplier supplier,
             ISerde<K> keySerde,
@@ -579,7 +579,7 @@ namespace Kafka.Streams.State
          * @param           value type
          * @return an instance of {@link StoreBuilder} than can build a {@link ISessionStore}
          */
-        public static IStoreBuilder<ISessionStore<K, V>> sessionStoreBuilder<K, V>(
+        public static IStoreBuilder<ISessionStore<K, V>> SessionStoreBuilder<K, V>(
             ISessionBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)

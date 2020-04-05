@@ -32,7 +32,7 @@ namespace Kafka.Streams.Tasks
             this.logger = logger;
         }
 
-        public void addNewTask(T task)
+        public void AddNewTask(T task)
         {
             created.Add(task.id, task);
         }
@@ -42,7 +42,7 @@ namespace Kafka.Streams.Tasks
          * @throws StreamsException if the store's change log does not contain the partition
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public void initializeNewTasks()
+        public void InitializeNewTasks()
         {
             if (created.Any())
             {
@@ -54,12 +54,12 @@ namespace Kafka.Streams.Tasks
                 KeyValuePair<TaskId, T> entry = it.Current;
                 try
                 {
-                    if (!entry.Value.initializeStateStores() && typeof(T) == typeof(StreamTask) && entry.Value != null)
+                    if (!entry.Value.InitializeStateStores() && typeof(T) == typeof(StreamTask) && entry.Value != null)
                     {
                         if (entry.Value is StreamTask valueAsTask)
                         {
                             logger.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.Key);
-                            ((AssignedStreamsTasks)(object)this).addToRestoring(valueAsTask);
+                            ((AssignedStreamsTasks)(object)this).AddToRestoring(valueAsTask);
                         }
                     }
                     else
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        public virtual bool allTasksRunning()
+        public virtual bool AllTasksRunning()
         {
             return !created.Any() || !suspended.Any();
         }
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tasks
             firstException = Interlocked.Exchange(ref firstException, SuspendTasks(running.Values.ToList()));
             logger.LogTrace($"Close created {taskTypeName} {created.Keys}");
 
-            firstException = Interlocked.Exchange(ref firstException, closeNonRunningTasks(created.Values.ToList()));
+            firstException = Interlocked.Exchange(ref firstException, CloseNonRunningTasks(created.Values.ToList()));
 
             previousActiveTasks.Clear();
             previousActiveTasks.UnionWith(running.Keys);
@@ -101,14 +101,14 @@ namespace Kafka.Streams.Tasks
             return firstException;
         }
 
-        private RuntimeException closeNonRunningTasks(List<T> tasks)
+        private RuntimeException CloseNonRunningTasks(List<T> tasks)
         {
             RuntimeException exception = null;
             foreach (T task in tasks)
             {
                 try
                 {
-                    task.close(false, false);
+                    task.Close(false, false);
                 }
                 catch (RuntimeException e)
                 {
@@ -133,7 +133,7 @@ namespace Kafka.Streams.Tasks
                 try
                 {
 
-                    task.suspend();
+                    task.Suspend();
                     suspended.Add(task.id, task);
                 }
                 catch (TaskMigratedException closeAsZombieAndSwallow)
@@ -141,7 +141,7 @@ namespace Kafka.Streams.Tasks
                     // as we suspend a task, we are either shutting down or rebalancing, thus, we swallow and move on
                     logger.LogInformation($"Failed to suspend {taskTypeName} {task.id} since it got migrated to another thread already. " +
                             "Closing it as zombie and move on.");
-                    firstException = Interlocked.Exchange(ref firstException, closeZombieTask(task));
+                    firstException = Interlocked.Exchange(ref firstException, CloseZombieTask(task));
 
                     tasks.Remove(it.Current);
                 }
@@ -154,7 +154,7 @@ namespace Kafka.Streams.Tasks
                     try
                     {
 
-                        task.close(false, false);
+                        task.Close(false, false);
                     }
                     catch (RuntimeException f)
                     {
@@ -166,12 +166,12 @@ namespace Kafka.Streams.Tasks
             return firstException;
         }
 
-        public RuntimeException closeZombieTask(T task)
+        public RuntimeException CloseZombieTask(T task)
         {
             try
             {
 
-                task.close(false, true);
+                task.Close(false, true);
             }
             catch (RuntimeException e)
             {
@@ -181,7 +181,7 @@ namespace Kafka.Streams.Tasks
             return null;
         }
 
-        public bool hasRunningTasks()
+        public bool HasRunningTasks()
         {
             return running.Any();
         }
@@ -189,7 +189,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool maybeResumeSuspendedTask(TaskId taskId, HashSet<TopicPartition> partitions)
+        public bool MaybeResumeSuspendedTask(TaskId taskId, HashSet<TopicPartition> partitions)
         {
             if (suspended.ContainsKey(taskId))
             {
@@ -198,7 +198,7 @@ namespace Kafka.Streams.Tasks
                 if (task.partitions.Equals(partitions))
                 {
                     suspended.Remove(taskId);
-                    task.resume();
+                    task.Resume();
                     try
                     {
 
@@ -210,7 +210,7 @@ namespace Kafka.Streams.Tasks
                         // is triggered in the rebalance callback
                         logger.LogInformation(e, "Failed to resume {} {} since it got migrated to another thread already. " +
                                 "Closing it as zombie before triggering a new rebalance.", taskTypeName, task.id);
-                        RuntimeException fatalException = closeZombieTask(task);
+                        RuntimeException fatalException = CloseZombieTask(task);
                         running.Remove(task.id, out var _);
                         if (fatalException != null)
                         {
@@ -238,7 +238,7 @@ namespace Kafka.Streams.Tasks
         {
             logger.LogDebug("Transitioning {} {} to running", taskTypeName, task.id);
             running.TryAdd(task.id, task);
-            task.initializeTopology();
+            task.InitializeTopology();
             foreach (TopicPartition topicPartition in task.partitions)
             {
                 runningByPartition.Add(topicPartition, task);
@@ -279,14 +279,14 @@ namespace Kafka.Streams.Tasks
         {
             var builder = new StringBuilder();
 
-            describe(builder, running.Values.ToList(), indent, "Running:");
-            describe(builder, suspended.Values.ToList(), indent, "Suspended:");
-            describe(builder, created.Values.ToList(), indent, "New:");
+            Describe(builder, running.Values.ToList(), indent, "Running:");
+            Describe(builder, suspended.Values.ToList(), indent, "Suspended:");
+            Describe(builder, created.Values.ToList(), indent, "New:");
 
             return builder.ToString();
         }
 
-        public void describe(
+        public void Describe(
             StringBuilder builder,
             List<T> tasks,
             string indent,
@@ -321,7 +321,7 @@ namespace Kafka.Streams.Tasks
             builder.Append("\n");
         }
 
-        public virtual List<T> allTasks()
+        public virtual List<T> AllTasks()
         {
             var tasks = new List<T>();
 
@@ -332,7 +332,7 @@ namespace Kafka.Streams.Tasks
             return tasks;
         }
 
-        public virtual HashSet<TaskId> allAssignedTaskIds()
+        public virtual HashSet<TaskId> AllAssignedTaskIds()
         {
             var taskIds = new HashSet<TaskId>();
             taskIds.UnionWith(running.Keys);
@@ -341,7 +341,7 @@ namespace Kafka.Streams.Tasks
             return taskIds;
         }
 
-        public virtual void clear()
+        public virtual void Clear()
         {
             runningByPartition.Clear();
             running.Clear();
@@ -349,7 +349,7 @@ namespace Kafka.Streams.Tasks
             suspended.Clear();
         }
 
-        public HashSet<TaskId> previousTaskIds()
+        public HashSet<TaskId> PreviousTaskIds()
         {
             return previousActiveTasks;
         }
@@ -358,7 +358,7 @@ namespace Kafka.Streams.Tasks
          * @throws TaskMigratedException if committing offsets failed (non-EOS)
          *                               or if the task producer got fenced (EOS)
          */
-        public int commit()
+        public int Commit()
         {
             var committed = 0;
             RuntimeException? firstException = null;
@@ -370,7 +370,7 @@ namespace Kafka.Streams.Tasks
 
                     if (task.commitNeeded)
                     {
-                        task.commit();
+                        task.Commit();
                         committed++;
                     }
                 }
@@ -379,7 +379,7 @@ namespace Kafka.Streams.Tasks
                     logger.LogInformation(e, $"Failed to commit {taskTypeName} {task.id} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.");
 
-                    RuntimeException fatalException = closeZombieTask(task);
+                    RuntimeException fatalException = CloseZombieTask(task);
                     if (fatalException != null)
                     {
                         throw fatalException;
@@ -411,7 +411,7 @@ namespace Kafka.Streams.Tasks
             return committed;
         }
 
-        public void closeNonAssignedSuspendedTasks(Dictionary<TaskId, HashSet<TopicPartition>> newAssignment)
+        public void CloseNonAssignedSuspendedTasks(Dictionary<TaskId, HashSet<TopicPartition>> newAssignment)
         {
             if (newAssignment == null || !newAssignment.Any())
             {
@@ -428,7 +428,7 @@ namespace Kafka.Streams.Tasks
                     try
                     {
 
-                        suspendedTask.closeSuspended(true, false, null);
+                        suspendedTask.CloseSuspended(true, false, null);
                     }
                     catch (Exception e)
                     {
@@ -442,22 +442,22 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        public void close(bool clean)
+        public void Close(bool clean)
         {
             var firstException = new RuntimeException(null);
-            foreach (T task in allTasks())
+            foreach (T task in AllTasks())
             {
                 try
                 {
 
-                    task.close(clean, false);
+                    task.Close(clean, false);
                 }
                 catch (TaskMigratedException e)
                 {
                     logger.LogInformation(e, $"Failed to close {taskTypeName} {task.id} since it got migrated to another thread already. " +
                             "Closing it as zombie and move on.");
 
-                    firstException = Interlocked.Exchange(ref firstException, closeZombieTask(task));
+                    firstException = Interlocked.Exchange(ref firstException, CloseZombieTask(task));
                 }
                 catch (RuntimeException t)
                 {
@@ -465,7 +465,7 @@ namespace Kafka.Streams.Tasks
 
                     if (clean)
                     {
-                        if (!closeUnclean(task))
+                        if (!CloseUnclean(task))
                         {
                             firstException = Interlocked.Exchange(ref firstException, t);
                         }
@@ -477,7 +477,7 @@ namespace Kafka.Streams.Tasks
                 }
             }
 
-            clear();
+            Clear();
 
             RuntimeException fatalException = firstException;
 
@@ -487,12 +487,12 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        private bool closeUnclean(T task)
+        private bool CloseUnclean(T task)
         {
             logger.LogInformation("Try to close {} {} unclean.", task.GetType().FullName, task.id);
             try
             {
-                task.close(false, false);
+                task.Close(false, false);
             }
             catch (RuntimeException fatalException)
             {

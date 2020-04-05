@@ -54,7 +54,7 @@ namespace Kafka.Streams.Threads.Stream
         public ITaskManager TaskManager { get; private set; }
         public IThread<StreamThreadStates> Thread { get; protected set; }
 
-        public bool isValidTransition(StreamThreadStates newState)
+        public bool IsValidTransition(StreamThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
                 ? this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState)
                 : false;
@@ -102,7 +102,7 @@ namespace Kafka.Streams.Threads.Stream
                     // refused but we do not throw exception here
                     return false;
                 }
-                else if (!this.isValidTransition(newState))
+                else if (!this.IsValidTransition(newState))
                 {
                     this.logger.LogError($"Unexpected state transition from {oldState} to {newState}");
 
@@ -120,7 +120,7 @@ namespace Kafka.Streams.Threads.Stream
                     if (this.Thread is StreamThread st)
                     {
                         st.UpdateThreadMetadata(
-                            this.TaskManager.activeTasks(),
+                            this.TaskManager.ActiveTasks(),
                             this.TaskManager.StandbyTasks());
                     }
                 }

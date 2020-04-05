@@ -27,14 +27,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldCallInitOfAdapteeTransformer()
 //        {
-//            EasyMock.expect(transformerSupplier.get()).andReturn(transformer);
-//            transformer.init(context);
+//            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer);
+//            transformer.Init(context);
 //            replayAll();
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.get();
-//            adaptedTransformer.init(context);
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.Get();
+//            adaptedTransformer.Init(context);
 
 //            //verifyAll();
 //        }
@@ -42,13 +42,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldCallCloseOfAdapteeTransformer()
 //        {
-//            EasyMock.expect(transformerSupplier.get()).andReturn(transformer);
+//            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer);
 //            transformer.close();
 //            replayAll();
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.get();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.Get();
 //            adaptedTransformer.close();
 
 //            //verifyAll();
@@ -57,31 +57,31 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldCallTransformOfAdapteeTransformerAndReturnSingletonIterable()
 //        {
-//            EasyMock.expect(transformerSupplier.get()).andReturn(transformer);
+//            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer);
 //            EasyMock.expect(transformer.transform(key, value)).andReturn(KeyValuePair.Create(0, 1));
 //            replayAll();
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.get();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.Get();
 //            Iterator<KeyValuePair<int, int>> iterator = adaptedTransformer.transform(key, value).iterator();
 
 //            //verifyAll();
 //            Assert.Equal(iterator..AsNext(), (true));
-//            iterator.next();
+//            iterator.MoveNext();
 //            Assert.Equal(iterator..AsNext(), (false));
 //        }
 
 //        [Fact]
 //        public void shouldCallTransformOfAdapteeTransformerAndReturnEmptyIterable()
 //        {
-//            EasyMock.expect(transformerSupplier.get()).andReturn(transformer);
+//            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer);
 //            EasyMock.expect(transformer.transform(key, value)).andReturn(null);
 //            replayAll();
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.get();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.Get();
 //            Iterator<KeyValuePair<int, int>> iterator = adaptedTransformer.transform(key, value).iterator();
 
 //            //verifyAll();
@@ -94,22 +94,22 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Transformer<string, string, KeyValuePair<int, int>> transformer1 = mock(Transformer));
 //            Transformer<string, string, KeyValuePair<int, int>> transformer2 = mock(Transformer));
 //            Transformer<string, string, KeyValuePair<int, int>> transformer3 = mock(Transformer));
-//            EasyMock.expect(transformerSupplier.get()).andReturn(transformer1);
-//            transformer1.init(context);
-//            EasyMock.expect(transformerSupplier.get()).andReturn(transformer2);
-//            transformer2.init(context);
-//            EasyMock.expect(transformerSupplier.get()).andReturn(transformer3);
-//            transformer3.init(context);
+//            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer1);
+//            transformer1.Init(context);
+//            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer2);
+//            transformer2.Init(context);
+//            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer3);
+//            transformer3.Init(context);
 //            replayAll();
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer1 = adapter.get();
-//            adapterTransformer1.init(context);
-//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer2 = adapter.get();
-//            adapterTransformer2.init(context);
-//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer3 = adapter.get();
-//            adapterTransformer3.init(context);
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer1 = adapter.Get();
+//            adapterTransformer1.Init(context);
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer2 = adapter.Get();
+//            adapterTransformer2.Init(context);
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer3 = adapter.Get();
+//            adapterTransformer3.Init(context);
 
 //            //verifyAll();
 //            Assert.Equal(adapterTransformer1, not(sameInstance(adapterTransformer2)));

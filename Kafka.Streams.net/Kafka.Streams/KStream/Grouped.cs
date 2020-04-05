@@ -3,33 +3,8 @@ using Kafka.Streams.KStream.Interfaces;
 
 namespace Kafka.Streams.KStream
 {
-    /**
-     * The that is used to capture the key and value {@link Serde}s and set the part of name used for
-     * repartition topics when performing {@link KStream#groupBy(KeyValueMapper, Grouped)}, {@link
-     * KStream#groupByKey(Grouped)}, or {@link KTable#groupBy(KeyValueMapper, Grouped)} operations.  Note
-     * that Kafka Streams does not always create repartition topics for grouping operations.
-     *
-     * @param the key type
-     * @param the value type
-     */
-    public class Grouped<K, V> : INamedOperation<Grouped<K, V>>
+    public static class Grouped
     {
-        public ISerde<K>? keySerde { get; private set; }
-        public ISerde<V>? valueSerde { get; private set; }
-        public string? name { get; }
-
-        private Grouped(string? name, ISerde<K>? keySerde, ISerde<V>? valueSerde)
-        {
-            this.name = name;
-            this.keySerde = keySerde;
-            this.valueSerde = valueSerde;
-        }
-
-        protected Grouped(Grouped<K, V> grouped)
-         : this(grouped?.name, grouped?.keySerde, grouped?.valueSerde)
-        {
-        }
-
         /**
          * Create a {@link Grouped} instance with the provided name used as part of the repartition topic if required.
          *
@@ -39,7 +14,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
-        public static Grouped<K, V> As(string name)
+        public static Grouped<K, V> As<K, V>(string name)
         {
             return new Grouped<K, V>(name, null, null);
         }
@@ -53,7 +28,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
-        public static Grouped<K, V> KeySerde(ISerde<K> keySerde)
+        public static Grouped<K, V> KeySerde<K, V>(ISerde<K> keySerde)
         {
             return new Grouped<K, V>(null, keySerde, null);
         }
@@ -67,7 +42,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
-        public static Grouped<K, V> ValueSerde(ISerde<V> valueSerde)
+        public static Grouped<K, V> ValueSerde<K, V>(ISerde<V> valueSerde)
         {
             return new Grouped<K, V>(null, null, valueSerde);
         }
@@ -84,7 +59,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
-        public static Grouped<K, V> With(
+        public static Grouped<K, V> With<K, V>(
             string name,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
@@ -103,11 +78,39 @@ namespace Kafka.Streams.KStream
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
-        public static Grouped<K, V> With(
+        public static Grouped<K, V> With<K, V>(
             ISerde<K>? keySerde,
             ISerde<V>? valueSerde)
         {
             return new Grouped<K, V>(null, keySerde, valueSerde);
+        }
+    }
+
+    /**
+     * The that is used to capture the key and value {@link Serde}s and set the part of name used for
+     * repartition topics when performing {@link KStream#groupBy(KeyValueMapper, Grouped)}, {@link
+     * KStream#groupByKey(Grouped)}, or {@link KTable#groupBy(KeyValueMapper, Grouped)} operations.  Note
+     * that Kafka Streams does not always create repartition topics for grouping operations.
+     *
+     * @param the key type
+     * @param the value type
+     */
+    public class Grouped<K, V> : INamedOperation<Grouped<K, V>>
+    {
+        public ISerde<K>? KeySerde { get; private set; }
+        public ISerde<V>? ValueSerde { get; private set; }
+        public string? Name { get; }
+
+        public Grouped(string? name, ISerde<K>? keySerde, ISerde<V>? valueSerde)
+        {
+            this.Name = name;
+            this.KeySerde = keySerde;
+            this.ValueSerde = valueSerde;
+        }
+
+        public Grouped(Grouped<K, V> grouped)
+         : this(grouped?.Name, grouped?.KeySerde, grouped?.ValueSerde)
+        {
         }
 
         /**
@@ -119,7 +122,7 @@ namespace Kafka.Streams.KStream
          * */
         public Grouped<K, V> WithName(string name)
         {
-            return new Grouped<K, V>(name, keySerde, valueSerde);
+            return new Grouped<K, V>(name, this.KeySerde, this.ValueSerde);
         }
 
         /**
@@ -130,7 +133,7 @@ namespace Kafka.Streams.KStream
          */
         public Grouped<K, V> WithKeySerde(ISerde<K> keySerde)
         {
-            return new Grouped<K, V>(name, keySerde, valueSerde);
+            return new Grouped<K, V>(this.Name, keySerde, this.ValueSerde);
         }
 
         /**
@@ -141,7 +144,7 @@ namespace Kafka.Streams.KStream
          */
         public Grouped<K, V> WithValueSerde(ISerde<V> valueSerde)
         {
-            return new Grouped<K, V>(name, keySerde, valueSerde);
+            return new Grouped<K, V>(this.Name, this.KeySerde, valueSerde);
         }
     }
 }

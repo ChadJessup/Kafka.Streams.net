@@ -22,8 +22,8 @@
 
 //        public KeyValuePair<Bytes, byte[]> next()
 //        {
-//            KeyValuePair<Bytes, byte[]> entry = iter.next();
-//            return new KeyValuePair<>(entry.Key, entry.Value);
+//            KeyValuePair<Bytes, byte[]> entry = iter.MoveNext();
+//            return KeyValuePair.Create(entry.Key, entry.Value);
 //        }
 
 

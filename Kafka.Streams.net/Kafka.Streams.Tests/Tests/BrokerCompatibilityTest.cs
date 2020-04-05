@@ -25,7 +25,7 @@ namespace Kafka.Streams.Tests.Tests
 //            string propFileName = args[0];
 //            bool eosEnabled = Boolean.parseBoolean(args[1]);
 
-//            Properties streamsProperties = Utils.loadProps(propFileName);
+//            StreamsConfig streamsProperties = Utils.loadProps(propFileName);
 //            string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 
 //            if (kafka == null)
@@ -62,12 +62,12 @@ namespace Kafka.Streams.Tests.Tests
 
 //                public string apply(long value)
 //            {
-//                return value.toString();
+//                return value.ToString();
 //            }
 //        })
-//            .to(SINK_TOPIC);
+//            .To(SINK_TOPIC);
 
-//        KafkaStreams streams = new KafkaStreams(builder.build(), streamsProperties);
+//        KafkaStreams streams = new KafkaStreams(builder.Build(), streamsProperties);
 //        streams.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
 //            public void uncaughtException(Thread t, Throwable e)
@@ -91,10 +91,10 @@ namespace Kafka.Streams.Tests.Tests
 
 
 //        System.Console.Out.WriteLine("send data");
-//        Properties producerProperties = new Properties();
+//        StreamsConfig producerProperties = new StreamsConfig();
 //    producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer);
-//        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer);
+//        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
 //        try {
 //            try { 
@@ -115,12 +115,12 @@ namespace Kafka.Streams.Tests.Tests
 
 //    private static void loopUntilRecordReceived(string kafka, bool eosEnabled)
 //{
-//    Properties consumerProperties = new Properties();
+//    StreamsConfig consumerProperties = new StreamsConfig();
 //    consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
 //    consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "broker-compatibility-consumer");
 //    consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//    consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer);
-//        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer);
+//    consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
+//        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
 //        if (eosEnabled) {
 //            consumerProperties.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.name().toLowerCase(Locale.ROOT));
 //        }
@@ -130,7 +130,7 @@ namespace Kafka.Streams.Tests.Tests
 //            consumer.subscribe(Collections.singletonList(SINK_TOPIC));
 
 //            while (true) {
-//                ConsumerRecords<string, string> records = consumer.poll(Duration.ofMillis(100));
+//                ConsumeResult<string, string> records = consumer.poll(Duration.FromMilliseconds(100));
 //                foreach (ConsumeResult<string, string> record in records) {
 //                    if (record.Key.equals("key") && record.Value.equals("1")) {
 //                        return;

@@ -29,8 +29,8 @@ namespace WordCountProcessorDemo
                 ApplicationId = "streams-wordcount",
                 GroupId = "streams-wordcount",
                 BootstrapServers = "localhost:9092",
-                DefaultKeySerde = Serdes.String().GetType(),
-                DefaultValueSerde = Serdes.String().GetType(),
+                KeySerde = Serdes.String().GetType(),
+                ValueSerde = Serdes.String().GetType(),
                 NumberOfStreamThreads = 1,
                 CacheMaxBytesBuffering = 10485760L,
                 // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data
@@ -63,14 +63,14 @@ namespace WordCountProcessorDemo
 
             builder
                 .Stream<string, string>("TextLinesTopic")
-                .flatMapValues(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()))
+                .FlatMapValues(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()))
                 .GroupBy((key, word) => word)
-                .Count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"))
+                .Count(Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("Counts"))
                 .ToStream()
                 .To("WordsWithCountsTopic",
-                    Produced<string, long>.With(
-                    Serdes.String(),
-                    Serdes.Long()));
+                    Produced.With(
+                        Serdes.String(),
+                        Serdes.Long()));
 
             // Make the topology injectable
             var topology = builder.Build();
@@ -300,12 +300,12 @@ namespace WordCountProcessorDemo
             //// in the message keys).
             //IKStream<string, string> textLines = builder.stream(
             //      "streams-plaintext-input",
-            //      Consumed.with(stringSerde, stringSerde)
+            //      Consumed.With(stringSerde, stringSerde)
             //    );
 
             //IKTable<string, long> wordCounts = textLines
             //    // Split each text line, by whitespace, into words.
-            //    .flatMapValues(value=>Arrays.asList(value.toLowerCase().split("\\W+")))
+            //    .flatMapValues(value=>Arrays.asList(value.toLowerCase().Split("\\W+")))
 
             //    // Group the text words as message keys
             //    .groupBy((key, value)=>value)
@@ -314,7 +314,7 @@ namespace WordCountProcessorDemo
             //    .count();
 
             //// Store the running counts as a changelog stream to the output topic.
-            //wordCounts.toStream().to("streams-wordcount-output", Produced.with(Serdes.String(), Serdes.Long()));
+            //wordCounts.toStream().to("streams-wordcount-output", Produced.With(Serdes.String(), Serdes.Long()));
 
             //var source = builder
             //    .stream<string, string>("streams-plaintext-input");

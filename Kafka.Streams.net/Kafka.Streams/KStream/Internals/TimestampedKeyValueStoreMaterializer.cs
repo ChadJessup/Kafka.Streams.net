@@ -21,18 +21,18 @@ namespace Kafka.Streams.KStream.Internals
         /**
          * @return  StoreBuilder
          */
-        public IStoreBuilder<ITimestampedKeyValueStore<K, V>> materialize()
+        public IStoreBuilder<ITimestampedKeyValueStore<K, V>> Materialize()
         {
             var supplier = (IKeyValueBytesStoreSupplier)materialized?.StoreSupplier ?? null;
 
             if (supplier == null)
             {
                 var name = materialized?.StoreName;
-                supplier = Stores.persistentTimestampedKeyValueStore(name);
+                supplier = Stores.PersistentTimestampedKeyValueStore(name);
             }
 
             IStoreBuilder<ITimestampedKeyValueStore<K, V>> builder =
-                Stores.timestampedKeyValueStoreBuilder(
+                Stores.TimestampedKeyValueStoreBuilder(
                     this.clock,
                    supplier,
                    materialized?.KeySerde,
@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (materialized?.LoggingEnabled == true)
             {
-                builder.WithLoggingEnabled(materialized.logConfig());
+                builder.WithLoggingEnabled(materialized.LogConfig());
             }
             else
             {

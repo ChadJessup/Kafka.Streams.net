@@ -86,7 +86,7 @@ namespace Kafka.Streams.State
          * @return directory for the {@link TaskId}
          * @throws ProcessorStateException if the task directory does not exists and could not be created
          */
-        public DirectoryInfo directoryForTask(TaskId taskId)
+        public DirectoryInfo DirectoryForTask(TaskId taskId)
         {
             taskId = taskId ?? throw new ArgumentNullException(nameof(taskId));
 
@@ -112,7 +112,7 @@ namespace Kafka.Streams.State
          * @return directory for the global stores
          * @throws ProcessorStateException if the global store directory does not exists and could not be created
          */
-        public DirectoryInfo globalStateDir()
+        public DirectoryInfo GlobalStateDir()
         {
             var dir = new DirectoryInfo(Path.Combine(stateDir.FullName, "global"));
 
@@ -126,11 +126,11 @@ namespace Kafka.Streams.State
             return dir;
         }
 
-        private string logPrefix()
+        private string LogPrefix()
             => $"stream-thread [{Thread.CurrentThread.Name}]";
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public bool lockGlobalState()
+        public bool LockGlobalState()
         {
             if (!createStateDirectory)
             {
@@ -139,12 +139,12 @@ namespace Kafka.Streams.State
 
             if (globalStateLock != null)
             {
-                logger.LogTrace($"{logPrefix()} Found cached state dir lock for the global task");
+                logger.LogTrace($"{LogPrefix()} Found cached state dir lock for the global task");
 
                 return true;
             }
 
-            var lockFile = new FileInfo(Path.Combine(globalStateDir().FullName, LOCK_FILE_NAME));
+            var lockFile = new FileInfo(Path.Combine(GlobalStateDir().FullName, LOCK_FILE_NAME));
             FileChannel channel;
 
             try
@@ -162,14 +162,14 @@ namespace Kafka.Streams.State
             FileLock fileLock = TryLock(channel);
             if (fileLock == null)
             {
-                channel.close();
+                channel.Close();
                 return false;
             }
 
             globalStateChannel = channel;
             globalStateLock = fileLock;
 
-            logger.LogDebug("{} Acquired global state dir lock", logPrefix());
+            logger.LogDebug("{} Acquired global state dir lock", LogPrefix());
 
             return true;
         }
@@ -182,12 +182,12 @@ namespace Kafka.Streams.State
                 return;
             }
 
-            globalStateLock.release();
-            globalStateChannel.close();
+            globalStateLock.Release();
+            globalStateChannel.Close();
             globalStateLock = null;
             globalStateChannel = null;
 
-            logger.LogDebug($"{logPrefix()} Released global state dir lock");
+            logger.LogDebug($"{LogPrefix()} Released global state dir lock");
         }
 
         /**
@@ -201,21 +201,21 @@ namespace Kafka.Streams.State
             {
                 locks.Remove(taskId);
                 //lockAndOwner.@lock.release();
-                logger.LogDebug("{} Released state dir lock for task {}", logPrefix(), taskId);
+                logger.LogDebug("{} Released state dir lock for task {}", LogPrefix(), taskId);
 
                 if (channels.Remove(taskId, out FileChannel fileChannel))
                 {
-                    fileChannel.close();
+                    fileChannel.Close();
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void clean()
+        public void Clean()
         {
             try
             {
-                cleanRemovedTasks(0, true);
+                CleanRemovedTasks(0, true);
             }
             catch (Exception e)
             {
@@ -227,12 +227,12 @@ namespace Kafka.Streams.State
             {
                 if (stateDir.Exists)
                 {
-                    globalStateDir().Delete();
+                    GlobalStateDir().Delete();
                 }
             }
             catch (IOException e)
             {
-                logger.LogError("{} Failed to delete global state directory due to an unexpected exception", logPrefix(), e);
+                logger.LogError("{} Failed to delete global state directory due to an unexpected exception", LogPrefix(), e);
 
                 throw new StreamsException(e);
             }
@@ -246,11 +246,11 @@ namespace Kafka.Streams.State
          *                       this amount of time (milliseconds)
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void cleanRemovedTasks(long cleanupDelayMs)
+        public void CleanRemovedTasks(long cleanupDelayMs)
         {
             try
             {
-                cleanRemovedTasks(cleanupDelayMs, false);
+                CleanRemovedTasks(cleanupDelayMs, false);
             }
             catch (Exception cannotHappen)
             {
@@ -259,11 +259,11 @@ namespace Kafka.Streams.State
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private void cleanRemovedTasks(
+        private void CleanRemovedTasks(
             long cleanupDelayMs,
             bool manualUserCall)
         {
-            DirectoryInfo[] taskDirs = listTaskDirectories();
+            DirectoryInfo[] taskDirs = ListTaskDirectories();
             if (taskDirs == null || taskDirs.Length == 0)
             {
                 return; // nothing to do
@@ -272,7 +272,7 @@ namespace Kafka.Streams.State
             foreach (var taskDir in taskDirs)
             {
                 var dirName = taskDir.FullName;
-                var id = TaskId.parse(dirName);
+                var id = TaskId.Parse(dirName);
                 if (!locks.ContainsKey(id))
                 {
                     try
@@ -287,7 +287,7 @@ namespace Kafka.Streams.State
                                 {
                                     logger.LogInformation(
                                         "{} Deleting obsolete state directory {} for task {} as {}ms has elapsed (cleanup delay is {}ms).",
-                                        logPrefix(),
+                                        LogPrefix(),
                                         dirName,
                                         id,
                                         now - lastModified,
@@ -297,7 +297,7 @@ namespace Kafka.Streams.State
                                 {
                                     logger.LogInformation(
                                             "{} Deleting state directory {} for task {} as user calling cleanup.",
-                                            logPrefix(),
+                                            LogPrefix(),
                                             dirName,
                                             id);
                                 }
@@ -311,14 +311,14 @@ namespace Kafka.Streams.State
                         // locked by another thread
                         if (manualUserCall)
                         {
-                            logger.LogError("{} Failed to get the state directory lock.", logPrefix(), e);
+                            logger.LogError("{} Failed to get the state directory lock.", LogPrefix(), e);
                             
                             throw;
                         }
                     }
                     catch (IOException e)
                     {
-                        logger.LogError("{} Failed to delete the state directory.", logPrefix(), e);
+                        logger.LogError("{} Failed to delete the state directory.", LogPrefix(), e);
                         if (manualUserCall)
                         {
                             throw;
@@ -332,7 +332,7 @@ namespace Kafka.Streams.State
                         }
                         catch (IOException e)
                         {
-                            logger.LogError(e, $"{logPrefix()} Failed to release the state directory lock.");
+                            logger.LogError(e, $"{LogPrefix()} Failed to release the state directory lock.");
 
                             if (manualUserCall)
                             {
@@ -348,14 +348,14 @@ namespace Kafka.Streams.State
          * List all of the task directories
          * @return The list of all the existing local directories for stream tasks
          */
-        public DirectoryInfo[] listTaskDirectories()
+        public DirectoryInfo[] ListTaskDirectories()
         {
             return !stateDir.Exists
                 ? Array.Empty<DirectoryInfo>()
                 : stateDir.GetDirectories().Where(pathname => pathname.Attributes == FileAttributes.Directory && PATH_NAME.IsMatch(pathname.FullName)).ToArray();
         }
 
-        private FileChannel getOrCreateFileChannel(
+        private FileChannel GetOrCreateFileChannel(
             TaskId taskId,
             string lockPath)
         {
@@ -371,7 +371,7 @@ namespace Kafka.Streams.State
         {
             try
             {
-                return channel.tryLock();
+                return channel.TryLock();
             }
             catch (OverlappingFileLockException e)
             {

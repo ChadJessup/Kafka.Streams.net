@@ -70,7 +70,7 @@
 //            long startNs = time.nanoseconds();
 //            try
 //            {
-//                base.init(context, root);
+//                base.Init(context, root);
 //            }
 //            finally
 //            {
@@ -111,7 +111,7 @@
 //            try
 //            {
 //                Bytes key = keyBytes(sessionKey.key);
-//                wrapped.Add(new Windowed<K>(key, sessionKey.window), serdes.rawValue(aggregate));
+//                wrapped.Add(new Windowed<K>(key, sessionKey.window), serdes.RawValue(aggregate));
 //            }
 //            catch (ProcessorStateException e)
 //            {
@@ -135,7 +135,7 @@
 //            }
 //            catch (ProcessorStateException e)
 //            {
-//                string message = string.Format(e.getMessage(), sessionKey.key());
+//                string message = string.Format(e.ToString(), sessionKey.key());
 //                throw new ProcessorStateException(message, e);
 //            }
 //            finally
@@ -151,7 +151,7 @@
 //            long startNs = time.nanoseconds();
 //            try
 //            {
-//                byte[] result = wrapped.fetchSession(bytesKey, startTime, endTime);
+//                byte[] result = wrapped.FetchSession(bytesKey, startTime, endTime);
 //                if (result == null)
 //                {
 //                    return default;
@@ -168,7 +168,7 @@
 //        {
 //            key = key ?? throw new ArgumentNullException(nameof(key));
 //            return new MeteredWindowedKeyValueIterator<>(
-//                wrapped.fetch(keyBytes(key)),
+//                wrapped.Fetch(keyBytes(key)),
 //                fetchTime,
 //                metrics,
 //                serdes,
@@ -181,7 +181,7 @@
 //            from = from ?? throw new ArgumentNullException(nameof(from));
 //            to = to ?? throw new ArgumentNullException(nameof(to));
 //            return new MeteredWindowedKeyValueIterator<>(
-//                wrapped.fetch(keyBytes(from), keyBytes(to)),
+//                wrapped.Fetch(keyBytes(from), keyBytes(to)),
 //                fetchTime,
 //                metrics,
 //                serdes,
@@ -247,7 +247,7 @@
 
 //        private Bytes keyBytes(K key)
 //        {
-//            return Bytes.wrap(serdes.rawKey(key));
+//            return Bytes.Wrap(serdes.rawKey(key));
 //        }
 //    }
 //}

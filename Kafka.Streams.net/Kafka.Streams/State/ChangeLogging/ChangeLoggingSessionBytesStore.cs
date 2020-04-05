@@ -12,7 +12,7 @@
 
 //        public override void init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
 //        {
-//            base.init(context, root);
+//            base.Init(context, root);
 //            string topic = ProcessorStateManager.storeChangelogTopic(
 //                    context.applicationId(),
 //                    name);
@@ -49,17 +49,17 @@
 
 //        public override byte[] fetchSession(Bytes key, long startTime, long endTime)
 //        {
-//            return wrapped.fetchSession(key, startTime, endTime);
+//            return wrapped.FetchSession(key, startTime, endTime);
 //        }
 
 //        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
 //        {
-//            return wrapped.fetch(key);
+//            return wrapped.Fetch(key);
 //        }
 
 //        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
 //        {
-//            return wrapped.fetch(from, to);
+//            return wrapped.Fetch(from, to);
 //        }
 //    }
 //}

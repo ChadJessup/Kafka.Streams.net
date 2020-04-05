@@ -17,10 +17,10 @@ namespace Kafka.Streams.Topologies
 
         public override string ToString()
         {
-            return "Sub-topology: " + id + "\n" + nodesAsString() + "\n";
+            return "Sub-topology: " + id + "\n" + NodesAsString() + "\n";
         }
 
-        private string nodesAsString()
+        private string NodesAsString()
         {
             var sb = new StringBuilder();
             foreach (INode node in nodes)

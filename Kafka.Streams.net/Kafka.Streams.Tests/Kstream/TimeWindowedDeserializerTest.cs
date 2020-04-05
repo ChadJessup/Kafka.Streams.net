@@ -28,7 +28,7 @@ namespace Kafka.Streams.Tests
         public void TestWindowedKeyDeserializerNoArgConstructors()
         {
             timeWindowedKeyDeserializer.Configure(props, isKey: true);
-            var inner = timeWindowedKeyDeserializer.innerDeserializer();
+            var inner = timeWindowedKeyDeserializer.InnerDeserializer();
             Assert.NotNull(inner);
             Assert.IsAssignableFrom<IDeserializer<string>>(inner);
         }
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Tests
         public void TestWindowedValueDeserializerNoArgConstructors()
         {
             timeWindowedValueDeserializer.Configure(props, isKey: false);
-            var inner = timeWindowedValueDeserializer.innerDeserializer();
+            var inner = timeWindowedValueDeserializer.InnerDeserializer();
             Assert.NotNull(inner);
             Assert.IsAssignableFrom<IDeserializer<byte[]>>(inner);
         }

@@ -28,7 +28,7 @@ namespace Kafka.Streams.Processors.Internals
         {
         }
 
-        public IRecordCollector recordCollector()
+        public IRecordCollector RecordCollector()
         {
             return NO_OP_COLLECTOR;
         }
@@ -36,7 +36,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public override IStateStore getStateStore(string name)
+        public override IStateStore GetStateStore(string name)
         {
             throw new InvalidOperationException("this should not happen: getStateStore() not supported in standby tasks.");
         }
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
         public override int partition
-            => throw new InvalidOperationException("this should not happen: partition() not supported in standby tasks.");
+            => throw new InvalidOperationException("this should not happen: Partition not supported in standby tasks.");
 
 
         /**
@@ -71,7 +71,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
 
-        public void forward(K key, V value)
+        public void Forward(K key, V value)
         {
             throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
         }
@@ -80,17 +80,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
 
-        public void forward(K key, V value, To to)
-        {
-            throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
-        }
-
-        /**
-         * @throws InvalidOperationException on every invocation
-         */
-
-        [Obsolete]
-        public void forward(K key, V value, int childIndex)
+        public void Forward(K key, V value, To to)
         {
             throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
         }
@@ -100,7 +90,7 @@ namespace Kafka.Streams.Processors.Internals
          */
 
         [Obsolete]
-        public void forward(K key, V value, string childName)
+        public void Forward(K key, V value, int childIndex)
         {
             throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
         }
@@ -109,7 +99,17 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
 
-        public override void commit()
+        [Obsolete]
+        public void Forward(K key, V value, string childName)
+        {
+            throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
+        }
+
+        /**
+         * @throws InvalidOperationException on every invocation
+         */
+
+        public override void Commit()
         {
             throw new InvalidOperationException("this should not happen: commit() not supported in standby tasks.");
         }
@@ -119,7 +119,7 @@ namespace Kafka.Streams.Processors.Internals
          */
 
         [Obsolete]
-        public ICancellable schedule(long interval, PunctuationType type, IPunctuator callback)
+        public ICancellable Schedule(long interval, PunctuationType type, IPunctuator callback)
         {
             throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
         }
@@ -128,7 +128,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
 
-        public override ICancellable schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
+        public override ICancellable Schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
         {
             throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
         }
@@ -144,7 +144,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
 
-        public override void setRecordContext(ProcessorRecordContext recordContext)
+        public override void SetRecordContext(ProcessorRecordContext recordContext)
         {
             throw new InvalidOperationException("this should not happen: setRecordContext not supported in standby tasks.");
         }

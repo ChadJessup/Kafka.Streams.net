@@ -55,15 +55,15 @@ namespace Kafka.Streams.Processors.Internals
             this.clientSupplier = clientSupplier ?? throw new ArgumentNullException(nameof(clientSupplier));
 
             this.eosEnabled = config.EnableIdempotence;
-            this.baseDir = stateDirectory.globalStateDir();
+            this.BaseDir = stateDirectory.GlobalStateDir();
             this.checkpointFileCache = new Dictionary<TopicPartition, long?>();
-            this.checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(baseDir.FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)));
+            this.checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(BaseDir.FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)));
 
             // Find non persistent store's topics
             var storeToChangelogTopic = topology?.StoreToChangelogTopic ?? new Dictionary<string, string>();
             foreach (var store in topology?.globalStateStores ?? Enumerable.Empty<IStateStore>())
             {
-                if (!store.persistent())
+                if (!store.Persistent())
                 {
                     globalNonPersistentStoresTopics.Add(storeToChangelogTopic[store.name]);
                 }
@@ -80,7 +80,7 @@ namespace Kafka.Streams.Processors.Internals
             this.pollTime = TimeSpan.FromMilliseconds(config.PollMs);
         }
 
-        public DirectoryInfo baseDir { get; }
+        public DirectoryInfo BaseDir { get; }
 
         public void SetGlobalProcessorContext(IInternalProcessorContext globalProcessorContext)
         {
@@ -91,9 +91,9 @@ namespace Kafka.Streams.Processors.Internals
         {
             try
             {
-                if (!stateDirectory.lockGlobalState())
+                if (!stateDirectory.LockGlobalState())
                 {
-                    throw new LockException($"Failed to lock the global state directory: {baseDir}");
+                    throw new LockException($"Failed to lock the global state directory: {BaseDir}");
                 }
             }
             catch (IOException e)
@@ -135,10 +135,10 @@ namespace Kafka.Streams.Processors.Internals
             List<TopicPartition> partitions,
             IInternalProcessorContext processorContext)
         {
-            StateManagerUtil.reinitializeStateStoresForPartitions(
+            StateManagerUtil.ReinitializeStateStoresForPartitions(
                 logger,
                 eosEnabled,
-                baseDir,
+                BaseDir,
                 globalStores,
                 topology?.StoreToChangelogTopic,
                 partitions,
@@ -222,7 +222,7 @@ namespace Kafka.Streams.Processors.Internals
                     topicPartitions,
                     highWatermarks,
                     store.name,
-                    StateManagerUtil.converterForStore(store));
+                    StateManagerUtil.ConverterForStore(store));
 
                 globalStores.Add(store.name, store);
             }
@@ -305,7 +305,7 @@ namespace Kafka.Streams.Processors.Internals
                 long offset = globalConsumer.Position(topicPartition);
                 var highWatermark = highWatermarks[topicPartition];
                 IRecordBatchingStateRestoreCallback stateRestoreAdapter =
-                    StateRestoreCallbackAdapter.adapt(stateRestoreCallback);
+                    StateRestoreCallbackAdapter.Adapt(stateRestoreCallback);
 
                 stateRestoreListener.OnRestoreStart(topicPartition, storeName, offset, highWatermark);
                 var restoreCount = 0L;
@@ -326,7 +326,7 @@ namespace Kafka.Streams.Processors.Internals
                         //}
 
                         offset = globalConsumer.Position(topicPartition);
-                        stateRestoreAdapter.restoreBatch(restoreRecords);
+                        stateRestoreAdapter.RestoreBatch(restoreRecords);
                         stateRestoreListener.OnBatchRestored(topicPartition, storeName, offset, restoreRecords.Count);
                         restoreCount += restoreRecords.Count;
                     }
@@ -426,7 +426,7 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        public void checkpoint(Dictionary<TopicPartition, long> offsets)
+        public void Checkpoint(Dictionary<TopicPartition, long> offsets)
         {
             //checkpointFileCache.putAll(offsets);
 
@@ -453,7 +453,7 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        public Dictionary<TopicPartition, long?> checkpointed()
+        public Dictionary<TopicPartition, long?> Checkpointed()
         {
             return checkpointFileCache;
         }

@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             //if (filterNot ^ predicate.test(key, value))
             //{
-            //    context.forward(key, value);
+            //    context.Forward(key, value);
             //}
         }
     }

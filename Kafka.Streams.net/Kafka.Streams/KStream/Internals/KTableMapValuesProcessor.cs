@@ -21,10 +21,15 @@ namespace Kafka.Streams.KStream.Internals
 
         public override void Init(IProcessorContext context)
         {
+            if (context is null)
+            {
+                throw new System.ArgumentNullException(nameof(context));
+            }
+
             base.Init(context);
             if (queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V1>)context.GetStateStore(queryableName);
 
                 tupleForwarder = new TimestampedTupleForwarder<K, V1>(
                     store,
@@ -34,32 +39,36 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-
         public override void Process(K key, Change<V> change)
         {
-            V1 newValue = computeValue(key, change.newValue);
+            if (change is null)
+            {
+                throw new System.ArgumentNullException(nameof(change));
+            }
+
+            V1 newValue = ComputeValue(key, change.newValue);
             V1 oldValue = sendOldValues
-                ? computeValue(key, change.oldValue)
+                ? ComputeValue(key, change.oldValue)
                 : default;
 
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp<V1>.make(newValue, context.timestamp));
-                tupleForwarder.maybeForward(key, newValue, oldValue);
+                store.Add(key, ValueAndTimestamp.Make(newValue, context.timestamp));
+                tupleForwarder.MaybeForward(key, newValue, oldValue);
             }
             else
             {
-                context.forward(key, new Change<V1>(newValue, oldValue));
+                context.Forward(key, new Change<V1>(newValue, oldValue));
             }
         }
 
-        private V1 computeValue(K key, V value)
+        private V1 ComputeValue(K key, V value)
         {
             V1 newValue = default;
 
             if (value != null)
             {
-                newValue = mapper.apply(key, value);
+                newValue = mapper.Apply(key, value);
             }
 
             return newValue;

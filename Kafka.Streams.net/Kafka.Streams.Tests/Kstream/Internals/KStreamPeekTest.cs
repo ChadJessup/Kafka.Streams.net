@@ -19,7 +19,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldObserveStreamElements()
 //        {
 //            var builder = new StreamsBuilder();
-//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            List<KeyValuePair<int, string>> peekObserved = new List<>(), streamObserved = new List<>();
 //            stream.peek(collect(peekObserved)).ForEach(collect(streamObserved));
 
@@ -28,8 +28,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            for (var key = 0; key < 32; key++)
 //            {
 //                var value = "V" + key;
-//                driver.pipeInput(recordFactory.create(topicName, key, value));
-//                expected.Add(new KeyValuePair<>(key, value));
+//                driver.PipeInput(recordFactory.Create(topicName, key, value));
+//                expected.Add(KeyValuePair.Create(key, value));
 //            }
 
 //            Assert.Equal(expected, peekObserved);
@@ -40,7 +40,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotAllowNullAction()
 //        {
 //            var builder = new StreamsBuilder();
-//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            try
 //            {
 //                stream.peek(null);
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        private static ForeachAction<K, V> collect<K, V>(List<KeyValuePair<K, V>> into)
 //        {
-//            return (key, value) => into.add(new KeyValuePair<>(key, value));
+//            return (key, value) => into.Add(KeyValuePair.Create(key, value));
 //        }
 //    }
 //}

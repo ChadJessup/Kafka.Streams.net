@@ -44,7 +44,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KTable} that contains "update" records with unmodified keys and {@link long} values that
          * represent the latest (rolling) count (i.e., number of records) for each key
          */
-        IKTable<K, long> count();
+        IKTable<K, long> Count();
 
         /**
          * Count the number of records in this stream by the grouped key.
@@ -65,7 +65,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // counting words
          * string queryableStoreName = "storeName"; // the store name should be the name of the store as defined by the Materialized instance
-         * ReadOnlyKeyValueStore<string,long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>keyValueStore());
+         * IReadOnlyKeyValueStore<string,long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore());
          * string key = "some-word";
          * long countForWord = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -126,7 +126,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * deletion for the key, and future messages of the same key coming from upstream operators
          * will be handled as newly initialized value.
          */
-        IKTable<K, V> reduce(IReducer<V> reducer);
+        IKTable<K, V> Reduce(IReducer<V> reducer);
 
         /**
          * Combine the value of records in this stream by the grouped key.
@@ -167,7 +167,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // compute sum
          * string queryableStoreName = "storeName" // the store name should be the name of the store as defined by the Materialized instance
-         * ReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>keyValueStore());
+         * IReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore());
          * string key = "some-key";
          * long sumForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -191,9 +191,13 @@ namespace Kafka.Streams.KStream.Interfaces
          * deletion for the key, and future messages of the same key coming from upstream operators
          * will be handled as newly initialized value.
          */
-        IKTable<K, V> reduce(
+        IKTable<K, V> Reduce(
             IReducer<V> reducer,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
+
+        IKTable<K, V> Reduce(
+            IReducer<V> reducer,
+            Materialized<K, V> materialized);
 
         /**
          * Aggregate the values of records in this stream by the grouped key.
@@ -237,7 +241,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * deletion for the key, and future messages of the same key coming from upstream operators
          * will be handled as newly initialized value.
          */
-        IKTable<K, VR> aggregate<VR>(
+        IKTable<K, VR> Aggregate<VR>(
             IInitializer<VR> initializer,
             IAggregator<K, V, VR> aggregator);
 
@@ -270,7 +274,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // some aggregation on value type double
          * string queryableStoreName = "storeName" // the store name should be the name of the store as defined by the Materialized instance
-         * ReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>keyValueStore());
+         * IReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore());
          * string key = "some-key";
          * long aggForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -297,10 +301,15 @@ namespace Kafka.Streams.KStream.Interfaces
          * deletion for the key, and future messages of the same key coming from upstream operators
          * will be handled as newly initialized value.
          */
-        IKTable<K, VR> aggregate<VR>(
+        IKTable<K, VR> Aggregate<VR>(
             IInitializer<VR> initializer,
             IAggregator<K, V, VR> aggregator,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
+
+        IKTable<K, VR> Aggregate<VR>(
+            IInitializer<VR> initializer,
+            IAggregator<K, V, VR> aggregator,
+            Materialized<K, VR> materialized);
 
         /**
          * Create a new {@link TimeWindowedKStream} instance that can be used to perform windowed aggregations.

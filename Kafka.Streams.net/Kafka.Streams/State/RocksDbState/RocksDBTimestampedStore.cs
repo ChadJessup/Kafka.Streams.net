@@ -15,8 +15,7 @@ namespace Kafka.Streams.State.RocksDbState
         {
         }
 
-        public RocksDbTimestampedStore(string name,
-                                string parentDir)
+        public RocksDbTimestampedStore(string name, string parentDir)
             : base(name, parentDir)
         {
         }

@@ -29,9 +29,9 @@ namespace Kafka.Streams.Processors
      */
     public class FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp
     {
-        private readonly ILogger logger;
+        private readonly ILogger? logger;
 
-        public FailOnInvalidTimestamp(ILogger<FailOnInvalidTimestamp> logger)
+        public FailOnInvalidTimestamp(ILogger<FailOnInvalidTimestamp>? logger)
             => this.logger = logger;
 
         /**

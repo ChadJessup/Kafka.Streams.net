@@ -18,17 +18,17 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //            string propFileName = args.Length > 0 ? args[0] : null;
 
-//            Properties streamsProperties = Utils.loadProps(propFileName);
+//            StreamsConfig streamsProperties = Utils.loadProps(propFileName);
 
 //            System.Console.Out.WriteLine("StreamsTest instance started (StreamsUpgradeTest trunk)");
 //            System.Console.Out.WriteLine("props=" + streamsProperties);
 
 //            StreamsBuilder builder = new StreamsBuilder();
-//            KStream dataStream = builder.stream("data");
+//            KStream dataStream = builder.Stream("data");
 //            dataStream.process(SmokeTestUtil.printProcessorSupplier("data"));
-//            dataStream.to("echo");
+//            dataStream.To("echo");
 
-//            Properties config = new Properties();
+//            StreamsConfig config = new StreamsConfig();
 //            config.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsUpgradeTest");
 //            config.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
 
@@ -44,7 +44,7 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //            config.putAll(streamsProperties);
 
-//            KafkaStreams streams = new KafkaStreams(builder.build(), config, kafkaClientSupplier);
+//            KafkaStreams streams = new KafkaStreams(builder.Build(), config, kafkaClientSupplier);
 //            streams.start();
 
 //            Runtime.getRuntime().addShutdownHook(new Thread(() =>
@@ -178,7 +178,7 @@ namespace Kafka.Streams.Tests.Tests
 //            bool bumpSupportedVersion;
 //            if (assignment != null)
 //            {
-//                bumpSupportedVersion = supportedVersions.Count == 1 && supportedVersions.iterator().next() == SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1;
+//                bumpSupportedVersion = supportedVersions.Count == 1 && supportedVersions.iterator().MoveNext() == SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1;
 //            }
 //            else
 //            {
@@ -258,7 +258,7 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            byte[] endPointBytes = prepareUserEndPoint();
 
-//            ByteBuffer buf = ByteBuffer.allocate(getVersionThreeAndFourByteLength(endPointBytes));
+//            ByteBuffer buf = new ByteBuffer().Allocate(getVersionThreeAndFourByteLength(endPointBytes));
 
 //            buf.putInt(LATEST_SUPPORTED_VERSION + 1); // used version
 //            buf.putInt(LATEST_SUPPORTED_VERSION + 1); // supported version
@@ -316,7 +316,7 @@ namespace Kafka.Streams.Tests.Tests
 //                {
 //                    while (true)
 //                    {
-//                        System.Console.Out.write(originalUserMetadata.get());
+//                        System.Console.Out.write(originalUserMetadata.Get());
 //                    }
 //                }
 //                catch (BufferUnderflowException expectedWhenAllDataCopied) { }
@@ -324,7 +324,7 @@ namespace Kafka.Streams.Tests.Tests
 //                System.Console.Out.flush();
 //                System.Console.Out.close();
 
-//                return ByteBuffer.wrap(baos.toByteArray());
+//                return ByteBuffer.Wrap(baos.toByteArray());
 //            }
 //            catch (IOException ex)
 //            {

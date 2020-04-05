@@ -18,8 +18,8 @@ namespace Kafka.Streams.KStream.Internals
 {
     public interface IKTableValueGetterSupplier<K, V>
     {
-        IKTableValueGetter<K, V> get();
+        IKTableValueGetter<K, V> Get();
 
-        string[] storeNames();
+        string[] StoreNames();
     }
 }

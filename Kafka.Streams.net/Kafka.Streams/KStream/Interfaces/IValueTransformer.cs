@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @throws InvalidOperationException If store gets registered after initialization is already finished
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void init<K>(IProcessorContext context);
+        void Init<K>(IProcessorContext context);
 
         /**
          * Transform the given value to a new value.
@@ -61,7 +61,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param value the value to be transformed
          * @return the new value
          */
-        VR transform(V value);
+        VR Transform(V value);
 
         /**
          * Close this transformer and clean up any resources. The framework may
@@ -71,6 +71,6 @@ namespace Kafka.Streams.KStream.Interfaces
          * Using {@link IProcessorContext#forward(object, object)} or {@link IProcessorContext#forward(object, object, To)}
          * will result in an {@link StreamsException exception}.
          */
-        void close();
+        void Close();
     }
 }

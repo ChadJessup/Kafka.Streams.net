@@ -25,11 +25,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                (key, value) => string.Format("%d, %s", key, value),
 //                "test-stream"));
 
-//            printProcessor = kStreamPrint.get();
+//            printProcessor = kStreamPrint.Get();
 //            IProcessorContext processorContext = EasyMock.createNiceMock(typeof(IProcessorContext));
 //            EasyMock.replay(processorContext);
 
-//            printProcessor.init(processorContext);
+//            printProcessor.Init(processorContext);
 //        }
 
 //        [Fact]
@@ -37,10 +37,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void testPrintStreamWithProvidedKeyValueMapper()
 //        {
 //            List<KeyValuePair<int, string>> inputRecords = Array.AsReadOnly(
-//                    new KeyValuePair<>(0, "zero"),
-//                    new KeyValuePair<>(1, "one"),
-//                    new KeyValuePair<>(2, "two"),
-//                    new KeyValuePair<>(3, "three"));
+//                    KeyValuePair.Create(0, "zero"),
+//                    KeyValuePair.Create(1, "one"),
+//                    KeyValuePair.Create(2, "two"),
+//                    KeyValuePair.Create(3, "three"));
 
 //            string[] expectedResult = {
 //            "[test-stream]: 0, zero",
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            }
 //            printProcessor.close();
 
-//            string[] flushOutData = new string(byteOutStream.toByteArray(), StandardCharsets.UTF_8).split("\\r*\\n");
+//            string[] flushOutData = new string(byteOutStream.toByteArray(), StandardCharsets.UTF_8).Split("\\r*\\n");
 //            for (var i = 0; i < flushOutData.Length; i++)
 //            {
 //                Assert.Equal(expectedResult[i], flushOutData[i]);

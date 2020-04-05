@@ -19,8 +19,8 @@ namespace Kafka.Streams.Tests.Kstream
 //            ISerde<Windowed<string>> serde = WindowedSerdes.timeWindowedSerdeFrom(string));
 //            Assert.True(serde.Serializer is TimeWindowedSerializer);
 //            Assert.True(serde.deserializer() is TimeWindowedDeserializer);
-//            Assert.True(((TimeWindowedSerializer)serde.Serializer).innerSerializer() is StringSerializer);
-//            Assert.True(((TimeWindowedDeserializer)serde.deserializer()).innerDeserializer() is StringDeserializer);
+//            Assert.True(((TimeWindowedSerializer)serde.Serializer).innerSerializer() is Serdes.String().Serializer);
+//            Assert.True(((TimeWindowedDeserializer)serde.deserializer()).innerDeserializer() is Serdes.String().Deserializer);
 //        }
 
 //        [Fact]
@@ -29,8 +29,8 @@ namespace Kafka.Streams.Tests.Kstream
 //            ISerde<Windowed<string>> serde = WindowedSerdes.sessionWindowedSerdeFrom<string>());
 //            Assert.True(serde.Serializer is SessionWindowedSerializer);
 //            Assert.True(serde.deserializer() is SessionWindowedDeserializer);
-//            Assert.True(((SessionWindowedSerializer)serde.Serializer).innerSerializer() is StringSerializer);
-//            Assert.True(((SessionWindowedDeserializer)serde.deserializer()).innerDeserializer() is StringDeserializer);
+//            Assert.True(((SessionWindowedSerializer)serde.Serializer).innerSerializer() is Serdes.String().Serializer);
+//            Assert.True(((SessionWindowedDeserializer)serde.deserializer()).innerDeserializer() is Serdes.String().Deserializer);
 //        }
 
 //        [Fact]
@@ -38,7 +38,7 @@ namespace Kafka.Streams.Tests.Kstream
 //        {
 //            Windowed<int> timeWindowed = new Windowed<>(10, new TimeWindow(0, long.MaxValue));
 //            ISerde<Windowed<int>> timeWindowedSerde = WindowedSerdes.timeWindowedSerdeFrom<int>();
-//            byte[] bytes = timeWindowedSerde.Serializer.serialize(topic, timeWindowed);
+//            byte[] bytes = timeWindowedSerde.Serializer.Serialize(topic, timeWindowed);
 //            Windowed<int> windowed = timeWindowedSerde.deserializer().Deserialize(topic, bytes);
 //            Assert.Equal(timeWindowed, windowed);
 //        }
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Kstream
 //        {
 //            Windowed<int> sessionWindowed = new Windowed<>(10, new SessionWindow(0, 1));
 //            ISerde<Windowed<int>> sessionWindowedSerde = WindowedSerdes.sessionWindowedSerdeFrom(int));
-//            byte[] bytes = sessionWindowedSerde.Serializer.serialize(topic, sessionWindowed);
+//            byte[] bytes = sessionWindowedSerde.Serializer.Serialize(topic, sessionWindowed);
 //            Windowed<int> windowed = sessionWindowedSerde.deserializer().Deserialize(topic, bytes);
 //            Assert.Equal(sessionWindowed, windowed);
 //        }
@@ -59,7 +59,7 @@ namespace Kafka.Streams.Tests.Kstream
 //        //            TimeWindowedSerializer<byte[]> serializer = new TimeWindowedSerializer<>();
 //        //            NullPointerException exception =Assert.Throws(
 //        //        NullPointerException),
-//        //                () => serializer.serialize("topic", new Windowed<>(new byte[0], new TimeWindow(0, 1))));
+//        //                () => serializer.Serialize("topic", new Windowed<>(new byte[0], new TimeWindow(0, 1))));
 //        //            Assert.Equal(
 //        //                exception.getMessage(),
 //        //                equalTo("Inner serializer is `null`. User code must use constructor " +
@@ -72,7 +72,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            TimeWindowedSerializer<byte[]> serializer = new TimeWindowedSerializer<>();
 //            NullPointerException exception = Assert.Throws(
 //        NullPointerException),
-//                () => serializer.serialize.AseKey("topic", new Windowed<>(new byte[0], new TimeWindow(0, 1))));
+//                () => serializer.Serialize.AseKey("topic", new Windowed<>(new byte[0], new TimeWindow(0, 1))));
 //            Assert.Equal(
 //                exception.getMessage(),
 //                equalTo("Inner serializer is `null`. User code must use constructor " +
@@ -98,7 +98,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            SessionWindowedSerializer<byte[]> serializer = new SessionWindowedSerializer<>();
 //            NullPointerException exception = Assert.Throws(
 //        NullPointerException),
-//                () => serializer.serialize("topic", new Windowed<>(new byte[0], new SessionWindow(0, 0))));
+//                () => serializer.Serialize("topic", new Windowed<>(new byte[0], new SessionWindow(0, 0))));
 //            Assert.Equal(
 //                exception.getMessage(),
 //                equalTo("Inner serializer is `null`. User code must use constructor " +
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            SessionWindowedSerializer<byte[]> serializer = new SessionWindowedSerializer<>();
 //            NullPointerException exception = Assert.Throws(
 //        NullPointerException),
-//                () => serializer.serialize.AseKey("topic", new Windowed<>(new byte[0], new SessionWindow(0, 0))));
+//                () => serializer.Serialize.AseKey("topic", new Windowed<>(new byte[0], new SessionWindow(0, 0))));
 //            Assert.Equal(
 //                exception.getMessage(),
 //                equalTo("Inner serializer is `null`. User code must use constructor " +

@@ -7,7 +7,7 @@ namespace Kafka.Streams.State.Interfaces
 {
     public interface IStateManager : ICheckpointable
     {
-        DirectoryInfo baseDir { get; }
+        DirectoryInfo BaseDir { get; }
 
         /**
          * @throws ArgumentException if the store name has already been registered or if it is not a valid name

@@ -4,10 +4,10 @@ namespace Kafka.Streams.State.Interfaces
 {
     public interface ISegment //: IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
     {
-        void destroy();//;
+        void Destroy();//;
 
-        IKeyValueIterator<Bytes, byte[]> all();
+        IKeyValueIterator<Bytes, byte[]> All();
 
-        IKeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to);
+        IKeyValueIterator<Bytes, byte[]> Range(Bytes from, Bytes to);
     }
 }

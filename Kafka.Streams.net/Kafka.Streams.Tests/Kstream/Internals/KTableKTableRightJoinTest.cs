@@ -44,14 +44,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 
 //            Processor<string, Change<string>> join = new KTableKTableRightJoin<>(
-//                (IKTable<string, string, string>)builder.Table("left", Consumed.with(Serdes.String(), Serdes.String())),
-//                (IKTable<string, string, string>)builder.Table("right", Consumed.with(Serdes.String(), Serdes.String())),
+//                (IKTable<string, string, string>)builder.Table("left", Consumed.With(Serdes.String(), Serdes.String())),
+//                (IKTable<string, string, string>)builder.Table("right", Consumed.With(Serdes.String(), Serdes.String())),
 //                null
-//            ).get();
+//            ).Get();
 
 //            var context = new MockProcessorContext();
 //            context.setRecordMetadata("left", -1, -2, null, -3);
-//            join.init(context);
+//            join.Init(context);
 //            LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 //            join.process(null, new Change<>("new", "old"));
 //            LogCaptureAppender.unregister(appender);

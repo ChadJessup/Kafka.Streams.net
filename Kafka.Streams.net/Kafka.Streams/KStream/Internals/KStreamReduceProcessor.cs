@@ -16,7 +16,7 @@
 
 //        public void init(IProcessorContext context)
 //        {
-//            base.init(context);
+//            base.Init(context);
 //            metrics = (StreamsMetricsImpl)context.metrics;
 //            skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 //            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
@@ -35,7 +35,7 @@
 //            {
 //                LOG.LogWarning(
 //                    "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-//                    key, value, context.Topic, context.partition(), context.offset()
+//                    key, value, context.Topic, context.Partition, context.offset()
 //                );
 //                skippedRecordsSensor.record();
 //                return;
@@ -59,7 +59,7 @@
 //                newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
 //            }
 
-//            store.Add(key, ValueAndTimestamp.make(newAgg, newTimestamp));
+//            store.Add(key, ValueAndTimestamp.Make(newAgg, newTimestamp));
 //            tupleForwarder.maybeForward(key, newAgg, sendOldValues ? oldAgg : null, newTimestamp);
 //        }
 //    }

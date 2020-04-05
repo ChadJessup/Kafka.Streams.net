@@ -10,6 +10,6 @@ namespace Kafka.Streams.Processors.Interfaces
         /**
          * Cancel the scheduled operation to avoid future calls.
          */
-        void cancel();
+        void Cancel();
     }
 }

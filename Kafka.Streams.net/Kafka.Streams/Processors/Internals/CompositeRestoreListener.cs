@@ -25,7 +25,7 @@ namespace Kafka.Streams.Processors.Internals
                 storeRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
             }
 
-            internalBatchingRestoreCallback = StateRestoreCallbackAdapter.adapt(stateRestoreCallback);
+            internalBatchingRestoreCallback = StateRestoreCallbackAdapter.Adapt(stateRestoreCallback);
         }
 
         /**
@@ -70,12 +70,12 @@ namespace Kafka.Streams.Processors.Internals
         }
 
 
-        public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
+        public void RestoreBatch(List<ConsumeResult<byte[], byte[]>> records)
         {
-            internalBatchingRestoreCallback.restoreBatch(records);
+            internalBatchingRestoreCallback.RestoreBatch(records);
         }
 
-        public void setUserRestoreListener(IStateRestoreListener userRestoreListener)
+        public void SetUserRestoreListener(IStateRestoreListener userRestoreListener)
         {
             if (userRestoreListener != null)
             {
@@ -83,12 +83,12 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        public void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
+        public void RestoreAll(List<KeyValuePair<byte[], byte[]>> records)
         {
             throw new InvalidOperationException();
         }
 
-        public void restore(byte[] key,
+        public void Restore(byte[] key,
                             byte[] value)
         {
             throw new InvalidOperationException("Single restore functionality shouldn't be called directly but "

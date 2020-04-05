@@ -28,7 +28,7 @@ namespace Kafka.Streams.Tests
         private readonly InternalStreamsBuilder internalStreamsBuilder;
 
         private readonly StreamsConfig config;
-        private readonly string stateDir = TestUtils.GetTempDirectory();
+        private readonly string stateDir = TestUtils.GetTempDirectory().FullName;
         private readonly StateDirectory stateDirectory;
         private readonly ConsumedInternal<object, object> consumed = new ConsumedInternal<object, object>();
 
@@ -174,59 +174,59 @@ namespace Kafka.Streams.Tests
         // var defaultTags = Collections.singletonMap("client-id", thread.getName());
         // string descriptionIsNotVerified = "";
         // 
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-latency-avg", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-latency-max", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-rate", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-total", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "poll-latency-avg", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "poll-latency-max", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "poll-rate", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "poll-total", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "process-latency-avg", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "process-latency-max", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "process-rate", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "process-total", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "punctuate-latency-avg", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "punctuate-latency-max", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "punctuate-rate", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "punctuate-total", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "Task-created-rate", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "Task-created-total", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "Task-closed-rate", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "Task-closed-total", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "skipped-records-rate", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "skipped-records-total", defaultGroupName, descriptionIsNotVerified, defaultTags)));
         // 
         // string TaskGroupName = "stream-Task-metrics";
         // var TaskTags =
         //     mkMap(mkEntry("Task-id", "all"), mkEntry("client-id", thread.getName()));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-latency-avg", TaskGroupName, descriptionIsNotVerified, TaskTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-latency-max", TaskGroupName, descriptionIsNotVerified, TaskTags)));
-        // Assert.NotNull(metrics.metrics().get(metrics.metricName(
+        // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-rate", TaskGroupName, descriptionIsNotVerified, TaskTags)));
         // 
         // JmxReporter reporter = new JmxReporter("kafka.streams");
@@ -266,10 +266,10 @@ namespace Kafka.Streams.Tests
         //                new AtomicInteger()
         //            );
 
-        //    thread.setNow(mockTime.milliseconds());
+        //    thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
         //    thread.maybeCommit();
         //    mockTime.sleep(commitInterval - 10L);
-        //    thread.setNow(mockTime.milliseconds());
+        //    thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
         //    thread.maybeCommit();
 
         //    EasyMock.verify(TaskManager);
@@ -394,10 +394,10 @@ namespace Kafka.Streams.Tests
                                 new LogContext(""),
                                 new AtomicInteger()
                             );
-                    thread.setNow(mockTime.milliseconds());
+                    thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
                     thread.maybeCommit();
                     mockTime.sleep(commitInterval - 10L);
-                    thread.setNow(mockTime.milliseconds());
+                    thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
                     thread.maybeCommit();
 
                     EasyMock.verify(TaskManager);
@@ -430,10 +430,10 @@ namespace Kafka.Streams.Tests
                                 new LogContext(""),
                                 new AtomicInteger()
                             );
-                    thread.setNow(mockTime.milliseconds());
+                    thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
                     thread.maybeCommit();
                     mockTime.sleep(commitInterval + 1);
-                    thread.setNow(mockTime.milliseconds());
+                    thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
                     thread.maybeCommit();
 
                     EasyMock.verify(TaskManager);
@@ -483,7 +483,7 @@ namespace Kafka.Streams.Tests
                     thread.RebalanceListener.OnPartitionsAssigned(null, new List<TopicPartition>assignedPartitions));
 
                     Assert.Equal(1, clientSupplier.producers.Count);
-                    var globalProducer = clientSupplier.producers.get(0);
+                    var globalProducer = clientSupplier.producers.Get(0);
 
                     foreach (StreamTask Task in thread.Tasks().Values)
                     {
@@ -783,10 +783,10 @@ namespace Kafka.Streams.Tests
 
                     thread.RunOnce();
                     Assert.Equal(1, thread.Tasks().Count);
-                    MockProducer producer = clientSupplier.producers.get(0);
+                    MockProducer producer = clientSupplier.producers.Get(0);
 
                     // change consumer subscription from "pattern" to "manual" to be able to call .addRecords()
-                    consumer.UpdateBeginningOffsets(Collections.singletonMapassignedPartitions.iterator().next(), 0L));
+                    consumer.UpdateBeginningOffsets(Collections.singletonMapassignedPartitions.iterator().MoveNext(), 0L));
                     consumer.Unsubscribe();
                     consumer.Assign(assignedPartitions);
 
@@ -797,7 +797,7 @@ namespace Kafka.Streams.Tests
 
                     Assert.False(producer.transactionCommitted());
                     mockTime.sleep(config.getLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1L);
-                    TestUtils.waitForCondition(
+                    TestUtils.WaitForCondition(
                         () => producer.commitCount() == 1,
                         "StreamsThread did not commit transaction.");
 
@@ -810,7 +810,7 @@ namespace Kafka.Streams.Tests
                         //Assert.False(true, "Should have thrown TaskMigratedException");
                     }
                     catch (TaskMigratedException expected) { }
-                    TestUtils.waitForCondition(
+                    TestUtils.WaitForCondition(
                         () => !thread.Tasks().Any(),
                                 "StreamsThread did not remove fenced zombie Task.");
 
@@ -848,11 +848,11 @@ namespace Kafka.Streams.Tests
 
                     Assert.Equal(1, thread.Tasks().Count);
 
-                    clientSupplier.producers.get(0).fenceProducer();
+                    clientSupplier.producers.Get(0).fenceProducer();
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
-                    Assert.True(clientSupplier.producers.get(0).transactionInFlight());
-                    Assert.False(clientSupplier.producers.get(0).transactionCommitted());
-                    Assert.True(clientSupplier.producers.get(0).closed());
+                    Assert.True(clientSupplier.producers.Get(0).transactionInFlight());
+                    Assert.False(clientSupplier.producers.Get(0).transactionCommitted());
+                    Assert.True(clientSupplier.producers.Get(0).closed());
                     Assert.False(thread.Tasks().Any());
                 }
 
@@ -888,12 +888,12 @@ namespace Kafka.Streams.Tests
 
                     Assert.Equal(1, thread.Tasks().Count);
 
-                    clientSupplier.producers.get(0).fenceProducerOnClose();
+                    clientSupplier.producers.Get(0).fenceProducerOnClose();
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
 
-                    Assert.False(clientSupplier.producers.get(0).transactionInFlight());
-                    Assert.True(clientSupplier.producers.get(0).transactionCommitted());
-                    Assert.False(clientSupplier.producers.get(0).closed());
+                    Assert.False(clientSupplier.producers.Get(0).transactionInFlight());
+                    Assert.True(clientSupplier.producers.Get(0).transactionCommitted());
+                    Assert.False(clientSupplier.producers.Get(0).closed());
                     Assert.False(thread.Tasks().Any());
                 }
 
@@ -1334,7 +1334,7 @@ namespace Kafka.Streams.Tests
                     {
                         thread.Start();
 
-                        TestUtils.waitForCondition(
+                        TestUtils.WaitForCondition(
                             () => mockRestoreConsumer.Assignment.Count == 1,
                             "Never restore first record");
 
@@ -1345,7 +1345,7 @@ namespace Kafka.Streams.Tests
                             "K1".getBytes(),
                             "V1".getBytes()));
 
-                        TestUtils.waitForCondition(
+                        TestUtils.WaitForCondition(
                             () => mockRestoreConsumer.position(changelogPartition) == 1L,
                             "Never restore first record");
 
@@ -1371,7 +1371,7 @@ namespace Kafka.Streams.Tests
                             "K2".getBytes(),
                             "V2".getBytes()));
 
-                        TestUtils.waitForCondition(
+                        TestUtils.WaitForCondition(
                             () =>
                             {
                                 mockRestoreConsumer.Assign(changelogPartitionSet);
@@ -1397,7 +1397,7 @@ namespace Kafka.Streams.Tests
                     config.Set(
                         StreamsConfigPropertyNames.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG,
                         LogAndContinueExceptionHandler.getName());
-                    config.Set(StreamsConfigPropertyNames.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass().getName());
+                    config.Set(StreamsConfigPropertyNames.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType().FullName);
                     KafkaStreamThread thread = CreateStreamThread(clientId, new StreamsConfig(config), false);
 
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
@@ -1557,7 +1557,7 @@ namespace Kafka.Streams.Tests
                 }
 
                 [Fact]
-                // TODO: Need to add a test case covering EOS when we create a mock TaskManager class
+                // TODO: Need to add a test case covering EOS when we Create a mock TaskManager class
                 public void producerMetricsVerificationWithoutEOS()
                 {
                     MockProducer<byte[], byte[]> producer = new MockProducer<>();
@@ -1588,7 +1588,7 @@ namespace Kafka.Streams.Tests
                         new MockTime());
                     producer.setMockMetrics(testMetricName, testMetric);
                     Dictionary<MetricName, Metric> producerMetrics = thread.producerMetrics();
-                    Assert.Equal(testMetricName, producerMetrics.get(testMetricName).metricName());
+                    Assert.Equal(testMetricName, producerMetrics.Get(testMetricName).metricName());
                 }
 
                 [Fact]
@@ -1633,7 +1633,7 @@ namespace Kafka.Streams.Tests
 
                     adminClient.setMockMetrics(testMetricName, testMetric);
                     Dictionary<MetricName, Metric> adminClientMetrics = thread.adminClientMetrics();
-                    Assert.Equal(testMetricName, adminClientMetrics.get(testMetricName).metricName());
+                    Assert.Equal(testMetricName, adminClientMetrics.Get(testMetricName).metricName());
                 }
 
                 private void addRecord(MockConsumer<byte[], byte[]> mockConsumer,

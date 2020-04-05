@@ -40,6 +40,6 @@ namespace Kafka.Streams.Processors.Interfaces
          * @param numPartitions the total number of partitions
          * @return an integer between 0 and {@code numPartitions-1}, or {@code null} if the default partitioning logic should be used
          */
-        int partition(string topic, K key, V value, int numPartitions);
+        int Partition(string topic, K key, V value, int numPartitions);
     }
 }

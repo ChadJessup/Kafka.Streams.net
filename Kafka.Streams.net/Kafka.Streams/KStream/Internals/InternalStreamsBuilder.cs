@@ -102,7 +102,7 @@ namespace Kafka.Streams.KStream.Internals
                 this);
         }
 
-        public IKTable<K, V> table<K, V>(
+        public IKTable<K, V> Table<K, V>(
             string topic,
             ConsumedInternal<K, V> consumed,
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
@@ -117,18 +117,18 @@ namespace Kafka.Streams.KStream.Internals
                 this.services.GetRequiredService<ILogger<KTableSource<K, V>>>(),
                 this.services,
                 materialized?.StoreName,
-                materialized?.queryableStoreName());
+                materialized?.QueryableStoreName());
 
             var processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
 
-            var tableSourceNode = TableSourceNode<K, V>.tableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
-                 .withTopic(topic)
-                 .withSourceName(sourceName)
-                 .withNodeName(tableSourceName)
-                 .withConsumedInternal(consumed)
-                 .withMaterializedInternal(materialized)
-                 .withProcessorParameters(processorParameters)
-                 .build();
+            var tableSourceNode = TableSourceNode<K, V>.TableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
+                 .WithTopic(topic)
+                 .WithSourceName(sourceName)
+                 .WithNodeName(tableSourceName)
+                 .WithConsumedInternal(consumed)
+                 .WithMaterializedInternal(materialized)
+                 .WithProcessorParameters(processorParameters)
+                 .Build();
 
             AddGraphNode<K, V>(root, tableSourceNode);
 
@@ -138,13 +138,13 @@ namespace Kafka.Streams.KStream.Internals
                 consumed.keySerde,
                 consumed.valueSerde,
                 new HashSet<string> { sourceName },
-                materialized.queryableStoreName(),
+                materialized.QueryableStoreName(),
                 tableSource,
                 tableSourceNode,
                 this);
         }
 
-        public IGlobalKTable<K, V> globalTable<K, V>(
+        public IGlobalKTable<K, V> GlobalTable<K, V>(
             string topic,
             ConsumedInternal<K, V> consumed,
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
@@ -160,18 +160,18 @@ namespace Kafka.Streams.KStream.Internals
             var tableSource = ActivatorUtilities.CreateInstance<KTableSource<K, V>>(this.services, storeName, storeName);
             var processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
 
-            var tableSourceNode = TableSourceNode<K, V>.tableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
-                  .withTopic(topic)
-                  .isGlobalKTable(true)
-                  .withSourceName(sourceName)
-                  .withConsumedInternal(consumed)
-                  .withMaterializedInternal(materialized)
-                  .withProcessorParameters(processorParameters)
-                  .build();
+            var tableSourceNode = TableSourceNode<K, V>.TableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
+                  .WithTopic(topic)
+                  .IsGlobalKTable(true)
+                  .WithSourceName(sourceName)
+                  .WithConsumedInternal(consumed)
+                  .WithMaterializedInternal(materialized)
+                  .WithProcessorParameters(processorParameters)
+                  .Build();
 
             this.AddGraphNode<K, V>(root, tableSourceNode);
 
-            return new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(storeName), materialized.queryableStoreName());
+            return new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(storeName), materialized.QueryableStoreName());
         }
 
         public string NewProcessorName(string prefix)

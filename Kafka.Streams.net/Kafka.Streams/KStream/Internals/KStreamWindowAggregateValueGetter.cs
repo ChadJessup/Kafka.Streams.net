@@ -8,19 +8,19 @@ namespace Kafka.Streams.KStream.Internals
     {
         private ITimestampedWindowStore<K, Agg> windowStore;
 
-        public void init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext context, string storeName)
         {
-            windowStore = (ITimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
+            windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(storeName);
         }
 
-        public ValueAndTimestamp<Agg> get(Windowed<K> windowedKey)
+        public ValueAndTimestamp<Agg> Get(Windowed<K> windowedKey)
         {
             K key = windowedKey.Key;
             var window = windowedKey.window;
 
-            return windowStore.fetch(key, window.Start());
+            return windowStore.Fetch(key, window.Start());
         }
 
-        public void close() { }
+        public void Close() { }
     }
 }

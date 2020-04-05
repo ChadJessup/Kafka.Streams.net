@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.Internals
             IStateStore root)
         {
             base.Init(context, root);
-            var topic = ProcessorStateManager.storeChangelogTopic(context.applicationId, name);
+            var topic = ProcessorStateManager.StoreChangelogTopic(context.applicationId, name);
     //        changeLogger = new StoreChangeLogger<>(
     //            name,
     //            context,
@@ -46,7 +46,7 @@ namespace Kafka.Streams.State.Internals
             byte[] value)
         {
             wrapped.Add(key, value);
-            log(key, value);
+            Log(key, value);
         }
 
         public byte[] PutIfAbsent(
@@ -57,7 +57,7 @@ namespace Kafka.Streams.State.Internals
             if (previous == null)
             {
                 // then it was absent
-                log(key, value);
+                Log(key, value);
             }
 
             return previous;
@@ -68,14 +68,14 @@ namespace Kafka.Streams.State.Internals
             wrapped.PutAll(entries);
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
-                log(entry.Key, entry.Value);
+                Log(entry.Key, entry.Value);
             }
         }
 
         public byte[] Delete(Bytes key)
         {
             var oldValue = wrapped.Delete(key);
-            log(key, null);
+            Log(key, null);
             return oldValue;
         }
 
@@ -96,9 +96,9 @@ namespace Kafka.Streams.State.Internals
             return wrapped.All();
         }
 
-        void log(Bytes key, byte[] value)
+        void Log(Bytes key, byte[] value)
         {
-            changeLogger.logChange(key, value);
+            changeLogger.LogChange(key, value);
         }
     }
 }

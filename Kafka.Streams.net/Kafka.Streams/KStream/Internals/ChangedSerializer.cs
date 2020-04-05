@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class ChangedSerializer<T> : ISerializer<Change<T>>
     {
-        private static readonly int NEWFLAG_SIZE = 1;
+        private const int NEWFLAG_SIZE = 1;
 
         public ISerializer<T> inner { get; private set; }
 
@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
             this.inner = inner;
         }
 
-        public void setInner(ISerializer<T> inner)
+        public void SetInner(ISerializer<T> inner)
         {
             this.inner = inner;
         }
@@ -65,11 +65,11 @@ namespace Kafka.Streams.KStream.Internals
                 serializedKey = inner.Serialize(data.oldValue, context);
             }
 
-            ByteBuffer buf = new ByteBuffer().allocate(serializedKey.Length + NEWFLAG_SIZE);
-            buf.add(serializedKey);
-            buf.add((byte)(data.newValue != null ? 1 : 0));
+            ByteBuffer buf = new ByteBuffer().Allocate(serializedKey.Length + NEWFLAG_SIZE);
+            buf.Add(serializedKey);
+            buf.Add((byte)(data.newValue != null ? 1 : 0));
 
-            return buf.array();
+            return buf.Array();
         }
     }
 }

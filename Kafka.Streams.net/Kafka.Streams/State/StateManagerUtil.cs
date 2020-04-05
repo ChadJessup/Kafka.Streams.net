@@ -33,14 +33,14 @@ namespace Kafka.Streams.Processors.Internals
 
         private StateManagerUtil() { }
 
-        public static IRecordConverter converterForStore(IStateStore store)
+        public static IRecordConverter ConverterForStore(IStateStore store)
         {
-            return WrappedStateStore.isTimestamped(store)
-                ? RecordConverters.rawValueToTimestampedValue()
-                : RecordConverters.identity();
+            return WrappedStateStore.IsTimestamped(store)
+                ? RecordConverters.RawValueToTimestampedValue()
+                : RecordConverters.Identity();
         }
 
-        public static void reinitializeStateStoresForPartitions(
+        public static void ReinitializeStateStoresForPartitions(
             ILogger log,
             bool eosEnabled,
             DirectoryInfo baseDir,
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Processors.Internals
             OffsetCheckpoint checkpointFile,
             Dictionary<TopicPartition, long?> checkpointFileCache)
         {
-            Dictionary<string, string> changelogTopicToStore = inverseOneToOneMap(storeToChangelogTopic);
+            Dictionary<string, string> changelogTopicToStore = InverseOneToOneMap(storeToChangelogTopic);
             var storesToBeReinitialized = new HashSet<string>();
 
             foreach (TopicPartition topicPartition in partitions)
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Processors.Internals
                     /* ignore */
                 }
 
-                processorContext.uninitialize();
+                processorContext.Uninitialize();
                 stateStores.Add(storeName, null);
 
                 // TODO Remove this eventually
@@ -133,7 +133,7 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        private static Dictionary<string, string> inverseOneToOneMap(Dictionary<string, string> origin)
+        private static Dictionary<string, string> InverseOneToOneMap(Dictionary<string, string> origin)
         {
             var reversedMap = new Dictionary<string, string>();
 

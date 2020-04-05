@@ -23,7 +23,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException If {@code null} is used for any key.
          */
-        V fetch(K key, long time);
+        V Fetch(K key, long time);
 
         /**
          * Get all the key-value pairs with the given key and the time range from all the existing windows.
@@ -45,7 +45,7 @@ namespace Kafka.Streams.State.ReadOnly
          * |   A   |     25     |    35    |
          * +--------------------------------
          * </pre>
-         * And we call {@code store.fetch("A", 10, 20)} then the results will contain the first
+         * And we call {@code store.Fetch("A", 10, 20)} then the results will contain the first
          * three windows from the table above, i.e., all those where 10 &lt;= start time &lt;= 20.
          * <p>
          * For each key, the iterator guarantees ordering of windows, starting from the oldest/earliest
@@ -60,7 +60,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @deprecated Use {@link #fetch(object, Instant, Instant)} instead
          */
         [Obsolete]
-        IWindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo);
+        IWindowStoreIterator<V> Fetch(K key, long timeFrom, long timeTo);
 
         /**
          * Get all the key-value pairs with the given key and the time range from all the existing windows.
@@ -82,7 +82,7 @@ namespace Kafka.Streams.State.ReadOnly
          * |   A   |     25     |    35    |
          * +--------------------------------
          * </pre>
-         * And we call {@code store.fetch("A", Instant.ofEpochMilli(10), Instant.ofEpochMilli(20))} then the results will contain the first
+         * And we call {@code store.Fetch("A", Instant.ofEpochMilli(10), Instant.ofEpochMilli(20))} then the results will contain the first
          * three windows from the table above, i.e., all those where 10 &lt;= start time &lt;= 20.
          * <p>
          * For each key, the iterator guarantees ordering of windows, starting from the oldest/earliest
@@ -96,7 +96,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws ArgumentNullException If {@code null} is used for key.
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
-        IWindowStoreIterator<V> fetch(K key, DateTime from, DateTime to);
+        IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to);
 
         /**
          * Get all the key-value pairs in the given key range and time range from all the existing windows.
@@ -113,7 +113,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @deprecated Use {@link #fetch(object, object, Instant, Instant)} instead
          */
         [Obsolete]
-        IKeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo);
+        IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
 
         /**
          * Get all the key-value pairs in the given key range and time range from all the existing windows.
@@ -129,7 +129,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws ArgumentNullException If {@code null} is used for any key.
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
-        IKeyValueIterator<Windowed<K>, V> fetch(K from, K to, DateTime fromTime, DateTime toTime);
+        IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, DateTime fromTime, DateTime toTime);
 
         /**
         * Gets all the key-value pairs in the existing windows.
@@ -137,7 +137,7 @@ namespace Kafka.Streams.State.ReadOnly
         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
         * @throws InvalidStateStoreException if the store is not initialized
         */
-        IKeyValueIterator<Windowed<K>, V> all();
+        IKeyValueIterator<Windowed<K>, V> All();
 
         /**
          * Gets all the key-value pairs that belong to the windows within in the given time range.
@@ -150,7 +150,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @deprecated Use {@link #fetchAll(Instant, Instant)} instead
          */
         [Obsolete]
-        IKeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom, long timeTo);
+        IKeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo);
 
         /**
          * Gets all the key-value pairs that belong to the windows within in the given time range.
@@ -162,7 +162,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws ArgumentNullException if {@code null} is used for any key
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
-        IKeyValueIterator<Windowed<K>, V> fetchAll(DateTime from, DateTime to);
+        IKeyValueIterator<Windowed<K>, V> FetchAll(DateTime from, DateTime to);
     }
 
     public interface IReadOnlyWindowStore

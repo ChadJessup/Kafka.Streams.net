@@ -23,7 +23,7 @@
 //        public void init(IProcessorContext<K, V> context,
 //                         IStateStore root)
 //        {
-//            wrapped.init(context, root);
+//            wrapped.Init(context, root);
 //        }
 
 
@@ -62,7 +62,7 @@
 //        public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
 //                                                     Bytes to)
 //        {
-//            return wrapped.range(from, to);
+//            return wrapped.Range(from, to);
 //        }
 
 
@@ -72,9 +72,9 @@
 //        }
 
 
-//        public long approximateNumEntries()
+//        public long approximateNumEntries
 //        {
-//            return wrapped.approximateNumEntries();
+//            return wrapped.approximateNumEntries;
 //        }
 
 

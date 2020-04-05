@@ -20,12 +20,12 @@ namespace Kafka.Streams.Topologies
         public HashSet<ISubtopology> subtopologies { get; } = new HashSet<ISubtopology>(/*SUBTOPOLOGY_COMPARATOR*/);
         public HashSet<IGlobalStore> globalStores { get; } = new HashSet<IGlobalStore>(/*GLOBALSTORE_COMPARATOR*/);
 
-        public void addSubtopology(ISubtopology subtopology)
+        public void AddSubtopology(ISubtopology subtopology)
         {
             subtopologies.Add(subtopology);
         }
 
-        public void addGlobalStore(IGlobalStore globalStore)
+        public void AddGlobalStore(IGlobalStore globalStore)
         {
             globalStores.Add(globalStore);
         }

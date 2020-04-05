@@ -118,11 +118,11 @@ namespace Kafka.Common
 
             //foreach (var p in partitions)
             //{
-            //    tmpPartitionsByTopicPartition.Add(new TopicPartition(p.topic(), p.partition()), p);
-            //    tmpPartitionsByTopic.Zip(p.topic(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
+            //    tmpPartitionsByTopicPartition.Add(new TopicPartition(p.Topic, p.Partition), p);
+            //    tmpPartitionsByTopic.Zip(p.Topic, Collections.singletonList(p), Utils::concatListsUnmodifiable);
             //    if (p.leader() != null)
             //    {
-            //        tmpAvailablePartitionsByTopic.merge(p.topic(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
+            //        tmpAvailablePartitionsByTopic.merge(p.Topic, Collections.singletonList(p), Utils::concatListsUnmodifiable);
             //        tmpPartitionsByNode.merge(p.leader().id(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
             //    }
             //}
@@ -222,7 +222,7 @@ namespace Kafka.Common
          */
         //public Node leaderFor(TopicPartition topicPartition)
         //{
-        //    PartitionMetadata LogInformation = partitionsByTopicPartition.get(topicPartition);
+        //    PartitionMetadata LogInformation = partitionsByTopicPartition.Get(topicPartition);
         //    if (LogInformation == null)
         //        return null;
         //    else

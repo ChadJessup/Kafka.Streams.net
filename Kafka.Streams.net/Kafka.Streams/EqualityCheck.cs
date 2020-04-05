@@ -11,11 +11,11 @@ public static class EqualityCheck
         }
         else if (o1 == null)
         {
-            throw new Exception(string.Format("o1 was null, but o2[%s] was not.", o2));
-        }
-        else if (o2 == null)
-        {
-            throw new Exception(string.Format("o1[%s] was not null, but o2 was.", o1));
+            throw new Exception($"o1 was null, but o2[{o2}] was not.");
+        }                       
+        else if (o2 == null)    
+        {                       
+            throw new Exception($"o1[{o2}] was not null, but o2 was.");
         }
 
         VerifyGeneralEqualityProperties(o1, o2);
@@ -31,7 +31,7 @@ public static class EqualityCheck
             throw new Exception(string.Format("o2[%s] was not equal to o1[%s].", o2, o1));
         }
 
-        verifyHashCodeConsistency(o1, o2);
+        VerifyHashCodeConsistency(o1, o2);
 
         // since these objects are equal, their hashcode MUST be the same
         if (o1.GetHashCode() != o2.GetHashCode())
@@ -69,21 +69,14 @@ public static class EqualityCheck
             throw new Exception(string.Format("o2[%s] was equal to o1[%s].", o2, o1));
         }
 
-        verifyHashCodeConsistency(o1, o2);
+        VerifyHashCodeConsistency(o1, o2);
 
         // since these objects are NOT equal, their hashcode SHOULD PROBABLY not be the same
         if (o1.GetHashCode() == o2.GetHashCode())
         {
             throw new Exception(
-                string.Format(
-                    "o1[%s].hash[%d] was equal to o2[%s].hash[%d], even though !o1.Equals(o2). " +
-                        "This is NOT A BUG, but it is undesirable for hash collection performance.",
-                    o1,
-                    o1.GetHashCode(),
-                    o2,
-                    o2.GetHashCode()
-                )
-            );
+                    $"o1[{o1}].hash[{o1.GetHashCode()}] was equal to o2[{o2}].hash[{o2.GetHashCode()}], even though !o1.Equals(o2). " +
+                        "This is NOT A BUG, but it is undesirable for hash collection performance.");
         }
     }
 
@@ -92,23 +85,23 @@ public static class EqualityCheck
         // objects should equal themselves
         if (!o1.Equals(o1))
         {
-            throw new Exception(string.Format("o1[%s] was not equal to itself.", o1));
+            throw new Exception($"o1[{o1}] was not equal to itself.");
         }
 
         if (!o2.Equals(o2))
         {
-            throw new Exception(string.Format("o2[%s] was not equal to itself.", o2));
+            throw new Exception($"o2[{o2}] was not equal to itself.");
         }
 
         // non-null objects should not equal null
         if (o1.Equals(null))
         {
-            throw new Exception(string.Format("o1[%s] was equal to null.", o1));
+            throw new Exception("o1[{o1}] was equal to null.");
         }
 
         if (o2.Equals(null))
         {
-            throw new Exception(string.Format("o2[%s] was equal to null.", o2));
+            throw new Exception($"o2[{o2}] was equal to null.");
         }
 
         // objects should not equal some random object
@@ -124,7 +117,7 @@ public static class EqualityCheck
     }
 
 
-    private static void verifyHashCodeConsistency<T>(T o1, T o2)
+    private static void VerifyHashCodeConsistency<T>(T o1, T o2)
     {
         {
             int first = o1.GetHashCode();

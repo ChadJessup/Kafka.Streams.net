@@ -10,23 +10,23 @@ namespace Kafka.Streams.State.Internals
         public KeyValuePair<K, V> Current { get; }
         object IEnumerator.Current { get; }
 
-        public void close()
+        public void Close()
         {
         }
 
-        public K peekNextKey()
+        public K PeekNextKey()
         {
             throw new IndexOutOfRangeException();
         }
 
 
-        public bool hasNext()
+        public bool HasNext()
         {
             return false;
         }
 
 
-        public KeyValuePair<K, V> next()
+        public KeyValuePair<K, V> Next()
         {
             throw new IndexOutOfRangeException();
         }

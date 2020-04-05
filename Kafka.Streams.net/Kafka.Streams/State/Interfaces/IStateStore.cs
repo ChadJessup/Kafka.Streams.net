@@ -67,7 +67,7 @@ namespace Kafka.Streams.State
          *
          * @return  {@code true} if the storage is persistent&mdash;{@code false} otherwise
          */
-        bool persistent();
+        bool Persistent();
 
         /**
          * Is this store open for reading and writing

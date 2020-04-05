@@ -19,7 +19,7 @@
          *
          * @param offset    the offset before which all records will be deleted
          */
-        public static RecordsToDelete beforeOffset(long offset)
+        public static RecordsToDelete BeforeOffset(long offset)
         {
             return new RecordsToDelete(offset);
         }
@@ -27,7 +27,7 @@
         /**
          * The offset before which all records will be deleted
          */
-        public long beforeOffset()
+        public long BeforeOffset()
         {
             return offset;
         }

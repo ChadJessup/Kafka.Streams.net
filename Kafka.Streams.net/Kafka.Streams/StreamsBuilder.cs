@@ -265,7 +265,7 @@ namespace Kafka.Streams
             {
                 return Stream(
                     topics,
-                    Consumed<K, V>.with(null, null, null, null));
+                    Consumed.With<K, V>(null, null, null, null));
             }
 
             /**
@@ -312,7 +312,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> Stream<K, V>(Regex topicPattern)
             {
-                return Stream(topicPattern, Consumed<K, V>.with(null, null));
+                return Stream(topicPattern, Consumed.With<K, V>(null, null));
             }
 
             /**
@@ -360,16 +360,16 @@ namespace Kafka.Streams
              * You should only specify serdes in the {@link Consumed} instance as these will also be used to overwrite the
              * serdes in {@link Materialized}, i.e.,
              * <pre> {@code
-             * streamBuilder.table(topic, Consumed.with(Serde.String(), Serde.String()), Materialized.<String, String, KeyValueStore<Bytes, byte[]>as(storeName))
+             * streamBuilder.table(topic, Consumed.With(Serde.String(), Serde.String()), Materialized.<String, String, KeyValueStore<Bytes, byte[]>as(storeName))
              * }
              * </pre>
              * To query the local {@link KeyValueStore} it must be obtained via
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * ReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>keyValueStore());
+             * IReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>KeyValueStore());
              * String key = "some-key";
-             * Long valueForKey = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+             * Long valueForKey = localStore.Get(key); // key must be local (application state is shared over all running Kafka Streams instances)
              * }</pre>
              * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
              * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -408,7 +408,7 @@ namespace Kafka.Streams
                 var materializedInternal =
                      new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.InternalStreamsBuilder, topic + "-");
 
-                return this.InternalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
+                return this.InternalStreamsBuilder.Table(topic, consumedInternal, materializedInternal);
             }
 
             /**
@@ -473,10 +473,10 @@ namespace Kafka.Streams
 
                 var materializedInternal =
                      new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-                             Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.With(consumedInternal.keySerde, consumedInternal.valueSerde),
+                             Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(consumedInternal.keySerde, consumedInternal.valueSerde),
                              this.InternalStreamsBuilder, topic + "-");
 
-                return this.InternalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
+                return this.InternalStreamsBuilder.Table(topic, consumedInternal, materializedInternal);
             }
 
             /**
@@ -497,22 +497,29 @@ namespace Kafka.Streams
              * @param materialized  the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
-            //[MethodImpl(MethodImplOptions.Synchronized)]
-            //public IKTable<K, V> table<K, V>(
-            //    string topic,
-            //    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            //{
-            //    Objects.requireNonNull(topic, "topic can't be null");
-            //    Objects.requireNonNull(materialized, "materialized can't be null");
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public IKTable<K, V> Table<K, V>(
+                string topic,
+                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            {
+                if (string.IsNullOrEmpty(topic))
+                {
+                    throw new ArgumentException("message", nameof(topic));
+                }
 
-            //    var materializedInternal =
-            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
+                if (materialized is null)
+                {
+                    throw new ArgumentNullException(nameof(materialized));
+                }
 
-            //    var consumedInternal =
-            //            new ConsumedInternal<K, V>(Consumed<K, V>.with(materializedInternal.keySerde, materializedInternal.valueSerde));
+                var materializedInternal =
+                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.InternalStreamsBuilder, topic + "-");
 
-            //    return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
-            //}
+                var consumedInternal =
+                        new ConsumedInternal<K, V>(Consumed.With<K, V>(materializedInternal.KeySerde, materializedInternal.ValueSerde));
+
+                return this.InternalStreamsBuilder.Table(topic, consumedInternal, materializedInternal);
+            }
 
             /**
              * Create a {@link GlobalKTable} for the specified topic.
@@ -566,7 +573,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IGlobalKTable<K, V> GlobalTable<K, V>(string topic)
             {
-                return null; // globalTable<K, V>(topic, Consumed<K, V>.with(null, null));
+                return null; // GlobalTable(topic, Consumed.With<K, V>(null, null));
             }
 
             /**
@@ -582,16 +589,16 @@ namespace Kafka.Streams
              * You should only specify serdes in the {@link Consumed} instance as these will also be used to overwrite the
              * serdes in {@link Materialized}, i.e.,
              * <pre> {@code
-             * streamBuilder.globalTable(topic, Consumed.with(Serde.String(), Serde.String()), Materialized.<String, String, KeyValueStore<Bytes, byte[]>as(storeName))
+             * streamBuilder.globalTable(topic, Consumed.With(Serde.String(), Serde.String()), Materialized.<String, String, KeyValueStore<Bytes, byte[]>as(storeName))
              * }
              * </pre>
              * To query the local {@link KeyValueStore} it must be obtained via
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * ReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>keyValueStore());
+             * IReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>KeyValueStore());
              * String key = "some-key";
-             * Long valueForKey = localStore.get(key);
+             * Long valueForKey = localStore.Get(key);
              * }</pre>
              * Note that {@link GlobalKTable} always applies {@code "auto.offset.reset"} strategy {@code "earliest"}
              * regardless of the specified value in {@link StreamsConfig} or {@link Consumed}.
@@ -601,25 +608,38 @@ namespace Kafka.Streams
              * @param materialized   the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link GlobalKTable} for the specified topic
              */
-            //[MethodImpl(MethodImplOptions.Synchronized)]
-            //public IGlobalKTable<K, V> globalTable<K, V>(
-            //    string topic,
-            //    Consumed<K, V> consumed,
-            //    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            //{
-            //    Objects.requireNonNull(topic, "topic can't be null");
-            //    Objects.requireNonNull(consumed, "consumed can't be null");
-            //    Objects.requireNonNull(materialized, "materialized can't be null");
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public IGlobalKTable<K, V> globalTable<K, V>(
+                string topic,
+                Consumed<K, V> consumed,
+                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            {
+                if (string.IsNullOrEmpty(topic))
+                {
+                    throw new ArgumentException("message", nameof(topic));
+                }
 
-            //    ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
-            //    // always use the serdes from consumed
-            //    materialized.withKeySerde(consumedInternal.keySerde).withValueSerde(consumedInternal.valueSerde);
+                if (consumed is null)
+                {
+                    throw new ArgumentNullException(nameof(consumed));
+                }
 
-            //    MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
+                if (materialized is null)
+                {
+                    throw new ArgumentNullException(nameof(materialized));
+                }
 
-            //    return internalStreamsBuilder.globalTable(topic, consumedInternal, materializedInternal);
-            //}
+                ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
+                // always use the serdes from consumed
+                materialized
+                    .WithKeySerde(consumedInternal.keySerde)
+                    .WithValueSerde(consumedInternal.valueSerde);
+
+                MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.InternalStreamsBuilder, topic + "-");
+
+                return this.InternalStreamsBuilder.GlobalTable(topic, consumedInternal, materializedInternal);
+            }
 
             /**
              * Create a {@link GlobalKTable} for the specified topic.
@@ -635,9 +655,9 @@ namespace Kafka.Streams
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * ReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>keyValueStore());
+             * IReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>KeyValueStore());
              * String key = "some-key";
-             * Long valueForKey = localStore.get(key);
+             * Long valueForKey = localStore.Get(key);
              * }</pre>
              * Note that {@link GlobalKTable} always applies {@code "auto.offset.reset"} strategy {@code "earliest"}
              * regardless of the specified value in {@link StreamsConfig}.
@@ -646,24 +666,23 @@ namespace Kafka.Streams
              * @param materialized   the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link GlobalKTable} for the specified topic
              */
-            //[MethodImpl(MethodImplOptions.Synchronized)]
-            //public IGlobalKTable<K, V> globalTable<K, V>(
-            //    string topic,
-            //    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            //{
-            //    Objects.requireNonNull(topic, "topic can't be null");
-            //    Objects.requireNonNull(materialized, "materialized can't be null");
-            //    MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-            //             materialized, internalStreamsBuilder, topic + "-");
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public IGlobalKTable<K, V> GlobalTable<K, V>(
+                string topic,
+                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            {
+                Objects.requireNonNull(topic, "topic can't be null");
+                Objects.requireNonNull(materialized, "materialized can't be null");
+                MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
+                         materialized, this.InternalStreamsBuilder, topic + "-");
 
-            //    return internalStreamsBuilder.globalTable(
-            //        topic,
-            //        new ConsumedInternal<K, V>(
-            //            Consumed<K, V>.with(materializedInternal.keySerde, materializedInternal.valueSerde)),
-            //            materializedInternal);
-            //}
-
+                return this.InternalStreamsBuilder.GlobalTable(
+                    topic,
+                    new ConsumedInternal<K, V>(
+                        Consumed.With<K, V>(materializedInternal.KeySerde, materializedInternal.ValueSerde)),
+                        materializedInternal);
+            }
 
             /**
              * Adds a state store to the underlying {@link Topology}.
@@ -679,8 +698,12 @@ namespace Kafka.Streams
             public StreamsBuilder AddStateStore<K, V, T>(IStoreBuilder<T> builder)
                 where T : IStateStore
             {
-                Objects.requireNonNull(builder, "builder can't be null");
-                InternalStreamsBuilder.AddStateStore<K, V, T>(builder);
+                if (builder is null)
+                {
+                    throw new ArgumentNullException(nameof(builder));
+                }
+
+                this.InternalStreamsBuilder.AddStateStore<K, V, T>(builder);
 
                 return this;
             }

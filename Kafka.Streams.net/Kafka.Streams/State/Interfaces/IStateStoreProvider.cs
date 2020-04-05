@@ -36,6 +36,6 @@ namespace Kafka.Streams.State.Interfaces
          * @param                   The type of the Store
          * @return  List of the instances of the store in this topology. Empty List if not found
          */
-        List<T> stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType);
+        List<T> Stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType);
     }
 }

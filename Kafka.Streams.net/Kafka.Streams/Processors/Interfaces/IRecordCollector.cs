@@ -13,14 +13,14 @@ namespace Kafka.Streams.Processors.Interfaces
          * Get the record collector.
          * @return the record collector
          */
-        IRecordCollector recordCollector();
+        IRecordCollector RecordCollector();
     }
 
     public interface IRecordCollector : IDisposable
     {
         ISupplier Supplier { get; }
 
-        void send<K, V>(
+        void Send<K, V>(
             string topic,
             K key,
             V value,
@@ -30,7 +30,7 @@ namespace Kafka.Streams.Processors.Interfaces
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer);
 
-        void send<K, V>(
+        void Send<K, V>(
             string topic,
             K key,
             V value,
@@ -44,17 +44,17 @@ namespace Kafka.Streams.Processors.Interfaces
          * Initialize the collector with a producer.
          * @param producer the producer that should be used by this collector
          */
-        void init(IProducer<byte[], byte[]> producer);
+        void Init(IProducer<byte[], byte[]> producer);
 
         /**
          * Flush the internal {@link Producer}.
          */
-        void flush();
+        void Flush();
 
         /**
          * Close the internal {@link Producer}.
          */
-        void close();
+        void Close();
 
         /**
          * The last acked offsets from the internal {@link Producer}.

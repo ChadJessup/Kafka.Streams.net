@@ -47,7 +47,7 @@ namespace Kafka.Streams.Processors.Internals.Assignments
             // GC.SuppressFinalize(this);
         }
 
-        internal void writeInt(int v)
+        internal void WriteInt(int v)
         {
             throw new NotImplementedException();
         }

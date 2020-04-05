@@ -5,6 +5,6 @@ namespace Kafka.Streams.Tasks
     {
         string name { get; }
 
-        void apply(T task);
+        void Apply(T task);
     }
 }

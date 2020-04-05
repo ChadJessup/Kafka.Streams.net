@@ -14,7 +14,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private readonly bool safeToDropTombstones;
         private readonly string storeName;
 
-        // private TimeOrderedKeyValueBuffer<K, V> buffer;
+        // private ITimeOrderedKeyValueBuffer<K, V> buffer;
         private IInternalProcessorContext internalProcessorContext;
         private long observedStreamTime = -1L;// ConsumeResult.NO_TIMESTAMP;
 
@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         {
             internalProcessorContext = (IInternalProcessorContext)context;
 
-            //buffer = requireNonNull((TimeOrderedKeyValueBuffer<K, V>)context.getStateStore(storeName));
+            //buffer = requireNonNull((ITimeOrderedKeyValueBuffer<K, V>)context.getStateStore(storeName));
             //buffer.setSerdesIfNull((ISerde<K>)context.keySerde, (ISerde<V>)context.valueSerde);
         }
 
@@ -48,25 +48,25 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         public void Process(K key, Change<V> value)
         {
             observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.timestamp);
-            buffer(key, value);
-            enforceConstraints();
+            Buffer(key, value);
+            EnforceConstraints();
         }
 
-        private void buffer(K key, Change<V> value)
+        private void Buffer(K key, Change<V> value)
         {
             var bufferTime = bufferTimeDefinition.Time(internalProcessorContext, key);
 
             // buffer.Add(bufferTime, key, value, internalProcessorContext.recordContext());
         }
 
-        private void enforceConstraints()
+        private void EnforceConstraints()
         {
             var streamTime = observedStreamTime;
             var expiryTime = streamTime - suppressDurationMillis;
 
             //buffer.evictWhile(() => buffer.minTimestamp() <= expiryTime, this.emit);
 
-            if (overCapacity())
+            if (OverCapacity())
             {
                 switch (bufferFullStrategy)
                 {
@@ -91,7 +91,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             }
         }
 
-        private bool overCapacity()
+        private bool OverCapacity()
         {
             return false; // buffer.numRecords() > maxRecords || buffer.bufferSize() > maxBytes;
         }

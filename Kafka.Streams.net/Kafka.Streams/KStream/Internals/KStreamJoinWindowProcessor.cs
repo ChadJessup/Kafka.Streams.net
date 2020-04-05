@@ -20,7 +20,7 @@
 
 //        public override void init(IProcessorContext context)
 //        {
-//            base.init(context);
+//            base.Init(context);
 
 //            window = (IWindowStore<K, V>)context.getStateStore(windowName);
 //        }
@@ -32,7 +32,7 @@
 //            // since it will never be considered for join operations
 //            if (key != null)
 //            {
-//                context.forward(key, value);
+//                context.Forward(key, value);
 //                // Every record basically starts a new window. We're using a window store mostly for the retention.
 //                window.put(key, value, context.timestamp());
 //            }

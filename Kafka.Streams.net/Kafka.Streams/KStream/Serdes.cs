@@ -6,9 +6,13 @@ namespace Kafka.Streams.KStream
 {
     public static class Serdes
     {
-        public static Serde<T> serdeFrom<T>()
+        public static Serde<T> SerdeFrom<T>(ISerializer<T> serializer, IDeserializer<T> deserializer)
+            => new Serde<T>(serializer, deserializer);
+
+        public static Serde<T> SerdeFrom<T>()
             => Activator.CreateInstance<Serde<T>>();
-        public static object serdeFrom(Type type)
+
+        public static object SerdeFrom(Type type)
             => Activator.CreateInstance(type);
 
         public static ISerde<string> String()
@@ -25,5 +29,10 @@ namespace Kafka.Streams.KStream
 
         public static ISerde<byte[]> ByteArray()
             => new Serde<byte[]>(Serializers.ByteArray, Deserializers.ByteArray);
+
+        public static ISerde<object> SerdeFrom<T>(ISerializer<object> valueSerializer, IDeserializer<object> valueDeserializer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

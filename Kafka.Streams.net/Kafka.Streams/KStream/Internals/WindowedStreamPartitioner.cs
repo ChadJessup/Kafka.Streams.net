@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
          * @return an integer between 0 and {@code numPartitions-1}, or {@code null} if the default partitioning logic should be used
          */
 
-        public int partition(string topic, Windowed<K> windowedKey, V value, int numPartitions)
+        public int Partition(string topic, Windowed<K> windowedKey, V value, int numPartitions)
         {
             var keyBytes = serializer.SerializeBaseKey(topic, windowedKey);
 

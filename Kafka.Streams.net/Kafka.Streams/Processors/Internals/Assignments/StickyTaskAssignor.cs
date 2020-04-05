@@ -79,7 +79,7 @@
 //            // have seen the task.
 //            for (IEnumerator<TaskId> iterator = unassigned.iterator(); iterator.hasNext();)
 //            {
-//                TaskId taskId = iterator.next();
+//                TaskId taskId = iterator.MoveNext();
 //                HashSet<ID> clientIds = previousStandbyTaskAssignment[taskId];
 //                if (clientIds != null)
 //                {
@@ -140,7 +140,7 @@
 //            // optimize the case where there is only 1 id to search within.
 //            if (clientsWithin.size() == 1)
 //            {
-//                return clients[clientsWithin.iterator().next()];
+//                return clients[clientsWithin.iterator().MoveNext()];
 //            }
 
 //            ClientState previous = findClientsWithPreviousAssignedTask(taskId, clientsWithin);

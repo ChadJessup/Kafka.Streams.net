@@ -25,7 +25,7 @@ namespace Kafka.Streams.Processors.Internals.Assignments
         private readonly HashSet<Pair> pairs;
         private readonly int maxPairs;
 
-        Pair pair(TaskId task1, TaskId task2)
+        Pair Pair(TaskId task1, TaskId task2)
         {
             if (task1.CompareTo(task2) < 0)
             {

@@ -18,6 +18,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
          *
          * @return the set of {@link ThreadMetadata}.
          */
-        List<ThreadMetadata> localThreadsMetadata();
+        List<ThreadMetadata> LocalThreadsMetadata();
     }
 }

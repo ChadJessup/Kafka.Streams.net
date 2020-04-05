@@ -1,134 +1,141 @@
-using Confluent.Kafka;
-using Xunit;
-using System;
+//using Confluent.Kafka;
+//using Xunit;
+//using System;
+//using NodaTime;
+//using Kafka.Streams.State.KeyValues;
+//using Kafka.Streams.State.Window;
+//using System.Collections.Generic;
+//using Kafka.Streams.State.ReadOnly;
+//using Kafka.Streams.State;
+//using Kafka.Streams.Processors.Interfaces;
 
-namespace Kafka.Streams.Tests.State
-{
-    public class NoOpWindowStore : ReadOnlyWindowStore, StateStore
-    {
+//namespace Kafka.Streams.Tests.State
+//{
+//    public class NoOpWindowStore : IReadOnlyWindowStore, IStateStore
+//    {
 
-        private static class EmptyWindowStoreIterator : WindowStoreIterator<KeyValue>
-        {
-
-
-            public void Close()
-            {
-            }
-
-
-            public long PeekNextKey()
-            {
-                throw new NoSuchElementException();
-            }
+//        private static class EmptyWindowStoreIterator : IWindowStoreIterator<KeyValuePair>
+//        {
 
 
-            public bool HasNext()
-            {
-                return false;
-            }
+//            public void Close()
+//            {
+//            }
 
 
-            public KeyValuePair<long, KeyValue> Next()
-            {
-                throw new NoSuchElementException();
-            }
+//            public long PeekNextKey()
+//            {
+//                throw new NoSuchElementException();
+//            }
 
 
-            public void Remove()
-            {
-            }
-        }
-
-        private static WindowStoreIterator<KeyValue> EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
+//            public bool HasNext()
+//            {
+//                return false;
+//            }
 
 
-        public string Name()
-        {
-            return "";
-        }
+//            public KeyValuePair<long, KeyValuePair> Next()
+//            {
+//                throw new NoSuchElementException();
+//            }
 
 
-        public void Init(ProcessorContext context, StateStore root)
-        {
+//            public void Remove()
+//            {
+//            }
+//        }
 
-        }
-
-
-        public void Flush()
-        {
-
-        }
+//        private static IWindowStoreIterator<KeyValuePair> EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
 
 
-        public void Close()
-        {
-
-        }
-
-
-        public bool Persistent()
-        {
-            return false;
-        }
+//        public string Name()
+//        {
+//            return "";
+//        }
 
 
-        public bool IsOpen()
-        {
-            return false;
-        }
+//        public void Init(IProcessorContext context, IStateStore root)
+//        {
+
+//        }
 
 
-        public object Fetch(object key, long time)
-        {
-            return null;
-        }
+//        public void Flush()
+//        {
+
+//        }
 
 
+//        public void Close()
+//        {
 
-        public WindowStoreIterator Fetch(object key, long timeFrom, long timeTo)
-        {
-            return EMPTY_WINDOW_STORE_ITERATOR;
-        }
+//        }
 
 
-        public WindowStoreIterator Fetch(object key, Instant from, Instant to)
-        {
-            return EMPTY_WINDOW_STORE_ITERATOR;
-        }
+//        public bool Persistent()
+//        {
+//            return false;
+//        }
+
+
+//        public bool IsOpen()
+//        {
+//            return false;
+//        }
+
+
+//        public object Fetch(object key, long time)
+//        {
+//            return null;
+//        }
 
 
 
-        public WindowStoreIterator<KeyValue> Fetch(object from, object to, long timeFrom, long timeTo)
-        {
-            return EMPTY_WINDOW_STORE_ITERATOR;
-        }
+//        public IWindowStoreIterator Fetch(object key, long timeFrom, long timeTo)
+//        {
+//            return EMPTY_WINDOW_STORE_ITERATOR;
+//        }
 
 
-        public KeyValueIterator Fetch(object from,
-                                      object to,
-                                      Instant fromTime,
-                                      Instant toTime)
-        {// throws IllegalArgumentException
-            return EMPTY_WINDOW_STORE_ITERATOR;
-        }
-
-
-        public WindowStoreIterator<KeyValue> All()
-        {
-            return EMPTY_WINDOW_STORE_ITERATOR;
-        }
+//        public IWindowStoreIterator Fetch(object key, Instant from, Instant to)
+//        {
+//            return EMPTY_WINDOW_STORE_ITERATOR;
+//        }
 
 
 
-        public WindowStoreIterator<KeyValue> FetchAll(long timeFrom, long timeTo)
-        {
-            return EMPTY_WINDOW_STORE_ITERATOR;
-        }
+//        public IWindowStoreIterator<KeyValuePair> Fetch(object from, object to, long timeFrom, long timeTo)
+//        {
+//            return EMPTY_WINDOW_STORE_ITERATOR;
+//        }
 
 
-        public KeyValueIterator FetchAll(Instant from, Instant to)
-        {
-            return EMPTY_WINDOW_STORE_ITERATOR;
-        }
-    }
-}
+//        public IKeyValueIterator Fetch(object from,
+//                                      object to,
+//                                      Instant fromTime,
+//                                      Instant toTime)
+//        {// throws ArgumentException
+//            return EMPTY_WINDOW_STORE_ITERATOR;
+//        }
+
+
+//        public IWindowStoreIterator<KeyValuePair> All()
+//        {
+//            return EMPTY_WINDOW_STORE_ITERATOR;
+//        }
+
+
+
+//        public IWindowStoreIterator<KeyValuePair> FetchAll(long timeFrom, long timeTo)
+//        {
+//            return EMPTY_WINDOW_STORE_ITERATOR;
+//        }
+
+
+//        public IKeyValueIterator FetchAll(Instant from, Instant to)
+//        {
+//            return EMPTY_WINDOW_STORE_ITERATOR;
+//        }
+//    }
+//}

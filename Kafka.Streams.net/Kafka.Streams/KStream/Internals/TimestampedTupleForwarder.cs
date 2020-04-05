@@ -27,21 +27,21 @@ namespace Kafka.Streams.KStream.Internals
         {
             this.context = context;
             this.sendOldValues = sendOldValues;
-            this.cachingEnabled = ((WrappedStateStore)store).setFlushListener(flushListener, sendOldValues);
+            this.cachingEnabled = ((WrappedStateStore)store).SetFlushListener(flushListener, sendOldValues);
         }
 
-        public void maybeForward(
+        public void MaybeForward(
             K key,
             V newValue,
             V oldValue)
         {
             if (!cachingEnabled)
             {
-                context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : default));
+                context.Forward(key, new Change<V>(newValue, sendOldValues ? oldValue : default));
             }
         }
 
-        public void maybeForward(
+        public void MaybeForward(
             K key,
             V newValue,
             V oldValue,
@@ -49,7 +49,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (!cachingEnabled)
             {
-                context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : default), To.All().WithTimestamp(timestamp));
+                context.Forward(key, new Change<V>(newValue, sendOldValues ? oldValue : default), To.All().WithTimestamp(timestamp));
             }
         }
     }

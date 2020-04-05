@@ -136,9 +136,9 @@ namespace Kafka.Streams.Tests.Kstream
 //            TimeWindows windows = TimeWindows.of(Duration.FromMilliseconds(12L)).advanceBy(Duration.FromMilliseconds(5L));
 //            Dictionary<long, TimeWindow> matched = windows.windowsFor(21L);
 //            Assert.Equal(12L / 5L + 1, matched.Count);
-//            Assert.Equal(new TimeWindow(10L, 22L), matched.get(10L));
-//            Assert.Equal(new TimeWindow(15L, 27L), matched.get(15L));
-//            Assert.Equal(new TimeWindow(20L, 32L), matched.get(20L));
+//            Assert.Equal(new TimeWindow(10L, 22L), matched.Get(10L));
+//            Assert.Equal(new TimeWindow(15L, 27L), matched.Get(15L));
+//            Assert.Equal(new TimeWindow(20L, 32L), matched.Get(20L));
 //        }
 
 //        [Fact]
@@ -147,7 +147,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            TimeWindows windows = TimeWindows.of(Duration.FromMilliseconds(6L)).advanceBy(Duration.FromMilliseconds(5L));
 //            Dictionary<long, TimeWindow> matched = windows.windowsFor(7L);
 //            Assert.Single(matched);
-//            Assert.Equal(new TimeWindow(5L, 11L), matched.get(5L));
+//            Assert.Equal(new TimeWindow(5L, 11L), matched.Get(5L));
 //        }
 
 //        [Fact]
@@ -156,7 +156,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            TimeWindows windows = TimeWindows.of(Duration.FromMilliseconds(12L));
 //            Dictionary<long, TimeWindow> matched = windows.windowsFor(21L);
 //            Assert.Single(matched);
-//            Assert.Equal(new TimeWindow(12L, 24L), matched.get(12L));
+//            Assert.Equal(new TimeWindow(12L, 24L), matched.Get(12L));
 //        }
 
 

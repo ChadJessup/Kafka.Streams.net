@@ -22,12 +22,12 @@ namespace Kafka.Streams.State.Interfaces
          *
          * @return a new {@link IStateStore} instance of type T
          */
-        T get();
+        T Get();
 
         /**
          * Return a string that is used as the scope for metrics recorded by Metered stores.
          * @return metricsScope
          */
-        string metricsScope();
+        string MetricsScope();
     }
 }

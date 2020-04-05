@@ -22,7 +22,7 @@ namespace Kafka.Streams.State.RocksDbState
          * @param options       the RocksDb options
          * @param configs       the configuration supplied to {@link org.apache.kafka.streams.StreamsConfig}
          */
-        void setConfig(string storeName, DbOptions options, Dictionary<string, object> configs);
+        void SetConfig(string storeName, DbOptions options, Dictionary<string, object> configs);
 
         /**
          * Close any user-constructed objects that inherit from {@code org.rocksdb.RocksObject}.
@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.RocksDbState
          * @param storeName     the name of the store being configured
          * @param options       the RocksDb options
          */
-        void close(string storeName, DbOptions options);
+        void Close(string storeName, DbOptions options);
         //{
         //    LOG.LogWarning("The default close will be removed in 3.0.0 -- you should overwrite it if you have implemented RocksDbConfigSetter");
         //}

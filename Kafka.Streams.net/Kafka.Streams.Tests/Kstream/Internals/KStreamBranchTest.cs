@@ -33,7 +33,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKStream<int, string> stream;
 //            IKStream<int, string>[] branches;
 
-//            stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            branches = stream.branch(isEven, isMultipleOfThree, isOdd);
 
 //            Assert.Equal(3, branches.Length);
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, "V" + expectedKey));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
 //            }
 
 //            List<MockProcessor<int, string>> processors = supplier.capturedProcessors(3);

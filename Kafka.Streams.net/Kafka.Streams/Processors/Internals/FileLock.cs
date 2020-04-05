@@ -4,7 +4,7 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class FileLock
     {
-        internal void release()
+        internal void Release()
         {
             throw new NotImplementedException();
         }

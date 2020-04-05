@@ -80,7 +80,7 @@ namespace Kafka.Streams.Tests.Mocks
             throw new System.NotImplementedException();
         }
 
-        bool IStateStore.persistent()
+        bool IStateStore.Persistent()
         {
             throw new System.NotImplementedException();
         }

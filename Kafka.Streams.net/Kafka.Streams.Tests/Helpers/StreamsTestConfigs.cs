@@ -22,7 +22,7 @@ namespace Kafka.Streams.Tests.Helpers
                     { StreamsConfigPropertyNames.ApplicationId, applicationId },
                     { StreamsConfigPropertyNames.BUFFERED_RECORDS_PER_PARTITION_CONFIG, "3" },
                     { StreamsConfigPropertyNames.DefaultTimestampExtractorClass, typeof(MockTimestampExtractor).FullName },
-                    { StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory() },
+                    { StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName },
                     { StreamsConfigPropertyNames.ProcessingGuarantee, enableEoS? StreamsConfigPropertyNames.ExactlyOnce : StreamsConfigPropertyNames.AtLeastOnce },
                     { StreamsConfigPropertyNames.GroupId, "testGroupId" },
                 });
@@ -39,7 +39,7 @@ namespace Kafka.Streams.Tests.Helpers
             props.Set(StreamsConfigPropertyNames.BootstrapServers, bootstrapServers);
             props.Set(StreamsConfigPropertyNames.DefaultKeySerdeClass, keySerdeClassName);
             props.Set(StreamsConfigPropertyNames.DefaultValueSerdeClass, valueSerdeClassName);
-            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory());
+            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
             props.SetAll(additional);
 
             return props;

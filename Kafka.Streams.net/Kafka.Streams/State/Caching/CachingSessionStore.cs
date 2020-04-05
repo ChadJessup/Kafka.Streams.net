@@ -36,7 +36,7 @@
 //        public override void init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
 //        {
 //            initInternal((IInternalProcessorContext<Bytes, byte[]>)context);
-//            base.init(context, root);
+//            base.Init(context, root);
 //        }
 
 
@@ -64,7 +64,7 @@
 //            {
 //                byte[] newValueBytes = entry.newValue();
 //                byte[] oldValueBytes = newValueBytes == null || sendOldValues ?
-//                    wrapped.fetchSession(bytesKey.key, bytesKey.window.start(), bytesKey.window.end()) : null;
+//                    wrapped.FetchSession(bytesKey.key, bytesKey.window.start(), bytesKey.window.end()) : null;
 
 //                // this is an optimization: if this key did not exist in underlying store and also not in the cache,
 //                // we can skip flushing to downstream as well as writing to underlying store
@@ -78,7 +78,7 @@
 //                    try
 //                    {
 //                        flushListener.apply(
-//                            binaryKey.get(),
+//                            binaryKey.Get(),
 //                            newValueBytes,
 //                            sendOldValues ? oldValueBytes : null,
 //                            entry.entry().context.timestamp());
@@ -111,11 +111,11 @@
 //            LRUCacheEntry entry =
 //                new LRUCacheEntry(
 //                    value,
-//                    context.headers(),
+//                    context.Headers,
 //                    true,
 //                    context.offset(),
 //                    context.timestamp(),
-//                    context.partition(),
+//                    context.Partition,
 //                    context.Topic);
 //            cache.Add(cacheName, cacheFunction.cacheKey(binaryKey), entry);
 
@@ -136,7 +136,7 @@
 
 //            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
 //                new CacheIteratorWrapper(key, earliestSessionEndTime, latestSessionStartTime) :
-//                cache.range(cacheName,
+//                cache.Range(cacheName,
 //                            cacheFunction.cacheKey(keySchema.lowerRangeFixedSize(key, earliestSessionEndTime)),
 //                            cacheFunction.cacheKey(keySchema.upperRangeFixedSize(key, latestSessionStartTime))
 //                );
@@ -170,7 +170,7 @@
 
 //            Bytes cacheKeyFrom = cacheFunction.cacheKey(keySchema.lowerRange(keyFrom, earliestSessionEndTime));
 //            Bytes cacheKeyTo = cacheFunction.cacheKey(keySchema.upperRange(keyTo, latestSessionStartTime));
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, cacheKeyFrom, cacheKeyTo);
+//            MemoryLRUCacheBytesIterator cacheIterator = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
 
 //            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped.findSessions(
 //                keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime
@@ -190,7 +190,7 @@
 //            validateStoreOpen();
 //            if (cache == null)
 //            {
-//                return wrapped.fetchSession(key, startTime, endTime);
+//                return wrapped.FetchSession(key, startTime, endTime);
 //            }
 //            else
 //            {
@@ -199,7 +199,7 @@
 //                LRUCacheEntry entry = cache[cacheName, cacheKey];
 //                if (entry == null)
 //                {
-//                    return wrapped.fetchSession(key, startTime, endTime);
+//                    return wrapped.FetchSession(key, startTime, endTime);
 //                }
 //                else
 //                {

@@ -33,13 +33,13 @@ namespace Kafka.Streams.KStream.Internals
                 this.predicate);
         }
 
-        public void enableSendingOldValues()
+        public void EnableSendingOldValues()
         {
-            parent.enableSendingOldValues();
+            parent.EnableSendingOldValues();
             sendOldValues = true;
         }
 
-        public IKTableValueGetterSupplier<K, V> view()
+        public IKTableValueGetterSupplier<K, V> View()
         {
             // if the KTable is materialized, use the materialized store to return getter value;
             // otherwise rely on the parent getter and apply filter on-the-fly

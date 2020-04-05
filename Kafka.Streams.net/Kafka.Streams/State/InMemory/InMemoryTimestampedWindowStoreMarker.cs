@@ -24,7 +24,7 @@
 //        public void init(IProcessorContext<K, V> context,
 //                         IStateStore root)
 //        {
-//            wrapped.init(context, root);
+//            wrapped.Init(context, root);
 //        }
 
 
@@ -46,16 +46,16 @@
 //        public byte[] fetch(Bytes key,
 //                            long time)
 //        {
-//            return wrapped.fetch(key, time);
+//            return wrapped.Fetch(key, time);
 //        }
 
 
 
-//        public WindowStoreIterator<byte[]> fetch(Bytes key,
+//        public IWindowStoreIterator<byte[]> fetch(Bytes key,
 //                                                 long timeFrom,
 //                                                 long timeTo)
 //        {
-//            return wrapped.fetch(key, timeFrom, timeTo);
+//            return wrapped.Fetch(key, timeFrom, timeTo);
 //        }
 
 
@@ -65,7 +65,7 @@
 //                                                               long timeFrom,
 //                                                               long timeTo)
 //        {
-//            return wrapped.fetch(from, to, timeFrom, timeTo);
+//            return wrapped.Fetch(from, to, timeFrom, timeTo);
 //        }
 
 

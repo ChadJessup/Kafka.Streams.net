@@ -25,7 +25,7 @@ namespace Kafka.Common.Utils
         public T Current { get; }
         object IEnumerator.Current { get; }
 
-        public virtual bool hasNext()
+        public virtual bool HasNext()
         {
             return state switch
             {
@@ -38,7 +38,7 @@ namespace Kafka.Common.Utils
 
         public virtual T next()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -56,7 +56,7 @@ namespace Kafka.Common.Utils
 
         public virtual T Peek()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -70,12 +70,12 @@ namespace Kafka.Common.Utils
             return default;
         }
 
-        public abstract T makeNext();
+        public abstract T MakeNext();
 
         private bool maybeComputeNext()
         {
             state = State.FAILED;
-            _next = makeNext();
+            _next = MakeNext();
             if (state == State.DONE)
             {
                 return false;

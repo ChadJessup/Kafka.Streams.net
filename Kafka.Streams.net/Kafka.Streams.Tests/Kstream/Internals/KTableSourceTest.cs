@@ -13,7 +13,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    public class KTableSourceTest
 //    {
-//        private Consumed<string, string> stringConsumed = Consumed.with(Serdes.String(), Serdes.String());
+//        private Consumed<string, string> stringConsumed = Consumed.With(Serdes.String(), Serdes.String());
 //        private ConsumerRecordFactory<string, string> recordFactory =
 //            new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L);
 //        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
@@ -24,7 +24,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var builder = new StreamsBuilder();
 //            var topic1 = "topic1";
 
-//            IKTable<string, int> table1 = builder.Table(topic1, Consumed.with(Serdes.String(), Serdes.Int()));
+//            IKTable<string, int> table1 = builder.Table(topic1, Consumed.With(Serdes.String(), Serdes.Int()));
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
 //            table1.toStream().process(supplier);
@@ -33,12 +33,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.Int(), 0L);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
-//            driver.pipeInput(integerFactory.create(topic1, "A", 1, 10L));
-//            driver.pipeInput(integerFactory.create(topic1, "B", 2, 11L));
-//            driver.pipeInput(integerFactory.create(topic1, "C", 3, 12L));
-//            driver.pipeInput(integerFactory.create(topic1, "D", 4, 13L));
-//            driver.pipeInput(integerFactory.create(topic1, "A", null, 14L));
-//            driver.pipeInput(integerFactory.create(topic1, "B", null, 15L));
+//            driver.PipeInput(integerFactory.Create(topic1, "A", 1, 10L));
+//            driver.PipeInput(integerFactory.Create(topic1, "B", 2, 11L));
+//            driver.PipeInput(integerFactory.Create(topic1, "C", 3, 12L));
+//            driver.PipeInput(integerFactory.Create(topic1, "D", 4, 13L));
+//            driver.PipeInput(integerFactory.Create(topic1, "A", null, 14L));
+//            driver.PipeInput(integerFactory.Create(topic1, "B", null, 15L));
 
 //            Assert.Equal(
 //                asList(new KeyValueTimestamp<>("A", 1, 10L),
@@ -61,7 +61,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            try
 //            {
 //                var driver = new TopologyTestDriver(builder.Build(), props);
-//                driver.pipeInput(recordFactory.create(topic, null, "value"));
+//                driver.PipeInput(recordFactory.Create(topic, null, "value"));
 //                LogCaptureAppender.unregister(appender);
 
 //                Assert.Equal(1.0, getMetricByName(driver.metrics(), "skipped-records-total", "stream-metrics").metricValue());
@@ -85,36 +85,36 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            topologyBuilder.connectProcessorAndStateStores(table1.name, getterSupplier1.storeNames());
 
 //            var driver = new TopologyTestDriverWrapper(builder.Build(), props){
-//            IKTableValueGetter<string, string> getter1 = getterSupplier1.get();
-//            getter1.init(driver.setCurrentNodeForProcessorContext(table1.name));
+//            IKTableValueGetter<string, string> getter1 = getterSupplier1.Get();
+//            getter1.Init(driver.setCurrentNodeForProcessorContext(table1.name));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "01", 10L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "01", 20L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "01", 15L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "01", 10L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "01", 20L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "01", 15L));
 
-//            Assert.Equal(ValueAndTimestamp.make("01", 10L), getter1.get("A"));
-//            Assert.Equal(ValueAndTimestamp.make("01", 20L), getter1.get("B"));
-//            Assert.Equal(ValueAndTimestamp.make("01", 15L), getter1.get("C"));
+//            Assert.Equal(ValueAndTimestamp.Make("01", 10L), getter1.Get("A"));
+//            Assert.Equal(ValueAndTimestamp.Make("01", 20L), getter1.Get("B"));
+//            Assert.Equal(ValueAndTimestamp.Make("01", 15L), getter1.Get("C"));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "02", 30L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "02", 5L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "02", 30L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "02", 5L));
 
-//            Assert.Equal(ValueAndTimestamp.make("02", 30L), getter1.get("A"));
-//            Assert.Equal(ValueAndTimestamp.make("02", 5L), getter1.get("B"));
-//            Assert.Equal(ValueAndTimestamp.make("01", 15L), getter1.get("C"));
+//            Assert.Equal(ValueAndTimestamp.Make("02", 30L), getter1.Get("A"));
+//            Assert.Equal(ValueAndTimestamp.Make("02", 5L), getter1.Get("B"));
+//            Assert.Equal(ValueAndTimestamp.Make("01", 15L), getter1.Get("C"));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "03", 29L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "03", 29L));
 
-//            Assert.Equal(ValueAndTimestamp.make("03", 29L), getter1.get("A"));
-//            Assert.Equal(ValueAndTimestamp.make("02", 5L), getter1.get("B"));
-//            Assert.Equal(ValueAndTimestamp.make("01", 15L), getter1.get("C"));
+//            Assert.Equal(ValueAndTimestamp.Make("03", 29L), getter1.Get("A"));
+//            Assert.Equal(ValueAndTimestamp.Make("02", 5L), getter1.Get("B"));
+//            Assert.Equal(ValueAndTimestamp.Make("01", 15L), getter1.Get("C"));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", (string)null, 50L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", (string)null, 3L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 50L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", (string)null, 3L));
 
-//            Assert.Null(getter1.get("A"));
-//            Assert.Null(getter1.get("B"));
-//            Assert.Equal(ValueAndTimestamp.make("01", 15L), getter1.get("C"));
+//            Assert.Null(getter1.Get("A"));
+//            Assert.Null(getter1.Get("B"));
+//            Assert.Equal(ValueAndTimestamp.Make("01", 15L), getter1.Get("C"));
 //        }
 
 //        [Fact]
@@ -127,28 +127,28 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var table1 = (IKTable<string, string>)builder.Table(topic1, stringConsumed);
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            Topology topology = builder.Build().addProcessor("proc1", supplier, table1.name);
+//            Topology topology = builder.Build().AddProcessor("proc1", supplier, table1.name);
 
 //            var driver = new TopologyTestDriver(topology, props);
 //            MockProcessor<string, int> proc1 = supplier.theCapturedProcessor();
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "01", 10L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "01", 20L));
-//            driver.pipeInput(recordFactory.create(topic1, "C", "01", 15L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "01", 10L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "01", 20L));
+//            driver.PipeInput(recordFactory.Create(topic1, "C", "01", 15L));
 //            proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("01", null), 10),
 //                new KeyValueTimestamp<>("B", new Change<>("01", null), 20),
 //                new KeyValueTimestamp<>("C", new Change<>("01", null), 15));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "02", 8L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", "02", 22L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "02", 8L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", "02", 22L));
 //            proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("02", null), 8),
 //                new KeyValueTimestamp<>("B", new Change<>("02", null), 22));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", "03", 12L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", "03", 12L));
 //            proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("03", null), 12));
 
-//            driver.pipeInput(recordFactory.create(topic1, "A", (string)null, 15L));
-//            driver.pipeInput(recordFactory.create(topic1, "B", (string)null, 20L));
+//            driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 15L));
+//            driver.PipeInput(recordFactory.Create(topic1, "B", (string)null, 20L));
 //            proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 15),
 //                new KeyValueTimestamp<>("B", new Change<>(null, null), 20));
 //        }
@@ -165,30 +165,30 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Assert.True(table1.sendingOldValueEnabled());
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            Topology topology = builder.Build().addProcessor("proc1", supplier, table1.name);
+//            Topology topology = builder.Build().AddProcessor("proc1", supplier, table1.name);
 
 //            try
 //            {
 //                var driver = new TopologyTestDriver(topology, props);
 //                MockProcessor<string, int> proc1 = supplier.theCapturedProcessor();
 
-//                driver.pipeInput(recordFactory.create(topic1, "A", "01", 10L));
-//                driver.pipeInput(recordFactory.create(topic1, "B", "01", 20L));
-//                driver.pipeInput(recordFactory.create(topic1, "C", "01", 15L));
+//                driver.PipeInput(recordFactory.Create(topic1, "A", "01", 10L));
+//                driver.PipeInput(recordFactory.Create(topic1, "B", "01", 20L));
+//                driver.PipeInput(recordFactory.Create(topic1, "C", "01", 15L));
 //                proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("01", null), 10),
 //                    new KeyValueTimestamp<>("B", new Change<>("01", null), 20),
 //                    new KeyValueTimestamp<>("C", new Change<>("01", null), 15));
 
-//                driver.pipeInput(recordFactory.create(topic1, "A", "02", 8L));
-//                driver.pipeInput(recordFactory.create(topic1, "B", "02", 22L));
+//                driver.PipeInput(recordFactory.Create(topic1, "A", "02", 8L));
+//                driver.PipeInput(recordFactory.Create(topic1, "B", "02", 22L));
 //                proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("02", "01"), 8),
 //                    new KeyValueTimestamp<>("B", new Change<>("02", "01"), 22));
 
-//                driver.pipeInput(recordFactory.create(topic1, "A", "03", 12L));
+//                driver.PipeInput(recordFactory.Create(topic1, "A", "03", 12L));
 //                proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("03", "02"), 12));
 
-//                driver.pipeInput(recordFactory.create(topic1, "A", (string)null, 15L));
-//                driver.pipeInput(recordFactory.create(topic1, "B", (string)null, 20L));
+//                driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 15L));
+//                driver.PipeInput(recordFactory.Create(topic1, "B", (string)null, 20L));
 //                proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, "03"), 15),
 //                    new KeyValueTimestamp<>("B", new Change<>(null, "02"), 20));
 //            }

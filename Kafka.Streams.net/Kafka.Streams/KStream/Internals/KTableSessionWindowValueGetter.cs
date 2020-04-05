@@ -16,8 +16,8 @@
 
 //    public ValueAndTimestamp<Agg> get(Windowed<K> key)
 //    {
-//        return ValueAndTimestamp.make(
-//            store.fetchSession(key.key(), key.window().start(), key.window().end()),
+//        return ValueAndTimestamp.Make(
+//            store.FetchSession(key.key(), key.window().start(), key.window().end()),
 //            key.window().end());
 //    }
 

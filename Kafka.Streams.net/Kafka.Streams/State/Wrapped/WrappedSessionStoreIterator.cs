@@ -28,7 +28,7 @@
 
 //        public override KeyValuePair<Windowed<Bytes>, byte[]> next()
 //        {
-//            KeyValuePair<Bytes, byte[]> next = bytesIterator.next();
+//            KeyValuePair<Bytes, byte[]> next = bytesIterator.MoveNext();
 //            return KeyValuePair.pair(SessionKeySchema.from(next.key), next.value);
 //        }
 

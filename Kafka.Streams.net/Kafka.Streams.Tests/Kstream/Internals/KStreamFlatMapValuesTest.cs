@@ -62,14 +62,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                value =>
 //                {
 //                    List<string> result = new List<>();
-//                    result.add("v" + value);
-//                    result.add("V" + value);
+//                    result.Add("v" + value);
+//                    result.Add("V" + value);
 //                    return result;
 //                };
 
 //            int[] expectedKeys = { 0, 1, 2, 3 };
 
-//            IKStream<int, int> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.Int()));
+//            IKStream<int, int> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.Int()));
 //            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
 //            stream.flatMapValues(mapper).process(supplier);
 
@@ -78,8 +78,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                var driver = new TopologyTestDriver(builder.Build(), props);
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    // .Assing the timestamp to recordFactory.create to disambiguate the call
-//                    driver.pipeInput(recordFactory.create(topicName, expectedKey, expectedKey, 0L));
+//                    // .Assing the timestamp to recordFactory.Create to disambiguate the call
+//                    driver.PipeInput(recordFactory.Create(topicName, expectedKey, expectedKey, 0L));
 //                }
 //            }
 
@@ -101,14 +101,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                (readOnlyKey, value) =>
 //                {
 //                    List<string> result = new List<>();
-//                    result.add("v" + value);
-//                    result.add("k" + readOnlyKey);
+//                    result.Add("v" + value);
+//                    result.Add("k" + readOnlyKey);
 //                    return result;
 //                };
 
 //            int[] expectedKeys = { 0, 1, 2, 3 };
 
-//            IKStream<int, int> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.Int()));
+//            IKStream<int, int> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.Int()));
 //            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
 
 //            stream.flatMapValues(mapper).process(supplier);
@@ -117,8 +117,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                // .Assing the timestamp to recordFactory.create to disambiguate the call
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, expectedKey, 0L));
+//                // .Assing the timestamp to recordFactory.Create to disambiguate the call
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, expectedKey, 0L));
 //            }
 //        }
 

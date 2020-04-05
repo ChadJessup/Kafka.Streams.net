@@ -60,13 +60,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKStream<int, string> stream;
 //            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
 
-//            stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            stream.filter(isMultipleOfThree).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, "V" + expectedKey));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
 //            }
 
 //            Assert.Equal(2, supplier.theCapturedProcessor().processed.Count);
@@ -81,13 +81,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKStream<int, string> stream;
 //            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
 
-//            stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            stream.filterNot(isMultipleOfThree).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, "V" + expectedKey));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
 //            }
 
 //            Assert.Equal(5, supplier.theCapturedProcessor().processed.Count);
@@ -102,7 +102,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .Stream<int, string>("empty")
 //                .filter(numberKeyPredicate)
 //                .filterNot(numberKeyPredicate)
-//                .to("nirvana");
+//                .To("nirvana");
 
 //        }
 //    }

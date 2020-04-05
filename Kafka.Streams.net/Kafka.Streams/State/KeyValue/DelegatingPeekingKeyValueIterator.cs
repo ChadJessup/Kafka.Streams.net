@@ -32,7 +32,7 @@ namespace Kafka.Streams.State.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public K PeekNextKey()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -41,14 +41,14 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void close()
+        public void Close()
         {
-            underlying.close();
+            underlying.Close();
             open = false;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public bool hasNext()
+        public bool HasNext()
         {
             if (!open)
             {
@@ -70,9 +70,9 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public KeyValuePair<K, V>? next()
+        public KeyValuePair<K, V>? Next()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -90,7 +90,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<K, V>? PeekNext()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -98,12 +98,12 @@ namespace Kafka.Streams.State.Internals
             return _next;
         }
 
-        void IKeyValueIterator<K, V>.close()
+        void IKeyValueIterator<K, V>.Close()
         {
             throw new System.NotImplementedException();
         }
 
-        K IKeyValueIterator<K, V>.peekNextKey()
+        K IKeyValueIterator<K, V>.PeekNextKey()
         {
             throw new System.NotImplementedException();
         }

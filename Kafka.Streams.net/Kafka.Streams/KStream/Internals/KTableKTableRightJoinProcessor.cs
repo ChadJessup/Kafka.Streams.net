@@ -23,10 +23,10 @@
 
 //        public void init(IProcessorContext<K, Change<V1>> context)
 //        {
-//            base.init(context);
+//            base.Init(context);
 //            metrics = (StreamsMetricsImpl)context.metrics;
 //            skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-//            valueGetter.init(context);
+//            valueGetter.Init(context);
 //        }
 
 
@@ -37,7 +37,7 @@
 //            {
 //                LOG.LogWarning(
 //                    "Skipping record due to null key. change=[{}] topic=[{}] partition=[{}] offset=[{}]",
-//                    change, context.Topic, context.partition(), context.offset()
+//                    change, context.Topic, context.Partition, context.offset()
 //                );
 //                skippedRecordsSensor.record();
 //                return;
@@ -47,7 +47,7 @@
 //            long resultTimestamp;
 //            R oldValue = null;
 
-//            ValueAndTimestamp<V2> valueAndTimestampLeft = valueGetter.get(key);
+//            ValueAndTimestamp<V2> valueAndTimestampLeft = valueGetter.Get(key);
 //            V2 valueLeft = ValueAndTimestamp.GetValueOrNull(valueAndTimestampLeft);
 //            if (valueLeft == null)
 //            {
@@ -65,7 +65,7 @@
 //                oldValue = joiner.apply(change.oldValue, valueLeft);
 //            }
 
-//            context.forward(key, new Change<V1>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
+//            context.Forward(key, new Change<V1>(newValue, oldValue), To.All().WithTimestamp(resultTimestamp));
 //        }
 
 

@@ -7,32 +7,35 @@ using System;
 
 namespace Kafka.Streams.State
 {
-    /**
- * Factory for creating serializers / deserializers for state stores in Kafka Streams.
- *
- * @param <K> key type of serde
- * @param <V> value type of serde
- */
-    public class StateSerdes<K, V>
+    public static class StateSerdes
     {
         /**
-         * Create a new instance of {@link StateSerdes} for the given state name and key-/value-type classes.
-         *
-         * @param topic      the topic name
-         * @param keyClass   the class of the key type
-         * @param valueClass the class of the value type
-         * @param <K>        the key type
-         * @param <V>        the value type
-         * @return a new instance of {@link StateSerdes}
-         */
-        public static StateSerdes<K, V> withBuiltinTypes<K, V>(
-             string topic,
-             K keyClass,
-            V valueClass)
+        * Create a new instance of {@link StateSerdes} for the given state name and key-/value-type classes.
+        *
+        * @param topic      the topic name
+        * @param keyClass   the class of the key type
+        * @param valueClass the class of the value type
+        * @param <K>        the key type
+        * @param <V>        the value type
+        * @return a new instance of {@link StateSerdes}
+        */
+        public static StateSerdes<K, V> WithBuiltinTypes<K, V>(string topic)
         {
-            return new StateSerdes<K, V>(topic, Serdes.serdeFrom<K>(), Serdes.serdeFrom<V>());
+            return new StateSerdes<K, V>(
+                topic,
+                Serdes.SerdeFrom<K>(),
+                Serdes.SerdeFrom<V>());
         }
+    }
 
+    /**
+    * Factory for creating serializers / deserializers for state stores in Kafka Streams.
+    *
+    * @param <K> key type of serde
+    * @param <V> value type of serde
+    */
+    public class StateSerdes<K, V>
+    {
         private readonly string topic;
         private readonly ISerde<K> keySerde;
         private readonly ISerde<V> valueSerde;
@@ -60,7 +63,7 @@ namespace Kafka.Streams.State
          *
          * @return the key deserializer
          */
-        public IDeserializer<K> keyDeserializer()
+        public IDeserializer<K> KeyDeserializer()
             => keySerde.Deserializer;
 
         /**
@@ -68,30 +71,24 @@ namespace Kafka.Streams.State
          *
          * @return the key serializer
          */
-        public ISerializer<K> keySerializer()
-        {
-            return keySerde.Serializer;
-        }
+        public ISerializer<K> KeySerializer()
+            => keySerde.Serializer;
 
         /**
          * Return the value deserializer.
          *
          * @return the value deserializer
          */
-        public IDeserializer<V> valueDeserializer()
-        {
-            return valueSerde.Deserializer;
-        }
+        public IDeserializer<V> ValueDeserializer()
+            => valueSerde.Deserializer;
 
         /**
          * Return the value serializer.
          *
          * @return the value serializer
          */
-        public ISerializer<V> valueSerializer()
-        {
-            return valueSerde.Serializer;
-        }
+        public ISerializer<V> ValueSerializer()
+            => valueSerde.Serializer;
 
         /**
          * Deserialize the key from raw bytes.
@@ -99,21 +96,23 @@ namespace Kafka.Streams.State
          * @param rawKey  the key as raw bytes
          * @return        the key as typed object
          */
-        public K keyFrom(byte[] rawKey)
-        {
-            return keySerde.Deserializer.Deserialize(rawKey, isNull: rawKey == null, new SerializationContext(MessageComponentType.Key, topic));
-        }
+        public K KeyFrom(byte[] rawKey)
+            => keySerde.Deserializer.Deserialize(
+                rawKey,
+                isNull: rawKey == null,
+                new SerializationContext(MessageComponentType.Key, topic));
 
         /**
          * Deserialize the value from raw bytes.
          *
-         * @param rawValue  the value as raw bytes
+         * @param RawValue  the value as raw bytes
          * @return          the value as typed object
          */
-        public V valueFrom(byte[] rawValue)
-        {
-            return valueSerde.Deserializer.Deserialize(rawValue, rawValue == null, new SerializationContext(MessageComponentType.Value, topic));
-        }
+        public V ValueFrom(byte[] RawValue)
+            => valueSerde.Deserializer.Deserialize(
+                RawValue,
+                RawValue == null,
+                new SerializationContext(MessageComponentType.Value, topic));
 
         /**
          * Serialize the given key.
@@ -121,7 +120,7 @@ namespace Kafka.Streams.State
          * @param key  the key to be serialized
          * @return     the serialized key
          */
-        public byte[] rawKey(K key)
+        public byte[] RawKey(K key)
         {
             try
             {
@@ -134,7 +133,7 @@ namespace Kafka.Streams.State
                     : key.GetType().FullName;
 
                 throw new StreamsException(
-                        $"A serializer ({keySerializer().GetType().FullName}) is not compatible to the actual key type " +
+                        $"A serializer ({KeySerializer().GetType().FullName}) is not compatible to the actual key type " +
                         $"(key type: {keyClass}). Change the default Serdes in StreamConfig or " +
                         "provide correct Serdes via method parameters.", e);
             }
@@ -146,7 +145,7 @@ namespace Kafka.Streams.State
          * @param value  the value to be serialized
          * @return       the serialized value
          */
-        public byte[] rawValue(V value)
+        public byte[] RawValue(V value)
         {
             try
             {
@@ -156,16 +155,17 @@ namespace Kafka.Streams.State
             {
                 string valueClass;
                 Type serializerClass;
-                if (valueSerializer() is ValueAndTimestampSerializer<V>)
+                if (ValueSerializer() is ValueAndTimestampSerializer<V>)
                 {
-                    serializerClass = ((ValueAndTimestampSerializer<V>)valueSerializer()).valueSerializer.GetType();
+                    serializerClass = ((ValueAndTimestampSerializer<V>)ValueSerializer()).valueSerializer.GetType();
                     valueClass = value == null ? "unknown because value is null" : value.GetType().FullName;
                 }
                 else
                 {
-                    serializerClass = valueSerializer().GetType();
+                    serializerClass = ValueSerializer().GetType();
                     valueClass = value == null ? "unknown because value is null" : value.GetType().FullName;
                 }
+                
                 throw new StreamsException(
                         $"A serializer ({serializerClass.FullName}) is not compatible to the actual value type " +
                         $"(value type: {valueClass}). Change the default Serdes in StreamConfig or " +

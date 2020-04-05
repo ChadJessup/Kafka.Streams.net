@@ -5,7 +5,7 @@
 //namespace Kafka.Streams.State.Internals
 //{
 //    /**
-//     * A wrapper over the underlying {@link ReadOnlyKeyValueStore}s found in a {@link
+//     * A wrapper over the underlying {@link IReadOnlyKeyValueStore}s found in a {@link
 //     * org.apache.kafka.streams.processor.Internals.ProcessorTopology}
 //     *
 //     * @param key type
@@ -34,7 +34,7 @@
 //            {
 //                try
 //                {
-//                    V result = store.get(key);
+//                    V result = store.Get(key);
 
 //                    if (result != null)
 //                    {
@@ -59,7 +59,7 @@
 //                {
 //                    try
 //                    {
-//                        return store.range(from, to);
+//                        return store.Range(from, to);
 //                    }
 //                    catch (InvalidStateStoreException e)
 //                    {

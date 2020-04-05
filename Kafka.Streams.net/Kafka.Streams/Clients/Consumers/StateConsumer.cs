@@ -41,9 +41,9 @@ namespace Kafka.Streams.Clients.Consumers
          * @throws InvalidOperationException If store gets registered after initialized is already finished
          * @throws StreamsException      if the store's change log does not contain the partition
          */
-        public void initialize()
+        public void Initialize()
         {
-            var partitionOffsets = stateMaintainer.initialize();
+            var partitionOffsets = stateMaintainer.Initialize();
             globalConsumer.Assign(partitionOffsets.Keys);
 
             foreach (var entry in partitionOffsets)
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Clients.Consumers
             lastFlush = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
         }
 
-        public void pollAndUpdate()
+        public void PollAndUpdate()
         {
             try
             {
@@ -62,13 +62,13 @@ namespace Kafka.Streams.Clients.Consumers
 
                 foreach (ConsumeResult<byte[], byte[]> record in received)
                 {
-                    stateMaintainer.update(record);
+                    stateMaintainer.Update(record);
                 }
 
                 var now = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
                 if (now >= lastFlush + flushInterval)
                 {
-                    stateMaintainer.flushState();
+                    stateMaintainer.FlushState();
                     lastFlush = now;
                 }
             }
@@ -81,7 +81,7 @@ namespace Kafka.Streams.Clients.Consumers
             }
         }
 
-        public void close()
+        public void Close()
         {
             try
             {
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Clients.Consumers
                 this.logger.LogError("Failed to close global consumer due to the following error:", e);
             }
 
-            stateMaintainer.close();
+            stateMaintainer.Close();
         }
     }
 }

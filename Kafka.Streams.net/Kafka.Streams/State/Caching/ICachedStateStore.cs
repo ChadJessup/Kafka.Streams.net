@@ -8,7 +8,7 @@ namespace Kafka.Streams.State.Internals
          * @param listener
          * @param sendOldValues
          */
-        bool setFlushListener<K, V>(
+        bool SetFlushListener<K, V>(
             ICacheFlushListener<K, V> listener,
             bool sendOldValues);
     }

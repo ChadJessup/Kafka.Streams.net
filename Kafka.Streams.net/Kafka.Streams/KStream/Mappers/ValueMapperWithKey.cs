@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream.Mappers
         public ValueMapperWithKey(Func<K, V, VR> mapper)
             => this.mapper = mapper;
 
-        public VR apply(K readOnlyKey, V value)
+        public VR Apply(K readOnlyKey, V value)
             => this.mapper(readOnlyKey, value);
     }
 }

@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        public void before()
 //        {
-//            IKStream<string, string> stream = builder.Stream(TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
+//            IKStream<string, string> stream = builder.Stream(TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
 //            windowedStream = stream.
 //                groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(500L)));
@@ -47,16 +47,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey
-//                    .get(new Windowed<>("1", new TimeWindow(0L, 500L))),
-//                equalTo(ValueAndTimestamp.make(2L, 15L)));
+//                    .Get(new Windowed<>("1", new TimeWindow(0L, 500L))),
+//                equalTo(ValueAndTimestamp.Make(2L, 15L)));
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey
-//                    .get(new Windowed<>("2", new TimeWindow(500L, 1000L))),
-//                equalTo(ValueAndTimestamp.make(2L, 550L)));
+//                    .Get(new Windowed<>("2", new TimeWindow(500L, 1000L))),
+//                equalTo(ValueAndTimestamp.Make(2L, 550L)));
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey
-//                    .get(new Windowed<>("1", new TimeWindow(500L, 1000L))),
-//                equalTo(ValueAndTimestamp.make(1L, 500L)));
+//                    .Get(new Windowed<>("1", new TimeWindow(500L, 1000L))),
+//                equalTo(ValueAndTimestamp.Make(1L, 500L)));
 //        }
 
 //        [Fact]
@@ -73,16 +73,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().CastValueAndTimestampPerKey
-//                    .get(new Windowed<>("1", new TimeWindow(0L, 500L))),
-//                equalTo(ValueAndTimestamp.make("1+2", 15L)));
+//                    .Get(new Windowed<>("1", new TimeWindow(0L, 500L))),
+//                equalTo(ValueAndTimestamp.Make("1+2", 15L)));
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey
-//                    .get(new Windowed<>("2", new TimeWindow(500L, 1000L))),
-//                equalTo(ValueAndTimestamp.make("10+20", 550L)));
+//                    .Get(new Windowed<>("2", new TimeWindow(500L, 1000L))),
+//                equalTo(ValueAndTimestamp.Make("10+20", 550L)));
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey
-//                    .get(new Windowed<>("1", new TimeWindow(500L, 1000L))),
-//                equalTo(ValueAndTimestamp.make("3", 500L)));
+//                    .Get(new Windowed<>("1", new TimeWindow(500L, 1000L))),
+//                equalTo(ValueAndTimestamp.Make("3", 500L)));
 //        }
 
 //        [Fact]
@@ -102,16 +102,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey
-//                    .get(new Windowed<>("1", new TimeWindow(0L, 500L))),
-//                equalTo(ValueAndTimestamp.make("0+1+2", 15L)));
+//                    .Get(new Windowed<>("1", new TimeWindow(0L, 500L))),
+//                equalTo(ValueAndTimestamp.Make("0+1+2", 15L)));
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey
-//                    .get(new Windowed<>("2", new TimeWindow(500L, 1000L))),
-//                equalTo(ValueAndTimestamp.make("0+10+20", 550L)));
+//                    .Get(new Windowed<>("2", new TimeWindow(500L, 1000L))),
+//                equalTo(ValueAndTimestamp.Make("0+10+20", 550L)));
 //            Assert.Equal(
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey
-//                    .get(new Windowed<>("1", new TimeWindow(500L, 1000L))),
-//                equalTo(ValueAndTimestamp.make("0+3", 500L)));
+//                    .Get(new Windowed<>("1", new TimeWindow(500L, 1000L))),
+//                equalTo(ValueAndTimestamp.Make("0+3", 500L)));
 //        }
 
 //        [Fact]
@@ -119,7 +119,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            windowedStream.count(
 //                Materialize.As<string, long, IWindowStore<Bytes, byte[]>("count-store")
-//                    .withKeySerde(Serdes.String())
+//                    .WithKeySerde(Serdes.String())
 //                    .withValueSerde(Serdes.Long()));
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
@@ -127,7 +127,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            IWindowStore<string, long> windowStore = driver.getWindowStore("count-store");
 //            List<KeyValuePair<Windowed<string>, long>> data =
-//                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
+//                StreamsTestUtils.toList(windowStore.Fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, Array.AsReadOnly(
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), 2L),
@@ -137,12 +137,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IWindowStore<string, ValueAndTimestamp<long>> windowStore =
 //                        driver.getTimestampedWindowStore("count-store");
 //            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<long>>> data =
-//                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
+//                StreamsTestUtils.toList(windowStore.Fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, (Array.AsReadOnly(
-//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make(2L, 15L)),
-//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make(1L, 500L)),
-//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make(2L, 550L)))));
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.Make(2L, 15L)),
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.Make(1L, 500L)),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.Make(2L, 550L)))));
 //        }
 
 //        [Fact]
@@ -151,14 +151,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            windowedStream.reduce(
 //                MockReducer.STRING_ADDER,
 //                Materialize.As < string, string, IWindowStore<Bytes, byte[]>("reduced")
-//                    .withKeySerde(Serdes.String())
+//                    .WithKeySerde(Serdes.String())
 //                    .withValueSerde(Serdes.String()));
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 //            IWindowStore<string, string> windowStore = driver.getWindowStore("reduced");
 //            List<KeyValuePair<Windowed<string>, string>> data =
-//                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
+//                StreamsTestUtils.toList(windowStore.Fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, (Array.AsReadOnly(
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), "1+2"),
@@ -167,12 +167,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            IWindowStore<string, ValueAndTimestamp<string>> windowStore = driver.getTimestampedWindowStore("reduced");
 //            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<string>>> data =
-//                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
+//                StreamsTestUtils.toList(windowStore.Fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, (Array.AsReadOnly(
-//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make("1+2", 15L)),
-//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make("3", 500L)),
-//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make("10+20", 550L)))));
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.Make("1+2", 15L)),
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.Make("3", 500L)),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.Make("10+20", 550L)))));
 //        }
 
 //        [Fact]
@@ -182,7 +182,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                MockInitializer.STRING_INIT,
 //                MockAggregator.TOSTRING_ADDER,
 //                Materialize.As < string, string, IWindowStore<Bytes, byte[]>("aggregated")
-//                    .withKeySerde(Serdes.String())
+//                    .WithKeySerde(Serdes.String())
 //                    .withValueSerde(Serdes.String()));
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
@@ -190,7 +190,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            IWindowStore<string, string> windowStore = driver.getWindowStore("aggregated");
 //            List<KeyValuePair<Windowed<string>, string>> data =
-//                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
+//                StreamsTestUtils.toList(windowStore.Fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, (Array.AsReadOnly(
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), "0+1+2"),
@@ -199,12 +199,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            IWindowStore<string, ValueAndTimestamp<string>> windowStore = driver.getTimestampedWindowStore("aggregated");
 //            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<string>>> data =
-//                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
+//                StreamsTestUtils.toList(windowStore.Fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, (Array.AsReadOnly(
-//                KeyValuePair(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make("0+1+2", 15L)),
-//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make("0+3", 500L)),
-//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make("0+10+20", 550L)))));
+//                KeyValuePair(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.Make("0+1+2", 15L)),
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.Make("0+3", 500L)),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.Make("0+10+20", 550L)))));
 //        }
 //    }
 
@@ -278,11 +278,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    private void processData(var driver)
 //    {
-//        driver.pipeInput(recordFactory.create(TOPIC, "1", "1", 10L));
-//        driver.pipeInput(recordFactory.create(TOPIC, "1", "2", 15L));
-//        driver.pipeInput(recordFactory.create(TOPIC, "1", "3", 500L));
-//        driver.pipeInput(recordFactory.create(TOPIC, "2", "10", 550L));
-//        driver.pipeInput(recordFactory.create(TOPIC, "2", "20", 500L));
+//        driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 10L));
+//        driver.PipeInput(recordFactory.Create(TOPIC, "1", "2", 15L));
+//        driver.PipeInput(recordFactory.Create(TOPIC, "1", "3", 500L));
+//        driver.PipeInput(recordFactory.Create(TOPIC, "2", "10", 550L));
+//        driver.PipeInput(recordFactory.Create(TOPIC, "2", "20", 500L));
 //    }
 
 //}

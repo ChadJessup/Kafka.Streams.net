@@ -39,20 +39,20 @@ namespace Kafka.Streams.State.Internals
 
             this.isDirty = isDirty;
             this.sizeBytes = 1 + // isDirty
-                record.residentMemorySizeEstimate();
+                record.ResidentMemorySizeEstimate();
         }
 
-        public void markClean()
+        public void MarkClean()
         {
             isDirty = false;
         }
 
-        public long size()
+        public long Size()
         {
             return sizeBytes;
         }
 
-        public byte[] value()
+        public byte[] Value()
         {
             return record.value;
         }

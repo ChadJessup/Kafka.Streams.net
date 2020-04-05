@@ -22,9 +22,9 @@ namespace Kafka.Streams.Internals
 {
     public class ApiUtils
     {
-        private static readonly string MILLISECOND_VALIDATION_FAIL_MSG_FRMT = "Invalid value for parameter \"%s\" (value was: %s). ";
-        private static readonly string VALIDATE_MILLISECOND_NULL_SUFFIX = "It shouldn't be null.";
-        private static readonly string VALIDATE_MILLISECOND_OVERFLOW_SUFFIX = "It can't be converted to milliseconds.";
+        private const string MILLISECOND_VALIDATION_FAIL_MSG_FRMT = "Invalid value for parameter \"%s\" (value was: %s). ";
+        private const string VALIDATE_MILLISECOND_NULL_SUFFIX = "It shouldn't be null.";
+        private const string VALIDATE_MILLISECOND_OVERFLOW_SUFFIX = "It can't be converted to milliseconds.";
 
         /**
             * Validates that milliseconds from {@code duration} can be retrieved.
@@ -32,7 +32,7 @@ namespace Kafka.Streams.Internals
             * @param messagePrefix Prefix text for an error message.
             * @return Milliseconds from {@code duration}.
             */
-        public static TimeSpan validateMillisecondDuration(TimeSpan duration, string messagePrefix)
+        public static TimeSpan ValidateMillisecondDuration(TimeSpan duration, string messagePrefix)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Kafka.Streams.Internals
             * @param messagePrefix Prefix text for an error message.
             * @return Milliseconds from {@code instant}.
             */
-        public static long validateMillisecondInstant(DateTime instant, string messagePrefix)
+        public static long ValidateMillisecondInstant(DateTime instant, string messagePrefix)
         {
             try
             {
@@ -78,12 +78,12 @@ namespace Kafka.Streams.Internals
             * @param name Object name
             * @return Error message prefix to use in exception
             */
-        public static string prepareMillisCheckFailMsgPrefix(object value, string name)
+        public static string PrepareMillisCheckFailMsgPrefix(object value, string name)
         {
             return string.Format(MILLISECOND_VALIDATION_FAIL_MSG_FRMT, name, value);
         }
 
-        public static byte[] convertToTimestampedFormat(byte[] plainValue)
+        public static byte[] ConvertToTimestampedFormat(byte[] plainValue)
         {
             if (plainValue == null)
             {
@@ -91,10 +91,10 @@ namespace Kafka.Streams.Internals
             }
 
             return new ByteBuffer()
-                .allocate(8 + plainValue.Length)
-                .putLong(-1)
+                .Allocate(8 + plainValue.Length)
+                .PutLong(-1)
                 .Add(plainValue)
-                .array();
+                .Array();
         }
     }
 }

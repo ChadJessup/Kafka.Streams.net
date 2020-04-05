@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream
         public Initializer(Func<VA> initializer)
             => this.initializer = initializer;
 
-        public VA apply()
+        public VA Apply()
             => this.initializer();
     }
 }

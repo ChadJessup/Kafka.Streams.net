@@ -10,17 +10,17 @@
 //            string otherProcessorName = otherProcessorParameters().processorName;
 //            string mergeProcessorName = mergeProcessorParameters().processorName;
 
-//            topologyBuilder.addProcessor(
+//            topologyBuilder.AddProcessor(
 //                thisProcessorName,
 //                thisProcessorParameters().IProcessorSupplier,
 //                thisJoinSideNodeName);
 
-//            topologyBuilder.addProcessor(
+//            topologyBuilder.AddProcessor(
 //                otherProcessorName,
 //                otherProcessorParameters().IProcessorSupplier,
 //                otherJoinSideNodeName);
 
-//            topologyBuilder.addProcessor(
+//            topologyBuilder.AddProcessor(
 //                mergeProcessorName,
 //                mergeProcessorParameters().IProcessorSupplier,
 //                thisProcessorName,

@@ -9,7 +9,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    public class FullChangeSerdeTest
 //    {
-//        private FullChangeSerde<string> serde = FullChangeSerde.wrap(Serdes.String());
+//        private FullChangeSerde<string> serde = FullChangeSerde.Wrap(Serdes.String());
 
 //        [Fact]
 //        public void shouldRoundTripNull()

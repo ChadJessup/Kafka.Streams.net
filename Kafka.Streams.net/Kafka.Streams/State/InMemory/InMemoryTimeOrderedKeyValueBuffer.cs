@@ -12,7 +12,7 @@
 
 //namespace Kafka.Streams.State.Internals
 //{
-//    public partial class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer<K, V>
+//    public partial class InMemoryTimeOrderedKeyValueBuffer<K, V> : ITimeOrderedKeyValueBuffer<K, V>
 //    {
 //        private static BytesSerializer KEY_SERIALIZER = new BytesSerializer();
 //        private static ByteArraySerializer VALUE_SERIALIZER = new ByteArraySerializer();
@@ -50,7 +50,7 @@
 //            this.storeName = storeName;
 //            this.loggingEnabled = loggingEnabled;
 //            this.keySerde = keySerde;
-//            this.valueSerde = FullChangeSerde.wrap(valueSerde);
+//            this.valueSerde = FullChangeSerde.Wrap(valueSerde);
 //        }
 
 //        public override string name => storeName;
@@ -63,7 +63,7 @@
 //        public override void setSerdesIfNull(ISerde<K> keySerde, ISerde<V> valueSerde)
 //        {
 //            this.keySerde = this.keySerde == null ? keySerde : this.keySerde;
-//            this.valueSerde = this.valueSerde == null ? FullChangeSerde.wrap(valueSerde) : this.valueSerde;
+//            this.valueSerde = this.valueSerde == null ? FullChangeSerde.Wrap(valueSerde) : this.valueSerde;
 //        }
 
 //        public void init(IProcessorContext<K, V> context, IStateStore root)
@@ -162,7 +162,7 @@
 //        {
 //            foreach (ConsumeResult<byte[], byte[]> record in batch)
 //            {
-//                Bytes key = Bytes.wrap(record.key());
+//                Bytes key = Bytes.Wrap(record.key());
 //                if (record.value() == null)
 //                {
 //                    // This was a tombstone. Delete the record.
@@ -180,12 +180,12 @@
 //                        }
 //                    }
 
-//                    if (record.partition() != partition)
+//                    if (record.Partition != partition)
 //                    {
 //                        throw new InvalidOperationException(
 //                            string.Format(
 //                                "record partition [%d] is being restored by the wrong suppress partition [%d]",
-//                                record.partition(),
+//                                record.Partition,
 //                                partition
 //                            )
 //                        );
@@ -193,10 +193,10 @@
 //                }
 //                else
 //                {
-//                    if (record.headers().lastHeader("v") == null)
+//                    if (record.Headers.lastHeader("v") == null)
 //                    {
 //                        // in this case, the changelog value is just the serialized record value
-//                        ByteBuffer timeAndValue = ByteBuffer.wrap(record.value());
+//                        ByteBuffer timeAndValue = ByteBuffer.Wrap(record.value());
 //                        long time = timeAndValue.getLong();
 //                        byte[] changelogValue = new byte[record.value().Length - 8];
 //                        timeAndValue[changelogValue];
@@ -206,9 +206,9 @@
 //                        ProcessorRecordContext recordContext = new ProcessorRecordContext(
 //                            record.timestamp(),
 //                            record.offset(),
-//                            record.partition(),
+//                            record.Partition,
 //                            record.Topic,
-//                            record.headers()
+//                            record.Headers
 //                        );
 
 //                        cleanPut(
@@ -224,15 +224,15 @@
 //                            )
 //                        );
 //                    }
-//                    else if (V_1_CHANGELOG_HEADERS.lastHeader("v").Equals(record.headers().lastHeader("v")))
+//                    else if (V_1_CHANGELOG_HEADERS.lastHeader("v").Equals(record.Headers.lastHeader("v")))
 //                    {
 //                        // in this case, the changelog value is a serialized ContextualRecord
-//                        ByteBuffer timeAndValue = ByteBuffer.wrap(record.value());
+//                        ByteBuffer timeAndValue = ByteBuffer.Wrap(record.value());
 //                        long time = timeAndValue.getLong();
 //                        byte[] changelogValue = new byte[record.value().Length - 8];
 //                        timeAndValue[changelogValue];
 
-//                        ContextualRecord contextualRecord = ContextualRecord.Deserialize(ByteBuffer.wrap(changelogValue));
+//                        ContextualRecord contextualRecord = ContextualRecord.Deserialize(ByteBuffer.Wrap(changelogValue));
 //                        Change<byte[]> change = requireNonNull(FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(contextualRecord.value()));
 
 //                        cleanPut(
@@ -248,11 +248,11 @@
 //                            )
 //                        );
 //                    }
-//                    else if (V_2_CHANGELOG_HEADERS.lastHeader("v").Equals(record.headers().lastHeader("v")))
+//                    else if (V_2_CHANGELOG_HEADERS.lastHeader("v").Equals(record.Headers.lastHeader("v")))
 //                    {
 //                        // in this case, the changelog value is a serialized BufferValue
 
-//                        ByteBuffer valueAndTime = ByteBuffer.wrap(record.value());
+//                        ByteBuffer valueAndTime = ByteBuffer.Wrap(record.value());
 //                        BufferValue bufferValue = BufferValue.Deserialize(valueAndTime);
 //                        long time = valueAndTime.getLong();
 //                        cleanPut(time, key, bufferValue);
@@ -262,12 +262,12 @@
 //                        throw new System.ArgumentException("Restoring apparently invalid changelog record: " + record);
 //                    }
 //                }
-//                if (record.partition() != partition)
+//                if (record.Partition != partition)
 //                {
 //                    throw new InvalidOperationException(
 //                        string.Format(
 //                            "record partition [%d] is being restored by the wrong suppress partition [%d]",
-//                            record.partition(),
+//                            record.Partition,
 //                            partition
 //                        )
 //                    );
@@ -287,7 +287,7 @@
 //                KeyValuePair<BufferKey, BufferValue> next = null;
 //                if (@delegate.hasNext())
 //                {
-//                    next = @delegate.next();
+//                    next = @delegate.MoveNext();
 //                }
 
 //                // predicate being true means we read one record, call the callback, and then Remove it
@@ -300,7 +300,7 @@
 //                                next.Key.time + "]"
 //                        );
 //                    }
-//                    K key = keySerde.Deserializer.Deserialize(changelogTopic, next.Key.key.get());
+//                    K key = keySerde.Deserializer.Deserialize(changelogTopic, next.Key.key.Get());
 //                    BufferValue bufferValue = next.Value;
 //                    Change<V> value = valueSerde.deserializeParts(
 //                        changelogTopic,
@@ -318,7 +318,7 @@
 //                    // peek at the next record so we can update the minTimestamp
 //                    if (@delegate.hasNext())
 //                    {
-//                        next = @delegate.next();
+//                        next = @delegate.MoveNext();
 //                        minTimestamp = next == null ? long.MaxValue : next.Key.time;
 //                    }
 //                    else
@@ -338,7 +338,7 @@
 
 //        public override Maybe<ValueAndTimestamp<V>> priorValueForBuffered(K key)
 //        {
-//            Bytes serializedKey = Bytes.wrap(keySerde.Serializer.Serialize(changelogTopic, key));
+//            Bytes serializedKey = Bytes.Wrap(keySerde.Serializer.Serialize(changelogTopic, key));
 //            if (index.ContainsKey(serializedKey))
 //            {
 //                byte[] serializedValue = internalPriorValueForBuffered(serializedKey);
@@ -351,7 +351,7 @@
 //                // it's unfortunately not possible to know this, unless we materialize the suppressed result, since our only
 //                // knowledge of the prior value is what the upstream processor sends us as the "old value" when we first
 //                // buffer something.
-//                return Maybe.defined(ValueAndTimestamp.make(deserializedValue, RecordQueue.UNKNOWN));
+//                return Maybe.defined(ValueAndTimestamp.Make(deserializedValue, RecordQueue.UNKNOWN));
 //            }
 //            else
 //            {
@@ -381,7 +381,7 @@
 //            requireNonNull(value, "value cannot be null");
 //            requireNonNull(recordContext, "recordContext cannot be null");
 
-//            Bytes serializedKey = Bytes.wrap(keySerde.Serializer.Serialize(changelogTopic, key));
+//            Bytes serializedKey = Bytes.Wrap(keySerde.Serializer.Serialize(changelogTopic, key));
 //            Change<byte[]> serialChange = valueSerde.serializeParts(changelogTopic, value);
 
 //            BufferValue buffered = getBuffered(serializedKey);
@@ -450,10 +450,10 @@
 //        {
 //            long size = 0L;
 //            size += 8; // buffer time
-//            size += key.get().Length;
+//            size += key.Get().Length;
 //            if (value != null)
 //            {
-//                size += value.residentMemorySizeEstimate();
+//                size += value.ResidentMemorySizeEstimate();
 //            }
 //            return size;
 //        }

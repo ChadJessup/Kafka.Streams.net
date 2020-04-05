@@ -94,7 +94,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                sessionMerger);
 
 //        private List<KeyValueTimestamp> results = new List<>();
-//        private Processor<string, string> processor = sessionAggregator.get();
+//        private Processor<string, string> processor = sessionAggregator.Get();
 //        private ISessionStore<string, long> sessionStore;
 //        private InternalMockProcessorContext context;
 //        private Metrics metrics;
@@ -122,19 +122,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            public void forward(K key, V value, To to)
 //            {
 //                toInternal.update(to);
-//                results.add(new KeyValueTimestamp<>(key, value, toInternal.Timestamp));
+//                results.Add(new KeyValueTimestamp<>(key, value, toInternal.Timestamp));
 //            }
 //        };
 
 //        initStore(true);
-//        processor.init(context);
+//        processor.Init(context);
 //    }
 
 //    private void initStore(bool enableCaching)
 //    {
 //        IStoreBuilder<ISessionStore<string, long>> storeBuilder =
 //            Stores.sessionStoreBuilder(
-//                Stores.persistentSessionStore(STORE_NAME, FromMilliseconds(GAP_MS * 3)),
+//                Stores.PersistentSessionStore(STORE_NAME, FromMilliseconds(GAP_MS * 3)),
 //                Serdes.String(),
 //                Serdes.Long())
 //            .withLoggingDisabled();
@@ -145,7 +145,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        }
 
 //        sessionStore = storeBuilder.Build();
-//        sessionStore.init(context, sessionStore);
+//        sessionStore.Init(context, sessionStore);
 //    }
 
 
@@ -162,10 +162,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        context.setTime(500);
 //        processor.process("john", "second");
 
-//        KeyValueIterator<Windowed<string>, long> values =
+//        IKeyValueIterator<Windowed<string>, long> values =
 //            sessionStore.findSessions("john", 0, 2000);
 //        Assert.True(values..AsNext());
-//        Assert.Equal(long.valueOf(2), values.next().value);
+//        Assert.Equal(long.valueOf(2), values.MoveNext().value);
 //    }
 
 //    [Fact]
@@ -186,9 +186,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        context.setTime(GAP_MS / 2);
 //        processor.process(sessionId, "third");
 
-//        KeyValueIterator<Windowed<string>, long> iterator =
+//        IKeyValueIterator<Windowed<string>, long> iterator =
 //            sessionStore.findSessions(sessionId, 0, GAP_MS + 1);
-//        KeyValuePair<Windowed<string>, long> kv = iterator.next();
+//        KeyValuePair<Windowed<string>, long> kv = iterator.MoveNext();
 
 //        Assert.Equal(long.valueOf(3), kv.value);
 //        Assert.False(iterator..AsNext());
@@ -200,9 +200,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        context.setTime(0);
 //        processor.process("mel", "first");
 //        processor.process("mel", "second");
-//        KeyValueIterator<Windowed<string>, long> iterator =
+//        IKeyValueIterator<Windowed<string>, long> iterator =
 //            sessionStore.findSessions("mel", 0, 0);
-//        Assert.Equal(long.valueOf(2L), iterator.next().value);
+//        Assert.Equal(long.valueOf(2L), iterator.MoveNext().value);
 //        Assert.False(iterator..AsNext());
 //    }
 
@@ -249,17 +249,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        processor.process("a", "1");
 
 //        // first ensure it is in the store
-//        KeyValueIterator<Windowed<string>, long> a1 =
+//        IKeyValueIterator<Windowed<string>, long> a1 =
 //            sessionStore.findSessions("a", 0, 0);
-//        Assert.Equal(KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 0)), 1L), a1.next());
+//        Assert.Equal(KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 0)), 1L), a1.MoveNext());
 
 //        context.setTime(100);
 //        processor.process("a", "2");
 //        // a1 from above should have been removed
 //        // should have merged session in store
-//        KeyValueIterator<Windowed<string>, long> a2 =
+//        IKeyValueIterator<Windowed<string>, long> a2 =
 //            sessionStore.findSessions("a", 0, 100);
-//        Assert.Equal(KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 100)), 2L), a2.next());
+//        Assert.Equal(KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 100)), 2L), a2.MoveNext());
 //        Assert.False(a2..AsNext());
 //    }
 
@@ -320,15 +320,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    [Fact]
 //    public void shouldGetAggregatedValuesFromValueGetter()
 //    {
-//        KTableValueGetter<Windowed<string>, long> getter = sessionAggregator.view().get();
-//        getter.init(context);
+//        KTableValueGetter<Windowed<string>, long> getter = sessionAggregator.view().Get();
+//        getter.Init(context);
 //        context.setTime(0);
 //        processor.process("a", "1");
 //        context.setTime(GAP_MS + 1);
 //        processor.process("a", "1");
 //        processor.process("a", "2");
-//        long t0 = getter.get(new Windowed<>("a", new SessionWindow(0, 0))).Value;
-//        long t1 = getter.get(new Windowed<>("a", new SessionWindow(GAP_MS + 1, GAP_MS + 1))).Value;
+//        long t0 = getter.Get(new Windowed<>("a", new SessionWindow(0, 0))).Value;
+//        long t1 = getter.Get(new Windowed<>("a", new SessionWindow(GAP_MS + 1, GAP_MS + 1))).Value;
 //        Assert.Equal(1L, t0);
 //        Assert.Equal(2L, t1);
 //    }
@@ -337,7 +337,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public void shouldImmediatelyForwardNewSessionWhenNonCachedStore()
 //    {
 //        initStore(false);
-//        processor.init(context);
+//        processor.Init(context);
 
 //        context.setTime(0);
 //        processor.process("a", "1");
@@ -367,7 +367,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public void shouldImmediatelyForwardRemovedSessionsWhenMerging()
 //    {
 //        initStore(false);
-//        processor.init(context);
+//        processor.Init(context);
 
 //        context.setTime(0);
 //        processor.process("a", "1");
@@ -397,7 +397,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    public void shouldLogAndMeterWhenSkippingNullKey()
 //    {
 //        initStore(false);
-//        processor.init(context);
+//        processor.Init(context);
 //        context.setRecordContext(new ProcessorRecordContext(-1, -2, -3, "topic", null));
 //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 //        processor.process(null, "1");
@@ -422,10 +422,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            initializer,
 //            aggregator,
 //            sessionMerger
-//        ).get();
+//        ).Get();
 
 //        initStore(false);
-//        processor.init(context);
+//        processor.Init(context);
 
 //        // dummy record to establish stream time = 0
 //        context.setRecordContext(new ProcessorRecordContext(0, -2, -3, "topic", null));
@@ -455,7 +455,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            )
 //        );
 
-//        Assert.Equal(metrics.metrics().get(dropMetric).metricValue(), (1.0));
+//        Assert.Equal(metrics.metrics().Get(dropMetric).metricValue(), (1.0));
 
 //        var dropRate = new MetricName(
 //            "late-record-drop-rate",
@@ -469,7 +469,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        );
 
 //        Assert.Equal(
-//            (double)metrics.metrics().get(dropRate).metricValue(),
+//            (double)metrics.metrics().Get(dropRate).metricValue(),
 //            greaterThan(0.0));
 //        Assert.Equal(
 //            appender.getMessages(),
@@ -487,10 +487,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            initializer,
 //            aggregator,
 //            sessionMerger
-//        ).get();
+//        ).Get();
 
 //        initStore(false);
-//        processor.init(context);
+//        processor.Init(context);
 
 //        // dummy record to establish stream time = 0
 //        context.setRecordContext(new ProcessorRecordContext(0, -2, -3, "topic", null));
@@ -530,7 +530,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            )
 //        );
 
-//        Assert.Equal(metrics.metrics().get(dropMetric).metricValue(), (1.0));
+//        Assert.Equal(metrics.metrics().Get(dropMetric).metricValue(), (1.0));
 
 //        var dropRate = new MetricName(
 //            "late-record-drop-rate",
@@ -544,7 +544,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        );
 
 //        Assert.Equal(
-//            (double)metrics.metrics().get(dropRate).metricValue(),
+//            (double)metrics.metrics().Get(dropRate).metricValue(),
 //            greaterThan(0.0));
 //        Assert.Equal(
 //            appender.getMessages(),

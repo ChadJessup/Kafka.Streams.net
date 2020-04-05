@@ -31,9 +31,9 @@ namespace Kafka.Streams.State.Internals
             this.value = value;
         }
 
-        public long residentMemorySizeEstimate()
+        public long ResidentMemorySizeEstimate()
         {
-            return (value == null ? 0 : value.Length) + recordContext.residentMemorySizeEstimate();
+            return (value == null ? 0 : value.Length) + recordContext.ResidentMemorySizeEstimate();
         }
 
         public override bool Equals(object o)

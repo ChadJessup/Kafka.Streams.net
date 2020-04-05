@@ -6,7 +6,7 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class InvalidOffsetException : Exception
     {
-        internal HashSet<TopicPartition> partitions()
+        internal HashSet<TopicPartition> Partitions()
         {
             throw new NotImplementedException();
         }

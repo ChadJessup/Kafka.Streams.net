@@ -19,8 +19,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
             string nodeName,
             string sourceName,
             ProcessorParameters<K, V> processorParameters,
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde,
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde,
             string sinkName,
             string repartitionTopic)
             : base(
@@ -45,15 +45,20 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            ISerializer<K> keySerializer = keySerde != null
+            if (topologyBuilder is null)
+            {
+                throw new System.ArgumentNullException(nameof(topologyBuilder));
+            }
+
+            ISerializer<K>? keySerializer = keySerde != null
                 ? keySerde.Serializer
                 : null;
 
-            IDeserializer<K> keyDeserializer = keySerde != null
+            IDeserializer<K>? keyDeserializer = keySerde != null
                 ? keySerde.Deserializer
                 : null;
 
-            topologyBuilder.addInternalTopic(repartitionTopic);
+            topologyBuilder.AddInternalTopic(repartitionTopic);
 
             topologyBuilder.AddProcessor(
                 processorParameters.ProcessorName,

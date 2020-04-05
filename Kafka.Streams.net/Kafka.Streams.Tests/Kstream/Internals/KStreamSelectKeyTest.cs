@@ -33,20 +33,20 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var expectedValues = new int[] { 1, 2, 3 };
 
 //            IKStream<string, int> stream =
-//                builder.Stream(topicName, Consumed.with(Serdes.String(), Serdes.Int()));
+//                builder.Stream(topicName, Consumed.With(Serdes.String(), Serdes.Int()));
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            stream.selectKey<string>((key, value) => keyMap.get(value)).process(supplier);
+//            stream.selectKey<string>((key, value) => keyMap.Get(value)).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedValue in expectedValues)
 //            {
-//                driver.pipeInput(recordFactory.create(expectedValue));
+//                driver.PipeInput(recordFactory.Create(expectedValue));
 //            }
 
 //            Assert.Equal(3, supplier.theCapturedProcessor().processed.Count);
 //            for (var i = 0; i < expected.Length; i++)
 //            {
-//                Assert.Equal(expected[i], supplier.theCapturedProcessor().processed.get(i));
+//                Assert.Equal(expected[i], supplier.theCapturedProcessor().processed.Get(i));
 //            }
 
 //        }

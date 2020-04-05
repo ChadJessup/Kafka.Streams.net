@@ -13,7 +13,7 @@ namespace Kafka.Streams
     public class Bytes : IComparable<Bytes>
     {
         public static LexicographicByteArrayComparator BYTES_LEXICO_COMPARATOR = new LexicographicByteArrayComparator();
-        public static byte[] EMPTY = new byte[0];
+        public static byte[] EMPTY = Array.Empty<byte>();
 
         private static readonly char[] HEX_CHARS_UPPER = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
@@ -22,7 +22,7 @@ namespace Kafka.Streams
         // cache the hash code for the string, default to 0
         private int hashCode;
 
-        public static Bytes wrap(byte[] bytes)
+        public static Bytes Wrap(byte[] bytes)
         {
             if (bytes == null)
             {
@@ -49,7 +49,7 @@ namespace Kafka.Streams
          * Get the data from the Bytes.
          * @return The underlying byte array
          */
-        public byte[] get() => this.bytes;
+        public byte[] Get() => this.bytes;
 
         /**
          * The hashcode is cached except for the case where it is computed as 0, in which

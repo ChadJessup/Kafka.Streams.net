@@ -18,7 +18,7 @@ namespace Kafka.Streams.Processors.Internals
             IPunctuator punctuator)
             : this(node, time, interval, punctuator, new RepointableCancellable())
         {
-            cancellable.setSchedule(this);
+            cancellable.SetSchedule(this);
         }
 
         public PunctuationSchedule(
@@ -34,17 +34,17 @@ namespace Kafka.Streams.Processors.Internals
             this.cancellable = cancellable;
         }
 
-        public IProcessorNode node()
+        public IProcessorNode Node()
         {
             return value;
         }
 
-        public void markCancelled()
+        public void MarkCancelled()
         {
             isCancelled = true;
         }
 
-        public PunctuationSchedule next(long currTimestamp)
+        public PunctuationSchedule Next(long currTimestamp)
         {
             var nextPunctuationTime = timestamp + interval;
             if (currTimestamp >= nextPunctuationTime)
@@ -60,7 +60,7 @@ namespace Kafka.Streams.Processors.Internals
 
             var nextSchedule = new PunctuationSchedule(value, nextPunctuationTime, interval, punctuator, cancellable);
 
-            cancellable.setSchedule(nextSchedule);
+            cancellable.SetSchedule(nextSchedule);
 
             return nextSchedule;
         }

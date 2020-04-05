@@ -33,19 +33,19 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Init(IProcessorContext context)
         {
-            valueTransformer.init(new ForwardingDisabledProcessorContext<K, V>(context));
+            valueTransformer.Init(new ForwardingDisabledProcessorContext<K, V>(context));
             this.context = context;
         }
 
 
         public void Process(K key, V value)
         {
-            //context.forward(key, valueTransformer.transform(key, value));
+            //context.Forward(key, valueTransformer.transform(key, value));
         }
 
         public void Close()
         {
-            valueTransformer.close();
+            valueTransformer.Close();
         }
 
         public void Process<K1, V1>(K1 key, V1 value)

@@ -12,17 +12,17 @@ namespace Kafka.Streams.KStream.Internals
         public TransformerSupplierAdapter(ITransformerSupplier<KIn, VIn, KeyValuePair<KOut, VOut>> transformerSupplier)
         {
             this.transformerSupplier = transformerSupplier;
-            this.transformer = transformerSupplier.get();
+            this.transformer = transformerSupplier.Get();
         }
 
-        public ITransformer<KIn, VIn, IEnumerable<KeyValuePair<KOut, VOut>>> get()
+        public ITransformer<KIn, VIn, IEnumerable<KeyValuePair<KOut, VOut>>> Get()
         {
             return null;// new ITransformer<KIn, VIn, IEnumerable<KeyValuePair<KOut, VOut>>>();
         }
 
-        public void init(IProcessorContext context)
+        public void Init(IProcessorContext context)
         {
-            transformer.init(context);
+            transformer.Init(context);
         }
 
 
@@ -39,9 +39,9 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void close()
+        public void Close()
         {
-            transformer.close();
+            transformer.Close();
         }
     };
 }

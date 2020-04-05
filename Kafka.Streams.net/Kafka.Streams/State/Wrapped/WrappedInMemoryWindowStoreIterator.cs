@@ -34,7 +34,7 @@
 //                throw new NoSuchElementException();
 //            }
 
-//            KeyValuePair<long, byte[]> result = new KeyValuePair<>(base.currentTime, base.next.value);
+//            KeyValuePair<long, byte[]> result = KeyValuePair.Create(base.currentTime, base.next.value);
 //            base.next = null;
 //            return result;
 //        }

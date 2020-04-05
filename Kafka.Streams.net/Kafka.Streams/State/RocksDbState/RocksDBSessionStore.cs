@@ -16,7 +16,7 @@
 //                                                                      long earliestSessionEndTime,
 //                                                                      long latestSessionStartTime)
 //        {
-//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.fetch(
+//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.Fetch(
 //                key,
 //                earliestSessionEndTime,
 //                latestSessionStartTime
@@ -29,7 +29,7 @@
 //                                                                      long earliestSessionEndTime,
 //                                                                      long latestSessionStartTime)
 //        {
-//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.fetch(
+//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.Fetch(
 //                keyFrom,
 //                keyTo,
 //                earliestSessionEndTime,

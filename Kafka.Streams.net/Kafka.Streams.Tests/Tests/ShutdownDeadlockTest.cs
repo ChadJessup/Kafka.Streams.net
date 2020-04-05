@@ -19,11 +19,11 @@ namespace Kafka.Streams.Tests.Tests
 //        public void start()
 //        {
 //            string topic = "source";
-//            Properties props = new Properties();
+//            StreamsConfig props = new StreamsConfig();
 //            props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "shouldNotDeadlock");
 //            props.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
 //            StreamsBuilder builder = new StreamsBuilder();
-//            KStream<string, string> source = builder.stream(topic, Consumed.with(Serdes.String(), Serdes.String()));
+//            KStream<string, string> source = builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()));
 
 //            source.ForEach (new ForeachAction<string, string>()
 //            {
@@ -34,7 +34,7 @@ namespace Kafka.Streams.Tests.Tests
 //                        throw new RuntimeException("KABOOM!");
 //                    }
 //        });
-//        KafkaStreams streams = new KafkaStreams(builder.build(), props);
+//        KafkaStreams streams = new KafkaStreams(builder.Build(), props);
 //        streams.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
 //            public void uncaughtException(Thread t, Throwable e)
@@ -52,11 +52,11 @@ namespace Kafka.Streams.Tests.Tests
 //        }
 //    }));
 
-//        Properties producerProps = new Properties();
+//        StreamsConfig producerProps = new StreamsConfig();
 //    producerProps.put(ProducerConfig.CLIENT_ID_CONFIG, "SmokeTest");
 //        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer);
-//        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer);
+//        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
 //        KafkaProducer<string, string> producer = new KafkaProducer<>(producerProps);
 //    producer.send(new ProducerRecord<>(topic, "a", "a"));

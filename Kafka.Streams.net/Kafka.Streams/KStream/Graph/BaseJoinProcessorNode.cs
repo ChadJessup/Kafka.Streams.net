@@ -31,17 +31,17 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.otherJoinSideNodeName = otherJoinSideNodeName;
         }
 
-        protected ProcessorParameters<K, V1> thisProcessorParameters()
+        protected ProcessorParameters<K, V1> ThisProcessorParameters()
         {
             return joinThisProcessorParameters;
         }
 
-        protected ProcessorParameters<K, V2> otherProcessorParameters()
+        protected ProcessorParameters<K, V2> OtherProcessorParameters()
         {
             return joinOtherProcessorParameters;
         }
 
-        protected ProcessorParameters<K, VR> mergeProcessorParameters()
+        protected ProcessorParameters<K, VR> MergeProcessorParameters()
         {
             return joinMergeProcessorParameters;
         }

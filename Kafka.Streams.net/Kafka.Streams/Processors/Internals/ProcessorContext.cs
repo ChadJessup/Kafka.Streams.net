@@ -41,12 +41,12 @@ namespace Kafka.Streams.Processors.Internals
             this.collector = collector;
         }
 
-        public ProcessorStateManager getStateMgr()
+        public ProcessorStateManager GetStateMgr()
         {
             return (ProcessorStateManager)stateManager;
         }
 
-        public IRecordCollector recordCollector()
+        public IRecordCollector RecordCollector()
         {
             return collector;
         }
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws StreamsException if an attempt is made to access this state store from an unknown node
          */
-        public override IStateStore getStateStore(string name)
+        public override IStateStore GetStateStore(string name)
         {
             if (GetCurrentNode() == null)
             {
@@ -125,12 +125,12 @@ namespace Kafka.Streams.Processors.Internals
             return store;
         }
 
-        public override void forward<K1, V1>(K1 key, V1 value)
+        public override void Forward<K1, V1>(K1 key, V1 value)
         {
-            forward(key, value, ProcessorContext.SEND_TO_ALL);
+            Forward(key, value, ProcessorContext.SEND_TO_ALL);
         }
 
-        public override void forward<K1, V1>(K1 key, V1 value, To to)
+        public override void Forward<K1, V1>(K1 key, V1 value, To to)
         {
             var previousNode = GetCurrentNode();
             ProcessorRecordContext previousContext = recordContext;
@@ -138,7 +138,7 @@ namespace Kafka.Streams.Processors.Internals
             try
             {
                 toInternal.Update(to);
-                if (toInternal.hasTimestamp())
+                if (toInternal.HasTimestamp())
                 {
                     recordContext = new ProcessorRecordContext(
                         toInternal.Timestamp,
@@ -148,7 +148,7 @@ namespace Kafka.Streams.Processors.Internals
                         recordContext.headers);
                 }
 
-                var sendTo = toInternal.child();
+                var sendTo = toInternal.Child();
                 if (sendTo == null)
                 {
                     var children = new List<IProcessorNode<K, V>>(GetCurrentNode().children.Select(c => (IProcessorNode<K, V>)c));
@@ -176,18 +176,18 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        public override void commit()
+        public override void Commit()
         {
             task.RequestCommit();
         }
 
-        public ICancellable schedule(
+        public ICancellable Schedule(
             TimeSpan interval,
             PunctuationType type,
             IPunctuator callback)
         {
-            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(interval, "interval");
-            return schedule(ApiUtils.validateMillisecondDuration(interval, msgPrefix), type, callback);
+            var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(interval, "interval");
+            return Schedule(ApiUtils.ValidateMillisecondDuration(interval, msgPrefix), type, callback);
         }
 
         public void SetCurrentNode(IProcessorNode<K, V> currentNode)

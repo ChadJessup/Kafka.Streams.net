@@ -16,15 +16,15 @@ namespace Kafka.Streams.KStream.Internals
             this.parentGetter = parentGetter;
         }
 
-        public void init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext context, string storeName)
         {
             this.context = context;
-            this.parentGetter.init(context, storeName);
+            this.parentGetter.Init(context, storeName);
         }
 
-        public ValueAndTimestamp<KeyValuePair<K1, V1>> get(K key)
+        public ValueAndTimestamp<KeyValuePair<K1, V1>>? Get(K key)
         {
-            var valueAndTimestamp = parentGetter.get(key);
+            var valueAndTimestamp = parentGetter.Get(key);
 
             var mapped = mapper.Apply(key, valueAndTimestamp.value);
 
@@ -32,14 +32,14 @@ namespace Kafka.Streams.KStream.Internals
                 ? context.timestamp
                 : valueAndTimestamp.timestamp;
 
-            return ValueAndTimestamp<KeyValuePair<K1, V1>>.make(
+            return ValueAndTimestamp.Make(
                 mapped,
                 timeStamp);
         }
 
-        public void close()
+        public void Close()
         {
-            parentGetter.close();
+            parentGetter.Close();
         }
     }
 }

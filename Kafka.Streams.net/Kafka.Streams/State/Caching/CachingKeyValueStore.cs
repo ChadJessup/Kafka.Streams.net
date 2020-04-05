@@ -31,7 +31,7 @@
 //                         IStateStore root)
 //        {
 //            initInternal(context);
-//            base.init(context, root);
+//            base.Init(context, root);
 //            // save the stream thread as we only ever want to trigger a flush
 //            // when the stream thread is the current thread.
 //            streamThread = Thread.CurrentThread;
@@ -127,11 +127,11 @@
 //                key,
 //                new LRUCacheEntry(
 //                    value,
-//                    context.headers(),
+//                    context.Headers,
 //                    true,
 //                    context.offset(),
 //                    context.timestamp(),
-//                    context.partition(),
+//                    context.Partition,
 //                    context.Topic));
 //        }
 
@@ -231,8 +231,8 @@
 //            }
 //            if (entry == null)
 //            {
-//                byte[] rawValue = wrapped[key];
-//                if (rawValue == null)
+//                byte[] RawValue = wrapped[key];
+//                if (RawValue == null)
 //                {
 //                    return null;
 //                }
@@ -240,9 +240,9 @@
 //                // as we don't want other threads to trigger an eviction/flush
 //                if (Thread.CurrentThread.Equals(streamThread))
 //                {
-//                    cache.Add(cacheName, key, new LRUCacheEntry(rawValue));
+//                    cache.Add(cacheName, key, new LRUCacheEntry(RawValue));
 //                }
-//                return rawValue;
+//                return RawValue;
 //            }
 //            else
 //            {
@@ -262,8 +262,8 @@
 //            }
 
 //            validateStoreOpen();
-//            IKeyValueIterator<Bytes, byte[]> storeIterator = wrapped.range(from, to);
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, from, to);
+//            IKeyValueIterator<Bytes, byte[]> storeIterator = wrapped.Range(from, to);
+//            MemoryLRUCacheBytesIterator cacheIterator = cache.Range(cacheName, from, to);
 //            return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
 //        }
 
@@ -276,14 +276,14 @@
 //            return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
 //        }
 
-//        public override long approximateNumEntries()
+//        public override long approximateNumEntries
 //        {
 //            validateStoreOpen();
 //            lock (readLock().@lock)
 //            {
 //                try
 //                {
-//                    return wrapped.approximateNumEntries();
+//                    return wrapped.approximateNumEntries;
 //                }
 //                finally
 //                {

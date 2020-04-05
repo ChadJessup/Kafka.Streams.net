@@ -37,7 +37,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            // build step two
 //            Assert.Equal(expectedJoinedFilteredTopology, builder.Build().describe().ToString());
 
-//            filteredJoinStream.mapValues(v => v + "some value").to("output-topic");
+//            filteredJoinStream.mapValues(v => v + "some value").To("output-topic");
 //            // build step three
 //            Assert.Equal(expectedFullTopology, builder.Build().describe().ToString());
 
@@ -59,14 +59,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            // first repartition
 //            changedKeyStream.groupByKey(Grouped.As("count-repartition"))
 //                .count(Materialized.As("count-store"))
-//                .toStream().to("count-topic", Produced.with(Serdes.String(), Serdes.Long()));
+//                .toStream().To("count-topic", Produced.With(Serdes.String(), Serdes.Long()));
 
 //            // second repartition
 //            changedKeyStream.groupByKey(Grouped.As("windowed-repartition"))
 //                .windowedBy(TimeWindows.of(Duration.FromSeconds(5)))
 //                .count(Materialized.As("windowed-count-store"))
 //                .toStream()
-//                .map((k, v) => KeyValuePair.Create(k.Key, v)).to("windowed-count", Produced.with(Serdes.String(), Serdes.Long()));
+//                .map((k, v) => KeyValuePair.Create(k.Key, v)).To("windowed-count", Produced.With(Serdes.String(), Serdes.Long()));
 
 //            builder.Build(properties);
 //        }
@@ -107,8 +107,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            IKStream<string, string> inputStream = builder.Stream<string, string>("input");
 //            IKStream<string, string> mappedKeyStream = inputStream.selectKey((k, v) => k + v);
 
-//            mappedKeyStream.mapValues(v => v.toUppercase(Locale.getDefault())).groupByKey().count().toStream().to("output");
-//            mappedKeyStream.flatMapValues(v => new List<string> { v.Split("\\s" })).groupByKey().windowedBy(TimeWindows.of(Duration.FromMilliseconds(5000))).count().toStream().to("windowed-output");
+//            mappedKeyStream.mapValues(v => v.toUppercase(Locale.getDefault())).groupByKey().count().toStream().To("output");
+//            mappedKeyStream.flatMapValues(v => new List<string> { v.Split("\\s" })).groupByKey().windowedBy(TimeWindows.of(Duration.FromMilliseconds(5000))).count().toStream().To("windowed-output");
 
 //            return builder.Build(properties);
 
@@ -124,8 +124,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            IKStream<string, string> inputStream = builder.Stream<string, string>("input");
 //            IKStream<string, string> mappedKeyStream = inputStream.selectKey((k, v) => k + v).through("through-topic");
 
-//            mappedKeyStream.groupByKey().count().toStream().to("output");
-//            mappedKeyStream.groupByKey().windowedBy(TimeWindows.of(Duration.FromMilliseconds(5000))).count().toStream().to("windowed-output");
+//            mappedKeyStream.groupByKey().count().toStream().To("output");
+//            mappedKeyStream.groupByKey().windowedBy(TimeWindows.of(Duration.FromMilliseconds(5000))).count().toStream().To("windowed-output");
 
 //            return builder.Build(properties);
 

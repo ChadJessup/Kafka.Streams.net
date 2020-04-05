@@ -22,14 +22,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var builder = new StreamsBuilder();
 //            var topic1 = "topic_map_keys";
 
-//            IKTable<int, string> table1 = builder.Table(topic1, Consumed.with(Serdes.Int(), Serdes.String()));
+//            IKTable<int, string> table1 = builder.Table(topic1, Consumed.With(Serdes.Int(), Serdes.String()));
 
 //            Dictionary<int, string> keyMap = new HashMap<>();
 //            keyMap.put(1, "ONE");
 //            keyMap.put(2, "TWO");
 //            keyMap.put(3, "THREE");
 
-//            IKStream<string, string> convertedStream = table1.toStream((key, value) => keyMap.get(key));
+//            IKStream<string, string> convertedStream = table1.toStream((key, value) => keyMap.Get(key));
 
 //            var expected = new[] KeyValueTimestamp {new KeyValueTimestamp<>("ONE", "V_ONE", 5),
 //            new KeyValueTimestamp<>("TWO", "V_TWO", 10),
@@ -45,14 +45,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                var driver = new TopologyTestDriver(builder.Build(), props);
 //                for (var i = 0; i < originalKeys.Length; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, originalKeys[i], values[i], 5 + i * 5));
+//                    driver.PipeInput(recordFactory.Create(topic1, originalKeys[i], values[i], 5 + i * 5));
 //                }
 //            }
 
 //       Assert.Equal(3, supplier.theCapturedProcessor().processed.Count);
 //            for (var i = 0; i < expected.Length; i++)
 //            {
-//                Assert.Equal(expected[i], supplier.theCapturedProcessor().processed.get(i));
+//                Assert.Equal(expected[i], supplier.theCapturedProcessor().processed.Get(i));
 //            }
 //        }
 //    }

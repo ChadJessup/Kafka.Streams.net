@@ -10,10 +10,5 @@ namespace Kafka.Streams.Processors.Internals
         {
             this.subscriptions = subscriptions;
         }
-
-        public Dictionary<string, Subscription> groupSubscription()
-        {
-            return subscriptions;
-        }
     }
 }

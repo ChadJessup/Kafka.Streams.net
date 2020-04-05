@@ -23,13 +23,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var expectedKeys = new int[] { 0, 1, 2, 3 };
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            stream.map((key, value) => KeyValuePair.Create(value, key)).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, "V" + expectedKey, 10L - expectedKey));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey, 10L - expectedKey));
 //            }
 
 
@@ -40,7 +40,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Assert.Equal(4, supplier.theCapturedProcessor().processed.Count);
 //            for (var i = 0; i < expected.Length; i++)
 //            {
-//                Assert.Equal(expected[i], supplier.theCapturedProcessor().processed.get(i));
+//                Assert.Equal(expected[i], supplier.theCapturedProcessor().processed.Get(i));
 //            }
 //        }
 
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            new StreamsBuilder()
 //                .Stream<int, string>("numbers")
 //                .map((key, value) => KeyValuePair.Create(key, key + ":" + value))
-//                .to("strings");
+//                .To("strings");
 //        }
 //    }
 //}

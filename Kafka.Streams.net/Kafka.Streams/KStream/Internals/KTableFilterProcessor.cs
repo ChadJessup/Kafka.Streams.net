@@ -29,10 +29,15 @@ namespace Kafka.Streams.KStream.Internals
 
         public override void Init(IProcessorContext context)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             base.Init(context);
             if (this.queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<K, V>(
                     store,
                     context,
@@ -43,6 +48,11 @@ namespace Kafka.Streams.KStream.Internals
 
         public override void Process(K key, Change<V> change)
         {
+            if (change is null)
+            {
+                throw new ArgumentNullException(nameof(change));
+            }
+
             V newValue = ComputeValue(key, change.newValue);
             V oldValue = sendOldValues
                 ? ComputeValue(key, change.oldValue)
@@ -55,12 +65,12 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp<V>.make(newValue, context.timestamp));
-                tupleForwarder.maybeForward(key, newValue, oldValue);
+                store.Add(key, ValueAndTimestamp.Make(newValue, context.timestamp));
+                tupleForwarder.MaybeForward(key, newValue, oldValue);
             }
             else
             {
-                context.forward(key, new Change<V>(newValue, oldValue));
+                context.Forward(key, new Change<V>(newValue, oldValue));
             }
         }
 

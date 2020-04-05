@@ -14,8 +14,8 @@ namespace Kafka.Streams.Errors
         public string name { get; }
         public int id { get; }
 
-        public ProductionExceptionHandlerResponse handle(
-            DeliveryReport<byte[], byte[]> record,
+        public ProductionExceptionHandlerResponse Handle(
+            DeliveryResult<byte[], byte[]> record,
             Exception exception)
         {
             return ProductionExceptionHandlerResponse.FAIL;

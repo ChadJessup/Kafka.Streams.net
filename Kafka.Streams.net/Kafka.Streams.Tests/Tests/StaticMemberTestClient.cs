@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        string propFileName = args[0];
 
-//        Properties streamsProperties = Utils.loadProps(propFileName);
+//        StreamsConfig streamsProperties = Utils.loadProps(propFileName);
 
 //        string groupInstanceId = Objects.requireNonNull(streamsProperties.getProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG));
 
@@ -31,16 +31,16 @@ namespace Kafka.Streams.Tests.Tests
 //        StreamsBuilder builder = new StreamsBuilder();
 //        string inputTopic = (string) (Objects.requireNonNull(streamsProperties.remove("input.topic")));
 
-//        KStream dataStream = builder.stream(inputTopic);
+//        KStream dataStream = builder.Stream(inputTopic);
 //        dataStream.peek((k, v) =>  System.Console.Out.WriteLine(string.format("PROCESSED key=%s value=%s", k, v)));
 
-//        Properties config = new Properties();
+//        StreamsConfig config = new StreamsConfig();
 //        config.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, testName);
 //        config.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
 
 //        config.putAll(streamsProperties);
 
-//        KafkaStreams streams = new KafkaStreams(builder.build(), config);
+//        KafkaStreams streams = new KafkaStreams(builder.Build(), config);
 //        streams.setStateListener((newState, oldState) => {
 //            if (oldState == KafkaStreams.State.REBALANCING && newState == KafkaStreams.State.RUNNING) {
 //                System.Console.Out.WriteLine("REBALANCING => RUNNING");

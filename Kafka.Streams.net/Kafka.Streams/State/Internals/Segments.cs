@@ -24,24 +24,24 @@ namespace Kafka.Streams.State.Internals
     public interface Segments<S>
         where S : ISegment
     {
-        long segmentId(long timestamp);
+        long SegmentId(long timestamp);
 
-        string segmentName(long segmentId);
+        string SegmentName(long segmentId);
 
-        S getSegmentForTimestamp(long timestamp);
+        S GetSegmentForTimestamp(long timestamp);
 
-        S getOrCreateSegmentIfLive<K, V>(long segmentId, IInternalProcessorContext context, long streamTime);
+        S GetOrCreateSegmentIfLive<K, V>(long segmentId, IInternalProcessorContext context, long streamTime);
 
-        S getOrCreateSegment<K, V>(long segmentId, IInternalProcessorContext context);
+        S GetOrCreateSegment<K, V>(long segmentId, IInternalProcessorContext context);
 
-        void openExisting<K, V>(IInternalProcessorContext context, long streamTime);
+        void OpenExisting<K, V>(IInternalProcessorContext context, long streamTime);
 
-        List<S> segments(long timeFrom, long timeTo);
+        List<S> Segments(long timeFrom, long timeTo);
 
-        List<S> allSegments();
+        List<S> AllSegments();
 
-        void flush();
+        void Flush();
 
-        void close();
+        void Close();
     }
 }

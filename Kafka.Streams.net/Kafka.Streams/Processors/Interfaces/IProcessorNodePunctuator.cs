@@ -4,6 +4,6 @@ namespace Kafka.Streams.Processors.Interfaces
 {
     public interface IProcessorNodePunctuator<K, V>
     {
-        void punctuate(IProcessorNode<K, V> node, long streamTime, PunctuationType type, IPunctuator punctuator);
+        void Punctuate(IProcessorNode<K, V> node, long streamTime, PunctuationType type, IPunctuator punctuator);
     }
 }

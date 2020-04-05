@@ -48,7 +48,7 @@ namespace Kafka.Streams.Processors.Internals
          *
          * @return StampedRecord
          */
-        public StampedRecord nextRecord<K, V>(RecordInfo LogInformation)
+        public StampedRecord NextRecord<K, V>(RecordInfo LogInformation)
         {
             StampedRecord record = null;
 
@@ -67,7 +67,7 @@ namespace Kafka.Streams.Processors.Internals
                 {
                     --totalBuffered;
 
-                    if (queue.isEmpty())
+                    if (queue.IsEmpty())
                     {
                         // if a certain queue has been drained, reset the flag
                         allBuffered = false;
@@ -99,12 +99,12 @@ namespace Kafka.Streams.Processors.Internals
          * @param rawRecords  the raw records
          * @return the queue size for the partition
          */
-        public int addRawRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
+        public int AddRawRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
         {
             RecordQueue recordQueue = partitionQueues[partition];
 
-            var oldSize = recordQueue.size();
-            var newSize = recordQueue.addRawRecords(rawRecords);
+            var oldSize = recordQueue.Size();
+            var newSize = recordQueue.AddRawRecords(rawRecords);
 
             // add this record queue to be considered for processing in the future if it was empty before
             if (oldSize == 0 && newSize > 0)
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Processors.Internals
             return newSize;
         }
 
-        public HashSet<TopicPartition> partitions()
+        public HashSet<TopicPartition> Partitions()
         {
             return new HashSet<TopicPartition>(partitionQueues.Keys);
         }
@@ -137,7 +137,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException if the record's partition does not belong to this partition group
          */
-        public int numBuffered(TopicPartition partition)
+        public int NumBuffered(TopicPartition partition)
         {
             RecordQueue recordQueue = partitionQueues[partition];
 
@@ -146,29 +146,29 @@ namespace Kafka.Streams.Processors.Internals
                 throw new InvalidOperationException(string.Format("Record's partition %s does not belong to this partition-group.", partition));
             }
 
-            return recordQueue.size();
+            return recordQueue.Size();
         }
 
-        public int numBuffered()
+        public int NumBuffered()
         {
             return totalBuffered;
         }
 
-        public bool allPartitionsBuffered() => allBuffered;
+        public bool AllPartitionsBuffered() => allBuffered;
 
-        public void close()
+        public void Close()
         {
-            clear();
+            Clear();
             partitionQueues.Clear();
         }
 
-        public void clear()
+        public void Clear()
         {
             nonEmptyQueuesByTime.Clear();
             streamTime = RecordQueue.UNKNOWN;
             foreach (RecordQueue queue in partitionQueues.Values)
             {
-                queue.clear();
+                queue.Clear();
             }
         }
     }

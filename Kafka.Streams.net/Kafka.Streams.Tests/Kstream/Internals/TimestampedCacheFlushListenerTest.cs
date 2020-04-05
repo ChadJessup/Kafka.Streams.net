@@ -18,7 +18,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            expect(context.currentNode()).andReturn(null).anyTimes();
 //            context.setCurrentNode(null);
 //            context.setCurrentNode(null);
-//            context.forward(
+//            context.Forward(
 //                "key",
 //                new Change<>("newValue", "oldValue"),
 //                To.All().WithTimestamp(42L));
@@ -27,8 +27,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            new TimestampedCacheFlushListener<>(context).apply(
 //                "key",
-//                ValueAndTimestamp.make("newValue", 42L),
-//                ValueAndTimestamp.make("oldValue", 21L),
+//                ValueAndTimestamp.Make("newValue", 42L),
+//                ValueAndTimestamp.Make("oldValue", 21L),
 //                73L);
 
 //            verify(context);
@@ -41,7 +41,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            expect(context.currentNode()).andReturn(null).anyTimes();
 //            context.setCurrentNode(null);
 //            context.setCurrentNode(null);
-//            context.forward(
+//            context.Forward(
 //                "key",
 //                new Change<>(null, "oldValue"),
 //                To.All().WithTimestamp(73L));
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            new TimestampedCacheFlushListener<>(context).apply(
 //                "key",
 //                null,
-//                ValueAndTimestamp.make("oldValue", 21L),
+//                ValueAndTimestamp.Make("oldValue", 21L),
 //                73L);
 
 //            verify(context);

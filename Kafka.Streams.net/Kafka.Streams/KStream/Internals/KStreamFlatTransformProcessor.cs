@@ -17,8 +17,8 @@
 
 //        public void init(IProcessorContext context)
 //        {
-//            base.init(context);
-//            transformer.init(context);
+//            base.Init(context);
+//            transformer.Init(context);
 //        }
 
 
@@ -29,7 +29,7 @@
 //            {
 //                foreach (KeyValuePair<KOut, VOut> pair in pairs)
 //                {
-//                    //context.forward(pair.key, pair.value);
+//                    //context.Forward(pair.key, pair.value);
 //                }
 //            }
 //        }

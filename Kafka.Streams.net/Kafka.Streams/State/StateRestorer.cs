@@ -54,77 +54,77 @@ namespace Kafka.Streams.Processors.Internals
             this.recordConverter = recordConverter;
         }
 
-        public long checkpoint()
+        public long Checkpoint()
         {
             return checkpointOffset;
         }
 
-        public void setCheckpointOffset(long checkpointOffset)
+        public void SetCheckpointOffset(long checkpointOffset)
         {
             this.checkpointOffset = checkpointOffset;
         }
 
-        public void restoreStarted()
+        public void RestoreStarted()
         {
             compositeRestoreListener.OnRestoreStart(partition, storeName, startingOffset, endingOffset);
         }
 
-        public void restoreDone()
+        public void RestoreDone()
         {
-            compositeRestoreListener.OnRestoreEnd(partition, storeName, restoredNumRecords());
+            compositeRestoreListener.OnRestoreEnd(partition, storeName, RestoredNumRecords());
         }
 
-        public void restoreBatchCompleted(long currentRestoredOffset, int numRestored)
+        public void RestoreBatchCompleted(long currentRestoredOffset, int numRestored)
         {
             compositeRestoreListener.OnBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
         }
 
-        public void restore(List<ConsumeResult<byte[], byte[]>> records)
+        public void Restore(List<ConsumeResult<byte[], byte[]>> records)
         {
             var convertedRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
             foreach (ConsumeResult<byte[], byte[]> record in records)
             {
-                convertedRecords.Add(recordConverter.convert(record));
+                convertedRecords.Add(recordConverter.Convert(record));
             }
-            compositeRestoreListener.restoreBatch(convertedRecords);
+            compositeRestoreListener.RestoreBatch(convertedRecords);
         }
 
-        public bool isPersistent()
+        public bool IsPersistent()
         {
             return persistent;
         }
 
-        public void setUserRestoreListener(IStateRestoreListener userRestoreListener)
+        public void SetUserRestoreListener(IStateRestoreListener userRestoreListener)
         {
-            this.compositeRestoreListener.setUserRestoreListener(userRestoreListener);
+            this.compositeRestoreListener.SetUserRestoreListener(userRestoreListener);
         }
 
-        public void setRestoredOffset(long restoredOffset)
+        public void SetRestoredOffset(long restoredOffset)
         {
             this.restoredOffset = Math.Min(offsetLimit, restoredOffset);
         }
 
-        public void setStartingOffset(long startingOffset)
+        public void SetStartingOffset(long startingOffset)
         {
             this.startingOffset = Math.Min(offsetLimit, startingOffset);
         }
 
-        public void setEndingOffset(long endingOffset)
+        public void SetEndingOffset(long endingOffset)
         {
             this.endingOffset = Math.Min(offsetLimit, endingOffset);
         }
 
-        public bool hasCompleted(long recordOffset, long endOffset)
+        public bool HasCompleted(long recordOffset, long endOffset)
         {
-            return endOffset == 0 || recordOffset >= readTo(endOffset);
+            return endOffset == 0 || recordOffset >= ReadTo(endOffset);
         }
 
-        long restoredNumRecords()
+        long RestoredNumRecords()
         {
             return restoredOffset - startingOffset;
         }
 
-        private long readTo(long endOffset)
+        private long ReadTo(long endOffset)
         {
             return endOffset < offsetLimit ? endOffset : offsetLimit;
         }

@@ -25,7 +25,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws   ArgumentNullException If null is used for key.
          *
          */
-        IKeyValueIterator<Windowed<K>, AGG> fetch(K key);
+        IKeyValueIterator<Windowed<K>, AGG> Fetch(K key);
 
         /**
          * Retrieve all aggregated sessions for the given range of keys.
@@ -39,7 +39,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @return   KeyValueIterator containing all sessions for the provided key.
          * @throws   ArgumentNullException If null is used for any of the keys.
          */
-        IKeyValueIterator<Windowed<K>, AGG> fetch(K from, K to);
+        IKeyValueIterator<Windowed<K>, AGG> Fetch(K from, K to);
     }
 
     public interface IReadOnlySessionStore

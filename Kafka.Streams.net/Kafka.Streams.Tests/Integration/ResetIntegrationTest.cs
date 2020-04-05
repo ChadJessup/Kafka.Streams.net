@@ -1,22 +1,24 @@
-namespace Kafka.Streams.Tests.Integration
-{
-    /*
+//using Kafka.Streams.Configs;
+//using System.Collections.Generic;
 
+//namespace Kafka.Streams.Tests.Integration
+//{
+//    /*
 
 
 
 
 
-    *
 
-    *
+//    *
 
+//    *
 
 
 
 
-    */
 
+//    */
 
 
 
@@ -32,143 +34,89 @@ namespace Kafka.Streams.Tests.Integration
 
 
 
-    /**
-     * Tests local state store and global application cleanup.
-     */
 
-    public class ResetIntegrationTest : AbstractResetIntegrationTest
-    {
+//    /**
+//     * Tests local state store and global application cleanup.
+//     */
 
+//    public class ResetIntegrationTest : AbstractResetIntegrationTest
+//    {
+//        public static EmbeddedKafkaCluster CLUSTER;
 
-        public static EmbeddedKafkaCluster CLUSTER;
+//        private const string TEST_ID = "reset-integration-test";
 
-        private static readonly string TEST_ID = "reset-integration-test";
+//        StreamsConfig brokerProps = new StreamsConfig();
+//        // we double the value passed to `time.sleep` in each iteration in one of the map functions, so we disable
+//        // expiration of connections by the brokers to avoid errors when `AdminClient` sends requests after potentially
+//        // very long sleep times
+//        //brokerProps.put(KafkaConfig$.MODULE$.ConnectionsMaxIdleMsProp(), -1L);
+//        //CLUSTER = new EmbeddedKafkaCluster(1, brokerProps);
 
-        static {
-        Properties brokerProps = new Properties();
-        // we double the value passed to `time.sleep` in each iteration in one of the map functions, so we disable
-        // expiration of connections by the brokers to avoid errors when `AdminClient` sends requests after potentially
-        // very long sleep times
-        brokerProps.put(KafkaConfig$.MODULE$.ConnectionsMaxIdleMsProp(), -1L);
-        CLUSTER = new EmbeddedKafkaCluster(1, brokerProps);
-    }
+//        Dictionary<string, object> GetClientSslConfig()
+//        {
+//            return null;
+//        }
 
 
-    Dictionary<string, object> GetClientSslConfig()
-    {
-        return null;
-    }
+//        public void Before()
+//        {// throws Exception
+//            testId = TEST_ID;
+//            cluster = CLUSTER;
+//            prepareTest();
+//        }
 
 
-    public void Before()
-    {// throws Exception
-        testId = TEST_ID;
-        cluster = CLUSTER;
-        prepareTest();
-    }
+//        public void After()
+//        {// throws Exception
+//            cleanupTest();
+//        }
 
+//        [Xunit.Fact]
+//        public void TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic()
+//        {// throws Exception
+//            base.TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic();
+//        }
 
-    public void After()
-    {// throws Exception
-        cleanupTest();
-    }
+//        [Xunit.Fact]
+//        public void TestReprocessingFromScratchAfterResetWithIntermediateUserTopic()
+//        {// throws Exception
+//            base.TestReprocessingFromScratchAfterResetWithIntermediateUserTopic();
+//        }
 
-    [Xunit.Fact]
-    public void TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic()
-    {// throws Exception
-        base.testReprocessingFromScratchAfterResetWithoutIntermediateUserTopic();
-    }
+//        [Xunit.Fact]
+//        public void TestReprocessingFromFileAfterResetWithoutIntermediateUserTopic()
+//        {// throws Exception
+//            base.TestReprocessingFromFileAfterResetWithoutIntermediateUserTopic();
+//        }
 
-    [Xunit.Fact]
-    public void TestReprocessingFromScratchAfterResetWithIntermediateUserTopic()
-    {// throws Exception
-        base.testReprocessingFromScratchAfterResetWithIntermediateUserTopic();
-    }
+//        [Xunit.Fact]
+//        public void TestReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic()
+//        {// throws Exception
+//            base.testReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic();
+//        }
 
-    [Xunit.Fact]
-    public void TestReprocessingFromFileAfterResetWithoutIntermediateUserTopic()
-    {// throws Exception
-        base.testReprocessingFromFileAfterResetWithoutIntermediateUserTopic();
-    }
-
-    [Xunit.Fact]
-    public void TestReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic()
-    {// throws Exception
-        base.testReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic();
-    }
-
-    [Xunit.Fact]
-    public void TestReprocessingByDurationAfterResetWithoutIntermediateUserTopic()
-    {// throws Exception
-        base.testReprocessingByDurationAfterResetWithoutIntermediateUserTopic();
-    }
-
-    [Xunit.Fact]
-    public void ShouldNotAllowToResetWhileStreamsRunning()
-    {// throws Exception
-        base.shouldNotAllowToResetWhileStreamsIsRunning();
-    }
-
-    [Xunit.Fact]
-    public void ShouldNotAllowToResetWhenInputTopicAbsent()
-    {// throws Exception
-        base.shouldNotAllowToResetWhenInputTopicAbsent();
-    }
-
-    [Xunit.Fact]
-    public void ShouldNotAllowToResetWhenIntermediateTopicAbsent()
-    {// throws Exception
-        base.shouldNotAllowToResetWhenIntermediateTopicAbsent();
-    }
-}
-}
-/*
-
-
-
-
-
-
-*
-
-*
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Tests local state store and global application cleanup.
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//        [Xunit.Fact]
+//        public void TestReprocessingByDurationAfterResetWithoutIntermediateUserTopic()
+//        {// throws Exception
+//            base.testReprocessingByDurationAfterResetWithoutIntermediateUserTopic();
+//        }
+
+//        [Xunit.Fact]
+//        public void ShouldNotAllowToResetWhileStreamsRunning()
+//        {// throws Exception
+//            base.shouldNotAllowToResetWhileStreamsIsRunning();
+//        }
+
+//        [Xunit.Fact]
+//        public void ShouldNotAllowToResetWhenInputTopicAbsent()
+//        {// throws Exception
+//            base.shouldNotAllowToResetWhenInputTopicAbsent();
+//        }
+
+//        [Xunit.Fact]
+//        public void ShouldNotAllowToResetWhenIntermediateTopicAbsent()
+//        {// throws Exception
+//            //base.shouldNotAllowToResetWhenIntermediateTopicAbsent();
+//        }
+//    }
+//}

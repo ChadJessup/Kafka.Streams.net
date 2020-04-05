@@ -8,7 +8,7 @@ namespace Kafka.Streams.Processors.Internals
     {
         private readonly SimplePriorityQueue<PunctuationSchedule> pq = new SimplePriorityQueue<PunctuationSchedule>();
 
-        public ICancellable schedule(PunctuationSchedule sched)
+        public ICancellable Schedule(PunctuationSchedule sched)
         {
             lock (pq)
             {
@@ -18,7 +18,7 @@ namespace Kafka.Streams.Processors.Internals
             return sched.cancellable;
         }
 
-        public void close()
+        public void Close()
         {
             lock (pq)
             {
@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool mayPunctuate<K, V>(long timestamp, PunctuationType type, IProcessorNodePunctuator<K, V> processorNodePunctuator)
+        public bool MayPunctuate<K, V>(long timestamp, PunctuationType type, IProcessorNodePunctuator<K, V> processorNodePunctuator)
         {
             lock (pq)
             {
@@ -42,11 +42,11 @@ namespace Kafka.Streams.Processors.Internals
 
                     if (!sched.isCancelled)
                     {
-                        processorNodePunctuator.punctuate((ProcessorNode<K, V>)sched.node(), timestamp, type, sched.punctuator);
+                        processorNodePunctuator.Punctuate((ProcessorNode<K, V>)sched.Node(), timestamp, type, sched.punctuator);
                         // sched can be cancelled from within the punctuator
                         if (!sched.isCancelled)
                         {
-                            pq.Enqueue(sched.next(timestamp), sched.timestamp);
+                            pq.Enqueue(sched.Next(timestamp), sched.timestamp);
                         }
 
                         punctuated = true;

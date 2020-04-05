@@ -22,19 +22,19 @@
 
 //        public void init(IProcessorContext<K, V1> context)
 //        {
-//            valueGetter1.init(context);
-//            valueGetter2.init(context);
+//            valueGetter1.Init(context);
+//            valueGetter2.Init(context);
 //        }
 
 
 //        public ValueAndTimestamp<R> get(K key)
 //        {
-//            ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2.get(key);
+//            ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2.Get(key);
 //            V2 value2 = ValueAndTimestamp.GetValueOrNull(valueAndTimestamp2);
 
 //            if (value2 != null)
 //            {
-//                ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1.get(key);
+//                ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1.Get(key);
 //                V1 value1 = ValueAndTimestamp.GetValueOrNull(valueAndTimestamp1);
 //                long resultTimestamp;
 //                if (valueAndTimestamp1 == null)

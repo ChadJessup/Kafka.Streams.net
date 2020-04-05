@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tasks
             this.partitions = new HashSet<TopicPartition>(partitions);
             this.topology = topology;
             this.consumer = consumer;
-            this.eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(config.getString(StreamsConfigPropertyNames.ProcessingGuarantee));
+            this.eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(config.GetString(StreamsConfigPropertyNames.ProcessingGuarantee));
             this.stateDirectory = stateDirectory;
 
             this.logPrefix = $"{(isStandby ? "standby-task" : "task")} [{id}] ";
@@ -76,7 +76,7 @@ namespace Kafka.Streams.Tasks
 
         public IProcessorContext context => processorContext;
 
-        public virtual IStateStore getStore(string name)
+        public virtual IStateStore GetStore(string name)
         {
             return StateMgr.GetStore(name);
         }
@@ -92,7 +92,7 @@ namespace Kafka.Streams.Tasks
             return ToString("");
         }
 
-        public bool isEosEnabled()
+        public bool IsEosEnabled()
         {
             return eosEnabled;
         }
@@ -134,7 +134,7 @@ namespace Kafka.Streams.Tasks
             return sb.ToString();
         }
 
-        public virtual Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
+        public virtual Dictionary<TopicPartition, long> ActiveTaskCheckpointableOffsets()
         {
             return new Dictionary<TopicPartition, long>();
         }
@@ -170,7 +170,7 @@ namespace Kafka.Streams.Tasks
         /**
          * Flush all state stores owned by this task
          */
-        protected virtual void flushState()
+        protected virtual void FlushState()
         {
             StateMgr.Flush();
         }
@@ -180,7 +180,7 @@ namespace Kafka.Streams.Tasks
          *
          * @throws StreamsException If the store's change log does not contain the partition
          */
-        protected virtual void registerStateStores()
+        protected virtual void RegisterStateStores()
         {
             if (!topology.StateStores.Any())
             {
@@ -209,12 +209,12 @@ namespace Kafka.Streams.Tasks
             foreach (IStateStore store in topology.StateStores)
             {
                 logger.LogTrace("Initializing store {}", store.name);
-                processorContext.uninitialize();
+                processorContext.Uninitialize();
                 store.Init(processorContext, store);
             }
         }
 
-        public virtual void reinitializeStateStoresForPartitions(List<TopicPartition> partitions)
+        public virtual void ReinitializeStateStoresForPartitions(List<TopicPartition> partitions)
         {
             StateMgr.ReinitializeStateStoresForPartitions(partitions, processorContext);
         }
@@ -222,7 +222,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws ProcessorStateException if there is an error while closing the state manager
          */
-        public virtual void closeStateManager(bool clean)
+        public virtual void CloseStateManager(bool clean)
         {
             ProcessorStateException? exception = null;
             logger.LogTrace("Closing state manager");
@@ -255,43 +255,43 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        public virtual bool isClosed()
+        public virtual bool IsClosed()
         {
             return TaskClosed;
         }
 
-        public virtual bool hasStateStores()
+        public virtual bool HasStateStores()
         {
             return topology.StateStores.Any();
         }
 
-        public abstract bool initializeStateStores();
+        public abstract bool InitializeStateStores();
 
-        public virtual void initializeTopology()
+        public virtual void InitializeTopology()
         {
         }
 
-        public virtual void commit()
+        public virtual void Commit()
         {
         }
 
-        public virtual void suspend()
+        public virtual void Suspend()
         {
         }
 
-        public virtual void resume()
+        public virtual void Resume()
         {
         }
 
-        public virtual void closeSuspended(bool clean, bool isZombie, RuntimeException e)
+        public virtual void CloseSuspended(bool clean, bool isZombie, RuntimeException e)
         {
         }
 
-        public virtual void close(bool clean, bool isZombie)
+        public virtual void Close(bool clean, bool isZombie)
         {
         }
 
-        public abstract void initializeIfNeeded();
+        public abstract void InitializeIfNeeded();
         public abstract void CompleteRestoration();
 
         public IEnumerable<TopicPartition> changelogPartitions

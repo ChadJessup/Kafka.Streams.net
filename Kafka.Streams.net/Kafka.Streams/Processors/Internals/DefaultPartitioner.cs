@@ -22,7 +22,7 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class DefaultPartitioner// : IPartitioner
     {
-        public int partition<K, V>(string topic, K key, byte[] keyBytes, V value, object p, Cluster cluster)
+        public int Partition<K, V>(string topic, K key, byte[] keyBytes, V value, object p, Cluster cluster)
         {
             throw new NotImplementedException();
         }

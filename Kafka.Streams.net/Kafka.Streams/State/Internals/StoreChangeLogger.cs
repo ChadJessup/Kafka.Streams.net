@@ -27,23 +27,23 @@ namespace Kafka.Streams.State.Internals
             int partition,
             StateSerdes<K, V> serialization)
         {
-            topic = ProcessorStateManager.storeChangelogTopic(context.applicationId, storeName);
+            topic = ProcessorStateManager.StoreChangelogTopic(context.applicationId, storeName);
             this.context = context;
             this.partition = partition;
-            this.collector = ((ISupplier)context).recordCollector();
-            keySerializer = serialization.keySerializer();
-            valueSerializer = serialization.valueSerializer();
+            this.collector = ((ISupplier)context).RecordCollector();
+            keySerializer = serialization.KeySerializer();
+            valueSerializer = serialization.ValueSerializer();
         }
 
-        public void logChange(K key, V value)
+        public void LogChange(K key, V value)
         {
-            logChange(key, value, context.timestamp);
+            LogChange(key, value, context.timestamp);
         }
 
-        void logChange(K key, V value, long timestamp)
+        void LogChange(K key, V value, long timestamp)
         {
             // Sending null headers to changelog topics (KIP-244)
-            collector.send(topic, key, value, null, partition, timestamp, keySerializer, valueSerializer);
+            collector.Send(topic, key, value, null, partition, timestamp, keySerializer, valueSerializer);
         }
     }
 }

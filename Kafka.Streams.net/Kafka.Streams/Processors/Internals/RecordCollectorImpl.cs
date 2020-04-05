@@ -18,11 +18,11 @@ namespace Kafka.Streams.Processors.Internals
 
         private readonly IProductionExceptionHandler productionExceptionHandler;
 
-        private static readonly string LOG_MESSAGE = "Error sending record to topic {} due to {}; " +
+        private const string LOG_MESSAGE = "Error sending record to topic {} due to {}; " +
             "No more records will be sent and no more offsets will be recorded for this task. " +
             "Enable TRACE logging to view failed record key and value.";
-        private static readonly string EXCEPTION_MESSAGE = "%sAbort sending since %s with a previous record (timestamp %d) to topic %s due to %s";
-        private static readonly string PARAMETER_HINT = "\nYou can increase the producer configs `delivery.timeout.ms` and/or " +
+        private const string EXCEPTION_MESSAGE = "%sAbort sending since %s with a previous record (timestamp %d) to topic %s due to %s";
+        private const string PARAMETER_HINT = "\nYou can increase the producer configs `delivery.timeout.ms` and/or " +
             "`retries` to avoid this error. Note that `retries` is set to infinite by default.";
 
         private volatile KafkaException sendException;
@@ -37,12 +37,12 @@ namespace Kafka.Streams.Processors.Internals
             this.productionExceptionHandler = productionExceptionHandler;
         }
 
-        public void init(IProducer<byte[], byte[]> producer)
+        public void Init(IProducer<byte[], byte[]> producer)
         {
             this.producer = producer;
         }
 
-        public void send<K, V>(
+        public void Send<K, V>(
             string topic,
             K key,
             V value,
@@ -60,7 +60,7 @@ namespace Kafka.Streams.Processors.Internals
 
                 if (partitions.Count > 0)
                 {
-                    partition = partitioner.partition(
+                    partition = partitioner.Partition(
                         topic,
                         key,
                         value,
@@ -73,7 +73,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
             }
 
-            send(
+            Send(
                 topic,
                 key,
                 value,
@@ -84,7 +84,7 @@ namespace Kafka.Streams.Processors.Internals
                 valueSerializer);
         }
 
-        public void send<K, V>(
+        public void Send<K, V>(
             string topic,
             K key,
             V value,
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Processors.Internals
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer)
         {
-            checkForException();
+            CheckForException();
             var keyBytes = keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
             var valBytes = valueSerializer.Serialize(value, new SerializationContext(MessageComponentType.Value, topic));
 
@@ -122,7 +122,7 @@ namespace Kafka.Streams.Processors.Internals
                 //        {
                 //            return;
                 //        }
-                //        TopicPartition tp = new TopicPartition(metadata.Topic, metadata.partition());
+                //        TopicPartition tp = new TopicPartition(metadata.Topic, metadata.Partition);
                 //        offsets.Add(tp, metadata.offset());
                 //    }
                 //    else
@@ -219,7 +219,7 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        private void checkForException()
+        private void CheckForException()
         {
             if (sendException != null)
             {
@@ -227,16 +227,16 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        public void flush()
+        public void Flush()
         {
             log.LogDebug("Flushing producer");
             producer.Flush();
 
-            checkForException();
+            CheckForException();
         }
 
 
-        public void close()
+        public void Close()
         {
             log.LogDebug("Closing producer");
             if (producer != null)
@@ -245,7 +245,7 @@ namespace Kafka.Streams.Processors.Internals
                 producer = null;
             }
 
-            checkForException();
+            CheckForException();
         }
 
         #region IDisposable Support

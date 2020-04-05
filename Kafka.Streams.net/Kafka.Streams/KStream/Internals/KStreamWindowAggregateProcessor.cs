@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
             base.Init(context);
             internalProcessorContext = (IInternalProcessorContext)context;
 
-            windowStore = (ITimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
+            windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(storeName);
 
             tupleForwarder = new TimestampedTupleForwarder<Windowed<K>, Agg>(
                 windowStore,
@@ -76,7 +76,7 @@ namespace Kafka.Streams.KStream.Internals
                 var windowEnd = entry.Value.End();
                 if (windowEnd > closeTime)
                 {
-                    ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.fetch(key, windowStart);
+                    ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.Fetch(key, windowStart);
                     Agg oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);
 
                     Agg newAgg;
@@ -84,7 +84,7 @@ namespace Kafka.Streams.KStream.Internals
 
                     if (oldAgg == null)
                     {
-                        oldAgg = initializer.apply();
+                        oldAgg = initializer.Apply();
                         newTimestamp = context.timestamp;
                     }
                     else
@@ -92,12 +92,12 @@ namespace Kafka.Streams.KStream.Internals
                         newTimestamp = Math.Max(context.timestamp, oldAggAndTimestamp.timestamp);
                     }
 
-                    newAgg = aggregator.apply(key, value, oldAgg);
+                    newAgg = aggregator.Apply(key, value, oldAgg);
 
                     // update the store with the new value
-                    windowStore.put(key, ValueAndTimestamp<Agg>.make(newAgg, newTimestamp), windowStart);
+                    windowStore.Put(key, ValueAndTimestamp.Make(newAgg, newTimestamp), windowStart);
 
-                    tupleForwarder.maybeForward(
+                    tupleForwarder.MaybeForward(
                         new Windowed<K>(key, entry.Value),
                         newAgg,
                         sendOldValues ? oldAgg : default,

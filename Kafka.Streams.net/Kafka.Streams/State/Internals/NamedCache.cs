@@ -31,35 +31,35 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public LRUCacheEntry get(Bytes key)
+        public LRUCacheEntry Get(Bytes key)
         {
             if (key == null)
             {
                 return null;
             }
 
-            LRUNode node = getInternal(key);
+            LRUNode node = GetInternal(key);
             if (node == null)
             {
                 return null;
             }
-            updateLRU(node);
+            UpdateLRU(node);
             return node.entry;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void setListener(IDirtyEntryFlushListener listener)
+        public void SetListener(IDirtyEntryFlushListener listener)
         {
             this.listener = listener;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void flush()
+        public void Flush()
         {
-            flush(null);
+            Flush(null);
         }
 
-        private void flush(LRUNode evicted)
+        private void Flush(LRUNode evicted)
         {
             numFlushes++;
 
@@ -117,7 +117,7 @@ namespace Kafka.Streams.State.Internals
 
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void put(Bytes key, LRUCacheEntry value)
+        public void Put(Bytes key, LRUCacheEntry value)
         {
             if (!value.isDirty && dirtyKeys.Contains(key))
             {
@@ -133,15 +133,15 @@ namespace Kafka.Streams.State.Internals
             {
                 numOverwrites++;
 
-                currentSizeBytes -= node.size();
-                node.update(value);
-                updateLRU(node);
+                currentSizeBytes -= node.Size();
+                node.Update(value);
+                UpdateLRU(node);
             }
             else
             {
                 node = new LRUNode(key, value);
                 // put element
-                putHead(node);
+                PutHead(node);
                 cache.TryAdd(key, node);
             }
             if (value.isDirty)
@@ -150,16 +150,16 @@ namespace Kafka.Streams.State.Internals
                 dirtyKeys.Remove(key);
                 dirtyKeys.Add(key);
             }
-            currentSizeBytes += node.size();
+            currentSizeBytes += node.Size();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public long sizeInBytes()
+        public long SizeInBytes()
         {
             return currentSizeBytes;
         }
 
-        private LRUNode getInternal(Bytes key)
+        private LRUNode GetInternal(Bytes key)
         {
             LRUNode node = cache[key];
             if (node == null)
@@ -176,11 +176,11 @@ namespace Kafka.Streams.State.Internals
             return node;
         }
 
-        private void updateLRU(LRUNode node)
+        private void UpdateLRU(LRUNode node)
         {
             Remove(node);
 
-            putHead(node);
+            PutHead(node);
         }
 
         private void Remove(LRUNode node)
@@ -203,7 +203,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        private void putHead(LRUNode node)
+        private void PutHead(LRUNode node)
         {
             node.next = _head;
             node.previous = null;
@@ -219,36 +219,36 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void evict()
+        public void Evict()
         {
             if (_tail == null)
             {
                 return;
             }
             LRUNode eldest = _tail;
-            currentSizeBytes -= eldest.size();
+            currentSizeBytes -= eldest.Size();
             Remove(eldest);
             cache.TryRemove(eldest.key, out var _);
 
             if (eldest.entry.isDirty)
             {
-                flush(eldest);
+                Flush(eldest);
             }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public LRUCacheEntry putIfAbsent(Bytes key, LRUCacheEntry value)
+        public LRUCacheEntry PutIfAbsent(Bytes key, LRUCacheEntry value)
         {
-            LRUCacheEntry originalValue = get(key);
+            LRUCacheEntry originalValue = Get(key);
             if (originalValue == null)
             {
-                put(key, value);
+                Put(key, value);
             }
             return originalValue;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public LRUCacheEntry delete(Bytes key)
+        public LRUCacheEntry Delete(Bytes key)
         {
             if (!cache.TryRemove(key, out var node) || node == null)
             {
@@ -257,29 +257,29 @@ namespace Kafka.Streams.State.Internals
 
             Remove(node);
             dirtyKeys.Remove(key);
-            currentSizeBytes -= node.size();
+            currentSizeBytes -= node.Size();
             return node.entry;
         }
 
-        public long size()
+        public long Size()
         {
             return cache.Count;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public IEnumerator<KeyValuePair<Bytes, LRUNode>> subMapIterator(Bytes from, Bytes to)
+        public IEnumerator<KeyValuePair<Bytes, LRUNode>> SubMapIterator(Bytes from, Bytes to)
         {
             return null;// cache.subMap(from, true, to, true).iterator();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public IEnumerator<KeyValuePair<Bytes, LRUNode>> allIterator()
+        public IEnumerator<KeyValuePair<Bytes, LRUNode>> AllIterator()
         {
             return cache.GetEnumerator();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void close()
+        public void Close()
         {
             _head = _tail = null;
             listener = null;

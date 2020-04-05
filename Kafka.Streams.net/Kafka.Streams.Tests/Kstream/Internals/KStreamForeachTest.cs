@@ -24,33 +24,33 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            // Given
 //            List<KeyValuePair<int, string>> inputRecords = Array.AsReadOnly(
-//                new KeyValuePair<>(0, "zero"),
-//                new KeyValuePair<>(1, "one"),
-//                new KeyValuePair<>(2, "two"),
-//                new KeyValuePair<>(3, "three")
+//                KeyValuePair.Create(0, "zero"),
+//                KeyValuePair.Create(1, "one"),
+//                KeyValuePair.Create(2, "two"),
+//                KeyValuePair.Create(3, "three")
 //            );
 
 //            List<KeyValuePair<int, string>> expectedRecords = Array.AsReadOnly(
-//                new KeyValuePair<>(0, "ZERO"),
-//                new KeyValuePair<>(2, "ONE"),
-//                new KeyValuePair<>(4, "TWO"),
-//                new KeyValuePair<>(6, "THREE")
+//                KeyValuePair.Create(0, "TimeSpan.Zero"),
+//                KeyValuePair.Create(2, "ONE"),
+//                KeyValuePair.Create(4, "TWO"),
+//                KeyValuePair.Create(6, "THREE")
 //            );
 
 //            var actualRecords = new List<KeyValuePair<int, string>>();
 //            ForeachAction<int, string> action =
-//                (key, value) => actualRecords.add(new KeyValuePair<>(key * 2, value.toUppercase(Locale.ROOT)));
+//                (key, value) => actualRecords.Add(KeyValuePair.Create(key * 2, value.toUppercase(Locale.ROOT)));
 
 //            // When
 //            var builder = new StreamsBuilder();
-//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 //            stream.ForEach(action);
 
 //            // Then
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (KeyValuePair<int, string> record in inputRecords)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, record.key, record.value));
+//                driver.PipeInput(recordFactory.Create(topicName, record.key, record.value));
 //            }
 
 //            Assert.Equal(expectedRecords.Count, actualRecords.Count);

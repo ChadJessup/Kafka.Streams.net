@@ -9,7 +9,7 @@ namespace Kafka.Streams.Processors.Internals
         public ISupplier Supplier { get; }
         public Dictionary<TopicPartition, long> offsets { get; } = new Dictionary<TopicPartition, long>();
 
-        public void send<K, V>(
+        public void Send<K, V>(
             string topic,
             K key,
             V value,
@@ -21,7 +21,7 @@ namespace Kafka.Streams.Processors.Internals
         {
         }
 
-        public void send<K, V>(
+        public void Send<K, V>(
             string topic,
             K key,
             V value,
@@ -32,12 +32,12 @@ namespace Kafka.Streams.Processors.Internals
             IStreamPartitioner<K, V> partitioner)
         { }
 
-        public void init(IProducer<byte[], byte[]> producer)
+        public void Init(IProducer<byte[], byte[]> producer)
         { }
 
-        public void flush() { }
+        public void Flush() { }
 
-        public void close() { }
+        public void Close() { }
 
         private bool disposedValue = false; // To detect redundant calls
 

@@ -29,11 +29,11 @@ namespace Kafka.Streams.Processors.Internals
         public TaskId taskId
             => del.taskId;
 
-        public ISerde<K> keySerde
-            => null;// del.keySerde;
+        public ISerde keySerde
+            => del.keySerde;
 
-        public ISerde<V> valueSerde
-            => null;// del.valueSerde;
+        public ISerde valueSerde
+            => del.valueSerde;
 
         public DirectoryInfo stateDir
             => del.stateDir;
@@ -46,57 +46,57 @@ namespace Kafka.Streams.Processors.Internals
             del.Register(store, stateRestoreCallback);
         }
 
-        public IStateStore getStateStore(string name)
+        public IStateStore GetStateStore(string name)
         {
-            return del.getStateStore(name);
+            return del.GetStateStore(name);
         }
 
         [Obsolete]
-        public ICancellable schedule(
+        public ICancellable Schedule(
             long intervalMs,
             PunctuationType type,
             IPunctuator callback)
         {
-            return del.schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
+            return del.Schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
         }
 
-        public ICancellable schedule(
+        public ICancellable Schedule(
             TimeSpan interval,
             PunctuationType type,
             IPunctuator callback)
         {
-            return del.schedule(interval, type, callback);
+            return del.Schedule(interval, type, callback);
         }
-        public ICancellable schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
+        public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
         {
             throw new NotImplementedException();
         }
 
-        public void forward<K1, V1>(K1 key, V1 value)
+        public void Forward<K1, V1>(K1 key, V1 value)
         {
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }
 
-        public void forward<K1, V1>(K1 key, V1 value, To to)
-        {
-            throw new StreamsException("IProcessorContext#forward() not supported.");
-        }
-
-        [Obsolete]
-        public void forward<K1, V1>(K1 key, V1 value, int childIndex)
+        public void Forward<K1, V1>(K1 key, V1 value, To to)
         {
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }
 
         [Obsolete]
-        public void forward<K1, V1>(K1 key, V1 value, string childName)
+        public void Forward<K1, V1>(K1 key, V1 value, int childIndex)
         {
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }
 
-        public void commit()
+        [Obsolete]
+        public void Forward<K1, V1>(K1 key, V1 value, string childName)
         {
-            del.commit();
+            throw new StreamsException("IProcessorContext#forward() not supported.");
+        }
+
+        public void Commit()
+        {
+            del.Commit();
         }
 
         public string Topic
@@ -114,10 +114,10 @@ namespace Kafka.Streams.Processors.Internals
         public long timestamp
             => del.timestamp;
 
-        public Dictionary<string, object> appConfigs()
-            => del.appConfigs();
+        public Dictionary<string, object> AppConfigs()
+            => del.AppConfigs();
 
-        public Dictionary<string, object> appConfigsWithPrefix(string prefix)
-            => del.appConfigsWithPrefix(prefix);
+        public Dictionary<string, object> AppConfigsWithPrefix(string prefix)
+            => del.AppConfigsWithPrefix(prefix);
     }
 }

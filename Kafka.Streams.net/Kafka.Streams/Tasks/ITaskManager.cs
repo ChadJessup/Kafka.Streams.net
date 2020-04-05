@@ -10,21 +10,21 @@ namespace Kafka.Streams.Tasks
     {
         IAdminClient adminClient { get; }
 
-        StreamTask activeTask(TopicPartition partition);
-        HashSet<TaskId> activeTaskIds();
-        Dictionary<TaskId, StreamTask> activeTasks();
-        InternalTopologyBuilder builder();
-        HashSet<TaskId> cachedTasksIds();
-        int commitAll();
-        void createTasks(List<TopicPartition> assignment);
-        IAdminClient getAdminClient();
-        bool hasActiveRunningTasks();
-        bool hasStandbyRunningTasks();
-        int maybeCommitActiveTasksPerUserRequested();
-        void maybePurgeCommitedRecords();
-        HashSet<TaskId> prevActiveTaskIds();
-        int process(long now);
-        int punctuate();
+        StreamTask ActiveTask(TopicPartition partition);
+        HashSet<TaskId> ActiveTaskIds();
+        Dictionary<TaskId, StreamTask> ActiveTasks();
+        InternalTopologyBuilder Builder();
+        HashSet<TaskId> CachedTasksIds();
+        int CommitAll();
+        void CreateTasks(List<TopicPartition> assignment);
+        IAdminClient GetAdminClient();
+        bool HasActiveRunningTasks();
+        bool HasStandbyRunningTasks();
+        int MaybeCommitActiveTasksPerUserRequested();
+        void MaybePurgeCommitedRecords();
+        HashSet<TaskId> PrevActiveTaskIds();
+        int Process(long now);
+        int Punctuate();
         void SetAssignmentMetadata(Dictionary<TaskId, HashSet<TopicPartition>> activeTasks, Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks);
         void SetClusterMetadata(Cluster cluster);
         void SetConsumer(IConsumer<byte[], byte[]> consumer);

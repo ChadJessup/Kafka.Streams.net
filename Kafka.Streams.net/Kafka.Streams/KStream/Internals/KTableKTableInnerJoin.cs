@@ -26,13 +26,13 @@ namespace Kafka.Streams.KStream.Internals
         public override IKeyValueProcessor<K, Change<V1>> Get()
         {
             return new KTableKTableJoinProcessor<K, R, V1, V2>(
-                valueGetterSupplier2.get(),
+                valueGetterSupplier2.Get(),
                 this.joiner,
                 this.storeName,
                 this.sendOldValues);
         }
 
-        public override IKTableValueGetterSupplier<K, R> view()
+        public override IKTableValueGetterSupplier<K, R> View()
         {
             return new KTableKTableInnerJoinValueGetterSupplier<K, R, V1, V2>(
                 valueGetterSupplier1,

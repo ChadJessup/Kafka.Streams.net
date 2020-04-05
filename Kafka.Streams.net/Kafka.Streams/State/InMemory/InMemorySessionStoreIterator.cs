@@ -106,11 +106,11 @@
 //                return null;
 //            }
 
-//            KeyValuePair<long, byte[]> nextRecord = recordIterator.next();
+//            KeyValuePair<long, byte[]> nextRecord = recordIterator.MoveNext();
 //            SessionWindow sessionWindow = new SessionWindow(nextRecord.Key, currentEndTime);
 //            Windowed<Bytes> windowedKey = new Windowed<>(currentKey, sessionWindow);
 
-//            return new KeyValuePair<>(windowedKey, nextRecord.Value);
+//            return KeyValuePair.Create(windowedKey, nextRecord.Value);
 //        }
 
 //        // Called when the inner two (key and starttime) iterators are empty to roll to the next endTimestamp
@@ -120,7 +120,7 @@
 //        {
 //            while (endTimeIterator.hasNext())
 //            {
-//                Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>> nextEndTimeEntry = endTimeIterator.next();
+//                Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>> nextEndTimeEntry = endTimeIterator.MoveNext();
 //                currentEndTime = nextEndTimeEntry.Key;
 //                keyIterator = nextEndTimeEntry.Value.subMap(keyFrom, true, keyTo, true).iterator();
 
@@ -138,7 +138,7 @@
 //        {
 //            while (keyIterator.hasNext())
 //            {
-//                Entry<Bytes, ConcurrentNavigableMap<long, byte[]>> nextKeyEntry = keyIterator.next();
+//                Entry<Bytes, ConcurrentNavigableMap<long, byte[]>> nextKeyEntry = keyIterator.MoveNext();
 //                currentKey = nextKeyEntry.Key;
 
 //                if (latestSessionStartTime == long.MaxValue)

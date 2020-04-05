@@ -22,7 +22,7 @@
 //        {
 //            if (!cachingEnabled)
 //            {
-//                context.forward(key, new Change<>(newValue, sendOldValues ? oldValue : null), To.all().withTimestamp(key.window.end()));
+//                context.Forward(key, new Change<>(newValue, sendOldValues ? oldValue : null), To.All().WithTimestamp(key.window.end()));
 //            }
 //        }
 //    }

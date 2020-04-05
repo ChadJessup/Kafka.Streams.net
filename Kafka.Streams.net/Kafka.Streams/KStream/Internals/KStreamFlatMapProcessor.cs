@@ -8,7 +8,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             //foreach (var newPair in mapper.apply(key, value))
             //{
-            //    context.forward(newPair.key, newPair.value);
+            //    context.Forward(newPair.key, newPair.value);
             //}
         }
     }

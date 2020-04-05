@@ -38,7 +38,7 @@
 
 //        public override KeyValuePair<Windowed<K>, V> next()
 //        {
-//            KeyValuePair<Windowed<Bytes>, byte[]> next = iter.next();
+//            KeyValuePair<Windowed<Bytes>, byte[]> next = iter.MoveNext();
 //            return KeyValuePair.pair(windowedKey(next.key), serdes.valueFrom(next.value));
 //        }
 

@@ -6,41 +6,41 @@ namespace Kafka.Streams.State.RocksDbState
 {
     public interface IRocksDbAccessor
     {
-        void put(byte[] key, byte[] value);
+        void Put(byte[] key, byte[] value);
 
-        void prepareBatch(List<KeyValuePair<Bytes, byte[]>> entries,
+        void PrepareBatch(List<KeyValuePair<Bytes, byte[]>> entries,
                           WriteBatch batch);
 
-        byte[] get(byte[] key);
+        byte[] Get(byte[] key);
 
         /**
          * In contrast to get(), we don't migrate the key to new CF.
          * <p>
          * Use for get() within delete() -- no need to migrate, as it's deleted anyway
          */
-        byte[] getOnly(byte[] key);
+        byte[] GetOnly(byte[] key);
 
-        IKeyValueIterator<Bytes, byte[]> range(
+        IKeyValueIterator<Bytes, byte[]> Range(
             Bytes from,
             Bytes to);
 
-        IKeyValueIterator<Bytes, byte[]> all();
+        IKeyValueIterator<Bytes, byte[]> All();
 
-        long approximateNumEntries();
+        long ApproximateNumEntries();
 
-        void flush();
+        void Flush();
 
-        void prepareBatchForRestore(
+        void PrepareBatchForRestore(
             List<KeyValuePair<byte[], byte[]>> records,
             WriteBatch batch);
 
-        void addToBatch(
+        void AddToBatch(
             byte[] key,
             byte[] value,
             WriteBatch batch);
 
-        void close();
+        void Close();
 
-        void toggleDbForBulkLoading();
+        void ToggleDbForBulkLoading();
     }
 }

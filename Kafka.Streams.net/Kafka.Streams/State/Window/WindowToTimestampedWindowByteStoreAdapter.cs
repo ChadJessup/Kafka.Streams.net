@@ -23,20 +23,20 @@
 //        public override void put(Bytes key,
 //                        byte[] valueWithTimestamp)
 //        {
-//            store.Add(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
+//            store.Add(key, valueWithTimestamp == null ? null : RawValue(valueWithTimestamp));
 //        }
 
 //        public override void put(Bytes key,
 //                        byte[] valueWithTimestamp,
 //                        long windowStartTimestamp)
 //        {
-//            store.Add(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp), windowStartTimestamp);
+//            store.Add(key, valueWithTimestamp == null ? null : RawValue(valueWithTimestamp), windowStartTimestamp);
 //        }
 
 //        public override byte[] fetch(Bytes key,
 //                            long time)
 //        {
-//            return convertToTimestampedFormat(store.fetch(key, time));
+//            return convertToTimestampedFormat(store.Fetch(key, time));
 //        }
 
 
@@ -45,14 +45,14 @@
 //                                                 long timeFrom,
 //                                                 long timeTo)
 //        {
-//            return new WindowToTimestampedWindowIteratorAdapter(store.fetch(key, timeFrom, timeTo));
+//            return new WindowToTimestampedWindowIteratorAdapter(store.Fetch(key, timeFrom, timeTo));
 //        }
 
 //        public override IWindowStoreIterator<byte[]> fetch(Bytes key,
 //                                                 DateTime from,
 //                                                 DateTime to)
 //        {
-//            return new WindowToTimestampedWindowIteratorAdapter(store.fetch(key, from, to));
+//            return new WindowToTimestampedWindowIteratorAdapter(store.Fetch(key, from, to));
 //        }
 
 
@@ -62,7 +62,7 @@
 //                                                               long timeFrom,
 //                                                               long timeTo)
 //        {
-//            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.fetch(from, to, timeFrom, timeTo));
+//            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.Fetch(from, to, timeFrom, timeTo));
 //        }
 
 //        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
@@ -70,7 +70,7 @@
 //                                                               DateTime fromTime,
 //                                                               DateTime toTime)
 //        {
-//            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.fetch(from, to, fromTime, toTime));
+//            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.Fetch(from, to, fromTime, toTime));
 //        }
 
 //        public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
@@ -97,7 +97,7 @@
 //        public override void init(IProcessorContext<K, V> context,
 //                         IStateStore root)
 //        {
-//            store.init(context, root);
+//            store.Init(context, root);
 //        }
 
 //        public override void flush()

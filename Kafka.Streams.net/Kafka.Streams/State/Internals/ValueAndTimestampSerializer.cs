@@ -66,14 +66,14 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            var rawValue = valueSerializer.Serialize(data, new SerializationContext(MessageComponentType.Value, topic));
+            var RawValue = valueSerializer.Serialize(data, new SerializationContext(MessageComponentType.Value, topic));
             var rawTimestamp = timestampSerializer.Serialize(timestamp, new SerializationContext(MessageComponentType.Value, topic));
 
             return new ByteBuffer()
-                .allocate(rawTimestamp.Length + rawValue.Length)
+                .Allocate(rawTimestamp.Length + RawValue.Length)
                 .Add(rawTimestamp)
-                .Add(rawValue)
-                .array();
+                .Add(RawValue)
+                .Array();
         }
 
         public void Close()

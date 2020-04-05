@@ -17,27 +17,27 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Init(IProcessorContext context)
         {
-            valueTransformer.init(new ForwardingDisabledProcessorContext<K, V>(context));
+            valueTransformer.Init(new ForwardingDisabledProcessorContext<K, V>(context));
 
             this.context = context;
         }
 
         public void Process(K key, V value)
         {
-            IEnumerable<VR> transformedValues = valueTransformer.transform(key, value);
+            IEnumerable<VR> transformedValues = valueTransformer.Transform(key, value);
 
             if (transformedValues != null)
             {
                 foreach (VR transformedValue in transformedValues)
                 {
-                    context.forward(key, transformedValue);
+                    context.Forward(key, transformedValue);
                 }
             }
         }
 
         public void Close()
         {
-            valueTransformer.close();
+            valueTransformer.Close();
         }
 
         public void Process<K1, V1>(K1 key, V1 value)

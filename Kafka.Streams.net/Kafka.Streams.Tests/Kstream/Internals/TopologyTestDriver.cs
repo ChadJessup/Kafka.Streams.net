@@ -40,9 +40,9 @@ namespace Kafka.Streams.Tests
     * Best of all, the class works without a real Kafka broker, so the tests execute very quickly with very little overhead.
     * <p>
     * Using the {@code TopologyTestDriver} in tests is easy: simply instantiate the driver and provide a {@link Topology}
-    * (cf. {@link StreamsBuilder#build()}) and {@link StreamsConfig configs}, {@link #createInputTopic(string, Serializer, Serializer) create}
+    * (cf. {@link StreamsBuilder#build()}) and {@link StreamsConfig configs}, {@link #createInputTopic(string, Serializer, Serializer) Create}
     * and use a {@link TestInputTopic} to supply an input records to the topology,
-    * and then {@link #createOutputTopic(string, Deserializer, Deserializer) create} and use a {@link TestOutputTopic} to read and
+    * and then {@link #createOutputTopic(string, Deserializer, Deserializer) Create} and use a {@link TestOutputTopic} to read and
     * verify any output records by the topology.
     * <p>
     * Although the driver doesn't use a real Kafka broker, it does simulate Kafka {@link Consumer consumers} and
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Tests
     * form regular Java objects to raw bytes.
     *
     * <h2>Driver setup</h2>
-    * In order to create a {@code TopologyTestDriver} instance, you need a {@link Topology} and a {@link StreamsConfig config}.
+    * In order to Create a {@code TopologyTestDriver} instance, you need a {@link Topology} and a {@link StreamsConfig config}.
     * The configuration needs to be representative of what you'd supply to the real topology, so that means including
     * several key properties (cf. {@link StreamsConfig}).
     * For example, the following code fragment creates a configuration that specifies a local Kafka broker list (which is
@@ -61,8 +61,8 @@ namespace Kafka.Streams.Tests
     * StreamsConfig props = new StreamsConfig();
     * props.setProperty(StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG, "localhost:9091");
     * props.setProperty(StreamsConfigPropertyNames.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, CustomTimestampExtractor.getName());
-    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
     * Topology topology = ...
     * TopologyTestDriver driver = new TopologyTestDriver(topology, props);
     * }</pre>
@@ -75,10 +75,10 @@ namespace Kafka.Streams.Tests
     *
     * <pre>{@code
     * TestInputTopic<string, string> inputTopic = driver.createInputTopic("input-topic", stringSerdeSerializer, stringSerializer);
-    * inputTopic.pipeInput("key1", "value1");
+    * inputTopic.PipeInput("key1", "value1");
     * }</pre>
     *
-    * When {@link TestInputTopic#pipeInput(object, object)} is called, the driver passes the input message through to the appropriate source that
+    * When {@link TestInputTopic#PipeInput(object, object)} is called, the driver passes the input message through to the appropriate source that
     * consumes the named topic, and will invoke the processor(s) downstream of the source.
     * If your topology's processors forward messages to sinks, your test can then consume these output messages to verify
     * they match the expected outcome.
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Tests
     * instance for use on both the keys and values. Your test logic can then verify whether these output records are
     * correct.
     * <p>
-    * Note, that calling {@code pipeInput()} will also trigger {@link PunctuationType#STREAM_TIME event-time} base
+    * Note, that calling {@code PipeInput()} will also trigger {@link PunctuationType#STREAM_TIME event-time} base
     * {@link ProcessorContext#schedule(Duration, PunctuationType, Punctuator) punctuation} callbacks.
     * However, you won't trigger {@link PunctuationType#WALL_CLOCK_TIME wall-clock} type punctuations that you must
     * trigger manually via {@link #advanceWallClockTime(long)}.
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Tests
         private readonly IClock mockWallClockTime;
         private InternalTopologyBuilder internalTopologyBuilder;
 
-        private static readonly int PARTITION_ID = 0;
+        private const int PARTITION_ID = 0;
         private static readonly TaskId TASK_ID = new TaskId(0, PARTITION_ID);
         private StreamTask? task;
         private GlobalStateUpdateTask? globalStateTask;
@@ -194,7 +194,7 @@ namespace Kafka.Streams.Tests
 
             //new LogContext("topology-test-driver ");
             mockWallClockTime = new MockTime(initialWallClockTimeMs.GetValueOrDefault());
-            eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(streamsConfig.getString(StreamsConfigPropertyNames.ProcessingGuarantee));
+            eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfigPropertyNames.ProcessingGuarantee));
 
             //StreamsMetricsImpl streamsMetrics = setupMetrics(streamsConfig);
             SetupTopology(builder, streamsConfig);
@@ -219,7 +219,7 @@ namespace Kafka.Streams.Tests
 
         private void LogIfTaskIdleEnabled(StreamsConfig streamsConfig)
         {
-            var taskIdleTime = streamsConfig.getLong(StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG);
+            var taskIdleTime = streamsConfig.GetLong(StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG);
             if (taskIdleTime > 0)
             {
                 //  this.logger.Information("Detected {} config in use with TopologyTestDriver (set to {}ms)." +
@@ -249,7 +249,7 @@ namespace Kafka.Streams.Tests
         //         streamsConfig.getString(StreamsConfigPropertyNames.BUILT_IN_METRICS_VERSION_CONFIG)
         //     );
         //     streamsMetrics.setRocksDBMetricsRecordingTrigger(new RocksDBMetricsRecordingTrigger());
-        //     TaskMetrics.droppedRecordsSensorOrSkippedRecordsSensor(threadId, TASK_ID.toString(), streamsMetrics);
+        //     TaskMetrics.droppedRecordsSensorOrSkippedRecordsSensor(threadId, TASK_ID.ToString(), streamsMetrics);
         // 
         //     return streamsMetrics;
         // }
@@ -270,8 +270,8 @@ namespace Kafka.Streams.Tests
                 offsetsByTopicOrPatternPartition.Add(tp, 0);
             }
 
-            var createStateDirectory = processorTopology.hasPersistentLocalStore() ||
-                (globalTopology != null && globalTopology.hasPersistentGlobalStore());
+            var createStateDirectory = processorTopology.HasPersistentLocalStore() ||
+                (globalTopology != null && globalTopology.HasPersistentGlobalStore());
 
             stateDirectory = new StateDirectory(
                 null,
@@ -316,8 +316,8 @@ namespace Kafka.Streams.Tests
                     globalStateManager,
                     new LogAndContinueExceptionHandler(Mock.Of<ILogger<LogAndContinueExceptionHandler>>()));
 
-                globalStateTask.initialize();
-                globalProcessorContext.setRecordContext(new ProcessorRecordContext(
+                globalStateTask.Initialize();
+                globalProcessorContext.SetRecordContext(new ProcessorRecordContext(
                     0L,
                     -1L,
                     -1,
@@ -364,7 +364,7 @@ namespace Kafka.Streams.Tests
                     stateDirectory,
                     processorTopology.StoreToChangelogTopic,
                     storeChangelogReader,
-                    StreamsConfigPropertyNames.ExactlyOnce.Equals(streamsConfig.getString(StreamsConfigPropertyNames.ProcessingGuarantee)));
+                    StreamsConfigPropertyNames.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfigPropertyNames.ProcessingGuarantee)));
 
                 var recordCollector = new RecordCollectorImpl(
                     TASK_ID.ToString(),
@@ -387,10 +387,10 @@ namespace Kafka.Streams.Tests
                     Mock.Of<IProducerSupplier>(),
                     recordCollector);
 
-                task.initializeIfNeeded();
+                task.InitializeIfNeeded();
                 task.CompleteRestoration();
 
-                ((IInternalProcessorContext)task.context).setRecordContext(new ProcessorRecordContext(
+                ((IInternalProcessorContext)task.context).SetRecordContext(new ProcessorRecordContext(
                     0L,
                     -1L,
                     -1,
@@ -506,7 +506,7 @@ namespace Kafka.Streams.Tests
                     // Process the record ...
                     //  task.process(mockWallClockTime.GetCurrentInstant().ToUnixTimeMilliseconds());
                     task.MaybePunctuateStreamTime();
-                    task.commit();
+                    task.Commit();
                     CaptureOutputsAndReEnqueueInternalResults();
                 }
 
@@ -539,12 +539,12 @@ namespace Kafka.Streams.Tests
             //    key,
             //    value,
             //    headers));
-            globalStateTask.flushState();
+            globalStateTask.FlushState();
         }
 
         private void ValidateSourceTopicNameRegexPattern(string inputRecordTopic)
         {
-            foreach (var sourceTopicName in internalTopologyBuilder.getSourceTopicNames())
+            foreach (var sourceTopicName in internalTopologyBuilder.GetSourceTopicNames())
             {
                 if (!sourceTopicName.Equals(inputRecordTopic) && new Regex(sourceTopicName, RegexOptions.Compiled).Matches(inputRecordTopic).Any())
                 {
@@ -557,7 +557,7 @@ namespace Kafka.Streams.Tests
 
         private TopicPartition GetInputTopicOrPatternPartition(string topicName)
         {
-            if (internalTopologyBuilder.getSourceTopicNames().Any())
+            if (internalTopologyBuilder.GetSourceTopicNames().Any())
             {
                 ValidateSourceTopicNameRegexPattern(topicName);
             }
@@ -585,13 +585,13 @@ namespace Kafka.Streams.Tests
             // 
             // foreach (Message<byte[], byte[]> record in output)
             // {
-            //     outputRecordsByTopic.computeIfAbsent(record.Topic, k => new LinkedList<>()).add(record);
+            //     outputRecordsByTopic.computeIfAbsent(record.Topic, k => new LinkedList<>()).Add(record);
             // 
             //     // Forward back into the topology if the produced record is to an internal or a source topic ...
             //     string outputTopicName = record.Topic;
             // 
             //     TopicPartition inputTopicOrPatternPartition = getInputTopicOrPatternPartition(outputTopicName);
-            //     TopicPartition globalInputTopicPartition = globalPartitionsByInputTopic.get(outputTopicName);
+            //     TopicPartition globalInputTopicPartition = globalPartitionsByInputTopic.Get(outputTopicName);
             // 
             //     if (inputTopicOrPatternPartition != null)
             //     {
@@ -660,14 +660,14 @@ namespace Kafka.Streams.Tests
             if (task != null)
             {
                 task.MaybePunctuateSystemTime();
-                task.commit();
+                task.Commit();
             }
             CompleteAllProcessableWork();
         }
 
         /**
          * Read the next record from the given topic.
-         * These records were output by the topology during the previous calls to {@link #pipeInput(ConsumeResult)}.
+         * These records were output by the topology during the previous calls to {@link #PipeInput(ConsumeResult)}.
          *
          * @deprecated Since 2.4 use methods of {@link TestOutputTopic} instead
          *
@@ -677,7 +677,7 @@ namespace Kafka.Streams.Tests
         // [Obsolete]
         // public Message<byte[], byte[]> readOutput(string topic)
         // {
-        //     Queue<Message<byte[], byte[]>> outputRecords = outputRecordsByTopic.get(topic);
+        //     Queue<Message<byte[], byte[]>> outputRecords = outputRecordsByTopic.Get(topic);
         //     if (outputRecords == null)
         //     {
         //         return null;
@@ -687,7 +687,7 @@ namespace Kafka.Streams.Tests
 
         /**
          * Read the next record from the given topic.
-         * These records were output by the topology during the previous calls to {@link #pipeInput(ConsumeResult)}.
+         * These records were output by the topology during the previous calls to {@link #PipeInput(ConsumeResult)}.
          *
          * @deprecated Since 2.4 use methods of {@link TestOutputTopic} instead
          *
@@ -868,7 +868,7 @@ namespace Kafka.Streams.Tests
          * The stores can be a "regular" or global stores.
          * <p>
          * This is often useful in test cases to pre-populate the store before the test case instructs the topology to
-         * {@link #pipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
+         * {@link #PipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
          * <p>
          * Note, that {@code IStateStore} might be {@code null} if a store is added but not connected to any processor.
          * <p>
@@ -903,12 +903,12 @@ namespace Kafka.Streams.Tests
          * For built-in stores, the corresponding typed methods like {@link #getKeyValueStore(string)} should be used.
          * <p>
          * This is often useful in test cases to pre-populate the store before the test case instructs the topology to
-         * {@link #pipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
+         * {@link #PipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
          *
          * @param name the name of the store
          * @return the state store, or {@code null} if no store has been registered with the given name
-         * @throws ArgumentException if the store is a built-in store like {@link KeyValueStore},
-         * {@link WindowStore}, or {@link SessionStore}
+         * @throws ArgumentException if the store is a built-in store like {@link IKeyValueStore},
+         * {@link IWindowStore}, or {@link ISessionStore}
          *
          * @see #getAllStateStores()
          * @see #getKeyValueStore(string)
@@ -984,7 +984,7 @@ namespace Kafka.Streams.Tests
         }
 
         /**
-         * Get the {@link KeyValueStore} or {@link ITimestampedKeyValueStore} with the given name.
+         * Get the {@link IKeyValueStore} or {@link ITimestampedKeyValueStore} with the given name.
          * The store can be a "regular" or global store.
          * <p>
          * If the registered store is a {@link ITimestampedKeyValueStore} this method will return a value-only query
@@ -992,10 +992,10 @@ namespace Kafka.Streams.Tests
          * {@link #getTimestampedKeyValueStore(string)} for full store access instead.</strong>
          * <p>
          * This is often useful in test cases to pre-populate the store before the test case instructs the topology to
-         * {@link #pipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
+         * {@link #PipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
          *
          * @param name the name of the store
-         * @return the key value store, or {@code null} if no {@link KeyValueStore} or {@link ITimestampedKeyValueStore}
+         * @return the key value store, or {@code null} if no {@link IKeyValueStore} or {@link ITimestampedKeyValueStore}
          * has been registered with the given name
          * @see #getAllStateStores()
          * @see #getStateStore(string)
@@ -1023,7 +1023,7 @@ namespace Kafka.Streams.Tests
          * The store can be a "regular" or global store.
          * <p>
          * This is often useful in test cases to pre-populate the store before the test case instructs the topology to
-         * {@link #pipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
+         * {@link #PipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
          *
          * @param name the name of the store
          * @return the key value store, or {@code null} if no {@link ITimestampedKeyValueStore} has been registered with the given name
@@ -1043,18 +1043,18 @@ namespace Kafka.Streams.Tests
         }
 
         /**
-         * Get the {@link WindowStore} or {@link TimestampedWindowStore} with the given name.
+         * Get the {@link IWindowStore} or {@link ITimestampedWindowStore} with the given name.
          * The store can be a "regular" or global store.
          * <p>
-         * If the registered store is a {@link TimestampedWindowStore} this method will return a value-only query
+         * If the registered store is a {@link ITimestampedWindowStore} this method will return a value-only query
          * interface. <strong>It is highly recommended to update the code for this case to avoid bugs and to use
          * {@link #getTimestampedWindowStore(string)} for full store access instead.</strong>
          * <p>
          * This is often useful in test cases to pre-populate the store before the test case instructs the topology to
-         * {@link #pipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
+         * {@link #PipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
          *
          * @param name the name of the store
-         * @return the key value store, or {@code null} if no {@link WindowStore} or {@link TimestampedWindowStore}
+         * @return the key value store, or {@code null} if no {@link IWindowStore} or {@link ITimestampedWindowStore}
          * has been registered with the given name
          * @see #getAllStateStores()
          * @see #getStateStore(string)
@@ -1068,7 +1068,7 @@ namespace Kafka.Streams.Tests
             IStateStore store = GetStateStore(name, false);
             if (store is ITimestampedWindowStore)
             {
-                //       this.logger.info("Method #getTimestampedWindowStore() should be used to access a TimestampedWindowStore.");
+                //       this.logger.info("Method #getTimestampedWindowStore() should be used to access a ITimestampedWindowStore.");
                 //       return new WindowStoreFacade<>((ITimestampedWindowStore<K, V>)store);
             }
             return store is IWindowStore
@@ -1077,14 +1077,14 @@ namespace Kafka.Streams.Tests
         }
 
         /**
-         * Get the {@link TimestampedWindowStore} with the given name.
+         * Get the {@link ITimestampedWindowStore} with the given name.
          * The store can be a "regular" or global store.
          * <p>
          * This is often useful in test cases to pre-populate the store before the test case instructs the topology to
-         * {@link #pipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
+         * {@link #PipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
          *
          * @param name the name of the store
-         * @return the key value store, or {@code null} if no {@link TimestampedWindowStore} has been registered with the given name
+         * @return the key value store, or {@code null} if no {@link ITimestampedWindowStore} has been registered with the given name
          * @see #getAllStateStores()
          * @see #getStateStore(string)
          * @see #getKeyValueStore(string)
@@ -1101,14 +1101,14 @@ namespace Kafka.Streams.Tests
         }
 
         /**
-         * Get the {@link SessionStore} with the given name.
+         * Get the {@link ISessionStore} with the given name.
          * The store can be a "regular" or global store.
          * <p>
          * This is often useful in test cases to pre-populate the store before the test case instructs the topology to
-         * {@link #pipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
+         * {@link #PipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
          *
          * @param name the name of the store
-         * @return the key value store, or {@code null} if no {@link SessionStore} has been registered with the given name
+         * @return the key value store, or {@code null} if no {@link ISessionStore} has been registered with the given name
          * @see #getAllStateStores()
          * @see #getStateStore(string)
          * @see #getKeyValueStore(string)
@@ -1138,7 +1138,7 @@ namespace Kafka.Streams.Tests
             {
                 try
                 {
-                    globalStateTask.close();
+                    globalStateTask.Close();
                 }
                 catch (IOException e)
                 {
@@ -1158,7 +1158,7 @@ namespace Kafka.Streams.Tests
                 //  producer.close();
             }
 
-            stateDirectory.clean();
+            stateDirectory.Clean();
         }
 
         internal class MockTime : IClock
@@ -1177,12 +1177,12 @@ namespace Kafka.Streams.Tests
 
             //public long milliseconds()
             //{
-            //    return timeMs.get();
+            //    return timeMs.Get();
             //}
 
             //public long nanoseconds()
             //{
-            //    return highResTimeNs.get();
+            //    return highResTimeNs.Get();
             //}
 
             //public long hiResClockMs()

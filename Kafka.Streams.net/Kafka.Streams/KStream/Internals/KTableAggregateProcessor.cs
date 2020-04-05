@@ -52,7 +52,7 @@
 //            }
 
 //            // update the store with the new value
-//            store.Add(key, ValueAndTimestamp.make(newAgg, newTimestamp));
+//            store.Add(key, ValueAndTimestamp.Make(newAgg, newTimestamp));
 //            tupleForwarder.maybeForward(key, newAgg, sendOldValues ? oldAgg : null, newTimestamp);
 //        }
 

@@ -14,6 +14,6 @@ namespace Kafka.Streams.KStream
      */
     public interface IValueTransformerWithKeySupplier<K, V, VR>
     {
-        IValueTransformerWithKey<K, V, VR> get();
+        IValueTransformerWithKey<K, V, VR> Get();
     }
 }

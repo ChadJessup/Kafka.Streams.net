@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
             //    {
             //        // use forward with child here and then break the loop
             //        // so that no record is going to be piped to multiple streams
-            //        context.forward(key, value, To.child(childNodes[i]));
+            //        context.Forward(key, value, To.Child(childNodes[i]));
             //        break;
             //    }
             //}

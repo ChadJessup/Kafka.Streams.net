@@ -13,7 +13,7 @@ namespace Kafka.Common.Utils
     public class Bytes2 : IComparable<Bytes2>
     {
         public static LexicographicByteArrayComparator BYTES_LEXICO_COMPARATOR = new LexicographicByteArrayComparator();
-        public static byte[] EMPTY = new byte[0];
+        public static byte[] EMPTY = Array.Empty<byte>();
 
         private static readonly char[] HEX_CHARS_UPPER = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 

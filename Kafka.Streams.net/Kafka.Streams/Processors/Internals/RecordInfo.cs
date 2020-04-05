@@ -7,12 +7,12 @@ namespace Kafka.Streams.Processors.Internals
     {
         public RecordQueue queue { get; set; }
 
-        public ProcessorNode node()
+        public ProcessorNode Node()
         {
             return null;// queue.source();
         }
 
-        public TopicPartition partition()
+        public TopicPartition Partition()
         {
             return queue.partition;
         }

@@ -73,7 +73,7 @@ namespace Kafka.Streams.KStream
         }
 
 
-        public void close()
+        public void Close()
         {
             if (inner != null)
             {
@@ -82,7 +82,7 @@ namespace Kafka.Streams.KStream
         }
 
         // Only for testing
-        public IDeserializer<T> innerDeserializer()
+        public IDeserializer<T> InnerDeserializer()
         {
             return inner;
         }

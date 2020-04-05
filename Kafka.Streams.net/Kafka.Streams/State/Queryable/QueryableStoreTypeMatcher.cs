@@ -13,7 +13,7 @@ namespace Kafka.Streams.State.Queryable
             this.matchTo = matchTo;
         }
 
-        public bool accepts(IStateStore stateStore)
+        public bool Accepts(IStateStore stateStore)
         {
             foreach (var matchToClass in matchTo)
             {
@@ -26,6 +26,6 @@ namespace Kafka.Streams.State.Queryable
             return true;
         }
 
-        public abstract T create(IStateStoreProvider storeProvider, string storeName);
+        public abstract T Create(IStateStoreProvider storeProvider, string storeName);
     }
 }

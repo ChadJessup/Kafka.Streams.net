@@ -29,7 +29,7 @@
 //        public void init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
 //        {
 //            this.context = context;
-//            base.init(context, root);
+//            base.Init(context, root);
 //        }
 
 //        public void put(Bytes key, byte[] value)
@@ -46,7 +46,7 @@
 
 //        public byte[] fetch(Bytes key, long timestamp)
 //        {
-//            byte[] bytesValue = wrapped.get(WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum));
+//            byte[] bytesValue = wrapped.Get(WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum));
 //            if (bytesValue == null)
 //            {
 //                return null;
@@ -57,7 +57,7 @@
 
 //        public IWindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
 //        {
-//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.fetch(key, timeFrom, timeTo);
+//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.Fetch(key, timeFrom, timeTo);
 //            return new WindowStoreIteratorWrapper(bytesIterator, windowSize).valuesIterator();
 //        }
 
@@ -67,7 +67,7 @@
 //                                                               long timeFrom,
 //                                                               long timeTo)
 //        {
-//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.fetch(from, to, timeFrom, timeTo);
+//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.Fetch(from, to, timeFrom, timeTo);
 //            return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
 //        }
 

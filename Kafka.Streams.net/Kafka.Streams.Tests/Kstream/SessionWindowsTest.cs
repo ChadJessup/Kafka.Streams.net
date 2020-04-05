@@ -11,70 +11,70 @@ namespace Kafka.Streams.Tests
         public void ShouldSetWindowGap()
         {
             var anyGap = TimeSpan.FromMilliseconds(42L);
-            Assert.Equal(anyGap, SessionWindows.with(Duration.FromTimeSpan(anyGap)).inactivityGap());
+            Assert.Equal(anyGap, SessionWindows.With(Duration.FromTimeSpan(anyGap)).InactivityGap());
         }
 
         [Fact]
         public void ShouldSetWindowGraceTime()
         {
             var anyRetentionTime = TimeSpan.FromMilliseconds(42L);
-            Assert.Equal(anyRetentionTime, SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromTimeSpan(anyRetentionTime)).gracePeriod());
+            Assert.Equal(anyRetentionTime, SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromTimeSpan(anyRetentionTime)).GracePeriod());
         }
 
         [Fact]
         public void GracePeriodShouldEnforceBoundaries()
         {
-            SessionWindows.with(Duration.FromMilliseconds(3L)).grace(Duration.FromMilliseconds(0));
-            Assert.Throws<ArgumentException>(() => SessionWindows.with(Duration.FromMilliseconds(3L)).grace(Duration.FromMilliseconds(-1L)));
+            SessionWindows.With(Duration.FromMilliseconds(3L)).Grace(Duration.FromMilliseconds(0));
+            Assert.Throws<ArgumentException>(() => SessionWindows.With(Duration.FromMilliseconds(3L)).Grace(Duration.FromMilliseconds(-1L)));
         }
 
         [Fact]
         public void WindowSizeMustNotBeNegative()
         {
-            Assert.Throws<ArgumentException>(() => SessionWindows.with(Duration.FromMilliseconds(-1)));
+            Assert.Throws<ArgumentException>(() => SessionWindows.With(Duration.FromMilliseconds(-1)));
         }
 
         [Fact]
         public void WindowSizeMustNotBeZero()
         {
-            Assert.Throws<ArgumentException>(() => SessionWindows.with(Duration.FromMilliseconds(0)));
+            Assert.Throws<ArgumentException>(() => SessionWindows.With(Duration.FromMilliseconds(0)));
         }
 
         // specifically testing deprecated apis
         [Fact]
         public void RetentionTimeShouldBeGapIfGapIsLargerThanDefaultRetentionTime()
         {
-            var windowGap = 2 * SessionWindows.with(Duration.FromMilliseconds(1)).maintain();
+            var windowGap = 2 * SessionWindows.With(Duration.FromMilliseconds(1)).Maintain();
 
-            Assert.Equal(windowGap, SessionWindows.with(Duration.FromTimeSpan(windowGap)).maintain());
+            Assert.Equal(windowGap, SessionWindows.With(Duration.FromTimeSpan(windowGap)).Maintain());
         }
 
 
         [Fact]
         public void RetentionTimeMustNotBeNegative()
         {
-            var windowSpec = SessionWindows.with(Duration.FromMilliseconds(42));
+            var windowSpec = SessionWindows.With(Duration.FromMilliseconds(42));
 
-            Assert.Throws<ArgumentException>(() => windowSpec.until(TimeSpan.FromMilliseconds(41)));
+            Assert.Throws<ArgumentException>(() => windowSpec.Until(TimeSpan.FromMilliseconds(41)));
         }
 
         [Fact]
         public void EqualsAndHashcodeShouldBeValidForPositiveCases()
         {
-            EqualityCheck.VerifyEquality(SessionWindows.with(Duration.FromMilliseconds(1)), SessionWindows.with(Duration.FromMilliseconds(1)));
-            EqualityCheck.VerifyEquality(SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(6)), SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(6)));
-            EqualityCheck.VerifyEquality(SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(7)), SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(7)));
-            EqualityCheck.VerifyEquality(SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(6)).grace(Duration.FromMilliseconds(7)), SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(6)).grace(Duration.FromMilliseconds(7)));
+            EqualityCheck.VerifyEquality(SessionWindows.With(Duration.FromMilliseconds(1)), SessionWindows.With(Duration.FromMilliseconds(1)));
+            EqualityCheck.VerifyEquality(SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(6)), SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(6)));
+            EqualityCheck.VerifyEquality(SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(7)), SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(7)));
+            EqualityCheck.VerifyEquality(SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(6)).Grace(Duration.FromMilliseconds(7)), SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(6)).Grace(Duration.FromMilliseconds(7)));
         }
 
         [Fact]
         public void EqualsAndHshcodeShouldBeValidForNegativeCases()
         {
-            EqualityCheck.VerifyInEquality(SessionWindows.with(Duration.FromMilliseconds(9)), SessionWindows.with(Duration.FromMilliseconds(1)));
-            EqualityCheck.VerifyInEquality(SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(9)), SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(6)));
-            EqualityCheck.VerifyInEquality(SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(9)), SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(7)));
-            EqualityCheck.VerifyInEquality(SessionWindows.with(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(6)).grace(Duration.FromMilliseconds(7)), SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(6)));
-            EqualityCheck.VerifyInEquality(SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(0)).grace(Duration.FromMilliseconds(7)), SessionWindows.with(Duration.FromMilliseconds(1)).grace(Duration.FromMilliseconds(6)));
+            EqualityCheck.VerifyInEquality(SessionWindows.With(Duration.FromMilliseconds(9)), SessionWindows.With(Duration.FromMilliseconds(1)));
+            EqualityCheck.VerifyInEquality(SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(9)), SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(6)));
+            EqualityCheck.VerifyInEquality(SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(9)), SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(7)));
+            EqualityCheck.VerifyInEquality(SessionWindows.With(Duration.FromMilliseconds(2)).Grace(Duration.FromMilliseconds(6)).Grace(Duration.FromMilliseconds(7)), SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(6)));
+            EqualityCheck.VerifyInEquality(SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(0)).Grace(Duration.FromMilliseconds(7)), SessionWindows.With(Duration.FromMilliseconds(1)).Grace(Duration.FromMilliseconds(6)));
         }
     }
 }

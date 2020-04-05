@@ -73,7 +73,7 @@ namespace Kafka.Streams.Nodes
 
         public void Punctuate(long timestamp, IPunctuator punctuator)
         {
-            punctuator.punctuate(timestamp);
+            punctuator.Punctuate(timestamp);
         }
 
         /**
@@ -143,7 +143,7 @@ namespace Kafka.Streams.Nodes
             base.AddChild(child);
         }
 
-        public void close()
+        public void Close()
         {
             try
             {

@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Tests
 //        string propFileName = args[0];
 //        string additionalConfigs = args[1];
 
-//        Properties streamsProperties = Utils.loadProps(propFileName);
+//        StreamsConfig streamsProperties = Utils.loadProps(propFileName);
 //        string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 
 //        if (kafka == null) {
@@ -76,21 +76,21 @@ namespace Kafka.Streams.Tests.Tests
 //        string inMemoryStoreName = "in-memory-store";
 //        string persistentMemoryStoreName = "persistent-memory-store";
 
-//        KeyValueBytesStoreSupplier inMemoryStoreSupplier = Stores.inMemoryKeyValueStore(inMemoryStoreName);
-//        KeyValueBytesStoreSupplier persistentStoreSupplier = Stores.persistentKeyValueStore(persistentMemoryStoreName);
+//        IKeyValueBytesStoreSupplier inMemoryStoreSupplier = Stores.InMemoryKeyValueStore(inMemoryStoreName);
+//        IKeyValueBytesStoreSupplier persistentStoreSupplier = Stores.PersistentKeyValueStore(persistentMemoryStoreName);
 
 //        Serde<string> stringSerde = Serdes.String();
 //        ValueMapper<long, string> countMapper = object::toString;
 
-//        KStream<string, string> inputStream = builder.stream(sourceTopic, Consumed.with(stringSerde, stringSerde));
+//        KStream<string, string> inputStream = builder.Stream(sourceTopic, Consumed.With(stringSerde, stringSerde));
 
 //        inputStream.groupByKey().count(Materialized.As(inMemoryStoreSupplier)).toStream().mapValues(countMapper)
-//            .to(sinkTopic1, Produced.with(stringSerde, stringSerde));
+//            .To(sinkTopic1, Produced.With(stringSerde, stringSerde));
 
 //        inputStream.groupByKey().count(Materialized.As(persistentStoreSupplier)).toStream().mapValues(countMapper)
-//            .to(sinkTopic2, Produced.with(stringSerde, stringSerde));
+//            .To(sinkTopic2, Produced.With(stringSerde, stringSerde));
 
-//        KafkaStreams streams = new KafkaStreams(builder.build(), streamsProperties);
+//        KafkaStreams streams = new KafkaStreams(builder.Build(), streamsProperties);
 
 //        streams.setUncaughtExceptionHandler((t, e) => {
 //            System.Console.Error.println("FATAL: An unexpected exception " + e);
@@ -123,7 +123,7 @@ namespace Kafka.Streams.Tests.Tests
 //        streams.close(Duration.ofSeconds(10));
 //    }
 
-//    private static bool confirmCorrectConfigs(Properties properties) {
+//    private static bool confirmCorrectConfigs(StreamsConfig properties) {
 //        return properties.containsKey(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG)) &&
 //               properties.containsKey(StreamsConfig.producerPrefix(ProducerConfig.RETRIES_CONFIG)) &&
 //               properties.containsKey(StreamsConfig.producerPrefix(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG)) &&

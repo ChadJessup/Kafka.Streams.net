@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Mocks
             return registered;
         }
 
-        public Dictionary<TopicPartition, long> RestoredOffsets()
+        public Dictionary<TopicPartition, long> GetRestoredOffsets()
         {
             return _restoredOffsets;
         }

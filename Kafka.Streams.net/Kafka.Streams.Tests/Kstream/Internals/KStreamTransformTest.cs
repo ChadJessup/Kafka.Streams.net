@@ -29,7 +29,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //        context.schedule(
 //            //            Duration.FromMilliseconds(1),
 //            //            PunctuationType.WALL_CLOCK_TIME,
-//            //            timestamp => context.forward(-1, (int)timestamp)
+//            //            timestamp => context.Forward(-1, (int)timestamp)
 //            //        );
 //            //    }
 
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            int[] expectedKeys = { 1, 10, 100, 1000 };
 
 //            MockProcessorSupplier<int, int> processor = new MockProcessorSupplier<>();
-//            IKStream<int, int> stream = builder.Stream(TOPIC_NAME, Consumed.with(Serdes.Int(), Serdes.Int()));
+//            IKStream<int, int> stream = builder.Stream(TOPIC_NAME, Consumed.With(Serdes.Int(), Serdes.Int()));
 //            stream.transform(transformerSupplier).process(processor);
 
 
@@ -63,7 +63,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(expectedKey, expectedKey * 10, expectedKey / 2L));
+//                    driver.PipeInput(recordFactory.Create(expectedKey, expectedKey * 10, expectedKey / 2L));
 //                }
 
 //                driver.advanceWallClockTime(2);
@@ -81,7 +81,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                Assert.Equal(expected.Length, processor.theCapturedProcessor().processed.Count);
 //                for (var i = 0; i < expected.Length; i++)
 //                {
-//                    Assert.Equal(expected[i], processor.theCapturedProcessor().processed.get(i));
+//                    Assert.Equal(expected[i], processor.theCapturedProcessor().processed.Get(i));
 //                }
 //            }
 //        }
@@ -102,7 +102,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                //context.schedule(
 //                //Duration.FromMilliseconds(1),
 //                //PunctuationType.WALL_CLOCK_TIME,
-//                //timestamp => context.forward(-1, (int)timestamp));
+//                //timestamp => context.Forward(-1, (int)timestamp));
 //                //}
 
 
@@ -119,13 +119,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                int[] expectedKeys = { 1, 10, 100, 1000 };
 
 //            MockProcessorSupplier<int, int> processor = new MockProcessorSupplier<>();
-//            IKStream<int, int> stream = builder.Stream(TOPIC_NAME, Consumed.with(Serdes.Int(), Serdes.Int()));
+//            IKStream<int, int> stream = builder.Stream(TOPIC_NAME, Consumed.With(Serdes.Int(), Serdes.Int()));
 //            stream.transform(transformerSupplier).process(processor);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props, 0L);
 //            foreach (int expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(TOPIC_NAME, expectedKey, expectedKey * 10, 0L));
+//                driver.PipeInput(recordFactory.Create(TOPIC_NAME, expectedKey, expectedKey * 10, 0L));
 
 //                // This tick yields the "-1:2" result
 //                driver.advanceWallClockTime(2);
@@ -144,7 +144,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            for (var i = 0; i < expected.Length; i++)
 //            {
-//                Assert.Equal(expected[i], processor.theCapturedProcessor().processed.get(i));
+//                Assert.Equal(expected[i], processor.theCapturedProcessor().processed.Get(i));
 //            }
 //        }
 //    }

@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests
         public void TestWindowedKeySerializerNoArgConstructors()
         {
             sessionWindowedKeySerializer.Configure(props, true);
-            var inner = sessionWindowedKeySerializer.innerSerializer();
+            var inner = sessionWindowedKeySerializer.InnerSerializer();
 
             Assert.NotNull(inner);
             Assert.IsAssignableFrom<ISerializer<string>>(inner);
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Tests
         public void TestWindowedValueSerializerNoArgConstructors()
         {
             sessionWindowedValueSerializer.Configure(props, false);
-            var inner = sessionWindowedValueSerializer.innerSerializer();
+            var inner = sessionWindowedValueSerializer.InnerSerializer();
 
             Assert.NotNull(inner);
             Assert.IsAssignableFrom<ISerializer<byte[]>>(inner);

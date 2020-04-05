@@ -45,18 +45,18 @@ namespace Kafka.Streams.Tasks
         }
 
 
-        public override bool initializeStateStores()
+        public override bool InitializeStateStores()
         {
             logger.LogTrace("Initializing state stores");
-            registerStateStores();
-            checkpointedOffsets = StateMgr.checkpointed();
-            processorContext.initialize();
+            RegisterStateStores();
+            checkpointedOffsets = StateMgr.Checkpointed();
+            processorContext.Initialize();
             TaskInitialized = true;
             return true;
         }
 
 
-        public override void initializeTopology()
+        public override void InitializeTopology()
         {
             //no-op
         }
@@ -66,7 +66,7 @@ namespace Kafka.Streams.Tasks
          * - update offset limits
          * </pre>
          */
-        public override void resume()
+        public override void Resume()
         {
             logger.LogDebug("Resuming");
             UpdateOffsetLimits();
@@ -80,10 +80,10 @@ namespace Kafka.Streams.Tasks
          * </pre>
          */
 
-        public override void commit()
+        public override void Commit()
         {
             logger.LogTrace("Committing");
-            flushAndCheckpointState();
+            FlushAndCheckpointState();
             // reinitialize offset limits
             UpdateOffsetLimits();
 
@@ -96,16 +96,16 @@ namespace Kafka.Streams.Tasks
          * - checkpoint store
          * </pre>
          */
-        public override void suspend()
+        public override void Suspend()
         {
             logger.LogDebug("Suspending");
-            flushAndCheckpointState();
+            FlushAndCheckpointState();
         }
 
-        private void flushAndCheckpointState()
+        private void FlushAndCheckpointState()
         {
             StateMgr.Flush();
-            StateMgr.checkpoint(new Dictionary<TopicPartition, long>());
+            StateMgr.Checkpoint(new Dictionary<TopicPartition, long>());
         }
 
         /**
@@ -116,7 +116,7 @@ namespace Kafka.Streams.Tasks
          * @param isZombie ignored by {@code StandbyTask} as it can never be a zombie
          */
 
-        public override void close(bool clean, bool isZombie)
+        public override void Close(bool clean, bool isZombie)
         {
             if (!TaskInitialized)
             {
@@ -130,22 +130,22 @@ namespace Kafka.Streams.Tasks
 
                 if (clean)
                 {
-                    commit();
+                    Commit();
                 }
             }
             finally
             {
 
-                closeStateManager(true);
+                CloseStateManager(true);
             }
 
             TaskClosed = true;
         }
 
 
-        public override void closeSuspended(bool clean, bool isZombie, RuntimeException e)
+        public override void CloseSuspended(bool clean, bool isZombie, RuntimeException e)
         {
-            close(clean, isZombie);
+            Close(clean, isZombie);
         }
 
         /**
@@ -153,11 +153,11 @@ namespace Kafka.Streams.Tasks
          *
          * @return a list of records not consumed
          */
-        public List<ConsumeResult<byte[], byte[]>> update(TopicPartition partition,
+        public List<ConsumeResult<byte[], byte[]>> Update(TopicPartition partition,
                                                            List<ConsumeResult<byte[], byte[]>> records)
         {
             logger.LogTrace("Updating standby replicas of its state store for partition [{}]", partition);
-            var limit = StateMgr.offsetLimit(partition);
+            var limit = StateMgr.OffsetLimit(partition);
 
             var lastOffset = -1L;
             var restoreRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Tasks
                 }
             }
 
-            StateMgr.updateStandbyStates(partition, restoreRecords, lastOffset);
+            StateMgr.UpdateStandbyStates(partition, restoreRecords, lastOffset);
 
             if (restoreRecords.Any())
             {
@@ -187,7 +187,7 @@ namespace Kafka.Streams.Tasks
             return remainingRecords;
         }
 
-        public override void initializeIfNeeded()
+        public override void InitializeIfNeeded()
         {
             throw new System.NotImplementedException();
         }

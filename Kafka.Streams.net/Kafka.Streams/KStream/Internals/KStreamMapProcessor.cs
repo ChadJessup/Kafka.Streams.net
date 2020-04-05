@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals
         public override void Process(K key, V value)
         {
             // KeyValuePair<K1, V1> newPair = mapper.apply(key, value);
-            // context.forward(newPair.key, newPair.value);
+            // context.Forward(newPair.key, newPair.value);
         }
     }
 }

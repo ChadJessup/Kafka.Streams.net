@@ -39,7 +39,7 @@ namespace Kafka.Streams.Tasks
         public StateDirectory stateDirectory { get; }
         public IChangelogReader storeChangelogReader { get; }
 
-        public List<T> createTasks(
+        public List<T> CreateTasks(
             ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             string threadTaskId,
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tasks
             {
                 TaskId taskId = newTaskAndPartitions.Key;
                 HashSet<TopicPartition> partitions = newTaskAndPartitions.Value;
-                T task = createTask(loggerFactory, consumer, taskId, threadTaskId, partitions);
+                T task = CreateTask(loggerFactory, consumer, taskId, threadTaskId, partitions);
                 if (task != null)
                 {
                     logger.LogTrace($"Created task {{{taskId}}} with assigned partitions {{{partitions}}}");
@@ -63,13 +63,13 @@ namespace Kafka.Streams.Tasks
             return createdTasks;
         }
 
-        public abstract T createTask(
+        public abstract T CreateTask(
             ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             TaskId id,
             string threadClientId,
             HashSet<TopicPartition> partitions);
 
-        public virtual void close() { }
+        public virtual void Close() { }
     }
 }

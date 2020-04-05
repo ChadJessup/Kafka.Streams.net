@@ -33,12 +33,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             // storeBuilder.withLoggingDisabled();
 
-            topologyBuilder.addGlobalStore<K, V, T>(
+            topologyBuilder.AddGlobalStore<K, V, T>(
                 storeBuilder,
                 sourceName,
                 consumed.timestampExtractor,
-                consumed.keyDeserializer(),
-                consumed.valueDeserializer(),
+                consumed.KeyDeserializer(),
+                consumed.ValueDeserializer(),
                 topic,
                 processorName,
                 stateUpdateSupplier);

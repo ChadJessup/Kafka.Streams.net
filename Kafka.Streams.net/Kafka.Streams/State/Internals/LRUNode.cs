@@ -16,16 +16,16 @@
             this.entry = entry;
         }
 
-        public long size()
+        public long Size()
         {
-            return key.get().Length +
+            return key.Get().Length +
                 8 + // entry
                 8 + // previous
                 8 + // next
-                entry.size();
+                entry.Size();
         }
 
-        public void update(LRUCacheEntry entry)
+        public void Update(LRUCacheEntry entry)
         {
             this.entry = entry;
         }

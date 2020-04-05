@@ -52,7 +52,7 @@
 
 //            //    public KeyValuePair<Bytes, LRUCacheEntry> next()
 //            //    {
-//            //        return cachedPair(cacheIterator.next());
+//            //        return cachedPair(cacheIterator.MoveNext());
 //            //    }
 
 //            //    private KeyValuePair<Bytes, LRUCacheEntry> cachedPair(KeyValuePair<Bytes, LRUCacheEntry> next)

@@ -30,7 +30,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws TaskIdFormatException if the taskIdStr is not a valid {@link TaskId}
          */
-        public static TaskId parse(string taskIdStr)
+        public static TaskId Parse(string taskIdStr)
         {
             var index = taskIdStr.IndexOf('_');
 
@@ -55,7 +55,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws IOException if cannot write to output stream
          */
-        public void writeTo(Stream outputStream)
+        public void WriteTo(Stream outputStream)
         {
             var bw = new BinaryWriter(outputStream, Encoding.UTF8, leaveOpen: true);
 
@@ -66,22 +66,22 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws IOException if cannot read from input stream
          */
-        public static TaskId readFrom(Stream input)
+        public static TaskId ReadFrom(Stream input)
         {
             var bw = new BinaryReader(input, Encoding.UTF8, leaveOpen: true);
 
             return new TaskId(bw.ReadInt32(), bw.ReadInt32());
         }
 
-        public void writeTo(ByteBuffer buf)
+        public void WriteTo(ByteBuffer buf)
         {
-            buf.putInt(topicGroupId);
-            buf.putInt(partition);
+            buf.PutInt(topicGroupId);
+            buf.PutInt(partition);
         }
 
-        public static TaskId readFrom(ByteBuffer buf)
+        public static TaskId ReadFrom(ByteBuffer buf)
         {
-            return new TaskId(buf.getInt(), buf.getInt());
+            return new TaskId(buf.GetInt(), buf.GetInt());
         }
 
 

@@ -21,6 +21,6 @@ namespace Kafka.Streams.Processors.Internals
 {
     public interface IRecordBatchingStateRestoreCallback : IBatchingStateRestoreCallback
     {
-        void restoreBatch(List<ConsumeResult<byte[], byte[]>> records);
+        void RestoreBatch(List<ConsumeResult<byte[], byte[]>> records);
     }
 }

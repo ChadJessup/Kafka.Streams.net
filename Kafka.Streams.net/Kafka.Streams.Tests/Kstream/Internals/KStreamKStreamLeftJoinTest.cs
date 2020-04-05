@@ -14,7 +14,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        private string topic1 = "topic1";
 //        private string topic2 = "topic2";
-//        private Consumed<int, string> consumed = Consumed.with(Serdes.Int(), Serdes.String());
+//        private Consumed<int, string> consumed = Consumed.With(Serdes.Int(), Serdes.String());
 //        private ConsumerRecordFactory<int, string> recordFactory =
 //            new ConsumerRecordFactory<>(Serdes.Int(), Serdes.String(), 0L);
 //        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
@@ -44,7 +44,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
 
 //            Assert.Equal(1, copartitionGroups.Count);
-//            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), copartitionGroups.iterator().next());
+//            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), copartitionGroups.iterator().MoveNext());
 
 //            try
 //            {
@@ -58,7 +58,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // -=> w2 = {}
 //                for (var i = 0; i < 2; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKeys[i], "A" + expectedKeys[i]));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "A" + expectedKeys[i]));
 //                }
 //                processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+null", 0),
 //                    new KeyValueTimestamp<>(1, "A1+null", 0));
@@ -69,7 +69,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // -=> w2 = { 0:a0, 1:a1 }
 //                for (var i = 0; i < 2; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic2, expectedKeys[i], "a" + expectedKeys[i]));
+//                    driver.PipeInput(recordFactory.Create(topic2, expectedKeys[i], "a" + expectedKeys[i]));
 //                }
 //                processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+a0", 0),
 //                    new KeyValueTimestamp<>(1, "A1+a1", 0));
@@ -80,7 +80,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // -=> w2 = { 0:a0, 1:a1 }
 //                for (var i = 0; i < 3; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKeys[i], "B" + expectedKeys[i]));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "B" + expectedKeys[i]));
 //                }
 //                processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "B0+a0", 0),
 //                    new KeyValueTimestamp<>(1, "B1+a1", 0),
@@ -92,7 +92,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // -=> w2 = { 0:a0, 1:a1, 0:b0, 1:b1, 2:b2, 3:b3 }
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic2, expectedKey, "b" + expectedKey));
+//                    driver.PipeInput(recordFactory.Create(topic2, expectedKey, "b" + expectedKey));
 //                }
 //                processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+b0", 0),
 //                    new KeyValueTimestamp<>(0, "B0+b0", 0),
@@ -106,7 +106,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // -=> w2 = { 0:a0, 1:a1, 0:b0, 1:b1, 2:b2, 3:b3 }
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKey, "C" + expectedKey));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "C" + expectedKey));
 //                }
 //                processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "C0+a0", 0),
 //                    new KeyValueTimestamp<>(0, "C0+b0", 0),
@@ -141,7 +141,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
 
 //            Assert.Equal(1, copartitionGroups.Count);
-//            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), copartitionGroups.iterator().next());
+//            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), copartitionGroups.iterator().MoveNext());
 
 //            try
 //            {
@@ -156,7 +156,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // -=> w2 = {}
 //                for (var i = 0; i < 2; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKeys[i], "A" + expectedKeys[i], time));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "A" + expectedKeys[i], time));
 //                }
 //                processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+null", 0),
 //                    new KeyValueTimestamp<>(1, "A1+null", 0));
@@ -167,7 +167,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // -=> w2 = { 0:a0 (ts: 0), 1:a1 (ts: 0), 2:a2 (ts: 0), 3:a3 (ts: 0) }
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic2, expectedKey, "a" + expectedKey, time));
+//                    driver.PipeInput(recordFactory.Create(topic2, expectedKey, "a" + expectedKey, time));
 //                }
 //                processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+a0", 0),
 //                    new KeyValueTimestamp<>(1, "A1+a1", 0));
@@ -191,7 +191,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time = 1000L;
 //            for (var i = 0; i < expectedKeys.Length; i++)
 //            {
-//                driver.pipeInput(recordFactory.create(topic2, expectedKeys[i], "b" + expectedKeys[i], time + i));
+//                driver.PipeInput(recordFactory.Create(topic2, expectedKeys[i], "b" + expectedKeys[i], time + i));
 //            }
 //            processor.checkAndClearProcessResult(EMPTY);
 
@@ -206,7 +206,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time = 1000L + 100L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "B" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "B" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "B0+b0", 1100),
 //                new KeyValueTimestamp<>(1, "B1+b1", 1100),
@@ -225,7 +225,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time += 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "C" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "C" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "C0+null", 1101),
 //                new KeyValueTimestamp<>(1, "C1+b1", 1101),
@@ -246,7 +246,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time += 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "D" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "D" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "D0+null", 1102),
 //                new KeyValueTimestamp<>(1, "D1+null", 1102),
@@ -269,7 +269,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time += 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "E" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "E" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "E0+null", 1103),
 //                new KeyValueTimestamp<>(1, "E1+null", 1103),
@@ -294,7 +294,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time += 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "F" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "F" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "F0+null", 1104),
 //                new KeyValueTimestamp<>(1, "F1+null", 1104),
@@ -328,7 +328,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time = 1000L - 100L - 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "G" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "G" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "G0+null", 899),
 //                new KeyValueTimestamp<>(1, "G1+null", 899), new KeyValueTimestamp<>(2, "G2+null", 899),
@@ -356,7 +356,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time += 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "H" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "H" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "H0+b0", 1000),
 //                new KeyValueTimestamp<>(1, "H1+null", 900), new KeyValueTimestamp<>(2, "H2+null", 900),
@@ -386,7 +386,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time += 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "I" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "I" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "I0+b0", 1000),
 //                new KeyValueTimestamp<>(1, "I1+b1", 1001), new KeyValueTimestamp<>(2, "I2+null", 901),
@@ -418,7 +418,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time += 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "J" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "J" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "J0+b0", 1000),
 //                new KeyValueTimestamp<>(1, "J1+b1", 1001), new KeyValueTimestamp<>(2, "J2+b2", 1002),
@@ -452,7 +452,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            time += 1L;
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "K" + expectedKey, time));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "K" + expectedKey, time));
 //            }
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "K0+b0", 1000),
 //                new KeyValueTimestamp<>(1, "K1+b1", 1001), new KeyValueTimestamp<>(2, "K2+b2", 1002),

@@ -147,8 +147,8 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
             var cacheSizePerThread = totalCacheSize / (Threads.Length + (globalTaskTopology == null ? 0 : 1));
 
-            var createStateDirectory = taskTopology.hasPersistentLocalStore()
-                || (globalTaskTopology != null && globalTaskTopology.hasPersistentGlobalStore());
+            var createStateDirectory = taskTopology.HasPersistentLocalStore()
+                || (globalTaskTopology != null && globalTaskTopology.HasPersistentGlobalStore());
 
             GlobalStreamThreadState? globalThreadState = null;
 
@@ -428,8 +428,8 @@ namespace Kafka.Streams.Threads.KafkaStreams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool Close(TimeSpan timeout)
         {
-            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(timeout, "timeout");
-            var validatedTimeout = ApiUtils.validateMillisecondDuration(timeout, msgPrefix);
+            var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(timeout, "timeout");
+            var validatedTimeout = ApiUtils.ValidateMillisecondDuration(timeout, msgPrefix);
 
             if (validatedTimeout.TotalMilliseconds > int.MaxValue)
             {
@@ -737,7 +737,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
          *
          * @return the set of {@link ThreadMetadata}.
          */
-        public List<ThreadMetadata> localThreadsMetadata()
+        public List<ThreadMetadata> LocalThreadsMetadata()
         {
             this.ValidateIsRunning();
 

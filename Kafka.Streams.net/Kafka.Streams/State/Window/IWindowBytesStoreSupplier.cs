@@ -22,7 +22,7 @@ namespace Kafka.Streams.State.Window
          * @deprecated since 2.1. Use {@link WindowBytesStoreSupplier#segmentIntervalMs()} instead.
          */
         [Obsolete]
-        int segments();
+        int Segments();
 
         /**
          * The size of the segments (in milliseconds) the store has.
@@ -31,14 +31,14 @@ namespace Kafka.Streams.State.Window
          *
          * @return size of the segments (in milliseconds)
          */
-        long segmentIntervalMs();
+        long SegmentIntervalMs();
 
         /**
          * The size of the windows (in milliseconds) any store created from this supplier is creating.
          *
          * @return window size
          */
-        long windowSize();
+        long WindowSize();
 
         /**
          * Whether or not this store is retaining duplicate keys.
@@ -47,13 +47,13 @@ namespace Kafka.Streams.State.Window
          *
          * @return true if duplicates should be retained
          */
-        bool retainDuplicates();
+        bool RetainDuplicates();
 
         /**
          * The time period for which the {@link WindowStore} will retain historic data.
          *
          * @return retentionPeriod
          */
-        long retentionPeriod();
+        long RetentionPeriod();
     }
 }

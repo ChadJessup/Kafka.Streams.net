@@ -37,7 +37,7 @@
 //                throw new NoSuchElementException();
 //            }
 
-//            KeyValuePair<Windowed<Bytes>, byte[]> result = new KeyValuePair<>(getWindowedKey(), base.next.value);
+//            KeyValuePair<Windowed<Bytes>, byte[]> result = KeyValuePair.Create(getWindowedKey(), base.next.value);
 //            base.next = null;
 //            return result;
 //        }

@@ -5,7 +5,7 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback, IRecordBatchingStateRestoreCallback
     {
-        public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
+        public void RestoreBatch(List<ConsumeResult<byte[], byte[]>> records)
         {
         }
     }

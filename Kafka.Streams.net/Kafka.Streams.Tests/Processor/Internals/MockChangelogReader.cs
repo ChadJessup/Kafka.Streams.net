@@ -10,7 +10,10 @@ namespace Kafka.Streams.Tests.Internal
     public class MockChangelogReader : IChangelogReader
     {
         private readonly List<TopicPartition> registered = new List<TopicPartition>();
-        public Dictionary<TopicPartition, long> RestoredOffsets { get; private set; } = new Dictionary<TopicPartition, long>();
+        private Dictionary<TopicPartition, long> restoredOffsets = new Dictionary<TopicPartition, long>();
+
+        public Dictionary<TopicPartition, long> GetRestoredOffsets()
+            => this.restoredOffsets;
 
         public void Register(StateRestorer restorer)
         {
@@ -25,10 +28,9 @@ namespace Kafka.Streams.Tests.Internal
 
         void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
         {
-            this.RestoredOffsets = restoredOffsets;
+            this.restoredOffsets = restoredOffsets;
         }
-
-
+        
         public void Reset()
         {
             registered.Clear();

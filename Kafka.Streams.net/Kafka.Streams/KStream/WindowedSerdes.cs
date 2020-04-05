@@ -25,29 +25,29 @@ namespace Kafka.Streams.KStream
         /**
          * Construct a {@code TimeWindowedSerde} object for the specified inner class type.
          */
-        static public ISerde<Windowed<T>> timeWindowedSerdeFrom<T>()
+        static public ISerde<Windowed<T>> TimeWindowedSerdeFrom<T>()
         {
-            return null;// new TimeWindowedSerde<T>(Serdes.serdeFrom<T>());
+            return null;// new TimeWindowedSerde<T>(Serdes.SerdeFrom<T>());
         }
 
         /**
          * Construct a {@code TimeWindowedSerde} object to deserialize changelog topic
          * for the specified inner class type and window size.
          */
-        public static Serde<Windowed<T>> timeWindowedSerdeFrom<T>(long windowSize)
+        public static Serde<Windowed<T>> TimeWindowedSerdeFrom<T>(long windowSize)
         {
-            return null;// new TimeWindowedSerde<T>(Serdes.serdeFrom<T>(), windowSize);
+            return null;// new TimeWindowedSerde<T>(Serdes.SerdeFrom<T>(), windowSize);
         }
 
         /**
          * Construct a {@code SessionWindowedSerde} object for the specified inner class type.
          */
-        public static Serde<Windowed<T>> sessionWindowedSerdeFrom<T>()
+        public static Serde<Windowed<T>> SessionWindowedSerdeFrom<T>()
         {
-            return null; // new SessionWindowedSerde<T>(Serdes.serdeFrom<T>());
+            return null; // new SessionWindowedSerde<T>(Serdes.SerdeFrom<T>());
         }
 
-        public static void verifyInnerSerializerNotNull<T>(ISerializer<T> inner, ISerializer<T> wrapper)
+        public static void VerifyInnerSerializerNotNull<T>(ISerializer<T> inner, ISerializer<T> wrapper)
         {
             if (inner == null)
             {
@@ -58,7 +58,7 @@ namespace Kafka.Streams.KStream
         }
 
         // TODO: share internals here, shouldn't be public
-        public static void verifyInnerDeserializerNotNull<T>(
+        public static void VerifyInnerDeserializerNotNull<T>(
             IDeserializer<T>? inner,
             IDeserializer<T> wrapper)
         {

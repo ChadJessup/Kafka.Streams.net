@@ -289,7 +289,7 @@ namespace Kafka.Streams.Processors.Internals
             IStreamPartitioner<K, V> partitioner,
             SourceTopicsInfo sourceTopicsInfo)
         {
-            var partition = partitioner.partition(
+            var partition = partitioner.Partition(
                 sourceTopicsInfo.topicWithMostPartitions,
                 key,
                 default,

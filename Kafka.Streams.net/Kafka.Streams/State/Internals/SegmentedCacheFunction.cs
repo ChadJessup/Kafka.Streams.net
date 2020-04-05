@@ -21,7 +21,7 @@
 
 //        public override Bytes key(Bytes cacheKey)
 //        {
-//            return Bytes.wrap(bytesFromCacheKey(cacheKey));
+//            return Bytes.Wrap(bytesFromCacheKey(cacheKey));
 //        }
 
 //        public override Bytes cacheKey(Bytes key)
@@ -32,9 +32,9 @@
 //        Bytes cacheKey(Bytes key, long segmentId)
 //        {
 //            byte[] keyBytes = key[];
-//            ByteBuffer buf = sizeof(ByteBuffer.allocate(SEGMENT_ID) + keyBytes.Length);
+//            ByteBuffer buf = sizeof(new ByteBuffer().Allocate(SEGMENT_ID) + keyBytes.Length);
 //            buf.putLong(segmentId).Add(keyBytes);
-//            return Bytes.wrap(buf.array());
+//            return Bytes.Wrap(buf.array());
 //        }
 
 //        static byte[] bytesFromCacheKey(Bytes cacheKey)
@@ -62,7 +62,7 @@
 //        int compareSegmentedKeys(Bytes cacheKey, Bytes storeKey)
 //        {
 //            long storeSegmentId = segmentId(storeKey);
-//            long cacheSegmentId = ByteBuffer.wrap(cacheKey()).getLong();
+//            long cacheSegmentId = ByteBuffer.Wrap(cacheKey()).getLong();
 
 //            int segmentCompare = long.compare(cacheSegmentId, storeSegmentId);
 //            if (segmentCompare == 0)

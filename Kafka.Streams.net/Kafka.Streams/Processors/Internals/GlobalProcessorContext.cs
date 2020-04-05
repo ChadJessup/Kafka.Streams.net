@@ -50,7 +50,7 @@ namespace Kafka.Streams.Processors.Internals
                 new TaskId(-1, -1), config, stateMgr, cache);
         }
 
-        public IStateStore getStateStore(string name)
+        public IStateStore GetStateStore(string name)
         {
             var store = stateManager.GetGlobalStore(name);
 
@@ -78,7 +78,7 @@ namespace Kafka.Streams.Processors.Internals
             return store;
         }
 
-        public override void forward<K, V>(K key, V value)
+        public override void Forward<K, V>(K key, V value)
         {
             var previousNode = currentNode;
             try
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Processors.Internals
          * No-op. This should only be called on GlobalStateStore#flush and there should be no child nodes
          */
 
-        public override void forward<K, V>(K key, V value, To to)
+        public override void Forward<K, V>(K key, V value, To to)
         {
             if (currentNode.children.Any())
             {
@@ -107,7 +107,7 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        public override void commit()
+        public override void Commit()
         {
             //no-op
         }
@@ -116,7 +116,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
         [Obsolete]
-        public ICancellable schedule(long interval, PunctuationType type, IPunctuator callback)
+        public ICancellable Schedule(long interval, PunctuationType type, IPunctuator callback)
         {
             throw new InvalidOperationException("this should not happen: schedule() not supported in global processor context.");
         }
@@ -124,7 +124,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public ICancellable schedule(Duration interval, PunctuationType type, IPunctuator callback)
+        public ICancellable Schedule(Duration interval, PunctuationType type, IPunctuator callback)
         {
             throw new InvalidOperationException("this should not happen: schedule() not supported in global processor context.");
         }

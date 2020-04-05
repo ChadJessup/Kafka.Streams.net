@@ -29,10 +29,10 @@ namespace Kafka.Streams.State.TimeStamped
 
         public override ITimestampedWindowStore<K, V> Build()
         {
-            IWindowStore<Bytes, byte[]> store = storeSupplier.get();
+            IWindowStore<Bytes, byte[]> store = storeSupplier.Get();
             if (!(store is ITimestampedBytesStore))
             {
-                if (store.persistent())
+                if (store.Persistent())
                 {
                     store = null;// new WindowToTimestampedWindowByteStoreAdapter(store);
                 }
@@ -52,9 +52,9 @@ namespace Kafka.Streams.State.TimeStamped
             //    valueSerde);
         }
 
-        public long retentionPeriod()
+        public long RetentionPeriod()
         {
-            return storeSupplier.retentionPeriod();
+            return storeSupplier.RetentionPeriod();
         }
     }
 }

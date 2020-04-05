@@ -14,25 +14,25 @@ namespace Kafka.Streams.Tasks
          * @throws IllegalStateException If store gets registered after initialized is already finished
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        bool initializeStateStores();
-        void initializeIfNeeded();
-        void initializeTopology();
+        bool InitializeStateStores();
+        void InitializeIfNeeded();
+        void InitializeTopology();
         bool commitNeeded { get; }
 
-        void commit();
+        void Commit();
 
-        void suspend();
+        void Suspend();
 
-        void resume();
+        void Resume();
 
-        void closeSuspended(
+        void CloseSuspended(
             bool clean,
             bool isZombie,
             RuntimeException e);
 
-        void close(bool clean, bool isZombie);
+        void Close(bool clean, bool isZombie);
 
-        IStateStore getStore(string name);
+        IStateStore GetStore(string name);
 
         string applicationId { get; }
 
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tasks
         IEnumerable<TopicPartition> changelogPartitions { get; }
         IProcessorContext context { get; }
         void CompleteRestoration();
-        bool hasStateStores();
+        bool HasStateStores();
 
         string ToString(string indent);
     }

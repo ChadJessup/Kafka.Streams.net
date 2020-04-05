@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private RecordTimeDefintion() { }
 
 
-        public static RecordTimeDefintion<K> instance()
+        public static RecordTimeDefintion<K> Instance()
         {
             return RecordTimeDefintion<K>.INSTANCE;
         }

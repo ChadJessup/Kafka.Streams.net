@@ -59,7 +59,7 @@ namespace Kafka.Streams.Nodes
 
         public override void Process(K key, V value)
         {
-            IRecordCollector collector = ((ISupplier)context).recordCollector();
+            IRecordCollector collector = ((ISupplier)context).RecordCollector();
 
             var timestamp = context.timestamp;
             if (timestamp < 0)
@@ -71,7 +71,7 @@ namespace Kafka.Streams.Nodes
 
             try
             {
-                collector.send(topic, key, value, context.headers, timestamp, keySerializer, valSerializer, partitioner);
+                collector.Send(topic, key, value, context.headers, timestamp, keySerializer, valSerializer, partitioner);
             }
             catch (Exception e)
             {

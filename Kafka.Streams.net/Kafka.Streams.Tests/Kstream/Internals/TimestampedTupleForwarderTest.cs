@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        private void setFlushListener(bool sendOldValues)
 //        {
-//            WrappedStateStore<StateStore, object, ValueAndTimestamp<object>> store = mock(WrappedStateStore));
+//            WrappedStateStore<IStateStore, object, ValueAndTimestamp<object>> store = mock(WrappedStateStore));
 //            TimestampedCacheFlushListener<object, object> flushListener = mock(TimestampedCacheFlushListener));
 
 //            expect(store.setFlushListener(flushListener, sendOldValues)).andReturn(false);
@@ -70,19 +70,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        private void shouldForwardRecordsIfWrappedStateStoreDoesNotCache(bool sendOldValues)
 //        {
-//            WrappedStateStore<StateStore, string, string> store = mock(WrappedStateStore));
+//            WrappedStateStore<IStateStore, string, string> store = mock(WrappedStateStore));
 //            IProcessorContext context = mock(IProcessorContext));
 
 //            expect(store.setFlushListener(null, sendOldValues)).andReturn(false);
 //            if (sendOldValues)
 //            {
-//                context.forward("key1", new Change<>("newValue1", "oldValue1"));
-//                context.forward("key2", new Change<>("newValue2", "oldValue2"), To.All().WithTimestamp(42L));
+//                context.Forward("key1", new Change<>("newValue1", "oldValue1"));
+//                context.Forward("key2", new Change<>("newValue2", "oldValue2"), To.All().WithTimestamp(42L));
 //            }
 //            else
 //            {
-//                context.forward("key1", new Change<>("newValue1", null));
-//                context.forward("key2", new Change<>("newValue2", null), To.All().WithTimestamp(42L));
+//                context.Forward("key1", new Change<>("newValue1", null));
+//                context.Forward("key2", new Change<>("newValue2", null), To.All().WithTimestamp(42L));
 //            }
 //            expect.AstCall();
 //            replay(store, context);

@@ -104,7 +104,7 @@ namespace Kafka.Streams.KStream
          * @deprecated Use {@link #of(Duration)} instead.
          */
         [Obsolete]
-        public static JoinWindows of(TimeSpan timeDifferenceMs)
+        public static JoinWindows Of(TimeSpan timeDifferenceMs)
         {
             // This is a static factory method, so we initialize grace and retention to the defaults.
             return new JoinWindows(
@@ -126,7 +126,7 @@ namespace Kafka.Streams.KStream
          * @deprecated Use {@link #before(Duration)} instead.
          */
         [Obsolete]
-        public JoinWindows before(TimeSpan timeDifferenceMs)
+        public JoinWindows Before(TimeSpan timeDifferenceMs)
         {
             return new JoinWindows(timeDifferenceMs, afterMs, graceMs, maintainDurationMs, segments);
         }
@@ -143,7 +143,7 @@ namespace Kafka.Streams.KStream
          * @deprecated Use {@link #after(Duration)} instead
          */
         [Obsolete]
-        public JoinWindows after(TimeSpan timeDifferenceMs)
+        public JoinWindows After(TimeSpan timeDifferenceMs)
         {
             return new JoinWindows(
                 beforeMs,
@@ -179,10 +179,10 @@ namespace Kafka.Streams.KStream
          * @return this updated builder
          * @throws ArgumentException if the {@code afterWindowEnd} is negative of can't be represented as {@code long milliseconds}
          */
-        public JoinWindows grace(TimeSpan afterWindowEnd)
+        public JoinWindows Grace(TimeSpan afterWindowEnd)
         {
-            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
-            var afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
+            var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
+            var afterWindowEndMs = ApiUtils.ValidateMillisecondDuration(afterWindowEnd, msgPrefix);
 
             if (afterWindowEndMs < TimeSpan.Zero)
             {
@@ -215,7 +215,7 @@ namespace Kafka.Streams.KStream
          * @deprecated since 2.1. Use {@link JoinWindows#grace(Duration)} instead.
          */
         [Obsolete]
-        public new JoinWindows until(TimeSpan durationMs)
+        public new JoinWindows Until(TimeSpan durationMs)
         {
             if (durationMs < Size())
             {

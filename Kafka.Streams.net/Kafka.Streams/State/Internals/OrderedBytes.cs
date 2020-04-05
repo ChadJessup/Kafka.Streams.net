@@ -5,16 +5,16 @@ namespace Kafka.Streams.State.Internals
     public class OrderedBytes
     {
 
-        private static readonly int MIN_KEY_LENGTH = 1;
+        private const int MIN_KEY_LENGTH = 1;
         /**
          * Returns the upper byte range for a key with a given fixed size maximum suffix
          *
          * Assumes the minimum key.Length is one byte
          */
-        public static Bytes upperRange(Bytes key, byte[] maxSuffix)
+        public static Bytes UpperRange(Bytes key, byte[] maxSuffix)
         {
-            var bytes = key.get();
-            ByteBuffer rangeEnd = new ByteBuffer().allocate(bytes.Length + maxSuffix.Length);
+            var bytes = key.Get();
+            ByteBuffer rangeEnd = new ByteBuffer().Allocate(bytes.Length + maxSuffix.Length);
 
             var i = 0;
             while (i < bytes.Length && (
@@ -29,14 +29,14 @@ namespace Kafka.Streams.State.Internals
             //rangeEnd.flip();
 
             //byte[] res = new byte[rangeEnd.remaining()];
-            //ByteBuffer.wrap(res).Add(rangeEnd);
-            return null; // Bytes.wrap(res);
+            //ByteBuffer.Wrap(res).Add(rangeEnd);
+            return null; // Bytes.Wrap(res);
         }
 
-        public static Bytes lowerRange(Bytes key, byte[] minSuffix)
+        public static Bytes LowerRange(Bytes key, byte[] minSuffix)
         {
-            var bytes = key.get();
-            ByteBuffer rangeStart = new ByteBuffer().allocate(bytes.Length + minSuffix.Length);
+            var bytes = key.Get();
+            ByteBuffer rangeStart = new ByteBuffer().Allocate(bytes.Length + minSuffix.Length);
             // any key in the range would start at least with the given prefix to be
             // in the range, and have at least SUFFIX_SIZE number of trailing zero bytes.
 
@@ -44,10 +44,10 @@ namespace Kafka.Streams.State.Internals
             // to keyFrom to create a key that will match the range, yet that would precede
             // KeySchema.toBinaryKey(keyFrom, from, 0) in byte order
             return null;
-            //Bytes.wrap(
+            //Bytes.Wrap(
             //    rangeStart
-            //        .add(bytes)
-            //        .add(minSuffix)
+            //        .Add(bytes)
+            //        .Add(minSuffix)
             //        .array()
             //);
         }

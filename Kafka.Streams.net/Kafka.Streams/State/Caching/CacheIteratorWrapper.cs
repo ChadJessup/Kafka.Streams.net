@@ -41,7 +41,7 @@
 
 //            setCacheKeyRange(earliestSessionEndTime, currentSegmentLastTime());
 
-//            this.current = cache.range(cacheName, cacheKeyFrom, cacheKeyTo);
+//            this.current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
 //        }
 
 
@@ -95,7 +95,7 @@
 //            {
 //                throw new NoSuchElementException();
 //            }
-//            return current.next();
+//            return current.MoveNext();
 //        }
 
 
@@ -128,7 +128,7 @@
 //            setCacheKeyRange(currentSegmentBeginTime(), currentSegmentLastTime());
 
 //            current.close();
-//            current = cache.range(cacheName, cacheKeyFrom, cacheKeyTo);
+//            current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
 //        }
 
 //        private void setCacheKeyRange(long lowerRangeEndTime, long upperRangeEndTime)

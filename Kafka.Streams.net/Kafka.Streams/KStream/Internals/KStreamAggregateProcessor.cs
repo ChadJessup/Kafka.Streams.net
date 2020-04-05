@@ -30,8 +30,13 @@ namespace Kafka.Streams.KStream.Internals
 
         public override void Init(IProcessorContext context)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             base.Init(context);
-            store = (ITimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, T>)context.GetStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<K, T>(
                 store,
                 context,
@@ -59,7 +64,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (oldAgg == null)
             {
-                oldAgg = initializer.apply();
+                oldAgg = initializer.Apply();
                 newTimestamp = context.timestamp;
             }
             else
@@ -68,10 +73,10 @@ namespace Kafka.Streams.KStream.Internals
                 newTimestamp = Math.Max(context.timestamp, oldAggAndTimestamp.timestamp);
             }
 
-            newAgg = aggregator.apply(key, value, oldAgg);
+            newAgg = aggregator.Apply(key, value, oldAgg);
 
-            store.Add(key, ValueAndTimestamp<T>.make(newAgg, newTimestamp));
-            tupleForwarder.maybeForward(key, newAgg, sendOldValues
+            store.Add(key, ValueAndTimestamp.Make(newAgg, newTimestamp));
+            tupleForwarder.MaybeForward(key, newAgg, sendOldValues
                 ? oldAgg
                 : default,
                 newTimestamp);

@@ -62,7 +62,7 @@
 //            long startNs = time.nanoseconds();
 //            try
 //            {
-//                base.init(context, root);
+//                base.Init(context, root);
 //            }
 //            finally
 //            {
@@ -115,11 +115,11 @@
 //            long startNs = time.nanoseconds();
 //            try
 //            {
-//                wrapped.Add(keyBytes(key), serdes.rawValue(value), windowStartTimestamp);
+//                wrapped.Add(keyBytes(key), serdes.RawValue(value), windowStartTimestamp);
 //            }
 //            catch (ProcessorStateException e)
 //            {
-//                string message = string.Format(e.getMessage(), key, value);
+//                string message = string.Format(e.ToString(), key, value);
 //                throw new ProcessorStateException(message, e);
 //            }
 //            finally
@@ -134,7 +134,7 @@
 //            long startNs = time.nanoseconds();
 //            try
 //            {
-//                byte[] result = wrapped.fetch(keyBytes(key), timestamp);
+//                byte[] result = wrapped.Fetch(keyBytes(key), timestamp);
 //                if (result == null)
 //                {
 //                    return default;
@@ -148,11 +148,11 @@
 //        }
 
 
-//        public override WindowStoreIterator<V> fetch(K key,
+//        public override IWindowStoreIterator<V> fetch(K key,
 //                                            long timeFrom,
 //                                            long timeTo)
 //        {
-//            return new MeteredWindowStoreIterator<>(wrapped.fetch(keyBytes(key), timeFrom, timeTo),
+//            return new MeteredWindowStoreIterator<>(wrapped.Fetch(keyBytes(key), timeFrom, timeTo),
 //                                                    fetchTime,
 //                                                    metrics,
 //                                                    serdes,
@@ -166,7 +166,7 @@
 //                                                      long timeTo)
 //        {
 //            return new MeteredWindowedKeyValueIterator<>(
-//                wrapped.fetch(keyBytes(from), keyBytes(to), timeFrom, timeTo),
+//                wrapped.Fetch(keyBytes(from), keyBytes(to), timeFrom, timeTo),
 //                fetchTime,
 //                metrics,
 //                serdes,
@@ -211,7 +211,7 @@
 
 //        private Bytes keyBytes(K key)
 //        {
-//            return Bytes.wrap(serdes.rawKey(key));
+//            return Bytes.Wrap(serdes.rawKey(key));
 //        }
 //    }
 //}

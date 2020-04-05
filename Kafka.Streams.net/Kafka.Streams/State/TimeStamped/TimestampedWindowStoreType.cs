@@ -15,7 +15,7 @@ namespace Kafka.Streams.State.TimeStamped
         {
         }
 
-        public override IReadOnlyWindowStore<K, ValueAndTimestamp<V>> create(IStateStoreProvider storeProvider, string storeName)
+        public override IReadOnlyWindowStore<K, ValueAndTimestamp<V>> Create(IStateStoreProvider storeProvider, string storeName)
         {
             return null;// new CompositeReadOnlyWindowStore<K, ValueAndTimestamp<V>>(storeProvider, this, storeName);
         }

@@ -24,36 +24,36 @@ namespace Kafka.Streams.State.Internals
             this.nextIteratorFunction = nextIteratorFunction;
         }
 
-        public void close()
+        public void Close()
         {
             if (current != null)
             {
-                current.close();
+                current.Close();
                 current = null;
             }
         }
 
-        public K peekNextKey()
+        public K PeekNextKey()
         {
             throw new InvalidOperationException("peekNextKey not supported");
         }
 
-        public bool hasNext()
+        public bool HasNext()
         {
             while ((current == null || !current.MoveNext())
                     && storeIterator.MoveNext())
             {
-                close();
-                current = nextIteratorFunction.apply(storeIterator.Current);
+                Close();
+                current = nextIteratorFunction.Apply(storeIterator.Current);
             }
 
             return current != null && current.MoveNext();
         }
 
 
-        public KeyValuePair<K, V> next()
+        public KeyValuePair<K, V> Next()
         {
-            if (!hasNext())
+            if (!HasNext())
             {
                 throw new IndexOutOfRangeException();
             }

@@ -40,7 +40,7 @@ namespace Kafka.Streams.Tests.Mocks
             base.Init(context);
             if (scheduleInterval > 0L)
             {
-                scheduleCancellable = context.schedule(
+                scheduleCancellable = context.Schedule(
                     Duration.FromMilliseconds(scheduleInterval).ToTimeSpan(),
                     punctuationType,
                     timestamp =>
@@ -67,7 +67,7 @@ namespace Kafka.Streams.Tests.Mocks
 
             if (value != null)
             {
-                lastValueAndTimestampPerKey.Add(key, ValueAndTimestamp<V>.make(value, context.timestamp));
+                lastValueAndTimestampPerKey.Add(key, ValueAndTimestamp.Make(value, context.timestamp));
             }
             else
             {
@@ -78,7 +78,7 @@ namespace Kafka.Streams.Tests.Mocks
 
             if (commitRequested)
             {
-                this.context.commit();
+                this.context.Commit();
                 commitRequested = false;
             }
         }

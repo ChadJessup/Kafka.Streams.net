@@ -38,12 +38,12 @@ namespace Kafka.Streams.KStream.Internals
                 this.aggregator);
         }
 
-        public void enableSendingOldValues()
+        public void EnableSendingOldValues()
         {
             sendOldValues = true;
         }
 
-        public IKTableValueGetterSupplier<Windowed<K>, Agg> view()
+        public IKTableValueGetterSupplier<Windowed<K>, Agg> View()
         {
             return null;
             //return new KTableValueGetterSupplier<Windowed<K>, Agg>()

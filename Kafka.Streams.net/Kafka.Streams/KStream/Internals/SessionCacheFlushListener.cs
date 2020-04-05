@@ -27,7 +27,7 @@
 //            try
 //            {
 
-//                context.forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(key.window.end()));
+//                context.Forward(key, new Change<>(newValue, oldValue), To.All().WithTimestamp(key.window.end()));
 //            }
 //            finally
 //            {

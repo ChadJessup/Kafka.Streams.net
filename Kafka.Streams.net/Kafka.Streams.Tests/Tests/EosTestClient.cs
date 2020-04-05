@@ -10,14 +10,14 @@ namespace Kafka.Streams.Tests.Tests
 //    {
 
 //        static string APP_ID = "EosTest";
-//        private Properties properties;
+//        private StreamsConfig properties;
 //        private bool withRepartitioning;
 //        private AtomicBoolean notRunningCallbackReceived = new AtomicBoolean(false);
 
 //        private KafkaStreams streams;
 //        private bool uncaughtException;
 
-//        EosTestClient(Properties properties, bool withRepartitioning)
+//        EosTestClient(StreamsConfig properties, bool withRepartitioning)
 //        {
 //            super();
 //            this.properties = properties;
@@ -92,7 +92,7 @@ namespace Kafka.Streams.Tests.Tests
 //        }
 //    }
 
-//    private KafkaStreams createKafkaStreams(Properties props)
+//    private KafkaStreams createKafkaStreams(StreamsConfig props)
 //{
 //    props.put(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
 //    props.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 1);
@@ -104,9 +104,9 @@ namespace Kafka.Streams.Tests.Tests
 //    props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
 
 //    StreamsBuilder builder = new StreamsBuilder();
-//    KStream<string, int> data = builder.stream("data");
+//    KStream<string, int> data = builder.Stream("data");
 
-//    data.to("echo");
+//    data.To("echo");
 //    data.process(SmokeTestUtil.printProcessorSupplier("data"));
 
 //    KGroupedStream<string, int> groupedData = data.groupByKey();
@@ -131,9 +131,9 @@ namespace Kafka.Streams.Tests.Tests
 //    return (value < aggregate) ? value : aggregate;
 //}
 //                },
-//                Materialized.<string, int, KeyValueStore<Bytes, byte[]>>with(null, intSerde))
+//                Materialized.<string, int, IKeyValueStore<Bytes, byte[]>>with(null, intSerde))
 //            .toStream()
-//            .to("min", Produced.with(stringSerde, intSerde));
+//            .To("min", Produced.With(stringSerde, intSerde));
 
 //// sum
 //groupedData.aggregate(
@@ -153,9 +153,9 @@ namespace Kafka.Streams.Tests.Tests
 //    return (long)value + aggregate;
 //}
 //            },
-//            Materialized.<string, long, KeyValueStore<Bytes, byte[]>>with(null, longSerde))
+//            Materialized.<string, long, IKeyValueStore<Bytes, byte[]>>with(null, longSerde))
 //            .toStream()
-//            .to("sum", Produced.with(stringSerde, longSerde));
+//            .To("sum", Produced.With(stringSerde, longSerde));
 
 //        if (withRepartitioning) {
 //            KStream<string, int> repartitionedData = data.through("repartition");
@@ -182,23 +182,23 @@ namespace Kafka.Streams.Tests.Tests
 //    return (value > aggregate) ? value : aggregate;
 //}
 //                    },
-//                    Materialized.<string, int, KeyValueStore<Bytes, byte[]>>with(null, intSerde))
+//                    Materialized.<string, int, IKeyValueStore<Bytes, byte[]>>with(null, intSerde))
 //                .toStream()
-//                .to("max", Produced.with(stringSerde, intSerde));
+//                .To("max", Produced.With(stringSerde, intSerde));
 
 //// count
 //groupedDataAfterRepartitioning.count()
 //                .toStream()
-//                .to("cnt", Produced.with(stringSerde, longSerde));
+//                .To("cnt", Produced.With(stringSerde, longSerde));
 //        }
 
-//        return new KafkaStreams(builder.build(), props);
+//        return new KafkaStreams(builder.Build(), props);
 //    }
 
 //    private void waitForStateTransitionCallback()
 //{
 //    long maxWaitTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(300);
-//    while (!notRunningCallbackReceived.get() && System.currentTimeMillis() < maxWaitTime)
+//    while (!notRunningCallbackReceived.Get() && System.currentTimeMillis() < maxWaitTime)
 //    {
 //        try
 //        {
@@ -206,7 +206,7 @@ namespace Kafka.Streams.Tests.Tests
 //        }
 //        catch (InterruptedException ignoreAndSwallow) { /* just keep waiting */ }
 //    }
-//    if (!notRunningCallbackReceived.get())
+//    if (!notRunningCallbackReceived.Get())
 //    {
 //        System.Console.Error.println("State transition callback to NOT_RUNNING never received. Timed out after 5 minutes.");
 //        System.Console.Error.flush();

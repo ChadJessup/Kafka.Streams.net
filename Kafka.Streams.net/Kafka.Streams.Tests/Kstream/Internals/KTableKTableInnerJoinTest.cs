@@ -17,7 +17,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        private string topic1 = "topic1";
 //        private string topic2 = "topic2";
 //        private string output = "output";
-//        private Consumed<int, string> consumed = Consumed.with(Serdes.Int(), Serdes.String());
+//        private Consumed<int, string> consumed = Consumed.With(Serdes.Int(), Serdes.String());
 //        private Materialized<int, string, IKeyValueStore<Bytes, byte[]>> materialized =
 //            Materialized.with(Serdes.Int(), Serdes.String());
 //        private ConsumerRecordFactory<int, string> recordFactory =
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table1 = builder.Table(topic1, consumed);
 //            table2 = builder.Table(topic2, consumed);
 //            joined = table1.join(table2, MockValueJoiner.TOSTRING_JOINER);
-//            joined.toStream().to(output);
+//            joined.toStream().To(output);
 
 //            doTestJoin(builder, expectedKeys);
 //        }
@@ -55,7 +55,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table1 = builder.Table(topic1, consumed);
 //            table2 = builder.Table(topic2, consumed);
 //            table3 = table1.join(table2, MockValueJoiner.TOSTRING_JOINER, materialized);
-//            table3.toStream().to(output);
+//            table3.toStream().To(output);
 
 //            doTestJoin(builder, expectedKeys);
 //        }
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table1 = builder.Table(topic1, consumed);
 //            table2 = builder.Table(topic2, consumed);
 //            joined = table1.join(table2, MockValueJoiner.TOSTRING_JOINER, materialized);
-//            builder.Build().addProcessor("proc", supplier, ((IKTable<object, object, object>)joined).name);
+//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object, object>)joined).name);
 
 //            doTestNotSendingOldValues(builder, expectedKeys, table1, table2, supplier, joined);
 //        }
@@ -95,7 +95,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table1 = builder.Table(topic1, consumed);
 //            table2 = builder.Table(topic2, consumed);
 //            joined = table1.join(table2, MockValueJoiner.TOSTRING_JOINER);
-//            builder.Build().addProcessor("proc", supplier, ((IKTable<object, object, object>)joined).name);
+//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object, object>)joined).name);
 
 //            doTestNotSendingOldValues(builder, expectedKeys, table1, table2, supplier, joined);
 //        }
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            ((IKTable<object, object>)joined).enableSendingOldValues();
 
-//            builder.Build().addProcessor("proc", supplier, ((IKTable<object, object>)joined).name);
+//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object>)joined).name);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            MockProcessor<int, string> proc = supplier.theCapturedProcessor();
@@ -130,10 +130,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // push two items to the primary stream. the other table is empty
 //            for (var i = 0; i < 2; i++)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[i], "X" + expectedKeys[i], 5L + i));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "X" + expectedKeys[i], 5L + i));
 //            }
 //            // .Ass tuple with null key, it will be discarded in join process
-//            driver.pipeInput(recordFactory.create(topic1, null, "SomeVal", 42L));
+//            driver.PipeInput(recordFactory.Create(topic1, null, "SomeVal", 42L));
 //            // left: X0:0 (ts: 5), X1:1 (ts: 6)
 //            // right:
 //            proc.checkAndClearProcessResult(EMPTY);
@@ -141,10 +141,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // push two items to the other stream. this should produce two items.
 //            for (var i = 0; i < 2; i++)
 //            {
-//                driver.pipeInput(recordFactory.create(topic2, expectedKeys[i], "Y" + expectedKeys[i], 10L * i));
+//                driver.PipeInput(recordFactory.Create(topic2, expectedKeys[i], "Y" + expectedKeys[i], 10L * i));
 //            }
 //            // .Ass tuple with null key, it will be discarded in join process
-//            driver.pipeInput(recordFactory.create(topic2, null, "AnotherVal", 73L));
+//            driver.PipeInput(recordFactory.Create(topic2, null, "AnotherVal", 73L));
 //            // left: X0:0 (ts: 5), X1:1 (ts: 6)
 //            // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
 //            proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("X0+Y0", null), 5),
@@ -152,7 +152,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // push all four items to the primary stream. this should produce two items.
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "XX" + expectedKey, 7L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XX" + expectedKey, 7L));
 //            }
 //            // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
 //            // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
@@ -161,7 +161,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // push all items to the other stream. this should produce four items.
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
+//                driver.PipeInput(recordFactory.Create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
 //            }
 //            // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
 //            // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
@@ -174,7 +174,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // push all four items to the primary stream. this should produce four items.
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "XXX" + expectedKey, 6L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXX" + expectedKey, 6L));
 //            }
 //            // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
 //            // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
@@ -185,8 +185,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>(3, new Change<>("XXX3+YY3", "XX3+YY3"), 15));
 
 //            // push two items with null to the other stream.As deletes. this should produce two item.
-//            driver.pipeInput(recordFactory.create(topic2, expectedKeys[0], null, 5L));
-//            driver.pipeInput(recordFactory.create(topic2, expectedKeys[1], null, 7L));
+//            driver.PipeInput(recordFactory.Create(topic2, expectedKeys[0], null, 5L));
+//            driver.PipeInput(recordFactory.Create(topic2, expectedKeys[1], null, 7L));
 //            // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
 //            // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //            proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>(null, "XXX0+YY0"), 6),
@@ -194,17 +194,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // push all four items to the primary stream. this should produce two items.
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topic1, expectedKey, "XXXX" + expectedKey, 13L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXXX" + expectedKey, 13L));
 //            }
 //            // left: XXXX0:0 (ts: 13), XXXX1:1 (ts: 13), XXXX2:2 (ts: 13), XXXX3:3 (ts: 13)
 //            // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //            proc.checkAndClearProcessResult(new KeyValueTimestamp<>(2, new Change<>("XXXX2+YY2", "XXX2+YY2"), 13),
 //                new KeyValueTimestamp<>(3, new Change<>("XXXX3+YY3", "XXX3+YY3"), 15));
 //            // push four items to the primary stream with null. this should produce two items.
-//            driver.pipeInput(recordFactory.create(topic1, expectedKeys[0], null, 0L));
-//            driver.pipeInput(recordFactory.create(topic1, expectedKeys[1], null, 42L));
-//            driver.pipeInput(recordFactory.create(topic1, expectedKeys[2], null, 5L));
-//            driver.pipeInput(recordFactory.create(topic1, expectedKeys[3], null, 20L));
+//            driver.PipeInput(recordFactory.Create(topic1, expectedKeys[0], null, 0L));
+//            driver.PipeInput(recordFactory.Create(topic1, expectedKeys[1], null, 42L));
+//            driver.PipeInput(recordFactory.Create(topic1, expectedKeys[2], null, 5L));
+//            driver.PipeInput(recordFactory.Create(topic1, expectedKeys[3], null, 20L));
 //            // left:
 //            // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //            proc.checkAndClearProcessResult(new KeyValueTimestamp<>(2, new Change<>(null, "XXXX2+YY2"), 10),
@@ -218,14 +218,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var builder = new StreamsBuilder();
 
 //            Processor<string, Change<string>> join = new KTableKTableInnerJoin<>(
-//                (IKTable<string, string, string>)builder.Table("left", Consumed.with(Serdes.String(), Serdes.String())),
-//                (IKTable<string, string, string>)builder.Table("right", Consumed.with(Serdes.String(), Serdes.String())),
+//                (IKTable<string, string, string>)builder.Table("left", Consumed.With(Serdes.String(), Serdes.String())),
+//                (IKTable<string, string, string>)builder.Table("right", Consumed.With(Serdes.String(), Serdes.String())),
 //                null
-//            ).get();
+//            ).Get();
 
 //            var context = new MockProcessorContext();
 //            context.setRecordMetadata("left", -1, -2, null, -3);
-//            join.init(context);
+//            join.Init(context);
 //            LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 //            join.process(null, new Change<>("new", "old"));
 //            LogCaptureAppender.unregister(appender);
@@ -254,10 +254,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push two items to the primary stream. the other table is empty
 //                for (var i = 0; i < 2; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKeys[i], "X" + expectedKeys[i], 5L + i));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "X" + expectedKeys[i], 5L + i));
 //                }
 //                // .Ass tuple with null key, it will be discarded in join process
-//                driver.pipeInput(recordFactory.create(topic1, null, "SomeVal", 42L));
+//                driver.PipeInput(recordFactory.Create(topic1, null, "SomeVal", 42L));
 //                // left: X0:0 (ts: 5), X1:1 (ts: 6)
 //                // right:
 //                proc.checkAndClearProcessResult(EMPTY);
@@ -265,10 +265,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push two items to the other stream. this should produce two items.
 //                for (var i = 0; i < 2; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic2, expectedKeys[i], "Y" + expectedKeys[i], 10L * i));
+//                    driver.PipeInput(recordFactory.Create(topic2, expectedKeys[i], "Y" + expectedKeys[i], 10L * i));
 //                }
 //                // .Ass tuple with null key, it will be discarded in join process
-//                driver.pipeInput(recordFactory.create(topic2, null, "AnotherVal", 73L));
+//                driver.PipeInput(recordFactory.Create(topic2, null, "AnotherVal", 73L));
 //                // left: X0:0 (ts: 5), X1:1 (ts: 6)
 //                // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
 //                proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("X0+Y0", null), 5),
@@ -276,7 +276,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push all four items to the primary stream. this should produce two items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKey, "XX" + expectedKey, 7L));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XX" + expectedKey, 7L));
 //                }
 //                // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
 //                // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
@@ -285,7 +285,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push all items to the other stream. this should produce four items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
+//                    driver.PipeInput(recordFactory.Create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
 //                }
 //                // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
 //                // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
@@ -298,7 +298,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push all four items to the primary stream. this should produce four items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKey, "XXX" + expectedKey, 6L));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXX" + expectedKey, 6L));
 //                }
 //                // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
 //                // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
@@ -309,8 +309,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    new KeyValueTimestamp<>(3, new Change<>("XXX3+YY3", null), 15));
 
 //                // push two items with null to the other stream.As deletes. this should produce two item.
-//                driver.pipeInput(recordFactory.create(topic2, expectedKeys[0], null, 5L));
-//                driver.pipeInput(recordFactory.create(topic2, expectedKeys[1], null, 7L));
+//                driver.PipeInput(recordFactory.Create(topic2, expectedKeys[0], null, 5L));
+//                driver.PipeInput(recordFactory.Create(topic2, expectedKeys[1], null, 7L));
 //                // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
 //                // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //                proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>(null, null), 6),
@@ -318,17 +318,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push all four items to the primary stream. this should produce two items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKey, "XXXX" + expectedKey, 13L));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXXX" + expectedKey, 13L));
 //                }
 //                // left: XXXX0:0 (ts: 13), XXXX1:1 (ts: 13), XXXX2:2 (ts: 13), XXXX3:3 (ts: 13)
 //                // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //                proc.checkAndClearProcessResult(new KeyValueTimestamp<>(2, new Change<>("XXXX2+YY2", null), 13),
 //                    new KeyValueTimestamp<>(3, new Change<>("XXXX3+YY3", null), 15));
 //                // push four items to the primary stream with null. this should produce two items.
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[0], null, 0L));
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[1], null, 42L));
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[2], null, 5L));
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[3], null, 20L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[0], null, 0L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[1], null, 42L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[2], null, 5L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[3], null, 20L));
 //                // left:
 //                // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //                proc.checkAndClearProcessResult(new KeyValueTimestamp<>(2, new Change<>(null, null), 10),
@@ -342,7 +342,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
 
 //            Assert.Equal(1, copartitionGroups.Count);
-//            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), copartitionGroups.iterator().next());
+//            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), copartitionGroups.iterator().MoveNext());
 
 //            try
 //            {
@@ -350,10 +350,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push two items to the primary stream. the other table is empty
 //                for (var i = 0; i < 2; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKeys[i], "X" + expectedKeys[i], 5L + i));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "X" + expectedKeys[i], 5L + i));
 //                }
 //                // .Ass tuple with null key, it will be discarded in join process
-//                driver.pipeInput(recordFactory.create(topic1, null, "SomeVal", 42L));
+//                driver.PipeInput(recordFactory.Create(topic1, null, "SomeVal", 42L));
 //                // left: X0:0 (ts: 5), X1:1 (ts: 6)
 //                // right:
 //                Assert.Null(driver.readOutput(output));
@@ -361,10 +361,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push two items to the other stream. this should produce two items.
 //                for (var i = 0; i < 2; i++)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic2, expectedKeys[i], "Y" + expectedKeys[i], 10L * i));
+//                    driver.PipeInput(recordFactory.Create(topic2, expectedKeys[i], "Y" + expectedKeys[i], 10L * i));
 //                }
 //                // .Ass tuple with null key, it will be discarded in join process
-//                driver.pipeInput(recordFactory.create(topic2, null, "AnotherVal", 73L));
+//                driver.PipeInput(recordFactory.Create(topic2, null, "AnotherVal", 73L));
 //                // left: X0:0 (ts: 5), X1:1 (ts: 6)
 //                // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
 //                assertOutputKeyValueTimestamp(driver, 0, "X0+Y0", 5L);
@@ -374,7 +374,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push all four items to the primary stream. this should produce two items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKey, "XX" + expectedKey, 7L));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XX" + expectedKey, 7L));
 //                }
 //                // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
 //                // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
@@ -385,7 +385,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push all items to the other stream. this should produce four items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
+//                    driver.PipeInput(recordFactory.Create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
 //                }
 //                // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
 //                // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
@@ -398,7 +398,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push all four items to the primary stream. this should produce four items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKey, "XXX" + expectedKey, 6L));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXX" + expectedKey, 6L));
 //                }
 //                // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
 //                // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
@@ -409,8 +409,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                Assert.Null(driver.readOutput(output));
 
 //                // push two items with null to the other stream.As deletes. this should produce two item.
-//                driver.pipeInput(recordFactory.create(topic2, expectedKeys[0], null, 5L));
-//                driver.pipeInput(recordFactory.create(topic2, expectedKeys[1], null, 7L));
+//                driver.PipeInput(recordFactory.Create(topic2, expectedKeys[0], null, 5L));
+//                driver.PipeInput(recordFactory.Create(topic2, expectedKeys[1], null, 7L));
 //                // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
 //                // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //                assertOutputKeyValueTimestamp(driver, 0, null, 6L);
@@ -420,7 +420,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // push all four items to the primary stream. this should produce two items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
-//                    driver.pipeInput(recordFactory.create(topic1, expectedKey, "XXXX" + expectedKey, 13L));
+//                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXXX" + expectedKey, 13L));
 //                }
 //                // left: XXXX0:0 (ts: 13), XXXX1:1 (ts: 13), XXXX2:2 (ts: 13), XXXX3:3 (ts: 13)
 //                // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
@@ -429,10 +429,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                Assert.Null(driver.readOutput(output));
 
 //                // push fourt items to the primary stream with null. this should produce two items.
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[0], null, 0L));
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[1], null, 42L));
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[2], null, 5L));
-//                driver.pipeInput(recordFactory.create(topic1, expectedKeys[3], null, 20L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[0], null, 0L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[1], null, 42L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[2], null, 5L));
+//                driver.PipeInput(recordFactory.Create(topic1, expectedKeys[3], null, 20L));
 //                // left:
 //                // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //                assertOutputKeyValueTimestamp(driver, 2, null, 10L);

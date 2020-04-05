@@ -30,7 +30,7 @@ namespace Kafka.Streams.Tasks
         {
         }
 
-        public override StandbyTask? createTask(
+        public override StandbyTask? CreateTask(
             ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             TaskId taskId,

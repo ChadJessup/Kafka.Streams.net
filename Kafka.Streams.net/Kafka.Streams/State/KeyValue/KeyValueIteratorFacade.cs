@@ -15,17 +15,17 @@ namespace Kafka.Streams.State.KeyValues
             this.iterator = iterator;
         }
 
-        public bool hasNext()
+        public bool HasNext()
         {
             return iterator.MoveNext();
         }
 
-        public K peekNextKey()
+        public K PeekNextKey()
         {
-            return iterator.peekNextKey();
+            return iterator.PeekNextKey();
         }
 
-        public KeyValuePair<K, V> next()
+        public KeyValuePair<K, V> Next()
         {
             var innerKeyValue = iterator.Current;
 
@@ -33,9 +33,9 @@ namespace Kafka.Streams.State.KeyValues
             return KeyValuePair.Create(innerKeyValue.Key, ValueAndTimestamp.GetValueOrNull(vat));
         }
 
-        public void close()
+        public void Close()
         {
-            iterator.close();
+            iterator.Close();
         }
 
         public bool MoveNext()

@@ -38,11 +38,11 @@ namespace Kafka.Streams.Processors.Internals
 
         public List<string> SourceTopics => sourcesByTopic.Keys.ToList();
 
-        public bool hasPersistentLocalStore()
+        public bool HasPersistentLocalStore()
         {
             foreach (IStateStore store in StateStores)
             {
-                if (store.persistent())
+                if (store.Persistent())
                 {
                     return true;
                 }
@@ -51,11 +51,11 @@ namespace Kafka.Streams.Processors.Internals
             return false;
         }
 
-        public bool hasPersistentGlobalStore()
+        public bool HasPersistentGlobalStore()
         {
             foreach (IStateStore store in globalStateStores)
             {
-                if (store.persistent())
+                if (store.Persistent())
                 {
                     return true;
                 }
@@ -80,13 +80,13 @@ namespace Kafka.Streams.Processors.Internals
             return sinksByTopic[topic];
         }
 
-        public List<IProcessorNode> processors()
+        public List<IProcessorNode> Processors()
             => processorNodes;
 
-        public bool isRepartitionTopic(string topic)
+        public bool IsRepartitionTopic(string topic)
             => repartitionTopics.Contains(topic);
 
-        private string childrenToString(string indent, List<IProcessorNode> children)
+        private string ChildrenToString(string indent, List<IProcessorNode> children)
         {
             if (children == null || !children.Any())
             {
@@ -106,7 +106,7 @@ namespace Kafka.Streams.Processors.Internals
             // recursively print children
             foreach (var child in children)
             {
-                sb.Append(child.ToString(indent)).Append(childrenToString(indent, child.children));
+                sb.Append(child.ToString(indent)).Append(ChildrenToString(indent, child.children));
             }
 
             return sb.ToString();
@@ -133,14 +133,14 @@ namespace Kafka.Streams.Processors.Internals
             // start from sources
             foreach (var source in sourcesByTopic.Values)
             {
-                sb.Append(source.ToString(indent + "\t")).Append(childrenToString(indent + "\t", source.children));
+                sb.Append(source.ToString(indent + "\t")).Append(ChildrenToString(indent + "\t", source.children));
             }
 
             return sb.ToString();
         }
 
         // for testing only
-        public HashSet<string> processorConnectedStateStores(string processorName)
+        public HashSet<string> ProcessorConnectedStateStores(string processorName)
         {
             foreach (ProcessorNode node in processorNodes)
             {

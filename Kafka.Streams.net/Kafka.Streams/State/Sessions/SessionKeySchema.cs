@@ -29,7 +29,7 @@
 
 //        public override Bytes upperRange(Bytes key, long to)
 //        {
-//            byte[] maxSuffix = ByteBuffer.allocate(SUFFIX_SIZE)
+//            byte[] maxSuffix = new ByteBuffer().Allocate(SUFFIX_SIZE)
 //                // the end timestamp can be as large as possible as long as it's larger than start time
 //                .putLong(long.MaxValue)
 //                // this is the start timestamp
@@ -63,7 +63,7 @@
 //            //                {
 //            //                    return true;
 //            //                }
-//            //                iterator.next();
+//            //                iterator.MoveNext();
 //            //            }
 //            //            return false;
 //            //        };
@@ -93,17 +93,17 @@
 
 //        static long extractEndTimestamp(byte[] binaryKey)
 //        {
-//            return ByteBuffer.wrap(binaryKey).getLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
+//            return ByteBuffer.Wrap(binaryKey).getLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
 //        }
 
 //        static long extractStartTimestamp(byte[] binaryKey)
 //        {
-//            return ByteBuffer.wrap(binaryKey).getLong(binaryKey.Length - TIMESTAMP_SIZE);
+//            return ByteBuffer.Wrap(binaryKey).getLong(binaryKey.Length - TIMESTAMP_SIZE);
 //        }
 
 //        static Window extractWindow(byte[] binaryKey)
 //        {
-//            ByteBuffer buffer = ByteBuffer.wrap(binaryKey);
+//            ByteBuffer buffer = ByteBuffer.Wrap(binaryKey);
 //            long start = buffer.getLong(binaryKey.Length - TIMESTAMP_SIZE);
 //            long end = buffer.getLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
 //            return new SessionWindow(start, end);
@@ -122,7 +122,7 @@
 //        {
 //            byte[] binaryKey = Array.Empty();
 //            Window window = extractWindow(binaryKey);
-//            return new Windowed<Bytes>(Bytes.wrap(extractKeyBytes(binaryKey)), window);
+//            return new Windowed<Bytes>(Bytes.Wrap(extractKeyBytes(binaryKey)), window);
 //        }
 
 //        public static Windowed<K> from<K>(
@@ -140,7 +140,7 @@
 //            string topic)
 //        {
 //            byte[] bytes = serializer.Serialize(topic, sessionKey.key);
-//            return toBinary(Bytes.wrap(bytes), sessionKey.window.start(), sessionKey.window.end())[];
+//            return toBinary(Bytes.Wrap(bytes), sessionKey.window.start(), sessionKey.window.end())[];
 //        }
 
 //        public static Bytes toBinary(Windowed<Bytes> sessionKey)
@@ -154,11 +154,11 @@
 //            long endTime)
 //        {
 //            byte[] bytes = key[];
-//            ByteBuffer buf = ByteBuffer.allocate(bytes.Length + 2 * TIMESTAMP_SIZE);
+//            ByteBuffer buf = new ByteBuffer().Allocate(bytes.Length + 2 * TIMESTAMP_SIZE);
 //            buf.Add(bytes);
 //            buf.putLong(endTime);
 //            buf.putLong(startTime);
-//            return Bytes.wrap(buf.array());
+//            return Bytes.Wrap(buf.array());
 //        }
 //    }
 //}

@@ -16,12 +16,12 @@ namespace Kafka.Streams.KStream.Internals
             this.valueGetterSupplier2 = valueGetterSupplier2;
         }
 
-        public abstract IKTableValueGetter<K, R> get();
+        public abstract IKTableValueGetter<K, R> Get();
 
-        public string[] storeNames()
+        public string[] StoreNames()
         {
-            string[] storeNames1 = valueGetterSupplier1.storeNames();
-            string[] storeNames2 = valueGetterSupplier2.storeNames();
+            string[] storeNames1 = valueGetterSupplier1.StoreNames();
+            string[] storeNames2 = valueGetterSupplier2.StoreNames();
             HashSet<string> stores = new HashSet<string>();
 
             stores.UnionWith(storeNames1);

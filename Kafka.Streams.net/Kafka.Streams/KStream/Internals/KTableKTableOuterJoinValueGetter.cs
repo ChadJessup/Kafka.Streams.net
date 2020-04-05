@@ -17,8 +17,8 @@
 
 //        public void init(IProcessorContext context)
 //        {
-//            valueGetter1.init(context);
-//            valueGetter2.init(context);
+//            valueGetter1.Init(context);
+//            valueGetter2.Init(context);
 //        }
 
 
@@ -61,7 +61,7 @@
 //                newValue = joiner.apply(value1, value2);
 //            }
 
-//            return ValueAndTimestamp.make(newValue, Math.Max(timestamp1, timestamp2));
+//            return ValueAndTimestamp.Make(newValue, Math.Max(timestamp1, timestamp2));
 //        }
 
 

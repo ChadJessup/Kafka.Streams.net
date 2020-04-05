@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @return the restored offsets for all persistent stores.
          */
-        Dictionary<TopicPartition, long> RestoredOffsets();
+        Dictionary<TopicPartition, long> GetRestoredOffsets();
 
         void Reset();
     }

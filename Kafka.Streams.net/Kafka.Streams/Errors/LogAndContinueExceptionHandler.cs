@@ -18,7 +18,7 @@ namespace Kafka.Streams.Errors
         public LogAndContinueExceptionHandler(ILogger<LogAndContinueExceptionHandler> logger)
             => this.logger = logger;
 
-        public DeserializationHandlerResponses handle<K, V>(
+        public DeserializationHandlerResponses Handle<K, V>(
             IProcessorContext context,
             ConsumeResult<byte[], byte[]> record,
             Exception exception)
@@ -30,7 +30,7 @@ namespace Kafka.Streams.Errors
             return DeserializationHandlerResponses.CONTINUE;
         }
 
-        public void configure(Dictionary<string, object> configs)
+        public void Configure(Dictionary<string, object> configs)
         {
             // ignore
         }

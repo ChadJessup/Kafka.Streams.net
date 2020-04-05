@@ -15,14 +15,14 @@ namespace Kafka.Streams.State.RocksDbState
             this.rocksDBStore = rocksDBStore;
         }
 
-        public override void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
+        public override void RestoreAll(List<KeyValuePair<byte[], byte[]>> records)
         {
             try
             {
                 using (var batch = new WriteBatch())
                 {
-                    rocksDBStore.DbAccessor.prepareBatchForRestore(records, batch);
-                    rocksDBStore.write(batch);
+                    rocksDBStore.DbAccessor.PrepareBatchForRestore(records, batch);
+                    rocksDBStore.Write(batch);
                 }
             }
             catch (RocksDbException e)
@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.RocksDbState
             long startingOffset,
             long endingOffset)
         {
-            rocksDBStore.toggleDbForBulkLoading(true);
+            rocksDBStore.ToggleDbForBulkLoading(true);
         }
 
         public override void OnRestoreEnd(
@@ -45,7 +45,7 @@ namespace Kafka.Streams.State.RocksDbState
             string storeName,
             long totalRestored)
         {
-            rocksDBStore.toggleDbForBulkLoading(false);
+            rocksDBStore.ToggleDbForBulkLoading(false);
         }
     }
 }

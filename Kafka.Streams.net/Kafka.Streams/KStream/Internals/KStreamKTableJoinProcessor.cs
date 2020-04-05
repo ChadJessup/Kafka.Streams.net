@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             base.Init(context);
 
-            valueGetter.init(context, this.storeName);
+            valueGetter.Init(context, this.storeName);
         }
 
         public override void Process(K1 key, V1 value)
@@ -59,18 +59,18 @@ namespace Kafka.Streams.KStream.Internals
             else
             {
                 K2 mappedKey = keyMapper.Apply(key, value);
-                V2 value2 = valueGetter.get(mappedKey).value;
+                V2 value2 = valueGetter.Get(mappedKey).value;
 
                 if (leftJoin || value2 != null)
                 {
-                    context.forward(key, joiner.Apply(value, value2));
+                    context.Forward(key, joiner.Apply(value, value2));
                 }
             }
         }
 
         public override void Close()
         {
-            valueGetter.close();
+            valueGetter.Close();
         }
     }
 }

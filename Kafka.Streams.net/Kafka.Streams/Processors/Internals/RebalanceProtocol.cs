@@ -12,7 +12,7 @@ namespace Kafka.Streams.Processors.Internals
         public RebalanceProtocol(byte id)
             => this.id = id;
 
-        public static RebalanceProtocol forId(byte id)
+        public static RebalanceProtocol ForId(byte id)
         {
             return id switch
             {

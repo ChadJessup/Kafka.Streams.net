@@ -24,18 +24,18 @@ namespace Kafka.Streams.KStream.Internals
             this.table2 = table2 ?? throw new ArgumentNullException(nameof(table2));
             this.joiner = joiner ?? throw new ArgumentNullException(nameof(joiner));
 
-            this.valueGetterSupplier1 = table1.valueGetterSupplier<V1>();
-            this.valueGetterSupplier2 = table2.valueGetterSupplier<V2>();
+            this.valueGetterSupplier1 = table1.ValueGetterSupplier<V1>();
+            this.valueGetterSupplier2 = table2.ValueGetterSupplier<V2>();
         }
 
-        public void enableSendingOldValues()
+        public void EnableSendingOldValues()
         {
-            table1.enableSendingOldValues();
-            table2.enableSendingOldValues();
+            table1.EnableSendingOldValues();
+            table2.EnableSendingOldValues();
             this.sendOldValues = true;
         }
 
-        public abstract IKTableValueGetterSupplier<K, R> view();
+        public abstract IKTableValueGetterSupplier<K, R> View();
         public abstract IKeyValueProcessor<K, Change<V1>> Get();
     }
 }

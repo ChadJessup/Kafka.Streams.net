@@ -17,7 +17,7 @@ namespace Kafka.Streams.KStream.Interfaces
      * A {@code KTable} can be transformed record by record, joined with another {@code KTable} or {@link KStream}, or
      * can be re-partitioned and aggregated into a new {@code KTable}.
      * <p>
-     * Some {@code KTable}s have an internal state (a {@link ReadOnlyKeyValueStore}) and are therefore queryable via the
+     * Some {@code KTable}s have an internal state (a {@link IReadOnlyKeyValueStore}) and are therefore queryable via the
      * interactive queries API.
      * For example:
      * <pre>{@code
@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Interfaces
      *     streams.start()
      *     ...
      *      string queryableStoreName = table.queryableStoreName(); // returns null if KTable is not queryable
-     *     ReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.keyValueStore());
+     *     IReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.KeyValueStore());
      *     view[key];
      *}</pre>
      *<p>
@@ -62,7 +62,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKTable<K, V> filter(Func<K, V, bool> predicate);
+        IKTable<K, V> Filter(Func<K, V, bool> predicate);
 
         /**
          * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -85,7 +85,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKTable<K, V> filter(Func<K, V, bool> predicate, Named named);
+        IKTable<K, V> Filter(Func<K, V, bool> predicate, Named named);
 
         /**
          * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -108,7 +108,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * ReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>keyValueStore());
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -123,11 +123,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate, Materialized)
          */
-        IKTable<K, V> filter(
+        IKTable<K, V> Filter(
             Func<K, V, bool> predicate,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
-        IKTableValueGetterSupplier<K, V> valueGetterSupplier<VR>();
+        IKTableValueGetterSupplier<K, V> ValueGetterSupplier<VR>();
 
         /**
          * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -150,7 +150,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * ReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>keyValueStore());
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -166,7 +166,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate, Materialized)
          */
-        IKTable<K, V> filter(Func<K, V, bool> predicate,
+        IKTable<K, V> Filter(Func<K, V, bool> predicate,
                              Named named,
                              Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
@@ -190,7 +190,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKTable<K, V> filterNot(Func<K, V, bool> predicate);
+        IKTable<K, V> FilterNot(Func<K, V, bool> predicate);
 
         /**
          * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -213,7 +213,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKTable<K, V> filterNot(Func<K, V, bool> predicate, Named named);
+        IKTable<K, V> FilterNot(Func<K, V, bool> predicate, Named named);
 
         /**
          * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -236,7 +236,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * ReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>keyValueStore());
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -250,7 +250,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate, Materialized)
          */
-        IKTable<K, V> filterNot(
+        IKTable<K, V> FilterNot(
             Func<K, V, bool> predicate,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
@@ -275,7 +275,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * ReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>keyValueStore());
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -290,7 +290,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate, Materialized)
          */
-        IKTable<K, V> filterNot(
+        IKTable<K, V> FilterNot(
             Func<K, V, bool> predicate,
             Named named,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
@@ -306,7 +306,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of token of the value string.
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
-         * KTable<string, int> outputTable = inputTable.mapValues(value => value.split(" ").Length);
+         * KTable<string, int> outputTable = inputTable.mapValues(value => value.Split(" ").Length);
          * }</pre>
          * <p>
          * This operation preserves data co-location with respect to the key.
@@ -323,7 +323,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
-        IKTable<K, VR> mapValues<VR>(IValueMapper<V, VR> mapper);
+        IKTable<K, VR> MapValues<VR>(IValueMapper<V, VR> mapper);
 
         /**
          * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -336,7 +336,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of token of the value string.
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
-         * KTable<string, int> outputTable = inputTable.mapValues(value => value.split(" ").Length, Named.As("countTokenValue"));
+         * KTable<string, int> outputTable = inputTable.mapValues(value => value.Split(" ").Length, Named.As("countTokenValue"));
          * }</pre>
          * <p>
          * This operation preserves data co-location with respect to the key.
@@ -354,7 +354,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
-        IKTable<K, VR> mapValues<VR>(IValueMapper<V, VR> mapper,
+        IKTable<K, VR> MapValues<VR>(IValueMapper<V, VR> mapper,
                                       Named named);
 
         /**
@@ -369,7 +369,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
          * KTable<string, int> outputTable =
-         *  inputTable.mapValues((readOnlyKey, value) => readOnlyKey.split(" ").Length + value.split(" ").Length);
+         *  inputTable.mapValues((readOnlyKey, value) => readOnlyKey.Split(" ").Length + value.Split(" ").Length);
          * }</pre>
          * <p>
          * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -387,7 +387,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
-        IKTable<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper);
+        IKTable<K, VR> MapValues<VR>(IValueMapperWithKey<K, V, VR> mapper);
 
         /**
          * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -401,7 +401,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
          * KTable<string, int> outputTable =
-         *  inputTable.mapValues((readOnlyKey, value) => readOnlyKey.split(" ").Length + value.split(" ").Length, Named.As("countTokenValueAndKey"));
+         *  inputTable.mapValues((readOnlyKey, value) => readOnlyKey.Split(" ").Length + value.Split(" ").Length, Named.As("countTokenValueAndKey"));
          * }</pre>
          * <p>
          * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -420,7 +420,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
-        IKTable<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper,
+        IKTable<K, VR> MapValues<VR>(IValueMapperWithKey<K, V, VR> mapper,
                                       Named named);
 
         /**
@@ -439,7 +439,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KTable<string, int> outputTable = inputTable.mapValue(new ValueMapper<string, int> {
          *     int apply(string value)
 {
-         *         return value.split(" ").Length;
+         *         return value.Split(" ").Length;
          *     }
          * });
          * }</pre>
@@ -467,11 +467,11 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
-        IKTable<K, VR> mapValues<VR>(
+        IKTable<K, VR> MapValues<VR>(
             IValueMapper<V, VR> mapper,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
-        void enableSendingOldValues();
+        void EnableSendingOldValues();
 
         /**
          * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -489,7 +489,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KTable<string, int> outputTable = inputTable.mapValue(new ValueMapper<string, int> {
          *     int apply(string value)
 {
-         *         return value.split(" ").Length;
+         *         return value.Split(" ").Length;
          *     }
          * });
          * }</pre>
@@ -518,7 +518,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
-        IKTable<K, VR> mapValues<VR>(IValueMapper<V, VR> mapper,
+        IKTable<K, VR> MapValues<VR>(IValueMapper<V, VR> mapper,
                                       Named named,
                                       Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
@@ -538,7 +538,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KTable<string, int> outputTable = inputTable.mapValue(new ValueMapperWithKey<string, string, int> {
          *     int apply(string readOnlyKey, string value)
 {
-         *          return readOnlyKey.split(" ").Length + value.split(" ").Length;
+         *          return readOnlyKey.Split(" ").Length + value.Split(" ").Length;
          *     }
          * });
          * }</pre>
@@ -567,7 +567,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
-        IKTable<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper,
+        IKTable<K, VR> MapValues<VR>(IValueMapperWithKey<K, V, VR> mapper,
                                       Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
@@ -586,7 +586,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * KTable<string, int> outputTable = inputTable.mapValue(new ValueMapperWithKey<string, string, int> {
          *     int apply(string readOnlyKey, string value)
 {
-         *          return readOnlyKey.split(" ").Length + value.split(" ").Length;
+         *          return readOnlyKey.Split(" ").Length + value.Split(" ").Length;
          *     }
          * });
          * }</pre>
@@ -616,7 +616,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
-        IKTable<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper,
+        IKTable<K, VR> MapValues<VR>(IValueMapperWithKey<K, V, VR> mapper,
                                       Named named,
                                       Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
@@ -640,7 +640,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return a {@link KStream} that contains the same records as this {@code KTable}
          */
-        IKStream<K, V> toStream(Named named);
+        IKStream<K, V> ToStream(Named named);
 
         /**
          * Convert this changelog stream to a {@link KStream} using the given {@link KeyValueMapper} to select the new key.
@@ -668,7 +668,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param the new key type of the result stream
          * @return a {@link KStream} that contains the same records as this {@code KTable}
          */
-        IKStream<KR, V> toStream<KR>(IKeyValueMapper<K, V, KR> mapper);
+        IKStream<KR, V> ToStream<KR>(IKeyValueMapper<K, V, KR> mapper);
 
         /**
          * Convert this changelog stream to a {@link KStream} using the given {@link KeyValueMapper} to select the new key.
@@ -697,7 +697,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param the new key type of the result stream
          * @return a {@link KStream} that contains the same records as this {@code KTable}
          */
-        IKStream<KR, V> toStream<KR>(IKeyValueMapper<K, V, KR> mapper,
+        IKStream<KR, V> ToStream<KR>(IKeyValueMapper<K, V, KR> mapper,
                                       Named named);
 
         /**
@@ -708,7 +708,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param suppressed Configuration object determining what, if any, updates to suppress
          * @return A new KTable with the desired suppression characteristics.
          */
-        IKTable<K, V> suppress(ISuppressed<K> suppressed);
+        IKTable<K, V> Suppress(ISuppressed<K> suppressed);
 
         /**
          * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -730,7 +730,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -786,7 +786,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        IKTable<K, VR> TransformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                             string[] stateStoreNames);
 
         /**
@@ -809,7 +809,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -866,7 +866,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        IKTable<K, VR> TransformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                             Named named,
                                             string[] stateStoreNames);
 
@@ -887,7 +887,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -951,7 +951,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        IKTable<K, VR> TransformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                             string[] stateStoreNames);
 
@@ -972,7 +972,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
-         *         Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("myValueTransformState"),
+         *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
          *                 Serdes.string(),
          *                 Serdes.string());
          * // register store
@@ -1037,7 +1037,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        IKTable<K, VR> TransformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                             Named named,
                                             string[] stateStoreNames);
@@ -1072,7 +1072,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the value type of the result {@link KGroupedTable}
          * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
          */
-        IKGroupedTable<KR, VR> groupBy<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector);
+        IKGroupedTable<KR, VR> GroupBy<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector);
 
         /**
          * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper}
@@ -1105,7 +1105,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KTable#groupBy(KeyValueMapper, Grouped)} instead
          */
         [Obsolete]
-        IKGroupedTable<KR, VR> groupBy<KR, VR>(
+        IKGroupedTable<KR, VR> GroupBy<KR, VR>(
             IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector,
             ISerialized<KR, VR> serialized);
 
@@ -1139,7 +1139,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param          the value type of the result {@link KGroupedTable}
          * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
          */
-        IKGroupedTable<KR, VR> groupBy<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector,
+        IKGroupedTable<KR, VR> GroupBy<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector,
                                                 Grouped<KR, VR> grouped);
 
         /**
@@ -1214,7 +1214,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner)
          * @see #outerJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> join<VO, VR>(
+        IKTable<K, VR> Join<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner);
 
@@ -1291,7 +1291,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner)
          * @see #outerJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> join<VO, VR>(
+        IKTable<K, VR> Join<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Named named);
@@ -1371,7 +1371,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner, Materialized)
          * @see #outerJoin(KTable, ValueJoiner, Materialized)
          */
-        IKTable<K, VR> join<VO, VR>(
+        IKTable<K, VR> Join<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
@@ -1452,7 +1452,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner, Materialized)
          * @see #outerJoin(KTable, ValueJoiner, Materialized)
          */
-        IKTable<K, VR> join<VO, VR>(
+        IKTable<K, VR> Join<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Named named,
@@ -1537,7 +1537,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #outerJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> leftJoin<VO, VR>(
+        IKTable<K, VR> LeftJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner);
 
@@ -1621,7 +1621,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #outerJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> leftJoin<VO, VR>(
+        IKTable<K, VR> LeftJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Named named);
@@ -1708,7 +1708,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner, Materialized)
          * @see #outerJoin(KTable, ValueJoiner, Materialized)
          */
-        IKTable<K, VR> leftJoin<VO, VR>(
+        IKTable<K, VR> LeftJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
@@ -1796,7 +1796,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner, Materialized)
          * @see #outerJoin(KTable, ValueJoiner, Materialized)
          */
-        IKTable<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other,
+        IKTable<K, VR> LeftJoin<VO, VR>(IKTable<K, VO> other,
                                          IValueJoiner<V, VO, VR> joiner,
                                          Named named,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
@@ -1879,7 +1879,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #leftJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> outerJoin<VO, VR>(IKTable<K, VO> other,
+        IKTable<K, VR> OuterJoin<VO, VR>(IKTable<K, VO> other,
                                           IValueJoiner<V, VO, VR> joiner);
 
 
@@ -1962,7 +1962,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #leftJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> outerJoin<VO, VR>(IKTable<K, VO> other,
+        IKTable<K, VR> OuterJoin<VO, VR>(IKTable<K, VO> other,
                                           IValueJoiner<V, VO, VR> joiner,
                                           Named named);
 
@@ -2047,7 +2047,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #leftJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> outerJoin<VO, VR>(IKTable<K, VO> other,
+        IKTable<K, VR> OuterJoin<VO, VR>(IKTable<K, VO> other,
                                           IValueJoiner<V, VO, VR> joiner,
                                           Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
@@ -2134,7 +2134,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #leftJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> outerJoin<VO, VR>(IKTable<K, VO> other,
+        IKTable<K, VR> OuterJoin<VO, VR>(IKTable<K, VO> other,
                                           IValueJoiner<V, VO, VR> joiner,
                                           Named named,
                                           Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);

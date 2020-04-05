@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
      */
     public static class StreamStreamJoinNode
     {
-        public static StreamStreamJoinNodeBuilder<K, V1, V2, VR> streamStreamJoinNodeBuilder<K, V1, V2, VR>()
+        public static StreamStreamJoinNodeBuilder<K, V1, V2, VR> StreamStreamJoinNodeBuilder<K, V1, V2, VR>()
         {
             return new StreamStreamJoinNodeBuilder<K, V1, V2, VR>();
         }
@@ -65,17 +65,17 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            var thisProcessorName = thisProcessorParameters().ProcessorName;
-            var otherProcessorName = otherProcessorParameters().ProcessorName;
+            var thisProcessorName = ThisProcessorParameters().ProcessorName;
+            var otherProcessorName = OtherProcessorParameters().ProcessorName;
             var thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.ProcessorName;
             var otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.ProcessorName;
 
-            topologyBuilder.AddProcessor(thisProcessorName, thisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
-            topologyBuilder.AddProcessor(otherProcessorName, otherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
+            topologyBuilder.AddProcessor(thisProcessorName, ThisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
+            topologyBuilder.AddProcessor(otherProcessorName, OtherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
 
             topologyBuilder.AddProcessor(
-                mergeProcessorParameters().ProcessorName,
-                mergeProcessorParameters().ProcessorSupplier,
+                MergeProcessorParameters().ProcessorName,
+                MergeProcessorParameters().ProcessorSupplier,
                 thisProcessorName, otherProcessorName);
 
             //topologyBuilder.addStateStore(

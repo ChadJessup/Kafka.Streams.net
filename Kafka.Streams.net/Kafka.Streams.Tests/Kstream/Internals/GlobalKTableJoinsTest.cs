@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        public void setUp()
 //        {
-//            Consumed<string, string> consumed = Consumed.with(Serdes.String(), Serdes.String());
+//            Consumed<string, string> consumed = Consumed.With(Serdes.String(), Serdes.String());
 //            global = builder.globalTable(globalTopic, consumed);
 //            stream = builder.Stream(streamTopic, consumed);
 //            keyValueMapper = (key, value) => value;
@@ -42,9 +42,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .process(supplier);
 
 //            Dictionary<string, ValueAndTimestamp<string>> expected = new HashMap<>();
-//            expected.put("1", ValueAndTimestamp.make("a+A", 2L));
-//            expected.put("2", ValueAndTimestamp.make("b+B", 10L));
-//            expected.put("3", ValueAndTimestamp.make("c+null", 3L));
+//            expected.put("1", ValueAndTimestamp.Make("a+A", 2L));
+//            expected.put("2", ValueAndTimestamp.Make("b+B", 10L));
+//            expected.put("3", ValueAndTimestamp.Make("c+null", 3L));
 
 //            verifyJoin(expected, supplier);
 //        }
@@ -58,8 +58,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .process(supplier);
 
 //            Dictionary<string, ValueAndTimestamp<string>> expected = new HashMap<>();
-//            expected.put("1", ValueAndTimestamp.make("a+A", 2L));
-//            expected.put("2", ValueAndTimestamp.make("b+B", 10L));
+//            expected.put("1", ValueAndTimestamp.Make("a+A", 2L));
+//            expected.put("2", ValueAndTimestamp.Make("b+B", 10L));
 
 //            verifyJoin(expected, supplier);
 //        }
@@ -72,12 +72,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            // write some data to the global table
-//            driver.pipeInput(recordFactory.create(globalTopic, "a", "A", 1L));
-//            driver.pipeInput(recordFactory.create(globalTopic, "b", "B", 5L));
+//            driver.PipeInput(recordFactory.Create(globalTopic, "a", "A", 1L));
+//            driver.PipeInput(recordFactory.Create(globalTopic, "b", "B", 5L));
 //            //write some data to the stream
-//            driver.pipeInput(recordFactory.create(streamTopic, "1", "a", 2L));
-//            driver.pipeInput(recordFactory.create(streamTopic, "2", "b", 10L));
-//            driver.pipeInput(recordFactory.create(streamTopic, "3", "c", 3L));
+//            driver.PipeInput(recordFactory.Create(streamTopic, "1", "a", 2L));
+//            driver.PipeInput(recordFactory.Create(streamTopic, "2", "b", 10L));
+//            driver.PipeInput(recordFactory.Create(streamTopic, "3", "c", 3L));
 
 //            Assert.Equal(expected, supplier.theCapturedProcessor().lastValueAndTimestampPerKey);
 //        }

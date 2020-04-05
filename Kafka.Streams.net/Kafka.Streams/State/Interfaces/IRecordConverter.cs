@@ -5,27 +5,27 @@ namespace Kafka.Streams.State.Interfaces
 {
     public interface IRecordConverter
     {
-        ConsumeResult<byte[], byte[]> convert(ConsumeResult<byte[], byte[]> record);
+        ConsumeResult<byte[], byte[]> Convert(ConsumeResult<byte[], byte[]> record);
     }
 
     public class IdentityRecordConverter : IRecordConverter
     {
-        public ConsumeResult<byte[], byte[]> convert(ConsumeResult<byte[], byte[]> record)
+        public ConsumeResult<byte[], byte[]> Convert(ConsumeResult<byte[], byte[]> record)
             => record;
     }
 
     public class RawToTimeStampInstance : IRecordConverter
     {
-        public ConsumeResult<byte[], byte[]> convert(ConsumeResult<byte[], byte[]> record)
+        public ConsumeResult<byte[], byte[]> Convert(ConsumeResult<byte[], byte[]> record)
         {
-            var rawValue = record.Value;
+            var RawValue = record.Value;
             Timestamp timestamp = record.Timestamp;
-            var recordValue = rawValue == null
+            var recordValue = RawValue == null
                 ? null
-                : new ByteBuffer().allocate(8 + rawValue.Length)
-                    .putLong(timestamp.UnixTimestampMs)
-                    .Add(rawValue)
-                    .array();
+                : new ByteBuffer().Allocate(8 + RawValue.Length)
+                    .PutLong(timestamp.UnixTimestampMs)
+                    .Add(RawValue)
+                    .Array();
 
             return new ConsumeResult<byte[], byte[]>()
             {

@@ -22,13 +22,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void testToInternalValueTransformerSupplierSuppliesNewTransformers()
 //        {
 //            ValueTransformerSupplier<object, object> valueTransformerSupplier = createMock(ValueTransformerSupplier));
-//            expect(valueTransformerSupplier.get()).andReturn(null).times(3);
+//            expect(valueTransformerSupplier.Get()).andReturn(null).times(3);
 //            ValueTransformerWithKeySupplier<object, object, object> valueTransformerWithKeySupplier =
 //                 AbstractStream.toValueTransformerWithKeySupplier(valueTransformerSupplier);
 //            replay(valueTransformerSupplier);
-//            valueTransformerWithKeySupplier.get();
-//            valueTransformerWithKeySupplier.get();
-//            valueTransformerWithKeySupplier.get();
+//            valueTransformerWithKeySupplier.Get();
+//            valueTransformerWithKeySupplier.Get();
+//            valueTransformerWithKeySupplier.Get();
 //            verify(valueTransformerSupplier);
 //        }
 
@@ -37,11 +37,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            IValueTransformerWithKeySupplier<object, object, object> valueTransformerWithKeySupplier =
 //            createMock(typeof(IValueTransformerWithKeySupplier));
-//            expect(valueTransformerWithKeySupplier.get()).andReturn(null).times(3);
+//            expect(valueTransformerWithKeySupplier.Get()).andReturn(null).times(3);
 //            replay(valueTransformerWithKeySupplier);
-//            valueTransformerWithKeySupplier.get();
-//            valueTransformerWithKeySupplier.get();
-//            valueTransformerWithKeySupplier.get();
+//            valueTransformerWithKeySupplier.Get();
+//            valueTransformerWithKeySupplier.Get();
+//            valueTransformerWithKeySupplier.Get();
 //            verify(valueTransformerWithKeySupplier);
 //        }
 
@@ -53,7 +53,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
 //            var topicName = "topic";
 
-//            ExtendedKStream<int, string> stream = new ExtendedKStream<>(builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String())));
+//            ExtendedKStream<int, string> stream = new ExtendedKStream<>(builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String())));
 
 //            stream.randomFilter().process(supplier);
 
@@ -66,7 +66,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
 //            {
-//                driver.pipeInput(recordFactory.create(topicName, expectedKey, "V" + expectedKey));
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
 //            }
 
 //            Assert.True(supplier.theCapturedProcessor().processed.Count <= expectedKeys.Length);
@@ -115,7 +115,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    // flip a coin and filter
 //                    if (rand.nextBoolean())
 //                    {
-//                        context().forward(key, value);
+//                        context.Forward(key, value);
 //                    }
 //                }
 //            }

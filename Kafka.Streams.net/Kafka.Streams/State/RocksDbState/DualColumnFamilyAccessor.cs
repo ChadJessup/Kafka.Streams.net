@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.RocksDbState
             this.newColumnFamily = newColumnFamily;
         }
 
-        public void put(
+        public void Put(
             byte[] key,
             byte[] valueWithTimestamp)
         {
@@ -78,18 +78,18 @@ namespace Kafka.Streams.State.RocksDbState
             }
         }
 
-        public void prepareBatch(
+        public void PrepareBatch(
             List<KeyValuePair<Bytes, byte[]>> entries,
             WriteBatch batch)
         {
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
-                addToBatch(entry.Key.get(), entry.Value, batch);
+                AddToBatch(entry.Key.Get(), entry.Value, batch);
             }
         }
 
 
-        public byte[] get(byte[] key)
+        public byte[] Get(byte[] key)
         {
             var valueWithTimestamp = db.Get(key, newColumnFamily);
 
@@ -102,11 +102,11 @@ namespace Kafka.Streams.State.RocksDbState
 
             if (plainValue != null)
             {
-                var valueWithUnknownTimestamp = ApiUtils.convertToTimestampedFormat(plainValue);
+                var valueWithUnknownTimestamp = ApiUtils.ConvertToTimestampedFormat(plainValue);
                 // this does only work, because the changelog topic contains correct data already
                 // for other string.Format changes, we cannot take this short cut and can only migrate data
                 // from old to new store on put()
-                put(key, valueWithUnknownTimestamp);
+                Put(key, valueWithUnknownTimestamp);
                 return valueWithUnknownTimestamp;
             }
 
@@ -114,7 +114,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
 
-        public byte[] getOnly(byte[] key)
+        public byte[] GetOnly(byte[] key)
         {
             var valueWithTimestamp = db.Get(key, newColumnFamily);
 
@@ -127,14 +127,14 @@ namespace Kafka.Streams.State.RocksDbState
 
             if (plainValue != null)
             {
-                return ApiUtils.convertToTimestampedFormat(plainValue);
+                return ApiUtils.ConvertToTimestampedFormat(plainValue);
             }
 
             return null;
         }
 
 
-        public IKeyValueIterator<Bytes, byte[]> range(
+        public IKeyValueIterator<Bytes, byte[]> Range(
             Bytes from,
             Bytes to)
         {
@@ -146,7 +146,7 @@ namespace Kafka.Streams.State.RocksDbState
                 to);
         }
 
-        public IKeyValueIterator<Bytes, byte[]> all()
+        public IKeyValueIterator<Bytes, byte[]> All()
         {
             Iterator innerIterWithTimestamp = db.NewIterator(newColumnFamily);
             innerIterWithTimestamp.SeekToFirst();
@@ -156,31 +156,31 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
 
-        public long approximateNumEntries()
+        public long ApproximateNumEntries()
         {
             return long.Parse(db.GetProperty("rocksdb.estimate-num-keys", oldColumnFamily))
                 + long.Parse(db.GetProperty("rocksdb.estimate-num-keys", newColumnFamily));
         }
 
 
-        public void flush()
+        public void Flush()
         {
             // db.Flush(fOptions, oldColumnFamily);
             // db.Flush(fOptions, newColumnFamily);
         }
 
-        public void prepareBatchForRestore(
+        public void PrepareBatchForRestore(
             List<KeyValuePair<byte[], byte[]>> records,
             WriteBatch batch)
         {
             foreach (KeyValuePair<byte[], byte[]> record in records)
             {
-                addToBatch(record.Key, record.Value, batch);
+                AddToBatch(record.Key, record.Value, batch);
             }
         }
 
 
-        public void addToBatch(
+        public void AddToBatch(
             byte[] key,
             byte[] value,
             WriteBatch batch)
@@ -198,13 +198,13 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
 
-        public void close()
+        public void Close()
         {
             // oldColumnFamily.close();
             // newColumnFamily.close();
         }
 
-        public void toggleDbForBulkLoading()
+        public void ToggleDbForBulkLoading()
         {
             try
             {

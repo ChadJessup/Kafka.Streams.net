@@ -20,50 +20,50 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.clock = clock;
         }
 
-        public TableSourceNodeBuilder<K, V> withSourceName(string sourceName)
+        public TableSourceNodeBuilder<K, V> WithSourceName(string sourceName)
         {
             this.sourceName = sourceName;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withTopic(string topic)
+        public TableSourceNodeBuilder<K, V> WithTopic(string topic)
         {
             this.topic = topic;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withMaterializedInternal(MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal)
+        public TableSourceNodeBuilder<K, V> WithMaterializedInternal(MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal)
         {
             this.materializedInternal = materializedInternal;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withConsumedInternal(ConsumedInternal<K, V> consumedInternal)
+        public TableSourceNodeBuilder<K, V> WithConsumedInternal(ConsumedInternal<K, V> consumedInternal)
         {
             this.consumedInternal = consumedInternal;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withProcessorParameters(ProcessorParameters<K, V> processorParameters)
+        public TableSourceNodeBuilder<K, V> WithProcessorParameters(ProcessorParameters<K, V> processorParameters)
         {
             this.processorParameters = processorParameters;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withNodeName(string nodeName)
+        public TableSourceNodeBuilder<K, V> WithNodeName(string nodeName)
         {
             this.nodeName = nodeName;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> isGlobalKTable(bool isGlobaKTable)
+        public TableSourceNodeBuilder<K, V> IsGlobalKTable(bool isGlobaKTable)
         {
             this._isGlobalKTable = isGlobaKTable;
 
             return this;
         }
 
-        public TableSourceNode<K, V> build()
+        public TableSourceNode<K, V> Build()
         {
             return new TableSourceNode<K, V>(
                 this.clock,

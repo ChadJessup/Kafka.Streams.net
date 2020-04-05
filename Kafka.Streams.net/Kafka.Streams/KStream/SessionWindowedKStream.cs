@@ -63,7 +63,7 @@
 //         * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
 //         * ReadOnlySessionStore<string,long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
 //         * string key = "some-key";
-//         * KeyValueIterator<Windowed<string>, long> sumForKeyForWindows = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+//         * KeyValueIterator<Windowed<string>, long> sumForKeyForWindows = localWindowStore.Fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
 //         * }</pre>
 //         * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
 //         * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -154,7 +154,7 @@
 //         * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
 //         * ReadOnlySessionStore<string, long> sessionStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>sessionStore());
 //         * string key = "some-key";
-//         * KeyValueIterator<Windowed<string>, long> aggForKeyForSession = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+//         * KeyValueIterator<Windowed<string>, long> aggForKeyForSession = localWindowStore.Fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
 //         * }</pre>
 //         *
 //         * <p>
@@ -249,7 +249,7 @@
 //         * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
 //         * ReadOnlySessionStore<string,long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
 //         * string key = "some-key";
-//         * KeyValueIterator<Windowed<string>, long> sumForKeyForWindows = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+//         * KeyValueIterator<Windowed<string>, long> sumForKeyForWindows = localWindowStore.Fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
 //         * }</pre>
 //         * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
 //         * query the value of the key on a parallel running instance of your Kafka Streams application.

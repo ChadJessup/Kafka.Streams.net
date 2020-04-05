@@ -4,60 +4,8 @@ using Kafka.Streams.Processors.Interfaces;
 
 namespace Kafka.Streams.KStream
 {
-    /**
-     * This is used to provide the optional parameters when producing to new topics
-     * using {@link KStream#through(string, Produced)} or {@link KStream#to(string, Produced)}.
-     * @param key type
-     * @param value type
-     */
-    public class Produced<K, V> : INamedOperation<Produced<K, V>>
+    public static class Produced
     {
-        public ISerde<K> keySerde { get; private set; }
-        public ISerde<V> valueSerde { get; private set; }
-        protected IStreamPartitioner<K, V> partitioner;
-        protected string processorName;
-
-        private Produced(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            IStreamPartitioner<K, V> partitioner,
-            string processorName)
-        {
-            this.keySerde = keySerde;
-            this.valueSerde = valueSerde;
-            this.partitioner = partitioner;
-            this.processorName = processorName;
-        }
-
-        protected Produced(Produced<K, V> produced)
-        {
-            this.keySerde = produced.keySerde;
-            this.valueSerde = produced.valueSerde;
-            this.partitioner = produced.partitioner;
-            this.processorName = produced.processorName;
-        }
-
-        /**
-         * Create a Produced instance with provided keySerde and valueSerde.
-         * @param keySerde      Serde to use for serializing the key
-         * @param valueSerde    Serde to use for serializing the value
-         * @param           key type
-         * @param           value type
-         * @return  A new {@link Produced} instance configured with keySerde and valueSerde
-         * @see KStream#through(string, Produced)
-         * @see KStream#to(string, Produced)
-         */
-        public static Produced<K, V> With(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde)
-        {
-            return new Produced<K, V>(
-                keySerde,
-                valueSerde,
-                null,
-                null);
-        }
-
         /**
          * Create a Produced instance with provided keySerde, valueSerde, and partitioner.
          * @param keySerde      Serde to use for serializing the key
@@ -72,7 +20,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public static Produced<K, V> with(
+        public static Produced<K, V> With<K, V>(
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             IStreamPartitioner<K, V> partitioner)
@@ -92,7 +40,7 @@ namespace Kafka.Streams.KStream
          * @param         value type
          * @return a new instance of {@link Produced}
          */
-        public static Produced<K, V> As(string processorName)
+        public static Produced<K, V> As<K, V>(string processorName)
         {
             return new Produced<K, V>(
                 null,
@@ -110,7 +58,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public static Produced<K, V> GetKeySerde(ISerde<K> keySerde)
+        public static Produced<K, V> GetKeySerde<K, V>(ISerde<K> keySerde)
         {
             return new Produced<K, V>(
                 keySerde, null, null, null);
@@ -125,7 +73,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public static Produced<K, V> GetValueSerde(ISerde<V> valueSerde)
+        public static Produced<K, V> GetValueSerde<K, V>(ISerde<V> valueSerde)
         {
             return new Produced<K, V>(
                 null,
@@ -145,11 +93,70 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public static Produced<K, V> streamPartitioner(IStreamPartitioner<K, V> partitioner)
+        public static Produced<K, V> StreamPartitioner<K, V>(IStreamPartitioner<K, V> partitioner)
         {
             return new Produced<K, V>(null, null, partitioner, null);
         }
 
+        /**
+         * Create a Produced instance with provided keySerde and valueSerde.
+         * @param keySerde      Serde to use for serializing the key
+         * @param valueSerde    Serde to use for serializing the value
+         * @param           key type
+         * @param           value type
+         * @return  A new {@link Produced} instance configured with keySerde and valueSerde
+         * @see KStream#through(string, Produced)
+         * @see KStream#to(string, Produced)
+         */
+        public static Produced<K, V> With<K, V>(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+        {
+            return new Produced<K, V>(
+                keySerde,
+                valueSerde,
+                null,
+                null);
+        }
+    }
+
+    /**
+     * This is used to provide the optional parameters when producing to new topics
+     * using {@link KStream#through(string, Produced)} or {@link KStream#to(string, Produced)}.
+     * @param key type
+     * @param value type
+     */
+    public class Produced<K, V> : INamedOperation<Produced<K, V>>
+    {
+        public ISerde<K>? keySerde { get; private set; }
+        public ISerde<V>? valueSerde { get; private set; }
+        protected IStreamPartitioner<K, V> partitioner { get; private set; }
+        protected string processorName { get; private set; }
+
+        public Produced(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            IStreamPartitioner<K, V> partitioner,
+            string processorName)
+        {
+            this.keySerde = keySerde;
+            this.valueSerde = valueSerde;
+            this.partitioner = partitioner;
+            this.processorName = processorName;
+        }
+
+        protected Produced(Produced<K, V> produced)
+        {
+            if (produced is null)
+            {
+                throw new System.ArgumentNullException(nameof(produced));
+            }
+
+            this.keySerde = produced.keySerde;
+            this.valueSerde = produced.valueSerde;
+            this.partitioner = produced.partitioner;
+            this.processorName = produced.processorName;
+        }
         /**
          * Produce records using the provided partitioner.
          * @param partitioner   the function used to determine how records are distributed among partitions of the topic,
@@ -157,7 +164,7 @@ namespace Kafka.Streams.KStream
          *                      {@link WindowedStreamPartitioner} will be used&mdash;otherwise {@link DefaultPartitioner} wil be used
          * @return this
          */
-        public Produced<K, V> withStreamPartitioner(IStreamPartitioner<K, V> partitioner)
+        public Produced<K, V> WithStreamPartitioner(IStreamPartitioner<K, V> partitioner)
         {
             this.partitioner = partitioner;
             return this;
@@ -168,7 +175,7 @@ namespace Kafka.Streams.KStream
          * @param valueSerde    Serde to use for serializing the value
          * @return this
          */
-        public Produced<K, V> withValueSerde(ISerde<V> valueSerde)
+        public Produced<K, V> WithValueSerde(ISerde<V>? valueSerde)
         {
             this.valueSerde = valueSerde;
 
@@ -180,13 +187,12 @@ namespace Kafka.Streams.KStream
          * @param keySerde    Serde to use for serializing the key
          * @return this
          */
-        public Produced<K, V> withKeySerde(ISerde<K> keySerde)
+        public Produced<K, V> WithKeySerde(ISerde<K>? keySerde)
         {
             this.keySerde = keySerde;
 
             return this;
         }
-
 
         public override bool Equals(object o)
         {

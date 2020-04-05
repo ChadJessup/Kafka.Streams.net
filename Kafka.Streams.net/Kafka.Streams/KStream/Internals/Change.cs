@@ -11,7 +11,7 @@ namespace Kafka.Streams.KStream.Internals
         public V newValue { get; }
         public V oldValue { get; }
 
-        public Change(V newValue, V oldValue)
+        public Change(V newValue = default, V oldValue = default)
         {
             this.newValue = newValue;
             this.oldValue = oldValue;

@@ -20,24 +20,24 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    "myStore",
 //                    unionNotNullArgs,
 //                    differenceNotNullArgs
-//                ).get();
+//                ).Get();
 
 //            ITimestampedKeyValueStore<string, HashSet<string>> myStore =
 //                new GenericInMemoryTimestampedKeyValueStore<>("myStore");
 
 //            context.register(myStore, null);
-//            reduceProcessor.init(context);
+//            reduceProcessor.Init(context);
 //            context.setCurrentNode(new ProcessorNode<>("reduce", reduceProcessor, singleton("myStore")));
 
 //            context.setTime(10L);
 //            reduceProcessor.process("A", new Change<>(singleton("a"), null));
-//            Assert.Equal(ValueAndTimestamp.make(singleton("a"), 10L), myStore.get("A"));
+//            Assert.Equal(ValueAndTimestamp.Make(singleton("a"), 10L), myStore.Get("A"));
 //            context.setTime(15L);
 //            reduceProcessor.process("A", new Change<>(singleton("b"), singleton("a")));
-//            Assert.Equal(ValueAndTimestamp.make(singleton("b"), 15L), myStore.get("A"));
+//            Assert.Equal(ValueAndTimestamp.Make(singleton("b"), 15L), myStore.Get("A"));
 //            context.setTime(12L);
 //            reduceProcessor.process("A", new Change<>(null, singleton("b")));
-//            Assert.Equal(ValueAndTimestamp.make(emptySet(), 15L), myStore.get("A"));
+//            Assert.Equal(ValueAndTimestamp.Make(emptySet(), 15L), myStore.Get("A"));
 //        }
 
 //        private HashSet<string> differenceNotNullArgs(HashSet<string> left, HashSet<string> right)

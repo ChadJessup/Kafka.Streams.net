@@ -21,20 +21,20 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode
     {
-        public ISerde<K> keySerde { get; protected set; }
-        public ISerde<V> valueSerde { get; protected set; }
+        public ISerde<K>? keySerde { get; protected set; }
+        public ISerde<V>? valueSerde { get; protected set; }
 
-        protected string sinkName;
-        protected string sourceName;
-        protected string repartitionTopic;
-        protected ProcessorParameters<K, V> processorParameters;
+        protected string sinkName { get; }
+        protected string sourceName { get; }
+        protected string repartitionTopic { get; }
+        protected ProcessorParameters<K, V> processorParameters { get; }
 
         public BaseRepartitionNode(
             string nodeName,
             string sourceName,
             ProcessorParameters<K, V> processorParameters,
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde,
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde,
             string sinkName,
             string repartitionTopic)
             : base(nodeName)

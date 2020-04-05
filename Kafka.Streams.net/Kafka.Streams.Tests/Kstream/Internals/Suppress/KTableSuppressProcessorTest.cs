@@ -27,19 +27,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 
 //                var storeName = "test-store";
 
-//                StateStore buffer = new InMemoryTimeOrderedKeyValueBuffer.Builder<>(storeName, keySerde, valueSerde)
+//                IStateStore buffer = new InMemoryTimeOrderedKeyValueBuffer.Builder<>(storeName, keySerde, valueSerde)
 //                    .withLoggingDisabled()
 //                    .Build();
 
 //                var parent = EasyMock.mock(KTable));
 //                Processor<K, Change<V>> processor =
-//                    new KTableSuppressProcessorSupplier<>((SuppressedInternal<K>)suppressed, storeName, parent).get();
+//                    new KTableSuppressProcessorSupplier<>((SuppressedInternal<K>)suppressed, storeName, parent).Get();
 
 //                var context = new MockInternalProcessorContext();
 //                context.setCurrentNode(new ProcessorNode("testNode"));
 
-//                buffer.init(context, buffer);
-//                processor.init(context);
+//                buffer.Init(context, buffer);
+//                processor.Init(context);
 
 //                this.processor = processor;
 //                this.context = context;
@@ -49,7 +49,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void zeroTimeLimitShouldImmediatelyEmit()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(ZERO, unbounded()), string(), long());
+//                    new Harness<>(untilTimeLimit(TimeSpan.Zero, unbounded()), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = ARBITRARY_LONG;
@@ -59,8 +59,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process(key, value);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -68,7 +68,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void windowedZeroTimeLimitShouldImmediatelyEmit()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//                    new Harness<>(untilTimeLimit(ZERO, unbounded()), timeWindowedSerdeFrom<string>(), 100L), long());
+//                    new Harness<>(untilTimeLimit(TimeSpan.Zero, unbounded()), timeWindowedSerdeFrom<string>(), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = ARBITRARY_LONG;
@@ -78,8 +78,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process(key, value);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -101,8 +101,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process("tick", new Change<>(null, null));
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -139,8 +139,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process(new Windowed<>("dummyKey2", new TimeWindow(windowStart3, windowEnd3)), ARBITRARY_CHANGE);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (recordTime));
 //            }
 
@@ -170,8 +170,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process(new Windowed<>("dummyKey", new TimeWindow(windowEnd, windowEnd + 100L)), ARBITRARY_CHANGE);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -189,8 +189,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process(key, value);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -253,8 +253,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process(key, value);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -277,8 +277,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process(key, value);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -301,8 +301,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process(key, value);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -323,8 +323,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process("dummyKey", value);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -345,8 +345,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                harness.processor.process("dummyKey", value);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
-//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
+//                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
+//                Assert.Equal(capturedForward.keyValue(), (KeyValuePair.Create(key, value)));
 //                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
@@ -372,7 +372,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                }
 //                catch (StreamsException e)
 //                {
-//                    Assert.Equal(e.getMessage(),.ContainsString("buffer exceeded its max capacity"));
+//                    Assert.Equal(e.ToString(),.ContainsString("buffer exceeded its max capacity"));
 //                }
 //            }
 
@@ -398,7 +398,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                }
 //                catch (StreamsException e)
 //                {
-//                    Assert.Equal(e.getMessage(),.ContainsString("buffer exceeded its max capacity"));
+//                    Assert.Equal(e.ToString(),.ContainsString("buffer exceeded its max capacity"));
 //                }
 //            }
 
@@ -439,7 +439,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 
 //        private static <K> ISerde<Windowed<K>> timeWindowedSerdeFrom(Class<K> rawType, long windowSize)
 //        {
-//            ISerde<K> kSerde = Serdes.serdeFrom(rawType);
+//            ISerde<K> kSerde = Serdes.SerdeFrom(rawType);
 //            return new Serdes.WrapperSerde<>(
 //                new TimeWindowedSerializer<>(kSerde.Serializer),
 //                new TimeWindowedDeserializer<>(kSerde.deserializer(), windowSize)

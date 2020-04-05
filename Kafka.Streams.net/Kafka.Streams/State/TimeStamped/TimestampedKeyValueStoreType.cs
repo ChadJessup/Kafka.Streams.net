@@ -14,7 +14,7 @@ namespace Kafka.Streams.State.TimeStamped
         {
         }
 
-        public override IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>> create(IStateStoreProvider storeProvider, string storeName)
+        public override IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>> Create(IStateStoreProvider storeProvider, string storeName)
         {
             return null; // new CompositeReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>(storeProvider, this, storeName);
         }

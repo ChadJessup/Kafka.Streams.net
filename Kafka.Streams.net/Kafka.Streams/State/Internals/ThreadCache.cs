@@ -39,22 +39,22 @@ namespace Kafka.Streams.State.Internals
             this.logger = logger;
         }
 
-        public long puts()
+        public long Puts()
         {
             return numPuts;
         }
 
-        public long gets()
+        public long Gets()
         {
             return numGets;
         }
 
-        public long evicts()
+        public long Evicts()
         {
             return numEvicts;
         }
 
-        public long flushes()
+        public long Flushes()
         {
             return numFlushes;
         }
@@ -66,7 +66,7 @@ namespace Kafka.Streams.State.Internals
          * @param underlyingStoreName Underlying store name
          * @return
          */
-        public static string nameSpaceFromTaskIdAndStore(string taskIDString, string underlyingStoreName)
+        public static string NameSpaceFromTaskIdAndStore(string taskIDString, string underlyingStoreName)
         {
             return taskIDString + "-" + underlyingStoreName;
         }
@@ -76,7 +76,7 @@ namespace Kafka.Streams.State.Internals
          * @param cacheName
          * @return
          */
-        public static string taskIDfromCacheName(string cacheName)
+        public static string TaskIDfromCacheName(string cacheName)
         {
             if (cacheName is null)
             {
@@ -92,7 +92,7 @@ namespace Kafka.Streams.State.Internals
          * @param cacheName
          * @return
          */
-        public static string underlyingStoreNamefromCacheName(string cacheName)
+        public static string UnderlyingStoreNamefromCacheName(string cacheName)
         {
             if (cacheName is null)
             {
@@ -111,28 +111,28 @@ namespace Kafka.Streams.State.Internals
          * @param @namespace
          * @param listener
          */
-        public void addDirtyEntryFlushListener(string @namespace, IDirtyEntryFlushListener listener)
+        public void AddDirtyEntryFlushListener(string @namespace, IDirtyEntryFlushListener listener)
         {
-            NamedCache cache = getOrCreateCache(@namespace);
-            cache.setListener(listener);
+            NamedCache cache = GetOrCreateCache(@namespace);
+            cache.SetListener(listener);
         }
 
-        public void flush(string @namespace)
+        public void Flush(string @namespace)
         {
             numFlushes++;
 
-            NamedCache cache = getCache(@namespace);
+            NamedCache cache = GetCache(@namespace);
             if (cache == null)
             {
                 return;
             }
 
-            cache.flush();
+            cache.Flush();
 
-            logger.LogTrace("Cache stats on flush: #puts={}, #gets={}, #evicts={}, #flushes={}", puts(), gets(), evicts(), flushes());
+            logger.LogTrace("Cache stats on flush: #puts={}, #gets={}, #evicts={}, #flushes={}", Puts(), Gets(), Evicts(), Flushes());
         }
 
-        public LRUCacheEntry? get(string @namespace, Bytes key)
+        public LRUCacheEntry? Get(string @namespace, Bytes key)
         {
             numGets++;
 
@@ -141,30 +141,30 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            NamedCache cache = getCache(@namespace);
+            NamedCache cache = GetCache(@namespace);
             if (cache == null)
             {
                 return null;
             }
 
-            return cache.get(key);
+            return cache.Get(key);
         }
 
-        public void put(string @namespace, Bytes key, LRUCacheEntry value)
+        public void Put(string @namespace, Bytes key, LRUCacheEntry value)
         {
             numPuts++;
 
-            NamedCache cache = getOrCreateCache(@namespace);
-            cache.put(key, value);
-            maybeEvict(@namespace);
+            NamedCache cache = GetOrCreateCache(@namespace);
+            cache.Put(key, value);
+            MaybeEvict(@namespace);
         }
 
-        public LRUCacheEntry? putIfAbsent(string @namespace, Bytes key, LRUCacheEntry value)
+        public LRUCacheEntry? PutIfAbsent(string @namespace, Bytes key, LRUCacheEntry value)
         {
-            NamedCache cache = getOrCreateCache(@namespace);
+            NamedCache cache = GetOrCreateCache(@namespace);
 
-            LRUCacheEntry result = cache.putIfAbsent(key, value);
-            maybeEvict(@namespace);
+            LRUCacheEntry result = cache.PutIfAbsent(key, value);
+            MaybeEvict(@namespace);
 
             if (result == null)
             {
@@ -174,54 +174,54 @@ namespace Kafka.Streams.State.Internals
             return result;
         }
 
-        public void putAll(string @namespace, List<KeyValuePair<Bytes, LRUCacheEntry>> entries)
+        public void PutAll(string @namespace, List<KeyValuePair<Bytes, LRUCacheEntry>> entries)
         {
             foreach (KeyValuePair<Bytes, LRUCacheEntry> entry in entries ?? Enumerable.Empty<KeyValuePair<Bytes, LRUCacheEntry>>())
             {
-                put(@namespace, entry.Key, entry.Value);
+                Put(@namespace, entry.Key, entry.Value);
             }
         }
 
-        public LRUCacheEntry? delete(string @namespace, Bytes key)
+        public LRUCacheEntry? Delete(string @namespace, Bytes key)
         {
-            NamedCache cache = getCache(@namespace);
+            NamedCache cache = GetCache(@namespace);
             if (cache == null)
             {
                 return null;
             }
 
-            return cache.delete(key);
+            return cache.Delete(key);
         }
 
-        public MemoryLRUCacheBytesIterator range(string @namespace, Bytes from, Bytes to)
+        public MemoryLRUCacheBytesIterator Range(string @namespace, Bytes from, Bytes to)
         {
-            NamedCache cache = getCache(@namespace);
+            NamedCache cache = GetCache(@namespace);
             if (cache == null)
             {
                 return new MemoryLRUCacheBytesIterator(Enumerable.Empty<KeyValuePair<Bytes, LRUNode>>().GetEnumerator());
             }
 
-            return new MemoryLRUCacheBytesIterator(cache.subMapIterator(from, to));
+            return new MemoryLRUCacheBytesIterator(cache.SubMapIterator(from, to));
         }
 
-        public MemoryLRUCacheBytesIterator all(string @namespace)
+        public MemoryLRUCacheBytesIterator All(string @namespace)
         {
-            NamedCache cache = getCache(@namespace);
+            NamedCache cache = GetCache(@namespace);
             if (cache == null)
             {
                 return new MemoryLRUCacheBytesIterator();
             }
 
-            return new MemoryLRUCacheBytesIterator(cache.allIterator());
+            return new MemoryLRUCacheBytesIterator(cache.AllIterator());
         }
 
-        public long size()
+        public long Size()
         {
             long size = 0;
             foreach (NamedCache cache in caches.Values)
             {
-                size += cache.size();
-                if (isOverflowing(size))
+                size += cache.Size();
+                if (IsOverflowing(size))
                 {
                     return long.MaxValue;
                 }
@@ -229,18 +229,18 @@ namespace Kafka.Streams.State.Internals
             return size;
         }
 
-        private bool isOverflowing(long size)
+        private bool IsOverflowing(long size)
         {
             return size < 0;
         }
 
-        long sizeBytes()
+        long SizeBytes()
         {
             long sizeInBytes = 0;
             foreach (NamedCache namedCache in caches.Values)
             {
-                sizeInBytes += namedCache.sizeInBytes();
-                if (isOverflowing(sizeInBytes))
+                sizeInBytes += namedCache.SizeInBytes();
+                if (IsOverflowing(sizeInBytes))
                 {
                     return long.MaxValue;
                 }
@@ -249,7 +249,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void close(string @namespace)
+        public void Close(string @namespace)
         {
             NamedCache? removed = null;
             if (caches.ContainsKey(@namespace))
@@ -258,25 +258,25 @@ namespace Kafka.Streams.State.Internals
                 caches.Remove(@namespace);
             }
 
-            removed?.close();
+            removed?.Close();
         }
 
-        private void maybeEvict(string @namespace)
+        private void MaybeEvict(string @namespace)
         {
             var numEvicted = 0;
-            while (sizeBytes() > maxCacheSizeBytes)
+            while (SizeBytes() > maxCacheSizeBytes)
             {
-                NamedCache cache = getOrCreateCache(@namespace);
+                NamedCache cache = GetOrCreateCache(@namespace);
                 // we abort here as the put on this cache may have triggered
                 // a put on another cache. So even though the sizeInBytes() is
                 // still > maxCacheSizeBytes there is nothing to evict from this
                 // namespaced cache.
-                if (cache.size() == 0)
+                if (cache.Size() == 0)
                 {
                     return;
                 }
 
-                cache.evict();
+                cache.Evict();
                 numEvicts++;
                 numEvicted++;
             }
@@ -285,13 +285,13 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private NamedCache getCache(string @namespace)
+        private NamedCache GetCache(string @namespace)
         {
             return caches[@namespace];
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private NamedCache getOrCreateCache(string name)
+        private NamedCache GetOrCreateCache(string name)
         {
             NamedCache cache = caches[name];
             if (cache == null)

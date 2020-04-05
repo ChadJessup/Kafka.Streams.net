@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            //},
 //            //        "dummy"
 //            //    )//,
-//            //    //(IStoreBuilder<? : StateStore>) null
+//            //    //(IStoreBuilder<? : IStateStore>) null
 //            //);
 
 //            ProcessorGraphNode<string, long> node = new ProcessorGraphNode<>("stateless", null);
@@ -80,7 +80,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 //                    "asdf"
 //                ), null
-//            //(IStoreBuilder <? : StateStore >) null
+//            //(IStoreBuilder <? : IStateStore >) null
 //            );
 
 //            var extracted = GraphGraceSearchUtil.findAndVerifyWindowGrace(node);
@@ -108,7 +108,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 //                    "asdf"
 //                ), null
-//            //(IStoreBuilder <? : StateStore >) null
+//            //(IStoreBuilder <? : IStateStore >) null
 //            );
 
 //            var extracted = GraphGraceSearchUtil.findAndVerifyWindowGrace(node);
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //                new ProcessorParameters<>(new KStreamSessionWindowAggregate<string, long, int>(
 //                    windows, "asdf", null, null, null
 //                ), "asdf"), null
-//            //       (IStoreBuilder <? : StateStore >) null
+//            //       (IStoreBuilder <? : IStateStore >) null
 //            );
 
 //            StatefulProcessorNode<string, long> statefulParent = new StatefulProcessorNode<>(
@@ -146,7 +146,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            //},
 //            //        "dummy"
 //            //    ),
-//            //    (IStoreBuilder<? : StateStore>) null
+//            //    (IStoreBuilder<? : IStateStore>) null
 //            //);
 //            graceGrandparent.AddChild(statefulParent);
 
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 //                    "asdf"
 //                )//,
-//                 //       (IStoreBuilder <? : StateStore >) null
+//                 //       (IStoreBuilder <? : IStateStore >) null
 //            );
 
 //            ProcessorGraphNode<string, long> statelessParent = new ProcessorGraphNode<>("stateless", null);
@@ -209,7 +209,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 //                    "asdf"
 //                ), null
-//            //       (IStoreBuilder <? : StateStore >) null
+//            //       (IStoreBuilder <? : IStateStore >) null
 //            );
 
 //            StatefulProcessorNode<string, long> rightParent = new StatefulProcessorNode<>(
@@ -227,7 +227,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 //                    "asdf"
 //                ), null
-//            //       (IStoreBuilder <? : StateStore >) null
+//            //       (IStoreBuilder <? : IStateStore >) null
 //            );
 
 //            ProcessorGraphNode<string, long> node = new ProcessorGraphNode<>("stateless", null);

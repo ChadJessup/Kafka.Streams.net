@@ -2,6 +2,6 @@
 {
     public interface IEldestEntryRemovalListener
     {
-        void apply(Bytes key, byte[] value);
+        void Apply(Bytes key, byte[] value);
     }
 }

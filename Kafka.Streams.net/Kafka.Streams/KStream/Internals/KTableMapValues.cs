@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTableValueGetterSupplier<K, V1> view()
+        public IKTableValueGetterSupplier<K, V1> View()
         {
             // if the KTable is materialized, use the materialized store to return getter value;
             // otherwise rely on the parent getter and apply map-values on-the-fly
@@ -56,9 +56,9 @@ namespace Kafka.Streams.KStream.Internals
             return null;
         }
 
-        public void enableSendingOldValues()
+        public void EnableSendingOldValues()
         {
-            parent.enableSendingOldValues();
+            parent.EnableSendingOldValues();
             sendOldValues = true;
         }
     }

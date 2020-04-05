@@ -21,8 +21,8 @@ namespace Kafka.Streams.Nodes
         private SourceNode sourceNode;
 
         private IProcessorContext context;
-        private readonly IDeserializer<K> keyDeserializer;
-        private readonly IDeserializer<V> valDeserializer;
+        private IDeserializer<K> keyDeserializer;
+        private IDeserializer<V> valDeserializer;
         public ITimestampExtractor? TimestampExtractor { get; }
 
         public SourceNode(
@@ -57,12 +57,12 @@ namespace Kafka.Streams.Nodes
             return sourceNode.sourceNode;
         }
 
-        public K deserializeKey(string topic, Headers headers, byte[] data)
+        public virtual K DeserializeKey(string topic, Headers headers, byte[] data)
         {
             return keyDeserializer.Deserialize(data, false, new SerializationContext(MessageComponentType.Key, topic));
         }
 
-        public V deserializeValue(string topic, Headers headers, byte[] data)
+        public virtual V DeserializeValue(string topic, Headers headers, byte[] data)
         {
             return valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
         }
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Nodes
             // if deserializers are null, get the default ones from the context
             if (this.keyDeserializer == null)
             {
-                // this.keyDeserializer = context.keySerde.Deserializer;
+                //this.keyDeserializer = context.keySerde.Deserializer;
             }
 
             if (this.valDeserializer == null)
@@ -93,7 +93,7 @@ namespace Kafka.Streams.Nodes
 
         public override void Process(K key, V value)
         {
-            context.forward(key, value);
+            context.Forward(key, value);
             //sourceNodeForwardSensor.record();
         }
 

@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public string? queryableStoreName()
+        public string? QueryableStoreName()
         {
             return queriable
                 ? this.StoreName
@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
             protected set => _storeName = value;
         }
 
-        public Dictionary<string, string> logConfig()
+        public Dictionary<string, string> LogConfig()
         {
             return TopicConfig;
         }

@@ -8,8 +8,8 @@ namespace Kafka.Streams.KStream.Internals
     public class KTableKTableJoinMergeProcessor<K, V> : AbstractProcessor<K, Change<V>>
     {
         private readonly string queryableName;
-        private ITimestampedKeyValueStore<K, V> store;
-        private TimestampedTupleForwarder<K, V> tupleForwarder;
+        private ITimestampedKeyValueStore<K, V>? store;
+        private TimestampedTupleForwarder<K, V>? tupleForwarder;
         private readonly bool sendOldValues;
 
         public KTableKTableJoinMergeProcessor(string queryableName)
@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals
             base.Init(context);
             if (queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<K, V>(
                     store,
                     context,
@@ -38,11 +38,16 @@ namespace Kafka.Streams.KStream.Internals
 
         public override void Process(K key, Change<V> value)
         {
+            if (value is null)
+            {
+                throw new System.ArgumentNullException(nameof(value));
+            }
+
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp<V>.make(value.newValue, context.timestamp));
+                store.Add(key, ValueAndTimestamp.Make(value.newValue, context.timestamp));
 
-                tupleForwarder.maybeForward(key, value.newValue, sendOldValues
+                tupleForwarder.MaybeForward(key, value.newValue, sendOldValues
                     ? value.oldValue
                     : default);
             }
@@ -50,11 +55,11 @@ namespace Kafka.Streams.KStream.Internals
             {
                 if (sendOldValues)
                 {
-                    context.forward(key, value);
+                    context.Forward(key, value);
                 }
                 else
                 {
-                    context.forward(key, new Change<V>(value.newValue, default));
+                    context.Forward(key, new Change<V>(value.newValue));
                 }
             }
         }
