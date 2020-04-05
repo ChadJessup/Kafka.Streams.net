@@ -47,7 +47,7 @@ namespace Kafka.Streams.KStream.Internals
                 builder.WithLoggingDisabled();
             }
 
-            if (materialized?.cachingEnabled == true)
+            if (materialized?.CachingEnabled == true)
             {
                 builder.WithCachingEnabled();
             }

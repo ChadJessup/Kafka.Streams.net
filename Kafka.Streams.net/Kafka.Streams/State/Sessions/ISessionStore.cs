@@ -17,6 +17,7 @@ namespace Kafka.Streams.State.Sessions
      * @param <AGG> type of the aggregated values
      */
     public interface ISessionStore<K, AGG> : IStateStore, IReadOnlySessionStore<K, AGG>
+        where AGG : class
     {
 
         /**
@@ -57,7 +58,7 @@ namespace Kafka.Streams.State.Sessions
          * @return The value or {@code null} if no session associated with the key can be found
          * @throws ArgumentNullException If {@code null} is used for any key.
          */
-        AGG FetchSession(K key, long startTime, long endTime);
+        AGG? FetchSession(K key, long startTime, long endTime);
 
         /**
          * Remove the session aggregated with provided {@link Windowed} key from the store

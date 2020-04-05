@@ -24,7 +24,7 @@
 //            consumer.AddRecord(new ConsumeResult<>(TOPIC, 0, 4L, System.Array.Empty<byte>(), System.Array.Empty<byte>()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestResetToSpecificOffsetWhenBetweenBeginningAndEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -41,7 +41,7 @@
 //            Assert.Equal(3, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestResetToSpecificOffsetWhenBeforeBeginningOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -58,7 +58,7 @@
 //            Assert.Equal(2, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestResetToSpecificOffsetWhenAfterEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -75,7 +75,7 @@
 //            Assert.Equal(2, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestShiftOffsetByWhenBetweenBeginningAndEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -92,7 +92,7 @@
 //            Assert.Equal(2, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestShiftOffsetByWhenBeforeBeginningOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -109,7 +109,7 @@
 //            Assert.Equal(5, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestShiftOffsetByWhenAfterEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -126,7 +126,7 @@
 //            Assert.Equal(2, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestResetUsingPlanWhenBetweenBeginningAndEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -145,7 +145,7 @@
 //            Assert.Equal(2, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestResetUsingPlanWhenBeforeBeginningOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -164,7 +164,7 @@
 //            Assert.Equal(2, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestResetUsingPlanWhenAfterEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -183,7 +183,7 @@
 //            Assert.Equal(2, records.count());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSeekToEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
@@ -202,7 +202,7 @@
 //            Assert.Equal(2, records.count());
 //        }
 
-//        [Xunit.Fact]//  throws InterruptedException, ExecutionException
+//        [Fact]//  throws InterruptedException, ExecutionException
 //        public void ShouldDeleteTopic()
 //        {
 //            Cluster cluster = CreateCluster(1);
@@ -225,7 +225,7 @@
 //                Collections.< string > emptySet(), nodes.Get(0));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAcceptValidDateFormats() // throws ParseException
 //        {
 //            //check valid formats
@@ -236,7 +236,7 @@
 //            InvokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowOnInvalidDateFormat() // throws ParseException
 
 //        {

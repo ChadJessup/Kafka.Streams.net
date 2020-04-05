@@ -1,6 +1,6 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using NodaTime;
 using System;
 
@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.TimeStamped
             ISerde<V> valueSerde,
             IClock clock)
             : base(
-                  storeSupplier.name,
+                  storeSupplier.Name,
                   keySerde,
                   valueSerde == null ? null : new ValueAndTimestampSerde<V>(valueSerde),
                   clock)
@@ -54,7 +54,7 @@ namespace Kafka.Streams.State.TimeStamped
 
         public long RetentionPeriod()
         {
-            return storeSupplier.RetentionPeriod();
+            return (long)storeSupplier.RetentionPeriod.TotalMilliseconds;
         }
     }
 }

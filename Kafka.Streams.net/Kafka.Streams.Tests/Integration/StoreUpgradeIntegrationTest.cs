@@ -96,12 +96,12 @@ namespace Kafka.Streams.Tests.Integration
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldMigrateInMemoryKeyValueStoreToTimestampedKeyValueStoreUsingPapi() {// throws Exception
 //        shouldMigrateKeyValueStoreToTimestampedKeyValueStoreUsingPapi(false);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldMigratePersistentKeyValueStoreToTimestampedKeyValueStoreUsingPapi() {// throws Exception
 //        shouldMigrateKeyValueStoreToTimestampedKeyValueStoreUsingPapi(true);
 //    }
@@ -215,7 +215,7 @@ namespace Kafka.Streams.Tests.Integration
 //        kafkaStreams.close();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldProxyKeyValueStoreToTimestampedKeyValueStoreUsingPapi() {// throws Exception
 //        StreamsBuilder streamsBuilderForOldStore = new StreamsBuilder();
 
@@ -466,7 +466,7 @@ namespace Kafka.Streams.Tests.Integration
 //            "Could not get expected result in time.");
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldMigrateInMemoryWindowStoreToTimestampedWindowStoreUsingPapi() {// throws Exception
 //        StreamsBuilder streamsBuilderForOldStore = new StreamsBuilder();
 //        streamsBuilderForOldStore
@@ -503,7 +503,7 @@ namespace Kafka.Streams.Tests.Integration
 //            false);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldMigratePersistentWindowStoreToTimestampedWindowStoreUsingPapi() {// throws Exception
 //        StreamsBuilder streamsBuilderForOldStore = new StreamsBuilder();
 
@@ -678,7 +678,7 @@ namespace Kafka.Streams.Tests.Integration
 //        kafkaStreams.close();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldProxyWindowStoreToTimestampedWindowStoreUsingPapi() {// throws Exception
 //        StreamsBuilder streamsBuilderForOldStore = new StreamsBuilder();
 

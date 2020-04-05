@@ -17,7 +17,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public long Time(IProcessorContext context, K key)
         {
-            return context.timestamp;
+            return context.Timestamp;
         }
 
         public TimeDefinitionType Type()

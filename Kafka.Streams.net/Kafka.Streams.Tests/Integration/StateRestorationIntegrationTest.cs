@@ -38,7 +38,7 @@
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreNullRecord()
 //        {// throws InterruptedException, ExecutionException
 //            builder.Table<int, byte[]>(INPUT_TOPIC, Materialized.As<int, byte[]>(

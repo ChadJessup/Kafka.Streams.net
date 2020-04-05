@@ -1,5 +1,8 @@
+using Avro.IO;
 using Confluent.Kafka;
 using Kafka.Streams.Processors.Internals;
+using System;
+using System.Text;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Processor.Internals
@@ -9,7 +12,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         // timestamp + offset + partition: 8 + 8 + 4
         private const long MIN_SIZE = 20L;
 
-        [Xunit.Fact]
+        [Fact]
         public void ShouldEstimateNullTopicAndNullHeadersAsZeroLength()
         {
             Headers headers = new Headers();
@@ -24,7 +27,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.Equal(MIN_SIZE, context.ResidentMemorySizeEstimate());
         }
 
-        [Xunit.Fact]
+        [Fact]
         public void ShouldEstimateEmptyHeaderAsZeroLength()
         {
             ProcessorRecordContext context = new ProcessorRecordContext(
@@ -38,7 +41,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.Equal(MIN_SIZE, context.ResidentMemorySizeEstimate());
         }
 
-        [Xunit.Fact]
+        [Fact]
         public void ShouldEstimateTopicLength()
         {
             ProcessorRecordContext context = new ProcessorRecordContext(
@@ -52,11 +55,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.Equal(MIN_SIZE + 5L, context.ResidentMemorySizeEstimate());
         }
 
-        [Xunit.Fact]
+        [Fact]
         public void ShouldEstimateHeadersLength()
         {
-            Headers headers = new Headers();
-            //headers.Add("header-key", "header-value");
+            Headers headers = new Headers
+            {
+                { "header-key", Encoding.UTF8.GetBytes("header-value") },
+            };
+
             ProcessorRecordContext context = new ProcessorRecordContext(
                 42L,
                 73L,
@@ -68,11 +74,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.Equal(MIN_SIZE + 10L + 12L, context.ResidentMemorySizeEstimate());
         }
 
-        [Xunit.Fact]
+        [Fact]
         public void ShouldEstimateNullValueInHeaderAsZero()
         {
-            Headers headers = new Headers();
-            headers.Add("header-key", null);
+            Headers headers = new Headers
+            {
+                { "header-key", null }
+            };
+
             ProcessorRecordContext context = new ProcessorRecordContext(
                 42L,
                 73L,

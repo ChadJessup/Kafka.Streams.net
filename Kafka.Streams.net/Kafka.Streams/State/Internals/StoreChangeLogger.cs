@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.Internals
             string storeName,
             IProcessorContext context,
             StateSerdes<K, V> serialization)
-            : this(storeName, context, context.taskId.partition, serialization)
+            : this(storeName, context, context.TaskId.partition, serialization)
         {
         }
 
@@ -27,7 +27,7 @@ namespace Kafka.Streams.State.Internals
             int partition,
             StateSerdes<K, V> serialization)
         {
-            topic = ProcessorStateManager.StoreChangelogTopic(context.applicationId, storeName);
+            topic = ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, storeName);
             this.context = context;
             this.partition = partition;
             this.collector = ((ISupplier)context).RecordCollector();
@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.Internals
 
         public void LogChange(K key, V value)
         {
-            LogChange(key, value, context.timestamp);
+            LogChange(key, value, context.Timestamp);
         }
 
         void LogChange(K key, V value, long timestamp)

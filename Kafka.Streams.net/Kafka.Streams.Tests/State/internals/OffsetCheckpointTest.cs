@@ -36,7 +36,7 @@
 
 //        private readonly string topic = "topic";
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestReadWrite()
 //        { //throws IOException
 //            File f = TestUtils.tempFile();
@@ -65,7 +65,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotWriteCheckpointWhenNoOffsets()
 //        { //throws IOException
 //          // we do not need to worry about file name uniqueness since this file should not be created

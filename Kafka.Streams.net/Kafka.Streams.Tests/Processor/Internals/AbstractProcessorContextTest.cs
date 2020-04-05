@@ -20,7 +20,7 @@
 //            context.SetRecordContext(recordContext);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIllegalStateExceptionOnRegisterWhenContextIsInitialized()
 //        {
 //            context.Initialize();
@@ -35,19 +35,19 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowIllegalStateExceptionOnRegisterWhenContextIsNotInitialized()
 //        {
 //            context.register(stateStore, null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnRegisterIfStateStoreIsNull()
 //        {
 //            context.register(null, null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIllegalStateExceptionOnTopicIfNoRecordContext()
 //        {
 //            context.SetRecordContext(null);
@@ -62,20 +62,20 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnTopicFromRecordContext()
 //        {
 //            Assert.Equal(context.Topic, (recordContext.Topic));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnNullIfTopicEqualsNonExistTopic()
 //        {
 //            context.SetRecordContext(new ProcessorRecordContext(0, 0, 0, AbstractProcessorContext.NONEXIST_TOPIC, null));
 //            Assert.Equal(context.Topic, nullValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIllegalStateExceptionOnPartitionIfNoRecordContext()
 //        {
 //            context.SetRecordContext(null);
@@ -90,13 +90,13 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPartitionFromRecordContext()
 //        {
 //            Assert.Equal(context.Partition, (recordContext.Partition));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIllegalStateExceptionOnOffsetIfNoRecordContext()
 //        {
 //            context.SetRecordContext(null);
@@ -110,13 +110,13 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnOffsetFromRecordContext()
 //        {
 //            Assert.Equal(context.Offset, (recordContext.Offset));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIllegalStateExceptionOnTimestampIfNoRecordContext()
 //        {
 //            context.SetRecordContext(null);
@@ -131,26 +131,26 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnTimestampFromRecordContext()
 //        {
 //            Assert.Equal(context.Timestamp, (recordContext.Timestamp));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnHeadersFromRecordContext()
 //        {
 //            Assert.Equal(context.Headers, (recordContext.Headers));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnNullIfHeadersAreNotSet()
 //        {
 //            context.SetRecordContext(new ProcessorRecordContext(0, 0, 0, AbstractProcessorContext.NONEXIST_TOPIC, null));
 //            Assert.Equal(context.Headers, nullValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIllegalStateExceptionOnHeadersIfNoRecordContext()
 //        {
 //            context.SetRecordContext(null);
@@ -165,7 +165,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void AppConfigsShouldReturnParsedValues()
 //        {
 //            Assert.Equal(
@@ -173,7 +173,7 @@
 //                equalTo(RocksDBConfigSetter));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void AppConfigsShouldReturnUnrecognizedValues()
 //        {
 //            Assert.Equal(

@@ -35,7 +35,7 @@
 //            LogCaptureAppender.setClassLoggerToDebug(InMemorySessionStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRemoveExpired()
 //        {
 //            sessionStore.put(new Windowed<string>("a", new SessionWindow(0, 0)), 1L);
@@ -50,7 +50,7 @@
 //            Assert.Equal(valuesToSet(iterator), new HashSet<>(Array.asList(2L, 3L, 4L)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotExpireFromOpenIterator()
 //        {
 //            sessionStore.put(new Windowed<string>("a", new SessionWindow(0, 0)), 1L);

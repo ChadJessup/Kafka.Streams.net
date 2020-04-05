@@ -33,9 +33,9 @@ namespace Kafka.Streams.KStream.Internals
 
         public IStreamPartitioner<K, V> StreamPartitioner()
         {
-            return partitioner;
+            return Partitioner;
         }
 
-        public string name => processorName;
+        public string name => ProcessorName;
     }
 }

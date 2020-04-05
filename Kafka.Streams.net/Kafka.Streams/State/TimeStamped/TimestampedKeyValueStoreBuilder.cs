@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.TimeStamped
             ISerde<V> valueSerde,
             IClock clock)
             : base(
-                storeSupplier.name,
+                storeSupplier.Name,
                 keySerde,
                 valueSerde == null ? null : new ValueAndTimestampSerde<V>(valueSerde),
                 clock)

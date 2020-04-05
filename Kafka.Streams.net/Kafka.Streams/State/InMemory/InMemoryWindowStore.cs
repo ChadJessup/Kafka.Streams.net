@@ -1,13 +1,13 @@
-//using Kafka.Common.Metrics;
-//using Kafka.Common.Utils;
+//using Confluent.Kafka;
+//using Kafka.Common;
 //using Kafka.Streams.KStream;
 //using Kafka.Streams.KStream.Internals;
 //using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Streams.Processors.Internals;
-//using Kafka.Streams.Processors.Internals.Metrics;
-//using Kafka.Streams.State.Interfaces;
+//using Kafka.Streams.State.KeyValues;
+//using Kafka.Streams.State.Windowed;
 //using Microsoft.Extensions.Logging;
 //using System;
+//using System.Collections.Concurrent;
 //using System.Collections.Generic;
 
 //namespace Kafka.Streams.State.Internals
@@ -19,19 +19,21 @@
 
 //        private string name;
 //        private string metricScope;
-//        private IInternalProcessorContext<K, V> context;
-//        private Sensor expiredRecordSensor;
+//        private IInternalProcessorContext context;
+//        //private Sensor expiredRecordSensor;
 //        private int seqnum = 0;
-//        private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
+//        private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
 
 //        private long retentionPeriod;
 //        private long windowSize;
 //        private bool retainDuplicates;
 
-//        private ConcurrentNavigableMap<long, ConcurrentNavigableMap<Bytes, byte[]>> segmentMap = new ConcurrentSkipListMap<>();
-//        private HashSet<InMemoryWindowStoreIteratorWrapper> openIterators = ConcurrentHashMap.newKeySet();
+//        private ConcurrentDictionary<long, ConcurrentDictionary<Bytes, byte[]>> segmentMap = new ConcurrentDictionary<long, ConcurrentDictionary<Bytes, byte[]>>();
+//        private HashSet<InMemoryWindowStoreIteratorWrapper> openIterators = new HashSet<InMemoryWindowStoreIteratorWrapper>();
 
 //        private volatile bool open = false;
+
+//        string IStateStore.name { get; }
 
 //        public InMemoryWindowStore(
 //            string name,
@@ -47,38 +49,38 @@
 //            this.metricScope = metricScope;
 //        }
 
-//        public override void init(IProcessorContext<K, V> context, IStateStore root)
+//        public override void Init(IProcessorContext context, IStateStore root)
 //        {
 //            this.context = (IInternalProcessorContext)context;
 
-//            StreamsMetricsImpl metrics = this.context.metrics;
-//            string taskName = context.taskId().ToString();
-//            expiredRecordSensor = metrics.storeLevelSensor(
-//                taskName,
-//                name,
-//                EXPIRED_WINDOW_RECORD_DROP,
-//                RecordingLevel.INFO
-//            );
-//            addInvocationRateAndCount(
-//                 expiredRecordSensor,
-//                 "stream-" + metricScope + "-metrics",
-//                 metrics.tagMap("task-id", taskName, metricScope + "-id", name),
-//                 EXPIRED_WINDOW_RECORD_DROP
-//             );
+//            //StreamsMetricsImpl metrics = this.context.metrics;
+//            string taskName = context.taskId.ToString();
+//            //expiredRecordSensor = metrics.storeLevelSensor(
+//            //    taskName,
+//            //    name,
+//            //    EXPIRED_WINDOW_RECORD_DROP,
+//            //    RecordingLevel.INFO
+//            //);
+//            //addInvocationRateAndCount(
+//            //     expiredRecordSensor,
+//            //     "stream-" + metricScope + "-metrics",
+//            //     metrics.tagMap("task-id", taskName, metricScope + "-id", name),
+//            //     EXPIRED_WINDOW_RECORD_DROP
+//            // );
 
 //            if (root != null)
 //            {
-//    //            context.register(root, (key, value) =>
-//    //{
-//    //    put(Bytes.Wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
-//    //});
+//                //            context.register(root, (key, value) =>
+//                //{
+//                //    put(Bytes.Wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
+//                //});
 //            }
 //            open = true;
 //        }
 
 //        public void put(Bytes key, byte[] value)
 //        {
-//            put(key, value, context.timestamp());
+//            put(key, value, context.Timestamp);
 //        }
 
 //        public void put(Bytes key, byte[] value, long windowStartTimestamp)
@@ -91,15 +93,15 @@
 
 //            if (windowStartTimestamp <= observedStreamTime - retentionPeriod)
 //            {
-//                expiredRecordSensor.record();
-//                LOG.LogWarning("Skipping record for expired segment.");
+//                //expiredRecordSensor.record();
+//                //LOG.LogWarning("Skipping record for expired segment.");
 //            }
 //            else
 //            {
 //                if (value != null)
 //                {
-//                    segmentMap.computeIfAbsent(windowStartTimestamp, t => new ConcurrentSkipListMap<>());
-//                    segmentMap[windowStartTimestamp].Add(keyBytes, value);
+//                    //segmentMap.computeIfAbsent(windowStartTimestamp, t => new ConcurrentSkipListMap<>());
+//                    //segmentMap[windowStartTimestamp].Add(keyBytes, value);
 //                }
 //                else
 //                {
@@ -128,7 +130,7 @@
 //                return null;
 //            }
 
-//            ConcurrentNavigableMap<Bytes, byte[]> kvMap = segmentMap[windowStartTimestamp];
+//            ConcurrentDictionary<Bytes, byte[]> kvMap = segmentMap[windowStartTimestamp];
 //            if (kvMap == null)
 //            {
 //                return null;
@@ -283,7 +285,7 @@
 //        }
 
 //        private WrappedInMemoryWindowStoreIterator registerNewWindowStoreIterator(Bytes key,
-//                                                                                  IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
+//                                                                                  IEnumerator<KeyValuePair<long, ConcurrentDictionary<Bytes, byte[]>>> segmentIterator)
 //        {
 //            Bytes keyFrom = retainDuplicates ? wrapForDups(key, 0) : key;
 //            Bytes keyTo = retainDuplicates ? wrapForDups(key, int.MaxValue) : key;
@@ -297,7 +299,7 @@
 
 //        private WrappedWindowedKeyValueIterator registerNewWindowedKeyValueIterator(Bytes keyFrom,
 //                                                                                    Bytes keyTo,
-//                                                                                    IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
+//                                                                                    IEnumerator<KeyValuePair<long, ConcurrentDictionary<Bytes, byte[]>>> segmentIterator)
 //        {
 //            Bytes from = (retainDuplicates && keyFrom != null) ? wrapForDups(keyFrom, 0) : keyFrom;
 //            Bytes to = (retainDuplicates && keyTo != null) ? wrapForDups(keyTo, int.MaxValue) : keyTo;
@@ -313,18 +315,101 @@
 //            return iterator;
 //        }
 
-
-//        public interface ClosingCallback
+//        public void Put(Bytes key, byte[] value)
 //        {
-//            void deregisterIterator(InMemoryWindowStoreIteratorWrapper iterator);
+//            throw new NotImplementedException();
 //        }
 
-//        private static abstract class InMemoryWindowStoreIteratorWrapper
+//        public void Put(Bytes key, byte[] value, long windowStartTimestamp)
 //        {
+//            throw new NotImplementedException();
+//        }
 
-//            private IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator;
-//            private IEnumerator<KeyValuePair<Bytes, byte[]>> recordIterator;
-//            private KeyValuePair<Bytes, byte[]> next;
+//        public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, long timeFrom, long timeTo)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public IKeyValueIterator<Windowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public void Add(Bytes key, byte[] value)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public void Init(IProcessorContext context, IStateStore root)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public void Flush()
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public void Close()
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public bool Persistent()
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public bool IsOpen()
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public bool IsPresent()
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public byte[] Fetch(Bytes key, long time)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime from, DateTime to)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime fromTime, DateTime toTime)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public IKeyValueIterator<Windowed<Bytes>, byte[]> All()
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public IKeyValueIterator<Windowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public interface IClosingCallback
+//        {
+//            void DeregisterIterator(InMemoryWindowStoreIteratorWrapper iterator);
+//        }
+
+//        private abstract class InMemoryWindowStoreIteratorWrapper
+//        {
+//            private IEnumerator<KeyValuePair<long, ConcurrentDictionary<Bytes, byte[]>>> segmentIterator;
+//            private IEnumerator<KeyValuePair<Bytes, byte[]>>? recordIterator;
+//            private KeyValuePair<Bytes, byte[]>? next;
 //            private long currentTime;
 
 //            private bool allKeys;
@@ -335,7 +420,7 @@
 
 //            InMemoryWindowStoreIteratorWrapper(Bytes keyFrom,
 //                                               Bytes keyTo,
-//                                               IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+//                                               IEnumerator<KeyValuePair<long, ConcurrentDictionary<Bytes, byte[]>>> segmentIterator,
 //                                               ClosingCallback callback,
 //                                               bool retainDuplicates)
 //            {
@@ -415,7 +500,7 @@
 //                    return null;
 //                }
 
-//                KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>> currentSegment = segmentIterator.MoveNext();
+//                KeyValuePair<long, ConcurrentDictionary<Bytes, byte[]>> currentSegment = segmentIterator.MoveNext();
 //                currentTime = currentSegment.Key;
 
 //                if (allKeys)

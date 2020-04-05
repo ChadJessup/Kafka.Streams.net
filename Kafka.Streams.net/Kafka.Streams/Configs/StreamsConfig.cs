@@ -523,8 +523,8 @@ namespace Kafka.Streams.Configs
 
             // add admin retries configs for creating topics
             var adminClientDefaultConfig = new AdminClientConfig(GetClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig()));
-            // consumerProps.Set(adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), adminClientDefaultConfig.getInt(AdminClientConfig.RETRIES_CONFIG));
-            // consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.getLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
+            // consumerProps.Set(adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), adminClientDefaultConfig.GetInt(AdminClientConfig.RETRIES_CONFIG));
+            // consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.GetLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
 
             // verify that producer batch config is no larger than segment size, then.Add topic configs required for creating topics
             Dictionary<string, string> topicProps = OriginalsWithPrefix(StreamsConfigPropertyNames.TopicPrefix, stripPrefix: false);

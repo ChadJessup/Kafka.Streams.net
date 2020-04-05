@@ -50,21 +50,21 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public override int partition
+        public override int Partition
             => throw new InvalidOperationException("this should not happen: Partition not supported in standby tasks.");
 
 
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public override long offset
+        public override long Offset
             => throw new InvalidOperationException("this should not happen: offset() not supported in standby tasks.");
 
         /**
          * @throws InvalidOperationException on every invocation
          */
 
-        public override long timestamp
+        public override long Timestamp
             => throw new InvalidOperationException("this should not happen: timestamp() not supported in standby tasks.");
 
         /**
@@ -137,7 +137,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
 
-        public override ProcessorRecordContext recordContext
+        public override ProcessorRecordContext RecordContext
             => throw new InvalidOperationException("this should not happen: recordContext not supported in standby tasks.");
 
         /**
@@ -157,7 +157,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public override IProcessorNode currentNode
+        public override IProcessorNode CurrentNode
             => throw new InvalidOperationException("this should not happen: currentNode not supported in standby tasks.");
     }
 }

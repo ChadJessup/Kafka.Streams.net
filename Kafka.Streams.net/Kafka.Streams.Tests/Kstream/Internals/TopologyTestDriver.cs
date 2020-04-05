@@ -15,7 +15,7 @@ using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.ReadOnly;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Tests;
 using Kafka.Streams.Tests.Helpers;
@@ -238,9 +238,9 @@ namespace Kafka.Streams.Tests
         //     string threadId = Thread.currentThread().getName();
         // 
         //     //MetricConfig metricConfig = new MetricConfig()
-        //     //    .samples(streamsConfig.getInt(StreamsConfigPropertyNames.METRICS_NUM_SAMPLES_CONFIG))
+        //     //    .samples(streamsConfig.GetInt(StreamsConfigPropertyNames.METRICS_NUM_SAMPLES_CONFIG))
         //     //    .recordLevel(Sensor.RecordingLevel.forName(streamsConfig.getString(StreamsConfigPropertyNames.METRICS_RECORDING_LEVEL_CONFIG)))
-        //     //    .timeWindow(streamsConfig.getLong(StreamsConfigPropertyNames.METRICS_SAMPLE_WINDOW_MS_CONFIG), TimeUnit.MILLISECONDS);
+        //     //    .timeWindow(streamsConfig.GetLong(StreamsConfigPropertyNames.METRICS_SAMPLE_WINDOW_MS_CONFIG), TimeUnit.MILLISECONDS);
         //     //metrics = new Metrics(metricConfig, mockWallClockTime);
         // 
         //     var streamsMetrics = new StreamsMetricsImpl(
@@ -958,27 +958,27 @@ namespace Kafka.Streams.Tests
         {
             if (stateStore is ITimestampedKeyValueStore)
             {
-                throw new ArgumentException("Store " + stateStore.name
+                throw new ArgumentException("Store " + stateStore.Name
                                                        + " is a timestamped key-value store and should be accessed via `getTimestampedKeyValueStore()`");
             }
             if (stateStore is IReadOnlyKeyValueStore)
             {
-                throw new ArgumentException("Store " + stateStore.name
+                throw new ArgumentException("Store " + stateStore.Name
                                                        + " is a key-value store and should be accessed via `getKeyValueStore()`");
             }
             if (stateStore is ITimestampedWindowStore)
             {
-                throw new ArgumentException("Store " + stateStore.name
+                throw new ArgumentException("Store " + stateStore.Name
                                                        + " is a timestamped window store and should be accessed via `getTimestampedWindowStore()`");
             }
             if (stateStore is IReadOnlyWindowStore)
             {
-                throw new ArgumentException("Store " + stateStore.name
+                throw new ArgumentException("Store " + stateStore.Name
                                                        + " is a window store and should be accessed via `getWindowStore()`");
             }
             if (stateStore is IReadOnlySessionStore)
             {
-                throw new ArgumentException("Store " + stateStore.name
+                throw new ArgumentException("Store " + stateStore.Name
                                                        + " is a session store and should be accessed via `getSessionStore()`");
             }
         }
@@ -1117,6 +1117,7 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          */
         public ISessionStore<K, V>? GetSessionStore<K, V>(string name)
+            where V : class
         {
             IStateStore store = GetStateStore(name, false);
             return store is ISessionStore<K, V>

@@ -1,7 +1,7 @@
 using Kafka.Streams.State.Interfaces;
 using System;
 
-namespace Kafka.Streams.State.Window
+namespace Kafka.Streams.State.Windowed
 {
     /**
      * A store supplier that can be used to create one or more {@link WindowStore WindowStore&lt;Byte, byte[]&gt;} instances of type &lt;Byte, byte[]&gt;.
@@ -31,14 +31,14 @@ namespace Kafka.Streams.State.Window
          *
          * @return size of the segments (in milliseconds)
          */
-        long SegmentIntervalMs();
+        TimeSpan SegmentInterval { get; }
 
         /**
          * The size of the windows (in milliseconds) any store created from this supplier is creating.
          *
          * @return window size
          */
-        long WindowSize();
+        TimeSpan WindowSize { get; }
 
         /**
          * Whether or not this store is retaining duplicate keys.
@@ -47,13 +47,13 @@ namespace Kafka.Streams.State.Window
          *
          * @return true if duplicates should be retained
          */
-        bool RetainDuplicates();
+        bool RetainDuplicates { get; }
 
         /**
          * The time period for which the {@link WindowStore} will retain historic data.
          *
          * @return retentionPeriod
          */
-        long RetentionPeriod();
+        TimeSpan RetentionPeriod { get; }
     }
 }

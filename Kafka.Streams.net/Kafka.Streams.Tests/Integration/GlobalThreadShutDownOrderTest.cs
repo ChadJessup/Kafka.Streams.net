@@ -83,7 +83,7 @@
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFinishGlobalStoreOperationOnShutDown()
 //        {// throws Exception
 //            kafkaStreams = new KafkaStreams(builder.Build(), streamsConfiguration);

@@ -59,22 +59,22 @@ namespace Kafka.Streams.KStream.Internals
 
             R newValue = default;
             R oldValue = default;
-            resultTimestamp = Math.Max(context.timestamp, valueAndTimestampRight.timestamp);
+            resultTimestamp = Math.Max(Context.Timestamp, valueAndTimestampRight.Timestamp);
 
-            if (change.newValue != null)
+            if (change.NewValue != null)
             {
-                newValue = joiner.Apply(change.newValue, valueRight);
+                newValue = joiner.Apply(change.NewValue, valueRight);
             }
 
-            if (sendOldValues && change.oldValue != null)
+            if (sendOldValues && change.OldValue != null)
             {
-                oldValue = joiner.Apply(change.oldValue, valueRight);
+                oldValue = joiner.Apply(change.OldValue, valueRight);
             }
 
-            context.Forward(key, new Change<R>(newValue, oldValue), To.All().WithTimestamp(resultTimestamp));
+            Context.Forward(key, new Change<R>(newValue, oldValue), To.All().WithTimestamp(resultTimestamp));
         }
 
-        public void Close()
+        public override void Close()
         {
             valueGetter.Close();
         }

@@ -78,7 +78,7 @@
 //            iterator = new DelegatingPeekingKeyValueIterator<>("foo", new KeyValueIteratorStub<>(keys.iterator()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchExactKeysSkippingLongerKeys()
 //        {
 //            Bytes key = Bytes.Wrap(new byte[] { 0 });
@@ -86,7 +86,7 @@
 //            Assert.Equal(result, Array.asList(2, 4));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchExactKeySkippingShorterKeys()
 //        {
 //            Bytes key = Bytes.Wrap(new byte[] { 0, 0 });
@@ -95,7 +95,7 @@
 //            Assert.Equal(results, Array.asList(1, 5));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchAllKeysUsingNullKeys()
 //        {
 //            HasNextCondition hasNextCondition = sessionKeySchema.hasNextCondition(null, null, 0, long.MaxValue);
@@ -103,7 +103,7 @@
 //            Assert.Equal(results, Array.asList(1, 2, 3, 4, 5, 6));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestUpperBoundWithLargeTimestamps()
 //        {
 //            Bytes upper = sessionKeySchema.upperRange(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), long.MaxValue);
@@ -132,7 +132,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestUpperBoundWithKeyBytesLargerThanFirstTimestampByte()
 //        {
 //            Bytes upper = sessionKeySchema.upperRange(Bytes.Wrap(new byte[] { 0xA, (byte)0x8F, (byte)0x9F }), long.MaxValue);
@@ -152,7 +152,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestUpperBoundWithZeroTimestamp()
 //        {
 //            Bytes upper = sessionKeySchema.upperRange(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), 0);
@@ -162,14 +162,14 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestLowerBoundWithZeroTimestamp()
 //        {
 //            Bytes lower = sessionKeySchema.lowerRange(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), 0);
 //            Assert.Equal(lower, SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), new SessionWindow(0, 0))));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestLowerBoundMatchesTrailingZeros()
 //        {
 //            Bytes lower = sessionKeySchema.lowerRange(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), long.MaxValue);
@@ -186,7 +186,7 @@
 //            Assert.Equal(lower, SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), new SessionWindow(0, 0))));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSerializeDeserialize()
 //        {
 //            byte[] bytes = keySerde.Serializer.Serialize(topic, windowedKey);
@@ -194,25 +194,25 @@
 //            Assert.Equal(windowedKey, result);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSerializeNullToNull()
 //        {
 //            Assert.Null(keySerde.Serializer.Serialize(topic, null));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeSerializeEmtpyByteArrayToNull()
 //        {
 //            Assert.Null(keySerde.Deserializer.Deserialize(topic, System.Array.Empty<byte>()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeSerializeNullToNull()
 //        {
 //            Assert.Null(keySerde.deserializer().deserialize(topic, null));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldConvertToBinaryAndBack()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
@@ -220,42 +220,42 @@
 //            Assert.Equal(windowedKey, result);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldExtractEndTimeFromBinary()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
 //            Assert.Equal(endTime, SessionKeySchema.extractEndTimestamp(serialized));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldExtractStartTimeFromBinary()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
 //            Assert.Equal(startTime, SessionKeySchema.extractStartTimestamp(serialized));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldExtractWindowFromBindary()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
 //            Assert.Equal(window, SessionKeySchema.extractWindow(serialized));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldExtractKeyBytesFromBinary()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
 //            assertArrayEquals(key.getBytes(), SessionKeySchema.extractKeyBytes(serialized));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldExtractKeyFromBinary()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
 //            Assert.Equal(windowedKey, SessionKeySchema.from(serialized, serde.deserializer(), "dummy"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldExtractBytesKeyFromBinary()
 //        {
 //            Bytes bytesKey = Bytes.Wrap(key.getBytes());

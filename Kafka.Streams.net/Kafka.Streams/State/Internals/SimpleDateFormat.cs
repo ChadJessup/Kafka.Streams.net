@@ -31,5 +31,10 @@ namespace Kafka.Streams.State.Internals
         {
             throw new NotImplementedException();
         }
+
+        internal object Parse(string segmentIdString)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

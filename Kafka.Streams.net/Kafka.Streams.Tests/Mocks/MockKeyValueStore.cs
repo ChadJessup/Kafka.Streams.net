@@ -18,7 +18,7 @@ namespace Kafka.Streams.Tests.Mocks
         }
 
         public long approximateNumEntries { get; }
-        string IStateStore.name { get; }
+        string IStateStore.Name { get; }
 
         public void Add(int key, byte[] value)
         {

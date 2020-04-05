@@ -1,6 +1,5 @@
 namespace Kafka.Streams.State.Interfaces
 {
-
     /**
      * A state store supplier which can create one or more {@link IStateStore} instances.
      *
@@ -15,7 +14,7 @@ namespace Kafka.Streams.State.Interfaces
          *
          * @return the name of this state store supplier
          */
-        string name { get; }
+        string Name { get; }
 
         /**
          * Return a new {@link IStateStore} instance.
@@ -28,6 +27,6 @@ namespace Kafka.Streams.State.Interfaces
          * Return a string that is used as the scope for metrics recorded by Metered stores.
          * @return metricsScope
          */
-        string MetricsScope();
+        //string MetricsScope();
     }
 }

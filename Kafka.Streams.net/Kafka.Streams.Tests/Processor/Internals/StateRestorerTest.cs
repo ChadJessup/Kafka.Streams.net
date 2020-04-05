@@ -25,32 +25,32 @@
 //            compositeRestoreListener.setUserRestoreListener(reportingListener);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCallRestoreOnRestoreCallback()
 //        {
 //            restorer.restore(Collections.singletonList(new ConsumeResult<>("", 0, 0L, System.Array.Empty<byte>(), System.Array.Empty<byte>())));
 //            Assert.Equal(callback.restored.Count, 1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeCompletedIfRecordOffsetGreaterThanEndOffset()
 //        {
 //            Assert.True(restorer.hasCompleted(11, 10));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeCompletedIfRecordOffsetGreaterThanOffsetLimit()
 //        {
 //            Assert.True(restorer.hasCompleted(51, 100));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeCompletedIfEndOffsetAndRecordOffsetAreZero()
 //        {
 //            Assert.True(restorer.hasCompleted(0, 0));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeCompletedIfOffsetAndOffsetLimitAreZero()
 //        {
 //            StateRestorer restorer = new StateRestorer(
@@ -64,7 +64,7 @@
 //            Assert.True(restorer.hasCompleted(0, 10));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetRestoredOffsetToMinOfLimitAndOffset()
 //        {
 //            restorer.setRestoredOffset(20);
@@ -73,7 +73,7 @@
 //            Assert.Equal(restorer.restoredOffset(), OFFSET_LIMIT);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetStartingOffsetToMinOfLimitAndOffset()
 //        {
 //            restorer.setStartingOffset(20);
@@ -82,7 +82,7 @@
 //            Assert.Equal(restorer.restoredOffset(), OFFSET_LIMIT);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnCorrectNumRestoredRecords()
 //        {
 //            restorer.setStartingOffset(20);

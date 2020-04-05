@@ -38,7 +38,7 @@
 
 //        private IDeserializer<string> deserializer = Serdes.String().Deserializer;
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveNextFromStore()
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
@@ -46,7 +46,7 @@
 //            Assert.True(mergeIterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetNextFromStore()
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
@@ -54,7 +54,7 @@
 //            Assert.Equal(convertKeyValuePair(mergeIterator.MoveNext()), (KeyValuePair.Create(new Windowed<>(storeKey, storeWindow), storeKey)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPeekNextKeyFromStore()
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
@@ -62,7 +62,7 @@
 //            Assert.Equal(convertWindowedKey(mergeIterator.peekNextKey()), (new Windowed<>(storeKey, storeWindow)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveNextFromCache()
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
@@ -70,7 +70,7 @@
 //            Assert.True(mergeIterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetNextFromCache()
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
@@ -78,7 +78,7 @@
 //            Assert.Equal(convertKeyValuePair(mergeIterator.MoveNext()), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPeekNextKeyFromCache()
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
@@ -86,7 +86,7 @@
 //            Assert.Equal(convertWindowedKey(mergeIterator.peekNextKey()), (new Windowed<string>(cacheKey, cacheWindow)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldIterateBothStoreAndCache()
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator iterator = createIterator(storeKvs, cacheKvs);

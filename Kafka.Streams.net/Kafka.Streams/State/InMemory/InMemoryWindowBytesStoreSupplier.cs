@@ -1,6 +1,6 @@
-
 //using Kafka.Common.Utils;
 //using Kafka.Streams.State.Interfaces;
+//using Kafka.Streams.State.Windowed;
 //using System;
 
 //namespace Kafka.Streams.State.Internals
@@ -12,10 +12,11 @@
 //        private long windowSize;
 //        private bool retainDuplicates;
 
-//        public InMemoryWindowBytesStoreSupplier(string name,
-//                                                long retentionPeriod,
-//                                                long windowSize,
-//                                                bool retainDuplicates)
+//        public InMemoryWindowBytesStoreSupplier(
+//            string name,
+//            long retentionPeriod,
+//            long windowSize,
+//            bool retainDuplicates)
 //        {
 //            this.name = name;
 //            this.retentionPeriod = retentionPeriod;

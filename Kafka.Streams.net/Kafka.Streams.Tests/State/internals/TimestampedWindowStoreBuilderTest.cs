@@ -65,14 +65,14 @@
 //                new MockTime());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveMeteredStoreAsOuterStore()
 //        {
 //            ITimestampedWindowStore<string, string> store = builder.Build();
 //            Assert.Equal(store, instanceOf(MeteredTimestampedWindowStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreByDefault()
 //        {
 //            ITimestampedWindowStore<string, string> store = builder.Build();
@@ -80,7 +80,7 @@
 //            Assert.Equal(next, instanceOf(ChangeLoggingTimestampedWindowBytesStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
 //            ITimestampedWindowStore<string, string> store = builder.withLoggingDisabled().Build();
@@ -88,7 +88,7 @@
 //            Assert.Equal(next, CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingStoreWhenEnabled()
 //        {
 //            ITimestampedWindowStore<string, string> store = builder.withCachingEnabled().Build();
@@ -97,7 +97,7 @@
 //            Assert.Equal(wrapped, instanceOf(CachingWindowStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled()
 //        {
 //            ITimestampedWindowStore<string, string> store = builder
@@ -109,7 +109,7 @@
 //            Assert.Equal(((WrappedStateStore)wrapped).wrapped(), CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled()
 //        {
 //            ITimestampedWindowStore<string, string> store = builder
@@ -124,7 +124,7 @@
 //            Assert.Equal(changeLogging.wrapped(), CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotWrapTimestampedByteStore()
 //        {
 //            reset(supplier);
@@ -147,7 +147,7 @@
 //            Assert.Equal(((WrappedStateStore)store).wrapped(), instanceOf(RocksDBTimestampedWindowStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldWrapPlainKeyValueStoreAsTimestampStore()
 //        {
 //            reset(supplier);
@@ -171,25 +171,25 @@
 //        }
 
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfInnerIsNull()
 //        {
 //            new TimestampedWindowStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            new TimestampedWindowStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            new TimestampedWindowStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            new TimestampedWindowStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);

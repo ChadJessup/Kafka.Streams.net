@@ -92,7 +92,7 @@
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestMetrics()
 //    {
 //        replay(innerStoreMock);
@@ -105,7 +105,7 @@
 //                "scope", "test", context.taskId().ToString(), "scope", "all")));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecordRestoreLatencyOnInit()
 //    {
 //        innerStoreMock.Init(context, store);
@@ -117,7 +117,7 @@
 //        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "restore-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecordPutLatency()
 //    {
 //        byte[] bytes = "a".getBytes();
@@ -133,7 +133,7 @@
 //        verify(innerStoreMock);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecordFetchLatency()
 //    {
 //        expect(innerStoreMock.Fetch(Bytes.Wrap("a".getBytes()), 1, 1)).andReturn(KeyValueIterators.< byte[] > emptyWindowStoreIterator());
@@ -147,7 +147,7 @@
 //        verify(innerStoreMock);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecordFetchRangeLatency()
 //    {
 //        expect(innerStoreMock.Fetch(Bytes.Wrap("a".getBytes()), Bytes.Wrap("b".getBytes()), 1, 1)).andReturn(KeyValueIterators.< Windowed<Bytes>, byte[] > emptyIterator());
@@ -161,7 +161,7 @@
 //        verify(innerStoreMock);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecordFlushLatency()
 //    {
 //        innerStoreMock.flush();
@@ -176,7 +176,7 @@
 //        verify(innerStoreMock);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseUnderlyingStore()
 //    {
 //        innerStoreMock.close();
@@ -188,7 +188,7 @@
 //        verify(innerStoreMock);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowNullPointerExceptionIfFetchReturnsNull()
 //    {
 //        expect(innerStoreMock.Fetch(Bytes.Wrap("a".getBytes()), 0)).andReturn(null);
@@ -201,7 +201,7 @@
 //    private interface CachedWindowStore : IWindowStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]> { }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSetFlushListenerOnWrappedCachingStore()
 //    {
 //        CachedWindowStore cachedWindowStore = mock(CachedWindowStore);
@@ -222,7 +222,7 @@
 //        verify(cachedWindowStore);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore()
 //    {
 //        Assert.False(store.setFlushListener(null, false));

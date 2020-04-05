@@ -1,7 +1,7 @@
 using Kafka.Streams.State.KeyValues;
 using System;
 
-namespace Kafka.Streams.State.Window
+namespace Kafka.Streams.State.Windowed
 {
     /**
      * IEnumerator interface of {@link KeyValuePair} with key typed {@link long} used for {@link WindowStore#fetch(object, long, long)}

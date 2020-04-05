@@ -43,7 +43,7 @@
 //        cache = new ThreadCache(new LogContext("testCache "), 10000L, new MockStreamsMetrics(new Metrics()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldIterateOverRange() {// throws Exception
 //        byte[][] bytes = {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}};
 //        for (int i = 0; i < bytes.Length; i += 2) {
@@ -69,7 +69,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSkipLargerDeletedCacheValue() {// throws Exception
 //        byte[][] bytes = {{0}, {1}};
 //        store.put(Bytes.Wrap(bytes[0]), bytes[0]);
@@ -79,7 +79,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSkipSmallerDeletedCachedValue() {// throws Exception
 //        byte[][] bytes = {{0}, {1}};
 //        cache.put(namespace, Bytes.Wrap(bytes[0]), new LRUCacheEntry(null));
@@ -89,7 +89,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldIgnoreIfDeletedInCacheButExistsInStore() {// throws Exception
 //        byte[][] bytes = {{0}};
 //        cache.put(namespace, Bytes.Wrap(bytes[0]), new LRUCacheEntry(null));
@@ -98,7 +98,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotHaveNextIfAllCachedItemsDeleted() {// throws Exception
 //        byte[][] bytes = {{0}, {1}, {2}};
 //        foreach (byte[] aByte in bytes) {
@@ -109,7 +109,7 @@
 //        Assert.False(createIterator().hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotHaveNextIfOnlyCacheItemsAndAllDeleted() {// throws Exception
 //        byte[][] bytes = {{0}, {1}, {2}};
 //        foreach (byte[] aByte in bytes) {
@@ -118,7 +118,7 @@
 //        Assert.False(createIterator().hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSkipAllDeletedFromCache() {// throws Exception
 //        byte[][] bytes = {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}};
 //        foreach (byte[] aByte in bytes) {
@@ -144,7 +144,7 @@
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPeekNextKey() {// throws Exception
 //        IKeyValueStore<Bytes, byte[]> kv = new InMemoryKeyValueStore("one");
 //        ThreadCache cache = new ThreadCache(new LogContext("testCache "), 1000000L, new MockStreamsMetrics(new Metrics()));

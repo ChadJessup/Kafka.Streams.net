@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Kafka.Streams.State.KeyValues;
 
-namespace Kafka.Streams.State.Window
+namespace Kafka.Streams.State.Windowed
 {
     public class WindowStoreIteratorFacade<V> : IWindowStoreIterator<V>
     {

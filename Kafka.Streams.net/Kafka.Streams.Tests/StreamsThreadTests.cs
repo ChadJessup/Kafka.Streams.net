@@ -784,18 +784,18 @@ namespace Kafka.Streams.Tests
         //        consumer.Assign(new HashSet<>assignedPartitions));
 
         //        consumer.addRecord(new ConsumeResult<>(topic1, 1, 0, new byte[0], new byte[0]));
-        //        mockTime.sleep(config.getLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1);
+        //        mockTime.sleep(config.GetLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1);
         //        thread.runOnce();
         //        Assert.Equal(producer.history().Count, (1));
 
         //       Assert.False(producer.transactionCommitted());
-        //mockTime.sleep(config.getLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1L);
+        //mockTime.sleep(config.GetLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1L);
         //        TestUtils.WaitForCondition(
         //            () => producer.commitCount() == 1,
         //            "StreamsThread did not commit transaction.");
 
         //        producer.fenceProducer();
-        //        mockTime.sleep(config.getLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1L);
+        //        mockTime.sleep(config.GetLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1L);
         //        consumer.addRecord(new ConsumeResult<>(topic1, 1, 1, new byte[0], new byte[0]));
         //        try {
         //            thread.runOnce();

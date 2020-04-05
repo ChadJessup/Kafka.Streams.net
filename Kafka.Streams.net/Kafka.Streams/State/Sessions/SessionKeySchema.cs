@@ -93,19 +93,19 @@
 
 //        static long extractEndTimestamp(byte[] binaryKey)
 //        {
-//            return ByteBuffer.Wrap(binaryKey).getLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
+//            return new ByteBuffer().Wrap(binaryKey).GetLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
 //        }
 
 //        static long extractStartTimestamp(byte[] binaryKey)
 //        {
-//            return ByteBuffer.Wrap(binaryKey).getLong(binaryKey.Length - TIMESTAMP_SIZE);
+//            return new ByteBuffer().Wrap(binaryKey).GetLong(binaryKey.Length - TIMESTAMP_SIZE);
 //        }
 
 //        static Window extractWindow(byte[] binaryKey)
 //        {
-//            ByteBuffer buffer = ByteBuffer.Wrap(binaryKey);
-//            long start = buffer.getLong(binaryKey.Length - TIMESTAMP_SIZE);
-//            long end = buffer.getLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
+//            ByteBuffer buffer = new ByteBuffer().Wrap(binaryKey);
+//            long start = buffer.GetLong(binaryKey.Length - TIMESTAMP_SIZE);
+//            long end = buffer.GetLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
 //            return new SessionWindow(start, end);
 //        }
 

@@ -163,7 +163,7 @@
 //            Utils.delete(stateDir);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindKeyValueStores()
 //        {
 //            mockThread(true);
@@ -177,7 +177,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindTimestampedKeyValueStores()
 //        {
 //            mockThread(true);
@@ -191,7 +191,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotFindKeyValueStoresAsTimestampedStore()
 //        {
 //            mockThread(true);
@@ -200,7 +200,7 @@
 //            Assert.Equal(0, tkvStores.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindTimestampedKeyValueStoresAsKeyValueStores()
 //        {
 //            mockThread(true);
@@ -214,7 +214,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindWindowStores()
 //        {
 //            mockThread(true);
@@ -228,7 +228,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindTimestampedWindowStores()
 //        {
 //            mockThread(true);
@@ -242,7 +242,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotFindWindowStoresAsTimestampedStore()
 //        {
 //            mockThread(true);
@@ -251,7 +251,7 @@
 //            Assert.Equal(0, windowStores.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindTimestampedWindowStoresAsWindowStore()
 //        {
 //            mockThread(true);
@@ -265,7 +265,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionIfKVStoreClosed()
 //        {
 //            mockThread(true);
@@ -273,7 +273,7 @@
 //            provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionIfTsKVStoreClosed()
 //        {
 //            mockThread(true);
@@ -281,7 +281,7 @@
 //            provider.Stores("timestamped-kv-store", QueryableStoreTypes.TimestampedKeyValueStore());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionIfWindowStoreClosed()
 //        {
 //            mockThread(true);
@@ -289,7 +289,7 @@
 //            provider.Stores("window-store", QueryableStoreTypes.windowStore());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionIfTsWindowStoreClosed()
 //        {
 //            mockThread(true);
@@ -297,7 +297,7 @@
 //            provider.Stores("timestamped-window-store", QueryableStoreTypes.timestampedWindowStore());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnEmptyListIfNoStoresFoundWithName()
 //        {
 //            mockThread(true);
@@ -306,7 +306,7 @@
 //                provider.Stores("not-a-store", QueryableStoreTypes.KeyValueStore()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnEmptyListIfStoreExistsButIsNotOfTypeValueStore()
 //        {
 //            mockThread(true);
@@ -316,7 +316,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionIfNotAllStoresAvailable()
 //        {
 //            mockThread(false);

@@ -15,19 +15,19 @@
 //            StateSerdes.WithBuiltinTypes(null, byte[], byte[]);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowIfKeyClassIsNullForBuiltinTypes()
 //        {
 //            StateSerdes.WithBuiltinTypes("anyName", null, byte[]);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowIfValueClassIsNullForBuiltinTypes()
 //        {
 //            StateSerdes.WithBuiltinTypes("anyName", byte[], null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnSerdesForBuiltInKeyAndValueTypesForBuiltinTypes()
 //        {
 //            Type[] supportedBuildInTypes = new Type[]
@@ -52,37 +52,37 @@
 //            }
 //        }
 
-//        [Xunit.Fact]// (expected = ArgumentException)
+//        [Fact]// (expected = ArgumentException)
 //        public void ShouldThrowForUnknownKeyTypeForBuiltinTypes()
 //        {
 //            StateSerdes.WithBuiltinTypes("anyName", Class, byte[]);
 //        }
 
-//        [Xunit.Fact]// (expected = ArgumentException)
+//        [Fact]// (expected = ArgumentException)
 //        public void ShouldThrowForUnknownValueTypeForBuiltinTypes()
 //        {
 //            StateSerdes.WithBuiltinTypes("anyName", byte[], Class);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowIfTopicNameIsNull()
 //        {
 //            new StateSerdes<>(null, Serdes.ByteArray(), Serdes.ByteArray());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowIfKeyClassIsNull()
 //        {
 //            new StateSerdes<>("anyName", null, Serdes.ByteArray());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowIfValueClassIsNull()
 //        {
 //            new StateSerdes<>("anyName", Serdes.ByteArray(), null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIfIncompatibleSerdeForValue()
 //        {
 //            // throws ClassNotFoundException
@@ -98,7 +98,7 @@
 //                    "Change the default Serdes in StreamConfig or provide correct Serdes via method parameters."));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSkipValueAndTimestampeInformationForErrorOnTimestampAndValueSerialization()
 //        {// throws ClassNotFoundException
 //            var myClass = Type.GetType("System.String");
@@ -114,7 +114,7 @@
 //                        "Change the default Serdes in StreamConfig or provide correct Serdes via method parameters."));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIfIncompatibleSerdeForKey()
 //        {// throws ClassNotFoundException
 //         //            Class myClass = Class.forName("java.lang.string");

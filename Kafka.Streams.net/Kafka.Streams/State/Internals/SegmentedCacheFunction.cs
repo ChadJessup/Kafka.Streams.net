@@ -62,7 +62,7 @@
 //        int compareSegmentedKeys(Bytes cacheKey, Bytes storeKey)
 //        {
 //            long storeSegmentId = segmentId(storeKey);
-//            long cacheSegmentId = ByteBuffer.Wrap(cacheKey()).getLong();
+//            long cacheSegmentId = new ByteBuffer().Wrap(cacheKey()).GetLong();
 
 //            int segmentCompare = long.compare(cacheSegmentId, storeSegmentId);
 //            if (segmentCompare == 0)

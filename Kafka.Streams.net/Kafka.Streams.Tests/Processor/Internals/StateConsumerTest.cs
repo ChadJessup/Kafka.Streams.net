@@ -28,14 +28,14 @@
 //            stateConsumer = new GlobalStreamThread.StateConsumer(logContext, consumer, stateMaintainer, time, Duration.FromMilliseconds(10L), FLUSH_INTERVAL);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignPartitionsToConsumer()
 //        {
 //            stateConsumer.initialize();
 //            Assert.Equal(Utils.mkSet(topicOne, topicTwo), consumer.assignment());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSeekToInitialOffsets()
 //        {
 //            stateConsumer.initialize();
@@ -43,7 +43,7 @@
 //            Assert.Equal(30L, consumer.position(topicTwo));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateStateWithReceivedRecordsForPartition()
 //        {
 //            stateConsumer.initialize();
@@ -53,7 +53,7 @@
 //            Assert.Equal(2, stateMaintainer.updatedPartitions.Get(topicOne).intValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateStateWithReceivedRecordsForAllTopicPartition()
 //        {
 //            stateConsumer.initialize();
@@ -65,7 +65,7 @@
 //            Assert.Equal(2, stateMaintainer.updatedPartitions.Get(topicTwo).intValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlushStoreWhenFlushIntervalHasLapsed()
 //        {
 //            stateConsumer.initialize();
@@ -76,7 +76,7 @@
 //            Assert.True(stateMaintainer.flushed);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotFlushOffsetsWhenFlushIntervalHasNotLapsed()
 //        {
 //            stateConsumer.initialize();
@@ -86,14 +86,14 @@
 //            Assert.False(stateMaintainer.flushed);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseConsumer()
 //        { //throws IOException
 //            stateConsumer.close();
 //            Assert.True(consumer.closed());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseStateMaintainer()
 //        { //throws IOException
 //            stateConsumer.close();

@@ -4,7 +4,7 @@
 //using Kafka.Streams.State.KeyValues;
 //using Kafka.Streams.State.ReadOnly;
 //using Kafka.Streams.State.TimeStamped;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using NodaTime;
 //using System.Collections.Generic;
 //using Xunit;
@@ -69,7 +69,7 @@
 //            readOnlyWindowStoreFacade = new ReadOnlyWindowStoreFacade<string, string>(mockedWindowTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsOnSingleKeyFetch()
 //        {
 //            expect(mockedWindowTimestampStore.Fetch("key1", 21L))
@@ -84,7 +84,7 @@
 //            verify(mockedWindowTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsOnSingleKeyFetchLongParameters()
 //        {
 //            expect(mockedWindowTimestampIterator.MoveNext())
@@ -102,7 +102,7 @@
 //            verify(mockedWindowTimestampIterator, mockedWindowTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsOnSingleKeyFetchInstantParameters()
 //        {
 //            expect(mockedWindowTimestampIterator.MoveNext())
@@ -120,7 +120,7 @@
 //            verify(mockedWindowTimestampIterator, mockedWindowTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsOnRangeFetchLongParameters()
 //        {
 //            expect(mockedKeyValueWindowTimestampIterator.MoveNext())
@@ -142,7 +142,7 @@
 //            verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsOnRangeFetchInstantParameters()
 //        {
 //            expect(mockedKeyValueWindowTimestampIterator.MoveNext())
@@ -164,7 +164,7 @@
 //            verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsOnFetchAllLongParameters()
 //        {
 //            expect(mockedKeyValueWindowTimestampIterator.MoveNext())
@@ -186,7 +186,7 @@
 //            verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsOnFetchAllInstantParameters()
 //        {
 //            expect(mockedKeyValueWindowTimestampIterator.MoveNext())
@@ -208,7 +208,7 @@
 //            verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsOnAll()
 //        {
 //            expect(mockedKeyValueWindowTimestampIterator.MoveNext())

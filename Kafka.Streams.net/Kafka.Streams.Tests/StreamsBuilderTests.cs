@@ -55,7 +55,7 @@ namespace Kafka.Streams.Tests
 
             Assert.Equal(
                 topology.ProcessorConnectedStateStores("KSTREAM-JOIN-0000000005"),
-                new HashSet<string> { topology.StateStores[0].name });
+                new HashSet<string> { topology.StateStores[0].Name });
 
             Assert.False(topology.ProcessorConnectedStateStores("KTABLE-FILTER-0000000003").Any());
         }

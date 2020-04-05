@@ -4,7 +4,7 @@
 //using Kafka.Streams.Processors.Internals;
 //using Kafka.Streams.State;
 //using Kafka.Streams.State.KeyValues;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using Kafka.Streams.Tests.Helpers;
 //using System.Collections.Generic;
 //using System.IO;
@@ -94,7 +94,7 @@
 //        windowStore.close();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestRangeAndSinglePointFetch()
 //    {
 //        long startTime = SEGMENT_INTERVAL - 4L;
@@ -230,7 +230,7 @@
 //        Assert.Null(entriesByKey.Get(6));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetAll()
 //    {
 //        long startTime = SEGMENT_INTERVAL - 4L;
@@ -249,7 +249,7 @@
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFetchAllInTimeRange()
 //    {
 //        long startTime = SEGMENT_INTERVAL - 4L;
@@ -276,7 +276,7 @@
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestFetchRange()
 //    {
 //        long startTime = SEGMENT_INTERVAL - 4L;
@@ -355,7 +355,7 @@
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPutAndFetchBefore()
 //    {
 //        long startTime = SEGMENT_INTERVAL - 4L;
@@ -507,7 +507,7 @@
 //        Assert.Null(entriesByKey.Get(6));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPutAndFetchAfter()
 //    {
 //        long startTime = SEGMENT_INTERVAL - 4L;
@@ -618,7 +618,7 @@
 //        Assert.Null(entriesByKey.Get(6));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPutSameKeyTimestamp()
 //    {
 //        windowStore = buildWindowStore(RETENTION_PERIOD, WINDOW_SIZE, true, Serdes.Int(), Serdes.String());
@@ -677,7 +677,7 @@
 //        Assert.Equal(Utils.mkSet("zero@0", "zero@0", "zero+@0", "zero++@0"), entriesByKey.Get(0));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseOpenIteratorsWhenStoreIsClosedAndNotThrowInvalidStateStoreExceptionOnHasNext()
 //    {
 //        setCurrentTime(0);
@@ -692,7 +692,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFetchAndIterateOverExactKeys()
 //    {
 //        long windowSize = 0x7a00000000000000L;
@@ -729,7 +729,7 @@
 //        ))));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestDeleteAndUpdate()
 //    {
 
@@ -746,37 +746,37 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnNullOnWindowNotFound()
 //    {
 //        Assert.Null(windowStore.Fetch(1, 0L));
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //    {
 //        windowStore.put(null, "anyValue");
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnGetNullKey()
 //    {
 //        windowStore.Fetch(null, ofEpochMilli(1L), ofEpochMilli(2L));
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
 //    {
 //        windowStore.Fetch(null, 2, ofEpochMilli(1L), ofEpochMilli(2L));
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
 //    {
 //        windowStore.Fetch(1, null, ofEpochMilli(1L), ofEpochMilli(2L));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFetchAndIterateOverExactBinaryKeys()
 //    {
 //        IWindowStore<Bytes, string> windowStore = buildWindowStore(RETENTION_PERIOD,
@@ -810,7 +810,7 @@
 //            equalTo(expectedKey3));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnSameResultsForSingleKeyFetchAndEqualKeyRangeFetch()
 //    {
 //        windowStore.put(1, "one", 0L);
@@ -827,7 +827,7 @@
 //        Assert.False(keyRangeIterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey()
 //    {
 //        setClassLoggerToDebug();
@@ -843,7 +843,7 @@
 //                + "Note that the built-in numerical serdes do not follow this for negative numbers"));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogAndMeasureExpiredRecords()
 //    {
 //        setClassLoggerToDebug();
@@ -890,7 +890,7 @@
 //        Assert.Equal(messages, hasItem("Skipping record for expired segment."));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowExceptionWhenFetchRangeIsExpired()
 //    {
 //        windowStore.put(1, "one", 0L);
@@ -901,7 +901,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestWindowIteratorPeek()
 //    {
 //        long currentTime = 0;
@@ -918,7 +918,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestValueIteratorPeek()
 //    {
 //        windowStore.put(1, "one", 0L);
@@ -933,7 +933,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowConcurrentModificationException()
 //    {
 //        long currentTime = 0;
@@ -962,7 +962,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestFetchDuplicates()
 //    {
 //        windowStore = buildWindowStore(RETENTION_PERIOD, WINDOW_SIZE, true, Serdes.Int(), Serdes.String());

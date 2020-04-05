@@ -1,4 +1,4 @@
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 
 namespace Kafka.Streams.State.TimeStamped
 {

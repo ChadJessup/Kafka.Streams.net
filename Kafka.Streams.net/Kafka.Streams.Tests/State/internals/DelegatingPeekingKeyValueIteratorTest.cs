@@ -46,7 +46,7 @@
 //            store = new GenericInMemoryKeyValueStore<>(name);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPeekNextKey()
 //        {
 //            store.Add("A", "A");
@@ -57,7 +57,7 @@
 //            peekingIterator.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPeekNext()
 //        {
 //            store.Add("A", "A");
@@ -68,7 +68,7 @@
 //            peekingIterator.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPeekAndIterate()
 //        {
 //            string[] kvs = { "a", "b", "c", "d", "e", "f" };
@@ -91,7 +91,7 @@
 //            peekingIterator.close();
 //        }
 
-//        [Xunit.Fact]// (expected = NoSuchElementException)
+//        [Fact]// (expected = NoSuchElementException)
 //        public void ShouldThrowNoSuchElementWhenNoMoreItemsLeftAndNextCalled()
 //        {
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
@@ -99,7 +99,7 @@
 //            peekingIterator.close();
 //        }
 
-//        [Xunit.Fact]// (expected = NoSuchElementException)
+//        [Fact]// (expected = NoSuchElementException)
 //        public void ShouldThrowNoSuchElementWhenNoMoreItemsLeftAndPeekNextCalled()
 //        {
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());

@@ -32,7 +32,7 @@
 //        private CompositeRestoreListener compositeRestoreListener;
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreInNonBatchMode()
 //        {
 //            setUpCompositeRestoreListener(stateRestoreCallback);
@@ -41,7 +41,7 @@
 //            Assert.Equal(stateRestoreCallback.restoredValue, (value));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreInBatchMode()
 //        {
 //            setUpCompositeRestoreListener(batchingStateRestoreCallback);
@@ -49,7 +49,7 @@
 //            Assert.Equal(batchingStateRestoreCallback.getRestoredRecords(), (records));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotifyRestoreStartNonBatchMode()
 //        {
 //            setUpCompositeRestoreListener(stateRestoreCallback);
@@ -58,7 +58,7 @@
 //            AssertStateRestoreListenerOnStartNotification(reportingStoreListener);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotifyRestoreStartBatchMode()
 //        {
 //            setUpCompositeRestoreListener(batchingStateRestoreCallback);
@@ -67,7 +67,7 @@
 //            AssertStateRestoreListenerOnStartNotification(reportingStoreListener);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotifyRestoreProgressNonBatchMode()
 //        {
 //            setUpCompositeRestoreListener(stateRestoreCallback);
@@ -76,7 +76,7 @@
 //            AssertStateRestoreListenerOnBatchCompleteNotification(reportingStoreListener);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotifyRestoreProgressBatchMode()
 //        {
 //            setUpCompositeRestoreListener(batchingStateRestoreCallback);
@@ -85,7 +85,7 @@
 //            AssertStateRestoreListenerOnBatchCompleteNotification(reportingStoreListener);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotifyRestoreEndInNonBatchMode()
 //        {
 //            setUpCompositeRestoreListener(stateRestoreCallback);
@@ -94,7 +94,7 @@
 //            AssertStateRestoreOnEndNotification(reportingStoreListener);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotifyRestoreEndInBatchMode()
 //        {
 //            setUpCompositeRestoreListener(batchingStateRestoreCallback);
@@ -103,7 +103,7 @@
 //            AssertStateRestoreOnEndNotification(reportingStoreListener);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHandleNullReportStoreListener()
 //        {
 //            compositeRestoreListener = new CompositeRestoreListener(batchingStateRestoreCallback);
@@ -118,7 +118,7 @@
 //            assertStateRestoreOnEndNotification(batchingStateRestoreCallback);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHandleNoRestoreListener()
 //        {
 //            compositeRestoreListener = new CompositeRestoreListener(noListenBatchingStateRestoreCallback);
@@ -132,14 +132,14 @@
 //            Assert.Equal(noListenBatchingStateRestoreCallback.restoredRecords, (records));
 //        }
 
-//        [Xunit.Fact]// (expected = UnsupportedOperationException)
+//        [Fact]// (expected = UnsupportedOperationException)
 //        public void ShouldThrowExceptionWhenSinglePutDirectlyCalled()
 //        {
 //            compositeRestoreListener = new CompositeRestoreListener(noListenBatchingStateRestoreCallback);
 //            compositeRestoreListener.Restore(key, value);
 //        }
 
-//        [Xunit.Fact]// (expected = UnsupportedOperationException)
+//        [Fact]// (expected = UnsupportedOperationException)
 //        public void ShouldThrowExceptionWhenRestoreAllDirectlyCalled()
 //        {
 //            compositeRestoreListener = new CompositeRestoreListener(noListenBatchingStateRestoreCallback);

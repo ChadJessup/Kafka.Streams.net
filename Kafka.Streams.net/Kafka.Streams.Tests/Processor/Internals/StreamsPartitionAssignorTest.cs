@@ -168,7 +168,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInterleaveTasksByGroupId()
 //        {
 //            TaskId taskIdA0 = new TaskId(0, 0);
@@ -196,7 +196,7 @@
 //            Assert.Equal(interleavedTaskIds, (embeddedList));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestSubscription()
 //        {
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -227,7 +227,7 @@
 //            Assert.Equal(info.encode(), subscription.userData());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAssignBasic()
 //        {
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -291,7 +291,7 @@
 //            Assert.Equal(allTasks, allActiveTasks);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignEvenlyAcrossConsumersOneClientMultipleThreads()
 //        {
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -362,7 +362,7 @@
 //            Assert.Equal(expectedInfo11TaskIds, info11.activeTasks());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAssignWithPartialTopology()
 //        {
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -397,7 +397,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAssignEmptyMetadata()
 //        {
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -452,7 +452,7 @@
 //            Assert.Equal(allTasks, allActiveTasks);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAssignWithNewTasks()
 //        {
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -505,7 +505,7 @@
 //            Assert.Equal(Utils.mkSet(t1p0, t1p1, t1p2, t2p0, t2p1, t2p2, t3p0, t3p1, t3p2, t3p3), allPartitions);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAssignWithStates()
 //        {
 //            builder.setApplicationId(applicationId);
@@ -605,7 +605,7 @@
 //            return ids;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAssignWithStandbyReplicas()
 //        {
 //            Dictionary<string, object> props = ConfigProps();
@@ -677,7 +677,7 @@
 //            Assert.Equal(allTasks, allStandbyTasks);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestOnAssignment()
 //        {
 //            configurePartitionAssignor(Collections.emptyMap());
@@ -713,7 +713,7 @@
 //            Assert.Equal(2, capturedCluster.getValue().partitionsForTopic(t3p0.Topic).Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAssignWithInternalTopics()
 //        {
 //            builder.setApplicationId(applicationId);
@@ -743,7 +743,7 @@
 //            Assert.Equal(allTasks.Count, (long)internalTopicManager.readyTopics.Get(applicationId + "-topicX"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAssignWithInternalTopicThatsSourceIsAnotherInternalTopic()
 //        {
 //            string applicationId = "test";
@@ -778,7 +778,7 @@
 //            Assert.Equal(allTasks.Count, (long)internalTopicManager.readyTopics.Get("test-topicZ"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGenerateTasksForAllCreatedPartitions()
 //        {
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -858,7 +858,7 @@
 //            Assert.Equal(new HashSet<>(assignment.Get(client).partitions()), (new HashSet<>(expectedAssignment)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddUserDefinedEndPointToSubscription()
 //        {
 //            builder.setApplicationId(applicationId);
@@ -879,7 +879,7 @@
 //            Assert.Equal("localhost:8080", subscriptionInfo.userEndPoint());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldMapUserEndPointToTopicPartitions()
 //        {
 //            builder.setApplicationId(applicationId);
@@ -912,7 +912,7 @@
 //                topicPartitions);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowExceptionIfApplicationServerConfigIsNotHostPortPair()
 //        {
 //            builder.setApplicationId(applicationId);
@@ -931,7 +931,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowExceptionIfApplicationServerConfigPortIsNotAnInteger()
 //        {
 //            builder.setApplicationId(applicationId);
@@ -947,7 +947,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotLoopInfinitelyOnMissingMetadataAndShouldNotCreateRelatedTasks()
 //        {
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -1015,7 +1015,7 @@
 //            Assert.Equal(assignment.Get(client).partitions().isEmpty(), (true));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateClusterMetadataAndHostInfoOnAssignment()
 //        {
 //            TopicPartition partitionOne = new TopicPartition("topic", 1);
@@ -1034,7 +1034,7 @@
 //            EasyMock.verify(taskManager);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAddStandbyTaskPartitionsToPartitionsForHost()
 //        {
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -1082,7 +1082,7 @@
 //            Assert.Equal(allAssignedPartitions, (allPartitions));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowKafkaExceptionIfTaskMangerNotConfigured()
 //        {
 //            Dictionary<string, object> config = ConfigProps();
@@ -1099,7 +1099,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowKafkaExceptionIfTaskMangerConfigIsNotTaskManagerInstance()
 //        {
 //            Dictionary<string, object> config = ConfigProps();
@@ -1117,7 +1117,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowKafkaExceptionAssignmentErrorCodeNotConfigured()
 //        {
 //            Dictionary<string, object> config = ConfigProps();
@@ -1134,7 +1134,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowKafkaExceptionIfVersionProbingFlagConfigIsNotAtomicInteger()
 //        {
 //            Dictionary<string, object> config = ConfigProps();
@@ -1152,19 +1152,19 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV1V2()
 //        {
 //            ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(1, 2);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV1V3()
 //        {
 //            ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(1, 3);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV2V3()
 //        {
 //            ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(2, 3);
@@ -1198,7 +1198,7 @@
 //            Assert.Equal(AssignmentInfo.decode(assignment.Get("consumer2").userData()).version(), (smallestVersion));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDownGradeSubscriptionToVersion1()
 //        {
 //            mockTaskManager(
@@ -1214,31 +1214,31 @@
 //            Assert.Equal(SubscriptionInfo.decode(subscription.userData()).version(), (1));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDownGradeSubscriptionToVersion2For0101()
 //        {
 //            shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_0101);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDownGradeSubscriptionToVersion2For0102()
 //        {
 //            shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_0102);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDownGradeSubscriptionToVersion2For0110()
 //        {
 //            shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_0110);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDownGradeSubscriptionToVersion2For10()
 //        {
 //            shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_10);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDownGradeSubscriptionToVersion2For11()
 //        {
 //            shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_11);
@@ -1259,7 +1259,7 @@
 //            Assert.Equal(SubscriptionInfo.decode(subscription.userData()).version(), (2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnUnchangedAssignmentForOldInstancesAndEmptyAssignmentForFutureInstances()
 //        {
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -1307,13 +1307,13 @@
 //        Assert.Equal(assignment.Get("future-consumer").partitions().Count, (0));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowIfV1SubscriptionAndFutureSubscriptionIsMixed()
 //    {
 //        shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(1);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowIfV2SubscriptionAndFutureSubscriptionIsMixed()
 //    {
 //        shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(2);

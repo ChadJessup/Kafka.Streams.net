@@ -48,7 +48,7 @@
 //            initStoreSerde(context);
 //            metrics = (StreamsMetricsImpl)context.metrics;
 
-//            taskName = context.taskId().ToString();
+//            taskName = context.taskId.ToString();
 //            string metricsGroup = "stream-" + metricScope + "-metrics";
 //            Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
 //            Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name);

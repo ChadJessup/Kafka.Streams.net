@@ -46,7 +46,7 @@
 //        Utils.delete(stateDir);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCreateBaseDirectory()
 //    {
 //        Assert.True(stateDir.Exists);
@@ -55,7 +55,7 @@
 //        Assert.True(appDir.isDirectory());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCreateTaskStateDirectory()
 //    {
 //        TaskId taskId = new TaskId(0, 0);
@@ -64,7 +64,7 @@
 //        Assert.True(taskDirectory.isDirectory());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLockTaskStateDirectory()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 0);
@@ -89,7 +89,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldBeTrueIfAlreadyHoldsLock()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 0);
@@ -105,7 +105,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowProcessorStateException()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 0);
@@ -123,7 +123,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotLockDeletedDirectory()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 0);
@@ -132,7 +132,7 @@
 //        Assert.False(directory.Lock(taskId));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLockMultipleTaskDirectories()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 0);
@@ -167,7 +167,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReleaseTaskStateDirectoryLock()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 0);
@@ -186,7 +186,7 @@
 //        }
 //        }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCleanUpTaskStateDirectoriesThatAreNotCurrentlyLocked()
 //    {// throws Exception
 //        TaskId task0 = new TaskId(0, 0);
@@ -215,7 +215,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCleanupStateDirectoriesWhenLastModifiedIsLessThanNowMinusCleanupDelay()
 //    {
 //        File dir = directory.directoryForTask(new TaskId(2, 0));
@@ -228,7 +228,7 @@
 //        Assert.False(dir.Exists);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotRemoveNonTaskDirectoriesAndFiles()
 //    {
 //        File otherDir = TestUtils.GetTempDirectory(stateDir.toPath(), "foo");
@@ -236,7 +236,7 @@
 //        Assert.True(otherDir.Exists);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldListAllTaskDirectories()
 //    {
 //        TestUtils.GetTempDirectory(stateDir.toPath(), "foo");
@@ -249,7 +249,7 @@
 //        Assert.True(dirs.Contains(taskDir2));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCreateDirectoriesIfParentDoesntExist()
 //    {
 //        File tempDir = TestUtils.GetTempDirectory();
@@ -268,7 +268,7 @@
 //        Assert.True(taskDir.Exists);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLockGlobalStateDirectory()
 //    {// throws Exception
 //        directory.lockGlobalState();
@@ -291,7 +291,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldUnlockGlobalStateDirectory()
 //    {// throws Exception
 //        directory.lockGlobalState();
@@ -308,7 +308,7 @@
 //        }
 //        }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotLockStateDirLockedByAnotherThread()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 0);
@@ -330,7 +330,7 @@
 //        Assert.False(directory.Lock(taskId));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotUnLockStateDirLockedByAnotherThread()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 0);
@@ -365,7 +365,7 @@
 //        Assert.True(directory.Lock(taskId));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCleanupAllTaskDirectoriesIncludingGlobalOne()
 //    {
 //        directory.directoryForTask(new TaskId(1, 0));
@@ -380,7 +380,7 @@
 //        Assert.Equal(0, files.Count);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCreateBaseDirectory()
 //    {// throws Exception
 //        initializeStateDirectory(false);
@@ -388,7 +388,7 @@
 //        Assert.False(appDir.Exists);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCreateTaskStateDirectory()
 //    {// throws Exception
 //        initializeStateDirectory(false);
@@ -397,7 +397,7 @@
 //        Assert.False(taskDirectory.Exists);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCreateGlobalStateDirectory()
 //    {// throws Exception
 //        initializeStateDirectory(false);
@@ -405,7 +405,7 @@
 //        Assert.False(globalStateDir.Exists);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLockTaskStateDirectoryWhenDirectoryCreationDisabled()
 //    {// throws Exception
 //        initializeStateDirectory(false);
@@ -413,7 +413,7 @@
 //        Assert.True(directory.Lock(taskId));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLockGlobalStateDirectoryWhenDirectoryCreationDisabled()
 //    {// throws Exception
 //        initializeStateDirectory(false);

@@ -7,7 +7,7 @@ using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tasks;
 using NodaTime;
 using System;
@@ -37,6 +37,7 @@ namespace Kafka.Streams.Processors.Internals
     }
 
     public class GlobalProcessorContext<K, V> : AbstractProcessorContext<K, V>
+        where V : class
     {
         private readonly GlobalProcessorContext globalProcessContext;
 
@@ -50,9 +51,9 @@ namespace Kafka.Streams.Processors.Internals
                 new TaskId(-1, -1), config, stateMgr, cache);
         }
 
-        public IStateStore GetStateStore(string name)
+        public override IStateStore GetStateStore(string name)
         {
-            var store = stateManager.GetGlobalStore(name);
+            var store = StateManager.GetGlobalStore(name);
 
             if (store is ITimestampedKeyValueStore<K, V>)
             {
@@ -80,10 +81,10 @@ namespace Kafka.Streams.Processors.Internals
 
         public override void Forward<K, V>(K key, V value)
         {
-            var previousNode = currentNode;
+            var previousNode = CurrentNode;
             try
             {
-                foreach (var child in currentNode.children)
+                foreach (var child in CurrentNode.Children)
                 {
                     SetCurrentNode(child);
                     child.Process(key, value);
@@ -101,7 +102,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public override void Forward<K, V>(K key, V value, To to)
         {
-            if (currentNode.children.Any())
+            if (CurrentNode.Children.Any())
             {
                 throw new Exception("This method should only be called on 'GlobalStateStore.flush' that should not have any children.");
             }

@@ -44,7 +44,7 @@ namespace Kafka.Streams.KStream.Internals
                 {
                     return ValueAndTimestamp.Make(
                         joiner.Apply(value1, value2),
-                        Math.Max(valueAndTimestamp1?.timestamp ?? 0, valueAndTimestamp2.timestamp));
+                        Math.Max(valueAndTimestamp1?.Timestamp ?? 0, valueAndTimestamp2.Timestamp));
                 }
                 else
                 {

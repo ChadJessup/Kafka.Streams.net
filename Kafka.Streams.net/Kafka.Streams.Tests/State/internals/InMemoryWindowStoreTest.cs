@@ -2,7 +2,7 @@
 //using Kafka.Streams.KStream;
 //using Kafka.Streams.State;
 //using Kafka.Streams.State.KeyValues;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using System.Collections.Generic;
 //using Xunit;
 
@@ -43,7 +43,7 @@
 //            LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestore()
 //        {
 //            // should be empty initially
@@ -71,7 +71,7 @@
 //            Assert.False(iterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotExpireFromOpenIterator()
 //        {
 
@@ -102,7 +102,7 @@
 //            Assert.False(windowStore.Fetch(1, 0L, 50L).hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestExpiration()
 //        {
 

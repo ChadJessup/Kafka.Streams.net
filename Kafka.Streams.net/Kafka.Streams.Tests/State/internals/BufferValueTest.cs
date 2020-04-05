@@ -38,14 +38,14 @@
 
 //    public class BufferValueTest
 //    {
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeduplicateNullValues()
 //        {
 //            BufferValue bufferValue = new BufferValue(null, null, null, null);
 //            Assert.Same(bufferValue.priorValue(), bufferValue.oldValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeduplicateIndenticalValues()
 //        {
 //            byte[] bytes = { (byte)0 };
@@ -53,14 +53,14 @@
 //            Assert.Same(bufferValue.priorValue(), bufferValue.oldValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeduplicateEqualValues()
 //        {
 //            BufferValue bufferValue = new BufferValue(new byte[] { (byte)0 }, new byte[] { (byte)0 }, null, null);
 //            Assert.Same(bufferValue.priorValue(), bufferValue.oldValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldStoreDifferentValues()
 //        {
 //            byte[] priorValue = { (byte)0 };
@@ -71,7 +71,7 @@
 //            Assert.NotEqual(bufferValue.priorValue(), bufferValue.oldValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldStoreDifferentValuesWithPriorNull()
 //        {
 //            byte[] priorValue = null;
@@ -82,7 +82,7 @@
 //            Assert.NotEqual(bufferValue.priorValue(), bufferValue.oldValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldStoreDifferentValuesWithOldNull()
 //        {
 //            byte[] priorValue = { (byte)0 };
@@ -93,7 +93,7 @@
 //            Assert.NotEqual(bufferValue.priorValue(), bufferValue.oldValue());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAccountForDeduplicationInSizeEstimate()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -107,7 +107,7 @@
 //            Assert.Equal(28L, new BufferValue(new byte[] { (byte)0 }, new byte[] { (byte)1 }, new byte[] { (byte)0 }, context).ResidentMemorySizeEstimate());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSerializeNulls()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -118,7 +118,7 @@
 //            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3).putInt(-1).putInt(-1).putInt(-1).array());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSerializePrior()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -130,7 +130,7 @@
 //            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(1).put(priorValue).putInt(-1).putInt(-1).array());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSerializeOld()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -144,7 +144,7 @@
 //            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(-1).putInt(1).put(oldValue).putInt(-1).array());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSerializeNew()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -156,7 +156,7 @@
 //            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(-1).putInt(-1).putInt(1).put(newValue).array());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCompactDuplicates()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -168,7 +168,7 @@
 //            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(1).put(duplicate).putInt(-2).putInt(-1).array());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeserializePrior()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -184,7 +184,7 @@
 //            Assert.Equal(deserialize, new BufferValue(priorValue, null, null, context));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeserializeOld()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -199,7 +199,7 @@
 //            Assert.Equal(BufferValue.deserialize(serialValue), new BufferValue(null, oldValue, null, context));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeserializeNew()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
@@ -214,7 +214,7 @@
 //            Assert.Equal(BufferValue.deserialize(serialValue), new BufferValue(null, null, newValue, context));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeserializeCompactedDuplicates()
 //        {
 //            ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);

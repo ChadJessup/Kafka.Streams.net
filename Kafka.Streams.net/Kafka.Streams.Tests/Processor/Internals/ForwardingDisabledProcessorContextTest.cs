@@ -1,42 +1,49 @@
+using Kafka.Streams.Errors;
 using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
+using Moq;
+using Xunit;
 
 namespace Kafka.Streams.Tests.Processor.Internals
 {
     public class ForwardingDisabledProcessorContextTest
     {
-        // private ProcessorContext del;
-        private ForwardingDisabledProcessorContext<string, string> context;
+        private readonly IProcessorContext del;
+        private readonly ForwardingDisabledProcessorContext<string, string> context;
 
-        public void SetUp()
+        public ForwardingDisabledProcessorContextTest()
         {
-            //context = new ForwardingDisabledProcessorContext(del);
+            del = Mock.Of<IProcessorContext>();
+            context = new ForwardingDisabledProcessorContext<string, string>(del);
         }
 
-        [Xunit.Fact]// (expected = StreamsException)
+        [Fact]
         public void ShouldThrowOnForward()
         {
-            context.Forward("key", "value");
+            Assert.Throws<StreamsException>(() => context.Forward("key", "value"));
         }
 
-        [Xunit.Fact]// (expected = StreamsException)
+        [Fact]
         public void ShouldThrowOnForwardWithTo()
         {
-            context.Forward("key", "value", To.All());
+            Assert.Throws<StreamsException>(() => context.Forward("key", "value", To.All()));
         }
 
         // need to test deprecated code until removed
-        [Xunit.Fact]// (expected = StreamsException)
+        [Fact]
         public void ShouldThrowOnForwardWithChildIndex()
         {
-            context.Forward("key", "value", 1);
+#pragma warning disable CS0612 // Type or member is obsolete
+            Assert.Throws<StreamsException>(() => context.Forward("key", "value", 1));
+#pragma warning restore CS0612 // Type or member is obsolete
         }
 
         // need to test deprecated code until removed
-        [Xunit.Fact]// (expected = StreamsException)
+        [Fact]
         public void ShouldThrowOnForwardWithChildName()
         {
-            context.Forward("key", "value", "child1");
+            Assert.Throws<StreamsException>(() => context.Forward("key", "value", "child1"));
         }
     }
 }

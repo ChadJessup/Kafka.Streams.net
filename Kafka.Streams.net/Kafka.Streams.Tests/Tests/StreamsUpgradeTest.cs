@@ -299,16 +299,16 @@ namespace Kafka.Streams.Tests.Tests
 //                (DataOutputStream out = new DataOutputStream(baos));
 //                if (bumpUsedVersion)
 //                {
-//                    originalUserMetadata.getInt(); // discard original used version
+//                    originalUserMetadata.GetInt(); // discard original used version
 //                    System.Console.Out.writeInt(AssignmentInfo.LATEST_SUPPORTED_VERSION + 1);
 //                }
 //                else
 //                {
-//                    System.Console.Out.writeInt(originalUserMetadata.getInt());
+//                    System.Console.Out.writeInt(originalUserMetadata.GetInt());
 //                }
 //                if (bumpSupportedVersion)
 //                {
-//                    originalUserMetadata.getInt(); // discard original supported version
+//                    originalUserMetadata.GetInt(); // discard original supported version
 //                    System.Console.Out.writeInt(AssignmentInfo.LATEST_SUPPORTED_VERSION + 1);
 //                }
 
@@ -324,7 +324,7 @@ namespace Kafka.Streams.Tests.Tests
 //                System.Console.Out.flush();
 //                System.Console.Out.close();
 
-//                return ByteBuffer.Wrap(baos.toByteArray());
+//                return new ByteBuffer().Wrap(baos.toByteArray());
 //            }
 //            catch (IOException ex)
 //            {

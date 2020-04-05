@@ -8,7 +8,7 @@
 //    public class InMemoryKeyValueStore<K, V> : IKeyValueStore<Bytes, byte[]>
 //    {
 //        private string name;
-//        private ConcurrentNavigableMap<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
+//        private ConcurrentDictionary<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
 //        private volatile bool open = false;
 
 //        private static ILogger LOG = new LoggerFactory().CreateLogger<InMemoryKeyValueStore>();

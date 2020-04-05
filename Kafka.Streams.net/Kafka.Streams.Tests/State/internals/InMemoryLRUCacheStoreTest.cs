@@ -63,7 +63,7 @@
 //            return (IKeyValueStore<K, V>)store;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAllKeyValuePairs()
 //        {
 //            List<KeyValuePair<int, string>> kvPairs = Array.asList(KeyValuePair.Create(1, "1"),
@@ -80,7 +80,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateValuesForExistingKeysOnPutAll()
 //        {
 //            List<KeyValuePair<int, string>> kvPairs = Array.asList(KeyValuePair.Create(1, "1"),
@@ -104,7 +104,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestEvict()
 //        {
 //            // Create the test driver ...
@@ -152,7 +152,7 @@
 //            Assert.Equal(3, driver.numFlushedEntryRemoved());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestRestoreEvict()
 //        {
 //            store.close();

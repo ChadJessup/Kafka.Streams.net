@@ -110,7 +110,7 @@
 //            metered.Init(context, metered);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestMetrics()
 //        {
 //            Init();
@@ -121,7 +121,7 @@
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
 //                    "scope", "test", taskId.ToString(), "scope", "all")));
 //        }
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldWriteBytesToInnerStoreAndRecordPutMetric()
 //        {
 //            inner.put(eq(keyBytes), aryEq(valueAndTimestampBytes));
@@ -135,7 +135,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetBytesFromInnerStoreAndReturnGetMetric()
 //        {
 //            expect(inner.Get(keyBytes)).andReturn(valueAndTimestampBytes);
@@ -148,7 +148,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutIfAbsentAndRecordPutIfAbsentMetric()
 //        {
 //            expect(inner.putIfAbsent(eq(keyBytes), aryEq(valueAndTimestampBytes))).andReturn(null);
@@ -167,7 +167,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAllToInnerStoreAndRecordPutAllMetric()
 //        {
 //            inner.putAll(anyObject(List));
@@ -181,7 +181,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeleteFromInnerStoreAndRecordDeleteMetric()
 //        {
 //            expect(inner.delete(keyBytes)).andReturn(valueAndTimestampBytes);
@@ -194,7 +194,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetRangeFromInnerStoreAndRecordRangeMetric()
 //        {
 //            expect(inner.Range(keyBytes, keyBytes)).andReturn(
@@ -211,7 +211,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetAllFromInnerStoreAndRecordAllMetric()
 //        {
 //            expect(inner.all())
@@ -228,7 +228,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlushInnerWhenFlushTimeRecords()
 //        {
 //            inner.flush();
@@ -245,7 +245,7 @@
 //        private interface CachedKeyValueStore : IKeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]> { }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetFlushListenerOnWrappedCachingStore()
 //        {
 //            CachedKeyValueStore cachedKeyValueStore = mock(CachedKeyValueStore);
@@ -264,7 +264,7 @@
 //            verify(cachedKeyValueStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore()
 //        {
 //            Assert.False(metered.setFlushListener(null, false));
@@ -275,7 +275,7 @@
 //            return this.metrics.metric(metricName);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 
 //        public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromProcessorContext()
 //        {
@@ -305,7 +305,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 
 //        public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromConstructorParameters()
 //        {

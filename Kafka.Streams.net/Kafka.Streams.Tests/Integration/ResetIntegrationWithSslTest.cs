@@ -52,13 +52,13 @@
 //        cleanupTest();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic()
 //    {// throws Exception
 //        base.testReprocessingFromScratchAfterResetWithoutIntermediateUserTopic();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestReprocessingFromScratchAfterResetWithIntermediateUserTopic()
 //    {// throws Exception
 //        base.testReprocessingFromScratchAfterResetWithIntermediateUserTopic();

@@ -108,7 +108,7 @@
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldOnlyReadRecordsWhereEarliestSpecifiedWithNoCommittedOffsetsWithGlobalAutoOffsetResetLatest()
 //        {// throws Exception
 //            streamsConfiguration.Set(StreamsConfig.ConsumerPrefix(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG), "latest");
@@ -117,14 +117,14 @@
 //            ShouldOnlyReadForEarliest("_0", TOPIC_1_0, TOPIC_2_0, TOPIC_A_0, TOPIC_C_0, TOPIC_Y_0, TOPIC_Z_0, OUTPUT_TOPIC_0, expectedReceivedValues);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldOnlyReadRecordsWhereEarliestSpecifiedWithNoCommittedOffsetsWithDefaultGlobalAutoOffsetResetEarliest()
 //        {// throws Exception
 //            List<string> expectedReceivedValues = Array.asList(topic1TestMessage, topic2TestMessage, topicYTestMessage, topicZTestMessage);
 //            ShouldOnlyReadForEarliest("_1", TOPIC_1_1, TOPIC_2_1, TOPIC_A_1, TOPIC_C_1, TOPIC_Y_1, TOPIC_Z_1, OUTPUT_TOPIC_1, expectedReceivedValues);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldOnlyReadRecordsWhereEarliestSpecifiedWithInvalidCommittedOffsets()
 //        {// throws Exception
 //            CommitInvalidOffsets();
@@ -204,7 +204,7 @@
 //            consumer.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowExceptionOverlappingPattern()
 //        {
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -224,7 +224,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowExceptionOverlappingTopic()
 //        {
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -242,7 +242,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowStreamsExceptionNoResetSpecified()
 //        {// throws InterruptedException
 //            StreamsConfig props = new StreamsConfig();

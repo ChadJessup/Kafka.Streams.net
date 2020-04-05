@@ -27,12 +27,9 @@ namespace Kafka.Streams.Processors
                 stateManager,
                 cache)
         {
-            keySerde = (ISerde<K>)config.GetDefaultKeySerde();
-            valueSerde = (ISerde<V>)config.GetDefaultValueSerde();
+            KeySerde = (ISerde<K>)config.GetDefaultKeySerde();
+            ValueSerde = (ISerde<V>)config.GetDefaultValueSerde();
         }
-
-        public ISerde<K> keySerde { get; }
-        public ISerde<V> valueSerde { get; }
     }
 
     public abstract class AbstractProcessorContext : IInternalProcessorContext
@@ -41,17 +38,17 @@ namespace Kafka.Streams.Processors
         private readonly StreamsConfig config;
         private readonly ThreadCache cache;
         private bool initialized;
-        public virtual ProcessorRecordContext recordContext { get; protected set; }
+        public virtual ProcessorRecordContext RecordContext { get; protected set; }
 
-        public virtual IProcessorNode currentNode { get; set; }
+        public virtual IProcessorNode CurrentNode { get; set; }
 
         public IProcessorNode GetCurrentNode()
-            => this.currentNode;
+            => this.CurrentNode;
 
-        protected IStateManager stateManager { get; }
+        protected IStateManager StateManager { get; }
 
-        public TaskId taskId { get; }
-        public string applicationId { get; }
+        public TaskId TaskId { get; }
+        public string ApplicationId { get; }
 
         public AbstractProcessorContext(
             TaskId taskId,
@@ -59,14 +56,14 @@ namespace Kafka.Streams.Processors
             IStateManager stateManager,
             ThreadCache cache)
         {
-            this.taskId = taskId;
-            this.applicationId = config.ApplicationId;
+            this.TaskId = taskId;
+            this.ApplicationId = config.ApplicationId;
             this.config = config;
-            this.stateManager = stateManager;
+            this.StateManager = stateManager;
             this.cache = cache;
         }
 
-        public DirectoryInfo stateDir => stateManager.BaseDir;
+        public DirectoryInfo StateDir => StateManager.BaseDir;
 
         public virtual void Register(
             IStateStore store,
@@ -79,7 +76,7 @@ namespace Kafka.Streams.Processors
 
             store = store ?? throw new ArgumentNullException(nameof(store));
 
-            stateManager.Register(store, stateRestoreCallback);
+            StateManager.Register(store, stateRestoreCallback);
         }
 
         /**
@@ -89,12 +86,12 @@ namespace Kafka.Streams.Processors
         {
             get
             {
-                if (recordContext == null)
+                if (RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as Topic should only be called while a record is processed");
                 }
 
-                var topic = recordContext.Topic;
+                var topic = RecordContext.Topic;
 
                 if (topic.Equals(NONEXIST_TOPIC))
                 {
@@ -108,66 +105,66 @@ namespace Kafka.Streams.Processors
         /**
          * @throws InvalidOperationException if partition is null
          */
-        public virtual int partition
+        public virtual int Partition
         {
             get
             {
-                if (recordContext == null)
+                if (RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as Partition should only be called while a record is processed");
                 }
 
-                return recordContext.partition;
+                return RecordContext.partition;
             }
         }
 
         /**
          * @throws InvalidOperationException if offset is null
          */
-        public virtual long offset
+        public virtual long Offset
         {
             get
             {
-                if (recordContext == null)
+                if (RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as offset() should only be called while a record is processed");
                 }
 
-                return recordContext.offset;
+                return RecordContext.offset;
             }
         }
 
-        public virtual Headers headers
+        public virtual Headers Headers
         {
             get
             {
-                if (recordContext == null)
+                if (RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as Headers should only be called while a record is processed");
                 }
 
-                return recordContext.headers;
+                return RecordContext.headers;
             }
         }
 
         /**
          * @throws InvalidOperationException if timestamp is null
          */
-        public virtual long timestamp
+        public virtual long Timestamp
         {
             get
             {
-                if (recordContext == null)
+                if (RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as timestamp() should only be called while a record is processed");
                 }
 
-                return recordContext.timestamp;
+                return RecordContext.timestamp;
             }
         }
 
-        public ISerde keySerde { get; }
-        public ISerde valueSerde { get; }
+        public ISerde KeySerde { get; protected set; }
+        public ISerde ValueSerde { get; protected set; }
 
         public Dictionary<string, object> AppConfigs()
         {
@@ -184,11 +181,11 @@ namespace Kafka.Streams.Processors
 
         public virtual void SetRecordContext(ProcessorRecordContext recordContext)
         {
-            this.recordContext = recordContext;
+            this.RecordContext = recordContext;
         }
 
         public virtual void SetCurrentNode(IProcessorNode? current)
-            => this.currentNode = current;
+            => this.CurrentNode = current;
 
         public ThreadCache GetCache()
         {

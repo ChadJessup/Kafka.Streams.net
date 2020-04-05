@@ -81,7 +81,7 @@
 //            }
 //            updateBufferMetrics();
 //            open = true;
-//            partition = context.taskId().partition;
+//            partition = context.taskId.partition;
 //        }
 
 //        public bool isOpen()
@@ -196,8 +196,8 @@
 //                    if (record.Headers.lastHeader("v") == null)
 //                    {
 //                        // in this case, the changelog value is just the serialized record value
-//                        ByteBuffer timeAndValue = ByteBuffer.Wrap(record.value());
-//                        long time = timeAndValue.getLong();
+//                        ByteBuffer timeAndValue = new ByteBuffer().Wrap(record.value());
+//                        long time = timeAndValue.GetLong();
 //                        byte[] changelogValue = new byte[record.value().Length - 8];
 //                        timeAndValue[changelogValue];
 
@@ -227,12 +227,12 @@
 //                    else if (V_1_CHANGELOG_HEADERS.lastHeader("v").Equals(record.Headers.lastHeader("v")))
 //                    {
 //                        // in this case, the changelog value is a serialized ContextualRecord
-//                        ByteBuffer timeAndValue = ByteBuffer.Wrap(record.value());
-//                        long time = timeAndValue.getLong();
+//                        ByteBuffer timeAndValue = new ByteBuffer().Wrap(record.value());
+//                        long time = timeAndValue.GetLong();
 //                        byte[] changelogValue = new byte[record.value().Length - 8];
 //                        timeAndValue[changelogValue];
 
-//                        ContextualRecord contextualRecord = ContextualRecord.Deserialize(ByteBuffer.Wrap(changelogValue));
+//                        ContextualRecord contextualRecord = ContextualRecord.Deserialize(new ByteBuffer().Wrap(changelogValue));
 //                        Change<byte[]> change = requireNonNull(FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(contextualRecord.value()));
 
 //                        cleanPut(
@@ -252,9 +252,9 @@
 //                    {
 //                        // in this case, the changelog value is a serialized BufferValue
 
-//                        ByteBuffer valueAndTime = ByteBuffer.Wrap(record.value());
+//                        ByteBuffer valueAndTime = new ByteBuffer().Wrap(record.value());
 //                        BufferValue bufferValue = BufferValue.Deserialize(valueAndTime);
-//                        long time = valueAndTime.getLong();
+//                        long time = valueAndTime.GetLong();
 //                        cleanPut(time, key, bufferValue);
 //                    }
 //                    else

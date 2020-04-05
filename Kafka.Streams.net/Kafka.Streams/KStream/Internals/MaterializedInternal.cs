@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream.Internals
         private string? _storeName;
         public override string? StoreName
         {
-            get => StoreSupplier?.name ?? _storeName;
+            get => StoreSupplier?.Name ?? _storeName;
             protected set => _storeName = value;
         }
 

@@ -65,7 +65,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInit()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -74,7 +74,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAcceptData()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -84,7 +84,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRejectNullValues()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -102,7 +102,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRemoveData()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -115,7 +115,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRespectEvictionPredicate()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -133,7 +133,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTrackCount()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -148,7 +148,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTrackSize()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -163,7 +163,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTrackMinTimestamp()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -176,7 +176,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEvictOldestAndUpdateSizeAndCountAndMinTimestamp()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -228,7 +228,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnUndefinedOnPriorValueForNotBufferedKey()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -238,7 +238,7 @@
 //            Assert.Equal(buffer.priorValueForBuffered("ASDF"), (Maybe.undefined()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPriorValueForBufferedKey()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -253,7 +253,7 @@
 //            Assert.Equal(buffer.priorValueForBuffered("B"), (Maybe.defined(null)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlush()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -287,9 +287,9 @@
 //                        else
 //                        {
 //                            byte[] serializedValue = pr.Value;
-//                            ByteBuffer valueBuffer = ByteBuffer.Wrap(serializedValue);
+//                            ByteBuffer valueBuffer = new ByteBuffer().Wrap(serializedValue);
 //                            BufferValue contextualRecord = BufferValue.deserialize(valueBuffer);
-//                            long timestamp = valueBuffer.getLong();
+//                            long timestamp = valueBuffer.GetLong();
 //                            niceValue = KeyValuePair.Create(timestamp, contextualRecord);
 //                        }
 
@@ -329,7 +329,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreOldFormat()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -442,7 +442,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreV1Format()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -566,7 +566,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreV2Format()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
@@ -697,7 +697,7 @@
 //            Cleanup(context, buffer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotRestoreUnrecognizedVersionRecord()
 //        {
 //            ITimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);

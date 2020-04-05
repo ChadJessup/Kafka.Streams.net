@@ -63,7 +63,7 @@
 //                    QueryableStoreTypes.< string, long > sessionStore(), storeName);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchResulstFromUnderlyingSessionStore()
 //        {
 //            underlyingSessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
@@ -75,14 +75,14 @@
 //                         results);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnEmptyIteratorIfNoData()
 //        {
 //            IKeyValueIterator<Windowed<string>, long> result = sessionStore.Fetch("b");
 //            Assert.False(result.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindValueForKeyWhenMultiStores()
 //        {
 //            ReadOnlySessionStoreStub<string, long> secondUnderlying = new
@@ -101,7 +101,7 @@
 //            Assert.Equal(Collections.singletonList(KeyValuePair.Create(keyTwo, 10L)), keyTwoResults);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotGetValueFromOtherStores()
 //        {
 //            Windowed<string> expectedKey = new Windowed<>("foo", new SessionWindow(0, 0));
@@ -113,7 +113,7 @@
 //            Assert.False(result.hasNext());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStateStoreExceptionOnRebalance()
 //        {
 //            CompositeReadOnlySessionStore<string, string> store =
@@ -125,7 +125,7 @@
 //            store.Fetch("a");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowInvalidStateStoreExceptionIfSessionFetchThrows()
 //        {
 //            underlyingSessionStore.setOpen(false);
@@ -137,13 +137,13 @@
 //            catch (InvalidStateStoreException e) { }
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionIfFetchingNullKey()
 //        {
 //            sessionStore.Fetch(null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchKeyRangeAcrossStores()
 //        {
 //            ReadOnlySessionStoreStub<string, long> secondUnderlying = new
@@ -155,19 +155,19 @@
 //            Assert.Equal(results.Count, (2));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNPEIfKeyIsNull()
 //        {
 //            underlyingSessionStore.Fetch(null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNPEIfFromKeyIsNull()
 //        {
 //            underlyingSessionStore.Fetch(null, "a");
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNPEIfToKeyIsNull()
 //        {
 //            underlyingSessionStore.Fetch("a", null);

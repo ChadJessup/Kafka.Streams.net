@@ -80,7 +80,7 @@
 //            segments.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetSegmentIdsFromTimestamp()
 //        {
 //            Assert.Equal(0, segments.segmentId(0));
@@ -89,7 +89,7 @@
 //            Assert.Equal(3, segments.segmentId(3 * SEGMENT_INTERVAL));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBaseSegmentIntervalOnRetentionAndNumSegments()
 //        {
 //            KeyValueSegments segments = new KeyValueSegments("test", 8 * SEGMENT_INTERVAL, 2 * SEGMENT_INTERVAL);
@@ -98,7 +98,7 @@
 //            Assert.Equal(1, segments.segmentId(2 * SEGMENT_INTERVAL));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetSegmentNameFromId()
 //        {
 //            Assert.Equal("test.0", segments.segmentName(0));
@@ -106,7 +106,7 @@
 //            Assert.Equal("test." + 2 * SEGMENT_INTERVAL, segments.segmentName(2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateSegments()
 //        {
 //            TimestampedSegment segment1 = segments.getOrCreateSegmentIfLive(0, context, -1L);
@@ -120,7 +120,7 @@
 //            Assert.True(segment3.isOpen());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotCreateSegmentThatIsAlreadyExpired()
 //        {
 //            long streamTime = UpdateStreamTimeAndCreateSegment(7);
@@ -128,7 +128,7 @@
 //            Assert.False(new DirectoryInfo(context.stateDir(), "test/test.0").Exists);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCleanupSegmentsThatHaveExpired()
 //        {
 //            TimestampedSegment segment1 = segments.getOrCreateSegmentIfLive(0, context, -1L);
@@ -142,7 +142,7 @@
 //            Assert.True(new DirectoryInfo(context.stateDir(), "test/test." + 7 * SEGMENT_INTERVAL).Exists);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetSegmentForTimestamp()
 //        {
 //            TimestampedSegment segment = segments.getOrCreateSegmentIfLive(0, context, -1L);
@@ -150,14 +150,14 @@
 //            Assert.Equal(segment, segments.getSegmentForTimestamp(0L));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetCorrectSegmentString()
 //        {
 //            TimestampedSegment segment = segments.getOrCreateSegmentIfLive(0, context, -1L);
 //            Assert.Equal("TimestampedSegment(id=0, name=test.0)", segment.ToString());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseAllOpenSegments()
 //        {
 //            TimestampedSegment first = segments.getOrCreateSegmentIfLive(0, context, -1L);
@@ -170,7 +170,7 @@
 //            Assert.False(third.isOpen());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldOpenExistingSegments()
 //        {
 //            segments = new TimestampedSegments("test", 4, 1);
@@ -192,7 +192,7 @@
 //            Assert.True(segments.getSegmentForTimestamp(4).isOpen());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetSegmentsWithinTimeRange()
 //        {
 //            UpdateStreamTimeAndCreateSegment(0);
@@ -213,7 +213,7 @@
 //            Assert.Equal(2, segments.Get(2).id);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetSegmentsWithinTimeRangeOutOfOrder()
 //        {
 //            UpdateStreamTimeAndCreateSegment(4);
@@ -229,7 +229,7 @@
 //            Assert.Equal(2, segments.Get(2).id);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRollSegments()
 //        {
 //            UpdateStreamTimeAndCreateSegment(0);
@@ -248,7 +248,7 @@
 //            VerifyCorrectSegments(2, 5);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void FutureEventsShouldNotCauseSegmentRoll()
 //        {
 //            UpdateStreamTimeAndCreateSegment(0);
@@ -274,7 +274,7 @@
 //            return streamTime;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateSegmentFileNameFromOldDateFormatToNewFormat()
 //        {// throws Exception
 //            long segmentInterval = 60_000L; // the old segment file's naming system maxes out at 1 minute granularity.
@@ -306,7 +306,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateSegmentFileNameFromOldColonFormatToNewFormat()
 //        {// throws Exception
 //            string storeDirectoryPath = stateDirectory.FullName + Path.DirectorySeparatorChar + storeName;
@@ -330,7 +330,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldClearSegmentsOnClose()
 //        {
 //            segments.getOrCreateSegmentIfLive(0, context, -1L);

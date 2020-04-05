@@ -35,7 +35,7 @@
 //                    new List<IStateStoreProvider> { stubProviderOne, stubProviderTwo });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindKeyValueStores()
 //        {
 //            List<IReadOnlyKeyValueStore<string, string>> results =
@@ -46,7 +46,7 @@
 //            Assert.Equal(2, results.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindWindowStores()
 //        {
 //            List<IReadOnlyWindowStore<object, object>>
@@ -55,7 +55,7 @@
 //            Assert.Equal(2, windowStores.Count);
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionIfNoStoreOfTypeFound()
 //        {
 //            wrappingStoreProvider.Stores("doesn't exist", QueryableStoreTypes.KeyValueStore<string, string>());

@@ -6,13 +6,13 @@
 //{
 //    public class LogAndSkipOnInvalidTimestampTest : TimestampExtractorTest
 //    {
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ExtractMetadataTimestamp()
 //        {
 //            TestExtractMetadataTimestamp(new LogAndSkipOnInvalidTimestamp());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void LogAndSkipOnInvalidTimestamp()
 //        {
 //            long invalidMetadataTimestamp = -42;

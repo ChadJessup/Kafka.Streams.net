@@ -53,9 +53,9 @@ namespace Kafka.Streams.KStream.Internals
                 throw new ArgumentNullException(nameof(change));
             }
 
-            V newValue = ComputeValue(key, change.newValue);
+            V newValue = ComputeValue(key, change.NewValue);
             V oldValue = sendOldValues
-                ? ComputeValue(key, change.oldValue)
+                ? ComputeValue(key, change.OldValue)
                 : default;
 
             if (sendOldValues && oldValue == null && newValue == null)
@@ -65,12 +65,12 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp.Make(newValue, context.timestamp));
+                store.Add(key, ValueAndTimestamp.Make(newValue, Context.Timestamp));
                 tupleForwarder.MaybeForward(key, newValue, oldValue);
             }
             else
             {
-                context.Forward(key, new Change<V>(newValue, oldValue));
+                Context.Forward(key, new Change<V>(newValue, oldValue));
             }
         }
 
@@ -94,7 +94,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (valueAndTimestamp != null)
             {
-                V value = valueAndTimestamp.value;
+                V value = valueAndTimestamp.Value;
                 if (filterNot ^ predicate(key, value))
                 {
                     newValueAndTimestamp = valueAndTimestamp;

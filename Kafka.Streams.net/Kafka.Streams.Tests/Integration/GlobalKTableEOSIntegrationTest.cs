@@ -120,7 +120,7 @@
 //        IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldKStreamGlobalKTableLeftJoin()
 //    {// throws Exception
 //        KStream<string, string> streamTableJoin = stream.leftJoin(globalTable, keyMapper, joiner);
@@ -166,7 +166,7 @@
 //            "waiting for values");
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldKStreamGlobalKTableJoin()
 //    {// throws Exception
 //        KStream<string, string> streamTableJoin = stream.join(globalTable, keyMapper, joiner);
@@ -211,7 +211,7 @@
 //            "waiting for values");
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreTransactionalMessages()
 //    {// throws Exception
 //        produceInitialGlobalTableValues();
@@ -249,7 +249,7 @@
 //            "waiting for initial values");
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotRestoreAbortedMessages()
 //    {// throws Exception
 //        produceAbortedMessages();

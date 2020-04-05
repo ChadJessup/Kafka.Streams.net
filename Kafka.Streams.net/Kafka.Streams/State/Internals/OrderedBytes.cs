@@ -29,7 +29,7 @@ namespace Kafka.Streams.State.Internals
             //rangeEnd.flip();
 
             //byte[] res = new byte[rangeEnd.remaining()];
-            //ByteBuffer.Wrap(res).Add(rangeEnd);
+            //new ByteBuffer().Wrap(res).Add(rangeEnd);
             return null; // Bytes.Wrap(res);
         }
 

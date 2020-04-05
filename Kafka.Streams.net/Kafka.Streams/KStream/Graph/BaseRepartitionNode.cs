@@ -21,13 +21,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode
     {
-        public ISerde<K>? keySerde { get; protected set; }
-        public ISerde<V>? valueSerde { get; protected set; }
+        public ISerde<K>? KeySerde { get; protected set; }
+        public ISerde<V>? ValueSerde { get; protected set; }
 
-        protected string sinkName { get; }
-        protected string sourceName { get; }
-        protected string repartitionTopic { get; }
-        protected ProcessorParameters<K, V> processorParameters { get; }
+        protected string SinkName { get; }
+        protected string SourceName { get; }
+        protected string RepartitionTopic { get; }
+        protected ProcessorParameters<K, V> ProcessorParameters { get; }
 
         public BaseRepartitionNode(
             string nodeName,
@@ -39,12 +39,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
             string repartitionTopic)
             : base(nodeName)
         {
-            this.keySerde = keySerde;
-            this.valueSerde = valueSerde;
-            this.sinkName = sinkName;
-            this.sourceName = sourceName;
-            this.repartitionTopic = repartitionTopic;
-            this.processorParameters = processorParameters;
+            this.KeySerde = keySerde;
+            this.ValueSerde = valueSerde;
+            this.SinkName = sinkName;
+            this.SourceName = sourceName;
+            this.RepartitionTopic = repartitionTopic;
+            this.ProcessorParameters = processorParameters;
         }
 
         public abstract ISerializer<V>? GetValueSerializer();
@@ -53,12 +53,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override string ToString()
             => "BaseRepartitionNode{" +
-                    $"keySerde={keySerde}" +
-                    $", valueSerde={valueSerde}" +
-                    $", sinkName='{sinkName}'" +
-                    $", sourceName='{sourceName}'" +
-                    $", repartitionTopic='{repartitionTopic}'" +
-                    $", processorParameters={processorParameters}" +
+                    $"keySerde={KeySerde}" +
+                    $", valueSerde={ValueSerde}" +
+                    $", sinkName='{SinkName}'" +
+                    $", sourceName='{SourceName}'" +
+                    $", repartitionTopic='{RepartitionTopic}'" +
+                    $", processorParameters={ProcessorParameters}" +
                     $"}} {base.ToString()}";
     }
 }

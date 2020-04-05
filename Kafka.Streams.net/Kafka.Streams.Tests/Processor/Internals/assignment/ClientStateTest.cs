@@ -34,13 +34,13 @@
 
 //        private ClientState client = new ClientState(1);
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveNotReachedCapacityWhenAssignedTasksLessThanCapacity()
 //        {
 //            Assert.False(client.reachedCapacity());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveReachedCapacityWhenAssignedTasksGreaterThanOrEqualToCapacity()
 //        {
 //            client.assign(new TaskId(0, 1), true);
@@ -48,7 +48,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddActiveTasksToBothAssignedAndActive()
 //        {
 //            TaskId tid = new TaskId(0, 1);
@@ -60,7 +60,7 @@
 //            Assert.Equal(client.standbyTasks().Count, (0));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddStandbyTasksToBothStandbyAndActive()
 //        {
 //            TaskId tid = new TaskId(0, 1);
@@ -72,7 +72,7 @@
 //            Assert.Equal(client.activeTasks().Count, (0));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddPreviousActiveTasksToPreviousAssignedAndPreviousActive()
 //        {
 //            TaskId tid1 = new TaskId(0, 1);
@@ -83,7 +83,7 @@
 //            Assert.Equal(client.previousAssignedTasks(), (Utils.mkSet(tid1, tid2)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddPreviousStandbyTasksToPreviousAssigned()
 //        {
 //            TaskId tid1 = new TaskId(0, 1);
@@ -94,7 +94,7 @@
 //            Assert.Equal(client.previousAssignedTasks(), (Utils.mkSet(tid1, tid2)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveAssignedTaskIfActiveTaskAssigned()
 //        {
 //            TaskId tid = new TaskId(0, 2);
@@ -103,7 +103,7 @@
 //            Assert.True(client.hasAssignedTask(tid));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveAssignedTaskIfStandbyTaskAssigned()
 //        {
 //            TaskId tid = new TaskId(0, 2);
@@ -112,7 +112,7 @@
 //            Assert.True(client.hasAssignedTask(tid));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveAssignedTaskIfTaskNotAssigned()
 //        {
 
@@ -120,7 +120,7 @@
 //            Assert.False(client.hasAssignedTask(new TaskId(0, 3)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveMoreAvailableCapacityWhenCapacityTheSameButFewerAssignedTasks()
 //        {
 //            ClientState c2 = new ClientState(1);
@@ -129,7 +129,7 @@
 //            Assert.False(client.hasMoreAvailableCapacityThan(c2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveMoreAvailableCapacityWhenCapacityHigherAndSameAssignedTaskCount()
 //        {
 //            ClientState c2 = new ClientState(2);
@@ -137,7 +137,7 @@
 //            Assert.False(client.hasMoreAvailableCapacityThan(c2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUseMultiplesOfCapacityToDetermineClientWithMoreAvailableCapacity()
 //        {
 //            ClientState c2 = new ClientState(2);
@@ -155,7 +155,7 @@
 //            Assert.True(c2.hasMoreAvailableCapacityThan(client));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveMoreAvailableCapacityWhenCapacityIsTheSameButAssignedTasksIsLess()
 //        {
 //            ClientState c1 = new ClientState(3);
@@ -169,21 +169,21 @@
 //            Assert.True(c1.hasMoreAvailableCapacityThan(c2));
 //        }
 
-//        [Xunit.Fact]// (expected = IllegalStateException)
+//        [Fact]// (expected = IllegalStateException)
 //        public void ShouldThrowIllegalStateExceptionIfCapacityOfThisClientStateIsZero()
 //        {
 //            ClientState c1 = new ClientState(0);
 //            c1.hasMoreAvailableCapacityThan(new ClientState(1));
 //        }
 
-//        [Xunit.Fact]// (expected = IllegalStateException)
+//        [Fact]// (expected = IllegalStateException)
 //        public void ShouldThrowIllegalStateExceptionIfCapacityOfOtherClientStateIsZero()
 //        {
 //            ClientState c1 = new ClientState(1);
 //            c1.hasMoreAvailableCapacityThan(new ClientState(0));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveUnfulfilledQuotaWhenActiveTaskSizeLessThanCapacityTimesTasksPerThread()
 //        {
 //            ClientState client = new ClientState(1);
@@ -191,7 +191,7 @@
 //            Assert.True(client.hasUnfulfilledQuota(2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveUnfulfilledQuotaWhenActiveTaskSizeGreaterEqualThanCapacityTimesTasksPerThread()
 //        {
 //            ClientState client = new ClientState(1);

@@ -12,7 +12,7 @@
 
 //            log.LogError("Exception caught during Deserialization, " +
 //                      "taskId: {}, topic: {}, partition: {}, offset: {}",
-//                      context.taskId(), record.Topic, record.Partition, record.offset(),
+//                      context.taskId, record.Topic, record.Partition, record.offset(),
 //                      exception);
 
 //            return DeserializationHandlerResponse.FAIL;

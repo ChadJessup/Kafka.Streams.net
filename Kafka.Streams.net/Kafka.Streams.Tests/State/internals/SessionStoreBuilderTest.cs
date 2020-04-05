@@ -68,14 +68,14 @@
 //                new MockTime());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveMeteredStoreAsOuterStore()
 //        {
 //            ISessionStore<string, string> store = builder.Build();
 //            Assert.Equal(store, instanceOf(MeteredSessionStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreByDefault()
 //        {
 //            ISessionStore<string, string> store = builder.Build();
@@ -83,7 +83,7 @@
 //            Assert.Equal(next, instanceOf(ChangeLoggingSessionBytesStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
 //            ISessionStore<string, string> store = builder.withLoggingDisabled().Build();
@@ -91,7 +91,7 @@
 //            Assert.Equal(next, CoreMatchers.< IStateStore > equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingStoreWhenEnabled()
 //        {
 //            ISessionStore<string, string> store = builder.withCachingEnabled().Build();
@@ -100,7 +100,7 @@
 //            Assert.Equal(wrapped, instanceOf(CachingSessionStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled()
 //        {
 //            ISessionStore<string, string> store = builder
@@ -112,7 +112,7 @@
 //            Assert.Equal(((WrappedStateStore)wrapped).wrapped(), CoreMatchers.< IStateStore > equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled()
 //        {
 //            ISessionStore<string, string> store = builder
@@ -127,28 +127,28 @@
 //            Assert.Equal(changeLogging.wrapped(), CoreMatchers.< IStateStore > equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerIfInnerIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new SessionStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime()));
 //            Assert.Equal(e.ToString(), ("supplier cannot be null"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new SessionStoreBuilder<>(supplier, null, Serdes.String(), new MockTime()));
 //            Assert.Equal(e.ToString(), ("name cannot be null"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new SessionStoreBuilder<>(supplier, Serdes.String(), null, new MockTime()));
 //            Assert.Equal(e.ToString(), ("name cannot be null"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            reset(supplier);
@@ -158,7 +158,7 @@
 //            Assert.Equal(e.ToString(), ("time cannot be null"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerIfMetricsScopeIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new SessionStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime()));

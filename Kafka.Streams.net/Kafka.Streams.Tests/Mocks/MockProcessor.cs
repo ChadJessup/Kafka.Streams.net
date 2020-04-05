@@ -47,11 +47,11 @@ namespace Kafka.Streams.Tests.Mocks
                     {
                         if (punctuationType == PunctuationType.STREAM_TIME)
                         {
-                            Assert.Equal(timestamp, context.timestamp);
+                            Assert.Equal(timestamp, context.Timestamp);
                         }
 
-                        Assert.Equal(-1, context.partition);
-                        Assert.Equal(-1L, context.offset);
+                        Assert.Equal(-1, context.Partition);
+                        Assert.Equal(-1L, context.Offset);
 
                         (punctuationType == PunctuationType.STREAM_TIME
                             ? punctuatedStreamTime
@@ -63,11 +63,11 @@ namespace Kafka.Streams.Tests.Mocks
 
         public override void Process(K key, V value)
         {
-            var keyValueTimestamp = new KeyValueTimestamp<K, V>(key, value, context.timestamp);
+            var keyValueTimestamp = new KeyValueTimestamp<K, V>(key, value, Context.Timestamp);
 
             if (value != null)
             {
-                lastValueAndTimestampPerKey.Add(key, ValueAndTimestamp.Make(value, context.timestamp));
+                lastValueAndTimestampPerKey.Add(key, ValueAndTimestamp.Make(value, Context.Timestamp));
             }
             else
             {
@@ -78,7 +78,7 @@ namespace Kafka.Streams.Tests.Mocks
 
             if (commitRequested)
             {
-                this.context.Commit();
+                this.Context.Commit();
                 commitRequested = false;
             }
         }

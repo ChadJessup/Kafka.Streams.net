@@ -6,19 +6,19 @@
 //{
 //    public class InternalTopicConfigTest
 //    {
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowIfNameIsNull()
 //        {
 //            new RepartitionTopicConfig(null, Collections.< string, string > emptyMap());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidTopicException)
+//        [Fact]// (expected = InvalidTopicException)
 //        public void ShouldThrowIfNameIsInvalid()
 //        {
 //            new RepartitionTopicConfig("foo bar baz", Collections.< string, string > emptyMap());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAugmentRetentionMsWithWindowedChangelog()
 //        {
 //            WindowedChangelogTopicConfig topicConfig = new WindowedChangelogTopicConfig("name", Collections.< string, string > emptyMap());
@@ -26,7 +26,7 @@
 //            Assert.Equal("30", topicConfig.getProperties(Collections.< string, string > emptyMap(), 20).Get(TopicConfig.RETENTION_MS_CONFIG));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUseSuppliedConfigs()
 //        {
 //            Dictionary<string, string> configs = new HashMap<>();
@@ -40,7 +40,7 @@
 //            Assert.Equal("10000", properties.Get("retention.bytes"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUseSuppliedConfigsForRepartitionConfig()
 //        {
 //            Dictionary<string, string> configs = new HashMap<>();

@@ -53,14 +53,14 @@
 //            return store;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetFlushListener()
 //        {
 //            Assert.True(store.setFlushListener(null, true));
 //            Assert.True(store.setFlushListener(null, false));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAvoidFlushingDeletionsWithoutDirtyKeys()
 //        {
 //            int added = AddItemsToCache();
@@ -78,7 +78,7 @@
 //            Assert.Equal(added, cacheFlushListener.forwarded.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseAfterErrorWithFlush()
 //        {
 //            try
@@ -98,7 +98,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutGetToFromCache()
 //        {
 //            store.put(BytesKey("key"), BytesValue("value"));
@@ -120,7 +120,7 @@
 //            return Bytes.Wrap(key.getBytes());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlushEvictedItemsIntoUnderlyingStore()
 //        {
 //            int added = AddItemsToCache();
@@ -130,14 +130,14 @@
 //            Assert.NotNull(underlyingStore.Get(Bytes.Wrap("0".getBytes())));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldForwardDirtyItemToListenerWhenEvicted()
 //        {
 //            int numRecords = AddItemsToCache();
 //            Assert.Equal(numRecords, cacheFlushListener.forwarded.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldForwardDirtyItemsWhenFlushCalled()
 //        {
 //            store.put(BytesKey("1"), BytesValue("a"));
@@ -146,7 +146,7 @@
 //            Assert.Null(cacheFlushListener.forwarded.Get("1").oldValue);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldForwardOldValuesWhenEnabled()
 //        {
 //            store.setFlushListener(cacheFlushListener, true);
@@ -172,7 +172,7 @@
 //            cacheFlushListener.forwarded.Clear();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotForwardOldValuesWhenDisabled()
 //        {
 //            store.put(BytesKey("1"), BytesValue("a"));
@@ -196,7 +196,7 @@
 //            cacheFlushListener.forwarded.Clear();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldIterateAllStoredItems()
 //        {
 //            int items = AddItemsToCache();
@@ -209,7 +209,7 @@
 //            Assert.Equal(items, results.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldIterateOverRange()
 //        {
 //            int items = AddItemsToCache();
@@ -222,7 +222,7 @@
 //            Assert.Equal(items, results.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeleteItemsFromCache()
 //        {
 //            store.put(BytesKey("a"), BytesValue("a"));
@@ -232,7 +232,7 @@
 //            Assert.False(store.all().hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotShowItemsDeletedFromCacheButFlushedToStoreBeforeDelete()
 //        {
 //            store.put(BytesKey("a"), BytesValue("a"));
@@ -243,7 +243,7 @@
 //            Assert.False(store.all().hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldClearNamespaceCacheOnClose()
 //        {
 //            store.put(BytesKey("a"), BytesValue("a"));
@@ -252,68 +252,68 @@
 //            Assert.Equal(0, cache.Count);
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToGetFromClosedCachingStore()
 //        {
 //            store.close();
 //            store.Get(BytesKey("a"));
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToWriteToClosedCachingStore()
 //        {
 //            store.close();
 //            store.put(BytesKey("a"), BytesValue("a"));
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoRangeQueryOnClosedCachingStore()
 //        {
 //            store.close();
 //            store.Range(BytesKey("a"), BytesKey("b"));
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoAllQueryOnClosedCachingStore()
 //        {
 //            store.close();
 //            store.all();
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoGetApproxSizeOnClosedCachingStore()
 //        {
 //            store.close();
 //            store.approximateNumEntries;
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoPutAllClosedCachingStore()
 //        {
 //            store.close();
 //            store.putAll(Collections.singletonList(KeyValuePair.Create(BytesKey("a"), BytesValue("a"))));
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoPutIfAbsentClosedCachingStore()
 //        {
 //            store.close();
 //            store.putIfAbsent(BytesKey("b"), BytesValue("c"));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnPutWithNullKey()
 //        {
 //            store.put(null, BytesValue("c"));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnPutIfAbsentWithNullKey()
 //        {
 //            store.putIfAbsent(null, BytesValue("c"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerExceptionOnPutAllWithNullKey()
 //        {
 //            List<KeyValuePair<Bytes, byte[]>> entries = new List<KeyValuePair<Bytes, byte[]>>();
@@ -328,7 +328,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutIfAbsent()
 //        {
 //            store.putIfAbsent(BytesKey("b"), BytesValue("2"));
@@ -338,7 +338,7 @@
 //            Assert.Equal(store.Get(BytesKey("b")), (BytesValue("2")));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAll()
 //        {
 //            List<KeyValuePair<Bytes, byte[]>> entries = new ArrayList<>();
@@ -349,13 +349,13 @@
 //            Assert.Equal(store.Get(BytesKey("b")), (BytesValue("2")));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnUnderlying()
 //        {
 //            Assert.Equal(underlyingStore, store.wrapped());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDeleteFromClosedCachingStore()
 //        {
 //            store.close();

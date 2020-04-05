@@ -81,7 +81,7 @@ namespace Kafka.Streams.Clients.Consumers
             }
         }
 
-        public void Close()
+        public override void Close()
         {
             try
             {

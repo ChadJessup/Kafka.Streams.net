@@ -104,7 +104,7 @@
 //            metered.Init(context, metered);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestMetrics()
 //        {
 //            Init();
@@ -116,7 +116,7 @@
 //                    "scope", "test", taskId.ToString(), "scope", "all")));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldWriteBytesToInnerStoreAndRecordPutMetric()
 //        {
 //            inner.put(eq(windowedKeyBytes), aryEq(keyBytes));
@@ -130,7 +130,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindSessionsFromStoreAndRecordFetchMetric()
 //        {
 //            expect(inner.findSessions(Bytes.Wrap(keyBytes), 0, 0))
@@ -148,7 +148,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindSessionRangeFromStoreAndRecordFetchMetric()
 //        {
 //            expect(inner.findSessions(Bytes.Wrap(keyBytes), Bytes.Wrap(keyBytes), 0, 0))
@@ -166,7 +166,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRemoveFromStoreAndRecordRemoveMetric()
 //        {
 //            inner.remove(windowedKeyBytes);
@@ -181,7 +181,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchForKeyAndRecordFetchMetric()
 //        {
 //            expect(inner.Fetch(Bytes.Wrap(keyBytes)))
@@ -199,7 +199,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchRangeFromStoreAndRecordFetchMetric()
 //        {
 //            expect(inner.Fetch(Bytes.Wrap(keyBytes), Bytes.Wrap(keyBytes)))
@@ -217,7 +217,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRecordRestoreTimeOnInit()
 //        {
 //            Init();
@@ -225,7 +225,7 @@
 //            Assert.True((Double)metric.metricValue() > 0);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowNullPointerExceptionIfFetchSessionReturnsNull()
 //        {
 //            expect(inner.FetchSession(Bytes.Wrap("a".getBytes()), 0, long.MaxValue)).andReturn(null);
@@ -234,49 +234,49 @@
 //            Assert.Null(metered.FetchSession("a", 0, long.MaxValue));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnPutIfKeyIsNull()
 //        {
 //            metered.put(null, "a");
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnRemoveIfKeyIsNull()
 //        {
 //            metered.remove(null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnFetchIfKeyIsNull()
 //        {
 //            metered.Fetch(null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnFetchRangeIfFromIsNull()
 //        {
 //            metered.Fetch(null, "to");
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnFetchRangeIfToIsNull()
 //        {
 //            metered.Fetch("from", null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnFindSessionsIfKeyIsNull()
 //        {
 //            metered.findSessions(null, 0, 0);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnFindSessionsRangeIfFromIsNull()
 //        {
 //            metered.findSessions(null, "a", 0, 0);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnFindSessionsRangeIfToIsNull()
 //        {
 //            metered.findSessions("a", null, 0, 0);
@@ -285,7 +285,7 @@
 //        private interface CachedSessionStore : ISessionStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]> { }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetFlushListenerOnWrappedCachingStore()
 //        {
 //            CachedSessionStore cachedSessionStore = mock(CachedSessionStore);
@@ -304,7 +304,7 @@
 //            verify(cachedSessionStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore()
 //        {
 //            Assert.False(metered.setFlushListener(null, false));

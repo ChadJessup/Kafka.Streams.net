@@ -70,7 +70,7 @@
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldKStreamGlobalKTableLeftJoin()
 //        {// throws Exception
 //            IKStream<string, string> streamTableJoin = stream.LeftJoin(globalTable, keyMapper, joiner);
@@ -147,7 +147,7 @@
 //                "waiting for values");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldKStreamGlobalKTableJoin()
 //        {// throws Exception
 //            IKStream<string, string> streamTableJoin = stream.Join(globalTable, keyMapper, joiner);
@@ -225,7 +225,7 @@
 //                "waiting for values");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreGlobalInMemoryKTableOnRestart()
 //        {// throws Exception
 //            builder = new StreamsBuilder();

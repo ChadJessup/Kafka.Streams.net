@@ -3,7 +3,7 @@
 //using Kafka.Streams.State.KeyValues;
 //using Kafka.Streams.State.Sessions;
 //using Kafka.Streams.State.TimeStamped;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using System.Collections.Generic;
 //using Xunit;
 
@@ -99,7 +99,7 @@
 //                    "LocalSessionStore"))));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void GlobalKeyValueStoreShouldBeReadOnly()
 //        {
 //            doTest("GlobalKeyValueStore", (Consumer<IKeyValueStore<string, long>>)store => {
@@ -118,7 +118,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void GlobalTimestampedKeyValueStoreShouldBeReadOnly()
 //        {
 //            doTest("GlobalTimestampedKeyValueStore", (Consumer<ITimestampedKeyValueStore<string, long>>)store => {
@@ -137,7 +137,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void GlobalWindowStoreShouldBeReadOnly()
 //        {
 //            doTest("GlobalWindowStore", (Consumer<IWindowStore<string, long>>)store => {
@@ -155,7 +155,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void GlobalTimestampedWindowStoreShouldBeReadOnly()
 //        {
 //            doTest("GlobalTimestampedWindowStore", (Consumer<ITimestampedWindowStore<string, long>>)store => {
@@ -173,7 +173,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void GlobalSessionStoreShouldBeReadOnly()
 //        {
 //            doTest("GlobalSessionStore", (Consumer<ISessionStore<string, long>>)store => {
@@ -190,7 +190,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void LocalKeyValueStoreShouldNotAllowInitOrClose()
 //        {
 //            doTest("LocalKeyValueStore", (Consumer<IKeyValueStore<string, long>>)store => {
@@ -218,7 +218,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void LocalTimestampedKeyValueStoreShouldNotAllowInitOrClose()
 //        {
 //            doTest("LocalTimestampedKeyValueStore", (Consumer<ITimestampedKeyValueStore<string, long>>)store => {
@@ -246,7 +246,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void LocalWindowStoreShouldNotAllowInitOrClose()
 //        {
 //            doTest("LocalWindowStore", (Consumer<IWindowStore<string, long>>)store => {
@@ -266,7 +266,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void LocalTimestampedWindowStoreShouldNotAllowInitOrClose()
 //        {
 //            doTest("LocalTimestampedWindowStore", (Consumer<ITimestampedWindowStore<string, long>>)store => {
@@ -289,7 +289,7 @@
 //            });
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void LocalSessionStoreShouldNotAllowInitOrClose()
 //        {
 //            doTest("LocalSessionStore", (Consumer<ISessionStore<string, long>>)store => {

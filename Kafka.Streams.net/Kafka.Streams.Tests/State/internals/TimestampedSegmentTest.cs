@@ -11,7 +11,7 @@ namespace Kafka.Streams.Tests.State.Internals
 {
     public class TimestampedSegmentTest
     {
-        [Xunit.Fact]
+        [Fact(Skip = "RocksDb")]
         public void ShouldDeleteStateDirectoryOnDestroy()
         {// throws Exception
             TimestampedSegment segment = new TimestampedSegment("segment", "window", 0L);
@@ -33,7 +33,7 @@ namespace Kafka.Streams.Tests.State.Internals
             Assert.True(new FileInfo(Path.Combine(directoryPath, "window")).Exists);
         }
 
-        [Xunit.Fact]
+        [Fact(Skip ="RocksDb")]
         public void ShouldBeEqualIfIdIsEqual()
         {
             TimestampedSegment segment = new TimestampedSegment("anyName", "anyName", 0L);
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tests.State.Internals
             //Assert.Equal(segment, "anyName");
         }
 
-        [Xunit.Fact]
+        [Fact(Skip = "RocksDb")]
         public void ShouldHashOnSegmentIdOnly()
         {
             TimestampedSegment segment = new TimestampedSegment("anyName", "anyName", 0L);
@@ -60,7 +60,7 @@ namespace Kafka.Streams.Tests.State.Internals
             Assert.True(set.Add(segmentDifferentId));
         }
 
-        [Xunit.Fact]
+        [Fact(Skip = "RocksDb")]
         public void ShouldCompareSegmentIdOnly()
         {
             TimestampedSegment segment1 = new TimestampedSegment("a", "C", 50L);

@@ -18,11 +18,11 @@ namespace Kafka.Streams.Nodes
     public class SourceNode<K, V> : ProcessorNode<K, V>, ISourceNode<K, V>
     {
         private readonly List<string> topics;
-        private SourceNode sourceNode;
+        private readonly SourceNode sourceNode;
 
         private IProcessorContext context;
-        private IDeserializer<K> keyDeserializer;
-        private IDeserializer<V> valDeserializer;
+        private readonly IDeserializer<K> keyDeserializer;
+        private readonly IDeserializer<V> valDeserializer;
         public ITimestampExtractor? TimestampExtractor { get; }
 
         public SourceNode(
@@ -130,6 +130,5 @@ namespace Kafka.Streams.Nodes
 
     public interface ISourceNode : IProcessorNode
     {
-        void Process<K, V>(K key, V value);
     }
 }

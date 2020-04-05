@@ -39,7 +39,7 @@
 //            cachingStore.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutFetchFromCache()
 //        {
 //            cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
@@ -57,7 +57,7 @@
 //            Assert.False(b.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutFetchAllKeysFromCache()
 //        {
 //            cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
@@ -73,7 +73,7 @@
 //            Assert.False(all.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutFetchRangeFromCache()
 //        {
 //            cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
@@ -88,7 +88,7 @@
 //            Assert.False(some.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchAllSessionsWithSameRecordKey()
 //        {
 //            List<KeyValuePair<Windowed<Bytes>, byte[]>> expected = asList(
@@ -110,7 +110,7 @@
 //            verifyKeyValueList(expected, results);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlushItemsToStoreOnEviction()
 //        {
 //            List<KeyValuePair<Windowed<Bytes>, byte[]>> added = addSessionsUntilOverflow("a", "b", "c", "d");
@@ -121,7 +121,7 @@
 //            assertArrayEquals(added.Get(0).value, next.value);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldQueryItemsInCacheAndStore()
 //        {
 //            List<KeyValuePair<Windowed<Bytes>, byte[]>> added = addSessionsUntilOverflow("a");
@@ -133,7 +133,7 @@
 //            verifyKeyValueList(added, actual);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRemove()
 //        {
 //            Windowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(0, 0));
@@ -151,7 +151,7 @@
 
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchCorrectlyAcrossSegments()
 //        {
 //            Windowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
@@ -169,7 +169,7 @@
 //            Assert.False(results.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchRangeCorrectlyAcrossSegments()
 //        {
 //            Windowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
@@ -194,14 +194,14 @@
 //            Assert.Equal(mkSet(a1, a2, a3, aa1, aa3), keys);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetFlushListener()
 //        {
 //            Assert.True(cachingStore.setFlushListener(null, true));
 //            Assert.True(cachingStore.setFlushListener(null, false));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldForwardChangedValuesDuringFlush()
 //        {
 //            Windowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(2, 4));
@@ -278,7 +278,7 @@
 //            flushListener.forwarded.Clear();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotForwardChangedValuesDuringFlushWhenSendOldValuesDisabled()
 //        {
 //            Windowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(0, 0));
@@ -327,7 +327,7 @@
 //            flushListener.forwarded.Clear();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnSameResultsForSingleKeyFindSessionsAndEqualKeyRangeFindSessions()
 //        {
 //            cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 1)), "1".getBytes());
@@ -344,7 +344,7 @@
 //            Assert.False(keyRangeIterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldClearNamespaceCacheOnClose()
 //        {
 //            Windowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(0, 0));
@@ -354,83 +354,83 @@
 //            Assert.Equal(0, cache.Count);
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToFetchFromClosedCachingStore()
 //        {
 //            cachingStore.close();
 //            cachingStore.Fetch(keyA);
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToFindMergeSessionFromClosedCachingStore()
 //        {
 //            cachingStore.close();
 //            cachingStore.findSessions(keyA, 0, long.MaxValue);
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToRemoveFromClosedCachingStore()
 //        {
 //            cachingStore.close();
 //            cachingStore.remove(new Windowed<>(keyA, new SessionWindow(0, 0)));
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToPutIntoClosedCachingStore()
 //        {
 //            cachingStore.close();
 //            cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnFindSessionsNullKey()
 //        {
 //            cachingStore.findSessions(null, 1L, 2L);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnFindSessionsNullFromKey()
 //        {
 //            cachingStore.findSessions(null, keyA, 1L, 2L);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnFindSessionsNullToKey()
 //        {
 //            cachingStore.findSessions(keyA, null, 1L, 2L);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnFetchNullFromKey()
 //        {
 //            cachingStore.Fetch(null, keyA);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnFetchNullToKey()
 //        {
 //            cachingStore.Fetch(keyA, null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnFetchNullKey()
 //        {
 //            cachingStore.Fetch(null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnRemoveNullKey()
 //        {
 //            cachingStore.remove(null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //        {
 //            cachingStore.put(null, "1".getBytes());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey()
 //        {
 //            LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);

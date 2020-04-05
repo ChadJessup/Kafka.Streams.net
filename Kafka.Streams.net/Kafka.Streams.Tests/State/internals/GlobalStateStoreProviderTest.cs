@@ -68,7 +68,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnSingleItemListIfStoreExists()
 //        {
 //            GlobalStateStoreProvider provider =
@@ -78,7 +78,7 @@
 //            Assert.Single(stores);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnEmptyItemListIfStoreDoesntExist()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(new Dictionary<string, IStateStore>());
@@ -87,7 +87,7 @@
 //            Assert.False(stores.Any());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowExceptionIfStoreIsntOpen()
 //        {
 //            NoOpReadOnlyStore<object, object> store = new NoOpReadOnlyStore<object, object>();
@@ -97,7 +97,7 @@
 //            provider.Stores("global", QueryableStoreTypes.KeyValueStore<object, object>());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnKeyValueStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
@@ -111,7 +111,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnTimestampedKeyValueStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
@@ -125,7 +125,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotReturnKeyValueStoreAsTimestampedStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
@@ -134,7 +134,7 @@
 //            Assert.Empty(stores);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnTimestampedKeyValueStoreAsKeyValueStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
@@ -148,7 +148,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnTimestampedWindowStoreAsWindowStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);

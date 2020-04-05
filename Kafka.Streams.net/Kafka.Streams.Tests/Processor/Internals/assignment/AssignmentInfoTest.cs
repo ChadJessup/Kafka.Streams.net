@@ -54,26 +54,26 @@
 //        }
 //    };
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldUseLatestSupportedVersionByDefault()
 //    {
 //        AssignmentInfo info = new AssignmentInfo(activeTasks, standbyTasks, globalAssignment);
 //        Assert.Equal(AssignmentInfo.LATEST_SUPPORTED_VERSION, info.version());
 //    }
 
-//    [Xunit.Fact]// (expected = ArgumentException)
+//    [Fact]// (expected = ArgumentException)
 //    public void ShouldThrowForUnknownVersion1()
 //    {
 //        new AssignmentInfo(0, activeTasks, standbyTasks, globalAssignment, 0);
 //    }
 
-//    [Xunit.Fact]// (expected = ArgumentException)
+//    [Fact]// (expected = ArgumentException)
 //    public void ShouldThrowForUnknownVersion2()
 //    {
 //        new AssignmentInfo(AssignmentInfo.LATEST_SUPPORTED_VERSION + 1, activeTasks, standbyTasks, globalAssignment, 0);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldEncodeAndDecodeVersion1()
 //    {
 //        AssignmentInfo info = new AssignmentInfo(1, activeTasks, standbyTasks, globalAssignment, 0);
@@ -81,7 +81,7 @@
 //        Assert.Equal(expectedInfo, AssignmentInfo.decode(info.encode()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldEncodeAndDecodeVersion2()
 //    {
 //        AssignmentInfo info = new AssignmentInfo(2, activeTasks, standbyTasks, globalAssignment, 0);
@@ -89,7 +89,7 @@
 //        Assert.Equal(expectedInfo, AssignmentInfo.decode(info.encode()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldEncodeAndDecodeVersion3()
 //    {
 //        AssignmentInfo info = new AssignmentInfo(3, activeTasks, standbyTasks, globalAssignment, 0);
@@ -97,7 +97,7 @@
 //        Assert.Equal(expectedInfo, AssignmentInfo.decode(info.encode()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldEncodeAndDecodeVersion4()
 //    {
 //        AssignmentInfo info = new AssignmentInfo(4, activeTasks, standbyTasks, globalAssignment, 2);

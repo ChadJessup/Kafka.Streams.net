@@ -38,19 +38,19 @@
 
 //    public class StateRestoreCallbackAdapterTest
 //    {
-//        [Xunit.Fact]// (expected = UnsupportedOperationException)
+//        [Fact]// (expected = UnsupportedOperationException)
 //        public void ShouldThrowOnRestoreAll()
 //        {
 //            adapt(mock(StateRestoreCallback)).restoreAll(null);
 //        }
 
-//        [Xunit.Fact]// (expected = UnsupportedOperationException)
+//        [Fact]// (expected = UnsupportedOperationException)
 //        public void ShouldThrowOnRestore()
 //        {
 //            adapt(mock(StateRestoreCallback)).restore(null, null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPassRecordsThrough()
 //        {
 //            ArrayList<ConsumeResult<byte[], byte[]>> actual = new ArrayList<>();
@@ -73,7 +73,7 @@
 //            validate(actual, recordList);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldConvertToKeyValueBatches()
 //        {
 //            ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();
@@ -114,7 +114,7 @@
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldConvertToKeyValue()
 //    {
 //        ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();

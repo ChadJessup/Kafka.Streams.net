@@ -61,7 +61,7 @@ namespace Kafka.Streams.Tests.Integration
 //using Kafka.Streams.KStream;
 //using Kafka.Streams.State;
 //using Kafka.Streams.State.Sessions;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 
 //public class MetricsIntegrationTest {
 
@@ -213,7 +213,7 @@ namespace Kafka.Streams.Tests.Integration
 //            () => "Kafka Streams application did not reach state NOT_RUNNING in " + timeout + " ms");
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldAddMetricsOnAllLevels() {// throws Exception
 //        builder.Stream(STREAM_INPUT, Consumed.With(Serdes.Int(), Serdes.String()))
 //            .To(STREAM_OUTPUT_1, Produced.With(Serdes.Int(), Serdes.String()));
@@ -244,7 +244,7 @@ namespace Kafka.Streams.Tests.Integration
 //        checkMetricsDeregistration();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldAddMetricsForWindowStore() {// throws Exception
 //        builder.Stream(STREAM_INPUT, Consumed.With(Serdes.Int(), Serdes.String()))
 //            .groupByKey()
@@ -262,7 +262,7 @@ namespace Kafka.Streams.Tests.Integration
 //        checkMetricsDeregistration();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldAddMetricsForSessionStore() {// throws Exception
 //        builder.Stream(STREAM_INPUT, Consumed.With(Serdes.Int(), Serdes.String()))
 //            .groupByKey()

@@ -51,23 +51,25 @@ namespace Kafka.Streams.KStream
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new TopologyException("Name is illegal, it can't be empty");
+                throw new ArgumentNullException(nameof(name));
             }
 
             if (name.Equals(".") || name.Equals(".."))
             {
-                throw new TopologyException("Name cannot be \".\" or \"..\"");
+                throw new ArgumentException("Name cannot be \".\" or \"..\"");
             }
 
             if (name.Length > MAX_NAME_LENGTH)
             {
-                throw new TopologyException("Name is illegal, it can't be longer than " + MAX_NAME_LENGTH +
+                throw new ArgumentException("Name is illegal, it can't be longer than " + MAX_NAME_LENGTH +
                         " characters, name: " + name);
             }
 
             if (!ContainsValidPattern(name))
-                throw new TopologyException("Name \"" + name + "\" is illegal, it contains a character other than " +
+            {
+                throw new ArgumentException("Name \"" + name + "\" is illegal, it contains a character other than " +
                         "ASCII alphanumerics, '.', '_' and '-'");
+            }
         }
 
         /**

@@ -6,7 +6,7 @@
 //using Kafka.Streams.State;
 //using Kafka.Streams.State.Internals;
 //using Kafka.Streams.State.KeyValues;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using System.Collections.Generic;
 //using Xunit;
 
@@ -52,7 +52,7 @@
 //            cachingStore.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotReturnDuplicatesInRanges()
 //        {
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -151,7 +151,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //public void ShouldPutFetchFromCache()
 //{
 //    cachingStore.put(bytesKey("a"), bytesValue("a"));
@@ -194,7 +194,7 @@
 //    return Serdes.String().deserializer().deserialize("", from);
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldPutFetchRangeFromCache()
 //{
 //    cachingStore.put(bytesKey("a"), bytesValue("a"));
@@ -214,7 +214,7 @@
 //    Assert.Equal(2, cache.Count);
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldGetAllFromCache()
 //{
 //    cachingStore.put(bytesKey("a"), bytesValue("a"));
@@ -238,7 +238,7 @@
 //    Assert.False(iterator.hasNext());
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldFetchAllWithinTimestampRange()
 //{
 //    string[] array = { "a", "b", "c", "d", "e", "f", "g", "h" };
@@ -285,7 +285,7 @@
 //    Assert.False(iterator2.hasNext());
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldFlushEvictedItemsIntoUnderlyingStore()
 //{
 //    int added = addItemsToCache();
@@ -301,7 +301,7 @@
 //    Assert.Equal(added - 1, cache.Count);
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldForwardDirtyItemsWhenFlushCalled()
 //{
 //    Windowed<string> windowedKey =
@@ -312,14 +312,14 @@
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey).oldValue);
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldSetFlushListener()
 //{
 //    Assert.True(cachingStore.setFlushListener(null, true));
 //    Assert.True(cachingStore.setFlushListener(null, false));
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldForwardOldValuesWhenEnabled()
 //{
 //    cachingStore.setFlushListener(cacheListener, true);
@@ -348,7 +348,7 @@
 //    cacheListener.forwarded.Clear();
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldForwardOldValuesWhenDisabled()
 //{
 //    Windowed<string> windowedKey =
@@ -375,14 +375,14 @@
 //    cacheListener.forwarded.Clear();
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldForwardDirtyItemToListenerWhenEvicted()
 //{
 //    int numRecords = addItemsToCache();
 //    Assert.Equal(numRecords, cacheListener.forwarded.Count);
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldTakeValueFromCacheIfSameTimestampFlushedToRocks()
 //{
 //    cachingStore.put(bytesKey("1"), bytesValue("a"), DEFAULT_TIMESTAMP);
@@ -395,7 +395,7 @@
 //    Assert.False(fetch.hasNext());
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldIterateAcrossWindows()
 //{
 //    cachingStore.put(bytesKey("1"), bytesValue("a"), DEFAULT_TIMESTAMP);
@@ -408,7 +408,7 @@
 //    Assert.False(fetch.hasNext());
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldIterateCacheAndStore()
 //{
 //    Bytes key = Bytes.Wrap("1".getBytes());
@@ -421,7 +421,7 @@
 //    Assert.False(fetch.hasNext());
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldIterateCacheAndStoreKeyRange()
 //{
 //    Bytes key = Bytes.Wrap("1".getBytes());
@@ -441,7 +441,7 @@
 //    Assert.False(fetchRange.hasNext());
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldClearNamespaceCacheOnClose()
 //{
 //    cachingStore.put(bytesKey("a"), bytesValue("a"));
@@ -450,28 +450,28 @@
 //    Assert.Equal(0, cache.Count);
 //}
 
-//[Xunit.Fact]// (expected = InvalidStateStoreException)
+//[Fact]// (expected = InvalidStateStoreException)
 //public void ShouldThrowIfTryingToFetchFromClosedCachingStore()
 //{
 //    cachingStore.close();
 //    cachingStore.Fetch(bytesKey("a"), ofEpochMilli(0), ofEpochMilli(10));
 //}
 
-//[Xunit.Fact]// (expected = InvalidStateStoreException)
+//[Fact]// (expected = InvalidStateStoreException)
 //public void ShouldThrowIfTryingToFetchRangeFromClosedCachingStore()
 //{
 //    cachingStore.close();
 //    cachingStore.Fetch(bytesKey("a"), bytesKey("b"), ofEpochMilli(0), ofEpochMilli(10));
 //}
 
-//[Xunit.Fact]// (expected = InvalidStateStoreException)
+//[Fact]// (expected = InvalidStateStoreException)
 //public void ShouldThrowIfTryingToWriteToClosedCachingStore()
 //{
 //    cachingStore.close();
 //    cachingStore.put(bytesKey("a"), bytesValue("a"));
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldFetchAndIterateOverExactKeys()
 //{
 //    cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
@@ -490,7 +490,7 @@
 //    verifyKeyValueList(expected, actual);
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldFetchAndIterateOverKeyRange()
 //{
 //    cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
@@ -527,7 +527,7 @@
 //    );
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldReturnSameResultsForSingleKeyFetchAndEqualKeyRangeFetch()
 //{
 //    cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
@@ -544,37 +544,37 @@
 //    Assert.False(keyRangeIterator.hasNext());
 //}
 
-//[Xunit.Fact]// (expected = NullPointerException)
+//[Fact]// (expected = NullPointerException)
 //public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //{
 //    cachingStore.put(null, bytesValue("anyValue"));
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldNotThrowNullPointerExceptionOnPutNullValue()
 //{
 //    cachingStore.put(bytesKey("a"), null);
 //}
 
-//[Xunit.Fact]// (expected = NullPointerException)
+//[Fact]// (expected = NullPointerException)
 //public void ShouldThrowNullPointerExceptionOnFetchNullKey()
 //{
 //    cachingStore.Fetch(null, ofEpochMilli(1L), ofEpochMilli(2L));
 //}
 
-//[Xunit.Fact]// (expected = NullPointerException)
+//[Fact]// (expected = NullPointerException)
 //public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
 //{
 //    cachingStore.Fetch(null, bytesKey("anyTo"), ofEpochMilli(1L), ofEpochMilli(2L));
 //}
 
-//[Xunit.Fact]// (expected = NullPointerException)
+//[Fact]// (expected = NullPointerException)
 //public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
 //{
 //    cachingStore.Fetch(bytesKey("anyFrom"), null, ofEpochMilli(1L), ofEpochMilli(2L));
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey()
 //{
 //    LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);

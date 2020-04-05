@@ -5,8 +5,9 @@ using Kafka.Streams.State.KeyValues;
 namespace Kafka.Streams.Processors.Internals
 {
     public class SessionStoreReadWriteDecorator<K, AGG>
-        : StateStoreReadWriteDecorator<ISessionStore<K, AGG>>
-        , ISessionStore<K, AGG>
+        : StateStoreReadWriteDecorator<ISessionStore<K, AGG>>,
+        ISessionStore<K, AGG>
+        where AGG : class
     {
         public SessionStoreReadWriteDecorator(ISessionStore<K, AGG> inner)
             : base(inner)

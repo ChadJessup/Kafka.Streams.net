@@ -44,7 +44,7 @@
 
 //        private SegmentedCacheFunction cacheFunction = new SegmentedCacheFunction(new WindowKeySchema(), SEGMENT_INTERVAL);
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void Key()
 //        {
 //            Assert.Equal(
@@ -53,22 +53,22 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void CacheKey()
 //        {
 //            long segmentId = TIMESTAMP / SEGMENT_INTERVAL;
 
 //            Bytes actualCacheKey = cacheFunction.cacheKey(THE_KEY);
-//            ByteBuffer buffer = ByteBuffer.Wrap(actualCacheKey.Get());
+//            ByteBuffer buffer = new ByteBuffer().Wrap(actualCacheKey.Get());
 
-//            Assert.Equal(buffer.getLong(), segmentId);
+//            Assert.Equal(buffer.GetLong(), segmentId);
 
 //            byte[] actualKey = new byte[buffer.remaining()];
 //            buffer.Get(actualKey);
 //            Assert.Equal(Bytes.Wrap(actualKey), THE_KEY);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestRoundTripping()
 //        {
 //            Assert.Equal(
@@ -82,7 +82,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void CompareSegmentedKeys()
 //        {
 //            Assert.Equal(

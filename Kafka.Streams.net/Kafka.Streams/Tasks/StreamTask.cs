@@ -134,8 +134,8 @@ namespace Kafka.Streams.Tasks
 
             streamTimePunctuationQueue = new PunctuationQueue();
             systemTimePunctuationQueue = new PunctuationQueue();
-            maxTaskIdleMs = config.GetLong(StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG).Value;
-            maxBufferedSize = config.GetInt(StreamsConfigPropertyNames.BUFFERED_RECORDS_PER_PARTITION_CONFIG).Value;
+            maxTaskIdleMs = config.GetLong(StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG) ?? 0L;
+            maxBufferedSize = config.GetInt(StreamsConfigPropertyNames.BUFFERED_RECORDS_PER_PARTITION_CONFIG) ?? 1000;
 
             // initialize the consumed and committed offset cache
             consumedOffsets = new Dictionary<TopicPartition, long>();
@@ -1012,12 +1012,12 @@ namespace Kafka.Streams.Tasks
                 return RecordQueue.UNKNOWN;
             }
 
-            ByteBuffer buffer = null;// ByteBuffer.Wrap(Base64.DecodeFromUtf8InPlace(encryptedString));
-            byte? version = null;// buffer.getLong;
+            ByteBuffer buffer = null;// new ByteBuffer().Wrap(Base64.DecodeFromUtf8InPlace(encryptedString));
+            byte? version = null;// buffer.GetLong;
             switch (version)
             {
                 //case LATEST_MAGIC_BYTE:
-                //    return buffer.getLong();
+                //    return buffer.GetLong();
                 default:
                     //log.LogWarning("Unsupported offset metadata version found. Supported version {}. Found version {}.",
                     //         LATEST_MAGIC_BYTE, version);

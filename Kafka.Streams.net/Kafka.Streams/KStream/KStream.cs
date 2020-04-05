@@ -6,7 +6,7 @@ using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -196,9 +196,11 @@ namespace Kafka.Streams.KStream.Internals
             var name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.MapName);
             var processorParameters = new ProcessorParameters<K, V>(new KStreamMap<K, V, KR, VR>(mapper), name);
 
-            var mapProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
+            var mapProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters)
+            {
+                IsKeyChangingOperation = true
+            };
 
-            mapProcessorNode.IsKeyChangingOperation = true;
             builder.AddGraphNode<K, V>(this.streamsGraphNode, mapProcessorNode);
 
             // key and value serde cannot be preserved
@@ -274,8 +276,10 @@ namespace Kafka.Streams.KStream.Internals
             var name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.FlatmapName);
 
             var processorParameters = new ProcessorParameters<K, V>(new KStreamFlatMap<K, V, KR, VR>(mapper), name);
-            var flatMapNode = new ProcessorGraphNode<K, V>(name, processorParameters);
-            flatMapNode.IsKeyChangingOperation = true;
+            var flatMapNode = new ProcessorGraphNode<K, V>(name, processorParameters)
+            {
+                IsKeyChangingOperation = true
+            };
 
             builder.AddGraphNode<K, V>(this.streamsGraphNode, flatMapNode);
 
@@ -322,9 +326,10 @@ namespace Kafka.Streams.KStream.Internals
             var name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.FlatmapValuesName);
 
             var processorParameters = new ProcessorParameters<K, V>(new KStreamFlatMapValues<K, V, VR>(mapper), name);
-            var flatMapValuesNode = new ProcessorGraphNode<K, V>(name, processorParameters);
-
-            flatMapValuesNode.IsValueChangingOperation = true;
+            var flatMapValuesNode = new ProcessorGraphNode<K, V>(name, processorParameters)
+            {
+                IsValueChangingOperation = true
+            };
 
             builder.AddGraphNode<K, V>(this.streamsGraphNode, flatMapValuesNode);
 
@@ -513,12 +518,12 @@ namespace Kafka.Streams.KStream.Internals
 
             var producedInternal = new ProducedInternal<K, V>(produced);
 
-            if (producedInternal.keySerde == null)
+            if (producedInternal.KeySerde == null)
             {
                 producedInternal.WithKeySerde(keySerde);
             }
 
-            if (producedInternal.valueSerde == null)
+            if (producedInternal.ValueSerde == null)
             {
                 producedInternal.WithValueSerde(valSerde);
             }
@@ -528,8 +533,8 @@ namespace Kafka.Streams.KStream.Internals
             return builder.Stream(
                 new List<string> { topic },
                 new ConsumedInternal<K, V>(
-                    producedInternal.keySerde,
-                    producedInternal.valueSerde,
+                    producedInternal.KeySerde,
+                    producedInternal.ValueSerde,
                     new FailOnInvalidTimestamp(null),
                     offsetReset: null));
         }
@@ -545,12 +550,12 @@ namespace Kafka.Streams.KStream.Internals
 
             var producedInternal = new ProducedInternal<K, V>(produced);
 
-            if (producedInternal.keySerde == null)
+            if (producedInternal.KeySerde == null)
             {
                 producedInternal.WithKeySerde(keySerde);
             }
 
-            if (producedInternal.valueSerde == null)
+            if (producedInternal.ValueSerde == null)
             {
                 producedInternal.WithValueSerde(valSerde);
             }
@@ -568,12 +573,12 @@ namespace Kafka.Streams.KStream.Internals
 
             var producedInternal = new ProducedInternal<K, V>(produced);
 
-            if (producedInternal.keySerde == null)
+            if (producedInternal.KeySerde == null)
             {
                 producedInternal.WithKeySerde(keySerde);
             }
 
-            if (producedInternal.valueSerde == null)
+            if (producedInternal.ValueSerde == null)
             {
                 producedInternal.WithValueSerde(valSerde);
             }

@@ -7,13 +7,13 @@
 //{
 //    public class UsePreviousTimeOnInvalidTimestampTest : TimestampExtractorTest
 //    {
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ExtractMetadataTimestamp()
 //        {
 //            TestExtractMetadataTimestamp(new UsePreviousTimeOnInvalidTimestamp());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void UsePreviousTimeOnInvalidTimestamp()
 //        {
 //            long previousTime = 42;
@@ -27,7 +27,7 @@
 //            Assert.Equal(timestamp, previousTime);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowStreamsException()
 //        {
 //            ITimestampExtractor extractor = new UsePreviousTimeOnInvalidTimestamp();

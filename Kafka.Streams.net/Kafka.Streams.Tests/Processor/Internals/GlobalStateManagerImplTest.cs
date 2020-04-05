@@ -76,13 +76,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        stateDirectory.unlockGlobalState();
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldLockGlobalStateDirectory() {
     //        stateManager.initialize();
     //        Assert.True(new File(stateDirectory.globalStateDir(), ".Lock").Exists);
     //    }
 
-    //    [Xunit.Fact]// (expected = LockException)
+    //    [Fact]// (expected = LockException)
     //    public void shouldThrowLockExceptionIfCantGetLock(){ //throws IOException
     //        StateDirectory stateDir = new StateDirectory(streamsConfig, time, true);
     //        try {
@@ -93,7 +93,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldReadCheckpointOffsets(){ //throws IOException
     //        Dictionary<TopicPartition, long> expected = writeCheckpoint();
 
@@ -102,33 +102,33 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(expected, offsets);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldNotDeleteCheckpointFileAfterLoaded(){ //throws IOException
     //        writeCheckpoint();
     //        stateManager.initialize();
     //        Assert.True(checkpointFile.Exists);
     //    }
 
-    //    [Xunit.Fact]// (expected = StreamsException)
+    //    [Fact]// (expected = StreamsException)
     //    public void shouldThrowStreamsExceptionIfFailedToReadCheckpointedOffsets(){ //throws IOException
     //        writeCorruptCheckpoint();
     //        stateManager.initialize();
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldInitializeStateStores() {
     //        stateManager.initialize();
     //        Assert.True(store1.initialized);
     //        Assert.True(store2.initialized);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldReturnInitializedStoreNames() {
     //        HashSet<string> storeNames = stateManager.initialize();
     //        Assert.Equal(Utils.mkSet(storeName1, storeName2, storeName3, storeName4), storeNames);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldThrowIllegalArgumentIfTryingToRegisterStoreThatIsNotGlobal() {
     //        stateManager.initialize();
 
@@ -140,7 +140,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldThrowIllegalArgumentExceptionIfAttemptingToRegisterStoreTwice() {
     //        stateManager.initialize();
     //        initializeConsumer(2, 0, t1);
@@ -153,7 +153,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldThrowStreamsExceptionIfNoPartitionsFoundForStore() {
     //        stateManager.initialize();
     //        try {
@@ -164,7 +164,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldNotConvertValuesIfStoreDoesNotImplementTimestampedBytesStore() {
     //        initializeConsumer(1, 0, t1);
 
@@ -176,7 +176,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(5, restoredRecord.value.Length);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldNotConvertValuesIfInnerStoreDoesNotImplementTimestampedBytesStore() {
     //        initializeConsumer(1, 0, t1);
 
@@ -192,7 +192,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(5, restoredRecord.value.Length);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldConvertValuesIfStoreImplementsTimestampedBytesStore() {
     //        initializeConsumer(1, 0, t2);
 
@@ -204,7 +204,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(13, restoredRecord.value.Length);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldConvertValuesIfInnerStoreImplementsTimestampedBytesStore() {
     //        initializeConsumer(1, 0, t2);
 
@@ -220,7 +220,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(13, restoredRecord.value.Length);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldRestoreRecordsUpToHighwatermark() {
     //        initializeConsumer(2, 0, t1);
 
@@ -230,7 +230,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(2, stateRestoreCallback.restored.Count);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldRecoverFromInvalidOffsetExceptionAndRestoreRecords() {
     //        initializeConsumer(2, 0, t1);
     //        consumer.setException(new InvalidOffsetException("Try Again!") {
@@ -245,7 +245,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(2, stateRestoreCallback.restored.Count);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldListenForRestoreEvents() {
     //        initializeConsumer(5, 1, t1);
     //        stateManager.initialize();
@@ -262,7 +262,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(stateRestoreListener.storeNameCalledStates.Get(RESTORE_END), (store1.name()));
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldRestoreRecordsFromCheckpointToHighwatermark(){ //throws IOException
     //        initializeConsumer(5, 5, t1);
 
@@ -276,7 +276,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //    }
 
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldFlushStateStores() {
     //        stateManager.initialize();
     //        // register the stores
@@ -290,7 +290,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.True(store2.flushed);
     //    }
 
-    //    [Xunit.Fact]// (expected = ProcessorStateException)
+    //    [Fact]// (expected = ProcessorStateException)
     //    public void shouldThrowProcessorStateStoreExceptionIfStoreFlushFailed() {
     //        stateManager.initialize();
     //        // register the stores
@@ -305,7 +305,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        stateManager.flush();
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldCloseStateStores(){ //throws IOException
     //        stateManager.initialize();
     //        // register the stores
@@ -319,7 +319,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.False(store2.isOpen());
     //    }
 
-    //    [Xunit.Fact]// (expected = ProcessorStateException)
+    //    [Fact]// (expected = ProcessorStateException)
     //    public void shouldThrowProcessorStateStoreExceptionIfStoreCloseFailed(){ //throws IOException
     //        stateManager.initialize();
     //        initializeConsumer(1, 0, t1);
@@ -333,7 +333,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        stateManager.close(true);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldThrowIllegalArgumentExceptionIfCallbackIsNull() {
     //        stateManager.initialize();
     //        try {
@@ -344,7 +344,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldUnlockGlobalStateDirectoryOnClose(){ //throws IOException
     //        stateManager.initialize();
     //        stateManager.close(true);
@@ -357,7 +357,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldNotCloseStoresIfCloseAlreadyCalled(){ //throws IOException
     //        stateManager.initialize();
     //        initializeConsumer(1, 0, t1);
@@ -375,7 +375,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        stateManager.close(true);
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldAttemptToCloseAllStoresEvenWhenSomeException(){ //throws IOException
     //        stateManager.initialize();
     //        initializeConsumer(1, 0, t1);
@@ -400,7 +400,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.False(store2.isOpen());
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldReleaseLockIfExceptionWhenLoadingCheckpoints(){ //throws IOException
     //        writeCorruptCheckpoint();
     //        try {
@@ -417,7 +417,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldCheckpointOffsets(){ //throws IOException
     //        Dictionary<TopicPartition, long> offsets = Collections.singletonMap(t1, 25L);
     //        stateManager.initialize();
@@ -429,7 +429,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(stateManager.checkpointed(), (offsets));
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldNotRemoveOffsetsOfUnUpdatedTablesDuringCheckpoint() {
     //        stateManager.initialize();
     //        initializeConsumer(10, 0, t1);
@@ -445,7 +445,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(updatedCheckpoint.Get(t1), (101L));
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldSkipNullKeysWhenRestoring() {
     //        HashDictionary<TopicPartition, long> startOffsets = new HashMap<>();
     //        startOffsets.put(t1, 1L);
@@ -466,7 +466,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(stateRestoreCallback.restored, (Collections.singletonList(KeyValuePair.Create(restoredKv.key, restoredKv.value))));
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldCheckpointRestoredOffsetsToFile(){ //throws IOException
     //        stateManager.initialize();
     //        initializeConsumer(10, 0, t1);
@@ -479,7 +479,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        Assert.Equal(readOffsetsCheckpoint(), (checkpointMap));
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldSkipGlobalInMemoryStoreOffsetsToFile(){ //throws IOException
     //        stateManager.initialize();
     //        initializeConsumer(10, 0, t3);
@@ -495,7 +495,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        return offsetCheckpoint.read();
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldThrowLockExceptionIfIOExceptionCaughtWhenTryingToLockStateDir() {
     //        stateManager = new GlobalStateManagerImpl(
     //            new LogContext("mock"),
@@ -519,7 +519,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldRetryWhenEndOffsetsThrowsTimeoutException() {
     //        int retries = 2;
     //        AtomicInteger numberOfCalls = new AtomicInteger(0);
@@ -552,7 +552,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldRetryWhenPartitionsForThrowsTimeoutException() {
     //        int retries = 2;
     //        AtomicInteger numberOfCalls = new AtomicInteger(0);
@@ -585,7 +585,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     //        }
     //    }
 
-    //    [Xunit.Fact]
+    //    [Fact]
     //    public void shouldDeleteAndRecreateStoreDirectoryOnReinitialize(){ //throws IOException
     //        File storeDirectory1 = new File(stateDirectory.globalStateDir().FullName
     //                                                  + Path.DirectorySeparatorChar + "rocksdb"

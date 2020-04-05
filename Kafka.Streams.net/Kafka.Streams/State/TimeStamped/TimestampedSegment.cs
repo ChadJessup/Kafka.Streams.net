@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.TimeStamped
 
         public override string ToString()
         {
-            return "TimestampedSegment(id=" + id + ", name=" + name + ")";
+            return "TimestampedSegment(id=" + id + ", name=" + Name + ")";
         }
 
         public override bool Equals(object obj)

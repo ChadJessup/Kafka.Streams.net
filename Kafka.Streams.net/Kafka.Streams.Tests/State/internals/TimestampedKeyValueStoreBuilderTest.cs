@@ -66,14 +66,14 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveMeteredStoreAsOuterStore()
 //        {
 //            ITimestampedKeyValueStore<string, string> store = builder.Build();
 //            Assert.Equal(store, instanceOf(MeteredTimestampedKeyValueStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreByDefault()
 //        {
 //            ITimestampedKeyValueStore<string, string> store = builder.Build();
@@ -82,7 +82,7 @@
 //            Assert.Equal(next, instanceOf(ChangeLoggingTimestampedKeyValueBytesStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
 //            ITimestampedKeyValueStore<string, string> store = builder.withLoggingDisabled().Build();
@@ -90,7 +90,7 @@
 //            Assert.Equal(next, CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingStoreWhenEnabled()
 //        {
 //            ITimestampedKeyValueStore<string, string> store = builder.withCachingEnabled().Build();
@@ -99,7 +99,7 @@
 //            Assert.Equal(wrapped, instanceOf(CachingKeyValueStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled()
 //        {
 //            ITimestampedKeyValueStore<string, string> store = builder
@@ -111,7 +111,7 @@
 //            Assert.Equal(((WrappedStateStore)wrapped).wrapped(), CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled()
 //        {
 //            ITimestampedKeyValueStore<string, string> store = builder
@@ -126,7 +126,7 @@
 //            Assert.Equal(changeLogging.wrapped(), CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotWrapTimestampedByteStore()
 //        {
 //            reset(supplier);
@@ -141,7 +141,7 @@
 //            Assert.Equal(((WrappedStateStore)store).wrapped(), instanceOf(RocksDBTimestampedStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldWrapPlainKeyValueStoreAsTimestampStore()
 //        {
 //            reset(supplier);
@@ -157,31 +157,31 @@
 //        }
 
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfInnerIsNull()
 //        {
 //            new TimestampedKeyValueStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            new TimestampedKeyValueStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            new TimestampedKeyValueStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            new TimestampedKeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfMetricsScopeIsNull()
 //        {
 //            new TimestampedKeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime());

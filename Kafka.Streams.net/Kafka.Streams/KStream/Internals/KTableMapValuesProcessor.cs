@@ -46,19 +46,19 @@ namespace Kafka.Streams.KStream.Internals
                 throw new System.ArgumentNullException(nameof(change));
             }
 
-            V1 newValue = ComputeValue(key, change.newValue);
+            V1 newValue = ComputeValue(key, change.NewValue);
             V1 oldValue = sendOldValues
-                ? ComputeValue(key, change.oldValue)
+                ? ComputeValue(key, change.OldValue)
                 : default;
 
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp.Make(newValue, context.timestamp));
+                store.Add(key, ValueAndTimestamp.Make(newValue, Context.Timestamp));
                 tupleForwarder.MaybeForward(key, newValue, oldValue);
             }
             else
             {
-                context.Forward(key, new Change<V1>(newValue, oldValue));
+                Context.Forward(key, new Change<V1>(newValue, oldValue));
             }
         }
 

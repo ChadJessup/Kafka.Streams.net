@@ -69,9 +69,7 @@ namespace Kafka.Streams.KStream.Internals
                 OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder
                     = OptimizableRepartitionNode.GetOptimizableRepartitionNodeBuilder<K, V>();
 
-                var repartitionTopicPrefix = userProvidedRepartitionTopicName != null
-                    ? userProvidedRepartitionTopicName
-                    : storeBuilder.name;
+                var repartitionTopicPrefix = userProvidedRepartitionTopicName ?? storeBuilder.name;
 
                 sourceName = CreateRepartitionSource(repartitionTopicPrefix, repartitionNodeBuilder);
 

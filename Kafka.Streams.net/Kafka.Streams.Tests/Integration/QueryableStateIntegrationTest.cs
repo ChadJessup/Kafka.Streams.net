@@ -8,7 +8,7 @@
 //using Kafka.Streams.KStream.Mappers;
 //using Kafka.Streams.State;
 //using Kafka.Streams.State.ReadOnly;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using Kafka.Streams.Tests.Helpers;
 //using Kafka.Streams.Tests.Mocks;
 //using System;
@@ -308,7 +308,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void QueryOnRebalance()
 //        {// throws Exception
 //            int numThreads = STREAM_TWO_PARTITIONS;
@@ -396,7 +396,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ConcurrentAccesses()
 //        {// throws Exception
 //            int numIterations = 500000;
@@ -443,19 +443,19 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToQueryStateWithZeroSizedCache()
 //        {// throws Exception
 //            VerifyCanQueryState(0);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToQueryStateWithNonZeroSizedCache()
 //        {// throws Exception
 //            VerifyCanQueryState(10 * 1024 * 1024);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToQueryFilterState()
 //        {// throws Exception
 //            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
@@ -527,7 +527,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToQueryMapValuesState()
 //        {// throws Exception
 //            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
@@ -574,7 +574,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToQueryMapValuesAfterFilterState()
 //        {// throws Exception
 //            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
@@ -696,7 +696,7 @@
 //            VerifyRangeAndAll(expectedCount, myCount);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotMakeStoreAvailableUntilAllStoresAvailable()
 //        {// throws Exception
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -785,7 +785,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAllowToQueryAfterThreadDied()
 //        {// throws Exception
 //            AtomicBoolean beforeFailure = new AtomicBoolean(true);

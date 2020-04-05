@@ -89,7 +89,7 @@
 //            restoreListener.setUserRestoreListener(stateRestoreListener);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRequestTopicsAndHandleTimeoutException()
 //        {
 //            AtomicBoolean functionCalled = new AtomicBoolean(false);
@@ -121,7 +121,7 @@
 //        Assert.True(functionCalled.Get());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowExceptionIfConsumerHasCurrentSubscription()
 //    {
 //        StateRestorer mockRestorer = EasyMock.mock(StateRestorer);
@@ -147,7 +147,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreAllMessagesFromBeginningWhenCheckpointNull()
 //    {
 //        int messages = 10;
@@ -167,7 +167,7 @@
 //        Assert.Equal(callback.restored.Count, (messages));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecoverFromInvalidOffsetExceptionAndFinishRestore()
 //    {
 //        int messages = 10;
@@ -209,7 +209,7 @@
 //        Assert.Equal(callback.restored.Count, (messages));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecoverFromOffsetOutOfRangeExceptionAndRestoreFromStart()
 //    {
 //        int messages = 10;
@@ -248,7 +248,7 @@
 //        Assert.Equal(callback.restored.Count, (messages));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreMessagesFromCheckpoint()
 //    {
 //        int messages = 10;
@@ -266,7 +266,7 @@
 //        Assert.Equal(callback.restored.Count, (5));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldClearAssignmentAtEndOfRestore()
 //    {
 //        int messages = 1;
@@ -285,7 +285,7 @@
 //        Assert.Equal(consumer.assignment(), (Collections.< TopicPartition > emptySet()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreToLimitWhenSupplied()
 //    {
 //        setupConsumer(10, topicPartition);
@@ -305,7 +305,7 @@
 //        Assert.Equal(restorer.restoredOffset(), (3L));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreMultipleStores()
 //    {
 //        TopicPartition one = new TopicPartition("one", 0);
@@ -354,7 +354,7 @@
 //        Assert.Equal(callbackTwo.restored.Count, (3));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreAndNotifyMultipleStores()
 //    {
 //        TopicPartition one = new TopicPartition("one", 0);
@@ -415,7 +415,7 @@
 //        assertCorrectOffsetsReportedByListener(callbackTwo, 0L, 2L, 3L);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldOnlyReportTheLastRestoredOffset()
 //    {
 //        setupConsumer(10, topicPartition);
@@ -455,7 +455,7 @@
 //        Assert.Equal(restoreListener.totalNumRestored, (totalRestored));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotRestoreAnythingWhenPartitionIsEmpty()
 //    {
 //        StateRestorer restorer = new StateRestorer(
@@ -474,7 +474,7 @@
 //        Assert.Equal(restorer.restoredOffset(), (0L));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotRestoreAnythingWhenCheckpointAtEndOffset()
 //    {
 //        long endOffset = 10L;
@@ -495,7 +495,7 @@
 //        Assert.Equal(restorer.restoredOffset(), (endOffset));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnRestoredOffsetsForPersistentStores()
 //    {
 //        setupConsumer(10, topicPartition);
@@ -515,7 +515,7 @@
 //        Assert.Equal(restoredOffsets, (Collections.singletonMap(topicPartition, 10L)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotReturnRestoredOffsetsForNonPersistentStore()
 //    {
 //        setupConsumer(10, topicPartition);
@@ -534,7 +534,7 @@
 //        Assert.Equal(restoredOffsets, (Collections.emptyMap()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldIgnoreNullKeysWhenRestoring()
 //    {
 //        assignPartition(3, topicPartition);
@@ -558,7 +558,7 @@
 //        Assert.Equal(callback.restored, CoreMatchers.equalTo(asList(KeyValuePair.Create(bytes, bytes), KeyValuePair.Create(bytes, bytes))));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCompleteImmediatelyWhenEndOffsetIs0()
 //    {
 //        Collection<TopicPartition> expected = Collections.singleton(topicPartition);
@@ -578,7 +578,7 @@
 //        Assert.Equal(restored, (expected));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestorePartitionsRegisteredPostInitialization()
 //    {
 //        MockRestoreCallback callbackTwo = new MockRestoreCallback();
@@ -625,7 +625,7 @@
 //        Assert.Equal(callbackTwo.restored.Count, (3));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowTaskMigratedExceptionIfSourceTopicUpdatedDuringRestoreProcess()
 //    {
 //        int messages = 10;
@@ -648,7 +648,7 @@
 //        changelogReader.restore(active);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowTaskMigratedExceptionDuringRestoreForChangelogTopicWhenEndOffsetNotExceededEOSEnabled()
 //    {
 //        int totalMessages = 10;
@@ -672,7 +672,7 @@
 //        Assert.Equal(callback.restored.Count, (10));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowTaskMigratedExceptionDuringRestoreForChangelogTopicWhenEndOffsetNotExceededEOSDisabled()
 //    {
 //        int totalMessages = 10;
@@ -694,7 +694,7 @@
 //        Assert.Equal(callback.restored.Count, (10));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetGetsExceededDuringRestoreForSourceTopic()
 //    {
 //        int messages = 10;
@@ -715,7 +715,7 @@
 //        Assert.Equal(callback.restored.Count, (5));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetNotExceededDuringRestoreForSourceTopic()
 //    {
 //        int messages = 10;
@@ -737,7 +737,7 @@
 //        Assert.Equal(callback.restored.Count, (10));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetGetsExceededDuringRestoreForSourceTopicEOSEnabled()
 //    {
 //        int totalMessages = 10;
@@ -766,7 +766,7 @@
 //        Assert.Equal(callback.restored.Count, (5));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetNotExceededDuringRestoreForSourceTopicEOSEnabled()
 //    {
 //        int totalMessages = 10;

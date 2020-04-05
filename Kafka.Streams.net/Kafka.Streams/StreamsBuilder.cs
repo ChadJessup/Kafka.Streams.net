@@ -609,7 +609,7 @@ namespace Kafka.Streams
              * @return a {@link GlobalKTable} for the specified topic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public IGlobalKTable<K, V> globalTable<K, V>(
+            public IGlobalKTable<K, V> GlobalTable<K, V>(
                 string topic,
                 Consumed<K, V> consumed,
                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)

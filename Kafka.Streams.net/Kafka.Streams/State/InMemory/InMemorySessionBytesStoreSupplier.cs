@@ -1,35 +1,35 @@
+using Kafka.Streams.State.Sessions;
+using System;
 
-//using Kafka.Common.Utils;
-//using Kafka.Streams.State.Interfaces;
+namespace Kafka.Streams.State.Internals
+{
+    public class InMemorySessionBytesStoreSupplier : ISessionBytesStoreSupplier
+    {
+        public string Name { get; }
+        public TimeSpan RetentionPeriod { get; }
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class InMemorySessionBytesStoreSupplier : ISessionBytesStoreSupplier
-//    {
-//        private string name;
-//        private long retentionPeriod;
+        public InMemorySessionBytesStoreSupplier(
+            string name,
+            TimeSpan retentionPeriod)
+        {
+            this.Name = name;
+            this.RetentionPeriod = retentionPeriod;
+        }
 
-//        public InMemorySessionBytesStoreSupplier(string name,
-//                                                 long retentionPeriod)
-//        {
-//            this.name = name;
-//            this.retentionPeriod = retentionPeriod;
-//        }
+        public ISessionStore<Bytes, byte[]> Get()
+        {
+            return new InMemorySessionStore(Name, RetentionPeriod);
+        }
 
-//        public ISessionStore<Bytes, byte[]> get()
-//        {
-//            return new InMemorySessionStore(name, retentionPeriod, metricsScope());
-//        }
+        //public string metricsScope()
+        //{
+        //    return "in-memory-session-state";
+        //}
 
-//        public string metricsScope()
-//        {
-//            return "in-memory-session-state";
-//        }
-
-//        // In-memory store is not *really* segmented, so just say it is 1 (for ordering consistency with caching enabled)
-//        public override long segmentIntervalMs()
-//        {
-//            return 1;
-//        }
-//    }
-//}
+        // In-memory store is not *really* segmented, so just say it is 1 (for ordering consistency with caching enabled)
+        public long SegmentIntervalMs()
+        {
+            return 1;
+        }
+    }
+}

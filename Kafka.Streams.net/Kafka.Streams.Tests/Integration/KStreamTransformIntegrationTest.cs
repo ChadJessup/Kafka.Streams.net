@@ -47,7 +47,7 @@
 //            Assert.Equal(results, (expected));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTransform()
 //        {
 //            //          stream
@@ -89,7 +89,7 @@
 //            //verifyResult(expected);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlatTransform()
 //        {
 //            //            stream
@@ -149,7 +149,7 @@
 //            // verifyResult(expected);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTransformValuesWithValueTransformerWithKey()
 //        {
 //            //          stream
@@ -192,7 +192,7 @@
 //            // verifyResult(expected);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTransformValuesWithValueTransformerWithoutKey()
 //        {
 //            //            stream
@@ -233,7 +233,7 @@
 //            // verifyResult(expected);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlatTransformValuesWithKey()
 //        {
 //            //            stream
@@ -292,7 +292,7 @@
 //            // verifyResult(expected);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlatTransformValuesWithValueTransformerWithoutKey()
 //        {
 //            //            stream

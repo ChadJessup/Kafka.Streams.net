@@ -72,8 +72,6 @@ namespace Kafka.Streams.KStream.Interfaces
          * duplicate results downstream, but does not promise to eliminate them.
          */
         IEagerBufferConfig EmitEarlyWhenFull();
-
-
         BufferFullStrategy BufferFullStrategy { get; }
     }
 

@@ -87,7 +87,7 @@
 //            segmentTwo.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldIterateOverAllSegments()
 //        {
 //            iterator = new SegmentIterator<>(
@@ -115,7 +115,7 @@
 //            Assert.False(iterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowExceptionOnHasNextWhenStoreClosed()
 //        {
 //            iterator = new SegmentIterator<>(
@@ -129,7 +129,7 @@
 //            Assert.False(iterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldOnlyIterateOverSegmentsInRange()
 //        {
 //            iterator = new SegmentIterator<>(
@@ -149,7 +149,7 @@
 //            Assert.False(iterator.hasNext());
 //        }
 
-//        [Xunit.Fact]// (expected = NoSuchElementException)
+//        [Fact]// (expected = NoSuchElementException)
 //        public void ShouldThrowNoSuchElementOnPeekNextKeyIfNoNext()
 //        {
 //            iterator = new SegmentIterator<>(
@@ -161,7 +161,7 @@
 //            iterator.peekNextKey();
 //        }
 
-//        [Xunit.Fact]// (expected = NoSuchElementException)
+//        [Fact]// (expected = NoSuchElementException)
 //        public void ShouldThrowNoSuchElementOnNextIfNoNext()
 //        {
 //            iterator = new SegmentIterator<>(

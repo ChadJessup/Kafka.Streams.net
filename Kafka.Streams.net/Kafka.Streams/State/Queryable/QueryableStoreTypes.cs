@@ -1,7 +1,7 @@
 using Kafka.Streams.State.ReadOnly;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 
 namespace Kafka.Streams.State.Queryable
 {

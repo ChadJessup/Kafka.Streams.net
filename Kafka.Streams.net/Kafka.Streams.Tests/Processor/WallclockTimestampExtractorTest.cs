@@ -31,7 +31,7 @@
 //    public class WallclockTimestampExtractorTest
 //    {
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ExtractSystemTimestamp()
 //        {
 //            TimestampExtractor extractor = new WallclockTimestampExtractor();

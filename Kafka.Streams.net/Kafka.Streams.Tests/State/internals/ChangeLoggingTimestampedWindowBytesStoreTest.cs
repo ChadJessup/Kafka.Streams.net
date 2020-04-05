@@ -93,7 +93,7 @@
 //        store.Init(context, store);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogPuts()
 //    {
 //        inner.put(bytesKey, valueAndTimestamp, 0);
@@ -112,7 +112,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDelegateToUnderlyingStoreWhenFetching()
 //    {
 //        EasyMock
@@ -125,7 +125,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDelegateToUnderlyingStoreWhenFetchingRange()
 //    {
 //        EasyMock
@@ -138,7 +138,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRetainDuplicatesWhenSet()
 //    {
 //        store = new ChangeLoggingTimestampedWindowBytesStore(inner, true);

@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.Internals
             IStateStore root)
         {
             base.Init(context, root);
-            var topic = ProcessorStateManager.StoreChangelogTopic(context.applicationId, name);
+            var topic = ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, Name);
     //        changeLogger = new StoreChangeLogger<>(
     //            name,
     //            context,

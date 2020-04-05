@@ -155,7 +155,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreState()
 //        {// throws Exception
 //         // produce some data to input topic

@@ -19,35 +19,35 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * @return the application id
          */
-        string applicationId { get; }
+        string ApplicationId { get; }
 
         /**
          * Returns the task id
          *
          * @return the task id
          */
-        TaskId taskId { get; }
+        TaskId TaskId { get; }
 
         /**
          * Returns the default key serde
          *
          * @return the key serializer
          */
-        ISerde keySerde { get; }
+        ISerde KeySerde { get; }
 
         /**
          * Returns the default value serde
          *
          * @return the value serializer
          */
-        ISerde valueSerde { get; }
+        ISerde ValueSerde { get; }
 
         /**
          * Returns the state directory for the partition.
          *
          * @return the state directory
          */
-        DirectoryInfo stateDir { get; }
+        DirectoryInfo StateDir { get; }
 
         /**
          * Returns Metrics instance
@@ -163,7 +163,7 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * @return the partition id
          */
-        int partition { get; }
+        int Partition { get; }
 
         /**
          * Returns the offset of the current input record; could be -1 if it is not
@@ -171,13 +171,13 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * @return the offset
          */
-        long offset { get; }
+        long Offset { get; }
 
         /**
          * Returns the headers of the current input record; could be null if it is not available
          * @return the headers
          */
-        Headers headers { get; }
+        Headers Headers { get; }
 
         /**
          * Returns the current timestamp.
@@ -191,7 +191,7 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * @return the timestamp
          */
-        long timestamp { get; }
+        long Timestamp { get; }
 
         /**
          * Returns all the application config properties as key/value pairs.

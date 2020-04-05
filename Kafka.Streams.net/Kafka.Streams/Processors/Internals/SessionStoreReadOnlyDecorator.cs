@@ -8,6 +8,7 @@ namespace Kafka.Streams.Processors.Internals
     public class SessionStoreReadOnlyDecorator<K, AGG>
         : StateStoreReadOnlyDecorator<ISessionStore<K, AGG>>
         , ISessionStore<K, AGG>
+        where AGG : class
     {
         public SessionStoreReadOnlyDecorator(ISessionStore<K, AGG> inner)
             : base(inner)

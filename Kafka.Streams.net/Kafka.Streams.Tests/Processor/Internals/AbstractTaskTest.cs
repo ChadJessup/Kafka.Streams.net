@@ -76,7 +76,7 @@
 //            expect(stateDirectory.directoryForTask(id)).andReturn(TestUtils.GetTempDirectory());
 //        }
 
-//        [Xunit.Fact]// (expected = ProcessorStateException)
+//        [Fact]// (expected = ProcessorStateException)
 //        public void ShouldThrowProcessorStateExceptionOnInitializeOffsetsWhenAuthorizationException()
 //        {
 //            Consumer consumer = mockConsumer(new AuthorizationException("blah"));
@@ -84,7 +84,7 @@
 //            task.updateOffsetLimits();
 //        }
 
-//        [Xunit.Fact]// (expected = ProcessorStateException)
+//        [Fact]// (expected = ProcessorStateException)
 //        public void ShouldThrowProcessorStateExceptionOnInitializeOffsetsWhenKafkaException()
 //        {
 //            Consumer consumer = mockConsumer(new KafkaException("blah"));
@@ -92,7 +92,7 @@
 //            task.updateOffsetLimits();
 //        }
 
-//        [Xunit.Fact]// (expected = WakeupException)
+//        [Fact]// (expected = WakeupException)
 //        public void ShouldThrowWakeupExceptionOnInitializeOffsetsWhenWakeupException()
 //        {
 //            Consumer consumer = mockConsumer(new WakeupException());
@@ -100,7 +100,7 @@
 //            task.updateOffsetLimits();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowLockExceptionIfFailedToLockStateDirectoryWhenTopologyHasStores()
 //        { //throws IOException
 //            Consumer consumer = EasyMock.createNiceMock(Consumer);
@@ -124,7 +124,7 @@
 
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAttemptToLockIfNoStores()
 //        {
 //            Consumer consumer = EasyMock.createNiceMock(Consumer);
@@ -138,7 +138,7 @@
 //            EasyMock.verify(stateDirectory);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeleteAndRecreateStoreDirectoryOnReinitialize()
 //        { //throws IOException
 //            StreamsConfig streamsConfig = new StreamsConfig(new StreamsConfig() {

@@ -35,13 +35,13 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUseCustomRocksDbConfigSetter()
 //        {
 //            Assert.True(TheRocksDbConfigSetter.called);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPerformRangeQueriesWithCachingDisabled()
 //        {
 //            context.setTime(1L);
@@ -53,7 +53,7 @@
 //            Assert.False(range.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPerformAllQueriesWithCachingDisabled()
 //        {
 //            context.setTime(1L);
@@ -65,7 +65,7 @@
 //            Assert.False(range.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseOpenIteratorsWhenStoreClosedAndThrowInvalidStateStoreOnHasNextAndNext()
 //        {
 //            context.setTime(1L);

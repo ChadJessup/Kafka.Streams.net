@@ -55,7 +55,7 @@
 //        private const string SENSOR_NAME_DELIMITER = ".s.";
 //        private const string INTERNAL_PREFIX = "internal";
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetThreadLevelSensor()
 //        {
 //            Metrics metrics = mock(Metrics);
@@ -77,20 +77,20 @@
 //            Assert.Null(sensor);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void TestNullMetrics()
 //        {
 //            new StreamsMetricsImpl(null, "");
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void TestRemoveNullSensor()
 //        {
 //            StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), "");
 //            streamsMetrics.removeSensor(null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestRemoveSensor()
 //        {
 //            string sensorName = "sensor1";
@@ -114,7 +114,7 @@
 //            Assert.Equal(Collections.emptyMap(), streamsMetrics.parentSensors());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestMutiLevelSensorRemoval()
 //        {
 //            Metrics registry = new Metrics();
@@ -168,7 +168,7 @@
 //            Assert.Equal(registry.metrics().Count, (0));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestLatencyMetrics()
 //        {
 //            StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), "");
@@ -189,7 +189,7 @@
 //            Assert.Equal(defaultMetrics, streamsMetrics.metrics().Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestThroughputMetrics()
 //        {
 //            StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), "");
@@ -209,7 +209,7 @@
 //            Assert.Equal(defaultMetrics, streamsMetrics.metrics().Count);
 //        }
 
-//        //[Xunit.Fact]
+//        //[Fact]
 //        //public void TestTotalMetricDoesntDecrease()
 //        //{
 //        //    MockTime time = new MockTime(1);

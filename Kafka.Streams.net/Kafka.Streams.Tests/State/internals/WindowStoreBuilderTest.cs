@@ -64,14 +64,14 @@
 //                new MockTime());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveMeteredStoreAsOuterStore()
 //        {
 //            IWindowStore<string, string> store = builder.Build();
 //            Assert.Equal(store, instanceOf(MeteredWindowStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreByDefault()
 //        {
 //            IWindowStore<string, string> store = builder.Build();
@@ -79,7 +79,7 @@
 //            Assert.Equal(next, instanceOf(ChangeLoggingWindowBytesStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
 //            IWindowStore<string, string> store = builder.withLoggingDisabled().Build();
@@ -87,7 +87,7 @@
 //            Assert.Equal(next, CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingStoreWhenEnabled()
 //        {
 //            IWindowStore<string, string> store = builder.withCachingEnabled().Build();
@@ -96,7 +96,7 @@
 //            Assert.Equal(wrapped, instanceOf(CachingWindowStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled()
 //        {
 //            IWindowStore<string, string> store = builder
@@ -108,7 +108,7 @@
 //            Assert.Equal(((WrappedStateStore)wrapped).wrapped(), CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled()
 //        {
 //            IWindowStore<string, string> store = builder
@@ -124,25 +124,25 @@
 //        }
 
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfInnerIsNull()
 //        {
 //            new WindowStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            new WindowStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            new WindowStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            new WindowStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);

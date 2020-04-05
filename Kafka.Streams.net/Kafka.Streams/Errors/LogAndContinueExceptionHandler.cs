@@ -25,7 +25,7 @@ namespace Kafka.Streams.Errors
         {
             logger.LogWarning(exception, 
                 "Exception caught during Deserialization, " +
-                     $"taskId: {context.taskId}, topic: {record.Topic}, partition: {record.Partition}, offset: {record.Offset}");
+                     $"taskId: {context.TaskId}, topic: {record.Topic}, partition: {record.Partition}, offset: {record.Offset}");
 
             return DeserializationHandlerResponses.CONTINUE;
         }

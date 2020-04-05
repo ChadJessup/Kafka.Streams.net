@@ -2,7 +2,7 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Queryable;
 using Kafka.Streams.State.TimeStamped;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals

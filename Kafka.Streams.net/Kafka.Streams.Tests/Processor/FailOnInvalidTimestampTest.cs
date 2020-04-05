@@ -3,13 +3,13 @@
 //    public class FailOnInvalidTimestampTest : TimestampExtractorTest
 //    {
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ExtractMetadataTimestamp()
 //        {
 //            TestExtractMetadataTimestamp(new FailOnInvalidTimestamp());
 //        }
 
-//        [Xunit.Fact]// (expected = StreamsException)
+//        [Fact]// (expected = StreamsException)
 //        public void FailOnInvalidTimestamp()
 //        {
 //            TimestampExtractor extractor = new FailOnInvalidTimestamp();

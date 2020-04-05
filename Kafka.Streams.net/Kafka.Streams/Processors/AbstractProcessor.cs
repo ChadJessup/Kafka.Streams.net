@@ -11,11 +11,11 @@ namespace Kafka.Streams.Processors
      */
     public abstract class AbstractProcessor<K, V> : IKeyValueProcessor<K, V>
     {
-        public IProcessorContext context { get; private set; }
+        public IProcessorContext Context { get; private set; }
 
         public virtual void Init(IProcessorContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
         /**

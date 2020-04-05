@@ -139,13 +139,13 @@
 //    };
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowNPEWhenOnChangeNotCalled()
 //    {
 //        new StreamsMetadataState(TopologyWrapper.getInternalTopologyBuilder(builder.Build()), hostOne).getAllMetadataForStore("store");
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetAllStreamInstances()
 //    {
 //        StreamsMetadata one = new StreamsMetadata(hostOne, Utils.mkSet(globalTable, "table-one", "table-two", "merged-table"),
@@ -162,7 +162,7 @@
 //        Assert.True("expected " + actual + " to contain " + three, actual.Contains(three));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetAllStreamsInstancesWithNoStores()
 //    {
 //        builder.Stream("topic-five").filter(new Predicate<object, object>()
@@ -187,7 +187,7 @@
 //    Assert.True("expected " + actual + " to contain " + expected, actual.Contains(expected));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetInstancesForStoreName()
 //    {
 //        StreamsMetadata one = new StreamsMetadata(hostOne, Utils.mkSet(globalTable, "table-one", "table-two", "merged-table"),
@@ -200,20 +200,20 @@
 //        Assert.True("expected " + actual + " to contain " + two, actual.Contains(two));
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowIfStoreNameIsNullOnGetAllInstancesWithStore()
 //    {
 //        metadataState.getAllMetadataForStore(null);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnEmptyCollectionOnGetAllInstancesWithStoreWhenStoreDoesntExist()
 //    {
 //        Collection<StreamsMetadata> actual = metadataState.getAllMetadataForStore("not-a-store");
 //        Assert.True(actual.isEmpty());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetInstanceWithKey()
 //    {
 //        TopicPartition tp4 = new TopicPartition("topic-three", 1);
@@ -231,7 +231,7 @@
 //        Assert.Equal(expected, actual);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetInstanceWithKeyAndCustomPartitioner()
 //    {
 //        TopicPartition tp4 = new TopicPartition("topic-three", 1);
@@ -246,7 +246,7 @@
 //        Assert.Equal(expected, actual);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnNotAvailableWhenClusterIsEmpty()
 //    {
 //        metadataState.onChange(Collections.< HostInfo, HashSet < TopicPartition >> emptyMap(), Cluster.empty());
@@ -254,7 +254,7 @@
 //        Assert.Equal(StreamsMetadata.NOT_AVAILABLE, result);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetInstanceWithKeyWithMergedStreams()
 //    {
 //        TopicPartition topic2P2 = new TopicPartition("topic-two", 2);
@@ -278,7 +278,7 @@
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnNullOnGetWithKeyWhenStoreDoesntExist()
 //    {
 //        StreamsMetadata actual = metadataState.getMetadataWithKey("not-a-store",
@@ -287,32 +287,32 @@
 //        Assert.Null(actual);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowWhenKeyIsNull()
 //    {
 //        metadataState.getMetadataWithKey("table-three", null, Serdes.String().Serializer);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowWhenSerializerIsNull()
 //    {
 //        metadataState.getMetadataWithKey("table-three", "key", (Serializer<object>)null);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowIfStoreNameIsNull()
 //    {
 //        metadataState.getMetadataWithKey(null, "key", Serdes.String().Serializer);
 //    }
 
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowIfStreamPartitionerIsNull()
 //    {
 //        metadataState.getMetadataWithKey(null, "key", (StreamPartitioner)null);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldHaveGlobalStoreInAllMetadata()
 //    {
 //        Collection<StreamsMetadata> metadata = metadataState.getAllMetadataForStore(globalTable);
@@ -323,14 +323,14 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetMyMetadataForGlobalStoreWithKey()
 //    {
 //        StreamsMetadata metadata = metadataState.getMetadataWithKey(globalTable, "key", Serdes.String().Serializer);
 //        Assert.Equal(hostOne, metadata.hostInfo());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetAnyHostForGlobalStoreByKeyIfMyHostUnknown()
 //    {
 //        StreamsMetadataState streamsMetadataState = new StreamsMetadataState(TopologyWrapper.getInternalTopologyBuilder(builder.Build()), StreamsMetadataState.UNKNOWN_HOST);
@@ -338,14 +338,14 @@
 //        Assert.NotNull(streamsMetadataState.getMetadataWithKey(globalTable, "key", Serdes.String().Serializer));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetMyMetadataForGlobalStoreWithKeyAndPartitioner()
 //    {
 //        StreamsMetadata metadata = metadataState.getMetadataWithKey(globalTable, "key", partitioner);
 //        Assert.Equal(hostOne, metadata.hostInfo());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetAnyHostForGlobalStoreByKeyAndPartitionerIfMyHostUnknown()
 //    {
 //        StreamsMetadataState streamsMetadataState = new StreamsMetadataState(TopologyWrapper.getInternalTopologyBuilder(builder.Build()), StreamsMetadataState.UNKNOWN_HOST);

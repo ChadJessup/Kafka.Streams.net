@@ -101,14 +101,14 @@
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldAllowEntryMatchingHasNextCondition()
 //    {
 //        List<KeyValuePair<Bytes, LRUCacheEntry>> keyValues = toList(allIterator);
 //        Assert.Equal(keyValues, (entries));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPeekNextKey()
 //    {
 //        while (allIterator.hasNext())
@@ -119,7 +119,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPeekNext()
 //    {
 //        while (allIterator.hasNext())
@@ -130,7 +130,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotHaveNextIfHasNextConditionNotMet()
 //    {
 //        Assert.True(firstEntryIterator.hasNext());
@@ -138,14 +138,14 @@
 //        Assert.False(firstEntryIterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFilterEntriesNotMatchingHasNextCondition()
 //    {
 //        List<KeyValuePair<Bytes, LRUCacheEntry>> keyValues = toList(firstEntryIterator);
 //        Assert.Equal(keyValues, (asList(firstEntry)));
 //    }
 
-//    [Xunit.Fact]// (expected = UnsupportedOperationException)
+//    [Fact]// (expected = UnsupportedOperationException)
 //    public void ShouldThrowUnsupportedOperationExeceptionOnRemove()
 //    {
 //        allIterator.remove();

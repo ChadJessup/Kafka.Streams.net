@@ -62,14 +62,14 @@
 //            CLUSTER.deleteAllTopicsAndWait(30_000L);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSendCorrectRecords_OPTIMIZED()
 //        {// throws Exception
 //            runIntegrationTest(StreamsConfigPropertyNames.OPTIMIZE,
 //                               ONE_REPARTITION_TOPIC);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSendCorrectResults_NO_OPTIMIZATION()
 //        {// throws Exception
 //            runIntegrationTest(StreamsConfigPropertyNames.NoOptimization, FOUR_REPARTITION_TOPICS);

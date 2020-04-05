@@ -1,7 +1,7 @@
 ﻿
 //using Kafka.Streams.State.Interfaces;
 
-//namespace Kafka.Streams.State.Window
+//namespace Kafka.Streams.State.Windowed
 //{
 //    public class WindowToTimestampedWindowIteratorAdapter
 //    : KeyValueToTimestampedKeyValueIteratorAdapter<long>

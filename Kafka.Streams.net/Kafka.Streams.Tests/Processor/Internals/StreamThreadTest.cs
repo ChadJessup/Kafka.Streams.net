@@ -164,7 +164,7 @@
 //            ));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestPartitionAssignmentChangeForSingleGroup()
 //        {
 //            internalTopologyBuilder.AddSource(null, "source1", null, null, null, topic1);
@@ -204,7 +204,7 @@
 //            Assert.Same(StreamThread.State.PENDING_SHUTDOWN, thread.state());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestStateChangeStartClose()
 //        {// throws Exception
 //            StreamThread thread = CreateStreamThread(clientId, config, false);
@@ -268,7 +268,7 @@
 //                threadIdx);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestMetricsCreatedAtStartup()
 //        {
 //            StreamThread thread = CreateStreamThread(clientId, config, false);
@@ -340,7 +340,7 @@
 //            Assert.True(reporter.containsMbean("kafka.streams:type=stream-task-metrics,client-id=" + thread.getName() + ",task-id=all"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotCommitBeforeTheCommitInterval()
 //        {
 //            long commitInterval = 1000L;
@@ -376,7 +376,7 @@
 //            EasyMock.verify(taskManager);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRespectNumIterationsInMainLoop()
 //        {
 //            MockProcessor mockProcessor = new MockProcessor(PunctuationType.WALL_CLOCK_TIME, 10L);
@@ -468,7 +468,7 @@
 
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotCauseExceptionIfNothingCommitted()
 //        {
 //            long commitInterval = 1000L;
@@ -504,7 +504,7 @@
 //            EasyMock.verify(taskManager);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCommitAfterTheCommitInterval()
 //        {
 //            long commitInterval = 1000L;
@@ -550,7 +550,7 @@
 //            return taskManager;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInjectSharedProducerForAllTasksUsingClientSupplierOnCreateIfEosDisabled()
 //        {
 //            internalTopologyBuilder.AddSource(null, "source1", null, null, null, topic1);
@@ -590,7 +590,7 @@
 //            Assert.Same(clientSupplier.restoreConsumer, thread.restoreConsumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInjectProducerPerTaskUsingClientSupplierOnCreateIfEosEnable()
 //        {
 //            internalTopologyBuilder.AddSource(null, "source1", null, null, null, topic1);
@@ -626,7 +626,7 @@
 //            Assert.Same(clientSupplier.restoreConsumer, thread.restoreConsumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseAllTaskProducersOnCloseIfEosEnabled()
 //        {
 //            internalTopologyBuilder.AddSource(null, "source1", null, null, null, topic1);
@@ -664,7 +664,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldShutdownTaskManagerOnClose()
 //        {
 //            Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
@@ -700,7 +700,7 @@
 //            EasyMock.verify(taskManager);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldShutdownTaskManagerOnCloseWithoutStart()
 //        {
 //            Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
@@ -728,13 +728,13 @@
 //            EasyMock.verify(taskManager);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowWhenPendingShutdownInRunOnce()
 //        {
 //            MockRunOnce(true);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowWithoutPendingShutdownInRunOnce()
 //        {
 //            // A reference test to verify that without intermediate shutdown the runOnce should pass
@@ -814,7 +814,7 @@
 //        thread.runOnce();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldOnlyShutdownOnce()
 //    {
 //        Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
@@ -844,7 +844,7 @@
 //        EasyMock.verify(taskManager);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotNullPointerWhenStandbyTasksAssignedAndNoStateStoresForTopology()
 //    {
 //        internalTopologyBuilder.AddSource(null, "name", null, null, null, "topic");
@@ -866,7 +866,7 @@
 //        thread.rebalanceListener.onPartitionsAssigned(Collections.emptyList());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerWasFencedWhileProcessing()
 //    {// throws Exception
 //        internalTopologyBuilder.AddSource(null, "source", null, null, null, topic1);
@@ -905,18 +905,18 @@
 //        consumer.assign(new HashSet<>(assignedPartitions));
 
 //        consumer.addRecord(new ConsumeResult<>(topic1, 1, 0, System.Array.Empty<byte>(), System.Array.Empty<byte>()));
-//        mockTime.sleep(config.getLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1);
+//        mockTime.sleep(config.GetLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1);
 //        thread.runOnce();
 //        Assert.Equal(producer.history().Count, (1));
 
 //        Assert.False(producer.transactionCommitted());
-//        mockTime.sleep(config.getLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1L);
+//        mockTime.sleep(config.GetLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1L);
 //        TestUtils.WaitForCondition(
 //            () => producer.commitCount() == 1,
 //            "StreamsThread did not commit transaction.");
 
 //        producer.fenceProducer();
-//        mockTime.sleep(config.getLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1L);
+//        mockTime.sleep(config.GetLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1L);
 //        consumer.addRecord(new ConsumeResult<>(topic1, 1, 1, System.Array.Empty<byte>(), System.Array.Empty<byte>()));
 //        try
 //        {
@@ -931,7 +931,7 @@
 //        Assert.Equal(producer.commitCount(), (1L));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerGotFencedInCommitTransactionWhenSuspendingTaks()
 //    {
 //        StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
@@ -968,7 +968,7 @@
 //        Assert.True(thread.tasks().isEmpty());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerGotFencedInCloseTransactionWhenSuspendingTasks()
 //    {
 //        StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
@@ -1030,7 +1030,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnActiveTaskMetadataWhileRunningState()
 //    {
 //        internalTopologyBuilder.AddSource(null, "source", null, null, null, topic1);
@@ -1062,7 +1062,7 @@
 //        Assert.True(threadMetadata.standbyTasks().isEmpty());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnStandbyTaskMetadataWhileRunningState()
 //    {
 //        internalStreamsBuilder.Stream(Collections.singleton(topic1), consumed)
@@ -1108,7 +1108,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldUpdateStandbyTask()
 //    {// throws Exception
 //        string storeName1 = "count-one";
@@ -1191,7 +1191,7 @@
 //        Assert.Equal(0, thread.standbyRecords().Count);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCreateStandbyTask()
 //    {
 //        setupInternalTopologyWithoutState();
@@ -1202,7 +1202,7 @@
 //        Assert.Equal(standbyTask, not(nullValue()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCreateStandbyTaskWithoutStateStores()
 //    {
 //        setupInternalTopologyWithoutState();
@@ -1212,7 +1212,7 @@
 //        Assert.Equal(standbyTask, nullValue());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCreateStandbyTaskIfStateStoresHaveLoggingDisabled()
 //    {
 //        setupInternalTopologyWithoutState();
@@ -1251,7 +1251,7 @@
 //            Collections.emptySet());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPunctuateActiveTask()
 //    {
 //        List<long> punctuatedStreamTime = new ArrayList<>();
@@ -1330,7 +1330,7 @@
 //        Assert.Equal(2, punctuatedWallClockTime.Count);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldAlwaysUpdateTasksMetadataAfterChangingState()
 //    {
 //        StreamThread thread = createStreamThread(clientId, config, false);
@@ -1345,7 +1345,7 @@
 //        Assert.Equal(StreamThread.State.RUNNING.name(), metadata.threadState());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldAlwaysReturnEmptyTasksMetadataWhileRebalancingStateAndTasksNotRunning()
 //    {
 //        internalStreamsBuilder.Stream(Collections.singleton(topic1), consumed)
@@ -1396,7 +1396,7 @@
 //        assertThreadMetadataHasEmptyTasksWithState(thread.threadMetadata(), StreamThread.State.PARTITIONS_ASSIGNED);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecoverFromInvalidOffsetExceptionOnRestoreAndFinishRestore()
 //    {// throws Exception
 //        internalStreamsBuilder.Stream(Collections.singleton("topic"), consumed)
@@ -1507,7 +1507,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecordSkippedMetricForDeserializationException()
 //    {
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
@@ -1580,7 +1580,7 @@
 //        Assert.True(strings.Contains("task [0_1] Skipping record due to deserialization error. topic=[topic1] partition=[1] offset=[1]"));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReportSkippedRecordsForInvalidTimestamps()
 //    {
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
@@ -1683,7 +1683,7 @@
 //        Assert.True(metadata.standbyTasks().isEmpty());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    // TODO: Need to add a test case covering EOS when we Create a mock taskManager class
 //    public void ProducerMetricsVerificationWithoutEOS()
 //    {
@@ -1718,7 +1718,7 @@
 //        Assert.Equal(testMetricName, producerMetrics.Get(testMetricName).metricName());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void AdminClientMetricsVerification()
 //    {
 //        Node broker1 = new Node(0, "dummyHost-1", 1234);

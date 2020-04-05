@@ -30,7 +30,7 @@
 //                new PartitionInfo("second", 1, null, null, null));
 //        }
 
-//        [Xunit.Fact]// (expected = IllegalStateException)
+//        [Fact]// (expected = IllegalStateException)
 //        public void ShouldThrowTopologyBuilderExceptionIfNoPartitionsFoundForCoPartitionedTopic()
 //        {
 //            validator.validate(Collections.singleton("topic"),
@@ -38,7 +38,7 @@
 //                               cluster);
 //        }
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void ShouldThrowTopologyBuilderExceptionIfPartitionCountsForCoPartitionedTopicsDontMatch()
 //        {
 //            partitions.remove(new TopicPartition("second", 0));
@@ -48,7 +48,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEnforceCopartitioningOnRepartitionTopics()
 //        {
 //            InternalTopicConfig config = CreateTopicConfig("repartitioned", 10);
@@ -61,7 +61,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetNumPartitionsToMaximumPartitionsWhenAllTopicsAreRepartitionTopics()
 //        {
 //            InternalTopicConfig one = CreateTopicConfig("one", 1);

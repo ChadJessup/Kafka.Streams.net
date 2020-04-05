@@ -75,7 +75,7 @@
 //                                                     stateRestoreListener);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowStreamsExceptionOnStartupIfThereIsAStreamsException()
 //    {
 //        // should throw as the MockConsumer hasn't been configured and there are no
@@ -93,7 +93,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowStreamsExceptionOnStartupIfExceptionOccurred()
 //    {
 //        MockConsumer<byte[], byte[]> mockConsumer = new MockConsumer(OffsetResetStrategy.EARLIEST)
@@ -125,7 +125,7 @@
 //        Assert.False(globalStreamThread.stillRunning());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //public void ShouldBeRunningAfterSuccessfulStart()
 //{
 //    initializeConsumer();
@@ -143,7 +143,7 @@
 //    Assert.Equal(GlobalStreamThread.State.DEAD, globalStreamThread.state());
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldCloseStateStoresOnClose()
 //{// throws Exception
 //    initializeConsumer();
@@ -156,7 +156,7 @@
 //}
 
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldTransitionToDeadOnClose()
 //{// throws Exception
 //    initializeConsumer();
@@ -168,7 +168,7 @@
 //}
 
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldStayDeadAfterTwoCloses()
 //{// throws Exception
 //    initializeConsumer();
@@ -181,7 +181,7 @@
 //}
 
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldTransitionToRunningOnStart()
 //{// throws Exception
 //    initializeConsumer();
@@ -195,7 +195,7 @@
 //    globalStreamThread.shutdown();
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldDieOnInvalidOffsetException()
 //{// throws Exception
 //    initializeConsumer();

@@ -63,7 +63,7 @@
 //            LogCaptureAppender.setClassLoggerToDebug(AbstractRocksDBSegmentedBytesStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRemoveExpired()
 //        {
 //            sessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);

@@ -8,7 +8,7 @@ using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tasks;
 using System;
 using System.Collections.Generic;
@@ -23,6 +23,7 @@ namespace Kafka.Streams.Processors.Internals
     }
 
     public class ProcessorContext<K, V> : AbstractProcessorContext<K, V>, ISupplier
+        where V : class
     {
         private readonly StreamTask task;
         private readonly IRecordCollector collector;
@@ -43,7 +44,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public ProcessorStateManager GetStateMgr()
         {
-            return (ProcessorStateManager)stateManager;
+            return (ProcessorStateManager)StateManager;
         }
 
         public IRecordCollector RecordCollector()
@@ -61,7 +62,7 @@ namespace Kafka.Streams.Processors.Internals
                 throw new StreamsException("Accessing from an unknown node");
             }
 
-            IStateStore? global = stateManager.GetGlobalStore(name);
+            IStateStore? global = StateManager.GetGlobalStore(name);
             if (global != null)
             {
                 if (global is ITimestampedKeyValueStore<K, V>)
@@ -88,7 +89,7 @@ namespace Kafka.Streams.Processors.Internals
                 return global;
             }
 
-            if (!GetCurrentNode().stateStores.Contains(name))
+            if (!GetCurrentNode().StateStores.Contains(name))
             {
                 throw new StreamsException("IProcessor " + GetCurrentNode().Name + " has no access to IStateStore " + name +
                     " as the store is not connected to the processor. If you.Add stores manually via '.AddStateStore()' " +
@@ -99,7 +100,7 @@ namespace Kafka.Streams.Processors.Internals
                     "please file a bug report at https://issues.apache.org/jira/projects/KAFKA.");
             }
 
-            IStateStore? store = stateManager.GetStore(name);
+            IStateStore? store = StateManager.GetStore(name);
 
             if (store is ITimestampedKeyValueStore<K, V>)
             {
@@ -133,25 +134,25 @@ namespace Kafka.Streams.Processors.Internals
         public override void Forward<K1, V1>(K1 key, V1 value, To to)
         {
             var previousNode = GetCurrentNode();
-            ProcessorRecordContext previousContext = recordContext;
+            ProcessorRecordContext previousContext = RecordContext;
 
             try
             {
                 toInternal.Update(to);
                 if (toInternal.HasTimestamp())
                 {
-                    recordContext = new ProcessorRecordContext(
+                    RecordContext = new ProcessorRecordContext(
                         toInternal.Timestamp,
-                        recordContext.offset,
-                        recordContext.partition,
-                        recordContext.Topic,
-                        recordContext.headers);
+                        RecordContext.offset,
+                        RecordContext.partition,
+                        RecordContext.Topic,
+                        RecordContext.headers);
                 }
 
                 var sendTo = toInternal.Child();
                 if (sendTo == null)
                 {
-                    var children = new List<IProcessorNode<K, V>>(GetCurrentNode().children.Select(c => (IProcessorNode<K, V>)c));
+                    var children = new List<IProcessorNode<K, V>>(GetCurrentNode().Children.Select(c => (IProcessorNode<K, V>)c));
                     foreach (var child in children)
                     {
                         //forward(child, key, value);
@@ -171,7 +172,7 @@ namespace Kafka.Streams.Processors.Internals
             }
             finally
             {
-                recordContext = previousContext;
+                RecordContext = previousContext;
                 SetCurrentNode(previousNode);
             }
         }
@@ -181,7 +182,7 @@ namespace Kafka.Streams.Processors.Internals
             task.RequestCommit();
         }
 
-        public ICancellable Schedule(
+        public override ICancellable Schedule(
             TimeSpan interval,
             PunctuationType type,
             IPunctuator callback)
@@ -192,7 +193,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public void SetCurrentNode(IProcessorNode<K, V> currentNode)
         {
-            this.currentNode = currentNode;
+            this.CurrentNode = currentNode;
         }
     }
 }

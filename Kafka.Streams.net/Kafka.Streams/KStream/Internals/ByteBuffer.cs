@@ -69,5 +69,15 @@ namespace Kafka.Streams.KStream.Internals
         {
             throw new NotImplementedException();
         }
+
+        internal long GetLong(int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal int GetInt(int v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

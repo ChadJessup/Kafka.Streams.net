@@ -27,7 +27,7 @@ namespace Kafka.Streams.State.RocksDbState
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error restoring batch to store " + rocksDBStore.name, e);
+                throw new ProcessorStateException("Error restoring batch to store " + rocksDBStore.Name, e);
             }
         }
 

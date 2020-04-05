@@ -26,7 +26,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         public abstract IStateStore GetWrappedStateStore();
-        public abstract string name { get; }
+        public abstract string Name { get; }
         public abstract void Close();
         public abstract void Flush();
         public abstract void Init(IProcessorContext context, IStateStore root);
@@ -66,7 +66,7 @@ namespace Kafka.Streams.State.Internals
             return false;
         }
 
-        public override string name => wrapped.name;
+        public override string Name => wrapped.Name;
 
         public override IStateStore GetWrappedStateStore()
             => this.wrapped;
@@ -85,7 +85,7 @@ namespace Kafka.Streams.State.Internals
         {
             if (!wrapped.IsOpen())
             {
-                throw new InvalidStateStoreException("Store " + wrapped.name + " is currently closed.");
+                throw new InvalidStateStoreException("Store " + wrapped.Name + " is currently closed.");
             }
         }
 

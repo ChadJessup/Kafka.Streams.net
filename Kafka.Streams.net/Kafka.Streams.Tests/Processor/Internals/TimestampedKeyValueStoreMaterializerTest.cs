@@ -55,7 +55,7 @@
 //        (type = MockType.NICE)
 //    private InternalNameProvider nameProvider;
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateBuilderThatBuildsMeteredStoreWithCachingAndLoggingEnabled()
 //        {
 //            MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized =
@@ -71,7 +71,7 @@
 //            Assert.Equal(logging, instanceOf(ChangeLoggingTimestampedKeyValueBytesStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateBuilderThatBuildsStoreWithCachingDisabled()
 //        {
 //            MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
@@ -84,7 +84,7 @@
 //            Assert.Equal(logging, instanceOf(ChangeLoggingKeyValueBytesStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateBuilderThatBuildsStoreWithLoggingDisabled()
 //        {
 //            MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
@@ -98,7 +98,7 @@
 //            Assert.Equal(caching.wrapped(), not(instanceOf(ChangeLoggingKeyValueBytesStore)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateBuilderThatBuildsStoreWithCachingAndLoggingDisabled()
 //        {
 //            MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
@@ -112,7 +112,7 @@
 //            Assert.Equal(wrapped, not(instanceOf(ChangeLoggingKeyValueBytesStore)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateKeyValueStoreWithTheProvidedInnerStore()
 //        {
 //            IKeyValueBytesStoreSupplier supplier = EasyMock.createNiceMock(IKeyValueBytesStoreSupplier);

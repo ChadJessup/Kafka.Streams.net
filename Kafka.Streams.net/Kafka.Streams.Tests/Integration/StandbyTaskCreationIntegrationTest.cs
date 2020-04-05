@@ -87,7 +87,7 @@
 //            return streamsConfiguration;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotCreateAnyStandByTasksForStateStoreWithLoggingDisabled()
 //        {// throws Exception
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -127,7 +127,7 @@
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCreateStandByTasksForMaterializedAndOptimizedSourceTables()
 //    {// throws Exception
 //        StreamsConfig streamsConfiguration1 = streamsConfiguration();

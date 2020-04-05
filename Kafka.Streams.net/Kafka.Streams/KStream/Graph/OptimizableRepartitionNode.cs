@@ -35,10 +35,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
         public override ISerializer<V>? GetValueSerializer()
-            => valueSerde?.Serializer;
+            => ValueSerde?.Serializer;
 
         public override IDeserializer<V>? GetValueDeserializer()
-            => valueSerde?.Deserializer;
+            => ValueSerde?.Deserializer;
 
         public override string ToString()
             => $"OptimizableRepartitionNode{{{base.ToString()}}}";
@@ -50,36 +50,31 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 throw new System.ArgumentNullException(nameof(topologyBuilder));
             }
 
-            ISerializer<K>? keySerializer = keySerde != null
-                ? keySerde.Serializer
-                : null;
+            ISerializer<K>? keySerializer = KeySerde?.Serializer;
+            IDeserializer<K>? keyDeserializer = KeySerde?.Deserializer;
 
-            IDeserializer<K>? keyDeserializer = keySerde != null
-                ? keySerde.Deserializer
-                : null;
-
-            topologyBuilder.AddInternalTopic(repartitionTopic);
+            topologyBuilder.AddInternalTopic(RepartitionTopic);
 
             topologyBuilder.AddProcessor(
-                processorParameters.ProcessorName,
-                processorParameters.ProcessorSupplier,
+                ProcessorParameters.ProcessorName,
+                ProcessorParameters.ProcessorSupplier,
                 ParentNodeNames());
 
             topologyBuilder.AddSink(
-                sinkName,
-                repartitionTopic,
+                SinkName,
+                RepartitionTopic,
                 keySerializer,
                 GetValueSerializer(),
                 null,
-                new[] { processorParameters.ProcessorName });
+                new[] { ProcessorParameters.ProcessorName });
 
             topologyBuilder.AddSource(
                 null,
-                sourceName,
+                SourceName,
                 new FailOnInvalidTimestamp(logger: null),
                 keyDeserializer,
                 GetValueDeserializer(),
-                new[] { repartitionTopic });
+                new[] { RepartitionTopic });
         }
     }
 }

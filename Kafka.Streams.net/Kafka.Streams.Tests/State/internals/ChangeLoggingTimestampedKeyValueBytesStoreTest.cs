@@ -93,14 +93,14 @@
 //        store.close();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWriteKeyValueBytesToInnerStoreOnPut()
 //    {
 //        store.put(hi, rawThere);
 //        Assert.Equal(root.Get(hi), (rawThere));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogChangeOnPut()
 //    {
 //        store.put(hi, rawThere);
@@ -109,7 +109,7 @@
 //        Assert.Equal(logged.Timestamp, (there.Timestamp));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWriteAllKeyValueToInnerStoreOnPutAll()
 //    {
 //        store.putAll(Array.asList(KeyValuePair.Create(hi, rawThere),
@@ -118,7 +118,7 @@
 //        Assert.Equal(root.Get(hello), (rawWorld));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogChangesOnPutAll()
 //    {
 //        store.putAll(Array.asList(KeyValuePair.Create(hi, rawThere),
@@ -131,7 +131,7 @@
 //        Assert.Equal(logged2.Timestamp, (world.Timestamp));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPropagateDelete()
 //    {
 //        store.put(hi, rawThere);
@@ -140,14 +140,14 @@
 //        Assert.Equal(root.Get(hi), nullValue());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnOldValueOnDelete()
 //    {
 //        store.put(hi, rawThere);
 //        Assert.Equal(store.delete(hi), (rawThere));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogKeyNullOnDelete()
 //    {
 //        store.put(hi, rawThere);
@@ -156,14 +156,14 @@
 //        Assert.Equal(sent.Get(hi), nullValue());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWriteToInnerOnPutIfAbsentNoPreviousValue()
 //    {
 //        store.putIfAbsent(hi, rawThere);
 //        Assert.Equal(root.Get(hi), (rawThere));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists()
 //    {
 //        store.put(hi, rawThere);
@@ -171,7 +171,7 @@
 //        Assert.Equal(root.Get(hi), (rawThere));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWriteToChangelogOnPutIfAbsentWhenNoPreviousValue()
 //    {
 //        store.putIfAbsent(hi, rawThere);
@@ -180,7 +180,7 @@
 //        Assert.Equal(logged.Timestamp, (there.Timestamp));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists()
 //    {
 //        store.put(hi, rawThere);
@@ -190,27 +190,27 @@
 //        Assert.Equal(logged.Timestamp, (there.Timestamp));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnCurrentValueOnPutIfAbsent()
 //    {
 //        store.put(hi, rawThere);
 //        Assert.Equal(store.putIfAbsent(hi, rawWorld), (rawThere));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnNullOnPutIfAbsentWhenNoPreviousValue()
 //    {
 //        Assert.Equal(store.putIfAbsent(hi, rawThere), (nullValue()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnValueOnGetWhenExists()
 //    {
 //        store.put(hello, rawWorld);
 //        Assert.Equal(store.Get(hello), (rawWorld));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnNullOnGetWhenDoesntExist()
 //    {
 //        Assert.Equal(store.Get(hello), (nullValue()));

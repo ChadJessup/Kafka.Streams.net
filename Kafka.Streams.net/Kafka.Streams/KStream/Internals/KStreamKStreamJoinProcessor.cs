@@ -1,6 +1,6 @@
 ﻿using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using System;
 using System.Collections.Generic;
 
@@ -29,7 +29,7 @@ namespace Kafka.Streams.KStream.Internals
         public override void Init(IProcessorContext context)
         {
             base.Init(context);
-            otherWindow = (IWindowStore<K, V2>)context.GetStateStore(otherWindow.name);
+            otherWindow = (IWindowStore<K, V2>)context.GetStateStore(otherWindow.Name);
         }
 
         public override void Process(K key, V1 value)
@@ -51,7 +51,7 @@ namespace Kafka.Streams.KStream.Internals
 
             var needOuterJoin = outer;
 
-            var inputRecordTimestamp = context.timestamp;
+            var inputRecordTimestamp = Context.Timestamp;
             var timeFrom = Math.Max(0L, inputRecordTimestamp - (long)joinBeforeMs.TotalMilliseconds);
             var timeTo = Math.Max(0L, inputRecordTimestamp + (long)joinAfterMs.TotalMilliseconds);
 
@@ -61,7 +61,7 @@ namespace Kafka.Streams.KStream.Internals
                 {
                     needOuterJoin = false;
                     KeyValuePair<long, V2> otherRecord = iter.Current;
-                    context.Forward(
+                    Context.Forward(
                         key,
                         joiner.Apply(value, otherRecord.Value),
                         To.All().WithTimestamp(Math.Max(inputRecordTimestamp, otherRecord.Key)));
@@ -69,7 +69,7 @@ namespace Kafka.Streams.KStream.Internals
 
                 if (needOuterJoin)
                 {
-                    context.Forward(key, joiner.Apply(value, default));
+                    Context.Forward(key, joiner.Apply(value, default));
                 }
             }
         }

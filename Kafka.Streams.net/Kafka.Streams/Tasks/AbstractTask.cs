@@ -208,7 +208,7 @@ namespace Kafka.Streams.Tasks
 
             foreach (IStateStore store in topology.StateStores)
             {
-                logger.LogTrace("Initializing store {}", store.name);
+                logger.LogTrace("Initializing store {}", store.Name);
                 processorContext.Uninitialize();
                 store.Init(processorContext, store);
             }

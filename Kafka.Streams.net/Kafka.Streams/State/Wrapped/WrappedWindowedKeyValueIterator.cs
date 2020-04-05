@@ -12,7 +12,7 @@
 
 //        WrappedWindowedKeyValueIterator(Bytes keyFrom,
 //                                        Bytes keyTo,
-//                                        IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+//                                        IEnumerator<KeyValuePair<long, ConcurrentDictionary<Bytes, byte[]>>> segmentIterator,
 //                                        ClosingCallback callback,
 //                                        bool retainDuplicates,
 //                                        long windowSize)

@@ -1,262 +1,273 @@
+using Confluent.Kafka;
+using Kafka.Common;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.Sessions;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace Kafka.Streams.State.Internals
+{
+    public class InMemorySessionStore : ISessionStore<Bytes, byte[]>
+    {
+        private static ILogger LOG = new LoggerFactory().CreateLogger<InMemorySessionStore>();
 
-//using Kafka.Common.Metrics;
-//using Kafka.Common.Utils;
-//using Kafka.Streams.KStream;
-//using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Streams.Processors.Internals.Metrics;
-//using Kafka.Streams.State.Interfaces;
-//using Microsoft.Extensions.Logging;
-//using System;
-//using System.Collections.Generic;
+        private string metricScope;
+        //private Sensor expiredRecordSensor;
+        private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class InMemorySessionStore : ISessionStore<Bytes, byte[]>
-//    {
-//        private static ILogger LOG = new LoggerFactory().CreateLogger<InMemorySessionStore>();
+        private TimeSpan retentionPeriod;
 
-//        private string metricScope;
-//        private Sensor expiredRecordSensor;
-//        private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
+        private ConcurrentDictionary<long, ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>>> endTimeMap = new ConcurrentDictionary<long, ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>>>();
+        private HashSet<InMemorySessionStoreIterator> openIterators = new HashSet<InMemorySessionStoreIterator>();
 
-//        private long retentionPeriod;
+        private volatile bool open = false;
 
-//        private ConcurrentNavigableMap<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>> endTimeMap = new ConcurrentSkipListMap<>();
-//        private HashSet<InMemorySessionStoreIterator> openIterators = new HashSet<InMemorySessionStoreIterator>();
+        public InMemorySessionStore(
+            string name,
+            TimeSpan retentionPeriod)
+        {
+            this.Name = name;
+            this.retentionPeriod = retentionPeriod;
+            //this.metricScope = metricScope;
+        }
 
-//        private volatile bool open = false;
+        public string Name { get; }
 
-//        public InMemorySessionStore(
-//            string name,
-//            long retentionPeriod,
-//            string metricScope)
-//        {
-//            this.name = name;
-//            this.retentionPeriod = retentionPeriod;
-//            this.metricScope = metricScope;
-//        }
+        public void Init(IProcessorContext context, IStateStore root)
+        {
+            //StreamsMetricsImpl metrics = ((IInternalProcessorContext)context).metrics;
+            string taskName = context.TaskId.ToString();
+            // expiredRecordSensor = metrics.storeLevelSensor(
+            //     taskName,
+            //     name,
+            //     EXPIRED_WINDOW_RECORD_DROP,
+            //     RecordingLevel.INFO
+            // );
+            //addInvocationRateAndCount(
+            //     expiredRecordSensor,
+            //     "stream-" + metricScope + "-metrics",
+            //     metrics.tagMap("task-id", taskName, metricScope + "-id", name),
+            //     EXPIRED_WINDOW_RECORD_DROP
+            // );
 
-//        public string name { get; }
+            if (root != null)
+            {
+                // context.Register(root, (key, value) => put(SessionKeySchema.from(Bytes.Wrap(key)), value));
+            }
 
-//        public override void init(IProcessorContext<K, V> context, IStateStore root)
-//        {
-//            StreamsMetricsImpl metrics = ((IInternalProcessorContext)context).metrics;
-//            string taskName = context.taskId().ToString();
-//            expiredRecordSensor = metrics.storeLevelSensor(
-//                taskName,
-//                name,
-//                EXPIRED_WINDOW_RECORD_DROP,
-//                RecordingLevel.INFO
-//            );
-//            addInvocationRateAndCount(
-//                 expiredRecordSensor,
-//                 "stream-" + metricScope + "-metrics",
-//                 metrics.tagMap("task-id", taskName, metricScope + "-id", name),
-//                 EXPIRED_WINDOW_RECORD_DROP
-//             );
+            open = true;
+        }
 
-//            if (root != null)
-//            {
-//                context.register(root, (key, value) => put(SessionKeySchema.from(Bytes.Wrap(key)), value));
-//            }
-//            open = true;
-//        }
+        public void Put(Windowed<Bytes> sessionKey, byte[] aggregate)
+        {
+            RemoveExpiredSegments();
 
-//        public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
-//        {
-//            removeExpiredSegments();
+            long windowEndTimestamp = sessionKey.window.End();
+            observedStreamTime = Math.Max(observedStreamTime, windowEndTimestamp);
 
-//            long windowEndTimestamp = sessionKey.window.end();
-//            observedStreamTime = Math.Max(observedStreamTime, windowEndTimestamp);
+            if (windowEndTimestamp <= observedStreamTime - retentionPeriod.TotalMilliseconds)
+            {
+                //expiredRecordSensor.record();
+                //LOG.LogDebug("Skipping record for expired segment.");
+            }
+            else
+            {
+                if (aggregate != null)
+                {
+                    // endTimeMap.computeIfAbsent(windowEndTimestamp, t => new ConcurrentSkipListMap<>());
+                    // ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = endTimeMap[windowEndTimestamp];
+                    // keyMap.ComputeIfAbsent(sessionKey.Key, t => new ConcurrentSkipListMap<>());
+                    // keyMap[sessionKey.Key].Add(sessionKey.window.Start(), aggregate);
+                }
+                else
+                {
+                    Remove(sessionKey);
+                }
+            }
+        }
 
-//            if (windowEndTimestamp <= observedStreamTime - retentionPeriod)
-//            {
-//                expiredRecordSensor.record();
-//                LOG.LogDebug("Skipping record for expired segment.");
-//            }
-//            else
-//            {
-//                if (aggregate != null)
-//                {
-//                    endTimeMap.computeIfAbsent(windowEndTimestamp, t => new ConcurrentSkipListMap<>());
-//                    ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[windowEndTimestamp];
-//                    keyMap.computeIfAbsent(sessionKey.key, t => new ConcurrentSkipListMap<>());
-//                    keyMap[sessionKey.key].Add(sessionKey.window.start(), aggregate);
-//                }
-//                else
-//                {
-//                    Remove(sessionKey);
-//                }
-//            }
-//        }
+        public void Remove(Windowed<Bytes> sessionKey)
+        {
+            ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = endTimeMap[sessionKey.window.End()];
+            if (keyMap == null)
+            {
+                return;
+            }
 
-//        public void Remove(Windowed<Bytes> sessionKey)
-//        {
-//            ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[sessionKey.window.end()];
-//            if (keyMap == null)
-//            {
-//                return;
-//            }
+            ConcurrentDictionary<long, byte[]> startTimeMap = keyMap[sessionKey.Key];
+            if (startTimeMap == null)
+            {
+                return;
+            }
 
-//            ConcurrentNavigableMap<long, byte[]> startTimeMap = keyMap[sessionKey.key];
-//            if (startTimeMap == null)
-//            {
-//                return;
-//            }
+            startTimeMap.Remove(sessionKey.window.Start(), out var _);
 
-//            startTimeMap.Remove(sessionKey.window.start());
+            if (!startTimeMap.Any())
+            {
+                keyMap.Remove(sessionKey.Key, out var _);
+                if (!keyMap.Any())
+                {
+                    endTimeMap.Remove(sessionKey.window.End(), out var _);
+                }
+            }
+        }
 
-//            if (startTimeMap.isEmpty())
-//            {
-//                keyMap.Remove(sessionKey.key);
-//                if (keyMap.isEmpty())
-//                {
-//                    endTimeMap.Remove(sessionKey.window.end());
-//                }
-//            }
-//        }
+        public byte[]? FetchSession(Bytes key, long startTime, long endTime)
+        {
+            RemoveExpiredSegments();
 
-//        public override byte[] fetchSession(Bytes key, long startTime, long endTime)
-//        {
-//            removeExpiredSegments();
+            key = key ?? throw new ArgumentNullException(nameof(key));
 
-//            key = key ?? throw new ArgumentNullException(nameof(key));
+            // Only need to search if the record hasn't expired yet
+            if (endTime > observedStreamTime - retentionPeriod.TotalMilliseconds)
+            {
+                ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = endTimeMap[endTime];
+                if (keyMap != null)
+                {
+                    ConcurrentDictionary<long, byte[]> startTimeMap = keyMap[key];
+                    if (startTimeMap != null)
+                    {
+                        return startTimeMap[startTime];
+                    }
+                }
+            }
 
-//            // Only need to search if the record hasn't expired yet
-//            if (endTime > observedStreamTime - retentionPeriod)
-//            {
-//                ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[endTime];
-//                if (keyMap != null)
-//                {
-//                    ConcurrentNavigableMap<long, byte[]> startTimeMap = keyMap[key];
-//                    if (startTimeMap != null)
-//                    {
-//                        return startTimeMap[startTime];
-//                    }
-//                }
-//            }
-//            return null;
-//        }
+            return null;
+        }
 
-//        [System.Obsolete]
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
-//                                                                      long earliestSessionEndTime,
-//                                                                      long latestSessionStartTime)
-//        {
-//            key = key ?? throw new ArgumentNullException(nameof(key));
+        [Obsolete]
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(
+            Bytes key,
+            long earliestSessionEndTime,
+            long latestSessionStartTime)
+        {
+            key = key ?? throw new ArgumentNullException(nameof(key));
 
-//            removeExpiredSegments();
+            RemoveExpiredSegments();
 
-//            return registerNewIterator(key,
-//                                       key,
-//                                       latestSessionStartTime,
-//                                       endTimeMap.tailMap(earliestSessionEndTime, true).iterator());
-//        }
+            return RegisterNewIterator(
+                key,
+                key,
+                latestSessionStartTime,
+                endTimeMap.GetEnumerator());//.tailMap(earliestSessionEndTime, true)
+        }
 
-//        [System.Obsolete]
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
-//                                                                      Bytes keyTo,
-//                                                                      long earliestSessionEndTime,
-//                                                                      long latestSessionStartTime)
-//        {
-//            keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
-//            keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
+        [Obsolete]
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(
+            Bytes keyFrom,
+            Bytes keyTo,
+            long earliestSessionEndTime,
+            long latestSessionStartTime)
+        {
+            keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
+            keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
 
-//            removeExpiredSegments();
+            RemoveExpiredSegments();
 
-//            if (keyFrom.CompareTo(keyTo) > 0)
-//            {
-//                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
-//                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
-//                    "Note that the built-in numerical serdes do not follow this for negative numbers");
-//                return KeyValueIterators.emptyIterator();
-//            }
+            if (keyFrom.CompareTo(keyTo) > 0)
+            {
+                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
+                    "Note that the built-in numerical serdes do not follow this for negative numbers");
+                return null;// KeyValueIterators.EMPTY_ITERATOR;
+            }
 
-//            return registerNewIterator(keyFrom,
-//                                       keyTo,
-//                                       latestSessionStartTime,
-//                                       endTimeMap.tailMap(earliestSessionEndTime, true).iterator());
-//        }
+            return RegisterNewIterator(
+                keyFrom,
+                keyTo,
+                latestSessionStartTime,
+                endTimeMap.GetEnumerator()); //.tailMap(earliestSessionEndTime, true)
+        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
-//        {
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes key)
+        {
+            key = key ?? throw new ArgumentNullException(nameof(key));
 
-//            key = key ?? throw new ArgumentNullException(nameof(key));
+            RemoveExpiredSegments();
 
-//            removeExpiredSegments();
+            return RegisterNewIterator(
+                key,
+                key,
+                long.MaxValue,
+                endTimeMap.GetEnumerator());
+        }
 
-//            return registerNewIterator(key, key, long.MaxValue, endTimeMap.iterator());
-//        }
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
+        {
+            from = from ?? throw new ArgumentNullException(nameof(from));
+            to = to ?? throw new ArgumentNullException(nameof(to));
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
-//        {
+            RemoveExpiredSegments();
 
-//            from = from ?? throw new ArgumentNullException(nameof(from));
-//            to = to ?? throw new ArgumentNullException(nameof(to));
+            return RegisterNewIterator(
+                from,
+                to,
+                long.MaxValue,
+                endTimeMap.GetEnumerator());
+        }
 
-//            removeExpiredSegments();
+        public bool Persistent()
+        {
+            return false;
+        }
 
+        public bool IsOpen()
+        {
+            return open;
+        }
 
-//            return registerNewIterator(from, to, long.MaxValue, endTimeMap.iterator());
-//        }
+        public void Flush()
+        {
+            // do-nothing since it is in-memory
+        }
 
-//        public bool persistent()
-//        {
-//            return false;
-//        }
+        public void Close()
+        {
+            if (openIterators.Count != 0)
+            {
+                LOG.LogWarning($"Closing {openIterators.Count} open iterators for store {Name}");
+                foreach (var it in openIterators)
+                {
+                    it.Close();
+                }
+            }
 
-//        public bool isOpen()
-//        {
-//            return open;
-//        }
+            endTimeMap.Clear();
+            openIterators.Clear();
+            open = false;
+        }
 
-//        public void flush()
-//        {
-//            // do-nothing since it is in-memory
-//        }
+        private void RemoveExpiredSegments()
+        {
+            long minLiveTime = Math.Max(0L, observedStreamTime - (long)retentionPeriod.TotalMilliseconds + 1);
 
-//        public void close()
-//        {
-//            if (openIterators.Count != 0)
-//            {
-//                LOG.LogWarning("Closing {} open iterators for store {}", openIterators.size(), name);
-//                foreach (InMemorySessionStoreIterator it in openIterators)
-//                {
-//                    it.close();
-//                }
-//            }
+            foreach (var it in openIterators)
+            {
+                minLiveTime = Math.Min(minLiveTime, it.MinTime());
+            }
 
-//            endTimeMap.clear();
-//            openIterators.clear();
-//            open = false;
-//        }
+            //endTimeMap.headMap(minLiveTime, false).clear();
+        }
 
-//        private void removeExpiredSegments()
-//        {
-//            long minLiveTime = Math.Max(0L, observedStreamTime - retentionPeriod + 1);
+        private InMemorySessionStoreIterator RegisterNewIterator(
+            Bytes keyFrom,
+            Bytes keyTo,
+            long latestSessionStartTime,
+            IEnumerator<KeyValuePair<long, ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>>>> endTimeIterator)
+        {
+            InMemorySessionStoreIterator iterator = null;// new InMemorySessionStoreIterator(keyFrom, keyTo, latestSessionStartTime, endTimeIterator, it => openIterators.Remove(it));
+            openIterators.Add(iterator);
+            return iterator;
+        }
 
-//            foreach (InMemorySessionStoreIterator it in openIterators)
-//            {
-//                minLiveTime = Math.Min(minLiveTime, it.minTime());
-//            }
-
-//            endTimeMap.headMap(minLiveTime, false).clear();
-//        }
-
-//        private InMemorySessionStoreIterator registerNewIterator(Bytes keyFrom,
-//                                                                 Bytes keyTo,
-//                                                                 long latestSessionStartTime,
-//                                                                 IEnumerator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator)
-//        {
-//            InMemorySessionStoreIterator iterator = new InMemorySessionStoreIterator(keyFrom, keyTo, latestSessionStartTime, endTimeIterator, it => openIterators.Remove(it));
-//            openIterators.Add(iterator);
-//            return iterator;
-//        }
-
-//        public interface ClosingCallback
-//        {
-//            void deregisterIterator(InMemorySessionStoreIterator iterator);
-//        }
-//    }
-//}
+        public bool IsPresent()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

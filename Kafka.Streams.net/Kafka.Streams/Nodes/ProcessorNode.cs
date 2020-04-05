@@ -13,8 +13,8 @@ namespace Kafka.Streams.Nodes
     public interface IProcessorNode
     {
         string Name { get; }
-        HashSet<string> stateStores { get; }
-        List<IProcessorNode> children { get; }
+        HashSet<string> StateStores { get; }
+        List<IProcessorNode> Children { get; }
         void AddChild(IProcessorNode child);
         IProcessorNode GetChild(string childName);
         string ToString(string indent);
@@ -32,10 +32,10 @@ namespace Kafka.Streams.Nodes
             IKeyValueProcessor? processor)
         {
             this.Name = name;
-            this.stateStores = stateStores ?? new HashSet<string>();
-            this.clock = clock;
-            this.children = new List<IProcessorNode>();
-            this.childByName = new Dictionary<string, IProcessorNode>();
+            this.StateStores = stateStores ?? new HashSet<string>();
+            this.Clock = clock;
+            this.Children = new List<IProcessorNode>();
+            this.ChildByName = new Dictionary<string, IProcessorNode>();
             this.processor = processor;
         }
 
@@ -60,13 +60,13 @@ namespace Kafka.Streams.Nodes
         }
 
         public string Name { get; }
-        protected IClock clock { get; }
+        protected IClock Clock { get; }
 
-        public HashSet<string> stateStores { get; protected set; } = new HashSet<string>();
+        public HashSet<string> StateStores { get; protected set; } = new HashSet<string>();
 
         // TODO: 'children' can be removed when #forward() via index is removed
-        public List<IProcessorNode> children { get; }
-        protected Dictionary<string, IProcessorNode> childByName { get; }
+        public List<IProcessorNode> Children { get; }
+        protected Dictionary<string, IProcessorNode> ChildByName { get; }
         public ITimestampExtractor? TimestampExtractor { get; }
 
         private readonly IKeyValueProcessor? processor;
@@ -91,11 +91,11 @@ namespace Kafka.Streams.Nodes
         {
             var sb = new StringBuilder($"{indent}{Name}:\n");
 
-            if (this.stateStores.Any())
+            if (this.StateStores.Any())
             {
                 sb.Append(indent)
                   .Append("\tstates:\t\t[")
-                  .Append(string.Join(",", this.stateStores))
+                  .Append(string.Join(",", this.StateStores))
                   .Append("]\n");
             }
 
@@ -104,13 +104,13 @@ namespace Kafka.Streams.Nodes
 
         public void AddChild(IProcessorNode child)
         {
-            children.Add(child);
-            childByName.Add(child.Name, child);
+            Children.Add(child);
+            ChildByName.Add(child.Name, child);
         }
 
-        public IProcessorNode GetChild(string childName)
+        public virtual IProcessorNode GetChild(string childName)
         {
-            return this.childByName[childName];
+            return this.ChildByName[childName];
         }
     }
 
@@ -135,7 +135,7 @@ namespace Kafka.Streams.Nodes
 
         public IProcessorNode<K, V> GetChild(string childName)
         {
-            return (IProcessorNode<K, V>)childByName[childName];
+            return (IProcessorNode<K, V>)ChildByName[childName];
         }
 
         public void AddChild(IProcessorNode<K, V> child)

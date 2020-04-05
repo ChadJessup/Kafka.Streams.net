@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.RocksDbState
         private const int MAX_WRITE_BUFFERS = 3;
         private const string DB_FILE_DIR = "rocksdb";
 
-        public string name { get; }
+        public string Name { get; }
         private readonly string parentDir;
         protected HashSet<IKeyValueIterator<Bytes, byte[]>> OpenIterators { get; } = new HashSet<IKeyValueIterator<Bytes, byte[]>>();
 
@@ -70,7 +70,7 @@ namespace Kafka.Streams.State.RocksDbState
 
         public RocksDbStore(string name, string parentDir)
         {
-            this.name = name;
+            this.Name = name;
             this.parentDir = parentDir;
         }
 
@@ -116,7 +116,7 @@ namespace Kafka.Streams.State.RocksDbState
             if (configSetterClass != null)
             {
                 configSetter = (IRocksDbConfigSetter)Activator.CreateInstance(configSetterClass.GetType());
-                configSetter.SetConfig(name, dbOptions, configs);
+                configSetter.SetConfig(Name, dbOptions, configs);
             }
 
             if (prepareForBulkload)
@@ -124,7 +124,7 @@ namespace Kafka.Streams.State.RocksDbState
                 //userSpecifiedOptions.prepareForBulkLoad();
             }
 
-            DbDir = new DirectoryInfo(Path.Combine(Path.Combine(context.stateDir.FullName, parentDir), name));
+            DbDir = new DirectoryInfo(Path.Combine(Path.Combine(context.StateDir.FullName, parentDir), Name));
 
             try
             {
@@ -155,7 +155,7 @@ namespace Kafka.Streams.State.RocksDbState
                     columnFamilyDescriptors);
 
                 DbAccessor = new SingleColumnFamilyAccessor(
-                    name,
+                    Name,
                     Db,
                     WOptions,
                     OpenIterators,
@@ -163,7 +163,7 @@ namespace Kafka.Streams.State.RocksDbState
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error opening store " + name + " at location " + DbDir.ToString(), e);
+                throw new ProcessorStateException("Error opening store " + Name + " at location " + DbDir.ToString(), e);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Kafka.Streams.State.RocksDbState
         {
             if (!open)
             {
-                throw new InvalidStateStoreException("Store " + name + " is currently closed");
+                throw new InvalidStateStoreException("Store " + Name + " is currently closed");
             }
         }
 
@@ -233,7 +233,7 @@ namespace Kafka.Streams.State.RocksDbState
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error while batch writing to store " + name, e);
+                throw new ProcessorStateException("Error while batch writing to store " + Name, e);
             }
         }
 
@@ -248,7 +248,7 @@ namespace Kafka.Streams.State.RocksDbState
             catch (RocksDbException e)
             {
                 // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                throw new ProcessorStateException("Error while getting value for key from store " + name, e);
+                throw new ProcessorStateException("Error while getting value for key from store " + Name, e);
             }
         }
 
@@ -265,7 +265,7 @@ namespace Kafka.Streams.State.RocksDbState
             catch (RocksDbException e)
             {
                 // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                throw new ProcessorStateException("Error while getting value for key from store " + name, e);
+                throw new ProcessorStateException("Error while getting value for key from store " + Name, e);
             }
 
             Put(key, null);
@@ -327,7 +327,7 @@ namespace Kafka.Streams.State.RocksDbState
                 }
                 catch (RocksDbException e)
                 {
-                    throw new ProcessorStateException("Error fetching property from store " + name, e);
+                    throw new ProcessorStateException("Error fetching property from store " + Name, e);
                 }
                 
                 if (IsOverflowing(numEntries))
@@ -359,7 +359,7 @@ namespace Kafka.Streams.State.RocksDbState
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error while executing flush from store " + name, e);
+                throw new ProcessorStateException("Error while executing flush from store " + Name, e);
             }
         }
 
@@ -408,7 +408,7 @@ namespace Kafka.Streams.State.RocksDbState
 
             if (configSetter != null)
             {
-                configSetter.Close(name, dbOptions);
+                configSetter.Close(Name, dbOptions);
                 configSetter = null;
             }
 
@@ -439,7 +439,7 @@ namespace Kafka.Streams.State.RocksDbState
 
             if (iterators.Count != 0)
             {
-                log.LogWarning("Closing {} open iterators for store {}", iterators.Count, name);
+                log.LogWarning("Closing {} open iterators for store {}", iterators.Count, Name);
 
                 foreach (IKeyValueIterator<Bytes, byte[]> iterator in iterators)
                 {

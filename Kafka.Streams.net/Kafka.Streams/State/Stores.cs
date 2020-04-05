@@ -4,7 +4,7 @@ using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using NodaTime;
 using System;
 
@@ -47,8 +47,7 @@ namespace Kafka.Streams.State
      * topology.AddStateStore(storeBuilder, "processorName");
      * }</pre>
      */
-
-    public class Stores
+    public static class Stores
     {
         /**
          * Create a persistent {@link KeyValueBytesStoreSupplier}.
@@ -266,6 +265,8 @@ namespace Kafka.Streams.State
                 retainDuplicates,
                 timestampedStore: true);
 
+        // TODO: Clean this up, back and forth from TimeSpan to MS isn't useful
+        // but Java kept things as MS for more things.
         private static IWindowBytesStoreSupplier PersistentWindowStore(
             string name,
             TimeSpan retentionPeriod,
@@ -334,51 +335,53 @@ namespace Kafka.Streams.State
             //    timestampedStore);
         }
 
-        ///**
-        // * Create an in-memory {@link WindowBytesStoreSupplier}.
-        // * <p>
-        // * This store supplier can be passed into a {@link #windowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)} or
-        // * {@link #timestampedWindowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
-        // *
-        // * @param name                  name of the store (cannot be {@code null})
-        // * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
-        // *                              Note that the retention period must be at least long enough to contain the
-        // *                              windowed data's entire life cycle, from window-start through window-end,
-        // *                              and for the entire grace period.
-        // * @param windowSize            size of the windows (cannot be negative)
-        // * @return an instance of {@link WindowBytesStoreSupplier}
-        // * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
-        // */
-        //public static WindowBytesStoreSupplier inMemoryWindowStore(string name,
-        //                                                           TimeSpan retentionPeriod,
-        //                                                           TimeSpan windowSize,
-        //                                                           bool retainDuplicates)
-        //{
-        //    name = name ?? throw new ArgumentNullException(nameof(name));
-
-        //        string repartitionPeriodErrorMessagePrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-        //long retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, repartitionPeriodErrorMessagePrefix);
-        //        if (retentionMs< 0L)
-        //{
-        //            throw new System.ArgumentException("retentionPeriod cannot be negative");
-        //        }
-
-        //        string windowSizeErrorMessagePrefix = prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
-        //long windowSizeMs = ApiUtils.validateMillisecondDuration(windowSize, windowSizeErrorMessagePrefix);
-        //        if (windowSizeMs< 0L)
-        //{
-        //            throw new System.ArgumentException("windowSize cannot be negative");
-        //        }
-
-        //        if (windowSizeMs > retentionMs)
-        //{
-        //            throw new System.ArgumentException("The retention period of the window store "
-        //                + name + " must be no smaller than its window size. Got size=["
-        //                + windowSize + "], retention=[" + retentionPeriod + "]"];
-        //        }
-
-        //        return new InMemoryWindowBytesStoreSupplier(name, retentionMs, windowSizeMs, retainDuplicates);
-        //    }
+        /**
+         * Create an in-memory {@link WindowBytesStoreSupplier}.
+         * <p>
+         * This store supplier can be passed into a {@link #windowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)} or
+         * {@link #timestampedWindowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
+         *
+         * @param name                  name of the store (cannot be {@code null})
+         * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
+         *                              Note that the retention period must be at least long enough to contain the
+         *                              windowed data's entire life cycle, from window-start through window-end,
+         *                              and for the entire grace period.
+         * @param windowSize            size of the windows (cannot be negative)
+         * @return an instance of {@link WindowBytesStoreSupplier}
+         * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
+         */
+        // public static IWindowBytesStoreSupplier InMemoryWindowStore(
+        //     string name,
+        //     TimeSpan retentionPeriod,
+        //     TimeSpan windowSize,
+        //     bool retainDuplicates)
+        // {
+        //     name = name ?? throw new ArgumentNullException(nameof(name));
+        // 
+        //     string repartitionPeriodErrorMessagePrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+        //     var retentionMs = ApiUtils.ValidateMillisecondDuration(retentionPeriod, repartitionPeriodErrorMessagePrefix);
+        //     if (retentionMs.TotalMilliseconds < 0L)
+        //     {
+        //         throw new System.ArgumentException("retentionPeriod cannot be negative");
+        //     }
+        // 
+        //     string windowSizeErrorMessagePrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
+        //     var windowSizeMs = ApiUtils.ValidateMillisecondDuration(windowSize, windowSizeErrorMessagePrefix);
+        // 
+        //     if (windowSizeMs.TotalMilliseconds < 0L)
+        //     {
+        //         throw new ArgumentException("windowSize cannot be negative");
+        //     }
+        // 
+        //     if (windowSizeMs > retentionMs)
+        //     {
+        //         throw new System.ArgumentException("The retention period of the window store "
+        //             + name + " must be no smaller than its window size. Got size=["
+        //             + windowSize + "], retention=[" + retentionPeriod + "]");
+        //     }
+        // 
+        //     return new InMemoryWindowBytesStoreSupplier(name, retentionMs, windowSizeMs, retainDuplicates);
+        // }
 
         /**
          * Create a persistent {@link SessionBytesStoreSupplier}.
@@ -416,14 +419,14 @@ namespace Kafka.Streams.State
          *                          and for the entire grace period.
          * @return an instance of a {@link  SessionBytesStoreSupplier}
          */
-        public static ISessionBytesStoreSupplier PersistentSessionStore(
-            string name,
-            TimeSpan retentionPeriod)
-        {
-            var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-
-            return PersistentSessionStore(name, ApiUtils.ValidateMillisecondDuration(retentionPeriod, msgPrefix));
-        }
+        // public static ISessionBytesStoreSupplier PersistentSessionStore(
+        //     string name,
+        //     TimeSpan retentionPeriod)
+        // {
+        //     var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+        // 
+        //     return PersistentSessionStore(name, ApiUtils.ValidateMillisecondDuration(retentionPeriod, msgPrefix));
+        // }
 
         /**
          * Create an in-memory {@link SessionBytesStoreSupplier}.
@@ -440,14 +443,14 @@ namespace Kafka.Streams.State
             name = name ?? throw new ArgumentNullException(nameof(name));
 
             var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-            var retentionPeriodMs = ApiUtils.ValidateMillisecondDuration(retentionPeriod, msgPrefix);
+            retentionPeriod = ApiUtils.ValidateMillisecondDuration(retentionPeriod, msgPrefix);
 
-            if (retentionPeriodMs < TimeSpan.Zero)
+            if (retentionPeriod < TimeSpan.Zero)
             {
                 throw new ArgumentException("retentionPeriod cannot be negative");
             }
 
-            return null;// new InMemorySessionBytesStoreSupplier(name, retentionPeriodMs);
+            return new InMemorySessionBytesStoreSupplier(name, retentionPeriod);
         }
 
         /**
@@ -583,6 +586,7 @@ namespace Kafka.Streams.State
             ISessionBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
+            where V : class
         {
             supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 

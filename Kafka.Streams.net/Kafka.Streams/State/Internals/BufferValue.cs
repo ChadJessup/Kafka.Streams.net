@@ -44,7 +44,7 @@
 //            byte[] priorValue = extractValue(buffer);
 
 //            byte[] oldValue;
-//            int oldValueLength = buffer.getInt();
+//            int oldValueLength = buffer.GetInt();
 //            if (oldValueLength == NULL_VALUE_SENTINEL)
 //            {
 //                oldValue = null;
@@ -66,7 +66,7 @@
 
 //        private static byte[] extractValue(ByteBuffer buffer)
 //        {
-//            int valueLength = buffer.getInt();
+//            int valueLength = buffer.GetInt();
 //            if (valueLength == NULL_VALUE_SENTINEL)
 //            {
 //                return null;

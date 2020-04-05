@@ -242,7 +242,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldHandleInitTransactionsTimeoutExceptionOnCreation()
 //    {
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
@@ -296,7 +296,7 @@
 //        LogCaptureAppender.unregister(appender);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldHandleInitTransactionsTimeoutExceptionOnResume()
 //    {
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
@@ -382,7 +382,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestProcessOrder()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -431,7 +431,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestMetrics()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -461,7 +461,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPauseResume()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -517,7 +517,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPunctuateOnceStreamTimeAfterGap()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -603,7 +603,7 @@
 //        processorStreamTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.STREAM_TIME, 20L, 142L, 155L, 160L);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRespectPunctuateCancellationStreamTime()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -644,7 +644,7 @@
 //        processorStreamTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.STREAM_TIME, 20L);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRespectPunctuateCancellationSystemTime()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -659,7 +659,7 @@
 //        processorSystemTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.WALL_CLOCK_TIME, now + 10);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRespectCommitNeeded()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -689,7 +689,7 @@
 //        Assert.False(task.commitNeeded());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRespectCommitRequested()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -700,7 +700,7 @@
 //        Assert.True(task.commitRequested());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldBeProcessableIfAllPartitionsBuffered()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -720,7 +720,7 @@
 //        Assert.True(task.isProcessable(0L));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldBeProcessableIfWaitedForTooLong()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -766,7 +766,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPunctuateSystemTimeWhenIntervalElapsed()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -787,7 +787,7 @@
 //        processorSystemTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.WALL_CLOCK_TIME, now + 10, now + 20, now + 30, now + 50);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotPunctuateSystemTimeWhenIntervalNotElapsed()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -799,7 +799,7 @@
 //        processorSystemTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.WALL_CLOCK_TIME);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPunctuateOnceSystemTimeAfterGap()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -826,7 +826,7 @@
 //        processorSystemTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.WALL_CLOCK_TIME, now + 100, now + 110, now + 122, now + 130, now + 235, now + 240);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWrapKafkaExceptionsWithStreamsExceptionAndAddContext()
 //    {
 //        task = createTaskThatThrowsException(false);
@@ -845,7 +845,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWrapKafkaExceptionsWithStreamsExceptionAndAddContextWhenPunctuatingStreamTime()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -871,7 +871,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWrapKafkaExceptionsWithStreamsExceptionAndAddContextWhenPunctuatingWallClockTimeTime()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -897,7 +897,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFlushRecordCollectorOnFlushState()
 //    {
 //        AtomicBoolean flushed = new AtomicBoolean(false);
@@ -927,7 +927,7 @@
 //        Assert.True(flushed.Get());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCheckpointOffsetsOnCommit()
 //    { //throws IOException
 //        task = createStatefulTask(createConfig(false), true);
@@ -941,7 +941,7 @@
 //        Assert.Equal(checkpoint.read(), (Collections.singletonMap(changelogPartition, offset)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCheckpointOffsetsOnCommitIfEosIsEnabled()
 //    {
 //        task = createStatefulTask(createConfig(true), true);
@@ -956,7 +956,7 @@
 //        Assert.False(checkpointFile.Exists);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowIllegalStateExceptionIfCurrentNodeIsNotNullWhenPunctuateCalled()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -974,7 +974,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCallPunctuateOnPassedInProcessorNode()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -986,7 +986,7 @@
 //        Assert.Equal(punctuatedAt, (10L));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSetProcessorNodeOnContextBackToNullAfterSuccessfulPunctuate()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -996,7 +996,7 @@
 //        Assert.Equal(((ProcessorContextImpl)task.context).currentNode(), nullValue());
 //    }
 
-//    [Xunit.Fact]// (expected = IllegalStateException)
+//    [Fact]// (expected = IllegalStateException)
 //    public void ShouldThrowIllegalStateExceptionOnScheduleIfCurrentNodeIsNull()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1011,7 +1011,7 @@
 //    });
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowExceptionOnScheduleIfCurrentNodeIsNotNull()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1027,7 +1027,7 @@
 //    });
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCloseProducerOnCleanCloseWithEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1037,7 +1037,7 @@
 //        Assert.False(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCloseProducerOnUncleanCloseWithEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1047,7 +1047,7 @@
 //        Assert.False(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCloseProducerOnErrorDuringCleanCloseWithEosDisabled()
 //    {
 //        task = createTaskThatThrowsException(false);
@@ -1065,7 +1065,7 @@
 //        Assert.False(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCloseProducerOnErrorDuringUncleanCloseWithEosDisabled()
 //    {
 //        task = createTaskThatThrowsException(false);
@@ -1076,7 +1076,7 @@
 //        Assert.False(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCommitTransactionAndCloseProducerOnCleanCloseWithEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1090,7 +1090,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotAbortTransactionAndNotCloseProducerOnErrorDuringCleanCloseWithEosEnabled()
 //    {
 //        task = createTaskThatThrowsException(true);
@@ -1110,7 +1110,7 @@
 //        Assert.False(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldOnlyCloseProducerIfFencedOnCommitDuringCleanCloseWithEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1135,7 +1135,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCloseProducerIfFencedOnCloseDuringCleanCloseWithEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1158,7 +1158,7 @@
 //        Assert.False(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldAbortTransactionAndCloseProducerOnUncleanCloseWithEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1172,7 +1172,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldAbortTransactionAndCloseProducerOnErrorDuringUncleanCloseWithEosEnabled()
 //    {
 //        task = createTaskThatThrowsException(true);
@@ -1184,7 +1184,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldOnlyCloseProducerIfFencedOnAbortDuringUncleanCloseWithEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1200,7 +1200,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldOnlyCloseFencedProducerOnUncleanClosedWithEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1214,7 +1214,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldAbortTransactionButNotCloseProducerIfFencedOnCloseDuringUncleanCloseWithEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1228,7 +1228,7 @@
 //        Assert.False(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowExceptionIfAnyExceptionsRaisedDuringCloseButStillCloseAllProcessorNodesTopology()
 //    {
 //        task = createTaskThatThrowsException(false);
@@ -1248,7 +1248,7 @@
 //        Assert.True(source1.closed);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldInitAndBeginTransactionOnCreateIfEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1258,7 +1258,7 @@
 //        Assert.True(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWrapProducerFencedExceptionWithTaskMigratedExceptionForBeginTransaction()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1275,7 +1275,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowOnCloseIfTaskWasNotInitializedWithEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1284,7 +1284,7 @@
 //        task.close(false, false);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotInitOrBeginTransactionOnCreateIfEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1293,7 +1293,7 @@
 //        Assert.False(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSendOffsetsAndCommitTransactionButNotStartNewTransactionOnSuspendIfEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1308,7 +1308,7 @@
 //        Assert.False(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCommitTransactionOnSuspendEvenIfTransactionIsEmptyIfEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1319,7 +1319,7 @@
 //        Assert.False(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotSendOffsetsAndCommitTransactionNorStartNewTransactionOnSuspendIfEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1332,7 +1332,7 @@
 //        Assert.False(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWrapProducerFencedExceptionWithTaskMigragedExceptionInSuspendWhenCommitting()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1352,7 +1352,7 @@
 //        Assert.False(producer.transactionCommitted());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWrapProducerFencedExceptionWithTaskMigragedExceptionInSuspendWhenClosingProducer()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1372,7 +1372,7 @@
 //        Assert.True(producer.transactionCommitted());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldStartNewTransactionOnResumeIfEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1387,7 +1387,7 @@
 //        Assert.True(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotStartNewTransactionOnResumeIfEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1400,7 +1400,7 @@
 //        Assert.False(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldStartNewTransactionOnCommitIfEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1413,7 +1413,7 @@
 //        Assert.True(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotStartNewTransactionOnCommitIfEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1425,7 +1425,7 @@
 //        Assert.False(producer.transactionInFlight());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotAbortTransactionOnZombieClosedIfEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1435,7 +1435,7 @@
 //        Assert.False(producer.transactionAborted());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotAbortTransactionOnDirtyClosedIfEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
@@ -1445,7 +1445,7 @@
 //        Assert.False(producer.transactionAborted());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseProducerOnCloseWhenEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1456,7 +1456,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseProducerOnUncleanCloseNotZombieWhenEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1467,7 +1467,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseProducerOnUncleanCloseIsZombieWhenEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1478,7 +1478,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotViolateAtLeastOnceWhenExceptionOccursDuringFlushing()
 //    {
 //        task = createTaskThatThrowsException(false);
@@ -1496,7 +1496,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotViolateAtLeastOnceWhenExceptionOccursDuringTaskSuspension()
 //    {
 //        StreamTask task = createTaskThatThrowsException(false);
@@ -1514,7 +1514,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseStateManagerIfFailureOnTaskClose()
 //    {
 //        task = createStatefulTaskThatThrowsExceptionOnClose();
@@ -1535,7 +1535,7 @@
 //        Assert.False(stateStore.isOpen());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotCloseTopologyProcessorNodesIfNotInitialized()
 //    {
 //        StreamTask task = createTaskThatThrowsException(false);
@@ -1549,7 +1549,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldBeInitializedIfChangelogPartitionsIsEmpty()
 //    {
 //        StreamTask task = createStatefulTask(createConfig(false), false);
@@ -1557,7 +1557,7 @@
 //        Assert.True(task.initializeStateStores());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotBeInitializedIfChangelogPartitionsIsNonEmpty()
 //    {
 //        StreamTask task = createStatefulTask(createConfig(false), true);
@@ -1565,7 +1565,7 @@
 //        Assert.False(task.initializeStateStores());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnOffsetsForRepartitionTopicsForPurging()
 //    {
 //        TopicPartition repartition = new TopicPartition("repartition", 1);
@@ -1605,7 +1605,7 @@
 //        Assert.Equal(map, (Collections.singletonMap(repartition, 11L)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowOnCleanCloseTaskWhenEosEnabledIfTransactionInFlight()
 //    {
 //        task = createStatelessTask(createConfig(true));
@@ -1623,7 +1623,7 @@
 //        Assert.True(producer.closed());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldAlwaysCommitIfEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));

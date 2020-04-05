@@ -43,7 +43,7 @@
 //            this.context = (IInternalProcessorContext<Bytes, byte[]>)context;
 
 //            this.cache = this.context.getCache();
-//            this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().ToString(), name);
+//            this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId.ToString(), name);
 //            //        cache.AddDirtyEntryFlushListener(cacheName, entries =>
 //            //{
 //            //    foreach (DirtyEntry entry in entries)

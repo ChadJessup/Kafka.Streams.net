@@ -32,7 +32,7 @@
 //            rightStream = builder.Stream(INPUT_TOPIC_RIGHT);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestInner()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
@@ -74,7 +74,7 @@
 //            runTest(expectedResult);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestInnerRepartitioned()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-repartitioned");
@@ -119,7 +119,7 @@
 //            runTest(expectedResult);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestLeft()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
@@ -161,7 +161,7 @@
 //            runTest(expectedResult);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestLeftRepartitioned()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left-repartitioned");
@@ -206,7 +206,7 @@
 //            runTest(expectedResult);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestOuter()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
@@ -248,7 +248,7 @@
 //            runTest(expectedResult);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestOuterRepartitioned()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
@@ -293,7 +293,7 @@
 //            runTest(expectedResult);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestMultiInner()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-multi-inner");

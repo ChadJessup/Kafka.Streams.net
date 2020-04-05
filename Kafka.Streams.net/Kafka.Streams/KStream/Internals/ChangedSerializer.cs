@@ -44,30 +44,30 @@ namespace Kafka.Streams.KStream.Internals
             byte[] serializedKey;
 
             // only one of the old / new values would be not null
-            if (data.newValue != null)
+            if (data.NewValue != null)
             {
-                if (data.oldValue != null)
+                if (data.OldValue != null)
                 {
-                    throw new StreamsException("Both old and new values are not null (" + data.oldValue
-                        + " : " + data.newValue + ") in ChangeSerializer, which is not allowed.");
+                    throw new StreamsException("Both old and new values are not null (" + data.OldValue
+                        + " : " + data.NewValue + ") in ChangeSerializer, which is not allowed.");
                 }
 
-                serializedKey = inner.Serialize(data.newValue, context);
+                serializedKey = inner.Serialize(data.NewValue, context);
             }
             else
             {
 
-                if (data.oldValue == null)
+                if (data.OldValue == null)
                 {
                     throw new StreamsException("Both old and new values are null in ChangeSerializer, which is not allowed.");
                 }
 
-                serializedKey = inner.Serialize(data.oldValue, context);
+                serializedKey = inner.Serialize(data.OldValue, context);
             }
 
             ByteBuffer buf = new ByteBuffer().Allocate(serializedKey.Length + NEWFLAG_SIZE);
             buf.Add(serializedKey);
-            buf.Add((byte)(data.newValue != null ? 1 : 0));
+            buf.Add((byte)(data.NewValue != null ? 1 : 0));
 
             return buf.Array();
         }

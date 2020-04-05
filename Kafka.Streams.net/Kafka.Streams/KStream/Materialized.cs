@@ -4,7 +4,7 @@ using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using System;
 using System.Collections.Generic;
 
@@ -177,9 +177,9 @@ namespace Kafka.Streams.KStream
         public ISerde<V>? ValueSerde { get; protected set; }
         public ISerde<K>? KeySerde { get; protected set; }
         public bool LoggingEnabled { get; protected set; } = true;
-        public bool cachingEnabled { get; protected set; } = true;
+        public bool CachingEnabled { get; protected set; } = true;
         protected Dictionary<string, string> TopicConfig { get; set; } = new Dictionary<string, string>();
-        public TimeSpan retention { get; protected set; }
+        public TimeSpan Retention { get; protected set; }
 
         /**
          * Set the valueSerde the materialized {@link IStateStore} will use.
@@ -242,9 +242,9 @@ namespace Kafka.Streams.KStream
             this.KeySerde = materialized.KeySerde;
             this.ValueSerde = materialized.ValueSerde;
             this.LoggingEnabled = materialized.LoggingEnabled;
-            this.cachingEnabled = materialized.cachingEnabled;
+            this.CachingEnabled = materialized.CachingEnabled;
             this.TopicConfig = materialized.TopicConfig;
-            this.retention = materialized.retention;
+            this.Retention = materialized.Retention;
         }
 
         /**
@@ -309,7 +309,7 @@ namespace Kafka.Streams.KStream
          */
         public Materialized<K, V, S> WithCachingEnabled()
         {
-            cachingEnabled = true;
+            CachingEnabled = true;
 
             return this;
         }
@@ -320,7 +320,7 @@ namespace Kafka.Streams.KStream
          */
         public Materialized<K, V, S> WithCachingDisabled()
         {
-            cachingEnabled = false;
+            CachingEnabled = false;
 
             return this;
         }
@@ -348,7 +348,7 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentException("Retention must not be negative.");
             }
 
-            this.retention = retention;
+            this.Retention = retention;
 
             return this;
         }

@@ -13,7 +13,7 @@
 //        //private StreamsMetricsImpl streamsMetrics = createStrictMock(StreamsMetricsImpl);
 //        private Dictionary<string, string> dummyTagMap = Collections.singletonMap("hello", "world");
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetCreateTaskSensor()
 //        {
 //            string operation = "task-created";
@@ -36,7 +36,7 @@
 //            Assert.Equal(sensor, (dummySensor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetCloseTaskSensor()
 //        {
 //            string operation = "task-closed";
@@ -59,7 +59,7 @@
 //            Assert.Equal(sensor, (dummySensor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetCommitSensor()
 //        {
 //            string operation = "commit";
@@ -85,7 +85,7 @@
 //            Assert.Equal(sensor, (dummySensor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetPollSensor()
 //        {
 //            string operation = "poll";
@@ -111,7 +111,7 @@
 //            Assert.Equal(sensor, (dummySensor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetProcessSensor()
 //        {
 //            string operation = "process";
@@ -137,7 +137,7 @@
 //            Assert.Equal(sensor, (dummySensor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetPunctuateSensor()
 //        {
 //            string operation = "punctuate";
@@ -163,7 +163,7 @@
 //            Assert.Equal(sensor, (dummySensor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetSkipRecordSensor()
 //        {
 //            string operation = "skipped-records";
@@ -186,7 +186,7 @@
 //            Assert.Equal(sensor, (dummySensor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetCommitOverTasksSensor()
 //        {
 //            string operation = "commit";

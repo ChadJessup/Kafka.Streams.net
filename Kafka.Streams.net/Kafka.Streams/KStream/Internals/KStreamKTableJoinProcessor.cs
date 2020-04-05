@@ -53,17 +53,17 @@ namespace Kafka.Streams.KStream.Internals
             {
                 logger.LogWarning(
                     $"Skipping record due to null key or value. key=[{key}] " +
-                    $"value=[{value}] topic=[{context.Topic}] partition=[{context.partition}] " +
-                    $"offset=[{context.offset}]");
+                    $"value=[{value}] topic=[{Context.Topic}] partition=[{Context.Partition}] " +
+                    $"offset=[{Context.Offset}]");
             }
             else
             {
                 K2 mappedKey = keyMapper.Apply(key, value);
-                V2 value2 = valueGetter.Get(mappedKey).value;
+                V2 value2 = valueGetter.Get(mappedKey).Value;
 
                 if (leftJoin || value2 != null)
                 {
-                    context.Forward(key, joiner.Apply(value, value2));
+                    Context.Forward(key, joiner.Apply(value, value2));
                 }
             }
         }

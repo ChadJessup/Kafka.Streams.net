@@ -90,7 +90,7 @@
 //            return Admin.Create(adminClientConfig);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCompactTopicsForKeyValueStoreChangelogs()
 //        {// throws Exception
 //            string appID = APP_ID + "-compact";
@@ -128,7 +128,7 @@
 //            Assert.Equal(3, repartitionProps.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCompactAndDeleteTopicsForWindowStoreChangelogs()
 //        {// throws Exception
 //            string appID = APP_ID + "-compact-delete";

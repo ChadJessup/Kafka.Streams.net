@@ -10,7 +10,7 @@
 //    public class KeyValueSegmentTest
 //    {
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeleteStateDirectoryOnDestroy()
 //        {// throws Exception
 //            KeyValueSegment segment = new KeyValueSegment("segment", "window", 0L);
@@ -32,7 +32,7 @@
 //            Assert.True( new DirectoryInfo(Path.Combine(directoryPath, "window")).Exists);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeEqualIfIdIsEqual()
 //        {
 //            KeyValueSegment segment = new KeyValueSegment("anyName", "anyName", 0L);
@@ -46,7 +46,7 @@
 //            // Assert.NotEqual(segment, "anyName");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHashOnSegmentIdOnly()
 //        {
 //            KeyValueSegment segment = new KeyValueSegment("anyName", "anyName", 0L);
@@ -59,7 +59,7 @@
 //            Assert.True(set.Add(segmentDifferentId));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCompareSegmentIdOnly()
 //        {
 //            KeyValueSegment segment1 = new KeyValueSegment("a", "C", 50L);

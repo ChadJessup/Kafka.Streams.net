@@ -106,7 +106,7 @@ namespace Kafka.Streams.Processors.Internals
             // recursively print children
             foreach (var child in children)
             {
-                sb.Append(child.ToString(indent)).Append(ChildrenToString(indent, child.children));
+                sb.Append(child.ToString(indent)).Append(ChildrenToString(indent, child.Children));
             }
 
             return sb.ToString();
@@ -133,7 +133,7 @@ namespace Kafka.Streams.Processors.Internals
             // start from sources
             foreach (var source in sourcesByTopic.Values)
             {
-                sb.Append(source.ToString(indent + "\t")).Append(ChildrenToString(indent + "\t", source.children));
+                sb.Append(source.ToString(indent + "\t")).Append(ChildrenToString(indent + "\t", source.Children));
             }
 
             return sb.ToString();
@@ -146,7 +146,7 @@ namespace Kafka.Streams.Processors.Internals
             {
                 if (node.Name.Equals(processorName))
                 {
-                    return node.stateStores;
+                    return node.StateStores;
                 }
             }
 

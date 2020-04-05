@@ -86,7 +86,7 @@
 //            return result;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotIncludeDeletedFromRangeResult()
 //        {
 //            store.close();
@@ -121,7 +121,7 @@
 //    Assert.Equal(expectedContents, getContents(store.all()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDeleteIfSerializedValueIsNull()
 //    {
 //        store.close();
@@ -155,7 +155,7 @@
 //    Assert.Equal(expectedContents, getContents(store.all()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPutGetRange()
 //    {
 //        // Verify that the store reads and writes correctly ...
@@ -204,7 +204,7 @@
 //        Assert.Equal(expectedContents, getContents(store.all()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPutGetRangeWithDefaultSerdes()
 //    {
 //        // Verify that the store reads and writes correctly ...
@@ -238,7 +238,7 @@
 //        Assert.True(driver.flushedEntryRemoved(5));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestRestore()
 //    {
 //        store.close();
@@ -261,7 +261,7 @@
 //        Assert.Equal(4, driver.sizeOf(store));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestRestoreWithDefaultSerdes()
 //    {
 //        store.close();
@@ -283,7 +283,7 @@
 //        Assert.Equal(4, driver.sizeOf(store));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPutIfAbsent()
 //    {
 //        // Verify that the store reads and writes correctly ...
@@ -312,67 +312,67 @@
 //        Assert.False(driver.flushedEntryRemoved(4));
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //    {
 //        store.put(null, "anyValue");
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowNullPointerExceptionOnPutNullValue()
 //    {
 //        store.put(1, null);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutIfAbsentNullKey()
 //    {
 //        store.putIfAbsent(null, "anyValue");
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowNullPointerExceptionOnPutIfAbsentNullValue()
 //    {
 //        store.putIfAbsent(1, null);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutAllNullKey()
 //    {
 //        store.putAll(Collections.singletonList(KeyValuePair.Create(null, "anyValue")));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowNullPointerExceptionOnPutAllNullKey()
 //    {
 //        store.putAll(Collections.singletonList(KeyValuePair.Create(1, null)));
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnDeleteNullKey()
 //    {
 //        store.delete(null);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnGetNullKey()
 //    {
 //        store.Get(null);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
 //    {
 //        store.Range(null, 2);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
 //    {
 //        store.Range(2, null);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestSize()
 //    {
 //        Assert.Equal("A newly created store should have no entries", 0, store.approximateNumEntries);
@@ -386,7 +386,7 @@
 //        Assert.Equal(5, store.approximateNumEntries);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPutAll()
 //    {
 //        List<KeyValuePair<int, string>> entries = new ArrayList<>();
@@ -407,7 +407,7 @@
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDeleteFromStore()
 //    {
 //        store.put(1, "one");
@@ -416,7 +416,7 @@
 //        Assert.Null(store.Get(2));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnSameResultsForGetAndRangeWithEqualKeys()
 //    {
 //        List<KeyValuePair<int, string>> entries = new ArrayList<>();
@@ -432,7 +432,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowConcurrentModificationException()
 //    {
 //        store.put(0, "zero");
@@ -444,7 +444,7 @@
 //        Assert.Equal(KeyValuePair.Create(0, "zero"), results.MoveNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey()
 //    {
 //        LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);

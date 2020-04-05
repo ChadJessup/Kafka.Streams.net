@@ -19,7 +19,7 @@ namespace Kafka.Streams.State
                 return default;
             }
 
-            return valueAndTimestamp.value;
+            return valueAndTimestamp.Value;
         }
 
         /**
@@ -46,19 +46,18 @@ namespace Kafka.Streams.State
      */
     public class ValueAndTimestamp<V>
     {
-        public V value { get; }
-        public long timestamp { get; }
-
+        public V Value { get; }
+        public long Timestamp { get; }
         public ValueAndTimestamp(V value, long timestamp)
         {
             value = value ?? throw new ArgumentNullException(nameof(value));
 
-            this.value = value;
-            this.timestamp = timestamp;
+            this.Value = value;
+            this.Timestamp = timestamp;
         }
 
         public override string ToString()
-            => "<" + value + "," + timestamp + ">";
+            => "<" + Value + "," + Timestamp + ">";
 
         public override bool Equals(object o)
         {
@@ -74,13 +73,13 @@ namespace Kafka.Streams.State
 
             var that = (ValueAndTimestamp<object>)o;
 
-            return timestamp == that.timestamp
-                && value.Equals(that.value);
+            return Timestamp == that.Timestamp
+                && Value.Equals(that.Value);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.value, this.timestamp);
+            return HashCode.Combine(this.Value, this.Timestamp);
         }
     }
 }

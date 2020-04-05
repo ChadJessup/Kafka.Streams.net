@@ -113,7 +113,7 @@
 //            this.eosEnabled = eosEnabled;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRecoverBufferAfterShutdown()
 //        {
 //            string testId = "-shouldRecoverBufferAfterShutdown";

@@ -26,11 +26,11 @@ namespace Kafka.Streams.KStream.Internals
         {
             var valueAndTimestamp = parentGetter.Get(key);
 
-            var mapped = mapper.Apply(key, valueAndTimestamp.value);
+            var mapped = mapper.Apply(key, valueAndTimestamp.Value);
 
             var timeStamp = valueAndTimestamp == null
-                ? context.timestamp
-                : valueAndTimestamp.timestamp;
+                ? context.Timestamp
+                : valueAndTimestamp.Timestamp;
 
             return ValueAndTimestamp.Make(
                 mapped,

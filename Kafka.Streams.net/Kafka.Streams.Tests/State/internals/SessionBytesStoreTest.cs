@@ -82,7 +82,7 @@
 //            sessionStore.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAndFindSessionsInRange()
 //        {
 //            string key = "a";
@@ -106,7 +106,7 @@
 //            Assert.Equal(new HashSet<>(expected2), toSet(values2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchAllSessionsWithSameRecordKey()
 //        {
 //            List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
@@ -127,7 +127,7 @@
 //            Assert.Equal(new HashSet<>(expected), toSet(values));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchAllSessionsWithinKeyRange()
 //        {
 //            List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
@@ -150,7 +150,7 @@
 //            Assert.Equal(new HashSet<>(expected), toSet(values));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchExactSession()
 //        {
 //            sessionStore.Put(new Windowed<string>("a", new SessionWindow(0, 4)), 1L);
@@ -163,13 +163,13 @@
 //            Assert.Equal(3L, result);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnNullOnSessionNotFound()
 //        {
 //            Assert.Null(sessionStore.FetchSession("any key", 0L, 5L));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindValuesWithinMergingSessionWindowRange()
 //        {
 //            string key = "a";
@@ -184,7 +184,7 @@
 //            Assert.Equal(new HashSet<>(expected), toSet(results));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRemove()
 //        {
 //            sessionStore.put(new Windowed<string>("a", new SessionWindow(0, 1000)), 1L);
@@ -200,7 +200,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRemoveOnNullAggValue()
 //    {
 //        sessionStore.Put(new Windowed<string>("a", new SessionWindow(0, 1000)), 1L);
@@ -214,7 +214,7 @@
 //        Assert.True(results.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFindSessionsToMerge()
 //    {
 //        var session1 = new Windowed<string>("a", new SessionWindow(0, 100));
@@ -235,7 +235,7 @@
 //        Assert.Equal(new HashSet<>(expected), toSet(results));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFetchExactKeys()
 //    {
 //        sessionStore = buildSessionStore(0x7a00000000000000L, Serdes.String(), Serdes.Long());
@@ -266,7 +266,7 @@
 //        Assert.Equal(valuesToSet(iterator), (new HashSet<>(Collections.singletonList(2L))));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFetchAndIterateOverExactBinaryKeys()
 //    {
 //        ISessionStore<Bytes, string> sessionStore =
@@ -296,7 +296,7 @@
 //        Assert.Equal(valuesToSet(sessionStore.findSessions(key3, 0L, long.MaxValue)), (expectedKey3));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestIteratorPeek()
 //    {
 //        sessionStore.put(new Windowed<string>("a", new SessionWindow(0, 0)), 1L);
@@ -312,7 +312,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestore()
 //    {
 //        List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
@@ -340,7 +340,7 @@
 //        Assert.Equal(new HashSet<>(expected), toSet(values));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseOpenIteratorsWhenStoreIsClosedAndNotThrowInvalidStateStoreExceptionOnHasNext()
 //    {
 //        sessionStore.put(new Windowed<string>("a", new SessionWindow(0, 0)), 1L);
@@ -354,7 +354,7 @@
 //        Assert.False(iterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnSameResultsForSingleKeyFindSessionsAndEqualKeyRangeFindSessions()
 //    {
 //        sessionStore.put(new Windowed<string>("a", new SessionWindow(0, 1)), 0L);
@@ -371,7 +371,7 @@
 //        Assert.False(rangeIterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogAndMeasureExpiredRecords()
 //    {
 //        setClassLoggerToDebug();
@@ -419,61 +419,61 @@
 //        Assert.Equal(messages, hasItem("Skipping record for expired segment."));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowExceptionRemovingNonexistentKey()
 //    {
 //        sessionStore.remove(new Windowed<string>("a", new SessionWindow(0, 1)));
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnFindSessionsNullKey()
 //    {
 //        sessionStore.findSessions(null, 1L, 2L);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnFindSessionsNullFromKey()
 //    {
 //        sessionStore.findSessions(null, "anyKeyTo", 1L, 2L);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnFindSessionsNullToKey()
 //    {
 //        sessionStore.findSessions("anyKeyFrom", null, 1L, 2L);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnFetchNullFromKey()
 //    {
 //        sessionStore.Fetch(null, "anyToKey");
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnFetchNullToKey()
 //    {
 //        sessionStore.Fetch("anyFromKey", null);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnFetchNullKey()
 //    {
 //        sessionStore.Fetch(null);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnRemoveNullKey()
 //    {
 //        sessionStore.remove(null);
 //    }
 
-//    [Xunit.Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //    {
 //        sessionStore.put(null, 1L);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey()
 //    {
 //        setClassLoggerToDebug();

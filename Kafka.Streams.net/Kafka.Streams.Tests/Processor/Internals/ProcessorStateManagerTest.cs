@@ -128,7 +128,7 @@
 //        Utils.delete(baseDir);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreStoreWithBatchingRestoreSpecification()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 2);
@@ -156,7 +156,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreStoreWithSinglePutRestoreSpecification()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 2);
@@ -183,7 +183,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldConvertDataOnRestoreIfStoreImplementsTimestampedBytesStore()
 //    {// throws Exception
 //        TaskId taskId = new TaskId(0, 2);
@@ -210,7 +210,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestRegisterPersistentStore()
 //    { //throws IOException
 //        TaskId taskId = new TaskId(0, 2);
@@ -240,7 +240,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestRegisterNonPersistentStore()
 //    { //throws IOException
 //        MockKeyValueStore nonPersistentStore =
@@ -269,7 +269,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestChangeLogOffsets()
 //    { //throws IOException
 //        TaskId taskId = new TaskId(0, 0);
@@ -336,7 +336,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestGetStore()
 //    { //throws IOException
 //        MockKeyValueStore mockKeyValueStore = new MockKeyValueStore(nonPersistentStoreName, false);
@@ -363,7 +363,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestFlushAndClose()
 //    { //throws IOException
 //        checkpoint.write(emptyMap());
@@ -414,7 +414,7 @@
 //        Assert.Equal(checkpointedOffsets, is (singletonMap(new TopicPartition(persistentStoreTopicName, 1), 124L)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldMaintainRegistrationOrderWhenReregistered()
 //    { //throws IOException
 //        checkpoint.write(emptyMap());
@@ -451,7 +451,7 @@
 //        Assert.Equal(persistentStore.getLastFlushCount(), Matchers.lessThan(nonPersistentStore.getLastFlushCount()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRegisterStoreWithoutLoggingEnabledAndNotBackedByATopic()
 //    { //throws IOException
 //        ProcessorStateManager stateMgr = new ProcessorStateManager(
@@ -467,7 +467,7 @@
 //        Assert.NotNull(stateMgr.getStore(nonPersistentStoreName));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotChangeOffsetsIfAckedOffsetsIsNull()
 //    { //throws IOException
 //        Dictionary<TopicPartition, long> offsets = singletonMap(persistentStorePartition, 99L);
@@ -489,7 +489,7 @@
 //        Assert.Equal(read, (offsets));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldIgnoreIrrelevantLoadedCheckpoints()
 //    { //throws IOException
 //        Dictionary<TopicPartition, long> offsets = mkMap(
@@ -518,7 +518,7 @@
 //        Assert.Equal(read, (singletonMap(persistentStorePartition, 110L)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldOverrideLoadedCheckpointsWithRestoredCheckpoints()
 //    { //throws IOException
 //        Dictionary<TopicPartition, long> offsets = singletonMap(persistentStorePartition, 99L);
@@ -544,7 +544,7 @@
 //        Assert.Equal(read, (singletonMap(persistentStorePartition, 110L)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldIgnoreIrrelevantRestoredCheckpoints()
 //    { //throws IOException
 //        Dictionary<TopicPartition, long> offsets = singletonMap(persistentStorePartition, 99L);
@@ -574,7 +574,7 @@
 //        Assert.Equal(read, (singletonMap(persistentStorePartition, 110L)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldOverrideRestoredOffsetsWithProcessedOffsets()
 //    { //throws IOException
 //        Dictionary<TopicPartition, long> offsets = singletonMap(persistentStorePartition, 99L);
@@ -610,7 +610,7 @@
 //        Assert.Equal(read, (singletonMap(persistentStorePartition, 221L)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWriteCheckpointForPersistentLogEnabledStore()
 //    { //throws IOException
 //        ProcessorStateManager stateMgr = new ProcessorStateManager(
@@ -629,7 +629,7 @@
 //        Assert.Equal(read, (singletonMap(persistentStorePartition, 11L)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldWriteCheckpointForStandbyReplica()
 //    { //throws IOException
 //        ProcessorStateManager stateMgr = new ProcessorStateManager(
@@ -657,7 +657,7 @@
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotWriteCheckpointForNonPersistent()
 //    { //throws IOException
 //        TopicPartition topicPartition = new TopicPartition(nonPersistentStoreTopicName, 1);
@@ -679,7 +679,7 @@
 //        Assert.Equal(read, (emptyMap()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotWriteCheckpointForStoresWithoutChangelogTopic()
 //    { //throws IOException
 //        ProcessorStateManager stateMgr = new ProcessorStateManager(
@@ -700,7 +700,7 @@
 //        Assert.Equal(read, (emptyMap()));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowIllegalArgumentExceptionIfStoreNameIsSameAsCheckpointFileName()
 //    { //throws IOException
 //        ProcessorStateManager stateManager = new ProcessorStateManager(
@@ -724,7 +724,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowIllegalArgumentExceptionOnRegisterWhenStoreHasAlreadyBeenRegistered()
 //    { //throws IOException
 //        ProcessorStateManager stateManager = new ProcessorStateManager(
@@ -751,7 +751,7 @@
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowProcessorStateExceptionOnFlushIfStoreThrowsAnException()
 //    { //throws IOException
 
@@ -784,7 +784,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowProcessorStateExceptionOnCloseIfStoreThrowsAnException()
 //    { //throws IOException
 
@@ -819,7 +819,7 @@
 
 //    // if the optional is absent, it'll throw an exception and fail the test.
     
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogAWarningIfCheckpointThrowsAnIOException()
 //    {
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
@@ -864,7 +864,7 @@
 //        Assert.True(foundExpectedLogMessage);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFlushAllStoresEvenIfStoreThrowsException()
 //    { //throws IOException
 //        AtomicBoolean flushedStore = new AtomicBoolean(false);
@@ -906,7 +906,7 @@
 //        Assert.True(flushedStore.Get());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseAllStoresEvenIfStoreThrowsExcepiton()
 //    { //throws IOException
 
@@ -949,7 +949,7 @@
 //        Assert.True(closedStore.Get());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDeleteCheckpointFileOnCreationIfEosEnabled()
 //    { //throws IOException
 //        checkpoint.write(singletonMap(new TopicPartition(persistentStoreTopicName, 1), 123L));
@@ -979,13 +979,13 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSuccessfullyReInitializeStateStoresWithEosDisable()
 //    {// throws Exception
 //        shouldSuccessfullyReInitializeStateStores(false);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSuccessfullyReInitializeStateStoresWithEosEnable()
 //    {// throws Exception
 //        shouldSuccessfullyReInitializeStateStores(true);

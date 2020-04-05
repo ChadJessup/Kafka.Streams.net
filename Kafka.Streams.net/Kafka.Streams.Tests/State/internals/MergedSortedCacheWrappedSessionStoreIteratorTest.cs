@@ -59,49 +59,49 @@
 //            new LRUCacheEntry(cacheKey.Get())
 //        )).iterator();
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldHaveNextFromStore()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
 //        Assert.True(mergeIterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetNextFromStore()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
 //        Assert.Equal(mergeIterator.MoveNext(), (KeyValuePair.Create(new Windowed<>(storeKey, storeWindow), storeKey.Get())));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPeekNextKeyFromStore()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
 //        Assert.Equal(mergeIterator.peekNextKey(), (new Windowed<>(storeKey, storeWindow)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldHaveNextFromCache()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
 //        Assert.True(mergeIterator.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldGetNextFromCache()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
 //        Assert.Equal(mergeIterator.MoveNext(), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey.Get())));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPeekNextKeyFromCache()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
 //        Assert.Equal(mergeIterator.peekNextKey(), (new Windowed<>(cacheKey, cacheWindow)));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldIterateBothStoreAndCache()
 //    {
 //        MergedSortedCacheSessionStoreIterator iterator = createIterator(storeKvs, cacheKvs);

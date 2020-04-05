@@ -26,7 +26,7 @@
 //                .count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("counts").withCachingDisabled());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUseDefaultSerdes()
 //        {
 //            string testId = "-shouldInheritSerdes";
@@ -82,7 +82,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInheritSerdes()
 //        {
 //            string testId = "-shouldInheritSerdes";
@@ -172,7 +172,7 @@
 //            }
 //    }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldShutdownWhenRecordConstraintIsViolated()
 //        {// throws InterruptedException
 //            string testId = "-shouldShutdownWhenRecordConstraintIsViolated";
@@ -217,7 +217,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldShutdownWhenBytesConstraintIsViolated()
 //        {// throws InterruptedException
 //            string testId = "-shouldShutdownWhenBytesConstraintIsViolated";

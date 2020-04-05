@@ -18,7 +18,7 @@
 //            keyValueIteratorFacade = new KeyValueIteratorFacade<>(mockedKeyValueIterator);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldForwardHasNext()
 //        {
 //            expect(mockedKeyValueIterator.hasNext()).andReturn(true).andReturn(false);
@@ -29,7 +29,7 @@
 //            verify(mockedKeyValueIterator);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldForwardPeekNextKey()
 //        {
 //            expect(mockedKeyValueIterator.peekNextKey()).andReturn("key");
@@ -39,7 +39,7 @@
 //            verify(mockedKeyValueIterator);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairOnGet()
 //        {
 //            expect(mockedKeyValueIterator.MoveNext()).andReturn(
@@ -50,7 +50,7 @@
 //            verify(mockedKeyValueIterator);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseInnerIterator()
 //        {
 //            mockedKeyValueIterator.close();

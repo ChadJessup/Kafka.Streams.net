@@ -18,7 +18,7 @@
 //        private InternalTopologyBuilder builder = new InternalTopologyBuilder();
 //        private IStoreBuilder<string> storeBuilder = new MockKeyValueStoreBuilder("store", false);
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddSourceWithOffsetReset()
 //        {
 //            string earliestTopic = "earliestTopic";
@@ -31,7 +31,7 @@
 //            Assert.True(builder.latestResetTopicsPattern().matcher(latestTopic).matches());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddSourcePatternWithOffsetReset()
 //        {
 //            string earliestTopicPattern = "earliest.*Topic";
@@ -44,7 +44,7 @@
 //            Assert.True(builder.LatestResetTopicsPattern.matcher("latestTestTopic").matches());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddSourceWithoutOffsetReset()
 //        {
 //            var expectedPattern = new Regex("test-topic", RegexOptions.Compiled);
@@ -56,7 +56,7 @@
 //            Assert.Equal(builder.LatestResetTopicsPattern.pattern(), "");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddPatternSourceWithoutOffsetReset()
 //        {
 //            var expectedPattern = new Regex("test-.*", RegexOptions.Compiled);
@@ -68,13 +68,13 @@
 //            Assert.Equal(builder.latestResetTopicsPattern().pattern(), "");
 //        }
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void ShouldNotAllowOffsetResetSourceWithoutTopics()
 //        {
 //            builder.AddSource(Topology.AutoOffsetReset.EARLIEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowOffsetResetSourceWithDuplicateSourceName()
 //        {
 //            builder.AddSource(Topology.AutoOffsetReset.EARLIEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer(), "topic-1");
@@ -86,7 +86,7 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddSourceWithSameName()
 //        {
 //            builder.AddSource<string, string>(null, "source", null, null, null, "topic-1");
@@ -98,7 +98,7 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddSourceWithSameTopic()
 //        {
 //            builder.AddSource<string, string>(null, "source", null, null, null, "topic-1");
@@ -110,7 +110,7 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddProcessorWithSameName()
 //        {
 //            builder.AddSource<string, string>(null, "source", null, null, null, "topic-1");
@@ -123,31 +123,31 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void TestAddProcessorWithWrongParent()
 //        {
 //            builder.AddProcessor("processor", new MockProcessorSupplier(), "source");
 //        }
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void TestAddProcessorWithSelfParent()
 //        {
 //            builder.AddProcessor("processor", new MockProcessorSupplier(), "processor");
 //        }
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void TestAddProcessorWithEmptyParents()
 //        {
 //            builder.AddProcessor("processor", new MockProcessorSupplier());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void TestAddProcessorWithNullParents()
 //        {
 //            builder.AddProcessor("processor", new MockProcessorSupplier(), (string)null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddSinkWithSameName()
 //        {
 //            builder.AddSource<string, string>(null, "source", null, null, null, "topic-1");
@@ -160,32 +160,32 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void TestAddSinkWithWrongParent()
 //        {
 //            builder.AddSink<string, string>("sink", "topic-2", null, null, null, "source");
 //        }
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void TestAddSinkWithSelfParent()
 //        {
 //            builder.AddSink<string, string>("sink", "topic-2", null, null, null, "sink");
 //        }
 
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void TestAddSinkWithEmptyParents()
 //        {
 //            builder.AddSink<string, string>("sink", "topic", null, null, null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void TestAddSinkWithNullParents()
 //        {
 //            builder.AddSink<string, string>("sink", "topic", null, null, null, (string)null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddSinkConnectedWithParent()
 //        {
 //            builder.AddSource<string, string>(null, "source", null, null, null, "source-topic");
@@ -198,7 +198,7 @@
 //            Assert.Contains("source", nodeGroup);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddSinkConnectedWithMultipleParent()
 //        {
 //            builder.AddSource<string, string>(null, "source", null, null, null, "source-topic");
@@ -213,7 +213,7 @@
 //            Assert.Contains("sourceII", nodeGroup);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestSourceTopics()
 //        {
 //            builder.SetApplicationId("X");
@@ -227,7 +227,7 @@
 //            Assert.Equal(expectedPattern.pattern(), builder.sourceTopicPattern().pattern());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestPatternSourceTopic()
 //        {
 //            Pattern expectedPattern = new Regex("topic-\\d", RegexOptions.Compiled);
@@ -235,7 +235,7 @@
 //            Assert.Equal(expectedPattern.pattern(), builder.sourceTopicPattern().pattern());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddMoreThanOnePatternSourceNode()
 //        {
 //            Pattern expectedPattern = new Regex("topics[A-Z]|.*-\\d", RegexOptions.Compiled);
@@ -244,7 +244,7 @@
 //            Assert.Equal(expectedPattern.pattern(), builder.sourceTopicPattern().pattern());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestSubscribeTopicNameAndPattern()
 //        {
 //            Pattern expectedPattern = new Regex("topic-bar|topic-foo|.*-\\d", RegexOptions.Compiled);
@@ -253,7 +253,7 @@
 //            Assert.Equal(expectedPattern.pattern(), builder.sourceTopicPattern().pattern());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestPatternMatchesAlreadyProvidedTopicSource()
 //        {
 //            builder.AddSource<string, string>(null, "source-1", null, null, null, "foo");
@@ -265,7 +265,7 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestNamedTopicMatchesAlreadyProvidedPattern()
 //        {
 //            builder.AddSource<string, string>(null, "source-1", null, null, null, new Regex("f.*", RegexOptions.Compiled));
@@ -277,13 +277,13 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void TestAddStateStoreWithNonExistingProcessor()
 //        {
 //            builder.AddStateStore<string, string, string>(storeBuilder, "no-such-processor");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddStateStoreWithSource()
 //        {
 //            builder.AddSource<string, string>(null, "source-1", null, null, null, "topic-1");
@@ -295,7 +295,7 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddStateStoreWithSink()
 //        {
 //            builder.AddSource(null, "source-1", null, null, null, "topic-1");
@@ -308,7 +308,7 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddStateStoreWithDuplicates()
 //        {
 //            builder.addStateStore(storeBuilder);
@@ -320,7 +320,7 @@
 //            catch (TopologyException expected) { /* ok */ }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestAddStateStore()
 //        {
 //            builder.addStateStore(storeBuilder);
@@ -337,7 +337,7 @@
 //            Assert.Equal(storeBuilder.name(), suppliers.Get(0).name());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestTopicGroups()
 //        {
 //            builder.setApplicationId("X");
@@ -370,7 +370,7 @@
 //            Assert.Equal(mkSet(mkSet("topic-1", "X-topic-1x", "topic-2")), new HashSet<>(copartitionGroups));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestTopicGroupsByStateStore()
 //        {
 //            builder.setApplicationId("X");
@@ -415,7 +415,7 @@
 //            Assert.Equal(expectedTopicGroups, topicGroups);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestBuild()
 //        {
 //            builder.AddSource(null, "source-1", null, null, null, "topic-1", "topic-1x");
@@ -438,7 +438,7 @@
 //            Assert.Equal(mkSet("source-5"), nodeNames(topology2.processors()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAllowIncrementalBuilds()
 //        {
 //            Dictionary<int, HashSet<string>> oldNodeGroups, newNodeGroups;
@@ -490,67 +490,67 @@
 //            Assert.NotEqual(oldNodeGroups, newNodeGroups);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullNameWhenAddingSink()
 //        {
 //            builder.AddSink(null, "topic", null, null, null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullTopicWhenAddingSink()
 //        {
 //            builder.AddSink("name", (string)null, null, null, null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullTopicChooserWhenAddingSink()
 //        {
 //            builder.AddSink("name", (TopicNameExtractor<object, object>)null, null, null, null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullNameWhenAddingProcessor()
 //        {
 //            builder.AddProcessor(null, () => null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullProcessorSupplier()
 //        {
 //            builder.AddProcessor("name", null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullNameWhenAddingSource()
 //        {
 //            builder.AddSource(null, null, null, null, null, new Regex(".*", RegexOptions.Compiled));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullProcessorNameWhenConnectingProcessorAndStateStores()
 //        {
 //            builder.connectProcessorAndStateStores(null, "store");
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullStateStoreNameWhenConnectingProcessorAndStateStores()
 //        {
 //            builder.connectProcessorAndStateStores("processor", new string[] { null });
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAddNullInternalTopic()
 //        {
 //            builder.AddInternalTopic(null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotSetApplicationIdToNull()
 //        {
 //            builder.setApplicationId(null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAddNullStateStoreSupplier()
 //        {
 //            builder.addStateStore(null);
@@ -566,7 +566,7 @@
 //            return nodeNames;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssociateStateStoreNameWhenStateStoreSupplierIsInternal()
 //        {
 //            builder.AddSource(null, "source", null, null, null, "topic");
@@ -577,7 +577,7 @@
 //            Assert.Equal(Collections.singletonList("topic"), stateStoreNameToSourceTopic.Get("store"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssociateStateStoreNameWhenStateStoreSupplierIsExternal()
 //        {
 //            builder.AddSource(null, "source", null, null, null, "topic");
@@ -588,7 +588,7 @@
 //            Assert.Equal(Collections.singletonList("topic"), stateStoreNameToSourceTopic.Get("store"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCorrectlyMapStateStoreToInternalTopics()
 //        {
 //            builder.setApplicationId("appId");
@@ -601,7 +601,7 @@
 //            Assert.Equal(Collections.singletonList("appId-internal-topic"), stateStoreNameToSourceTopic.Get("store"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddInternalTopicConfigForWindowStores()
 //        {
 //            builder.setApplicationId("appId");
@@ -639,7 +639,7 @@
 //            Assert.True(topicConfig2 is WindowedChangelogTopicConfig);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddInternalTopicConfigForNonWindowStores()
 //        {
 //            builder.SetApplicationId("appId");
@@ -656,7 +656,7 @@
 //            Assert.True(topicConfig is UnwindowedChangelogTopicConfig);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddInternalTopicConfigForRepartitionTopics()
 //        {
 //            builder.setApplicationId("appId");
@@ -673,7 +673,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetCorrectSourceNodesWithRegexUpdatedTopics()
 //        {// throws Exception
 //            builder.AddSource(null, "source-1", null, null, null, "topic-foo");
@@ -701,7 +701,7 @@
 
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddTimestampExtractorPerSource()
 //        {
 //            builder.AddSource(null, "source", new MockTimestampExtractor(), null, null, "topic");
@@ -709,7 +709,7 @@
 //            Assert.Equal(processorTopology.source("topic").getTimestampExtractor(), instanceOf(MockTimestampExtractor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddTimestampExtractorWithPatternPerSource()
 //        {
 //            var pattern = new Regex("t.*", RegexOptions.Compiled);
@@ -718,7 +718,7 @@
 //            Assert.Equal(processorTopology.Source(pattern.pattern()).getTimestampExtractor(), instanceOf(MockTimestampExtractor));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSortProcessorNodesCorrectly()
 //        {
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -764,7 +764,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldConnectRegexMatchedTopicsToStateStore()
 //        {// throws Exception
 //            builder.AddSource(null, "ingest", null, null, null, new Regex("topic-\\d+", RegexOptions.Compiled));
@@ -795,7 +795,7 @@
 //        }
 
 
-//        [Xunit.Fact]// (expected = TopologyException)
+//        [Fact]// (expected = TopologyException)
 //        public void ShouldNotAllowToAddGlobalStoreWithSourceNameEqualsProcessorName()
 //        {
 //            string sameNameForSourceAndProcessor = "sameName";
@@ -810,28 +810,28 @@
 //                new MockProcessorSupplier());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIfNameIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new InternalTopologyBuilder.Source(null, Collections.emptySet(), null));
 //            Assert.Equal("name cannot be null", e.ToString());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIfTopicAndPatternAreNull()
 //        {
 //            Exception e = Assert.Throws(ArgumentException, () => new InternalTopologyBuilder.Source("name", null, null));
 //            Assert.Equal("Either topics or pattern must be not-null, but both are null.", e.ToString());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowIfBothTopicAndPatternAreNotNull()
 //        {
 //            Exception e = Assert.Throws(ArgumentException, () => new InternalTopologyBuilder.Source("name", Collections.emptySet(), new Regex("", RegexOptions.Compiled)));
 //            Assert.Equal("Either topics or pattern must be null, but both are not null.", e.ToString());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void SourceShouldBeEqualIfNameAndTopicListAreTheSame()
 //        {
 //            InternalTopologyBuilder.Source @base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
@@ -840,7 +840,7 @@
 //            Assert.Equal(@base, (sameAsBase));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void SourceShouldBeEqualIfNameAndPatternAreTheSame()
 //        {
 //            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
@@ -849,7 +849,7 @@
 //            Assert.Equal(base, (sameAsBase));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void SourceShouldNotBeEqualForDifferentNamesWithSameTopicList()
 //        {
 //            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
@@ -858,7 +858,7 @@
 //            Assert.Equal(base, not(equalTo(differentName)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void SourceShouldNotBeEqualForDifferentNamesWithSamePattern()
 //        {
 //            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
@@ -867,7 +867,7 @@
 //            Assert.Equal(base, not(equalTo(differentName)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void SourceShouldNotBeEqualForDifferentTopicList()
 //        {
 //            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
@@ -878,7 +878,7 @@
 //            Assert.Equal(base, not(equalTo(differentTopic)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void SourceShouldNotBeEqualForDifferentPattern()
 //        {
 //            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));

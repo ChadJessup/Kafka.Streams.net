@@ -20,7 +20,7 @@
 //            return (IKeyValueStore<K, V>)store;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRemoveKeysWithNullValues()
 //        {
 //            store.close();

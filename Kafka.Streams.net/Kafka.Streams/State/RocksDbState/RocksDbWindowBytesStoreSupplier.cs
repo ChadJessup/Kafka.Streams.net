@@ -1,70 +1,71 @@
+using Kafka.Streams.State.Windowed;
+using System;
 
-//using Kafka.Common.Utils;
-//using Kafka.Streams.State.Interfaces;
+namespace Kafka.Streams.State.Internals
+{
+    public class RocksDbWindowBytesStoreSupplier : IWindowBytesStoreSupplier
+    {
+        public string Name { get; }
+        public TimeSpan RetentionPeriod { get; }
+        public TimeSpan SegmentInterval { get; }
+        public TimeSpan WindowSize { get; }
+        public bool RetainDuplicates { get; }
+        public bool ReturnTimestampedStore { get; }
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class RocksDbWindowBytesStoreSupplier : IWindowBytesStoreSupplier
-//    {
-//        private string name;
-//        private long retentionPeriod;
-//        private long segmentInterval;
-//        private long windowSize;
-//        private bool retainDuplicates;
-//        private bool returnTimestampedStore;
+        public RocksDbWindowBytesStoreSupplier(
+            string name,
+            TimeSpan retentionPeriod,
+            TimeSpan segmentInterval,
+            TimeSpan windowSize,
+            bool retainDuplicates,
+            bool returnTimestampedStore)
+        {
+            this.Name = name;
+            this.RetentionPeriod = retentionPeriod;
+            this.SegmentInterval = segmentInterval;
+            this.WindowSize = windowSize;
+            this.RetainDuplicates = retainDuplicates;
+            this.ReturnTimestampedStore = returnTimestampedStore;
+        }
 
-//        public RocksDbWindowBytesStoreSupplier(
-//            string name,
-//            long retentionPeriod,
-//            long segmentInterval,
-//            long windowSize,
-//            bool retainDuplicates,
-//            bool returnTimestampedStore)
-//        {
-//            this.name = name;
-//            this.retentionPeriod = retentionPeriod;
-//            this.segmentInterval = segmentInterval;
-//            this.windowSize = windowSize;
-//            this.retainDuplicates = retainDuplicates;
-//            this.returnTimestampedStore = returnTimestampedStore;
-//        }
+        public IWindowStore<Bytes, byte[]> Get()
+        {
+            if (!ReturnTimestampedStore)
+            {
+                return null;
+                // new RocksDbWindowStore(
+                // new RocksDbSegmentedBytesStore(
+                //     Name,
+                //     //metricsScope(),
+                //     RetentionPeriod,
+                //     SegmentInterval,
+                //     new WindowKeySchema()),
+                // RetainDuplicates,
+                // WindowSize);
+            }
+            else
+            {
+                return null;
+                //new RocksDbTimestampedWindowStore(
+                //new RocksDbTimestampedSegmentedBytesStore(
+                //    Name,
+                //    //metricsScope(),
+                //    RetentionPeriod,
+                //    SegmentInterval,
+                //    new WindowKeySchema()),
+                //RetainDuplicates,
+                //WindowSize);
+            }
+        }
 
-//        public IWindowStore<Bytes, byte[]> get()
-//        {
-//            if (!returnTimestampedStore)
-//            {
-//                return new RocksDbWindowStore(
-//                    new RocksDbSegmentedBytesStore(
-//                        name,
-//                        metricsScope(),
-//                        retentionPeriod,
-//                        segmentInterval,
-//                        new WindowKeySchema()),
-//                    retainDuplicates,
-//                    windowSize);
-//            }
-//            else
-//            {
-//                return new RocksDbTimestampedWindowStore(
-//                    new RocksDbTimestampedSegmentedBytesStore(
-//                        name,
-//                        metricsScope(),
-//                        retentionPeriod,
-//                        segmentInterval,
-//                        new WindowKeySchema()),
-//                    retainDuplicates,
-//                    windowSize);
-//            }
-//        }
+        // public string MetricsScope()
+        // {
+        //     return "rocksdb-window-state";
+        // }
 
-//        public string metricsScope()
-//        {
-//            return "rocksdb-window-state";
-//        }
-
-//        public long segmentIntervalMs()
-//        {
-//            return segmentInterval;
-//        }
-//    }
-//}
+        public int Segments()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}

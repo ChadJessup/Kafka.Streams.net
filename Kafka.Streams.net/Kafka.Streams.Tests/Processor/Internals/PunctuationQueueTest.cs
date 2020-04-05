@@ -43,7 +43,7 @@
 //        }
 //    };
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPunctuationInterval()
 //    {
 //        PunctuationSchedule sched = new PunctuationSchedule(node, 0L, 100L, punctuator);
@@ -86,7 +86,7 @@
 //        Assert.Equal(4, node.mockProcessor.punctuatedStreamTime.Count);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPunctuationIntervalCustomAlignment()
 //    {
 //        PunctuationSchedule sched = new PunctuationSchedule(node, 50L, 100L, punctuator);
@@ -129,7 +129,7 @@
 //        Assert.Equal(4, node.mockProcessor.punctuatedStreamTime.Count);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestPunctuationIntervalCancelFromPunctuator()
 //    {
 //        PunctuationSchedule sched = new PunctuationSchedule(node, 0L, 100L, punctuator);

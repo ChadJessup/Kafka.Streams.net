@@ -116,7 +116,7 @@
 //                    @out.flush();
 //                    @out.close();
 
-//                    return ByteBuffer.Wrap(baos.toByteArray());
+//                    return new ByteBuffer().Wrap(baos.toByteArray());
 //                }
 //            }
 //            catch (IOException ex)

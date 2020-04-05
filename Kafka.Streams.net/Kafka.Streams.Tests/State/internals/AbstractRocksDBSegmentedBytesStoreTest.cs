@@ -77,7 +77,7 @@
 
 //        abstract Options GetOptions(S segment);
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAndFetch()
 //        {
 //            string key = "a";
@@ -95,7 +95,7 @@
 //            Assert.Equal(expected, ToList(values));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindValuesWithinRange()
 //        {
 //            string key = "a";
@@ -111,7 +111,7 @@
 //            Assert.Equal(expected, ToList(results));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRemove()
 //        {
 //            bytesStore.put(serializeKey(new Windowed<>("a", windows[0])), SerializeValue(30));
@@ -122,7 +122,7 @@
 //            Assert.False(value.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRollSegments()
 //        {
 //            // just to validate directories
@@ -149,7 +149,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetAllSegments()
 //        {
 //            // just to validate directories
@@ -178,7 +178,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchAllSegments()
 //        {
 //            // just to validate directories
@@ -207,7 +207,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldLoadSegmentsWithOldStyleDateFormattedName()
 //        {
 //            AbstractSegments<S> segments = NewSegments();
@@ -242,7 +242,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldLoadSegmentsWithOldStyleColonFormattedName()
 //        {
 //            AbstractSegments<S> segments = NewSegments();
@@ -273,7 +273,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToWriteToReInitializedStore()
 //        {
 //            string key = "a";
@@ -284,7 +284,7 @@
 //            bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(100));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateWriteBatches()
 //        {
 //            string key = "a";
@@ -299,7 +299,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreToByteStore()
 //        {
 //            // 0 segments initially.
@@ -327,7 +327,7 @@
 //            Assert.Equal(expected, results);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRespectBulkLoadOptionsDuringInit()
 //        {
 //            bytesStore.Init(context, bytesStore);
@@ -352,7 +352,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldLogAndMeasureExpiredRecords()
 //        {
 //            LogCaptureAppender.setClassLoggerToDebug(AbstractRocksDBSegmentedBytesStore);

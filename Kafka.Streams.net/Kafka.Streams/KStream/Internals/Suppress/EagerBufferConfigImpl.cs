@@ -1,4 +1,5 @@
 using Kafka.Streams.KStream.Interfaces;
+using System;
 
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
@@ -23,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             return new EagerBufferConfigImpl(this.MaxRecords, byteLimit);
         }
 
-        public BufferFullStrategy BufferFullStrategy
+        public override BufferFullStrategy BufferFullStrategy
             => BufferFullStrategy.EMIT;
 
         public override bool Equals(object o)
@@ -44,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public override int GetHashCode()
         {
-            return (MaxRecords, MaxBytes).GetHashCode();
+            return HashCode.Combine(this.MaxRecords, this.MaxBytes);
         }
 
         public override string ToString()

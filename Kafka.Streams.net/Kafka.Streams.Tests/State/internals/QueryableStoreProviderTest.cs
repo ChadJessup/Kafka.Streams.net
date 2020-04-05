@@ -53,43 +53,43 @@
 //                        Collections.< StateStoreProvider > singletonList(theStoreProvider), new GlobalStateStoreProvider(globalStateStores));
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowExceptionIfKVStoreDoesntExist()
 //        {
 //            storeProvider.getStore("not-a-store", QueryableStoreTypes.KeyValueStore());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowExceptionIfWindowStoreDoesntExist()
 //        {
 //            storeProvider.getStore("not-a-store", QueryableStoreTypes.windowStore());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnKVStoreWhenItExists()
 //        {
 //            Assert.NotNull(storeProvider.getStore(KeyValueStore, QueryableStoreTypes.KeyValueStore()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnWindowStoreWhenItExists()
 //        {
 //            Assert.NotNull(storeProvider.getStore(windowStore, QueryableStoreTypes.windowStore()));
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowExceptionWhenLookingForWindowStoreWithDifferentType()
 //        {
 //            storeProvider.getStore(windowStore, QueryableStoreTypes.KeyValueStore());
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowExceptionWhenLookingForKVStoreWithDifferentType()
 //        {
 //            storeProvider.getStore(KeyValueStore, QueryableStoreTypes.windowStore());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindGlobalStores()
 //        {
 //            globalStateStores.put("global", new NoOpReadOnlyStore<>());

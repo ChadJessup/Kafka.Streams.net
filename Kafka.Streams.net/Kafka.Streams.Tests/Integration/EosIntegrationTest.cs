@@ -54,37 +54,37 @@
 //            CLUSTER.createTopic(MULTI_PARTITION_OUTPUT_TOPIC, NUM_TOPIC_PARTITIONS, 1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToRunWithEosEnabled()
 //        {// throws Exception
 //            RunSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToRestartAfterClose()
 //        {// throws Exception
 //            RunSimpleCopyTest(2, SINGLE_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToCommitToMultiplePartitions()
 //        {// throws Exception
 //            RunSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, null, MULTI_PARTITION_OUTPUT_TOPIC);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToCommitMultiplePartitionOffsets()
 //        {// throws Exception
 //            RunSimpleCopyTest(1, MULTI_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToRunWithTwoSubtopologies()
 //        {// throws Exception
 //            RunSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, SINGLE_PARTITION_THROUGH_TOPIC, SINGLE_PARTITION_OUTPUT_TOPIC);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToRunWithTwoSubtopologiesAndMultiplePartitions()
 //        {// throws Exception
 //            RunSimpleCopyTest(1, MULTI_PARTITION_INPUT_TOPIC, MULTI_PARTITION_THROUGH_TOPIC, MULTI_PARTITION_OUTPUT_TOPIC);
@@ -191,7 +191,7 @@
 //            return recordsPerKey;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBeAbleToPerformMultipleTransactions()
 //        {// throws Exception
 //            StreamsBuilder builder = new StreamsBuilder();
@@ -332,7 +332,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotViolateEosIfOneTaskFailsWithState()
 //    {// throws Exception
 //     // this test updates a store with 10 + 5 + 5 records per partition (running with 2 partitions)
@@ -405,7 +405,7 @@
 //    }
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldNotViolateEosIfOneTaskGetsFencedUsingIsolatedAppInstances()
 //{// throws Exception
 // // this test writes 10 + 5 + 5 + 10 records per partition (running with 2 partitions)

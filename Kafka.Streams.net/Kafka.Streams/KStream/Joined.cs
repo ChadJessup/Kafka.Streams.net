@@ -188,7 +188,7 @@ namespace Kafka.Streams.KStream
         }
 
         protected Joined(Joined<K, V, VO> joined)
-            : this(joined?.KeySerde ?? throw new ArgumentNullException(nameof(joined)), joined.ValueSerde, joined.OtherValueSerde, joined.Name)
+            : this(joined?.KeySerde, joined?.ValueSerde, joined?.OtherValueSerde, joined?.Name)
         {
         }
 

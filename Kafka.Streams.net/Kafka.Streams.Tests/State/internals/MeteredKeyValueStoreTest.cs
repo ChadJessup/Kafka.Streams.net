@@ -105,7 +105,7 @@
 //            metered.Init(context, metered);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestMetrics()
 //        {
 //            Init();
@@ -117,7 +117,7 @@
 //                    "scope", "test", taskId.ToString(), "scope", "all")));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldWriteBytesToInnerStoreAndRecordPutMetric()
 //        {
 //            inner.put(eq(keyBytes), aryEq(valueBytes));
@@ -131,7 +131,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetBytesFromInnerStoreAndReturnGetMetric()
 //        {
 //            expect(inner.Get(keyBytes)).andReturn(valueBytes);
@@ -144,7 +144,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutIfAbsentAndRecordPutIfAbsentMetric()
 //        {
 //            expect(inner.putIfAbsent(eq(keyBytes), aryEq(valueBytes))).andReturn(null);
@@ -163,7 +163,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAllToInnerStoreAndRecordPutAllMetric()
 //        {
 //            inner.putAll(anyObject(List));
@@ -177,7 +177,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeleteFromInnerStoreAndRecordDeleteMetric()
 //        {
 //            expect(inner.delete(keyBytes)).andReturn(valueBytes);
@@ -190,7 +190,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetRangeFromInnerStoreAndRecordRangeMetric()
 //        {
 //            expect(inner.Range(keyBytes, keyBytes))
@@ -207,7 +207,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetAllFromInnerStoreAndRecordAllMetric()
 //        {
 //            expect(inner.all()).andReturn(new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValuePair).iterator()));
@@ -223,7 +223,7 @@
 //            verify(inner);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlushInnerWhenFlushTimeRecords()
 //        {
 //            inner.flush();
@@ -240,7 +240,7 @@
 //        private interface CachedKeyValueStore : IKeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]> { }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSetFlushListenerOnWrappedCachingStore()
 //        {
 //            CachedKeyValueStore cachedKeyValueStore = mock(CachedKeyValueStore);
@@ -260,7 +260,7 @@
 //            verify(cachedKeyValueStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowNullPointerExceptionIfGetReturnsNull()
 //        {
 //            expect(inner.Get(Bytes.Wrap("a".getBytes()))).andReturn(null);
@@ -269,7 +269,7 @@
 //            Assert.Null(metered.Get("a"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore()
 //        {
 //            Assert.False(metered.setFlushListener(null, false));

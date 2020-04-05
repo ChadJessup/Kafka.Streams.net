@@ -3,7 +3,7 @@ using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Queryable;
 using Kafka.Streams.State.ReadOnly;
 using Kafka.Streams.State.TimeStamped;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads.Stream;
 using System.Collections.Generic;

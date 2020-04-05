@@ -4,7 +4,7 @@ using Kafka.Streams.State.ReadOnly;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.State.Window
+namespace Kafka.Streams.State.Windowed
 {
     public class WindowStoreType<K, V> : QueryableStoreTypeMatcher<IReadOnlyWindowStore<K, V>>
     {

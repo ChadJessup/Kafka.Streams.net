@@ -71,7 +71,7 @@
 //            globalContext.setRecordContext(recordContext);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnGlobalOrNullStore()
 //        {
 //            Assert.Equal(globalContext.getStateStore(GLOBAL_STORE_NAME), new IsInstanceOf(IStateStore));
@@ -79,7 +79,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldForwardToSingleChild()
 //        {
 //            child.Process<string, string>(null, null);
@@ -90,46 +90,46 @@
 //            verify(child, recordContext);
 //        }
 
-//        [Xunit.Fact]// (expected = IllegalStateException)
+//        [Fact]// (expected = IllegalStateException)
 //        public void ShouldFailToForwardUsingToParameter()
 //        {
 //            globalContext.Forward(null, null, To.All());
 //        }
 
 //        // need to test deprecated code until removed
-//        [Xunit.Fact]// (expected = NotImplementedException)
+//        [Fact]// (expected = NotImplementedException)
 //        public void ShouldNotSupportForwardingViaChildIndex()
 //        {
 //            globalContext.Forward(null, null, 0);
 //        }
 
 //        // need to test deprecated code until removed
-//        [Xunit.Fact]// (expected = NotImplementedException)
+//        [Fact]// (expected = NotImplementedException)
 //        public void ShouldNotSupportForwardingViaChildName()
 //        {
 //            globalContext.Forward(null, null, "processorName");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotFailOnNoOpCommit()
 //        {
 //            globalContext.commit();
 //        }
 
 
-//        [Xunit.Fact]// (expected = NotImplementedException)
+//        [Fact]// (expected = NotImplementedException)
 //        public void ShouldNotAllowToSchedulePunctuationsUsingDeprecatedApi()
 //        {
 //            globalContext.schedule(0L, null, null);
 //        }
 
-//        [Xunit.Fact]// (expected = NotImplementedException)
+//        [Fact]// (expected = NotImplementedException)
 //        public void ShouldNotAllowToSchedulePunctuations()
 //        {
 //            globalContext.schedule(null, null, null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowInitForKeyValueStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_KEY_VALUE_STORE_NAME);
@@ -141,7 +141,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowInitForTimestampedKeyValueStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_TIMESTAMPED_KEY_VALUE_STORE_NAME);
@@ -153,7 +153,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowInitForWindowStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_WINDOW_STORE_NAME);
@@ -165,7 +165,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowInitForTimestampedWindowStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_TIMESTAMPED_WINDOW_STORE_NAME);
@@ -177,7 +177,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowInitForSessionStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_SESSION_STORE_NAME);
@@ -189,7 +189,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowCloseForKeyValueStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_KEY_VALUE_STORE_NAME);
@@ -201,7 +201,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowCloseForTimestampedKeyValueStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_TIMESTAMPED_KEY_VALUE_STORE_NAME);
@@ -213,7 +213,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowCloseForWindowStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_WINDOW_STORE_NAME);
@@ -225,7 +225,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowCloseForTimestampedWindowStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_TIMESTAMPED_WINDOW_STORE_NAME);
@@ -237,7 +237,7 @@
 //            catch (NotImplementedException expected) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowCloseForSessionStore()
 //        {
 //            IStateStore store = globalContext.getStateStore(GLOBAL_SESSION_STORE_NAME);

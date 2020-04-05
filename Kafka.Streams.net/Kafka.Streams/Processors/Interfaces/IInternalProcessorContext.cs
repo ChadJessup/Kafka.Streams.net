@@ -15,7 +15,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * Returns the current {@link RecordContext}
          * @return the current {@link RecordContext}
          */
-        ProcessorRecordContext recordContext { get; }
+        ProcessorRecordContext RecordContext { get; }
 
         /**
          * @param recordContext the {@link ProcessorRecordContext} for the record about to be processes

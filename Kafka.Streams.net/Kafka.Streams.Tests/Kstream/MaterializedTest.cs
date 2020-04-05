@@ -2,7 +2,7 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.KStream;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using System;
 using Xunit;
 

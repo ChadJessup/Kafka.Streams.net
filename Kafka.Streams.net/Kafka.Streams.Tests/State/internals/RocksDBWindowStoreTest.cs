@@ -80,7 +80,7 @@
 //            LogCaptureAppender.setClassLoggerToDebug(AbstractRocksDBSegmentedBytesStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldOnlyIterateOpenSegments()
 //        {
 //            long currentTime = 0;
@@ -108,7 +108,7 @@
 //            Assert.False(iterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestRolling()
 //        {
 
@@ -384,7 +384,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestSegmentMaintenance()
 //        {
 
@@ -469,7 +469,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestInitialLoading()
 //        {
 //            File storeDir = new File(baseDir, STORE_NAME);
@@ -518,7 +518,7 @@
 //        );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestRestore()
 //        {// throws Exception
 //            long startTime = SEGMENT_INTERVAL * 2;

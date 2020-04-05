@@ -2,7 +2,7 @@ using Kafka.Streams.KStream;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.ReadOnly;
 
-namespace Kafka.Streams.State.Window
+namespace Kafka.Streams.State.Windowed
 {
     /**
      * Interface for storing the aggregated values of fixed-size time windows.

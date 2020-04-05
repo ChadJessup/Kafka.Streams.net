@@ -3,7 +3,7 @@
 //using System;
 //using NodaTime;
 //using Kafka.Streams.State.KeyValues;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using System.Collections.Generic;
 //using Kafka.Streams.State.ReadOnly;
 //using Kafka.Streams.State;

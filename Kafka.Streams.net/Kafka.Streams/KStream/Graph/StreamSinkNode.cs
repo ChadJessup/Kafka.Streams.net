@@ -32,13 +32,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            var keySerializer = producedInternal.keySerde == null
-                ? null
-                : producedInternal.keySerde.Serializer;
+            var keySerializer = producedInternal.KeySerde?.Serializer;
 
-            var valSerializer = producedInternal.valueSerde == null
-                ? null
-                : producedInternal.valueSerde.Serializer;
+            var valSerializer = producedInternal.ValueSerde?.Serializer;
 
             IStreamPartitioner<K, V> partitioner = producedInternal.StreamPartitioner();
             var parentNames = ParentNodeNames();

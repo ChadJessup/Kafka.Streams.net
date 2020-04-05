@@ -1,8 +1,9 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Internals;
 using NodaTime;
+using System;
 
-namespace Kafka.Streams.State.Window
+namespace Kafka.Streams.State.Windowed
 {
     public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IWindowStore<K, V>>
     {
@@ -13,7 +14,7 @@ namespace Kafka.Streams.State.Window
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             IClock clock)
-            : base(storeSupplier.name, keySerde, valueSerde, clock)
+            : base(storeSupplier.Name, keySerde, valueSerde, clock)
         {
             this.storeSupplier = storeSupplier;
         }
@@ -30,9 +31,7 @@ namespace Kafka.Streams.State.Window
             //    valueSerde);
         }
 
-        public long RetentionPeriod()
-        {
-            return storeSupplier.RetentionPeriod();
-        }
+        public TimeSpan RetentionPeriod
+            => storeSupplier.RetentionPeriod;
     }
 }

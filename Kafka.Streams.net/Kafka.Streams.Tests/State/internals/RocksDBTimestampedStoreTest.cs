@@ -52,7 +52,7 @@
 //            return new RocksDBTimestampedStore(DB_NAME);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldMigrateDataFromDefaultToTimestampColumnFamily()
 //        {// throws Exception
 //            PrepareOldStore();

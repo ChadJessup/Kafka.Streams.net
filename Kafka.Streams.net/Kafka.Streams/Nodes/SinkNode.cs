@@ -61,17 +61,17 @@ namespace Kafka.Streams.Nodes
         {
             IRecordCollector collector = ((ISupplier)context).RecordCollector();
 
-            var timestamp = context.timestamp;
+            var timestamp = context.Timestamp;
             if (timestamp < 0)
             {
                 throw new StreamsException("Invalid (negative) timestamp of " + timestamp + " for output record <" + key + ":" + value + ">.");
             }
 
-            var topic = topicExtractor.Extract(key, value, this.context.recordContext);
+            var topic = topicExtractor.Extract(key, value, this.context.RecordContext);
 
             try
             {
-                collector.Send(topic, key, value, context.headers, timestamp, keySerializer, valSerializer, partitioner);
+                collector.Send(topic, key, value, context.Headers, timestamp, keySerializer, valSerializer, partitioner);
             }
             catch (Exception e)
             {

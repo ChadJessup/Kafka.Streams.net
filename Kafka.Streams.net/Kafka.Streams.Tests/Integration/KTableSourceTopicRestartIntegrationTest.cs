@@ -110,7 +110,7 @@
 //            IntegrationTestUtils.purgeLocalStreamsState(STREAMS_CONFIG);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreAndProgressWhenTopicWrittenToDuringRestorationWithEosDisabled()
 //        {// throws Exception
 //            try
@@ -141,7 +141,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreAndProgressWhenTopicWrittenToDuringRestorationWithEosEnabled()
 //        {// throws Exception
 //            try
@@ -173,7 +173,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreAndProgressWhenTopicNotWrittenToDuringRestoration()
 //        {// throws Exception
 //            try

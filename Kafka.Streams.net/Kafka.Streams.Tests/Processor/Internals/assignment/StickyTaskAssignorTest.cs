@@ -29,7 +29,7 @@
 //        private readonly int p3 = 3;
 //        private readonly int p4 = 4;
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignOneActiveTaskToEachProcessWhenTaskCountSameAsProcessCount()
 //        {
 //            CreateClient(p1, 1);
@@ -45,7 +45,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTopicGroupIdEvenlyAcrossClientsWithNoStandByTasks()
 //        {
 //            CreateClient(p1, 2);
@@ -57,7 +57,7 @@
 //            AssertActiveTaskTopicGroupIdsEvenlyDistributed();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTopicGroupIdEvenlyAcrossClientsWithStandByTasks()
 //        {
 //            CreateClient(p1, 2);
@@ -69,7 +69,7 @@
 //            AssertActiveTaskTopicGroupIdsEvenlyDistributed();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotMigrateActiveTaskToOtherProcess()
 //        {
 //            createClientWithPreviousActiveTasks(p1, 1, task00);
@@ -96,7 +96,7 @@
 //            Assert.Equal(AllActiveTasks(), (Array.asList(task00, task01, task02)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldMigrateActiveTasksToNewProcessWithoutChangingAllAssignments()
 //        {
 //            createClientWithPreviousActiveTasks(p1, 1, task00, task02);
@@ -113,7 +113,7 @@
 //            Assert.Equal(AllActiveTasks(), (Array.asList(task00, task01, task02)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignBasedOnCapacity()
 //        {
 //            CreateClient(p1, 1);
@@ -125,7 +125,7 @@
 //            Assert.Equal(clients.Get(p2).activeTasks().Count, (2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTasksEvenlyWithUnequalTopicGroupSizes()
 //        {
 
@@ -145,7 +145,7 @@
 //            Assert.Equal(clients.Get(p2).activeTasks(), (expectedClientIITasks));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldKeepActiveTaskStickynessWhenMoreClientThanActiveTasks()
 //        {
 //            int p5 = 5;
@@ -180,7 +180,7 @@
 
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTasksToClientWithPreviousStandbyTasks()
 //        {
 //            ClientState client1 = CreateClient(p1, 1);
@@ -199,7 +199,7 @@
 //            Assert.Equal(clients.Get(p3).activeTasks(), (Collections.singleton(task00)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignBasedOnCapacityWhenMultipleClientHaveStandbyTasks()
 //        {
 //            ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task00);
@@ -215,7 +215,7 @@
 //            Assert.Equal(clients.Get(p2).activeTasks(), (Utils.mkSet(task02, task01)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignStandbyTasksToDifferentClientThanCorrespondingActiveTaskIsAssingedTo()
 //        {
 //            createClientWithPreviousActiveTasks(p1, 1, task00);
@@ -247,7 +247,7 @@
 
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignMultipleReplicasOfStandbyTask()
 //        {
 //            createClientWithPreviousActiveTasks(p1, 1, task00);
@@ -262,7 +262,7 @@
 //            Assert.Equal(clients.Get(p3).standbyTasks(), (Utils.mkSet(task00, task01)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAssignStandbyTaskReplicasWhenNoClientAvailableWithoutHavingTheTaskAssigned()
 //        {
 //            CreateClient(p1, 1);
@@ -271,7 +271,7 @@
 //            Assert.Equal(clients.Get(p1).standbyTasks().Count, (0));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignActiveAndStandbyTasks()
 //        {
 //            CreateClient(p1, 1);
@@ -286,7 +286,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignAtLeastOneTaskToEachClientIfPossible()
 //        {
 //            CreateClient(p1, 3);
@@ -300,7 +300,7 @@
 //            Assert.Equal(clients.Get(p3).assignedTaskCount(), (1));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignEachActiveTaskToOneClientWhenMoreClientsThanTasks()
 //        {
 //            CreateClient(p1, 1);
@@ -316,7 +316,7 @@
 //            Assert.Equal(AllActiveTasks(), (Array.asList(task00, task01, task02)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldBalanceActiveAndStandbyTasksAcrossAvailableClients()
 //        {
 //            CreateClient(p1, 1);
@@ -335,7 +335,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignMoreTasksToClientWithMoreCapacity()
 //        {
 //            CreateClient(p2, 2);
@@ -359,7 +359,7 @@
 //            Assert.Equal(clients.Get(p1).assignedTaskCount(), (4));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEvenlyDistributeByTaskIdAndPartition()
 //        {
 //            CreateClient(p1, 4);
@@ -399,7 +399,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveSameAssignmentOnAnyTwoHosts()
 //        {
 //            CreateClient(p1, 1);
@@ -425,7 +425,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveSameAssignmentOnAnyTwoHostsWhenThereArePreviousActiveTasks()
 //        {
 //            createClientWithPreviousActiveTasks(p1, 1, task01, task02);
@@ -451,7 +451,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveSameAssignmentOnAnyTwoHostsWhenThereArePreviousStandbyTasks()
 //        {
 //            ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task01, task02);
@@ -480,7 +480,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReBalanceTasksAcrossAllClientsWhenCapacityAndTaskCountTheSame()
 //        {
 //            createClientWithPreviousActiveTasks(p3, 1, task00, task01, task02, task03);
@@ -497,7 +497,7 @@
 //            Assert.Equal(clients.Get(p4).assignedTaskCount(), (1));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReBalanceTasksAcrossClientsWhenCapacityLessThanTaskCount()
 //        {
 //            createClientWithPreviousActiveTasks(p3, 1, task00, task01, task02, task03);
@@ -512,7 +512,7 @@
 //            Assert.Equal(clients.Get(p2).assignedTaskCount(), (1));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRebalanceTasksToClientsBasedOnCapacity()
 //        {
 //            createClientWithPreviousActiveTasks(p2, 1, task00, task03, task02);
@@ -523,7 +523,7 @@
 //            Assert.Equal(clients.Get(p3).assignedTaskCount(), (2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldMoveMinimalNumberOfTasksWhenPreviouslyAboveCapacityAndNewClientAdded()
 //        {
 //            HashSet<TaskId> p1PrevTasks = Utils.mkSet(task00, task02);
@@ -548,7 +548,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotMoveAnyTasksWhenNewTasksAdded()
 //        {
 //            createClientWithPreviousActiveTasks(p1, 1, task00, task01);
@@ -561,7 +561,7 @@
 //            Assert.Equal(clients.Get(p2).activeTasks(), hasItems(task02, task03));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignNewTasksToNewClientWhenPreviousTasksAssignedToOldClients()
 //        {
 
@@ -577,7 +577,7 @@
 //            Assert.Equal(clients.Get(p3).activeTasks(), hasItems(task04, task05));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTasksNotPreviouslyActiveToNewClient()
 //        {
 //            TaskId task10 = new TaskId(0, 10);
@@ -608,7 +608,7 @@
 //            Assert.Equal(newClient.activeTasks(), (Utils.mkSet(task02, task03, task10)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTasksNotPreviouslyActiveToMultipleNewClients()
 //        {
 //            TaskId task10 = new TaskId(0, 10);
@@ -640,7 +640,7 @@
 //            Assert.Equal(bounce2.activeTasks(), (Utils.mkSet(task02, task03, task10)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTasksToNewClient()
 //        {
 //            createClientWithPreviousActiveTasks(p1, 1, task01, task02);
@@ -649,7 +649,7 @@
 //            Assert.Equal(clients.Get(p1).activeTaskCount(), (1));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTasksToNewClientWithoutFlippingAssignmentBetweenExistingClients()
 //        {
 //            ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task00, task01, task02);
@@ -669,7 +669,7 @@
 //            Assert.Equal(newClient.activeTaskCount(), (2));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignTasksToNewClientWithoutFlippingAssignmentBetweenExistingAndBouncedClients()
 //        {
 //            TaskId task06 = new TaskId(0, 6);

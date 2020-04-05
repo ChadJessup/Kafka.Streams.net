@@ -76,7 +76,7 @@
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseUnderlyingStore()
 //    {
 //        innerStoreMock.close();
@@ -88,7 +88,7 @@
 //        EasyMock.verify(innerStoreMock);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotExceptionIfFetchReturnsNull()
 //    {
 //        EasyMock.expect(innerStoreMock.Fetch(Bytes.Wrap("a".getBytes()), 0)).andReturn(null);
@@ -98,7 +98,7 @@
 //        Assert.Null(store.Fetch("a", 0));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromProcessorContext()
 //    {
 //        EasyMock.expect(innerStoreMock.name()).andStubReturn("mocked-store");
@@ -127,7 +127,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromConstructorParameters()
 //    {
 //        EasyMock.expect(innerStoreMock.name()).andStubReturn("mocked-store");

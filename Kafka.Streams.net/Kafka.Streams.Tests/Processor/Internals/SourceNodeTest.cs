@@ -7,7 +7,7 @@
 //{
 //    public class SourceNodeTest
 //    {
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldProvideTopicHeadersAndDataToKeyDeserializer()
 //        {
 //            SourceNode<string, string> sourceNode = new MockSourceNode<>(new string[] { "" }, new TheDeserializer(), new TheDeserializer());
@@ -16,7 +16,7 @@
 //            Assert.Equal(deserializeKey, "topic" + headers + "data");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldProvideTopicHeadersAndDataToValueDeserializer()
 //        {
 //            SourceNode<string, string> sourceNode = new MockSourceNode<>(new string[] { "" }, new TheDeserializer(), new TheDeserializer());

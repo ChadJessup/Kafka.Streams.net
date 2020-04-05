@@ -32,7 +32,7 @@
 //            leftStream = builder.Stream(INPUT_TOPIC_LEFT);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestShouldAutoShutdownOnIncompleteMetadata()
 //        {// throws InterruptedException
 //            STREAMS_CONFIG.put(StreamsConfigPropertyNames.ApplicationId, appID + "-incomplete");
@@ -58,7 +58,7 @@
 //            Assert.True(listener.revokedToPendingShutdownSeen());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestInner()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfigPropertyNames.ApplicationId, appID + "-inner");
@@ -86,7 +86,7 @@
 //            runTest(expectedResult);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestLeft()
 //        {// throws Exception
 //            STREAMS_CONFIG.put(StreamsConfigPropertyNames.ApplicationId, appID + "-left");

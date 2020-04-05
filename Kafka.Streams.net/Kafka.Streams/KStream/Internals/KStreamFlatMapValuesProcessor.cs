@@ -16,7 +16,7 @@ namespace Kafka.Streams.KStream.Internals
             var newValues = this.mapper.Apply(key, value);
             foreach (VR newValue in newValues)
             {
-                context.Forward(key, newValue);
+                Context.Forward(key, newValue);
             }
         }
     }

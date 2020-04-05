@@ -6,7 +6,7 @@
 //            // ensure we are at the beginning of the ByteBuffer
 //            data.rewind();
 
-//            int usedVersion = data.getInt();
+//            int usedVersion = data.GetInt();
 //            int latestSupportedVersion;
 //            switch (usedVersion)
 //            {
@@ -20,12 +20,12 @@
 //                    break;
 //                case 3:
 //                case 4:
-//                    latestSupportedVersion = data.getInt();
+//                    latestSupportedVersion = data.GetInt();
 //                    subscriptionInfo = new SubscriptionInfo(usedVersion, latestSupportedVersion);
 //                    decodeVersionThreeData(subscriptionInfo, data);
 //                    break;
 //                default:
-//                    latestSupportedVersion = data.getInt();
+//                    latestSupportedVersion = data.GetInt();
 //                    subscriptionInfo = new SubscriptionInfo(usedVersion, latestSupportedVersion);
 //                    log.LogInformation("Unable to decode subscription data: used version: {}; latest supported version: {}", usedVersion, LATEST_SUPPORTED_VERSION);
 //                    break;
@@ -44,21 +44,21 @@
 //        private static void decodeClientUUID(SubscriptionInfo subscriptionInfo,
 //                                             ByteBuffer data)
 //        {
-//            subscriptionInfo.processId = new Guid(data.getLong(), data.getLong());
+//            subscriptionInfo.processId = new Guid(data.GetLong(), data.GetLong());
 //        }
 
 //        private static void decodeTasks(SubscriptionInfo subscriptionInfo,
 //                                        ByteBuffer data)
 //        {
 //            subscriptionInfo.prevTasks = new HashSet<>();
-//            int numPrevTasks = data.getInt();
+//            int numPrevTasks = data.GetInt();
 //            for (int i = 0; i < numPrevTasks; i++)
 //            {
 //                subscriptionInfo.prevTasks.Add(TaskId.readFrom(data));
 //            }
 
 //            subscriptionInfo.standbyTasks = new HashSet<>();
-//            int numStandbyTasks = data.getInt();
+//            int numStandbyTasks = data.GetInt();
 //            for (int i = 0; i < numStandbyTasks; i++)
 //            {
 //                subscriptionInfo.standbyTasks.Add(TaskId.readFrom(data));
@@ -76,7 +76,7 @@
 //        private static void decodeUserEndPoint(SubscriptionInfo subscriptionInfo,
 //                                               ByteBuffer data)
 //        {
-//            int bytesLength = data.getInt();
+//            int bytesLength = data.GetInt();
 //            if (bytesLength != 0)
 //            {
 //                byte[] bytes = new byte[bytesLength];

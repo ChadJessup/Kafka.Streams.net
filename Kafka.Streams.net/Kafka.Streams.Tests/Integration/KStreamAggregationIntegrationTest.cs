@@ -68,7 +68,7 @@ namespace Kafka.Streams.Tests.Integration
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void shouldReduce()
 //        {// throws Exception
 //            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
@@ -117,7 +117,7 @@ namespace Kafka.Streams.Tests.Integration
 //            return keyComparison;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void shouldReduceWindowed()
 //        {// throws Exception
 //            long firstBatchTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
@@ -192,7 +192,7 @@ namespace Kafka.Streams.Tests.Integration
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void shouldAggregate()
 //        {// throws Exception
 //            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
@@ -228,7 +228,7 @@ namespace Kafka.Streams.Tests.Integration
 //            )));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void shouldAggregateWindowed()
 //        {// throws Exception
 //            long firstTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
@@ -332,7 +332,7 @@ namespace Kafka.Streams.Tests.Integration
 //            )));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void shouldCount()
 //        {// throws Exception
 //            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
@@ -344,7 +344,7 @@ namespace Kafka.Streams.Tests.Integration
 //            shouldCountHelper();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void shouldCountWithInternalStore()
 //        {// throws Exception
 //            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
@@ -356,7 +356,7 @@ namespace Kafka.Streams.Tests.Integration
 //            shouldCountHelper();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void shouldGroupByKey()
 //        {// throws Exception
 //            long timestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
@@ -391,7 +391,7 @@ namespace Kafka.Streams.Tests.Integration
 //            )));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void shouldCountSessionWindows()
 //        {// throws Exception
 //            long sessionGap = 5 * 60 * 1000L;
@@ -503,7 +503,7 @@ namespace Kafka.Streams.Tests.Integration
 //        Assert.Equal(results.Get(new Windowed<>("penny", new SessionWindow(t3, t3))), (KeyValuePair.Create(1L, t3)));
 //    }
 
-//[Xunit.Fact]
+//[Fact]
 //public void shouldReduceSessionWindows()
 //{// throws Exception
 //    long sessionGap = 1000L; // something to do with time
@@ -624,7 +624,7 @@ namespace Kafka.Streams.Tests.Integration
 //        Assert.False(bob.hasNext());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //public void shouldCountUnlimitedWindows()
 //{// throws Exception
 //    long startTime = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(); - TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS) + 1;

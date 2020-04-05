@@ -50,7 +50,7 @@
 //        //     return lastRecordedValue;
 //        // }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestTimeTracking()
 //        {
 //            Assert.Equal(0, group.numBuffered());
@@ -176,7 +176,7 @@
 
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldChooseNextRecordBasedOnHeadTimestamp()
 //        {
 //            Assert.Equal(0, group.numBuffered());

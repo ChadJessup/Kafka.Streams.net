@@ -22,7 +22,7 @@
 //            readOnlyKeyValueStoreFacade = new ReadOnlyKeyValueStoreFacade<>(mockedKeyValueTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainValueOnGet()
 //        {
 //            expect(mockedKeyValueTimestampStore.Get("key"))
@@ -36,7 +36,7 @@
 //            verify(mockedKeyValueTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsForRangeIterator()
 //        {
 //            expect(mockedKeyValueTimestampIterator.MoveNext())
@@ -51,7 +51,7 @@
 //            verify(mockedKeyValueTimestampIterator, mockedKeyValueTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnPlainKeyValuePairsForAllIterator()
 //        {
 //            expect(mockedKeyValueTimestampIterator.MoveNext())
@@ -66,7 +66,7 @@
 //            verify(mockedKeyValueTimestampIterator, mockedKeyValueTimestampStore);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldForwardApproximateNumEntries()
 //        {
 //            expect(mockedKeyValueTimestampStore.approximateNumEntries).andReturn(42L);

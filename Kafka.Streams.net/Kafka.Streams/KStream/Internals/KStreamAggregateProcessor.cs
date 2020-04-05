@@ -65,12 +65,12 @@ namespace Kafka.Streams.KStream.Internals
             if (oldAgg == null)
             {
                 oldAgg = initializer.Apply();
-                newTimestamp = context.timestamp;
+                newTimestamp = Context.Timestamp;
             }
             else
             {
-                oldAgg = oldAggAndTimestamp.value;
-                newTimestamp = Math.Max(context.timestamp, oldAggAndTimestamp.timestamp);
+                oldAgg = oldAggAndTimestamp.Value;
+                newTimestamp = Math.Max(Context.Timestamp, oldAggAndTimestamp.Timestamp);
             }
 
             newAgg = aggregator.Apply(key, value, oldAgg);

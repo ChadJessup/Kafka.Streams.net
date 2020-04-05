@@ -46,26 +46,26 @@
 
 //        private const string IGNORED_USER_ENDPOINT = "ignoredUserEndpoint:80";
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUseLatestSupportedVersionByDefault()
 //        {
 //            SubscriptionInfo info = new SubscriptionInfo(processId, activeTasks, standbyTasks, "localhost:80");
 //            Assert.Equal(SubscriptionInfo.LATEST_SUPPORTED_VERSION, info.version());
 //        }
 
-//        [Xunit.Fact]// (expected = ArgumentException)
+//        [Fact]// (expected = ArgumentException)
 //        public void ShouldThrowForUnknownVersion1()
 //        {
 //            new SubscriptionInfo(0, processId, activeTasks, standbyTasks, "localhost:80");
 //        }
 
-//        [Xunit.Fact]// (expected = ArgumentException)
+//        [Fact]// (expected = ArgumentException)
 //        public void ShouldThrowForUnknownVersion2()
 //        {
 //            new SubscriptionInfo(SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1, processId, activeTasks, standbyTasks, "localhost:80");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEncodeAndDecodeVersion1()
 //        {
 //            SubscriptionInfo info = new SubscriptionInfo(1, processId, activeTasks, standbyTasks, IGNORED_USER_ENDPOINT);
@@ -73,7 +73,7 @@
 //            Assert.Equal(expectedInfo, SubscriptionInfo.decode(info.encode()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEncodeAndDecodeVersion2()
 //        {
 //            SubscriptionInfo info = new SubscriptionInfo(2, processId, activeTasks, standbyTasks, "localhost:80");
@@ -81,7 +81,7 @@
 //            Assert.Equal(expectedInfo, SubscriptionInfo.decode(info.encode()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEncodeAndDecodeVersion3()
 //        {
 //            SubscriptionInfo info = new SubscriptionInfo(3, processId, activeTasks, standbyTasks, "localhost:80");
@@ -89,7 +89,7 @@
 //            Assert.Equal(expectedInfo, SubscriptionInfo.decode(info.encode()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEncodeAndDecodeVersion4()
 //        {
 //            SubscriptionInfo info = new SubscriptionInfo(4, processId, activeTasks, standbyTasks, "localhost:80");
@@ -97,7 +97,7 @@
 //            Assert.Equal(expectedInfo, SubscriptionInfo.decode(info.encode()));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAllowToDecodeFutureSupportedVersion()
 //        {
 //            SubscriptionInfo info = SubscriptionInfo.decode(EncodeFutureVersion());

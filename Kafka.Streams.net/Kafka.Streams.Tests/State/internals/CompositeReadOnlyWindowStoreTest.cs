@@ -2,7 +2,7 @@
 //using Kafka.Streams.KStream.Internals;
 //using Kafka.Streams.State.Internals;
 //using Kafka.Streams.State.Queryable;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using System;
 //using System.Collections.Generic;
 //using Xunit;
@@ -38,7 +38,7 @@
 //                    storeName);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchValuesFromWindowStore()
 //        {
 //            underlyingWindowStore.put("my-key", "my-value", 0L);
@@ -52,14 +52,14 @@
 //                         results);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnEmptyIteratorIfNoData()
 //        {
 //            IWindowStoreIterator<string> iterator = windowStore.Fetch("my-key", ofEpochMilli(0L), ofEpochMilli(25L));
 //            Assert.Equal(false, iterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindValueForKeyWhenMultiStores()
 //        {
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlying = new
@@ -78,7 +78,7 @@
 //            Assert.Equal(Collections.singletonList(KeyValuePair.Create(10L, "value-two")), keyTwoResults);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotGetValuesFromOtherStores()
 //        {
 //            otherUnderlyingStore.put("some-key", "some-value", 0L);
@@ -88,14 +88,14 @@
 //            Assert.Equal(Collections.singletonList(KeyValuePair.Create(1L, "my-value")), results);
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStateStoreExceptionOnRebalance()
 //        {
 //            CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new StateStoreProviderStub(true), QueryableStoreTypes.windowStore(), "foo");
 //            store.Fetch("key", ofEpochMilli(1), ofEpochMilli(10));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowInvalidStateStoreExceptionIfFetchThrows()
 //        {
 //            underlyingWindowStore.setOpen(false);
@@ -113,7 +113,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void EmptyIteratorAlwaysReturnsFalse()
 //        {
 //            CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
@@ -123,7 +123,7 @@
 //            Assert.False(windowStoreIterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void EmptyIteratorPeekNextKeyShouldThrowNoSuchElementException()
 //        {
 //            CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
@@ -132,7 +132,7 @@
 //            Assert.Throws<NotImplementedException>(() => windowStoreIterator::peekNextKey);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void EmptyIteratorNextShouldThrowNoSuchElementException()
 //        {
 //            CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
@@ -141,7 +141,7 @@
 //            Assert.Throws(NoSuchElementException, windowStoreIterator::next);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchKeyRangeAcrossStores()
 //        {
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlying = new ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
@@ -154,7 +154,7 @@
 //                    KeyValuePair.Create(new Windowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchKeyValueAcrossStores()
 //        {
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlyingWindowStore = new ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
@@ -168,7 +168,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetAllAcrossStores()
 //        {
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlying = new
@@ -182,7 +182,7 @@
 //                    KeyValuePair.Create(new Windowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFetchAllAcrossStores()
 //        {
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlying = new
@@ -196,19 +196,19 @@
 //                    KeyValuePair.Create(new Windowed<string>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNPEIfKeyIsNull()
 //        {
 //            windowStore.Fetch(null, ofEpochMilli(0), ofEpochMilli(0));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNPEIfFromKeyIsNull()
 //        {
 //            windowStore.Fetch(null, "a", ofEpochMilli(0), ofEpochMilli(0));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNPEIfToKeyIsNull()
 //        {
 //            windowStore.Fetch("a", null, ofEpochMilli(0), ofEpochMilli(0));

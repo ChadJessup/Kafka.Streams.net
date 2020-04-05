@@ -1,5 +1,5 @@
 using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 
 namespace Kafka.Streams.State.KeyValues
 {

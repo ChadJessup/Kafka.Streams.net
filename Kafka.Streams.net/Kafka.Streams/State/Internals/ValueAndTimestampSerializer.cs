@@ -53,7 +53,7 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            return Serialize(context.Topic, data.value, data.timestamp);
+            return Serialize(context.Topic, data.Value, data.Timestamp);
         }
 
         public byte[] Serialize(

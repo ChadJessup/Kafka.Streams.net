@@ -1,7 +1,5 @@
-using Confluent.Kafka;
 using System;
 using System.Collections.Generic;
-using Xunit;
 
 namespace Kafka.Streams.Tests.Tools
 {
@@ -9,10 +7,8 @@ namespace Kafka.Streams.Tests.Tools
      * Class for common convenience methods for working on
      * System tests
      */
-
-    public class SystemTestUtil
+    public static class SystemTestUtil
     {
-
         private const int KEY = 0;
         private const int VALUE = 1;
 
@@ -29,12 +25,12 @@ namespace Kafka.Streams.Tests.Tools
         {
             if (string.IsNullOrWhiteSpace(formattedConfigs))
             {
-                throw new System.ArgumentException("message", nameof(formattedConfigs));
+                throw new ArgumentNullException(nameof(formattedConfigs));
             }
 
             if (formattedConfigs.IndexOf('=') == -1)
             {
-                throw new System.InvalidOperationException(string.Format("Provided string [ %s ] does not have expected key-value separator of '='", formattedConfigs));
+                throw new ArgumentException($"Provided string [ {formattedConfigs} ] does not have expected key-value separator of '='");
             }
 
             string[] parts = formattedConfigs.Split(",");
@@ -45,12 +41,14 @@ namespace Kafka.Streams.Tests.Tools
                 string[] keyValue = part.Split("=");
                 if (keyValue.Length > 2)
                 {
-                    throw new InvalidOperationException(
-                        string.Format("Provided string [ %s ] does not have expected key-value pair separator of ','", formattedConfigs));
+                    throw new ArgumentException(
+                        $"Provided string [ {formattedConfigs} ] does not have expected key-value pair separator of ','",
+                        nameof(formattedConfigs));
                 }
 
                 configs.Add(keyValue[KEY], keyValue[VALUE]);
             }
+
             return configs;
         }
     }

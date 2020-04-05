@@ -63,14 +63,14 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveMeteredStoreAsOuterStore()
 //        {
 //            IKeyValueStore<string, string> store = builder.Build();
 //            Assert.Equal(store, instanceOf(MeteredKeyValueStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreByDefault()
 //        {
 //            IKeyValueStore<string, string> store = builder.Build();
@@ -79,7 +79,7 @@
 //            Assert.Equal(next, instanceOf(ChangeLoggingKeyValueBytesStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
 //            IKeyValueStore<string, string> store = builder.withLoggingDisabled().Build();
@@ -87,7 +87,7 @@
 //            Assert.Equal(next, CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingStoreWhenEnabled()
 //        {
 //            IKeyValueStore<string, string> store = builder.withCachingEnabled().Build();
@@ -96,7 +96,7 @@
 //            Assert.Equal(wrapped, instanceOf(CachingKeyValueStore));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled()
 //        {
 //            IKeyValueStore<string, string> store = builder
@@ -108,7 +108,7 @@
 //            Assert.Equal(((WrappedStateStore)wrapped).wrapped(), CoreMatchers.equalTo(inner));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled()
 //        {
 //            IKeyValueStore<string, string> store = builder
@@ -124,31 +124,31 @@
 //        }
 
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfInnerIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerIfMetricsScopeIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime());

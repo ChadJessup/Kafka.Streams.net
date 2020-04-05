@@ -121,7 +121,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreStateFromSourceTopic()
 //        {// throws Exception
 //            AtomicInteger numReceived = new AtomicInteger(0);
@@ -195,7 +195,7 @@
 //        Assert.Equal(numReceived.Get(), (offsetLimitDelta* 2));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRestoreStateFromChangelogTopic()
 //    {// throws Exception
 //        AtomicInteger numReceived = new AtomicInteger(0);
@@ -268,7 +268,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldSuccessfullyStartWhenLoggingDisabled()
 //    {// throws InterruptedException
 //        StreamsBuilder builder = new StreamsBuilder();
@@ -294,7 +294,7 @@
 //        Assert.True(startupLatch.await(30, TimeUnit.SECONDS));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldProcessDataFromStoresWithLoggingDisabled()
 //    {// throws InterruptedException, ExecutionException
 

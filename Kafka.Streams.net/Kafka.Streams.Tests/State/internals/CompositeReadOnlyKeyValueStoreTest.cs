@@ -46,45 +46,45 @@
 //            return store;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnNullIfKeyDoesntExist()
 //        {
 //            Assert.Null(theStore.Get("whatever"));
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnGetNullKey()
 //        {
 //            theStore.Get(null);
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
 //        {
 //            theStore.Range(null, "to");
 //        }
 
-//        [Xunit.Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
 //        {
 //            theStore.Range("from", null);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnValueIfExists()
 //        {
 //            stubOneUnderlying.put("key", "value");
 //            Assert.Equal("value", theStore.Get("key"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotGetValuesFromOtherStores()
 //        {
 //            otherUnderlyingStore.put("otherKey", "otherValue");
 //            Assert.Null(theStore.Get("otherKey"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNoSuchElementExceptionWhileNext()
 //        {
 //            stubOneUnderlying.put("a", "1");
@@ -98,7 +98,7 @@
 //            catch (NoSuchElementException e) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNoSuchElementExceptionWhilePeekNext()
 //        {
 //            stubOneUnderlying.put("a", "1");
@@ -112,7 +112,7 @@
 //            catch (NoSuchElementException e) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowUnsupportedOperationExceptionWhileRemove()
 //        {
 //            IKeyValueIterator<string, string> keyValueIterator = theStore.all();
@@ -124,7 +124,7 @@
 //            catch (UnsupportedOperationException e) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowUnsupportedOperationExceptionWhileRange()
 //        {
 //            stubOneUnderlying.put("a", "1");
@@ -138,7 +138,7 @@
 //            catch (UnsupportedOperationException e) { }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFindValueForKeyWhenMultiStores()
 //        {
 //            IKeyValueStore<string, string> cache = NewStoreInstance();
@@ -151,7 +151,7 @@
 //            Assert.Equal("key-one-value", theStore.Get("key-one"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSupportRange()
 //        {
 //            stubOneUnderlying.put("a", "a");
@@ -164,7 +164,7 @@
 //            Assert.Equal(2, results.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSupportRangeAcrossMultipleKVStores()
 //        {
 //            IKeyValueStore<string, string> cache = NewStoreInstance();
@@ -186,7 +186,7 @@
 //            Assert.Equal(4, results.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSupportAllAcrossMultipleStores()
 //        {
 //            IKeyValueStore<string, string> cache = NewStoreInstance();
@@ -210,31 +210,31 @@
 //            Assert.Equal(6, results.Count);
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionDuringRebalance()
 //        {
 //            rebalancing().Get("anything");
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionOnApproximateNumEntriesDuringRebalance()
 //        {
 //            rebalancing().approximateNumEntries;
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionOnRangeDuringRebalance()
 //        {
 //            rebalancing().Range("anything", "something");
 //        }
 
-//        [Xunit.Fact]// (expected = InvalidStateStoreException)
+//        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionOnAllDuringRebalance()
 //        {
 //            rebalancing().all();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetApproximateEntriesAcrossAllStores()
 //        {
 //            IKeyValueStore<string, string> cache = NewStoreInstance();
@@ -251,7 +251,7 @@
 //            Assert.Equal(6, theStore.approximateNumEntries);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnLongMaxValueOnOverflow()
 //        {
 //            stubProviderTwo.addStore(storeName, new NoOpReadOnlyStore<object, object>()
@@ -268,7 +268,7 @@
 //        Assert.Equal(long.MaxValue, theStore.approximateNumEntries);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnLongMaxValueOnUnderflow()
 //    {
 //        stubProviderTwo.addStore(storeName, new NoOpReadOnlyStore<object, object>()

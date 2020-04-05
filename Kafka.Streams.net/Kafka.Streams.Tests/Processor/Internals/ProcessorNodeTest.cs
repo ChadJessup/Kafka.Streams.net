@@ -7,7 +7,7 @@
 //    {
 
 
-//        [Xunit.Fact]// (expected = StreamsException)
+//        [Fact]// (expected = StreamsException)
 //        public void ShouldThrowStreamsExceptionIfExceptionCaughtDuringInit()
 //        {
 //            ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
@@ -15,7 +15,7 @@
 //        }
 
 
-//        [Xunit.Fact]// (expected = StreamsException)
+//        [Fact]// (expected = StreamsException)
 //        public void ShouldThrowStreamsExceptionIfExceptionCaughtDuringClose()
 //        {
 //            ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
@@ -64,7 +64,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestMetrics()
 //        {
 //            StateSerdes anyStateSerde = StateSerdes.WithBuiltinTypes("anyName", Bytes, Bytes);

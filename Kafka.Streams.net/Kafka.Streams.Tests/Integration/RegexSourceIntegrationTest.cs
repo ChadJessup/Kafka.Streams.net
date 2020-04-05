@@ -79,7 +79,7 @@
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestRegexMatchesTopicsAWhenCreated()
 //        {// throws Exception
 
@@ -130,7 +130,7 @@
 //        return outputTopic;
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestRegexMatchesTopicsAWhenDeleted()
 //    {// throws Exception
 
@@ -175,7 +175,7 @@
 //        TestUtils.WaitForCondition(() => assignedTopics.equals(expectedSecondAssignment), STREAM_TASKS_NOT_UPDATED);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldAddStateStoreToRegexDefinedSource()
 //    {// throws InterruptedException
 
@@ -210,7 +210,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestShouldReadFromRegexAndNamedTopics()
 //    {// throws Exception
 
@@ -262,7 +262,7 @@
 //        Assert.Equal(actualValues, (expectedReceivedValues));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestMultipleConsumersCanReadFromPartitionedTopic()
 //    {// throws Exception
 
@@ -335,7 +335,7 @@
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestNoMessagesSentExceptionFromOverlappingPatterns()
 //    {// throws Exception
 

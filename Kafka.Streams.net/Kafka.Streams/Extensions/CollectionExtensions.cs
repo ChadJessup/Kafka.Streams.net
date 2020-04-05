@@ -16,7 +16,7 @@ namespace System
 {
     public static class ArrayExtensions
     {
-        public static List<T> asList<T>(this Array _, params T[] items)
+        public static List<T> AsList<T>(this Array _, params T[] items)
         {
             var list = new List<T>();
 

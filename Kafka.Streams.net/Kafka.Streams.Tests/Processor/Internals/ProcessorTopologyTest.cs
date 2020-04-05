@@ -60,7 +60,7 @@
 //            driver = null;
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestTopologyMetadata()
 //        {
 //            topology.AddSource("source-1", "topic-1");
@@ -87,7 +87,7 @@
 //            Assert.Equal(processorTopology.source("topic-2"), processorTopology.source("topic-3"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestDrivingSimpleTopology()
 //        {
 //            int partition = 10;
@@ -110,7 +110,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestDrivingMultiplexingTopology()
 //        {
 //            driver = new TopologyTestDriver(CreateMultiplexingTopology(), props);
@@ -133,7 +133,7 @@
 //            AssertNextOutputRecord(OUTPUT_TOPIC_2, "key5", "value5(2)");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestDrivingMultiplexByNameTopology()
 //        {
 //            driver = new TopologyTestDriver(CreateMultiplexByNameTopology(), props);
@@ -156,7 +156,7 @@
 //            AssertNextOutputRecord(OUTPUT_TOPIC_2, "key5", "value5(2)");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestDrivingStatefulTopology()
 //        {
 //            string storeName = "entries";
@@ -174,7 +174,7 @@
 //            Assert.Null(store.Get("key4"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDriveGlobalStore()
 //        {
 //            string storeName = "my-store";
@@ -192,7 +192,7 @@
 //            Assert.Equal("value2", globalStore.Get("key2"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestDrivingSimpleMultiSourceTopology()
 //        {
 //            int partition = 10;
@@ -207,7 +207,7 @@
 //            AssertNoOutputRecord(OUTPUT_TOPIC_1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestDrivingForwardToSourceTopology()
 //        {
 //            driver = new TopologyTestDriver(CreateForwardToSourceTopology(), props);
@@ -219,7 +219,7 @@
 //            AssertNextOutputRecord(OUTPUT_TOPIC_2, "key3", "value3");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestDrivingInternalRepartitioningTopology()
 //        {
 //            driver = new TopologyTestDriver(CreateInternalRepartitioningTopology(), props);
@@ -231,7 +231,7 @@
 //            AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3");
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestDrivingInternalRepartitioningForwardingTimestampTopology()
 //        {
 //            driver = new TopologyTestDriver(CreateInternalRepartitioningWithValueTimestampTopology(), props);
@@ -246,7 +246,7 @@
 //                    equalTo(new ProducerRecord<>(OUTPUT_TOPIC_1, null, 3000L, "key3", "value3")));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateStringWithSourceAndTopics()
 //        {
 //            topology.AddSource("source", "topic1", "topic2");
@@ -255,7 +255,7 @@
 //            Assert.Equal(result, containsString("source:\n\t\ttopics:\t\t[topic1, topic2]\n"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateStringWithMultipleSourcesAndTopics()
 //        {
 //            topology.AddSource("source", "topic1", "topic2");
@@ -266,7 +266,7 @@
 //            Assert.Equal(result, containsString("source2:\n\t\ttopics:\t\t[t, t1, t2]\n"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCreateStringWithProcessors()
 //        {
 //            topology.AddSource("source", "t")
@@ -279,7 +279,7 @@
 //            Assert.Equal(result, containsString("other:\n"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRecursivelyPrintChildren()
 //        {
 //            topology.AddSource("source", "t")
@@ -294,7 +294,7 @@
 //            Assert.Equal(result, containsString("child-two:\n\t\tchildren:\t[child-two-one]"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldConsiderTimeStamps()
 //        {
 //            int partition = 10;
@@ -307,7 +307,7 @@
 //            AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", partition, 30L);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldConsiderModifiedTimeStamps()
 //        {
 //            int partition = 10;
@@ -320,7 +320,7 @@
 //            AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", partition, 40L);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldConsiderModifiedTimeStampsForMultipleProcessors()
 //        {
 //            int partition = 10;
@@ -347,7 +347,7 @@
 //            AssertNoOutputRecord(OUTPUT_TOPIC_2);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldConsiderHeaders()
 //        {
 //            int partition = 10;
@@ -360,7 +360,7 @@
 //            AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", HEADERS, partition, 30L);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddHeaders()
 //        {
 //            driver = new TopologyTestDriver(CreateAddHeaderTopology(), props);
@@ -372,7 +372,7 @@
 //            AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", HEADERS, 30L);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void StatelessTopologyShouldNotHavePersistentStore()
 //        {
 //            TopologyWrapper topology = new TopologyWrapper();
@@ -381,28 +381,28 @@
 //            Assert.False(processorTopology.hasPersistentGlobalStore());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void InMemoryStoreShouldNotResultInPersistentLocalStore()
 //        {
 //            ProcessorTopology processorTopology = createLocalStoreTopology(Stores.InMemoryKeyValueStore("my-store"));
 //            Assert.False(processorTopology.hasPersistentLocalStore());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void PersistentLocalStoreShouldBeDetected()
 //        {
 //            ProcessorTopology processorTopology = createLocalStoreTopology(Stores.PersistentKeyValueStore("my-store"));
 //            Assert.True(processorTopology.hasPersistentLocalStore());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void InMemoryStoreShouldNotResultInPersistentGlobalStore()
 //        {
 //            ProcessorTopology processorTopology = createGlobalStoreTopology(Stores.InMemoryKeyValueStore("my-store"));
 //            Assert.False(processorTopology.hasPersistentGlobalStore());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void PersistentGlobalStoreShouldBeDetected()
 //        {
 //            ProcessorTopology processorTopology = createGlobalStoreTopology(Stores.PersistentKeyValueStore("my-store"));

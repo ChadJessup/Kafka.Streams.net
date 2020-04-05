@@ -55,8 +55,8 @@ namespace Kafka.Streams.KStream.Internals
 
             ISerializer<T> innerSerializer = InnerSerde().Serializer;
 
-            var oldBytes = data.oldValue == null ? null : innerSerializer.Serialize(data.oldValue, new SerializationContext(MessageComponentType.Key, topic));
-            var newBytes = data.newValue == null ? null : innerSerializer.Serialize(data.newValue, new SerializationContext(MessageComponentType.Key, topic));
+            var oldBytes = data.OldValue == null ? null : innerSerializer.Serialize(data.OldValue, new SerializationContext(MessageComponentType.Key, topic));
+            var newBytes = data.NewValue == null ? null : innerSerializer.Serialize(data.NewValue, new SerializationContext(MessageComponentType.Key, topic));
 
             return new Change<byte[]>(newBytes, oldBytes);
         }
@@ -70,8 +70,8 @@ namespace Kafka.Streams.KStream.Internals
 
             IDeserializer<T> innerDeserializer = InnerSerde().Deserializer;
 
-            var oldValue = innerDeserializer.Deserialize(serialChange.oldValue, isNull: serialChange.oldValue == null, new SerializationContext(MessageComponentType.Key, topic));
-            var newValue = innerDeserializer.Deserialize(serialChange.newValue, isNull: serialChange.newValue == null, new SerializationContext(MessageComponentType.Key, topic));
+            var oldValue = innerDeserializer.Deserialize(serialChange.OldValue, isNull: serialChange.OldValue == null, new SerializationContext(MessageComponentType.Key, topic));
+            var newValue = innerDeserializer.Deserialize(serialChange.NewValue, isNull: serialChange.NewValue == null, new SerializationContext(MessageComponentType.Key, topic));
 
             return new Change<T>(newValue, oldValue);
         }
@@ -87,22 +87,22 @@ namespace Kafka.Streams.KStream.Internals
                 return null;
             }
 
-            var oldSize = serialChange.oldValue == null ? -1 : serialChange.oldValue.Length;
-            var newSize = serialChange.newValue == null ? -1 : serialChange.newValue.Length;
+            var oldSize = serialChange.OldValue == null ? -1 : serialChange.OldValue.Length;
+            var newSize = serialChange.NewValue == null ? -1 : serialChange.NewValue.Length;
 
             ByteBuffer buffer = new ByteBuffer().Allocate(sizeof(int) * 2 + Math.Max(0, oldSize) + Math.Max(0, newSize));
 
             buffer.PutInt(oldSize);
 
-            if (serialChange.oldValue != null)
+            if (serialChange.OldValue != null)
             {
-                buffer.Add(serialChange.oldValue);
+                buffer.Add(serialChange.OldValue);
             }
 
             buffer.PutInt(newSize);
-            if (serialChange.newValue != null)
+            if (serialChange.NewValue != null)
             {
-                buffer.Add(serialChange.newValue);
+                buffer.Add(serialChange.NewValue);
             }
             return buffer.Array();
         }

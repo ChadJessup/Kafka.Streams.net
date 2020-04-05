@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream.Internals
         private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, S, V>>();
         private readonly IProcessorSupplier<K, V> processorSupplier;
         private readonly IClock clock;
-        public string? queryableStoreName { get; private set; }
+        public string? QueryableStoreName { get; private set; }
         private bool sendOldValues = false;
 
         public KTable(
@@ -58,7 +58,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             this.clock = clock;
             this.processorSupplier = IProcessorSupplier;
-            this.queryableStoreName = queryableStoreName;
+            this.QueryableStoreName = queryableStoreName;
         }
 
         private IKTable<K, V> DoFilter(
@@ -105,7 +105,7 @@ namespace Kafka.Streams.KStream.Internals
 
             var name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KTable.FILTER_NAME);
 
-            ProcessorParameters<K, VR> UnsafeCastProcessorParametersToCompletelyDifferentType<VR>(
+            static ProcessorParameters<K, VR> UnsafeCastProcessorParametersToCompletelyDifferentType<VR>(
                 ProcessorParameters<K, Change<V>> processorParameters)
             {
                 var convert = (IProcessorSupplier<K, VR>)processorParameters.ProcessorSupplier;
@@ -235,9 +235,7 @@ namespace Kafka.Streams.KStream.Internals
                     builder.NewStoreName(KTable.MAPVALUES_NAME);
                 }
 
-                keySerde = materializedInternal.KeySerde != null
-                    ? materializedInternal.KeySerde
-                    : this.keySerde;
+                keySerde = materializedInternal.KeySerde ?? this.keySerde;
 
                 valueSerde = materializedInternal.ValueSerde;
                 queryableStoreName = materializedInternal.QueryableStoreName();
@@ -473,7 +471,7 @@ namespace Kafka.Streams.KStream.Internals
 
             IProcessorSupplier<K, Change<V>> kStreamMapValues =
                 new KStreamMapValues<K, Change<V>, V>(
-                    (key, change) => change.newValue);
+                    (key, change) => change.NewValue);
 
             //ProcessorParameters<K, V> processorParameters = UnsafeCastProcessorParametersToCompletelyDifferentType<V>(
             //new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
@@ -516,7 +514,7 @@ namespace Kafka.Streams.KStream.Internals
             if (suppressed is INamedSuppressed<K>)
             {
                 var givenName = ((INamedSuppressed<object>)suppressed).name;
-                name = givenName != null ? givenName : builder.NewProcessorName(KTable.SUPPRESS_NAME);
+                name = givenName ?? builder.NewProcessorName(KTable.SUPPRESS_NAME);
             }
             else
             {
@@ -731,8 +729,8 @@ namespace Kafka.Streams.KStream.Internals
 
             if (!leftOuter)
             { // inner
-                joinThis = new KTableKTableInnerJoin<K, S, VR, V, VO>(this, (KTable<K, S, VO>)other, joiner, this.queryableStoreName);
-                joinOther = new KTableKTableInnerJoin<K, S, VR, VO, V>((KTable<K, S, VO>)other, this, ReverseJoiner(joiner), this.queryableStoreName);
+                joinThis = new KTableKTableInnerJoin<K, S, VR, V, VO>(this, (KTable<K, S, VO>)other, joiner, this.QueryableStoreName);
+                joinOther = new KTableKTableInnerJoin<K, S, VR, VO, V>((KTable<K, S, VO>)other, this, ReverseJoiner(joiner), this.QueryableStoreName);
             }
             else if (!rightOuter)
             { // left

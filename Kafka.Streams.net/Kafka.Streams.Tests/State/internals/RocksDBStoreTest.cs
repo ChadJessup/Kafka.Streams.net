@@ -109,7 +109,7 @@
 //            rocksDBStore.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRespectBulkloadOptionsDuringInit()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -129,7 +129,7 @@
 //            Assert.Equal(rocksDBStore.getOptions().level0StopWritesTrigger(), (36));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowExceptionOnRestoreWhenThereIsPreExistingRocksDbFiles()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -157,7 +157,7 @@
 //                equalTo("restoredValue"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCallRocksDbConfigSetter()
 //        {
 //            MockRocksDbConfigSetter.called = false;
@@ -167,7 +167,7 @@
 //            Assert.True(MockRocksDbConfigSetter.called);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowProcessorStateExceptionOnOpeningReadOnlyDir()
 //        {
 //            var tmpDir = TestUtils.GetTempDirectory();
@@ -186,7 +186,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAll()
 //        {
 //            List<KeyValuePair<Bytes, byte[]>> entries = new ArrayList<>();
@@ -221,7 +221,7 @@
 //                    rocksDBStore.Get(new Bytes(stringSerializer.Serialize(null, "3")))));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTogglePrepareForBulkloadSetting()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -235,7 +235,7 @@
 //            Assert.False("Should have set bulk loading to false", rocksDBStore.isPrepareForBulkload());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTogglePrepareForBulkloadSettingWhenPrexistingSstFiles()
 //        {
 //            List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
@@ -253,7 +253,7 @@
 //            Assert.False("Should have set bulk loading to false", rocksDBStore.isPrepareForBulkload());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreAll()
 //        {
 //            List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
@@ -278,7 +278,7 @@
 //                    rocksDBStore.Get(new Bytes(stringSerializer.Serialize(null, "3")))));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutOnlyIfAbsentValue()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -293,7 +293,7 @@
 //            Assert.Equal("A", retrievedValue);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHandleDeletesOnRestoreAll()
 //        {
 //            List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
@@ -313,7 +313,7 @@
 //            Assert.Equal(keys, (Utils.mkSet("2", "3")));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHandleDeletesAndPutbackOnRestoreAll()
 //        {
 //            List<KeyValuePair<byte[], byte[]>> entries = new ArrayList<>();
@@ -355,7 +355,7 @@
 //                    rocksDBStore.Get(new Bytes(stringSerializer.Serialize(null, "3")))));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreThenDeleteOnRestoreAll()
 //        {
 //            List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
@@ -399,7 +399,7 @@
 //            Assert.Equal(keys, (Utils.mkSet("2", "3")));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerExceptionOnNullPut()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -414,7 +414,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerExceptionOnNullPutAll()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -429,7 +429,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerExceptionOnNullGet()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -444,7 +444,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerExceptionOnDelete()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -459,7 +459,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowNullPointerExceptionOnRange()
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -474,7 +474,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]// (expected = ProcessorStateException)
+//        [Fact]// (expected = ProcessorStateException)
 //        public void ShouldThrowProcessorStateExceptionOnPutDeletedDir()
 //        { //throws IOException
 //            rocksDBStore.Init(context, rocksDBStore);
@@ -485,7 +485,7 @@
 //            rocksDBStore.flush();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHandleToggleOfEnablingBloomFilters()
 //        {
 

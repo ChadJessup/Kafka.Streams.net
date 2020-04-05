@@ -4,19 +4,19 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Tests
 {
-    public class IntegrationTestUtils
+    public static class IntegrationTestUtils
     {
-        internal static void waitUntilFinalKeyValueRecordsReceived<K, V>(StreamsConfig consumerConfig3, string reduceTopic, List<KeyValuePair<K, V>> expectedReducedValues)
+        internal static void WaitUntilFinalKeyValueRecordsReceived<K, V>(StreamsConfig consumerConfig3, string reduceTopic, List<KeyValuePair<K, V>> expectedReducedValues)
         {
             throw new NotImplementedException();
         }
 
-        internal static void purgeLocalStreamsState(StreamsConfig streamsConfiguration)
+        internal static void PurgeLocalStreamsState(StreamsConfig streamsConfiguration)
         {
             throw new NotImplementedException();
         }
 
-        internal static void produceKeyValuesSynchronously(string globalTableTopic, object p1, object p2, MockTime mockTime)
+        internal static void ProduceKeyValuesSynchronously(string globalTableTopic, object p1, object p2, MockTime mockTime)
         {
             throw new NotImplementedException();
         }

@@ -31,14 +31,14 @@
 
 //    public class MaybeTest
 //    {
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnDefinedValue()
 //        {
 //            Assert.Equal(Maybe.defined(null).getNullableValue(), nullValue());
 //            Assert.Equal(Maybe.defined("ASDF").getNullableValue(), ("ASDF"));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAnswerIsDefined()
 //        {
 //            Assert.Equal(Maybe.defined(null).isDefined(), (true));
@@ -46,7 +46,7 @@
 //            Assert.Equal(Maybe.undefined().isDefined(), (false));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowOnGetUndefinedValue()
 //        {
 //            Maybe<object> undefined = Maybe.undefined();
@@ -61,7 +61,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpholdEqualityCorrectness()
 //        {
 //            Assert.Equal(Maybe.undefined().equals(Maybe.undefined()), (true));
@@ -79,7 +79,7 @@
 //            Assert.Equal(Maybe.defined("a").equals(Maybe.defined("b")), (false));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpholdHashCodeCorrectness()
 //        {
 //            // This specifies the current implementation, which is simpler to write than an exhaustive test.

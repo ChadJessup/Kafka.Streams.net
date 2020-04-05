@@ -1,7 +1,7 @@
 ﻿using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.State;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using NodaTime;
 using System.Collections.Generic;
 

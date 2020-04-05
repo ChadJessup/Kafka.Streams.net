@@ -71,49 +71,49 @@
 //            cleanupTest();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic()
 //        {// throws Exception
 //            base.TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestReprocessingFromScratchAfterResetWithIntermediateUserTopic()
 //        {// throws Exception
 //            base.TestReprocessingFromScratchAfterResetWithIntermediateUserTopic();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestReprocessingFromFileAfterResetWithoutIntermediateUserTopic()
 //        {// throws Exception
 //            base.TestReprocessingFromFileAfterResetWithoutIntermediateUserTopic();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic()
 //        {// throws Exception
 //            base.testReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestReprocessingByDurationAfterResetWithoutIntermediateUserTopic()
 //        {// throws Exception
 //            base.testReprocessingByDurationAfterResetWithoutIntermediateUserTopic();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowToResetWhileStreamsRunning()
 //        {// throws Exception
 //            base.shouldNotAllowToResetWhileStreamsIsRunning();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowToResetWhenInputTopicAbsent()
 //        {// throws Exception
 //            base.shouldNotAllowToResetWhenInputTopicAbsent();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowToResetWhenIntermediateTopicAbsent()
 //        {// throws Exception
 //            //base.shouldNotAllowToResetWhenIntermediateTopicAbsent();

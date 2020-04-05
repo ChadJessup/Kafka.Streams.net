@@ -1,6 +1,6 @@
 using Kafka.Streams.KStream;
 using Kafka.Streams.State.KeyValues;
-using Kafka.Streams.State.Window;
+using Kafka.Streams.State.Windowed;
 using System;
 
 namespace Kafka.Streams.State.ReadOnly

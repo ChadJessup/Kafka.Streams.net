@@ -14,7 +14,7 @@ namespace Kafka.Streams.State.KeyValues
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             IClock clock)
-            : base(storeSupplier.name, keySerde, valueSerde, clock)
+            : base(storeSupplier.Name, keySerde, valueSerde, clock)
         {
             storeSupplier = storeSupplier ?? throw new ArgumentNullException(nameof(storeSupplier));
             this.storeSupplier = storeSupplier;

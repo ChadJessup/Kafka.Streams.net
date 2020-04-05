@@ -49,7 +49,7 @@
 //    private string namespace = "0.0-one";
 //    private StateSerdes<string, string> stateSerdes = new StateSerdes<>("foo", Serdes.String(), Serdes.String());
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldIterateOverValueFromBothIterators() {
 //        List<KeyValuePair<long, byte[]>> expectedKvPairs = new ArrayList<>();
 //        for (long t = 0; t < 100; t += 20) {
@@ -84,7 +84,7 @@
 //        iterator.close();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPeekNextStoreKey() {
 //        windowStoreKvPairs.Add(KeyValuePair.Create(10L, "a".getBytes()));
 //        cache.put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes)), new LRUCacheEntry("b".getBytes()));
@@ -103,7 +103,7 @@
 //        iterator.close();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldPeekNextCacheKey() {
 //        windowStoreKvPairs.Add(KeyValuePair.Create(0L, "a".getBytes()));
 //        cache.put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary("a", 10L, 0, stateSerdes)), new LRUCacheEntry("b".getBytes()));

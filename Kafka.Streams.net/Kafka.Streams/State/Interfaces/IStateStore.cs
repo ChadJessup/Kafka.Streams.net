@@ -27,7 +27,7 @@ namespace Kafka.Streams.State
          * The name of this store.
          * @return the storage name
          */
-        string name { get; }
+        string Name { get; }
 
         /**
          * Initializes this state store.

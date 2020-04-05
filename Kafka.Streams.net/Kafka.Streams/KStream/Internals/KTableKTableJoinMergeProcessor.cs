@@ -45,21 +45,21 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp.Make(value.newValue, context.timestamp));
+                store.Add(key, ValueAndTimestamp.Make(value.NewValue, Context.Timestamp));
 
-                tupleForwarder.MaybeForward(key, value.newValue, sendOldValues
-                    ? value.oldValue
+                tupleForwarder.MaybeForward(key, value.NewValue, sendOldValues
+                    ? value.OldValue
                     : default);
             }
             else
             {
                 if (sendOldValues)
                 {
-                    context.Forward(key, value);
+                    Context.Forward(key, value);
                 }
                 else
                 {
-                    context.Forward(key, new Change<V>(value.newValue));
+                    Context.Forward(key, new Change<V>(value.NewValue));
                 }
             }
         }

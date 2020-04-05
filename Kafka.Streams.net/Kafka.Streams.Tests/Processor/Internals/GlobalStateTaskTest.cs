@@ -56,7 +56,7 @@
 //            globalStateTask = new GlobalStateUpdateTask(topology, context, stateMgr, new LogAndFailExceptionHandler(), logContext);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInitializeStateManager()
 //        {
 //            Dictionary<TopicPartition, long> startingOffsets = globalStateTask.initialize();
@@ -64,14 +64,14 @@
 //            Assert.Equal(offsets, startingOffsets);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInitializeContext()
 //        {
 //            globalStateTask.initialize();
 //            Assert.True(context.initialized);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInitializeProcessorTopology()
 //        {
 //            globalStateTask.initialize();
@@ -81,7 +81,7 @@
 //            Assert.True(processorTwo.initialized);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldProcessRecordsForTopic()
 //        {
 //            globalStateTask.initialize();
@@ -90,7 +90,7 @@
 //            Assert.Equal(0, sourceTwo.numReceived);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldProcessRecordsForOtherTopic()
 //        {
 //            byte[] integerBytes = new IntegerSerializer().Serialize("foo", 1);
@@ -128,7 +128,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowStreamsExceptionWhenKeyDeserializationFails()
 //        {
 //            byte[] key = new Serdes.Long().Serializer().Serialize(topic2, 1L);
@@ -137,7 +137,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowStreamsExceptionWhenValueDeserializationFails()
 //        {
 //            byte[] key = new IntegerSerializer().Serialize(topic2, 1);
@@ -145,7 +145,7 @@
 //            MaybeDeserialize(globalStateTask, key, recordValue, true);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowStreamsExceptionWhenKeyDeserializationFailsWithSkipHandler()
 //        {
 //            GlobalStateUpdateTask globalStateTask2 = new GlobalStateUpdateTask(
@@ -161,7 +161,7 @@
 //            MaybeDeserialize(globalStateTask2, key, recordValue, false);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowStreamsExceptionWhenValueDeserializationFails()
 //        {
 //            GlobalStateUpdateTask globalStateTask2 = new GlobalStateUpdateTask(
@@ -178,7 +178,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlushStateManagerWithOffsets()
 //        { //throws IOException
 //            Dictionary<TopicPartition, long> expectedOffsets = new HashMap<>();
@@ -190,7 +190,7 @@
 //            Assert.Equal(expectedOffsets, stateMgr.checkpointed());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCheckpointOffsetsWhenStateIsFlushed()
 //        {
 //            Dictionary<TopicPartition, long> expectedOffsets = new HashMap<>();

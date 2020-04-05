@@ -65,7 +65,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReduce()
 //        {// throws Exception
 //            produceMessages(System.currentTimeMillis());
@@ -90,7 +90,7 @@
 //                        new KeyValueTimestamp<>("E", "E:E", timestamp)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReduceWindowed()
 //        {// throws Exception
 //            long firstBatchTimestamp = System.currentTimeMillis() - 1000;
@@ -128,7 +128,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGroupByKey()
 //        {// throws Exception
 //            long timestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;

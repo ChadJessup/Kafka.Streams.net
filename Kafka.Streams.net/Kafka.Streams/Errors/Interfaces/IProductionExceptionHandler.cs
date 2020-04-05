@@ -21,12 +21,12 @@ namespace Kafka.Streams.Errors.Interfaces
         /**
          * an english description of the api--this is for debugging and can change
          */
-        string name { get; }
+        string Name { get; }
 
         /**
          * the permanent and immutable id of an API--this can't change ever
          */
-        int id { get; }
+        int Id { get; }
     }
 
     public enum ProductionExceptionHandlerResponse

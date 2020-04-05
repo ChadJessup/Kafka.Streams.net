@@ -121,7 +121,7 @@ namespace Kafka.Streams.Processors.Internals
                 throw new ArgumentNullException(nameof(store));
             }
 
-            var storeName = store.name;
+            var storeName = store.Name;
             logger.LogDebug("Registering state store {} to its state manager", storeName);
 
             if (StateManagerUtil.CHECKPOINT_FILE_NAME.Equals(storeName))
@@ -290,7 +290,7 @@ namespace Kafka.Streams.Processors.Internals
                     if (entry.Value.IsPresent())
                     {
                         IStateStore store = entry.Value;
-                        logger.LogTrace("Flushing store {}", store.name);
+                        logger.LogTrace("Flushing store {}", store.Name);
                         try
                         {
 
@@ -300,9 +300,9 @@ namespace Kafka.Streams.Processors.Internals
                         {
                             if (firstException == null)
                             {
-                                firstException = new ProcessorStateException(string.Format("%sFailed to flush state store %s", logPrefix, store.name), e);
+                                firstException = new ProcessorStateException(string.Format("%sFailed to flush state store %s", logPrefix, store.Name), e);
                             }
-                            logger.LogError("Failed to flush state store {}: ", store.name, e);
+                            logger.LogError("Failed to flush state store {}: ", store.Name, e);
                         }
                     }
                     else
@@ -339,21 +339,21 @@ namespace Kafka.Streams.Processors.Internals
                     if (entry.Value.IsPresent())
                     {
                         IStateStore store = entry.Value;
-                        logger.LogDebug("Closing storage engine {}", store.name);
+                        logger.LogDebug("Closing storage engine {}", store.Name);
                         try
                         {
 
                             store.Close();
-                            registeredStores.Add(store.name, null);
+                            registeredStores.Add(store.Name, null);
                         }
                         catch (RuntimeException e)
                         {
                             if (firstException == null)
                             {
-                                firstException = new ProcessorStateException(string.Format("%sFailed to close state store %s", logPrefix, store.name), e);
+                                firstException = new ProcessorStateException(string.Format("%sFailed to close state store %s", logPrefix, store.Name), e);
                             }
 
-                            logger.LogError("Failed to close state store {}: ", store.name, e);
+                            logger.LogError("Failed to close state store {}: ", store.Name, e);
                         }
                     }
                     else
@@ -466,7 +466,7 @@ namespace Kafka.Streams.Processors.Internals
             logger.LogDebug("Register global stores {}", stateStores);
             foreach (IStateStore stateStore in stateStores)
             {
-                globalStores.Add(stateStore.name, stateStore);
+                globalStores.Add(stateStore.Name, stateStore);
             }
         }
 

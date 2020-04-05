@@ -47,7 +47,7 @@
 //    mockAdminClient.close();
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldReturnCorrectPartitionCounts()
 //{
 //    mockAdminClient.addTopic(
@@ -58,7 +58,7 @@
 //    Assert.Equal(Collections.singletonMap(topic, 1), internalTopicManager.getNumPartitions(Collections.singleton(topic)));
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldCreateRequiredTopics()
 //{// throws Exception
 //    InternalTopicConfig topicConfig = new RepartitionTopicConfig(topic, Collections.< string, string > emptyMap());
@@ -99,7 +99,7 @@
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //public void ShouldNotCreateTopicIfExistsWithDifferentPartitions()
 //{
 //    mockAdminClient.addTopic(
@@ -121,7 +121,7 @@
 //        } catch (StreamsException expected) { /* pass */ }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //public void ShouldNotThrowExceptionIfExistsWithDifferentReplication()
 //{
 //    mockAdminClient.addTopic(
@@ -140,13 +140,13 @@
 //    internalTopicManager2.makeReady(Collections.singletonMap(topic, internalTopicConfig));
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldNotThrowExceptionForEmptyTopicMap()
 //{
 //    internalTopicManager.makeReady(Collections.emptyMap());
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldExhaustRetriesOnTimeoutExceptionForMakeReady()
 //{
 //    mockAdminClient.timeoutNextRequest(1);
@@ -164,7 +164,7 @@
 //    }
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldLogWhenTopicNotFoundAndNotThrowException()
 //{
 //    LogCaptureAppender.setClassLoggerToDebug(InternalTopicManager);
@@ -196,7 +196,7 @@
 
 //}
 
-//[Xunit.Fact]
+//[Fact]
 //public void ShouldExhaustRetriesOnMarkedForDeletionTopic()
 //{
 //    mockAdminClient.addTopic(

@@ -8,7 +8,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //using Kafka.Streams.KStream.Interfaces;
 //using Kafka.Streams.KStream.Internals;
 //using Kafka.Streams.State;
-//using Kafka.Streams.State.Window;
+//using Kafka.Streams.State.Windowed;
 //using System;
 //using System.Collections.Generic;
 

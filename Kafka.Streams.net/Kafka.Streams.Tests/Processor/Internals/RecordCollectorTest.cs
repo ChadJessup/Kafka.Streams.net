@@ -79,7 +79,7 @@
 //            return int.parseInt(key) % numPartitions;
 //        };
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestSpecificPartition()
 //        {
 
@@ -118,7 +118,7 @@
 //            Assert.Equal((long)1L, offsets.Get(new TopicPartition("topic1", 2)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestStreamPartitioner()
 //        {
 
@@ -152,7 +152,7 @@
 //        }
 
 
-//        [Xunit.Fact]// (expected = StreamsException)
+//        [Fact]// (expected = StreamsException)
 //        public void ShouldThrowStreamsExceptionOnAnyExceptionButProducerFencedException()
 //        {
 //            RecordCollector collector = new RecordCollectorImpl(
@@ -173,7 +173,7 @@
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowStreamsExceptionOnSubsequentCallIfASendFailsWithDefaultExceptionHandler()
 //    {
 //        RecordCollector collector = new RecordCollectorImpl(
@@ -200,7 +200,7 @@
 //    }
 
     
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowStreamsExceptionOnSubsequentCallIfASendFailsWithContinueExceptionHandler()
 //    {
 //        RecordCollector collector = new RecordCollectorImpl(
@@ -224,7 +224,7 @@
 //    }
 
     
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRecordSkippedMetricAndLogWarningIfSendFailsWithContinueExceptionHandler()
 //    {
 //        Metrics metrics = new Metrics();
@@ -253,7 +253,7 @@
 //    }
 
     
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowStreamsExceptionOnFlushIfASendFailedWithDefaultExceptionHandler()
 //    {
 //        RecordCollector collector = new RecordCollectorImpl(
@@ -280,7 +280,7 @@
 //    }
 
     
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowStreamsExceptionOnFlushIfASendFailedWithContinueExceptionHandler()
 //    {
 //        RecordCollector collector = new RecordCollectorImpl(
@@ -304,7 +304,7 @@
 //    }
 
     
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldThrowStreamsExceptionOnCloseIfASendFailedWithDefaultExceptionHandler()
 //    {
 //        RecordCollector collector = new RecordCollectorImpl(
@@ -331,7 +331,7 @@
 //    }
 
     
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowStreamsExceptionOnCloseIfASendFailedWithContinueExceptionHandler()
 //    {
 //        RecordCollector collector = new RecordCollectorImpl(
@@ -355,7 +355,7 @@
 //    }
 
     
-//    [Xunit.Fact]// (expected = StreamsException)
+//    [Fact]// (expected = StreamsException)
 //    public void ShouldThrowIfTopicIsUnknownWithDefaultExceptionHandler()
 //    {
 //        RecordCollector collector = new RecordCollectorImpl(
@@ -377,7 +377,7 @@
 //    }
 
     
-//    [Xunit.Fact]// (expected = StreamsException)
+//    [Fact]// (expected = StreamsException)
 //    public void ShouldThrowIfTopicIsUnknownWithContinueExceptionHandler()
 //    {
 //        RecordCollector collector = new RecordCollectorImpl(
@@ -398,7 +398,7 @@
 //        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestRecordHeaderPassThroughSerializer()
 //    {
 //        CustomStringSerializer keySerializer = new CustomStringSerializer();
@@ -427,7 +427,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestShouldNotThrowNPEOnCloseIfProducerIsNotInitialized()
 //    {
 //        RecordCollectorImpl collector = new RecordCollectorImpl(

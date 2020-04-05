@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         public override void Process(K key, V value)
         {
-            context.Forward(key, value);
+            Context.Forward(key, value);
         }
     }
 }

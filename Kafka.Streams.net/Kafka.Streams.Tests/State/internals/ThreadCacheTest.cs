@@ -12,7 +12,7 @@
 //        string namespace2 = "0.2-ns";
 //        private LogContext logContext = new LogContext("testCache ");
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void BasicPutGet()
 //        { //throws IOException
 //            List<KeyValuePair<string, string>> toInsert = Array.asList(
@@ -80,7 +80,7 @@
 //                cache.sizeBytes() * systemFactor >= usedRuntimeMemory);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void CacheOverheadsSmallValues()
 //        {
 //            Runtime runtime = Runtime.getRuntime();
@@ -93,7 +93,7 @@
 //            checkOverheads(factor, systemFactor, desiredCacheSize, keySizeBytes, valueSizeBytes);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void CacheOverheadsLargeValues()
 //        {
 //            Runtime runtime = Runtime.getRuntime();
@@ -123,7 +123,7 @@
 //                    8; // next
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void Evict()
 //        {
 //            List<KeyValuePair<string, string>> received = new ArrayList<>();
@@ -164,7 +164,7 @@
 //            Assert.Equal(cache.evicts(), 4);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDelete()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
@@ -175,7 +175,7 @@
 //            Assert.Null(cache.Get(ns, key));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotFlushAfterDelete()
 //        {
 //            Bytes key = Bytes.Wrap(new byte[] { 0 });
@@ -191,7 +191,7 @@
 //            Assert.Equal(cache.flushes(), 1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotBlowUpOnNonExistentKeyWhenDeleting()
 //        {
 //            Bytes key = Bytes.Wrap(new byte[] { 0 });
@@ -201,14 +201,14 @@
 //            Assert.Null(cache.delete(ns, Bytes.Wrap(new byte[] { 1 })));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotBlowUpOnNonExistentNamespaceWhenDeleting()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            Assert.Null(cache.delete(ns, Bytes.Wrap(new byte[] { 1 })));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotClashWithOverlappingNames()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
@@ -221,7 +221,7 @@
 //            assertArrayEquals(name1Byte.Get(), cache.Get(namespace2, nameByte).Value);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPeekNextKey()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
@@ -232,7 +232,7 @@
 //            Assert.Equal(theByte, iterator.peekNextKey());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldGetSameKeyAsPeekNext()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
@@ -242,7 +242,7 @@
 //            Assert.Equal(iterator.peekNextKey(), iterator.MoveNext().key);
 //        }
 
-//        [Xunit.Fact]// (expected = NoSuchElementException)
+//        [Fact]// (expected = NoSuchElementException)
 //        public void ShouldThrowIfNoPeekNextKey()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
@@ -250,7 +250,7 @@
 //            iterator.peekNextKey();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnFalseIfNoNextKey()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
@@ -258,7 +258,7 @@
 //            Assert.False(iterator.hasNext());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPeekAndIterateOverRange()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
@@ -280,7 +280,7 @@
 //            Assert.Equal(5, bytesIndex);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSkipEntriesWhereValueHasBeenEvictedFromCache()
 //        {
 //            int entrySize = memoryCacheEntrySize(new byte[1], new byte[1], "");
@@ -302,7 +302,7 @@
 //            Assert.Equal(Bytes.Wrap(new byte[] { 1 }), range.peekNextKey());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlushDirtyEntriesForNamespace()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
@@ -325,7 +325,7 @@
 //            Assert.Equal(expected, received);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotFlushCleanEntriesForNamespace()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
@@ -362,21 +362,21 @@
 //            Assert.Equal(1, received.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEvictImmediatelyIfCacheSizeIsVerySmall()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 1, new MockStreamsMetrics(new Metrics()));
 //            shouldEvictImmediatelyIfCacheSizeIsZeroOrVerySmall(cache);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEvictImmediatelyIfCacheSizeIsZero()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 0, new MockStreamsMetrics(new Metrics()));
 //            shouldEvictImmediatelyIfCacheSizeIsZeroOrVerySmall(cache);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEvictAfterPutAll()
 //        {
 //            List<ThreadCache.DirtyEntry> received = new ArrayList<>();
@@ -390,7 +390,7 @@
 //            Assert.Equal(received.Count, 2);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAll()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
@@ -402,7 +402,7 @@
 //            assertArrayEquals(new byte[] { 6 }, cache.Get(ns, Bytes.Wrap(new byte[] { 1 })).Value);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotForwardCleanEntryOnEviction()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 0, new MockStreamsMetrics(new Metrics()));
@@ -411,7 +411,7 @@
 //            cache.put(ns, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 0 }));
 //            Assert.Equal(0, received.Count);
 //        }
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutIfAbsent()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
@@ -422,7 +422,7 @@
 //            assertArrayEquals(value, cache.Get(ns, key).Value);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEvictAfterPutIfAbsent()
 //        {
 //            List<ThreadCache.DirtyEntry> received = new ArrayList<>();
@@ -437,7 +437,7 @@
 //            Assert.Equal(received.Count, 3);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotLoopForEverWhenEvictingAndCurrentCacheIsEmpty()
 //        {
 //            int maxCacheSizeInBytes = 100;
@@ -460,7 +460,7 @@
 //            threadCache.put(ns, Bytes.Wrap(new byte[] { 2 }), dirtyEntry(new byte[remaining + 100]));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCleanupNamedCacheOnClose()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
@@ -472,7 +472,7 @@
 //            Assert.Null(cache.Get(namespace2, Bytes.Wrap(new byte[] { 1 })));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnNullIfKeyIsNull()
 //        {
 //            ThreadCache threadCache = new ThreadCache(logContext, 10, new MockStreamsMetrics(new Metrics()));
@@ -480,7 +480,7 @@
 //            Assert.Null(threadCache.Get(ns, null));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCalculateSizeInBytes()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));

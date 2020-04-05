@@ -47,7 +47,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public void Process(K key, Change<V> value)
         {
-            observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.timestamp);
+            observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.Timestamp);
             Buffer(key, value);
             EnforceConstraints();
         }
@@ -98,7 +98,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         private bool ShouldForward(Change<V> value)
         {
-            return value.newValue != null || !safeToDropTombstones;
+            return value.NewValue != null || !safeToDropTombstones;
         }
 
         public void Close()

@@ -29,7 +29,7 @@ namespace Kafka.Streams.KStream.Internals
 
             SessionWindow otherWindow = (SessionWindow)other;
 
-            return !(otherWindow.Start() < this.Start() || this.End() < otherWindow.Start());
+            return !(otherWindow.End() < this.Start() || this.End() < otherWindow.Start());
         }
     }
 }

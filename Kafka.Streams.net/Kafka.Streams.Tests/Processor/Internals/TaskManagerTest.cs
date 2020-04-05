@@ -147,7 +147,7 @@
 //                            adminClient);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateSubscriptionFromAssignment()
 //        {
 //            MockTopologyBuilder();
@@ -166,7 +166,7 @@
 //                            subscriptionUpdates);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotUpdateSubscriptionFromAssignment()
 //        {
 //            MockTopologyBuilder();
@@ -183,7 +183,7 @@
 //                            subscriptionUpdates);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateSubscriptionFromMetadata()
 //        {
 //            MockTopologyBuilder();
@@ -202,7 +202,7 @@
 //                    subscriptionUpdates);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotUpdateSubscriptionFromMetadata()
 //        {
 //            MockTopologyBuilder();
@@ -219,7 +219,7 @@
 //                    subscriptionUpdates);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnCachedTaskIdsFromDirectory()
 //        { //throws IOException
 //            File[] taskFolders = asList(testFolder.newFolder("0_1"),
@@ -244,7 +244,7 @@
 //            Assert.Equal(tasks, (Utils.mkSet(task01, task02, task11)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseActiveUnAssignedSuspendedTasksWhenCreatingNewTasks()
 //        {
 //            MockSingleActiveTask();
@@ -258,7 +258,7 @@
 //            verify(active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseStandbyUnAssignedSuspendedTasksWhenCreatingNewTasks()
 //        {
 //            MockSingleActiveTask();
@@ -272,7 +272,7 @@
 //            verify(active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddNonResumedActiveTasks()
 //        {
 //            MockSingleActiveTask();
@@ -286,7 +286,7 @@
 //            verify(activeTaskCreator, active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAddResumedActiveTasks()
 //        {
 //            checkOrder(active, true);
@@ -300,7 +300,7 @@
 //            verify(active, activeTaskCreator);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddNonResumedStandbyTasks()
 //        {
 //            MockStandbyTaskExpectations();
@@ -314,7 +314,7 @@
 //            verify(standbyTaskCreator, active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAddResumedStandbyTasks()
 //        {
 //            checkOrder(active, true);
@@ -328,7 +328,7 @@
 //            verify(standby, standbyTaskCreator);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPauseActivePartitions()
 //        {
 //            MockSingleActiveTask();
@@ -341,7 +341,7 @@
 //            verify(consumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSuspendActiveTasks()
 //        {
 //            expect(active.suspend()).andReturn(null);
@@ -351,7 +351,7 @@
 //            verify(active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSuspendStandbyTasks()
 //        {
 //            expect(standby.suspend()).andReturn(null);
@@ -361,7 +361,7 @@
 //            verify(standby);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUnassignChangelogPartitionsOnSuspend()
 //        {
 //            restoreConsumer.unsubscribe();
@@ -372,7 +372,7 @@
 //            verify(restoreConsumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowStreamsExceptionAtEndIfExceptionDuringSuspend()
 //        {
 //            expect(active.suspend()).andReturn(new RuntimeException(""));
@@ -393,7 +393,7 @@
 //            verify(restoreConsumer, active, standby);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseActiveTasksOnShutdown()
 //        {
 //            active.close(true);
@@ -404,7 +404,7 @@
 //            verify(active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseStandbyTasksOnShutdown()
 //        {
 //            standby.close(false);
@@ -415,7 +415,7 @@
 //            verify(standby);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUnassignChangelogPartitionsOnShutdown()
 //        {
 //            restoreConsumer.unsubscribe();
@@ -426,7 +426,7 @@
 //            verify(restoreConsumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInitializeNewActiveTasks()
 //        {
 //            active.updateRestored(EasyMock.< Collection < TopicPartition >> anyObject());
@@ -437,7 +437,7 @@
 //            verify(active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInitializeNewStandbyTasks()
 //        {
 //            active.updateRestored(EasyMock.< Collection < TopicPartition >> anyObject());
@@ -448,7 +448,7 @@
 //            verify(standby);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldRestoreStateFromChangeLogReader()
 //        {
 //            expect(changeLogReader.restore(active)).andReturn(taskId0Partitions);
@@ -460,7 +460,7 @@
 //            verify(changeLogReader, active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldResumeRestoredPartitions()
 //        {
 //            expect(changeLogReader.restore(active)).andReturn(taskId0Partitions);
@@ -476,7 +476,7 @@
 //            verify(consumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAssignStandbyPartitionsWhenAllActiveTasksAreRunning()
 //        {
 //            MockAssignStandbyPartitions(1L);
@@ -486,7 +486,7 @@
 //            verify(restoreConsumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnTrueWhenActiveAndStandbyTasksAreRunning()
 //        {
 //            MockAssignStandbyPartitions(1L);
@@ -496,7 +496,7 @@
 //            Assert.True(taskManager.updateNewAndRestoringTasks());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnFalseWhenOnlyActiveTasksAreRunning()
 //        {
 //            MockAssignStandbyPartitions(1L);
@@ -506,7 +506,7 @@
 //            Assert.False(taskManager.updateNewAndRestoringTasks());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnFalseWhenThereAreStillNonRunningTasks()
 //        {
 //            expect(active.allTasksRunning()).andReturn(false);
@@ -515,7 +515,7 @@
 //            Assert.False(taskManager.updateNewAndRestoringTasks());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSeekToCheckpointedOffsetOnStandbyPartitionsWhenOffsetGreaterThanEqualTo0()
 //        {
 //            MockAssignStandbyPartitions(1L);
@@ -527,7 +527,7 @@
 //            verify(restoreConsumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSeekToBeginningIfOffsetIsLessThan0()
 //        {
 //            MockAssignStandbyPartitions(-1L);
@@ -539,7 +539,7 @@
 //            verify(restoreConsumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCommitActiveAndStandbyTasks()
 //        {
 //            expect(active.commit()).andReturn(1);
@@ -551,7 +551,7 @@
 //            verify(active, standby);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPropagateExceptionFromActiveCommit()
 //        {
 //            // upgrade to strict mock to ensure no calls
@@ -572,7 +572,7 @@
 //            verify(active, standby);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPropagateExceptionFromStandbyCommit()
 //        {
 //            expect(standby.commit()).andThrow(new RuntimeException(""));
@@ -590,7 +590,7 @@
 //            verify(standby);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSendPurgeData()
 //        {
 //            KafkaFutureImpl<DeletedRecords> futureDeletedRecords = new KafkaFutureImpl<>();
@@ -608,7 +608,7 @@
 //            verify(active, adminClient);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotSendPurgeDataIfPreviousNotDone()
 //        {
 //            KafkaFuture<DeletedRecords> futureDeletedRecords = new KafkaFutureImpl<>();
@@ -625,7 +625,7 @@
 //            verify(active, adminClient);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldIgnorePurgeDataErrors()
 //        {
 //            KafkaFutureImpl<DeletedRecords> futureDeletedRecords = new KafkaFutureImpl<>();
@@ -643,7 +643,7 @@
 //            verify(active, adminClient);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldMaybeCommitActiveTasks()
 //        {
 //            expect(active.maybeCommitPerUserRequested()).andReturn(5);
@@ -653,7 +653,7 @@
 //            verify(active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldProcessActiveTasks()
 //        {
 //            expect(active.process(0L)).andReturn(10);
@@ -663,7 +663,7 @@
 //            verify(active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPunctuateActiveTasks()
 //        {
 //            expect(active.punctuate()).andReturn(20);
@@ -673,7 +673,7 @@
 //            verify(active);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotResumeConsumptionUntilAllStoresRestored()
 //        {
 //            expect(active.allTasksRunning()).andReturn(false);
@@ -686,7 +686,7 @@
 //            EasyMock.verify(consumer);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldUpdateTasksFromPartitionAssignment()
 //        {
 //            Dictionary<TaskId, HashSet<TopicPartition>> activeTasks = new HashMap<>();

@@ -23,20 +23,20 @@ namespace Kafka.Streams.Processors.Internals
             this.del = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
         }
 
-        public string applicationId
-            => del.applicationId;
+        public string ApplicationId
+            => del.ApplicationId;
 
-        public TaskId taskId
-            => del.taskId;
+        public TaskId TaskId
+            => del.TaskId;
 
-        public ISerde keySerde
-            => del.keySerde;
+        public ISerde KeySerde
+            => del.KeySerde;
 
-        public ISerde valueSerde
-            => del.valueSerde;
+        public ISerde ValueSerde
+            => del.ValueSerde;
 
-        public DirectoryInfo stateDir
-            => del.stateDir;
+        public DirectoryInfo StateDir
+            => del.StateDir;
 
         //public IStreamsMetrics metrics
         //    => del.metrics;
@@ -102,17 +102,17 @@ namespace Kafka.Streams.Processors.Internals
         public string Topic
             => del.Topic;
 
-        public int partition
-            => del.partition;
+        public int Partition
+            => del.Partition;
 
-        public long offset
-            => del.offset;
+        public long Offset
+            => del.Offset;
 
-        public Headers headers
-            => del.headers;
+        public Headers Headers
+            => del.Headers;
 
-        public long timestamp
-            => del.timestamp;
+        public long Timestamp
+            => del.Timestamp;
 
         public Dictionary<string, object> AppConfigs()
             => del.AppConfigs();

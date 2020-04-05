@@ -52,7 +52,7 @@
 //            Collections.< string > emptySet(),
 //            Collections.< string > emptySet());
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldComputeGroupingForTwoGroups()
 //        {
 //            PartitionGrouper grouper = new DefaultPartitionGrouper();
@@ -73,7 +73,7 @@
 //            Assert.Equal(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldComputeGroupingForSingleGroupWithMultipleTopics()
 //        {
 //            PartitionGrouper grouper = new DefaultPartitionGrouper();
@@ -96,7 +96,7 @@
 //            Assert.Equal(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
 //        }
 
-//        [Xunit.Fact]// (expected = RuntimeException)
+//        [Fact]// (expected = RuntimeException)
 //        public void ShouldNotCreateAnyTasksBecauseOneTopicHasUnknownPartitions()
 //        {
 //            PartitionGrouper grouper = new DefaultPartitionGrouper();

@@ -5,7 +5,7 @@
 //using Kafka.Streams.State.Interfaces;
 //using System;
 
-//namespace Kafka.Streams.State.Window
+//namespace Kafka.Streams.State.Windowed
 //{
 //    public class WindowToTimestampedWindowByteStoreAdapter : IWindowStore<Bytes, byte[]>
 //    {

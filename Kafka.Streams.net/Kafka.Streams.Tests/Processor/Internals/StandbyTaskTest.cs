@@ -190,7 +190,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        Utils.delete(baseDir);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void testStorePartitions(){ //throws IOException
 //        StreamsConfig config = createConfig(baseDir);
 //        task = new StandbyTask(taskId,
@@ -206,7 +206,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    }
 
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void testUpdateNonInitializedStore(){ //throws IOException
 //        StreamsConfig config = createConfig(baseDir);
 //        task = new StandbyTask(taskId,
@@ -242,7 +242,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void testUpdate(){ //throws IOException
 //        StreamsConfig config = createConfig(baseDir);
 //        task = new StandbyTask(taskId,
@@ -301,7 +301,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        Assert.Equal(asList(1, 2, 3), store2.keys);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldRestoreToWindowedStores(){ //throws IOException
 //        string storeName = "windowed-store";
 //        string changelogName = applicationId + "-" + storeName + "-changelog";
@@ -403,7 +403,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldWriteCheckpointFile(){ //throws IOException
 //        string storeName = "checkpoint-file-store";
 //        string changelogName = applicationId + "-" + storeName + "-changelog";
@@ -473,7 +473,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        return result;
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldRestoreToKTable(){ //throws IOException
 //        consumer.assign(Collections.singletonList(globalTopicPartition));
 //        consumer.commitSync(mkMap(mkEntry(globalTopicPartition, new OffsetAndMetadata(0L))));
@@ -557,7 +557,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        );
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldInitializeStateStoreWithoutException(){ //throws IOException
 //        InternalStreamsBuilder builder = new InternalStreamsBuilder(new InternalTopologyBuilder());
 //        builder.Stream(Collections.singleton("topic"), new ConsumedInternal<>()).groupByKey().count();
@@ -565,7 +565,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        initializeStandbyStores(builder);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldInitializeWindowStoreWithoutException(){ //throws IOException
 //        InternalStreamsBuilder builder = new InternalStreamsBuilder(new InternalTopologyBuilder());
 //        builder.Stream(Collections.singleton("topic"),
@@ -596,7 +596,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        Assert.True(task.hasStateStores());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldCheckpointStoreOffsetsOnCommit(){ //throws IOException
 //        consumer.assign(Collections.singletonList(globalTopicPartition));
 //        Dictionary<TopicPartition, OffsetAndMetadata> committedOffsets = new HashMap<>();
@@ -636,7 +636,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //                                               serializedValue))
 //        );
 
-//        time.sleep(config.getLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG));
+//        time.sleep(config.GetLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG));
 //        task.commit();
 
 //        Dictionary<TopicPartition, long> checkpoint = new OffsetCheckpoint(
@@ -646,7 +646,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldCloseStateMangerOnTaskCloseWhenCommitFailed() {// throws Exception
 //        consumer.assign(Collections.singletonList(globalTopicPartition));
 //        Dictionary<TopicPartition, OffsetAndMetadata> committedOffsets = new HashMap<>();
@@ -707,7 +707,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        Assert.Equal(totalCloses, (expected));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldRecordTaskClosedMetricOnClose(){ //throws IOException
 //        MetricName metricName = setupCloseTaskMetric();
 //        StandbyTask task = new StandbyTask(
@@ -729,7 +729,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        verifyCloseTaskMetric(expectedCloseTaskMetric, streamsMetrics, metricName);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void shouldRecordTaskClosedMetricOnCloseSuspended(){ //throws IOException
 //        MetricName metricName = setupCloseTaskMetric();
 //        StandbyTask task = new StandbyTask(

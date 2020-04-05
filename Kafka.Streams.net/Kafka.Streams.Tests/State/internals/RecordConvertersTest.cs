@@ -39,14 +39,14 @@
 
 //        private IRecordConverter timestampedValueConverter = rawValueToTimestampedValue();
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPreserveNullValueOnConversion()
 //        {
 //            ConsumeResult<byte[], byte[]> nullValueRecord = new ConsumeResult<byte[], byte[]>("", 0, 0L, System.Array.Empty<byte>(), null);
 //            Assert.Null(timestampedValueConverter.convert(nullValueRecord).Value);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAddTimestampToValueOnConversionWhenValueIsNotNull()
 //        {
 //            long timestamp = 10L;

@@ -1,28 +1,30 @@
+using System;
+
 namespace Kafka.Streams.KStream.Internals
 {
     public interface IChange<out T>
     {
-        T newValue { get; }
-        T oldValue { get; }
+        T NewValue { get; }
+        T OldValue { get; }
     }
 
     public class Change<V> : IChange<V>
     {
-        public V newValue { get; }
-        public V oldValue { get; }
+        public V NewValue { get; }
+        public V OldValue { get; }
 
         public Change(V newValue = default, V oldValue = default)
         {
-            this.newValue = newValue;
-            this.oldValue = oldValue;
+            this.NewValue = newValue;
+            this.OldValue = oldValue;
         }
 
         public override string ToString()
-            => $"({newValue}<-{oldValue})";
+            => $"({NewValue}<-{OldValue})";
 
         public static implicit operator V(Change<V> change)
         {
-            return change.newValue;
+            return change.NewValue;
         }
 
         public override bool Equals(object o)
@@ -39,13 +41,13 @@ namespace Kafka.Streams.KStream.Internals
 
             var change = (Change<object>)o;
 
-            return newValue?.Equals(change.newValue) ?? false
-                && oldValue.Equals(change.oldValue);
+            return NewValue?.Equals(change.NewValue) ?? false
+                && OldValue.Equals(change.OldValue);
         }
 
         public override int GetHashCode()
         {
-            return (newValue, oldValue).GetHashCode();
+            return HashCode.Combine(this.NewValue, this.OldValue);
         }
     }
 }

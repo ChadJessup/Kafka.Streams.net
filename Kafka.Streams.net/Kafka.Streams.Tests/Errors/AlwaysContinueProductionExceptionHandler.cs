@@ -11,8 +11,8 @@ namespace Kafka.Streams.Tests.Errors
      */
     public class AlwaysContinueProductionExceptionHandler : IProductionExceptionHandler
     {
-        public string name { get; }
-        public int id { get; }
+        public string Name { get; }
+        public int Id { get; }
 
         public ProductionExceptionHandlerResponse Handle(
             DeliveryResult<byte[], byte[]> record,

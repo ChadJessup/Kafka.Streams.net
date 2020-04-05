@@ -64,7 +64,7 @@
 //            EasyMock.expect(t2.id()).andReturn(taskId2).anyTimes();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldInitializeNewTasks()
 //        {
 //            EasyMock.expect(t1.InitializeStateStores()).andReturn(false);
@@ -77,7 +77,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldMoveInitializedTasksNeedingRestoreToRestoring()
 //        {
 //            EasyMock.expect(t1.InitializeStateStores()).andReturn(false);
@@ -104,7 +104,7 @@
 //            Assert.Same(restoring.iterator().MoveNext(), t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldMoveInitializedTasksThatDontNeedRestoringToRunning()
 //        {
 //            EasyMock.expect(t2.InitializeStateStores()).andReturn(true);
@@ -121,7 +121,7 @@
 //            Assert.Equal(assignedTasks.runningTaskIds(), (Collections.singleton(taskId2)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTransitionFullyRestoredTasksToRunning()
 //        {
 //            HashSet<TopicPartition> task1Partitions = Utils.mkSet(tp1);
@@ -141,7 +141,7 @@
 //            Assert.Equal(assignedTasks.runningTaskIds(), (Collections.singleton(taskId1)));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldSuspendRunningTasks()
 //        {
 //            MockRunningTaskSuspension();
@@ -153,7 +153,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseRestoringTasks()
 //        {
 //            EasyMock.expect(t1.InitializeStateStores()).andReturn(false);
@@ -169,7 +169,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldClosedUnInitializedTasksOnSuspend()
 //        {
 //            t1.Close(false, false);
@@ -182,7 +182,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotSuspendSuspendedTasks()
 //        {
 //            MockRunningTaskSuspension();
@@ -194,7 +194,7 @@
 //        }
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseTaskOnSuspendWhenRuntimeException()
 //        {
 //            MockTaskInitialization();
@@ -209,7 +209,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseTaskOnSuspendIfTaskMigratedException()
 //        {
 //            MockTaskInitialization();
@@ -224,7 +224,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldResumeMatchingSuspendedTasks()
 //        {
 //            MockRunningTaskSuspension();
@@ -241,7 +241,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseTaskOnResumeSuspendedIfTaskMigratedException()
 //        {
 //            MockRunningTaskSuspension();
@@ -274,7 +274,7 @@
 //            EasyMock.expect(t1.changelogPartitions()).andReturn(Collections.emptyList());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCommitRunningTasks()
 //        {
 //            MockTaskInitialization();
@@ -289,7 +289,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseTaskOnCommitIfTaskMigratedException()
 //        {
 //            MockTaskInitialization();
@@ -312,7 +312,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowExceptionOnCommitWhenNotCommitFailedOrProducerFenced()
 //        {
 //            MockTaskInitialization();
@@ -335,7 +335,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCommitRunningTasksIfNeeded()
 //        {
 //            MockTaskInitialization();
@@ -351,7 +351,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseTaskOnMaybeCommitIfTaskMigratedException()
 //        {
 //            MockTaskInitialization();
@@ -375,7 +375,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseTaskOnProcessesIfTaskMigratedException()
 //        {
 //            MockTaskInitialization();
@@ -398,7 +398,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotProcessUnprocessableTasks()
 //        {
 //            MockTaskInitialization();
@@ -411,7 +411,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldAlwaysProcessProcessableTasks()
 //        {
 //            MockTaskInitialization();
@@ -427,7 +427,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPunctuateRunningTasks()
 //        {
 //            MockTaskInitialization();
@@ -441,7 +441,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseTaskOnMaybePunctuateStreamTimeIfTaskMigratedException()
 //        {
 //            MockTaskInitialization();
@@ -463,7 +463,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldCloseTaskOnMaybePunctuateSystemTimeIfTaskMigratedException()
 //        {
 //            MockTaskInitialization();
@@ -484,7 +484,7 @@
 //            EasyMock.verify(t1);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnNumberOfPunctuations()
 //        {
 //            MockTaskInitialization();

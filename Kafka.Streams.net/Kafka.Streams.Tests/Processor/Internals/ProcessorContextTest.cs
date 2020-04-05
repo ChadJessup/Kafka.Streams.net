@@ -60,7 +60,7 @@
 //            );
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowToScheduleZeroMillisecondPunctuation()
 //        {
 //            try
@@ -74,7 +74,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotAllowToScheduleSubMillisecondPunctuation()
 //        {
 //            try

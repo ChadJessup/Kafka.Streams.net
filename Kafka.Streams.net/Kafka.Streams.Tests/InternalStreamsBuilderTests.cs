@@ -25,11 +25,11 @@ namespace Kafka.Streams.Tests
         private readonly string storePrefix = "prefix-";
         private readonly ConsumedInternal<string, string> consumed = new ConsumedInternal<string, string>();
 
-        private MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized =>
+        private MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> MaterializedTest =>
             new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
                 Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("test-store"),
-                Builder,
-                storePrefix);
+                this.Builder,
+                this.storePrefix);
 
         [Fact]
         public void TestNewName()
@@ -82,7 +82,7 @@ namespace Kafka.Streams.Tests
 
             merged
                 .GroupByKey()
-                .Count(Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("my-table"));
+                .Count(KStream.Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("my-table"));
 
             Builder.BuildAndOptimizeTopology();
 
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Tests
         public void ShouldNotMaterializeSourceKTableIfNotRequired()
         {
             var materializedInternal = new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
-                Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(null, null), Builder, storePrefix);
+                KStream.Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(null, null), this.Builder, this.storePrefix);
 
             IKTable<string, string> table1 = Builder.Table("topic2", consumed, materializedInternal);
 
@@ -105,14 +105,14 @@ namespace Kafka.Streams.Tests
 
             Assert.Empty(topology.StateStores);
             Assert.Empty(topology.StoreToChangelogTopic);
-            Assert.Null(table1.queryableStoreName);
+            Assert.Null(table1.QueryableStoreName);
         }
 
         [Fact]
         public void ShouldBuildGlobalTableWithNonQueryableStoreName()
         {
             var materializedInternal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(null, null), Builder, storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(null, null), this.Builder, this.storePrefix);
 
             IGlobalKTable<string, string> table1 = Builder.GlobalTable("topic2", consumed, materializedInternal);
 
@@ -123,7 +123,7 @@ namespace Kafka.Streams.Tests
         public void ShouldBuildGlobalTableWithQueryaIbleStoreName()
         {
             var materializedInternal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("globalTable"), Builder, storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("globalTable"), this.Builder, this.storePrefix);
             IGlobalKTable<string, string> table1 = Builder.GlobalTable("topic2", consumed, materializedInternal);
 
             Assert.Equal("globalTable", table1.QueryableStoreName);
@@ -133,9 +133,9 @@ namespace Kafka.Streams.Tests
         public void ShouldBuildSimpleGlobalTableTopology()
         {
             var materializedInternal = new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
-                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("globalTable"),
-                Builder,
-                storePrefix);
+                KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("globalTable"),
+                this.Builder,
+                this.storePrefix);
 
             Builder.GlobalTable("table", consumed, materializedInternal);
 
@@ -147,7 +147,7 @@ namespace Kafka.Streams.Tests
             List<IStateStore> stateStores = topology.globalStateStores;
 
             Assert.Single(stateStores);
-            Assert.Equal("globalTable", stateStores[0].name);
+            Assert.Equal("globalTable", stateStores[0].Name);
         }
 
         private void DoBuildGlobalTopologyWithAllGlobalTables()
@@ -166,12 +166,12 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void ShouldBuildGlobalTopologyWithAllGlobalTables()
         {
-            MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("global1"), Builder, storePrefix);
+            var materializedInternal =
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("global1"), this.Builder, this.storePrefix);
             Builder.GlobalTable("table", consumed, materializedInternal);
 
-            MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternal2 =
-                     new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("global2"), Builder, storePrefix);
+            var materializedInternal2 =
+                     new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("global2"), this.Builder, this.storePrefix);
             Builder.GlobalTable("table2", consumed, materializedInternal2);
 
             Builder.BuildAndOptimizeTopology();
@@ -185,15 +185,15 @@ namespace Kafka.Streams.Tests
             var two = "globalTable2";
 
             var materializedInternal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(one), Builder, storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(one), this.Builder, this.storePrefix);
             IGlobalKTable<string, string> globalTable = Builder.GlobalTable("table", consumed, materializedInternal);
 
             var materializedInternal2 =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(two), Builder, storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(two), this.Builder, this.storePrefix);
             IGlobalKTable<string, string> globalTable2 = Builder.GlobalTable("table2", consumed, materializedInternal2);
 
             var materializedInternalNotGlobal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("not-global"), Builder, storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("not-global"), this.Builder, this.storePrefix);
             Builder.Table("not-global", consumed, materializedInternalNotGlobal);
 
             var kvMapper = new KeyValueMapper<string, string, string>((key, value) => value);
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Tests
                 var names = new HashSet<string>();
                 foreach (var stateStore in stateStores)
                 {
-                    names.Add(stateStore.name);
+                    names.Add(stateStore.Name);
                 }
 
                 Assert.Equal(2, stateStores.Count);
@@ -226,13 +226,20 @@ namespace Kafka.Streams.Tests
             IKStream<string, string> playEvents = Builder.Stream(new[] { "events" }, consumed);
 
             var materializedInternal = new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
-                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("table-store"), Builder, storePrefix);
+                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("table-store"),
+                    this.Builder,
+                    this.storePrefix);
 
             IKTable<string, string> table = Builder.Table("table-topic", consumed, materializedInternal);
 
             var mapper = new MockMapper.SelectValueKeyValueMapper<string, string>();
             IKStream<string, string> mapped = playEvents.Map(mapper);
-            mapped.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER<string, string>()).GroupByKey().Count(Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("count"));
+            var leftJoined = mapped.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER<string, string>());
+            var groupedByKey = leftJoined.GroupByKey();
+
+            var countMaterialized = Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("count");
+            var count = groupedByKey.Count(countMaterialized);
+
             Builder.BuildAndOptimizeTopology();
             Builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)));
 
@@ -269,7 +276,7 @@ namespace Kafka.Streams.Tests
         public void ShouldAddTableToEarliestAutoOffsetResetList()
         {
             var topicName = "topic-1";
-            Builder.Table(topicName, new ConsumedInternal<string, string>(Consumed.With<string, string>(AutoOffsetReset.Earliest)), materialized);
+            Builder.Table(topicName, new ConsumedInternal<string, string>(Consumed.With<string, string>(AutoOffsetReset.Earliest)), MaterializedTest);
             Builder.BuildAndOptimizeTopology();
 
             Assert.Matches(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicName);
@@ -280,7 +287,7 @@ namespace Kafka.Streams.Tests
         public void ShouldAddTableToLatestAutoOffsetResetList()
         {
             var topicName = "topic-1";
-            Builder.Table(topicName, new ConsumedInternal<string, string>(Consumed.With<string, string>(AutoOffsetReset.Latest)), materialized);
+            Builder.Table(topicName, new ConsumedInternal<string, string>(Consumed.With<string, string>(AutoOffsetReset.Latest)), MaterializedTest);
             Builder.BuildAndOptimizeTopology();
 
             Assert.Matches(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
@@ -291,7 +298,7 @@ namespace Kafka.Streams.Tests
         public void ShouldNotAddTableToOffsetResetLists()
         {
             var topicName = "topic-1";
-            Builder.Table(topicName, consumed, materialized);
+            Builder.Table(topicName, consumed, MaterializedTest);
             Assert.DoesNotMatch(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
             Assert.DoesNotMatch(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicName);
         }
@@ -360,7 +367,7 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void KtableShouldHaveNullTimestampExtractorWhenNoneSupplied()
         {
-            Builder.Table("topic", consumed, materialized);
+            Builder.Table("topic", consumed, MaterializedTest);
             Builder.BuildAndOptimizeTopology();
             ProcessorTopology processorTopology = Builder.InternalTopologyBuilder
                 .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))
@@ -375,7 +382,7 @@ namespace Kafka.Streams.Tests
             var consumed = new ConsumedInternal<string, string>(
                 Consumed.With<string, string>(new MockTimestampExtractor()));
 
-            Builder.Table("topic", consumed, materialized);
+            Builder.Table("topic", consumed, MaterializedTest);
             Builder.BuildAndOptimizeTopology();
             ProcessorTopology processorTopology = Builder.InternalTopologyBuilder
                 .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))

@@ -64,7 +64,7 @@
 //            cache = new NamedCache(taskIDString + "-" + underlyingStoreName, metrics);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldKeepTrackOfMostRecentlyAndLeastRecentlyUsed()
 //        { //throws IOException
 //            List<KeyValuePair<string, string>> toInsert = Array.asList(
@@ -89,7 +89,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestMetrics()
 //        {
 //            Dictionary<string, string> metricTags = new LinkedHashMap<>();
@@ -115,7 +115,7 @@
 //                    taskIDString, "all")));
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldKeepTrackOfSize()
 //        {
 //            LRUCacheEntry value = new LRUCacheEntry(new byte[] { 0 });
@@ -127,7 +127,7 @@
 //            Assert.Equal((value.Count + 25) * 3, size);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutGet()
 //        {
 //            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
@@ -140,7 +140,7 @@
 //            Assert.Equal(cache.hits(), 3);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutIfAbsent()
 //        {
 //            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
@@ -151,7 +151,7 @@
 //            assertArrayEquals(new byte[] { 30 }, cache.Get(Bytes.Wrap(new byte[] { 1 })).Value);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDeleteAndUpdateSize()
 //        {
 //            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
@@ -160,7 +160,7 @@
 //            Assert.Equal(0, cache.sizeInBytes());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPutAll()
 //        {
 //            cache.putAll(Array.asList(KeyValuePair.Create(new byte[] { 0 }, new LRUCacheEntry(new byte[] { 0 })),
@@ -172,7 +172,7 @@
 //            assertArrayEquals(new byte[] { 2 }, cache.Get(Bytes.Wrap(new byte[] { 2 })).Value);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldOverwriteAll()
 //        {
 //            cache.putAll(Array.asList(KeyValuePair.Create(new byte[] { 0 }, new LRUCacheEntry(new byte[] { 0 })),
@@ -183,7 +183,7 @@
 //            Assert.Equal(cache.overwrites(), 2);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldEvictEldestEntry()
 //        {
 //            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
@@ -195,7 +195,7 @@
 //            Assert.Equal(2, cache.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldFlushDirtEntriesOnEviction()
 //        {
 //            List<ThreadCache.DirtyEntry> flushed = new ArrayList<>();
@@ -224,20 +224,20 @@
 //        Assert.Equal(cache.flushes(), 1);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowNullPointerWhenCacheIsEmptyAndEvictionCalled()
 //    {
 //        cache.evict();
 //    }
 
-//    [Xunit.Fact]// (expected = IllegalStateException)
+//    [Fact]// (expected = IllegalStateException)
 //    public void ShouldThrowIllegalStateExceptionWhenTryingToOverwriteDirtyEntryWithCleanEntry()
 //    {
 //        cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, headers, true, 0, 0, 0, ""));
 //        cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, null, false, 0, 0, 0, ""));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldRemoveDeletedValuesOnFlush()
 //    {
 //        cache.setListener(new ThreadCache.DirtyEntryFlushListener()
@@ -256,7 +256,7 @@
 //        Assert.NotNull(cache.Get(Bytes.Wrap(new byte[]{1})));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldBeReentrantAndNotBreakLRU()
 //    {
 //        LRUCacheEntry dirty = new LRUCacheEntry(new byte[] { 3 }, null, true, 0, 0, 0, "");
@@ -306,7 +306,7 @@
 //    Assert.Null(cache.head().previous());
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotThrowIllegalArgumentAfterEvictingDirtyRecordAndThenPuttingNewRecordWithSameKey()
 //    {
 //        LRUCacheEntry dirty = new LRUCacheEntry(new byte[] { 3 }, null, true, 0, 0, 0, "");
@@ -325,7 +325,7 @@
 //        cache.evict();
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldReturnNullIfKeyIsNull()
 //    {
 //        Assert.Null(cache.Get(null));

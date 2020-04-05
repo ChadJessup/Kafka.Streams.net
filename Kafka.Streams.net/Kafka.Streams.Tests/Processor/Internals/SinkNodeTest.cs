@@ -37,7 +37,7 @@
 //            sink.Init(context);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowStreamsExceptionOnInputRecordWithInvalidTimestamp()
 //        {
 //            Bytes anyKey = new Bytes("any key".getBytes());
@@ -56,7 +56,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldThrowStreamsExceptionOnKeyValueTypeSerializerMismatch()
 //        {
 //            string keyOfDifferentTypeThanSerializer = "key with different type";
@@ -75,7 +75,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHandleNullKeysWhenThrowingStreamsExceptionOnKeyValueTypeSerializerMismatch()
 //        {
 //            string invalidValueToTriggerSerializerMismatch = "";
@@ -94,7 +94,7 @@
 //            }
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldHandleNullValuesWhenThrowingStreamsExceptionOnKeyValueTypeSerializerMismatch()
 //        {
 //            string invalidKeyToTriggerSerializerMismatch = "";

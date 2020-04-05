@@ -90,7 +90,7 @@
 
 //    private ColumnFamilyOptions columnFamilyOptions;
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldOverwriteAllOptionsMethods()
 //    {// throws Exception
 //        foreach (Method method in Options.getMethods())
@@ -103,7 +103,7 @@
 //        }
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldForwardAllDbOptionsCalls()
 //    {// throws Exception
 //        foreach (Method method in Options.getMethods())
@@ -203,7 +203,7 @@
 //        return parameters;
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldForwardAllColumnFamilyCalls()
 //    {// throws Exception
 //        foreach (Method method in Options.getMethods())

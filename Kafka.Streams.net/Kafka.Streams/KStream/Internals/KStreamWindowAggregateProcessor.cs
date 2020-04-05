@@ -63,7 +63,7 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             // first get the matching windows
-            var timestamp = context.timestamp;
+            var timestamp = Context.Timestamp;
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
             var closeTime = observedStreamTime - (long)windows.GracePeriod().TotalMilliseconds;
 
@@ -85,11 +85,11 @@ namespace Kafka.Streams.KStream.Internals
                     if (oldAgg == null)
                     {
                         oldAgg = initializer.Apply();
-                        newTimestamp = context.timestamp;
+                        newTimestamp = Context.Timestamp;
                     }
                     else
                     {
-                        newTimestamp = Math.Max(context.timestamp, oldAggAndTimestamp.timestamp);
+                        newTimestamp = Math.Max(Context.Timestamp, oldAggAndTimestamp.Timestamp);
                     }
 
                     newAgg = aggregator.Apply(key, value, oldAgg);

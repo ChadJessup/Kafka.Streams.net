@@ -92,7 +92,7 @@
 //        store.Init(context, store);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogPuts()
 //    {
 //        inner.put(key1, value1);
@@ -106,7 +106,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldLogRemoves()
 //    {
 //        inner.remove(key1);
@@ -121,7 +121,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDelegateToUnderlyingStoreWhenFetching()
 //    {
 //        EasyMock.expect(inner.Fetch(bytesKey)).andReturn(KeyValueIterators.< Windowed<Bytes>, byte[] > emptyIterator());
@@ -132,7 +132,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDelegateToUnderlyingStoreWhenFetchingRange()
 //    {
 //        EasyMock.expect(inner.Fetch(bytesKey, bytesKey)).andReturn(KeyValueIterators.< Windowed<Bytes>, byte[] > emptyIterator());
@@ -143,7 +143,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDelegateToUnderlyingStoreWhenFindingSessions()
 //    {
 //        EasyMock.expect(inner.findSessions(bytesKey, 0, 1)).andReturn(KeyValueIterators.< Windowed<Bytes>, byte[] > emptyIterator());
@@ -154,7 +154,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldDelegateToUnderlyingStoreWhenFindingSessionRange()
 //    {
 //        EasyMock.expect(inner.findSessions(bytesKey, bytesKey, 0, 1)).andReturn(KeyValueIterators.< Windowed<Bytes>, byte[] > emptyIterator());
@@ -165,7 +165,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldFlushUnderlyingStore()
 //    {
 //        inner.flush();
@@ -177,7 +177,7 @@
 //        EasyMock.verify(inner);
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldCloseUnderlyingStore()
 //    {
 //        inner.close();

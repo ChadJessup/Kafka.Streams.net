@@ -22,7 +22,7 @@
 //            headers);
 
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldReturnConsumerRecordWithDeserializedValueWhenNoExceptions()
 //        {
 //            RecordDeserializer recordDeserializer = new RecordDeserializer(

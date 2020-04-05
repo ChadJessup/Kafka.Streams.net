@@ -9,7 +9,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         public abstract long MaxRecords { get; protected set; }
 
         public abstract long MaxBytes { get; protected set; }
-        public BufferFullStrategy BufferFullStrategy { get; protected set; }
+        public virtual BufferFullStrategy BufferFullStrategy { get; protected set; }
 
         public IStrictBufferConfig WithNoBound()
         {

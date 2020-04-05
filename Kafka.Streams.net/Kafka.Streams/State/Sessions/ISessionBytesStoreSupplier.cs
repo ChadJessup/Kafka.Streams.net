@@ -1,4 +1,5 @@
 using Kafka.Streams.State.Interfaces;
+using System;
 
 namespace Kafka.Streams.State.Sessions
 {
@@ -27,6 +28,6 @@ namespace Kafka.Streams.State.Sessions
          *
          * @return retentionPeriod
          */
-        long retentionPeriod { get; }
+        TimeSpan RetentionPeriod { get; }
     }
 }

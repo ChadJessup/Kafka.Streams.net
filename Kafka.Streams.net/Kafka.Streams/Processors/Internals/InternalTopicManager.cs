@@ -22,11 +22,11 @@ namespace Kafka.Streams.Processors.Internals
 
             //new LogContext($"stream-thread [{Thread.CurrentThread.Name}] ");
 
-            //replicationFactor = streamsConfig.getInt(StreamsConfig.REPLICATION_FACTOR_CONFIG).shortValue();
-            //windowChangeLogAdditionalRetention = streamsConfig.getLong(StreamsConfig.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG);
+            //replicationFactor = streamsConfig.GetInt(StreamsConfig.REPLICATION_FACTOR_CONFIG).shortValue();
+            //windowChangeLogAdditionalRetention = streamsConfig.GetLong(StreamsConfig.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG);
             //InternalAdminClientConfig dummyAdmin = new InternalAdminClientConfig(streamsConfig.getAdminConfigs("dummy"));
-            //retries = dummyAdmin.getInt(AdminClientConfig.RETRIES_CONFIG);
-            //retryBackOffMs = dummyAdmin.getLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG);
+            //retries = dummyAdmin.GetInt(AdminClientConfig.RETRIES_CONFIG);
+            //retryBackOffMs = dummyAdmin.GetLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG);
 
             //log.LogDebug("Configs:" + Utils.NL,
             //    "\t{} = {}" + Utils.NL,

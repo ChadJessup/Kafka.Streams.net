@@ -56,7 +56,7 @@
 //    private StoreChangeLogger<int, string> changeLogger =
 //        new StoreChangeLogger<int, string>(topic, context, StateSerdes.WithBuiltinTypes(topic, int, string));
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void TestAddRemove()
 //    {
 //        context.setTime(1);
@@ -75,7 +75,7 @@
 //        Assert.Null(logged.Get(0));
 //    }
 
-//    [Xunit.Fact]
+//    [Fact]
 //    public void ShouldNotSendRecordHeadersToChangelogTopic()
 //    {
 //        context.Headers.Add(new Header("key", "value".getBytes()));

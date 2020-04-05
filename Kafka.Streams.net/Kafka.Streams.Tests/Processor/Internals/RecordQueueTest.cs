@@ -59,7 +59,7 @@
 //            mockSourceNodeWithMetrics.close();
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void TestTimeTracking()
 //        {
 
@@ -146,7 +146,7 @@
 //            Assert.Equal(4L, queue.headRecordTimestamp);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldTrackPartitionTimeAsMaxSeenTimestamp()
 //        {
 
@@ -174,7 +174,7 @@
 //            Assert.Equal(queue.partitionTime(), 3L);
 //        }
 
-//        [Xunit.Fact]// (expected = StreamsException)
+//        [Fact]// (expected = StreamsException)
 //        public void ShouldThrowStreamsExceptionWhenKeyDeserializationFails()
 //        {
 //            byte[] key = Serdes.Long().Serializer.Serialize("foo", 1L);
@@ -184,7 +184,7 @@
 //            queue.AddRawRecords(records);
 //        }
 
-//        [Xunit.Fact]// (expected = StreamsException)
+//        [Fact]// (expected = StreamsException)
 //        public void ShouldThrowStreamsExceptionWhenValueDeserializationFails()
 //        {
 //            byte[] value = Serdes.Long().Serializer.Serialize("foo", 1L);
@@ -194,7 +194,7 @@
 //            queue.AddRawRecords(records);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowStreamsExceptionWhenKeyDeserializationFailsWithSkipHandler()
 //        {
 //            byte[] key = Serdes.Long().Serializer.Serialize(1L, new SerializationContext(MessageComponentType.Key, "foo"));
@@ -205,7 +205,7 @@
 //            Assert.Equal(0, queueThatSkipsDeserializeErrors.Count);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldNotThrowStreamsExceptionWhenValueDeserializationFailsWithSkipHandler()
 //        {
 //            byte[] value = Serdes.Long().Serializer.Serialize(1L, new SerializationContext(MessageComponentType.Value, "foo"));
@@ -217,7 +217,7 @@
 //        }
 
 
-//        [Xunit.Fact]// (expected = StreamsException)
+//        [Fact]// (expected = StreamsException)
 //        public void ShouldThrowOnNegativeTimestamp()
 //        {
 //            List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
@@ -234,7 +234,7 @@
 //            queue.AddRawRecords(records);
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldDropOnNegativeTimestamp()
 //        {
 //            List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
@@ -252,7 +252,7 @@
 //            Assert.Equal(0, queue.Size());
 //        }
 
-//        [Xunit.Fact]
+//        [Fact]
 //        public void ShouldPassPartitionTimeToTimestampExtractor()
 //        {
 

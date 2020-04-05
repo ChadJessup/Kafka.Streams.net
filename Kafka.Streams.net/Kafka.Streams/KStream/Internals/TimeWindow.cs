@@ -26,6 +26,11 @@ namespace Kafka.Streams.KStream.Internals
          * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than or equal to
          * {@code startMs}
          */
+        public TimeWindow(long startMs, long endMs)
+           : this(Duration.FromTimeSpan(TimeSpan.FromMilliseconds(endMs - startMs)))
+        {
+        }
+
         public TimeWindow(Duration duration)
             : base(duration)
         {

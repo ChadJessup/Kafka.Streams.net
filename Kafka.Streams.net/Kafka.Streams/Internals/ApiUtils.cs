@@ -2,27 +2,11 @@
 using Kafka.Streams.KStream.Internals;
 using System;
 
-/*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements. See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License. You may obtain a copy of the License at
-    *
-    *    http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
 namespace Kafka.Streams.Internals
 {
-    public class ApiUtils
+    public static class ApiUtils
     {
-        private const string MILLISECOND_VALIDATION_FAIL_MSG_FRMT = "Invalid value for parameter \"%s\" (value was: %s). ";
+        private const string MILLISECOND_VALIDATION_FAIL_MSG_FRMT = "Invalid value for parameter \"{0}\" (value was: {1}). ";
         private const string VALIDATE_MILLISECOND_NULL_SUFFIX = "It shouldn't be null.";
         private const string VALIDATE_MILLISECOND_OVERFLOW_SUFFIX = "It can't be converted to milliseconds.";
 
@@ -32,7 +16,7 @@ namespace Kafka.Streams.Internals
             * @param messagePrefix Prefix text for an error message.
             * @return Milliseconds from {@code duration}.
             */
-        public static TimeSpan ValidateMillisecondDuration(TimeSpan duration, string messagePrefix)
+        public static TimeSpan ValidateMillisecondDuration(TimeSpan? duration, string messagePrefix)
         {
             try
             {
@@ -41,7 +25,9 @@ namespace Kafka.Streams.Internals
                     throw new ArgumentException(messagePrefix + VALIDATE_MILLISECOND_NULL_SUFFIX);
                 }
 
-                return duration;
+                long maxTimeSpan = (long)TimeSpan.MaxValue.TotalMilliseconds;
+                var tsl = TimeSpan.FromMilliseconds(maxTimeSpan);
+                return duration.Value;
             }
             catch (ArithmeticException e)
             {
@@ -55,7 +41,7 @@ namespace Kafka.Streams.Internals
             * @param messagePrefix Prefix text for an error message.
             * @return Milliseconds from {@code instant}.
             */
-        public static long ValidateMillisecondInstant(DateTime instant, string messagePrefix)
+        public static long ValidateMillisecondInstant(DateTime? instant, string messagePrefix)
         {
             try
             {
@@ -64,7 +50,7 @@ namespace Kafka.Streams.Internals
                     throw new ArgumentException(messagePrefix + VALIDATE_MILLISECOND_NULL_SUFFIX);
                 }
 
-                return instant.ToEpochMilliseconds();
+                return instant.Value.ToEpochMilliseconds();
             }
             catch (ArithmeticException e)
             {
