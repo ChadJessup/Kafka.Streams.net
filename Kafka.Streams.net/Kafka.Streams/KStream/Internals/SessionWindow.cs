@@ -1,21 +1,21 @@
-using NodaTime;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
     public class SessionWindow : Window
     {
-        public SessionWindow(Duration duration)
+        public SessionWindow(TimeSpan duration)
             : base(duration)
         {
         }
 
-        public SessionWindow(Instant startTime, Duration duration)
+        public SessionWindow(DateTime startTime, DateTime duration)
             : base(startTime, duration)
         {
         }
 
         public SessionWindow(long start, long end)
-            : base(Instant.FromUnixTimeMilliseconds(start), Instant.FromUnixTimeMilliseconds(end))
+            : base(start, end)
         {
         }
 

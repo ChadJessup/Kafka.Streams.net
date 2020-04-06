@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    // slow down data production to span 30 seconds so that system tests have time to
 //                    // do their bounces, etc.
 //                    Dictionary<string, HashSet<int>> allData =
-//                        generate(kafka, numKeys, maxRecordsPerKey, Duration.ofSeconds(30));
+//                        generate(kafka, numKeys, maxRecordsPerKey, TimeSpan.ofSeconds(30));
 //                    SmokeTestDriver.verify(kafka, allData, maxRecordsPerKey);
 //                }
 //                break;

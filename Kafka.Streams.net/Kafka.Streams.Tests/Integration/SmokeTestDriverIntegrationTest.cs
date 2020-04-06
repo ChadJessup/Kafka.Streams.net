@@ -29,7 +29,7 @@
 //                try
 //                {
 //                    Dictionary<string, HashSet<int>> allData =
-//                        generate(bootstrapServers, numKeys, maxRecordsPerKey, Duration.ofSeconds(20));
+//                        generate(bootstrapServers, numKeys, maxRecordsPerKey, TimeSpan.ofSeconds(20));
 //                    result = verify(bootstrapServers, allData, maxRecordsPerKey);
 
 //                }

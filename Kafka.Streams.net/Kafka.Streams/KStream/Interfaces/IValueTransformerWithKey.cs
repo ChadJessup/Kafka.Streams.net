@@ -8,7 +8,7 @@ namespace Kafka.Streams.KStream
      * record of a stream and can access and modify a state that is available beyond a single call of
      * {@link #transform(object, object)} (cf. {@link ValueMapper} for stateless value transformation).
      * Additionally, this {@code ValueTransformerWithKey} can
-     * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
+     * {@link IProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) schedule} a method to be
      * {@link Punctuator#punctuate(long) called periodically} with the provided context.
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
      * If {@code ValueTransformerWithKey} is applied to a {@link KeyValuePair} pair record the record's key is preserved.
@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream
          * This is called once per instance when the topology gets initialized.
          * <p>
          * The provided {@link IProcessorContext<K, V> context} can be used to access topology and record meta data, to
-         * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
+         * {@link IProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) schedule} a method to be
          * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
          * <p>
          * Note that {@link IProcessorContext} is updated in the background with the current record's meta data.

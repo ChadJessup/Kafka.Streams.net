@@ -338,7 +338,7 @@
 //                                Serdes.Long().Serializer,
 //                                Serdes.String().Serializer,
 //                                properties),
-//                mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//                mockTime.NowAsEpochMilliseconds;);
 //    }
 
 //    private void ProduceInitialGlobalTableValues()

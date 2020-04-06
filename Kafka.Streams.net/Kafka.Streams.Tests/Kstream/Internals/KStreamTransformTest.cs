@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //    public void init(IProcessorContext context)
 //            //    {
 //            //        context.schedule(
-//            //            Duration.FromMilliseconds(1),
+//            //            TimeSpan.FromMilliseconds(1),
 //            //            PunctuationType.WALL_CLOCK_TIME,
 //            //            timestamp => context.Forward(-1, (int)timestamp)
 //            //        );
@@ -100,7 +100,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                //public void init(IProcessorContext context)
 //                //{
 //                //context.schedule(
-//                //Duration.FromMilliseconds(1),
+//                //TimeSpan.FromMilliseconds(1),
 //                //PunctuationType.WALL_CLOCK_TIME,
 //                //timestamp => context.Forward(-1, (int)timestamp));
 //                //}

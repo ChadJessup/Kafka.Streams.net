@@ -1,6 +1,7 @@
+using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Internals;
-using NodaTime;
+
 using System;
 
 namespace Kafka.Streams.State.Windowed

@@ -55,7 +55,7 @@ namespace Kafka.Streams.KStream
          * Note however, that once a suppression has buffered some records, removing it from the topology would cause
          * the loss of those records.
          * <p>
-         * A suppression can be "disabled" with the configuration {@code untilTimeLimit(Duration.ZERO, ...}.
+         * A suppression can be "disabled" with the configuration {@code untilTimeLimit(TimeSpan.ZERO, ...}.
          *
          * @param name The name to be used for the suppression node and changelog topic
          * @return The same configuration with the addition of the given {@code name}.

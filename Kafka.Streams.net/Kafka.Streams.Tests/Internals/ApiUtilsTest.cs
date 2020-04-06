@@ -1,7 +1,8 @@
 using Kafka.Common.Extensions;
 using Kafka.Streams.Internals;
+using Kafka.Streams.Kafka.Streams;
 using Moq;
-using NodaTime;
+
 using System;
 using Xunit;
 
@@ -9,9 +10,9 @@ namespace Kafka.Streams.Tests.Internals
 {
     public class ApiUtilsTest
     {
-        // This is the maximum limit that Duration accepts but fails when it converts to milliseconds.
+        // This is the maximum limit that TimeSpan accepts but fails when it converts to milliseconds.
         private const double MAX_ACCEPTABLE_DAYS_FOR_DURATION = 10675199.116730064;
-        // This is the maximum limit that Duration accepts and converts to milliseconds with out fail.
+        // This is the maximum limit that TimeSpan accepts and converts to milliseconds with out fail.
         private const double MAX_ACCEPTABLE_DAYS_FOR_DURATION_TO_MILLIS = 10675199.116730064;
 
         [Fact]
@@ -56,7 +57,7 @@ namespace Kafka.Streams.Tests.Internals
         [Fact]
         public void ShouldReturnMillisecondsOnValidInstant()
         {
-            DateTime sampleInstant = SystemClock.Instance.GetCurrentInstant().ToDateTimeUtc();
+            DateTime sampleInstant = SystemClock.AsUtcNow;
 
             Assert.Equal(sampleInstant.ToEpochMilliseconds(), ApiUtils.ValidateMillisecondInstant(sampleInstant, "sampleInstant"));
         }

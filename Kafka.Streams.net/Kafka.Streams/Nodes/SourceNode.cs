@@ -1,7 +1,7 @@
 using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors.Interfaces;
-using NodaTime;
 using System.Collections.Generic;
 using System.Text;
 

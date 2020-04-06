@@ -243,7 +243,7 @@ namespace Kafka.Streams.Tests.Tests
 //        bool allRecordsReceived = false;
 //        while (!allRecordsReceived && System.currentTimeMillis() < maxWaitTime)
 //        {
-//            ConsumeResult<byte[], byte[]> receivedRecords = consumer.poll(Duration.FromMilliseconds(100));
+//            ConsumeResult<byte[], byte[]> receivedRecords = consumer.poll(TimeSpan.FromMilliseconds(100));
 
 //            foreach (ConsumeResult<byte[], byte[]> record in receivedRecords)
 //            {
@@ -592,7 +592,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //long maxWaitTime = System.currentTimeMillis() + MAX_IDLE_TIME_MS;
 //        while (!partitions.isEmpty() && System.currentTimeMillis() < maxWaitTime) {
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(100));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(100));
 //            if (records.isEmpty()) {
 //                System.Console.Out.WriteLine("No data received.");
 //                foreach (TopicPartition tp in partitions) {

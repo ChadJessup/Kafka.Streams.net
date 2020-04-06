@@ -117,7 +117,7 @@
 //        {
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close(Duration.ofSeconds(30));
+//                kafkaStreams.close(TimeSpan.ofSeconds(30));
 //            }
 //        }
 

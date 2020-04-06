@@ -45,12 +45,12 @@ namespace Kafka.Streams.Tests.Tests
 
 //        public void closeAsync()
 //        {
-//            streams.close(Duration.TimeSpan.Zero);
+//            streams.close(TimeSpan.TimeSpan.Zero);
 //        }
 
 //        public void close()
 //        {
-//            streams.close(Duration.ofSeconds(5));
+//            streams.close(TimeSpan.ofSeconds(5));
 //            // do not remove these printouts since they are needed for health scripts
 //            if (!uncaughtException)
 //            {
@@ -100,7 +100,7 @@ namespace Kafka.Streams.Tests.Tests
 //            streamsClient.setUncaughtExceptionHandler((t, e) =>
 //            {
 //                System.Console.Out.WriteLine(name + ": FATAL: An unexpected exception is encountered on thread " + t + ": " + e);
-//                streamsClient.close(Duration.ofSeconds(30));
+//                streamsClient.close(TimeSpan.ofSeconds(30));
 //            });
 
 //            return streamsClient;
@@ -120,14 +120,14 @@ namespace Kafka.Streams.Tests.Tests
 //            KGroupedStream<string, int> groupedData = data.groupByKey(Grouped.with(stringSerde, intSerde));
 
 //            KTable<Windowed<string>, int> minAggregation = groupedData
-//                .windowedBy(TimeWindows.of(Duration.ofDays(1)).grace(Duration.ofMinutes(1)))
+//                .windowedBy(TimeWindows.of(TimeSpan.ofDays(1)).grace(TimeSpan.ofMinutes(1)))
 //                .aggregate(
 //                    () => int.MaxValue,
 //                    (aggKey, value, aggregate) => (value < aggregate) ? value : aggregate,
 //                    Materialized
 //                        .< string, int, IWindowStore<Bytes, byte[]> >as ("uwin-min")
 //                        .withValueSerde(intSerde)
-//                        .withRetention(Duration.ofHours(25))
+//                        .withRetention(TimeSpan.ofHours(25))
 //                );
 
 //            streamify(minAggregation, "min-raw");
@@ -140,7 +140,7 @@ namespace Kafka.Streams.Tests.Tests
 //                .To("min", Produced.With(stringSerde, intSerde));
 
 //            KTable<Windowed<string>, int> smallWindowSum = groupedData
-//                .windowedBy(TimeWindows.of(Duration.ofSeconds(2)).advanceBy(Duration.ofSeconds(1)).grace(Duration.ofSeconds(30)))
+//                .windowedBy(TimeWindows.of(TimeSpan.ofSeconds(2)).advanceBy(TimeSpan.ofSeconds(1)).grace(TimeSpan.ofSeconds(30)))
 //                .reduce((l, r) => l + r);
 
 //            streamify(smallWindowSum, "sws-raw");
@@ -155,7 +155,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            // max
 //            groupedData
-//                .windowedBy(TimeWindows.of(Duration.ofDays(2)))
+//                .windowedBy(TimeWindows.of(TimeSpan.ofDays(2)))
 //                .aggregate(
 //                    () => int.MIN_VALUE,
 //                    (aggKey, value, aggregate) => (value > aggregate) ? value : aggregate,
@@ -172,7 +172,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            // sum
 //            groupedData
-//                .windowedBy(TimeWindows.of(Duration.ofDays(2)))
+//                .windowedBy(TimeWindows.of(TimeSpan.ofDays(2)))
 //                .aggregate(
 //                    () => 0L,
 //                    (aggKey, value, aggregate) => (long)value + aggregate,
@@ -187,7 +187,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            // cnt
 //            groupedData
-//                .windowedBy(TimeWindows.of(Duration.ofDays(2)))
+//                .windowedBy(TimeWindows.of(TimeSpan.ofDays(2)))
 //                .count(Materialized.As ("uwin-cnt"))
 //            .toStream(new Unwindow<>())
 //            .filterNot((k, v) => k.equals("flush"))

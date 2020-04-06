@@ -30,7 +30,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKStream<string, string> stream = builder.Stream(TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
 //            windowedStream = stream.
 //                groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(500L)));
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(500L)));
 //        }
 
 //        [Fact]

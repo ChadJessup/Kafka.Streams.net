@@ -7,7 +7,7 @@ namespace Kafka.Streams.KStream.Interfaces
      * This is a stateful record-by-record operation, i.e, {@link #transform(object)} is invoked individually for each
      * record of a stream and can access and modify a state that is available beyond a single call of
      * {@link #transform(object)} (cf. {@link ValueMapper} for stateless value transformation).
-     * Additionally, this {@code ValueTransformer} can {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule}
+     * Additionally, this {@code ValueTransformer} can {@link IProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) schedule}
      * a method to be {@link Punctuator#punctuate(long) called periodically} with the provided context.
      * If {@code ValueTransformer} is applied to a {@link KeyValuePair} pair record the record's key is preserved.
      * <p>
@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * framework may later re-use the transformer by calling {@link #init(IProcessorContext)} again.
          * <p>
          * The provided {@link IProcessorContext<K, V> context} can be used to access topology and record meta data, to
-         * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
+         * {@link IProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) schedule} a method to be
          * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
          * <p>
          * Note that {@link IProcessorContext} is updated in the background with the current record's meta data.

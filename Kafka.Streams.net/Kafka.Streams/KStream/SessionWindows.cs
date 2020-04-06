@@ -1,5 +1,4 @@
 using Kafka.Streams.Internals;
-using NodaTime;
 using System;
 
 namespace Kafka.Streams.KStream
@@ -68,7 +67,7 @@ namespace Kafka.Streams.KStream
          * @return a new window specification with default maintain duration of 1 day
          *
          * @throws ArgumentException if {@code inactivityGapMs} is zero or negative
-         * @deprecated Use {@link #with(Duration)} instead.
+         * @deprecated Use {@link #with(TimeSpan)} instead.
          */
         public static SessionWindows With(TimeSpan inactivityGap)
         {
@@ -78,20 +77,6 @@ namespace Kafka.Streams.KStream
             }
 
             return new SessionWindows(inactivityGap, DEFAULT_RETENTION_MS, TimeSpan.FromMilliseconds(-1));
-        }
-
-        /**
-         * Create a new window specification with the specified inactivity gap.
-         *
-         * @param inactivityGap the gap of inactivity between sessions
-         * @return a new window specification with default maintain duration of 1 day
-         *
-         * @throws ArgumentException if {@code inactivityGap} is zero or negative or can't be represented as {@code long milliseconds}
-         */
-        public static SessionWindows With(Duration inactivityGap)
-        {
-            String msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(inactivityGap, "inactivityGap");
-            return With(ApiUtils.ValidateMillisecondDuration(inactivityGap.ToTimeSpan(), msgPrefix));
         }
 
         /**
@@ -105,7 +90,7 @@ namespace Kafka.Streams.KStream
          *             or directly configure the retention in a store supplier and use
          *             {@link Materialized#as(SessionBytesStoreSupplier)}.
          */
-        public SessionWindows Until(TimeSpan duration)// throws ArgumentException
+        public SessionWindows Until(TimeSpan duration)
         {
             if (duration < gap)
             {
@@ -127,10 +112,10 @@ namespace Kafka.Streams.KStream
          * @return this updated builder
          * @throws ArgumentException if the {@code afterWindowEnd} is negative of can't be represented as {@code long milliseconds}
          */
-        public SessionWindows Grace(Duration afterWindowEnd)// throws ArgumentException
+        public SessionWindows Grace(TimeSpan afterWindowEnd)// throws ArgumentException
         {
             var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
-            var afterWindow = ApiUtils.ValidateMillisecondDuration(afterWindowEnd.ToTimeSpan(), msgPrefix);
+            var afterWindow = ApiUtils.ValidateMillisecondDuration(afterWindowEnd, msgPrefix);
 
             if (afterWindow.TotalMilliseconds < 0)
             {

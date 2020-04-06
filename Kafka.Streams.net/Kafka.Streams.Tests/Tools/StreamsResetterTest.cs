@@ -37,7 +37,7 @@
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 2L);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(3, records.count());
 //        }
 
@@ -54,7 +54,7 @@
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 2L);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(2, records.count());
 //        }
 
@@ -71,7 +71,7 @@
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 4L);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(2, records.count());
 //        }
 
@@ -88,7 +88,7 @@
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, 3L);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(2, records.count());
 //        }
 
@@ -105,7 +105,7 @@
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, -3L);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(5, records.count());
 //        }
 
@@ -122,7 +122,7 @@
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, 5L);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(2, records.count());
 //        }
 
@@ -141,7 +141,7 @@
 //            topicPartitionsAndOffset.put(topicPartition, 3L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(2, records.count());
 //        }
 
@@ -160,7 +160,7 @@
 //            topicPartitionsAndOffset.put(topicPartition, 1L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(2, records.count());
 //        }
 
@@ -179,7 +179,7 @@
 //            topicPartitionsAndOffset.put(topicPartition, 5L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(2, records.count());
 //        }
 
@@ -198,7 +198,7 @@
 //            intermediateTopicPartitions.Add(topicPartition);
 //            streamsResetter.maybeSeekToEnd("g1", consumer, intermediateTopicPartitions);
 
-//            ConsumeResult<byte[], byte[]> records = consumer.poll(Duration.FromMilliseconds(500));
+//            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
 //            Assert.Equal(2, records.count());
 //        }
 

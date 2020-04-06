@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        public void run()
 //        {
-//            streams.close(Duration.ofSeconds(5));
+//            streams.close(TimeSpan.ofSeconds(5));
 //        }
 //    }));
 

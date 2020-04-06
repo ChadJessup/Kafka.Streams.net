@@ -35,7 +35,7 @@ namespace Kafka.Streams.Tests.Tests
 //            public void run()
 //            {
 //                isRunning = false;
-//                streams.close(Duration.ofSeconds(300));
+//                streams.close(TimeSpan.ofSeconds(300));
 
 //                // need to wait for callback to avoid race condition
 //                // => make sure the callback printout to stdout is there as it is expected test output
@@ -85,7 +85,7 @@ namespace Kafka.Streams.Tests.Tests
 //                streams.start();
 //            }
 //            if (uncaughtException) {
-//                streams.close(Duration.ofSeconds(60_000L));
+//                streams.close(TimeSpan.ofSeconds(60_000L));
 //                streams = null;
 //            }
 //            sleep(1000);

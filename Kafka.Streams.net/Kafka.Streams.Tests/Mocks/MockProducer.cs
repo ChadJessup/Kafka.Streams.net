@@ -337,11 +337,11 @@ namespace Kafka.Streams.Tests.Mocks
         // 
         // public void close()
         // {
-        //     close(Duration.FromMilliseconds(0));
+        //     close(TimeSpan.FromMilliseconds(0));
         // }
         // 
         // 
-        // public void close(Duration timeout)
+        // public void close(TimeSpan timeout)
         // {
         //     if (producerFencedOnClose)
         //     {

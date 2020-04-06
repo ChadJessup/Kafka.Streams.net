@@ -104,7 +104,7 @@ namespace Kafka.Streams.Tests.Tests
 //        public static Dictionary<string, HashSet<int>> generate(string kafka,
 //                                                         int numKeys,
 //                                                         int maxRecordsPerKey,
-//                                                         Duration timeToSpend)
+//                                                         TimeSpan timeToSpend)
 //        {
 //            StreamsConfig producerProps = generatorProperties(kafka);
 
@@ -190,7 +190,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    producer.send(new ProducerRecord<>(
 //                        partition.Topic,
 //                        partition.Partition,
-//                        System.currentTimeMillis() + Duration.ofDays(2).TotalMilliseconds,
+//                        System.currentTimeMillis() + TimeSpan.ofDays(2).TotalMilliseconds,
 //                        stringSerde.Serializer.Serialize("", "flush"),
 //                        intSerde.Serializer.Serialize("", 0)
 //                    ));
@@ -316,7 +316,7 @@ namespace Kafka.Streams.Tests.Tests
 //int retry = 0;
 //long start = System.currentTimeMillis();
 //        while (System.currentTimeMillis() - start<TimeUnit.MINUTES.toMillis(6)) {
-//            ConsumeResult<string, Number> records = consumer.poll(Duration.ofSeconds(1));
+//            ConsumeResult<string, Number> records = consumer.poll(TimeSpan.ofSeconds(1));
 //            if (records.isEmpty() && recordsProcessed >= recordsGenerated) {
 //                verificationResult = verifyAll(inputs, events);
 //                if (verificationResult.passed()) {

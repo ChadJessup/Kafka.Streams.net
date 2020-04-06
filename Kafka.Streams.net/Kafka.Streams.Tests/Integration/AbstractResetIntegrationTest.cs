@@ -28,7 +28,7 @@
 //        {
 //            if (adminClient != null)
 //            {
-//                adminClient.close(Duration.ofSeconds(10));
+//                adminClient.close(TimeSpan.ofSeconds(10));
 //                adminClient = null;
 //            }
 //        }
@@ -158,7 +158,7 @@
 //            {// throws Exception
 //                if (streams != null)
 //                {
-//                    streams.close(Duration.ofSeconds(30));
+//                    streams.close(TimeSpan.ofSeconds(30));
 //                }
 //                IntegrationTestUtils.purgeLocalStreamsState(streamsConfig);
 //            }
@@ -179,7 +179,7 @@
 //                foreach (KeyValuePair<long, string> record in records)
 //                {
 //                    mockTime.sleep(10);
-//                    IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(INPUT_TOPIC, Collections.singleton(record), producerConfig, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//                    IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(INPUT_TOPIC, Collections.singleton(record), producerConfig, mockTime.NowAsEpochMilliseconds;);
 //                }
 //            }
 
@@ -303,7 +303,7 @@
 //                    INTERMEDIATE_USER_TOPIC,
 //                    Collections.singleton(badMessage),
 //                        producerConfig,
-//                    mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//                    mockTime.NowAsEpochMilliseconds;);
 
 //                // RESET
 //                streams = new KafkaStreams(SetupTopologyWithIntermediateUserTopic(OUTPUT_TOPIC_2_RERUN), streamsConfig);

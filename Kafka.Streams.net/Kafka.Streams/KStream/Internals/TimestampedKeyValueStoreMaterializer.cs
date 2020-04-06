@@ -1,7 +1,7 @@
+using Kafka.Common;
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.TimeStamped;
-using NodaTime;
 
 namespace Kafka.Streams.KStream.Internals
 {

@@ -1,7 +1,7 @@
 ﻿using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
-using NodaTime;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -41,7 +41,7 @@ namespace Kafka.Streams.Tests.Mocks
             if (scheduleInterval > 0L)
             {
                 scheduleCancellable = context.Schedule(
-                    Duration.FromMilliseconds(scheduleInterval).ToTimeSpan(),
+                    TimeSpan.FromMilliseconds(scheduleInterval),
                     punctuationType,
                     timestamp =>
                     {

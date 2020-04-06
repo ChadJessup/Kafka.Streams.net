@@ -248,7 +248,7 @@ namespace Kafka.Streams.Tests.Integration
 //    public void shouldAddMetricsForWindowStore() {// throws Exception
 //        builder.Stream(STREAM_INPUT, Consumed.With(Serdes.Int(), Serdes.String()))
 //            .groupByKey()
-//            .windowedBy(TimeWindows.of(Duration.FromMilliseconds(50)))
+//            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(50)))
 //            .aggregate(() => 0L,
 //                (aggKey, newValue, aggValue) => aggValue,
 //                Materialized<int, long, IWindowStore<Bytes, byte[]>>.As(TIME_WINDOWED_AGGREGATED_STREAM_STORE)
@@ -266,7 +266,7 @@ namespace Kafka.Streams.Tests.Integration
 //    public void shouldAddMetricsForSessionStore() {// throws Exception
 //        builder.Stream(STREAM_INPUT, Consumed.With(Serdes.Int(), Serdes.String()))
 //            .groupByKey()
-//            .windowedBy(SessionWindows.with(Duration.FromMilliseconds(50)))
+//            .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(50)))
 //            .aggregate(() => 0L,
 //                (aggKey, newValue, aggValue) => aggValue,
 //                (aggKey, leftAggValue, rightAggValue) => leftAggValue,

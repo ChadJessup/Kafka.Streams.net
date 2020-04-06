@@ -1,9 +1,9 @@
+using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
-using NodaTime;
 using System;
 using System.Collections.Generic;
 
@@ -22,8 +22,8 @@ namespace Kafka.Streams.KStream.Internals
         private readonly StreamsGraphNode streamsGraphNode;
         private StreamsGraphNode repartitionNode;
 
-        public IInitializer<long> countInitializer;// = () => 0L;
-        public IAggregator<K, V, long> countAggregator;// = (aggKey, value, aggregate) => aggregate + 1;
+        public IInitializer<V> countInitializer;// = () => 0L;
+        public IAggregator<K, long, V> countAggregator;// = (aggKey, value, aggregate) => aggregate + 1;
         public IInitializer<V> reduceInitializer;// = () => null;
 
         public GroupedStreamAggregateBuilder(
@@ -49,7 +49,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKTable<KR, VR> Build<KR, VR>(
             string functionName,
             IStoreBuilder<IStateStore> storeBuilder,
-            IKStreamAggProcessorSupplier<K, KR, V, VR> aggregateSupplier,
+            IKStreamAggProcessorSupplier<KR, K, VR, V> aggregateSupplier,
             string queryableStoreName,
             ISerde<KR> keySerde,
             ISerde<VR> valSerde)
@@ -87,12 +87,12 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             var statefulProcessorNode =
-               new StatefulProcessorNode<K, V>(
+               new StatefulProcessorNode<KR, VR>(
                    aggFunctionName,
-                   new ProcessorParameters<K, V>(aggregateSupplier, aggFunctionName),
+                   new ProcessorParameters<KR, VR>(aggregateSupplier, aggFunctionName),
                    storeBuilder);
 
-            builder.AddGraphNode<K, V>(parentNode, statefulProcessorNode);
+            builder.AddGraphNode<KR, VR>(parentNode, statefulProcessorNode);
 
             return new KTable<KR, IKeyValueStore<Bytes, byte[]>, VR>(
                 this.clock,
@@ -101,7 +101,7 @@ namespace Kafka.Streams.KStream.Internals
                 valSerde,
                 sourceName.Equals(this.name) ? sourceNodes : new HashSet<string> { sourceName },
                 queryableStoreName,
-                aggregateSupplier.GetSwappedProcessorSupplier(),
+                aggregateSupplier,
                 statefulProcessorNode,
                 builder);
         }

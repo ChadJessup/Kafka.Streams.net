@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream
          * @param durationMs the window retention time in milliseconds
          * @return itself
          * @throws IllegalArgumentException if {@code durationMs} is negative
-         * @deprecated since 2.1. Use {@link Materialized#withRetention(Duration)}
+         * @deprecated since 2.1. Use {@link Materialized#withRetention(TimeSpan)}
          *             or directly configure the retention in a store supplier and use {@link Materialized#as(WindowBytesStoreSupplier)}.
          */
         [Obsolete]

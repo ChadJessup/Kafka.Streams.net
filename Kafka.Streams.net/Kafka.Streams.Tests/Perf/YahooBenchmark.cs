@@ -332,7 +332,7 @@
 //        // calculate windowed counts
 //        keyedByCampaign
 //            .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//            .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10 * 1000)))
+//            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10 * 1000)))
 //            .count(Materialized.As("time-windows"));
 
 //        return new KafkaStreams(builder.Build(), streamConfig);

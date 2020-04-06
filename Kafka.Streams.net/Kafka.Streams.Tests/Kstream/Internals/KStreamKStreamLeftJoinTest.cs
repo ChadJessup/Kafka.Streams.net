@@ -36,7 +36,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            joined = stream1.leftJoin(
 //                stream2,
 //                MockValueJoiner.TOSTRING_JOINER,
-//                JoinWindows.of(Duration.FromMilliseconds(100)),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(100)),
 //                Joined.with(Serdes.Int(), Serdes.String(), Serdes.String()));
 //            joined.process(supplier);
 
@@ -133,7 +133,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            joined = stream1.leftJoin(
 //                stream2,
 //                MockValueJoiner.TOSTRING_JOINER,
-//                JoinWindows.of(Duration.FromMilliseconds(100)),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(100)),
 //                Joined.with(Serdes.Int(), Serdes.String(), Serdes.String()));
 //            joined.process(supplier);
 

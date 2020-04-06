@@ -21,7 +21,8 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void ShouldNotAllowInvalidTopicNames()
         {
-            Assert.Throws<TopologyException>(() => Materialized.As<string, string>("not:valid"));
+            var e = Assert.Throws<ArgumentException>(() => Materialized.As<string, string>("not:valid"));
+            Assert.Equal("Name \"not:valid\" is illegal, it contains a character other than ASCII alphanumerics, '.', '_' and '-'", e.Message);
         }
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.

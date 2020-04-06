@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Interfaces
      * partition is reassigned it may want to automatically trigger a flush of this cache, before the new owner takes over
      * consumption.
      * <p>
-     * This callback will only execute in the user thread as part of the {@link Consumer#poll(java.time.Duration) poll(long)} call
+     * This callback will only execute in the user thread as part of the {@link Consumer#poll(java.time.TimeSpan) poll(long)} call
      * whenever partition assignment changes.
      * <p>
      * It is guaranteed that all consumer processes will invoke {@link #onPartitionsRevoked(Collection) onPartitionsRevoked} prior to
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * It is common for the revocation callback to use the consumer instance in order to commit offsets. It is possible
          * for a {@link org.apache.kafka.common.errors.WakeupException} or {@link org.apache.kafka.common.errors.InterruptException}
          * to be raised from one these nested invocations. In this case, the exception will be propagated to the current
-         * invocation of {@link KafkaConsumer#poll(java.time.Duration)} in which this callback is being executed. This means it is not
+         * invocation of {@link KafkaConsumer#poll(java.time.TimeSpan)} in which this callback is being executed. This means it is not
          * necessary to catch these exceptions and re-attempt to wakeup or interrupt the consumer thread.
          *
          * @param partitions The list of partitions that were assigned to the consumer on the last rebalance

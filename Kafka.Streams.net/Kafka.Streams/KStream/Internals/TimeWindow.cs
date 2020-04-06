@@ -1,4 +1,4 @@
-using NodaTime;
+
 using System;
 
 namespace Kafka.Streams.KStream.Internals
@@ -27,11 +27,11 @@ namespace Kafka.Streams.KStream.Internals
          * {@code startMs}
          */
         public TimeWindow(long startMs, long endMs)
-           : this(Duration.FromTimeSpan(TimeSpan.FromMilliseconds(endMs - startMs)))
+           : base(startMs, endMs)
         {
         }
 
-        public TimeWindow(Duration duration)
+        public TimeWindow(TimeSpan duration)
             : base(duration)
         {
         }

@@ -152,7 +152,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            KTable mock = EasyMock.mock< string, ?, long>(KTable));
 //            Processor<string, Change<long>> processor =
 //                new KTableSuppressProcessorSupplier<>(
-//                    (SuppressedInternal<string>)Suppressed.< string > untilTimeLimit(Duration.ofDays(100), maxRecords(1)),
+//                    (SuppressedInternal<string>)Suppressed.< string > untilTimeLimit(TimeSpan.ofDays(100), maxRecords(1)),
 //                    storeName,
 //                    mock
 //                ).Get();

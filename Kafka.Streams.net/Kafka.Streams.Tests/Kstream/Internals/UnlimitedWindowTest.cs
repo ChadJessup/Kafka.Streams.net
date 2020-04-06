@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace Kafka.Streams.KStream.Internals
@@ -25,7 +26,8 @@ namespace Kafka.Streams.KStream.Internals
         [Fact]
         public void CannotCompareUnlimitedWindowWithDifferentWindowType()
         {
-            window.Overlap(sessionWindow);
+            var e = Assert.Throws<ArgumentException>(() => window.Overlap(sessionWindow));
+            Assert.Equal("Cannot compare windows of different type. Other window has type Kafka.Streams.KStream.Internals.SessionWindow.", e.Message);
         }
     }
 }

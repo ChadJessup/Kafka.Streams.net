@@ -137,7 +137,7 @@
 //            }
 //            finally
 //            {
-//                streamsOne.close(Duration.ofSeconds(5));
+//                streamsOne.close(TimeSpan.ofSeconds(5));
 //            }
 //        }
 
@@ -169,7 +169,7 @@
 //            }
 //            finally
 //            {
-//                streamsOne.close(Duration.ofSeconds(5));
+//                streamsOne.close(TimeSpan.ofSeconds(5));
 //            }
 //        }
 
@@ -197,7 +197,7 @@
 //            }
 //            finally
 //            {
-//                streamsOne.close(Duration.ofSeconds(5));
+//                streamsOne.close(TimeSpan.ofSeconds(5));
 //            }
 //        }
 

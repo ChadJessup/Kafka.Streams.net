@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //using Kafka.Streams;
 //using Kafka.Streams.Kafka.Streams;
 //using Kafka.Streams.KStream;
-//using NodaTime;
+//
 
 //namespace Kafka.Streams.KStream.Internals {
 
@@ -155,7 +155,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        anonymousNodeBuilder
 //            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
-//            .windowedBy(SessionWindows.with(Duration.FromMilliseconds(5L)).grace(Duration.FromMilliseconds(5L)))
+//            .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(5L)))
 //            .count(Materialize.As<string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()))
 //            .toStream()
@@ -173,7 +173,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        namedNodeBuilder
 //            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
-//            .windowedBy(SessionWindows.with(Duration.FromMilliseconds(5L)).grace(Duration.FromMilliseconds(5L)))
+//            .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(5L)))
 //            .count(Materialize.As<string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()).withName("myname"))
 //            .toStream()
@@ -192,7 +192,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .groupByKey()
 //            .count()
-//            .suppress(untilTimeLimit(Duration.FromSeconds(1), unbounded()))
+//            .suppress(untilTimeLimit(TimeSpan.FromSeconds(1), unbounded()))
 //            .toStream()
 //            .To("output", Produced.With(STRING_SERDE, Serdes.Long()));
 //        string anonymousNodeTopology = anonymousNodeBuilder.Build().describe().ToString();
@@ -208,7 +208,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .groupByKey()
 //            .count()
-//            .suppress(untilTimeLimit(Duration.ofSeconds(1), unbounded()).withName("asdf"))
+//            .suppress(untilTimeLimit(TimeSpan.ofSeconds(1), unbounded()).withName("asdf"))
 //            .toStream()
 //            .To("output", Produced.With(STRING_SERDE, Serdes.Long()));
 //        string namedNodeTopology = namedNodeBuilder.Build().describe().ToString();

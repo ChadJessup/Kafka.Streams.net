@@ -25,7 +25,7 @@
 //            partitionOffsets.put(topicOne, 20L);
 //            partitionOffsets.put(topicTwo, 30L);
 //            stateMaintainer = new StateMaintainerStub(partitionOffsets);
-//            stateConsumer = new GlobalStreamThread.StateConsumer(logContext, consumer, stateMaintainer, time, Duration.FromMilliseconds(10L), FLUSH_INTERVAL);
+//            stateConsumer = new GlobalStreamThread.StateConsumer(logContext, consumer, stateMaintainer, time, TimeSpan.FromMilliseconds(10L), FLUSH_INTERVAL);
 //        }
 
 //        [Fact]

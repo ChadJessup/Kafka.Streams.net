@@ -1,7 +1,7 @@
 namespace Kafka.Streams.Processors
 {
     /**
-     * A functional interface used as an argument to {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator)}.
+     * A functional interface used as an argument to {@link IProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator)}.
      *
      * @see Cancellable
      */

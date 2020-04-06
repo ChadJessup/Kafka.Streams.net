@@ -177,7 +177,7 @@
 //            List<KeyValuePair<string, string>> expectedStringCountKeyValues = Array.asList(KeyValuePair.Create("A", "6"), KeyValuePair.Create("B", "6"), KeyValuePair.Create("C", "6"));
 //            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(consumerConfig2, COUNT_STRING_TOPIC, expectedStringCountKeyValues);
 
-//            streams.close(Duration.ofSeconds(5));
+//            streams.close(TimeSpan.ofSeconds(5));
 //        }
 
 

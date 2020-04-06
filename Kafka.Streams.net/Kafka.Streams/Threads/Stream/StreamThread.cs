@@ -16,7 +16,7 @@ using Kafka.Streams.Tasks;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NodaTime;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -389,7 +389,7 @@ namespace Kafka.Streams.Threads.Stream
         public void RunOnce()
         {
             ConsumerRecords<byte[], byte[]>? records;
-            now = SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds();
+            now = SystemClock.AsEpochMilliseconds;
 
             if (this.State.CurrentState == StreamThreadStates.PARTITIONS_ASSIGNED)
             {
@@ -767,7 +767,7 @@ namespace Kafka.Streams.Threads.Stream
 
                         if (this.logger.IsEnabled(LogLevel.Debug))
                         {
-                            this.logger.LogDebug($"Updated standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} in {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - now} ms");
+                            this.logger.LogDebug($"Updated standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} in {clock.NowAsEpochMilliseconds - now} ms");
                         }
                     }
                     processStandbyRecords = false;
@@ -850,7 +850,7 @@ namespace Kafka.Streams.Threads.Stream
         private long AdvanceNowAndComputeLatency()
         {
             var previous = now;
-            now = SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds();
+            now = SystemClock.AsEpochMilliseconds;
 
             return Math.Max(now - previous, 0);
         }

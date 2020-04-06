@@ -213,7 +213,7 @@
 //            }
 
 
-//            public Cancellable Schedule(Duration interval,
+//            public Cancellable Schedule(TimeSpan interval,
 //                                        PunctuationType type,
 //                                        Punctuator callback)
 //            {// throws ArgumentException

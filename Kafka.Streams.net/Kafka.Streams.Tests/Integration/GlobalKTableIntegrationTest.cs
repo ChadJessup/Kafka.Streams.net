@@ -77,7 +77,7 @@
 //            streamTableJoin.Process(supplier);
 //            ProduceInitialGlobalTableValues();
 //            StartStreams();
-//            long firstTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();
+//            long firstTimestamp = mockTime.NowAsEpochMilliseconds;
 //            ProduceTopicValues(streamTopic);
 
 //            var expected = new Dictionary<string, ValueAndTimestamp<string>?>
@@ -106,7 +106,7 @@
 //                "waiting for initial values");
 
 
-//            firstTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            firstTimestamp = mockTime.NowAsEpochMilliseconds;;
 //            ProduceGlobalTableValues();
 
 //            IReadOnlyKeyValueStore<long, string> replicatedStore =
@@ -121,7 +121,7 @@
 //                kafkaStreams.store(globalStore, QueryableStoreTypes.TimestampedKeyValueStore);
 //            Assert.Equal(replicatedStoreWithTimestamp.Get(5L), (ValueAndTimestamp.Make("J", firstTimestamp + 4L)));
 
-//            firstTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            firstTimestamp = mockTime.NowAsEpochMilliseconds;;
 //            ProduceTopicValues(streamTopic);
 
 //            expected.Add("a", ValueAndTimestamp.Make("1+F", firstTimestamp));
@@ -154,7 +154,7 @@
 //            streamTableJoin.Process(supplier);
 //            ProduceInitialGlobalTableValues();
 //            StartStreams();
-//            long firstTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            long firstTimestamp = mockTime.NowAsEpochMilliseconds;;
 //            ProduceTopicValues(streamTopic);
 
 //            var expected = new Dictionary<string, ValueAndTimestamp<string>?>
@@ -183,7 +183,7 @@
 //                "waiting for initial values");
 
 
-//            firstTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            firstTimestamp = mockTime.NowAsEpochMilliseconds;;
 //            ProduceGlobalTableValues();
 
 //            IReadOnlyKeyValueStore<long, string> replicatedStore =
@@ -198,7 +198,7 @@
 //                kafkaStreams.store(globalStore, QueryableStoreTypes.TimestampedKeyValueStore);
 //            Assert.Equal(replicatedStoreWithTimestamp.Get(5L), (ValueAndTimestamp.Make("J", firstTimestamp + 4L)));
 
-//            firstTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();
+//            firstTimestamp = mockTime.NowAsEpochMilliseconds;
 //            ProduceTopicValues(streamTopic);
 
 //            expected.Add("a", ValueAndTimestamp.Make("1+F", firstTimestamp));

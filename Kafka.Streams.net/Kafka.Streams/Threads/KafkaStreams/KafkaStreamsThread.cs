@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Internals;
@@ -14,7 +15,6 @@ using Kafka.Streams.Threads.Stream;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -214,7 +214,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         private bool WaitOnState(KafkaStreamsThreadStates targetState, long waitMs)
         {
-            var begin = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+            var begin = clock.NowAsEpochMilliseconds;
             lock (stateLock)
             {
                 var elapsedMs = 0L;
@@ -239,7 +239,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
                         return false;
                     }
 
-                    elapsedMs = clock.GetCurrentInstant().ToUnixTimeMilliseconds() - begin;
+                    elapsedMs = clock.NowAsEpochMilliseconds - begin;
                 }
 
                 return true;

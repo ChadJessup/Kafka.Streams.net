@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
@@ -12,7 +13,7 @@ using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
-using NodaTime;
+
 using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
@@ -445,7 +446,7 @@ namespace Kafka.Streams.Tasks
         // visible for testing
         void Commit(bool startNewTransaction)
         {
-            var startNs = clock.GetCurrentInstant().ToUnixTimeTicks() * NodaConstants.NanosecondsPerTick;
+            var startNs = clock.NowAsEpochNanoseconds;
             logger.LogDebug("Committing");
 
             FlushState();
@@ -828,7 +829,7 @@ namespace Kafka.Streams.Tasks
             return type switch
             {
                 PunctuationType.STREAM_TIME => Schedule(0L, interval, type, punctuator),
-                PunctuationType.WALL_CLOCK_TIME => Schedule(clock.GetCurrentInstant().ToUnixTimeMilliseconds() + interval, interval, type, punctuator),
+                PunctuationType.WALL_CLOCK_TIME => Schedule(clock.NowAsEpochMilliseconds + interval, interval, type, punctuator),
                 _ => throw new ArgumentException("Unrecognized PunctuationType: " + type),
             };
         }
@@ -845,7 +846,7 @@ namespace Kafka.Streams.Tasks
         {
             if (processorContext.GetCurrentNode() == null)
             {
-                throw new InvalidOperationException(string.Format("%sCurrent node is null", logPrefix));
+                throw new InvalidOperationException($"{logPrefix}Current node is null");
             }
 
             var schedule = new PunctuationSchedule(processorContext.GetCurrentNode(), startTime, interval, punctuator);
@@ -898,7 +899,7 @@ namespace Kafka.Streams.Tasks
          */
         public bool MaybePunctuateSystemTime()
         {
-            var systemTime = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+            var systemTime = clock.NowAsEpochMilliseconds;
 
             var punctuated = systemTimePunctuationQueue.MayPunctuate(systemTime, PunctuationType.WALL_CLOCK_TIME, this);
 

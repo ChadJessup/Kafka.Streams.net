@@ -21,8 +21,8 @@ namespace Kafka.Streams.KStream
          * @see KStream#to(string, Produced)
          */
         public static Produced<K, V> With<K, V>(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde,
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde,
             IStreamPartitioner<K, V> partitioner)
         {
             return new Produced<K, V>(
@@ -130,14 +130,14 @@ namespace Kafka.Streams.KStream
     {
         public ISerde<K>? KeySerde { get; private set; }
         public ISerde<V>? ValueSerde { get; private set; }
-        protected IStreamPartitioner<K, V> Partitioner { get; private set; }
-        protected string ProcessorName { get; private set; }
+        protected IStreamPartitioner<K, V>? Partitioner { get; private set; }
+        protected string? ProcessorName { get; private set; }
 
         public Produced(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            IStreamPartitioner<K, V> partitioner,
-            string processorName)
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde,
+            IStreamPartitioner<K, V>? partitioner,
+            string? processorName)
         {
             this.KeySerde = keySerde;
             this.ValueSerde = valueSerde;

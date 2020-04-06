@@ -4,7 +4,7 @@
 //using Kafka.Streams.Kafka.Streams;
 //using Kafka.Streams.KStream;
 //using Kafka.Streams.Tests.Helpers;
-//using NodaTime;
+//
 //using System;
 //using System.Collections.Generic;
 
@@ -151,7 +151,7 @@
 //        {
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close(Duration.ofSeconds(30));
+//                kafkaStreams.close(TimeSpan.ofSeconds(30));
 //            }
 //        }
 
@@ -170,7 +170,7 @@
 //                    TestUtils.producerConfig(CLUSTER.bootstrapServers(),
 //                            IntegerSerializer,
 //                            IntegerSerializer),
-//                    time.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//                    time.NowAsEpochMilliseconds;);
 
 //            kafkaStreams.start();
 

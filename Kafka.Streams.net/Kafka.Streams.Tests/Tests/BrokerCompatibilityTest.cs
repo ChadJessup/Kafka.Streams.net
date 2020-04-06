@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tests.Tests
 //            System.Console.Error.println("FATAL: An unexpected exception " + cause);
 //            e.printStackTrace(System.Console.Error);
 //            System.Console.Error.flush();
-//            streams.close(Duration.ofSeconds(30));
+//            streams.close(TimeSpan.ofSeconds(30));
 //        }
 //    });
 //        System.Console.Out.WriteLine("start Kafka Streams");
@@ -130,7 +130,7 @@ namespace Kafka.Streams.Tests.Tests
 //            consumer.subscribe(Collections.singletonList(SINK_TOPIC));
 
 //            while (true) {
-//                ConsumeResult<string, string> records = consumer.poll(Duration.FromMilliseconds(100));
+//                ConsumeResult<string, string> records = consumer.poll(TimeSpan.FromMilliseconds(100));
 //                foreach (ConsumeResult<string, string> record in records) {
 //                    if (record.Key.equals("key") && record.Value.equals("1")) {
 //                        return;

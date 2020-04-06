@@ -755,7 +755,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
          *             }
          *
          *             NewValueType transform(K readOnlyKey, V value)
@@ -834,7 +834,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *             void init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
          *             }
          *
          *             NewValueType transform(K readOnlyKey, V value)
@@ -917,7 +917,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *             void init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
          *             }
          *
          *             NewValueType transform(K readOnlyKey, V value)
@@ -1002,7 +1002,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *             void init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
          *             }
          *
          *             NewValueType transform(K readOnlyKey, V value)

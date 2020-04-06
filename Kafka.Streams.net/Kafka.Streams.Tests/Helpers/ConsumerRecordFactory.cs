@@ -1,6 +1,6 @@
 ﻿using Confluent.Kafka;
 using Kafka.Common;
-using NodaTime;
+using Kafka.Streams.Kafka.Streams;
 using System;
 using System.Collections.Generic;
 
@@ -19,7 +19,7 @@ namespace Kafka.Streams.Tests.Helpers
      */
     public class ConsumerRecordFactory<K, V>
     {
-        private readonly string topicName;
+        private readonly string? topicName;
         private readonly ISerializer<K> keySerializer;
         private readonly ISerializer<V> valueSerializer;
         private long timeMs;
@@ -34,9 +34,14 @@ namespace Kafka.Streams.Tests.Helpers
          * @param valueSerializer the value serializer
          */
 
-        public ConsumerRecordFactory(ISerializer<K> keySerializer,
-                                     ISerializer<V> valueSerializer)
-            : this(null, keySerializer, valueSerializer, SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds())
+        public ConsumerRecordFactory(
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer)
+            : this(
+                  null,
+                  keySerializer,
+                  valueSerializer,
+                  SystemClock.AsEpochMilliseconds)
         {
         }
 
@@ -50,10 +55,15 @@ namespace Kafka.Streams.Tests.Helpers
          * @param valueSerializer the value serializer
          */
 
-        public ConsumerRecordFactory(string defaultTopicName,
-                                     ISerializer<K> keySerializer,
-                                     ISerializer<V> valueSerializer)
-            : this(defaultTopicName, keySerializer, valueSerializer, SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds())
+        public ConsumerRecordFactory(
+            string defaultTopicName,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer)
+            : this(
+                  defaultTopicName,
+                  keySerializer,
+                  valueSerializer,
+                  SystemClock.AsEpochMilliseconds)
         {
         }
 
@@ -66,9 +76,10 @@ namespace Kafka.Streams.Tests.Helpers
          * @param startTimestampMs the initial timestamp for generated records
          */
 
-        public ConsumerRecordFactory(ISerializer<K> keySerializer,
-                                     ISerializer<V> valueSerializer,
-                                     long startTimestampMs)
+        public ConsumerRecordFactory(
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer,
+            long startTimestampMs)
             : this(null, keySerializer, valueSerializer, startTimestampMs, 0L)
         {
         }
@@ -83,11 +94,17 @@ namespace Kafka.Streams.Tests.Helpers
          * @param startTimestampMs the initial timestamp for generated records
          */
 
-        public ConsumerRecordFactory(string defaultTopicName,
-                                     ISerializer<K> keySerializer,
-                                     ISerializer<V> valueSerializer,
-                                     long startTimestampMs)
-            : this(defaultTopicName, keySerializer, valueSerializer, startTimestampMs, 0L)
+        public ConsumerRecordFactory(
+            string? defaultTopicName,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer,
+            long startTimestampMs)
+            : this(
+                  defaultTopicName,
+                  keySerializer,
+                  valueSerializer,
+                  startTimestampMs,
+                  0L)
         {
         }
 
@@ -100,11 +117,17 @@ namespace Kafka.Streams.Tests.Helpers
          * @param autoAdvanceMs the time increment pre generated record
          */
 
-        public ConsumerRecordFactory(ISerializer<K> keySerializer,
-                                     ISerializer<V> valueSerializer,
-                                     long startTimestampMs,
-                                     long autoAdvanceMs)
-            : this(null, keySerializer, valueSerializer, startTimestampMs, autoAdvanceMs)
+        public ConsumerRecordFactory(
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer,
+            long startTimestampMs,
+            long autoAdvanceMs)
+            : this(
+                  null,
+                  keySerializer,
+                  valueSerializer,
+                  startTimestampMs,
+                  autoAdvanceMs)
         {
         }
 
@@ -118,17 +141,16 @@ namespace Kafka.Streams.Tests.Helpers
          * @param autoAdvanceMs the time increment pre generated record
          */
 
-        public ConsumerRecordFactory(string defaultTopicName,
-                                     ISerializer<K> keySerializer,
-                                     ISerializer<V> valueSerializer,
-                                     long startTimestampMs,
-                                     long autoAdvanceMs)
+        public ConsumerRecordFactory(
+            string? defaultTopicName,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer,
+            long startTimestampMs,
+            long autoAdvanceMs)
         {
-            Objects.requireNonNull(keySerializer, "keySerializer cannot be null");
-            Objects.requireNonNull(valueSerializer, "valueSerializer cannot be null");
             this.topicName = defaultTopicName;
-            this.keySerializer = keySerializer;
-            this.valueSerializer = valueSerializer;
+            this.keySerializer = keySerializer ?? throw new ArgumentNullException(nameof(keySerializer));
+            this.valueSerializer = valueSerializer ?? throw new ArgumentNullException(nameof(valueSerializer));
             timeMs = startTimestampMs;
             advanceMs = autoAdvanceMs;
         }
@@ -160,17 +182,18 @@ namespace Kafka.Streams.Tests.Helpers
          * @param timestampMs the record timestamp
          * @return the generated {@link ConsumeResult}
          */
-
-        public ConsumeResult<byte[], byte[]> Create(string topicName,
-                                                     K key,
-                                                     V value,
-                                                     Headers headers,
-                                                     long timestampMs)
+        public ConsumeResult<byte[], byte[]> Create(
+            string topicName,
+            K key,
+            V value,
+            Headers headers,
+            long timestampMs)
         {
             Objects.requireNonNull(topicName, "topicName cannot be null.");
             Objects.requireNonNull(headers, "headers cannot be null.");
             var serializedKey = keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topicName));
             var serializedValue = valueSerializer.Serialize(value, new SerializationContext(MessageComponentType.Value, topicName));
+
             return new ConsumeResult<byte[], byte[]>
             {
                 Topic = topicName,
@@ -197,11 +220,11 @@ namespace Kafka.Streams.Tests.Helpers
          * @param timestampMs the record timestamp
          * @return the generated {@link ConsumeResult}
          */
-
-        public ConsumeResult<byte[], byte[]> Create(string topicName,
-                                                     K Key,
-                                                     V value,
-                                                     long timestampMs)
+        public ConsumeResult<byte[], byte[]> Create(
+            string topicName,
+            K Key,
+            V value,
+            long timestampMs)
         {
             return Create(topicName, Key, value, new Headers(), timestampMs);
         }
@@ -215,10 +238,10 @@ namespace Kafka.Streams.Tests.Helpers
          * @param timestampMs the record timestamp
          * @return the generated {@link ConsumeResult}
          */
-
-        public ConsumeResult<byte[], byte[]> Create(K Key,
-                                                     V value,
-                                                     long timestampMs)
+        public ConsumeResult<byte[], byte[]> Create(
+            K Key,
+            V value,
+            long timestampMs)
         {
             return Create(Key, value, new Headers(), timestampMs);
         }
@@ -234,10 +257,11 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> Create(K Key,
-                                                     V value,
-                                                     Headers headers,
-                                                     long timestampMs)
+        public ConsumeResult<byte[], byte[]> Create(
+            K Key,
+            V value,
+            Headers headers,
+            long timestampMs)
         {
             if (topicName == null)
             {
@@ -258,9 +282,10 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> Create(string topicName,
-                                                     K Key,
-                                                     V value)
+        public ConsumeResult<byte[], byte[]> Create(
+            string topicName,
+            K Key,
+            V value)
         {
             var timestamp = timeMs;
             timeMs += advanceMs;
@@ -278,13 +303,15 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> Create(string topicName,
-                                                     K Key,
-                                                     V value,
-                                                     Headers headers)
+        public ConsumeResult<byte[], byte[]> Create(
+            string topicName,
+            K Key,
+            V value,
+            Headers headers)
         {
             var timestamp = timeMs;
             timeMs += advanceMs;
+
             return Create(topicName, Key, value, headers, timestamp);
         }
 
@@ -297,8 +324,9 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> Create(K Key,
-                                                     V value)
+        public ConsumeResult<byte[], byte[]> Create(
+            K Key,
+            V value)
         {
             return Create(Key, value, new Headers());
         }
@@ -312,10 +340,10 @@ namespace Kafka.Streams.Tests.Helpers
          * @param headers the record headers
          * @return the generated {@link ConsumeResult}
          */
-
-        public ConsumeResult<byte[], byte[]> Create(K Key,
-                                                     V value,
-                                                     Headers headers)
+        public ConsumeResult<byte[], byte[]> Create(
+            K Key,
+            V value,
+            Headers headers)
         {
             if (topicName == null)
             {
@@ -335,12 +363,17 @@ namespace Kafka.Streams.Tests.Helpers
          * @param timestampMs the record timestamp
          * @return the generated {@link ConsumeResult}
          */
-
-        public ConsumeResult<byte[], byte[]> Create(string topicName,
-                                                     V value,
-                                                     long timestampMs)
+        public ConsumeResult<byte[], byte[]> Create(
+            string topicName,
+            V value,
+            long timestampMs)
         {
-            return Create(topicName, default, value, new Headers(), timestampMs);
+            return Create(
+                topicName,
+                key: default,
+                value,
+                new Headers(),
+                timestampMs);
         }
 
         /**
@@ -354,10 +387,11 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> Create(string topicName,
-                                                     V value,
-                                                     Headers headers,
-                                                     long timestampMs)
+        public ConsumeResult<byte[], byte[]> Create(
+            string topicName,
+            V value,
+            Headers headers,
+            long timestampMs)
         {
             return Create(topicName, default, value, headers, timestampMs);
         }

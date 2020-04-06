@@ -28,7 +28,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            IKStream<string, string> stream = builder.Stream(TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
 //            this.Stream = stream.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//                    .windowedBy(SessionWindows.with(Duration.FromMilliseconds(500)));
+//                    .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(500)));
 //        }
 
 //        [Fact]

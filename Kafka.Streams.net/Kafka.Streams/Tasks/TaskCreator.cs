@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Producers;
 using Kafka.Streams.Configs;
@@ -7,7 +8,7 @@ using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
-using NodaTime;
+
 using System;
 using System.Collections.Generic;
 

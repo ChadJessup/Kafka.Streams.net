@@ -49,7 +49,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotHaveNullReducerWithWindowedReduce()
 //        {
 //            groupedStream
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
 //                .reduce(null, Materialized.As("store"));
 //        }
 
@@ -63,7 +63,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotHaveInvalidStoreNameWithWindowedReduce()
 //        {
 //            groupedStream
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
 //                .reduce(MockReducer.STRING_ADDER, Materialized.As(INVALID_STORE_NAME));
 //        }
 
@@ -92,7 +92,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotHaveNullInitializerOnWindowedAggregate()
 //        {
 //            groupedStream
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
 //                .aggregate(null, MockAggregator.TOSTRING_ADDER, Materialized.As("store"));
 //        }
 
@@ -100,7 +100,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotHaveNullAdderOnWindowedAggregate()
 //        {
 //            groupedStream
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
 //                .aggregate(MockInitializer.STRING_INIT, null, Materialized.As("store"));
 //        }
 
@@ -114,7 +114,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotHaveInvalidStoreNameOnWindowedAggregate()
 //        {
 //            groupedStream
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialized.As(INVALID_STORE_NAME));
 //        }
 
@@ -146,7 +146,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            MockProcessorSupplier<Windowed<string>, int> supplier = new MockProcessorSupplier<>();
 //            IKTable<Windowed<string>, int> table = groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .aggregate(
 //                    () => 0,
 //                    (aggKey, value, aggregate) => aggregate + 1,
@@ -164,7 +164,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            MockProcessorSupplier<Windowed<string>, int> supplier = new MockProcessorSupplier<>();
 //            IKTable<Windowed<string>, int> table = groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .aggregate(
 //                    () => 0,
 //                    (aggKey, value, aggregate) => aggregate + 1,
@@ -203,7 +203,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
 //            IKTable<Windowed<string>, long> table = groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .count(Materialized.As("session-store"));
 //            table.toStream().process(supplier);
 //            doCountSessionWindows(supplier);
@@ -215,7 +215,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
 //            IKTable<Windowed<string>, long> table = groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .count();
 //            table.toStream().process(supplier);
 //            doCountSessionWindows(supplier);
@@ -250,7 +250,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
 //            IKTable<Windowed<string>, string> table = groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .reduce((value1, value2) => value1 + ":" + value2, Materialized.As("session-store"));
 //            table.toStream().process(supplier);
 //            doReduceSessionWindows(supplier);
@@ -262,7 +262,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
 //            IKTable<Windowed<string>, string> table = groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .reduce((value1, value2) => value1 + ":" + value2);
 //            table.toStream().process(supplier);
 //            doReduceSessionWindows(supplier);
@@ -273,7 +273,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotAcceptNullReducerWhenReducingSessionWindows()
 //        {
 //            groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .reduce(null, Materialized.As("store"));
 //        }
 
@@ -287,7 +287,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotAcceptInvalidStoreNameWhenReducingSessionWindows()
 //        {
 //            groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .reduce(MockReducer.STRING_ADDER, Materialized.As(INVALID_STORE_NAME));
 //        }
 
@@ -295,7 +295,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotAcceptNullStateStoreSupplierWhenReducingSessionWindows()
 //        {
 //            groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .reduce(
 //                    null,
 //                    Materialize.As < string, string, ISessionStore<Bytes, byte[]>(null));
@@ -305,7 +305,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotAcceptNullInitializerWhenAggregatingSessionWindows()
 //        {
 //            groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .aggregate(
 //                    null,
 //                    MockAggregator.TOSTRING_ADDER,
@@ -317,7 +317,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotAcceptNullAggregatorWhenAggregatingSessionWindows()
 //        {
 //            groupedStream.
-//                windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .aggregate(
 //                    MockInitializer.STRING_INIT,
 //                    null,
@@ -329,7 +329,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotAcceptNullSessionMergerWhenAggregatingSessionWindows()
 //        {
 //            groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(30)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .aggregate(
 //                    MockInitializer.STRING_INIT,
 //                    MockAggregator.TOSTRING_ADDER,
@@ -347,7 +347,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldAcceptNullStoreNameWhenAggregatingSessionWindows()
 //        {
 //            groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(10)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(10)))
 //                .aggregate(
 //                    MockInitializer.STRING_INIT,
 //                    MockAggregator.TOSTRING_ADDER,
@@ -359,7 +359,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldNotAcceptInvalidStoreNameWhenAggregatingSessionWindows()
 //        {
 //            groupedStream
-//                .windowedBy(SessionWindows.with(Duration.FromMilliseconds(10)))
+//                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(10)))
 //                .aggregate(
 //                    MockInitializer.STRING_INIT,
 //                    MockAggregator.TOSTRING_ADDER,
@@ -577,7 +577,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    {
 //        MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
 //        groupedStream
-//            .windowedBy(TimeWindows.of(Duration.FromMilliseconds(500L)))
+//            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(500L)))
 //            .count(Materialized.As("aggregate-by-key-windowed"))
 //            .toStream()
 //            .process(supplier);
@@ -591,7 +591,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
 //        List<KeyValuePair<Windowed<string>, KeyValuePair<long, long>>> results = new List<>();
 //        groupedStream
-//            .windowedBy(TimeWindows.of(Duration.FromMilliseconds(500L)))
+//            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(500L)))
 //            .count()
 //            .toStream()
 //            .process(supplier);

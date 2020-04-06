@@ -183,7 +183,7 @@
 
 //                supplier = Stores.PersistentSessionStore(
 //                    materialized.storeName(),
-//                    Duration.FromMilliseconds(retentionPeriod)
+//                    TimeSpan.FromMilliseconds(retentionPeriod)
 //                );
 //            }
 //            IStoreBuilder<ISessionStore<K, VR>> builder = Stores.sessionStoreBuilder(

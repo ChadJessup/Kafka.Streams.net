@@ -2,7 +2,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 {
 }
 //using Kafka.Streams.KStream;
-//using NodaTime;
+//
 //using System.Collections.ObjectModel;
 //using Xunit;
 
@@ -87,7 +87,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void intermediateSuppressionShouldBufferAndEmitLater()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromMilliseconds(1), unbounded()), string(), long());
+//                    new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(1), unbounded()), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 0L;
@@ -110,7 +110,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void finalResultsSuppressionShouldBufferAndEmitAtGraceExpiration()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//                    new Harness<>(finalResults(Duration.FromMilliseconds(1L)), timeWindowedSerdeFrom<string>(), 1L), long());
+//                    new Harness<>(finalResults(TimeSpan.FromMilliseconds(1L)), timeWindowedSerdeFrom<string>(), 1L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var windowStart = 99L;
@@ -153,7 +153,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void finalResultsWithZeroGraceShouldStillBufferUntilTheWindowEnd()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//                    new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), long());
+//                    new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                // note the record is in the .Ast, but the window end is in the future, so we still have to buffer,
@@ -179,7 +179,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void finalResultsWithZeroGraceAtWindowEndShouldImmediatelyEmit()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), long());
+//        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -202,7 +202,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void finalResultsShouldDropTombstonesForTimeWindows()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom<string>(), 100L), long());
+//        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), timeWindowedSerdeFrom<string>(), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -223,7 +223,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void finalResultsShouldDropTombstonesForSessionWindows()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), sessionWindowedSerdeFrom(string)), long());
+//        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), sessionWindowedSerdeFrom(string)), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -243,7 +243,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void suppressShouldNotDropTombstonesForTimeWindows()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), timeWindowedSerdeFrom(string), 100L), long());
+//        new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -267,7 +267,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void suppressShouldNotDropTombstonesForSessionWindows()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), sessionWindowedSerdeFrom(string)), long());
+//        new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), sessionWindowedSerdeFrom(string)), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -291,7 +291,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void suppressShouldNotDropTombstonesForKTable()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), string(), long());
+//                    new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -310,7 +310,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void suppressShouldEmitWhenOverRecordCapacity()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxRecords(1)), string(), long());
+//                    new Harness<>(untilTimeLimit(TimeSpan.FromDays(100), maxRecords(1)), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -332,7 +332,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void suppressShouldEmitWhenOverByteCapacity()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxBytes(60L)), string(), long());
+//                    new Harness<>(untilTimeLimit(TimeSpan.FromDays(100), maxBytes(60L)), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -354,7 +354,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void suppressShouldShutDownWhenOverRecordCapacity()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxRecords(1).shutDownWhenFull()), string(), long());
+//                    new Harness<>(untilTimeLimit(TimeSpan.FromDays(100), maxRecords(1).shutDownWhenFull()), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -380,7 +380,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            public void suppressShouldShutDownWhenOverByteCapacity()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxBytes(60L).shutDownWhenFull()), string(), long());
+//                    new Harness<>(untilTimeLimit(TimeSpan.FromDays(100), maxBytes(60L).shutDownWhenFull()), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -403,7 +403,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            }
 
 
-//            private static SuppressedInternal<K> finalResults<K>(Duration grace)
+//            private static SuppressedInternal<K> finalResults<K>(TimeSpan grace)
 //                where K : Windowed
 //            {
 //                return ((FinalResultsSuppressionBuilder)untilWindowCloses(unbounded())).buildFinalResultsSuppression(grace);

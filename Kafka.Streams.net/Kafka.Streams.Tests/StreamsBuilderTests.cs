@@ -592,7 +592,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     IKStream<string, string> streamOne = builder.Stream(STREAM_TOPIC);
                     IKStream<string, string> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.leftJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(Duration.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.leftJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
 
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -615,7 +615,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     IKStream<string, string> streamOne = builder.Stream(STREAM_TOPIC);
                     IKStream<string, string> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.join(streamTwo, (value1, value2) => value1, JoinWindows.of(Duration.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.join(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
 
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -639,7 +639,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     IKStream<string, string> streamOne = builder.Stream(STREAM_TOPIC);
                     IKStream<string, string> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.outerJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(Duration.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.outerJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForStateStore(topology.StateStores,

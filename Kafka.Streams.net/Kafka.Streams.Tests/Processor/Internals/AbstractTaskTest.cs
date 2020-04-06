@@ -255,7 +255,7 @@
 //                                                storeNamesToChangelogTopics),
 //                                consumer,
 //                                new StoreChangelogReader(consumer,
-//                                                         Duration.TimeSpan.Zero,
+//                                                         TimeSpan.TimeSpan.Zero,
 //                                                         new MockStateRestoreListener(),
 //                                                         new LogContext("stream-task-test ")),
 //                                false,

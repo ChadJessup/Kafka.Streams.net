@@ -1,7 +1,8 @@
 ﻿using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Threads.Stream;
-using NodaTime;
+
+using System;
 using Xunit;
 
 namespace Kafka.Streams.Tests
@@ -16,7 +17,7 @@ namespace Kafka.Streams.Tests
         {
         }
 
-        public ConsumeResult<K, V> Poll(Duration timeout)
+        public ConsumeResult<K, V> Poll(TimeSpan timeout)
         {
             Assert.NotNull(streamThread);
             //if (shutdownOnPoll)

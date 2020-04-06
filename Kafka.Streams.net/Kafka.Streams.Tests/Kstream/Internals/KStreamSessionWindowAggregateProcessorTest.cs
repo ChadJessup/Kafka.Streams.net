@@ -87,7 +87,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        private Merger<string, long> sessionMerger = (aggKey, aggOne, aggTwo) => aggOne + aggTwo;
 //        private KStreamSessionWindowAggregate<string, string, long> sessionAggregator =
 //            new KStreamSessionWindowAggregate<>(
-//                SessionWindows.with(Duration.FromMilliseconds(GAP_MS)),
+//                SessionWindows.with(TimeSpan.FromMilliseconds(GAP_MS)),
 //                STORE_NAME,
 //                initializer,
 //                aggregator,
@@ -417,7 +417,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        LogCaptureAppender.setClassLoggerToDebug(KStreamSessionWindowAggregate));
 //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 //        Processor<string, string> processor = new KStreamSessionWindowAggregate<>(
-//            SessionWindows.with(Duration.FromMilliseconds(10L)).grace(Duration.FromMilliseconds(0L)),
+//            SessionWindows.with(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(0L)),
 //            STORE_NAME,
 //            initializer,
 //            aggregator,
@@ -482,7 +482,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        LogCaptureAppender.setClassLoggerToDebug(KStreamSessionWindowAggregate));
 //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 //        Processor<string, string> processor = new KStreamSessionWindowAggregate<>(
-//            SessionWindows.with(Duration.FromMilliseconds(10L)).grace(Duration.FromMilliseconds(1L)),
+//            SessionWindows.with(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(1L)),
 //            STORE_NAME,
 //            initializer,
 //            aggregator,

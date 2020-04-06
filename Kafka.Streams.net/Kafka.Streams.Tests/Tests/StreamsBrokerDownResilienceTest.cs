@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tests.Tests
 //{
 //    System.Console.Error.println("FATAL: An unexpected exception " + e);
 //    System.Console.Error.flush();
-//    streams.close(Duration.ofSeconds(30));
+//    streams.close(TimeSpan.ofSeconds(30));
 //}
 //        });
 //        System.Console.Out.WriteLine("Start Kafka Streams");
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //    public void run()
 //    {
-//        streams.close(Duration.ofSeconds(30));
+//        streams.close(TimeSpan.ofSeconds(30));
 //        System.Console.Out.WriteLine("Complete shutdown of streams resilience test app now");
 //        System.Console.Out.flush();
 //    }

@@ -3,9 +3,7 @@ using Kafka.Common;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
 using Microsoft.Extensions.Logging;
-using NodaTime;
 using System;
-using System.Collections.Generic;
 
 namespace Kafka.Streams.Clients.Consumers
 {
@@ -51,7 +49,7 @@ namespace Kafka.Streams.Clients.Consumers
                 globalConsumer.Seek(new TopicPartitionOffset(entry.Key, entry.Value ?? 0));
             }
 
-            lastFlush = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+            lastFlush = clock.NowAsEpochMilliseconds;
         }
 
         public void PollAndUpdate()
@@ -65,7 +63,7 @@ namespace Kafka.Streams.Clients.Consumers
                     stateMaintainer.Update(record);
                 }
 
-                var now = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+                var now = clock.NowAsEpochMilliseconds;
                 if (now >= lastFlush + flushInterval)
                 {
                     stateMaintainer.FlushState();

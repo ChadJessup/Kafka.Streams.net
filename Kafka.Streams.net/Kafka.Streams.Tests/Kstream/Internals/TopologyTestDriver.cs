@@ -1,5 +1,4 @@
-﻿using Castle.Core.Logging;
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
@@ -17,13 +16,11 @@ using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tasks;
-using Kafka.Streams.Tests;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -100,7 +97,7 @@ namespace Kafka.Streams.Tests
     * correct.
     * <p>
     * Note, that calling {@code PipeInput()} will also trigger {@link PunctuationType#STREAM_TIME event-time} base
-    * {@link ProcessorContext#schedule(Duration, PunctuationType, Punctuator) punctuation} callbacks.
+    * {@link ProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) punctuation} callbacks.
     * However, you won't trigger {@link PunctuationType#WALL_CLOCK_TIME wall-clock} type punctuations that you must
     * trigger manually via {@link #advanceWallClockTime(long)}.
     * <p>
@@ -166,13 +163,13 @@ namespace Kafka.Streams.Tests
          * @param config                 the configuration for the topology
          * @param initialWallClockTime   the initial value of internally mocked wall-clock time
          */
-        public TopologyTestDriver(Topology topology, StreamsConfig config, Instant? initialWallClockTime)
+        public TopologyTestDriver(Topology topology, StreamsConfig config, DateTime? initialWallClockTime)
             : this(
                 topology.internalTopologyBuilder,
                 config,
                 initialWallClockTime == null
-                  ? SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds()
-                  : initialWallClockTime?.ToUnixTimeMilliseconds())
+                  ? DateTimeOffset.Now.ToUnixTimeMilliseconds()
+                  : Timestamp.DateTimeToUnixTimestampMs(initialWallClockTime.Value))
         {
         }
 
@@ -501,10 +498,10 @@ namespace Kafka.Streams.Tests
             // For this method, it just means there's nothing to do.
             if (task != null)
             {
-                //while (task.hasRecordsQueued() && task.isProcessable(mockWallClockTime.GetCurrentInstant().ToUnixTimeMilliseconds()))
+                //while (task.hasRecordsQueued() && task.isProcessable(mockWallClockTime.NowAsEpochMilliseconds))
                 {
                     // Process the record ...
-                    //  task.process(mockWallClockTime.GetCurrentInstant().ToUnixTimeMilliseconds());
+                    //  task.process(mockWallClockTime.NowAsEpochMilliseconds);
                     task.MaybePunctuateStreamTime();
                     task.Commit();
                     CaptureOutputsAndReEnqueueInternalResults();
@@ -635,26 +632,26 @@ namespace Kafka.Streams.Tests
         /**
          * Advances the internally mocked wall-clock time.
          * This might trigger a {@link PunctuationType#WALL_CLOCK_TIME wall-clock} type
-         * {@link ProcessorContext#schedule(Duration, PunctuationType, Punctuator) punctuations}.
+         * {@link ProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) punctuations}.
          *
-         * @deprecated Since 2.4 use {@link #advanceWallClockTime(Duration)} instead
+         * @deprecated Since 2.4 use {@link #advanceWallClockTime(TimeSpan)} instead
          *
          * @param advanceMs the amount of time to advance wall-clock time in milliseconds
          */
         [Obsolete]
         public void AdvanceWallClockTime(long advanceMs)
         {
-            AdvanceWallClockTime(Duration.FromMilliseconds(advanceMs));
+            AdvanceWallClockTime(TimeSpan.FromMilliseconds(advanceMs));
         }
 
         /**
          * Advances the internally mocked wall-clock time.
          * This might trigger a {@link PunctuationType#WALL_CLOCK_TIME wall-clock} type
-         * {@link ProcessorContext#schedule(Duration, PunctuationType, Punctuator) punctuations}.
+         * {@link ProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) punctuations}.
          *
          * @param advance the amount of time to advance wall-clock time
          */
-        public void AdvanceWallClockTime(Duration advance)
+        public void AdvanceWallClockTime(TimeSpan advance)
         {
             //mockWallClockTime.sleep(advance);
             if (task != null)
@@ -746,7 +743,7 @@ namespace Kafka.Streams.Tests
         //         keySerializer,
         //         valueSerializer,
         //         SystemClock.Instance.GetCurrentInstant(),
-        //         Duration.Zero);
+        //         TimeSpan.Zero);
         // }
 
         /**
@@ -766,7 +763,7 @@ namespace Kafka.Streams.Tests
         //                                                          ISerializer<K> keySerializer,
         //                                                          ISerializer<V> valueSerializer,
         //                                                          Instant startTimestamp,
-        //                                                          Duration autoAdvance)
+        //                                                          TimeSpan autoAdvance)
         //{
         //    return new TestInputTopic<>(this, topicName, keySerializer, valueSerializer, startTimestamp, autoAdvance);
         //}
@@ -823,7 +820,7 @@ namespace Kafka.Streams.Tests
             TestRecord<K, V> record,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
-            Instant time)
+            DateTime time)
         {
             var serializedKey = keySerializer.Serialize(record.Key, new SerializationContext(MessageComponentType.Key, topic));
             var serializedValue = valueSerializer.Serialize(record.Value, new SerializationContext(MessageComponentType.Value, topic));
@@ -831,7 +828,7 @@ namespace Kafka.Streams.Tests
             long timestamp;
             if (time != null)
             {
-                timestamp = time.ToUnixTimeMilliseconds();
+                timestamp = Timestamp.DateTimeToUnixTimestampMs(time);
             }
             else if (record.Timestamp() != null)
             {
@@ -1160,52 +1157,6 @@ namespace Kafka.Streams.Tests
             }
 
             stateDirectory.Clean();
-        }
-
-        internal class MockTime : IClock
-        {
-            private readonly long timeMs;
-            private readonly long highResTimeNs;
-
-            public MockTime(long startTimestampMs)
-            {
-                this.timeMs = startTimestampMs;
-                this.highResTimeNs = startTimestampMs * 1000L * 1000L;
-            }
-
-            public Instant GetCurrentInstant()
-                => Instant.FromUnixTimeMilliseconds(this.timeMs);
-
-            //public long milliseconds()
-            //{
-            //    return timeMs.Get();
-            //}
-
-            //public long nanoseconds()
-            //{
-            //    return highResTimeNs.Get();
-            //}
-
-            //public long hiResClockMs()
-            //{
-            //    return TimeUnit.NANOSECONDS.toMillis(nanoseconds());
-            //}
-
-            //public void sleep(long ms)
-            //{
-            //    if (ms < 0)
-            //    {
-            //        throw new ArgumentException("Sleep ms cannot be negative.");
-            //    }
-            //    timeMs.addAndGet(ms);
-            //    highResTimeNs.addAndGet(TimeUnit.MILLISECONDS.toNanos(ms));
-            //}
-
-            //public void waitObject(object obj, Supplier<Boolean> condition, long timeoutMs)
-            //{
-            //    throw new UnsupportedOperationException();
-            //}
-
         }
 
         // private MockConsumer<byte[], byte[]> createRestoreConsumer(Dictionary<string, string> storeToChangelogTopic)

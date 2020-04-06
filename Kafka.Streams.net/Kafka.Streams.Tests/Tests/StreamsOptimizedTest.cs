@@ -101,7 +101,7 @@
 //            {
 //                System.Console.Out.WriteLine("closing Kafka Streams instance");
 //                System.Console.Out.flush();
-//                streams.close(Duration.FromMilliseconds(5000));
+//                streams.close(TimeSpan.FromMilliseconds(5000));
 //                System.Console.Out.WriteLine("OPTIMIZE_TEST Streams Stopped");
 //                System.Console.Out.flush();
 //            }

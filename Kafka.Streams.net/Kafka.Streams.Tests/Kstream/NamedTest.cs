@@ -26,7 +26,7 @@ namespace Kafka.Streams.Tests
 
             foreach (var name in invalidNames)
             {
-                Assert.Throws<TopologyException>(() => Named.Validate(name));
+                Assert.Throws<ArgumentException>(() => Named.Validate(name));
             }
         }
     }

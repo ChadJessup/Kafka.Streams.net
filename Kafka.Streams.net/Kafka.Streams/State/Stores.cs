@@ -1,3 +1,4 @@
+using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
 using Kafka.Streams.State.Internals;
@@ -5,7 +6,7 @@ using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Windowed;
-using NodaTime;
+
 using System;
 
 namespace Kafka.Streams.State
@@ -178,7 +179,7 @@ namespace Kafka.Streams.State
          *                              careful to set it the same as the windowed keys you're actually storing.
          * @param retainDuplicates      whether or not to retain duplicates.
          * @return an instance of {@link WindowBytesStoreSupplier}
-         * @deprecated since 2.1 Use {@link Stores#PersistentWindowStore(string, Duration, Duration, bool)} instead
+         * @deprecated since 2.1 Use {@link Stores#PersistentWindowStore(string, TimeSpan, TimeSpan, bool)} instead
          */
         [Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
         public static IWindowBytesStoreSupplier PersistentWindowStore(
@@ -209,7 +210,7 @@ namespace Kafka.Streams.State
          * <p>
          * This store supplier can be passed into a {@link #windowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
          * If you want to create a {@link TimestampedWindowStore} you should use
-         * {@link #PersistentTimestampedWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
+         * {@link #PersistentTimestampedWindowStore(string, TimeSpan, TimeSpan, bool)} to create a store supplier instead.
          *
          * @param name                  name of the store (cannot be {@code null})
          * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
@@ -241,7 +242,7 @@ namespace Kafka.Streams.State
          * This store supplier can be passed into a
          * {@link #timestampedWindowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
          * If you want to create a {@link WindowStore} you should use
-         * {@link #PersistentWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
+         * {@link #PersistentWindowStore(string, TimeSpan, TimeSpan, bool)} to create a store supplier instead.
          *
          * @param name                  name of the store (cannot be {@code null})
          * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
@@ -392,7 +393,7 @@ namespace Kafka.Streams.State
          *                          windowed data's entire life cycle, from window-start through window-end,
          *                          and for the entire grace period)
          * @return an instance of a {@link  SessionBytesStoreSupplier}
-         * @deprecated since 2.1 Use {@link Stores#PersistentSessionStore(string, Duration)} instead
+         * @deprecated since 2.1 Use {@link Stores#PersistentSessionStore(string, TimeSpan)} instead
          */
         [Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
         public static ISessionBytesStoreSupplier PersistentSessionStore(

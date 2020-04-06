@@ -12,7 +12,7 @@
 //     * They have no fixed time boundaries, rather the size of the window is determined by the records.
 //     * Please see {@link SessionWindows} for more details.
 //     * <p>
-//     * New events are.Added to {@link SessionWindows} until their grace period ends (see {@link SessionWindows#grace(Duration)}).
+//     * New events are.Added to {@link SessionWindows} until their grace period ends (see {@link SessionWindows#grace(TimeSpan)}).
 //     *
 //     * Furthermore, updates are sent downstream into a windowed {@link KTable} changelog stream, where
 //     * "windowed" implies that the {@link KTable} key is a combined key of the original record key and a window ID.

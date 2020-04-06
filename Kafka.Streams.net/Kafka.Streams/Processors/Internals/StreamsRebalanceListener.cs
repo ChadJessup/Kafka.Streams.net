@@ -1,10 +1,11 @@
 ﻿using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.Extensions;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads.Stream;
 using Microsoft.Extensions.Logging;
-using NodaTime;
+
 using System;
 using System.Collections.Generic;
 
@@ -44,7 +45,7 @@ namespace Kafka.Streams.Processors.Internals
                 return;
             }
 
-            var start = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+            var start = clock.NowAsEpochMilliseconds;
             try
             {
                 if (!streamThread.State.SetState(StreamThreadStates.PARTITIONS_ASSIGNED))
@@ -71,7 +72,7 @@ namespace Kafka.Streams.Processors.Internals
             finally
             {
                 log.LogInformation(
-                    $"partition assignment took {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - start} ms.\n" +
+                    $"partition assignment took {clock.NowAsEpochMilliseconds - start} ms.\n" +
                     $"\tcurrent active tasks: {taskManager.ActiveTaskIds().ToJoinedString()}\n" +
                     $"\tcurrent standby tasks: {taskManager.StandbyTaskIds().ToJoinedString()}\n" +
                     $"\tprevious active tasks: {taskManager.PrevActiveTaskIds().ToJoinedString()}\n");
@@ -89,7 +90,7 @@ namespace Kafka.Streams.Processors.Internals
 
             if (streamThread.State.SetState(StreamThreadStates.PARTITIONS_REVOKED))
             {
-                var start = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+                var start = clock.NowAsEpochMilliseconds;
                 try
                 {
                     // suspend active tasks
@@ -115,7 +116,7 @@ namespace Kafka.Streams.Processors.Internals
                     streamThread.ClearStandbyRecords();
 
                     log.LogInformation(
-                        $"partition revocation took {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - start} ms.\n" +
+                        $"partition revocation took {clock.NowAsEpochMilliseconds - start} ms.\n" +
                         $"\tsuspended active tasks: {taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
                         $"\tsuspended standby tasks: {taskManager.SuspendedStandbyTaskIds().ToJoinedString()}");
                 }

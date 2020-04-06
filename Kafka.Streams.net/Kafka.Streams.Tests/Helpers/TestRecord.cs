@@ -1,5 +1,5 @@
 ﻿using Confluent.Kafka;
-using NodaTime;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +16,7 @@ namespace Kafka.Streams.Tests.Helpers
         public Headers? Headers { get; }
         public K Key { get; }
         public V Value { get; }
-        public Instant? RecordTime { get; }
+        public DateTime? RecordTime { get; }
 
         /**
          * Creates a record.
@@ -26,7 +26,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param headers the record headers that will be included in the record
          * @param recordTime The timestamp of the record.
          */
-        public TestRecord(K key, V value, Headers? headers, Instant recordTime)
+        public TestRecord(K key, V value, Headers? headers, DateTime recordTime)
         {
             this.Key = key;
             this.Value = value;
@@ -52,7 +52,7 @@ namespace Kafka.Streams.Tests.Helpers
                         string.Format("Invalid timestamp: %d. Timestamp should always be non-negative or null.", timestampMs));
                 }
 
-                this.RecordTime = Instant.FromUnixTimeMilliseconds(timestampMs.Value);
+                this.RecordTime = Confluent.Kafka.Timestamp.UnixTimestampMsToDateTime(timestampMs.Value);
             }
             else
             {
@@ -71,7 +71,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param value The value of the record
          * @param recordTime The timestamp of the record as Instant.
          */
-        public TestRecord(K key, V value, Instant recordTime)
+        public TestRecord(K key, V value, DateTime recordTime)
             : this(key, value, null, recordTime)
         {
         }
@@ -130,7 +130,7 @@ namespace Kafka.Streams.Tests.Helpers
             this.Key = record.Key;
             this.Value = record.Value;
             this.Headers = record.Headers;
-            this.RecordTime = Instant.FromUnixTimeMilliseconds(record.Timestamp.UnixTimestampMs);
+            this.RecordTime = record.Timestamp.UtcDateTime;
         }
 
         /**
@@ -148,7 +148,7 @@ namespace Kafka.Streams.Tests.Helpers
             this.Key = record.Key;
             this.Value = record.Value;
             this.Headers = record.Headers;
-            this.RecordTime = Instant.FromUnixTimeMilliseconds(record.Timestamp.UnixTimestampMs);
+            this.RecordTime = record.Timestamp.UtcDateTime;
         }
 
         /**
@@ -158,7 +158,7 @@ namespace Kafka.Streams.Tests.Helpers
         {
             return this.RecordTime == null
                 ? (long?)null
-                : this.RecordTime.Value.ToUnixTimeMilliseconds();
+                : Confluent.Kafka.Timestamp.DateTimeToUnixTimestampMs(this.RecordTime.Value);
         }
 
         public override string ToString()

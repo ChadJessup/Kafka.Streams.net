@@ -12,7 +12,7 @@ namespace Kafka.Streams.Internals
 
         /**
             * Validates that milliseconds from {@code duration} can be retrieved.
-            * @param duration Duration to check.
+            * @param duration TimeSpan to check.
             * @param messagePrefix Prefix text for an error message.
             * @return Milliseconds from {@code duration}.
             */

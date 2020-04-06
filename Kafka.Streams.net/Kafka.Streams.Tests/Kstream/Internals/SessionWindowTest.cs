@@ -1,4 +1,3 @@
-using NodaTime;
 using System;
 using Xunit;
 
@@ -14,7 +13,7 @@ namespace Kafka.Streams.KStream.Internals
         public SessionWindowTest()
         {
             this.window = new SessionWindow(start, end);
-            this.timeWindow = new TimeWindow(Duration.FromMilliseconds(end - start));
+            this.timeWindow = new TimeWindow(start, end);
         }
 
         [Fact]

@@ -131,7 +131,7 @@
 //        [Fact]
 //        public void ShouldGroupByKey()
 //        {// throws Exception
-//            long timestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            long timestamp = mockTime.NowAsEpochMilliseconds;;
 //            ProduceMessages(timestamp);
 //            ProduceMessages(timestamp);
 

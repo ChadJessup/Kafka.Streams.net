@@ -940,7 +940,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
          *                 // punctuate each second; can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             KeyValuePair transform(K key, V value)
@@ -1038,7 +1038,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
          *                 // punctuate each second; can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             KeyValuePair transform(K key, V value)
@@ -1139,7 +1139,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
          *                 // punctuate each second; can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             IEnumerable<KeyValuePair> transform(K key, V value)
@@ -1239,7 +1239,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
          *                 // punctuate each second; can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             IEnumerable<KeyValuePair> transform(K key, V value)
@@ -1340,7 +1340,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             NewValueType transform(V value)
@@ -1422,7 +1422,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             NewValueType transform(V value)
@@ -1509,7 +1509,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             NewValueType transform(K readOnlyKey, V value)
@@ -1595,7 +1595,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             NewValueType transform(K readOnlyKey, V value)
@@ -1684,7 +1684,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             IEnumerable<NewValueType> transform(V value)
@@ -1777,7 +1777,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             IEnumerable<NewValueType> transform(V value)
@@ -1872,7 +1872,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             IEnumerable<NewValueType> transform(K readOnlyKey, V value)
@@ -1967,7 +1967,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             IEnumerable<NewValueType> transform(K readOnlyKey, V value)
@@ -2054,7 +2054,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myProcessorState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             void process(K key, V value)
@@ -2118,7 +2118,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *                 this.state = context.getStateStore("myProcessorState");
          *                 // punctuate each second, can access this.state
-         *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
+         *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
          *             void process(K key, V value)

@@ -1,3 +1,4 @@
+using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
@@ -7,7 +8,7 @@ using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.TimeStamped;
 using Microsoft.Extensions.Logging;
-using NodaTime;
+
 using System;
 using System.Collections.Generic;
 
@@ -51,13 +52,13 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<V>? valSerde,
             HashSet<string> sourceNodes,
             string? queryableStoreName,
-            IProcessorSupplier<K, V> IProcessorSupplier,
+            IProcessorSupplier<K, V> processorSupplier,
             StreamsGraphNode streamsGraphNode,
             InternalStreamsBuilder builder)
             : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
         {
             this.clock = clock;
-            this.processorSupplier = IProcessorSupplier;
+            this.processorSupplier = processorSupplier;
             this.QueryableStoreName = queryableStoreName;
         }
 

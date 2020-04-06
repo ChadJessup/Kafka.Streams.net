@@ -79,7 +79,7 @@
 //        private LogContext logContext = new LogContext("test-reader ");
 //        private StoreChangelogReader changelogReader = new StoreChangelogReader(
 //            consumer,
-//            Duration.TimeSpan.Zero,
+//            TimeSpan.TimeSpan.Zero,
 //            stateRestoreListener,
 //            logContext);
 
@@ -106,7 +106,7 @@
 
 //        StoreChangelogReader changelogReader = new StoreChangelogReader(
 //            consumer,
-//            Duration.TimeSpan.Zero,
+//            TimeSpan.TimeSpan.Zero,
 //            stateRestoreListener,
 //            logContext);
 //        changelogReader.register(new StateRestorer(

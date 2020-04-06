@@ -9,7 +9,7 @@ using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tasks;
-using NodaTime;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public ICancellable Schedule(Duration interval, PunctuationType type, IPunctuator callback)
+        public ICancellable Schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
         {
             throw new InvalidOperationException("this should not happen: schedule() not supported in global processor context.");
         }

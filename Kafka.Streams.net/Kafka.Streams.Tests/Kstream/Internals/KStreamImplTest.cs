@@ -66,10 +66,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            int anyWindowSize = 1;
 //            Joined<string, int, int> joined = Joined.with(Serdes.String(), Serdes.Int(), Serdes.Int());
 //            IKStream<string, int> stream4 = streams2[0].join(streams3[0],
-//                (value1, value2) => value1 + value2, JoinWindows.of(Duration.FromMilliseconds(anyWindowSize)), joined);
+//                (value1, value2) => value1 + value2, JoinWindows.of(TimeSpan.FromMilliseconds(anyWindowSize)), joined);
 
 //            streams2[1].join(streams3[1], (value1, value2) => value1 + value2,
-//                JoinWindows.of(Duration.FromMilliseconds(anyWindowSize)), joined);
+//                JoinWindows.of(TimeSpan.FromMilliseconds(anyWindowSize)), joined);
 
 //            stream4.To("topic-5");
 
@@ -178,20 +178,20 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //       Assert.Equal(((AbstractStream) stream1.groupBy(selector, Grouped.with(mySerde, mySerde))).keySerde(), mySerde);
 //       Assert.Equal(((AbstractStream) stream1.groupBy(selector, Grouped.with(mySerde, mySerde))).valueSerde(), mySerde);
 
-//       Assert.Null(((AbstractStream) stream1.join(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)))).keySerde());
-//       Assert.Null(((AbstractStream) stream1.join(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)))).valueSerde());
-//       Assert.Equal(((AbstractStream) stream1.join(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).keySerde(), mySerde);
-//       Assert.Null(((AbstractStream) stream1.join(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).valueSerde());
+//       Assert.Null(((AbstractStream) stream1.join(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)))).keySerde());
+//       Assert.Null(((AbstractStream) stream1.join(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)))).valueSerde());
+//       Assert.Equal(((AbstractStream) stream1.join(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).keySerde(), mySerde);
+//       Assert.Null(((AbstractStream) stream1.join(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).valueSerde());
 
-//       Assert.Null(((AbstractStream) stream1.leftJoin(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)))).keySerde());
-//       Assert.Null(((AbstractStream) stream1.leftJoin(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)))).valueSerde());
-//       Assert.Equal(((AbstractStream) stream1.leftJoin(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).keySerde(), mySerde);
-//       Assert.Null(((AbstractStream) stream1.leftJoin(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).valueSerde());
+//       Assert.Null(((AbstractStream) stream1.leftJoin(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)))).keySerde());
+//       Assert.Null(((AbstractStream) stream1.leftJoin(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)))).valueSerde());
+//       Assert.Equal(((AbstractStream) stream1.leftJoin(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).keySerde(), mySerde);
+//       Assert.Null(((AbstractStream) stream1.leftJoin(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).valueSerde());
 
-//       Assert.Null(((AbstractStream) stream1.outerJoin(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)))).keySerde());
-//       Assert.Null(((AbstractStream) stream1.outerJoin(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)))).valueSerde());
-//       Assert.Equal(((AbstractStream) stream1.outerJoin(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).keySerde(), mySerde);
-//       Assert.Null(((AbstractStream) stream1.outerJoin(stream1, joiner, JoinWindows.of(Duration.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).valueSerde());
+//       Assert.Null(((AbstractStream) stream1.outerJoin(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)))).keySerde());
+//       Assert.Null(((AbstractStream) stream1.outerJoin(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)))).valueSerde());
+//       Assert.Equal(((AbstractStream) stream1.outerJoin(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).keySerde(), mySerde);
+//       Assert.Null(((AbstractStream) stream1.outerJoin(stream1, joiner, JoinWindows.of(TimeSpan.FromMilliseconds(100L)), Joined.with(mySerde, mySerde, mySerde))).valueSerde());
 
 //       Assert.Equal(((AbstractStream) stream1.join(table1, joiner)).keySerde(), consumedInternal.keySerde());
 //       Assert.Null(((AbstractStream) stream1.join(table1, joiner)).valueSerde());
@@ -294,7 +294,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        .map((key, value) => KeyValuePair.Create(value, value));
 //    stream.join(kStream,
 //                valueJoiner,
-//                JoinWindows.of(Duration.FromMilliseconds(windowSize)).grace(Duration.FromMilliseconds(3 * windowSize)),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(windowSize)).grace(TimeSpan.FromMilliseconds(3 * windowSize)),
 //                Joined.with(Serdes.String(),
 //                            Serdes.String(),
 //                            Serdes.String()))
@@ -329,7 +329,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    stream.join(
 //        kStream,
 //        valueJoiner,
-//        JoinWindows.of(Duration.FromMilliseconds(windowSize)).grace(Duration.FromMilliseconds(3L * windowSize)),
+//        JoinWindows.of(TimeSpan.FromMilliseconds(windowSize)).grace(TimeSpan.FromMilliseconds(3L * windowSize)),
 //        Joined.with(Serdes.String(), Serdes.String(), Serdes.String())
 //    )
 //          .To("output-topic", Produced.With(Serdes.String(), Serdes.String()));
@@ -525,13 +525,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //[Fact] (typeof(expected = NullPointerException))
 //    public void shouldNotAllowNullOtherStreamOnJoin()
 //{
-//    testStream.join(null, MockValueJoiner.TOSTRING_JOINER, JoinWindows.of(Duration.FromMilliseconds(10)));
+//    testStream.join(null, MockValueJoiner.TOSTRING_JOINER, JoinWindows.of(TimeSpan.FromMilliseconds(10)));
 //}
 
 //[Fact] (typeof(expected = NullPointerException))
 //    public void shouldNotAllowNullValueJoinerOnJoin()
 //{
-//    testStream.join(testStream, null, JoinWindows.of(Duration.FromMilliseconds(10)));
+//    testStream.join(testStream, null, JoinWindows.of(TimeSpan.FromMilliseconds(10)));
 //}
 
 //[Fact] (typeof(expected = NullPointerException))
@@ -667,13 +667,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //[Fact] (typeof(expected = NullPointerException))
 //    public void shouldThrowNullPointerOnJoinWithStreamWhenJoinedIsNull()
 //{
-//    testStream.join(testStream, MockValueJoiner.TOSTRING_JOINER, JoinWindows.of(Duration.FromMilliseconds(10)), null);
+//    testStream.join(testStream, MockValueJoiner.TOSTRING_JOINER, JoinWindows.of(TimeSpan.FromMilliseconds(10)), null);
 //}
 
 //[Fact] (typeof(expected = NullPointerException))
 //    public void shouldThrowNullPointerOnOuterJoinJoinedIsNull()
 //{
-//    testStream.outerJoin(testStream, MockValueJoiner.TOSTRING_JOINER, JoinWindows.of(Duration.FromMilliseconds(10)), null);
+//    testStream.outerJoin(testStream, MockValueJoiner.TOSTRING_JOINER, JoinWindows.of(TimeSpan.FromMilliseconds(10)), null);
 //}
 
 //[Fact]

@@ -115,7 +115,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldReturnMatchedWindowsOrderedByTimestamp()
 //        {
-//            TimeWindows windows = TimeWindows.of(Duration.FromMilliseconds(12L)).advanceBy(Duration.FromMilliseconds(5L));
+//            TimeWindows windows = TimeWindows.of(TimeSpan.FromMilliseconds(12L)).advanceBy(TimeSpan.FromMilliseconds(5L));
 //            Dictionary<long, TimeWindow> matched = windows.windowsFor(21L);
 
 //            var expected = matched.keySet().ToArray(new long[matched.Count]);

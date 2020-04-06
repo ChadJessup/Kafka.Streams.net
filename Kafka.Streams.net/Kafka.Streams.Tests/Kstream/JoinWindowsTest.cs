@@ -14,32 +14,32 @@ namespace Kafka.Streams.Tests.Kstream
 //        [Fact]
 //        public void validWindows()
 //        {
-//            JoinWindows.of(Duration.FromMilliseconds(ANY_OTHER_SIZE))   // [ -anyOtherSize ; anyOtherSize ]
-//                       .before(Duration.FromMilliseconds(ANY_SIZE))                    // [ -anySize ; anyOtherSize ]
-//                       .before(Duration.FromMilliseconds(0))                          // [ 0 ; anyOtherSize ]
-//                       .before(Duration.FromMilliseconds(-ANY_SIZE))                   // [ anySize ; anyOtherSize ]
-//                       .before(Duration.FromMilliseconds(-ANY_OTHER_SIZE));             // [ anyOtherSize ; anyOtherSize ]
+//            JoinWindows.of(TimeSpan.FromMilliseconds(ANY_OTHER_SIZE))   // [ -anyOtherSize ; anyOtherSize ]
+//                       .before(TimeSpan.FromMilliseconds(ANY_SIZE))                    // [ -anySize ; anyOtherSize ]
+//                       .before(TimeSpan.FromMilliseconds(0))                          // [ 0 ; anyOtherSize ]
+//                       .before(TimeSpan.FromMilliseconds(-ANY_SIZE))                   // [ anySize ; anyOtherSize ]
+//                       .before(TimeSpan.FromMilliseconds(-ANY_OTHER_SIZE));             // [ anyOtherSize ; anyOtherSize ]
 
-//            JoinWindows.of(Duration.FromMilliseconds(ANY_OTHER_SIZE))   // [ -anyOtherSize ; anyOtherSize ]
-//                       .after(Duration.FromMilliseconds(ANY_SIZE))                     // [ -anyOtherSize ; anySize ]
-//                       .after(Duration.FromMilliseconds(0))                           // [ -anyOtherSize ; 0 ]
-//                       .after(Duration.FromMilliseconds(-ANY_SIZE))                    // [ -anyOtherSize ; -anySize ]
-//                       .after(Duration.FromMilliseconds(-ANY_OTHER_SIZE));              // [ -anyOtherSize ; -anyOtherSize ]
+//            JoinWindows.of(TimeSpan.FromMilliseconds(ANY_OTHER_SIZE))   // [ -anyOtherSize ; anyOtherSize ]
+//                       .after(TimeSpan.FromMilliseconds(ANY_SIZE))                     // [ -anyOtherSize ; anySize ]
+//                       .after(TimeSpan.FromMilliseconds(0))                           // [ -anyOtherSize ; 0 ]
+//                       .after(TimeSpan.FromMilliseconds(-ANY_SIZE))                    // [ -anyOtherSize ; -anySize ]
+//                       .after(TimeSpan.FromMilliseconds(-ANY_OTHER_SIZE));              // [ -anyOtherSize ; -anyOtherSize ]
 //        }
 
 //        [Fact]
 //        public void timeDifferenceMustNotBeNegative()
 //        {
-//            JoinWindows.of(Duration.FromMilliseconds(-1));
+//            JoinWindows.of(TimeSpan.FromMilliseconds(-1));
 //        }
 
 //        [Fact]
 //        public void endTimeShouldNotBeBeforeStart()
 //        {
-//            JoinWindows windowSpec = JoinWindows.of(Duration.FromMilliseconds(ANY_SIZE));
+//            JoinWindows windowSpec = JoinWindows.of(TimeSpan.FromMilliseconds(ANY_SIZE));
 //            try
 //            {
-//                windowSpec.after(Duration.FromMilliseconds(-ANY_SIZE - 1));
+//                windowSpec.after(TimeSpan.FromMilliseconds(-ANY_SIZE - 1));
 //                Assert.False(true, "window end time should not be before window start time");
 //            }
 //            catch (ArgumentException e)
@@ -51,10 +51,10 @@ namespace Kafka.Streams.Tests.Kstream
 //        [Fact]
 //        public void startTimeShouldNotBeAfterEnd()
 //        {
-//            JoinWindows windowSpec = JoinWindows.of(Duration.FromMilliseconds(ANY_SIZE));
+//            JoinWindows windowSpec = JoinWindows.of(TimeSpan.FromMilliseconds(ANY_SIZE));
 //            try
 //            {
-//                windowSpec.before(Duration.FromMilliseconds(-ANY_SIZE - 1));
+//                windowSpec.before(TimeSpan.FromMilliseconds(-ANY_SIZE - 1));
 //                Assert.False(true, "window start time should not be after window end time");
 //            }
 //            catch (ArgumentException e)
@@ -66,16 +66,16 @@ namespace Kafka.Streams.Tests.Kstream
 //        [Fact]
 //        public void untilShouldSetGraceDuration()
 //        {
-//            JoinWindows windowSpec = JoinWindows.of(Duration.FromMilliseconds(ANY_SIZE));
+//            JoinWindows windowSpec = JoinWindows.of(TimeSpan.FromMilliseconds(ANY_SIZE));
 //            long windowSize = windowSpec.Count;
-//            Assert.Equal(windowSize, windowSpec.grace(Duration.FromMilliseconds(windowSize)).gracePeriodMs());
+//            Assert.Equal(windowSize, windowSpec.grace(TimeSpan.FromMilliseconds(windowSize)).gracePeriodMs());
 //        }
 
 
 //        [Fact]
 //        public void retentionTimeMustNoBeSmallerThanWindowSize()
 //        {
-//            JoinWindows windowSpec = JoinWindows.of(Duration.FromMilliseconds(ANY_SIZE));
+//            JoinWindows windowSpec = JoinWindows.of(TimeSpan.FromMilliseconds(ANY_SIZE));
 //            long windowSize = windowSpec.Count;
 //            try
 //            {
@@ -91,11 +91,11 @@ namespace Kafka.Streams.Tests.Kstream
 //        [Fact]
 //        public void gracePeriodShouldEnforceBoundaries()
 //        {
-//            JoinWindows.of(Duration.FromMilliseconds(3L)).grace(Duration.FromMilliseconds(0L));
+//            JoinWindows.of(TimeSpan.FromMilliseconds(3L)).grace(TimeSpan.FromMilliseconds(0L));
 
 //            try
 //            {
-//                JoinWindows.of(Duration.FromMilliseconds(3L)).grace(Duration.FromMilliseconds(-1L));
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3L)).grace(TimeSpan.FromMilliseconds(-1L));
 //                Assert.False(true, "should not accept negatives");
 //            }
 //            catch (ArgumentException e)
@@ -107,54 +107,54 @@ namespace Kafka.Streams.Tests.Kstream
 //        [Fact]
 //        public void equalsAndHashcodeShouldBeValidForPositiveCases()
 //        {
-//            VerifyEquality(JoinWindows.of(Duration.FromMilliseconds(3)), JoinWindows.of(Duration.FromMilliseconds(3)));
+//            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)), JoinWindows.of(TimeSpan.FromMilliseconds(3)));
 
-//            VerifyEquality(JoinWindows.of(Duration.FromMilliseconds(3)).after(Duration.FromMilliseconds(2)), JoinWindows.of(Duration.FromMilliseconds(3)).after(Duration.FromMilliseconds(2)));
+//            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).after(TimeSpan.FromMilliseconds(2)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).after(TimeSpan.FromMilliseconds(2)));
 
-//            VerifyEquality(JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(2)), JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(2)));
+//            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(2)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(2)));
 
-//            VerifyEquality(JoinWindows.of(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(2)), JoinWindows.of(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(2)));
+//            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(2)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(2)));
 
-//            VerifyEquality(JoinWindows.of(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(60)), JoinWindows.of(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(60)));
+//            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)));
 
 //            VerifyEquality(
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(60)),
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(60))
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60))
 //            );
 //            // JoinWindows is a little weird in that before and after set the same fields.As of.
 //            VerifyEquality(
-//                JoinWindows.of(Duration.FromMilliseconds(9)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(60)),
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(60))
+//                JoinWindows.of(TimeSpan.FromMilliseconds(9)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60))
 //            );
 //        }
 
 //        [Fact]
 //        public void equalsAndHashcodeShouldBeValidForNegativeCases()
 //        {
-//            EqualityCheck.VerifyInEquality(JoinWindows.of(Duration.FromMilliseconds(9)), JoinWindows.of(Duration.FromMilliseconds(3)));
+//            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(9)), JoinWindows.of(TimeSpan.FromMilliseconds(3)));
 
-//            EqualityCheck.VerifyInEquality(JoinWindows.of(Duration.FromMilliseconds(3)).after(Duration.FromMilliseconds(9)), JoinWindows.of(Duration.FromMilliseconds(3)).after(Duration.FromMilliseconds(2)));
+//            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).after(TimeSpan.FromMilliseconds(9)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).after(TimeSpan.FromMilliseconds(2)));
 
-//            EqualityCheck.VerifyInEquality(JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(9)), JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(2)));
+//            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(9)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(2)));
 
-//            EqualityCheck.VerifyInEquality(JoinWindows.of(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(9)), JoinWindows.of(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(2)));
+//            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(9)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(2)));
 
-//            EqualityCheck.VerifyInEquality(JoinWindows.of(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(90)), JoinWindows.of(Duration.FromMilliseconds(3)).grace(Duration.FromMilliseconds(60)));
+//            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(90)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)));
 
 
 //            EqualityCheck.VerifyInEquality(
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(9)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(3)),
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(3))
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(9)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3))
 //            );
 
 //            EqualityCheck.VerifyInEquality(
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(9)).grace(Duration.FromMilliseconds(3)),
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(3))
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(9)).grace(TimeSpan.FromMilliseconds(3)),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3))
 //            );
 
 //            EqualityCheck.VerifyInEquality(
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(9)),
-//                JoinWindows.of(Duration.FromMilliseconds(3)).before(Duration.FromMilliseconds(1)).after(Duration.FromMilliseconds(2)).grace(Duration.FromMilliseconds(3))
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(9)),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3))
 //            );
 //        }
 //    }

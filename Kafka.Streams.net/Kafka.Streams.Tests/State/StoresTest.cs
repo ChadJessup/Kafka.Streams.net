@@ -8,7 +8,7 @@ using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Windowed;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.Sessions;
-using NodaTime;
+
 
 namespace Kafka.Streams.Tests.State
 {

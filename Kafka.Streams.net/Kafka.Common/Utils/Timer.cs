@@ -1,4 +1,4 @@
-using NodaTime;
+
 using System;
 
 namespace Kafka.Common.Utils
@@ -91,14 +91,20 @@ namespace Kafka.Common.Utils
         public void reset(long timeoutMs)
         {
             if (timeoutMs < 0)
-                throw new System.ArgumentException("Invalid negative timeout " + timeoutMs);
+            {
+                throw new ArgumentException("Invalid negative timeout " + timeoutMs);
+            }
 
             this.startMs = this.currentTimeMs;
 
             if (currentTimeMs > long.MaxValue - timeoutMs)
+            {
                 this.deadlineMs = long.MaxValue;
+            }
             else
+            {
                 this.deadlineMs = currentTimeMs + timeoutMs;
+            }
         }
 
         /**
@@ -108,7 +114,7 @@ namespace Kafka.Common.Utils
          */
         public void update()
         {
-            update(clock.GetCurrentInstant().ToUnixTimeMilliseconds());
+            update(clock.NowAsEpochMilliseconds);
         }
 
         /**

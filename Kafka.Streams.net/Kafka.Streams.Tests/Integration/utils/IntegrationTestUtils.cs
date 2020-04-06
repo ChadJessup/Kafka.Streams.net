@@ -213,7 +213,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                Collections.singleton(record),
 //                producerConfig,
 //                headers,
-//                time.GetCurrentInstant().ToUnixTimeMilliseconds();,
+//                time.NowAsEpochMilliseconds;,
 //                enableTransactions);
 //            time.sleep(1L);
 //        }
@@ -949,7 +949,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        while (totalPollTimeMs < waitTime &&
 //            continueConsuming(consumerRecords.Count, maxMessages)) {
 //            totalPollTimeMs += pollIntervalMs;
-//            ConsumeResult<K, V> records = consumer.poll(Duration.FromMilliseconds(pollIntervalMs));
+//            ConsumeResult<K, V> records = consumer.poll(TimeSpan.FromMilliseconds(pollIntervalMs));
 
 //            foreach (ConsumeResult<K, V> record in records) {
 //                consumerRecords.Add(record);

@@ -71,7 +71,7 @@ namespace Kafka.Streams.Tests.Integration
 //        [Fact]
 //        public void shouldReduce()
 //        {// throws Exception
-//            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//            produceMessages(mockTime.NowAsEpochMilliseconds;);
 //            groupedStream
 //                .reduce(reducer, Materialized.As("reduce-by-key"))
 //                .toStream()
@@ -79,7 +79,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //            startStreams();
 
-//            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//            produceMessages(mockTime.NowAsEpochMilliseconds;);
 
 //            List<KeyValueTimestamp<string, string>> results = receiveMessages(
 //                new Serdes.String().Deserializer(),
@@ -89,16 +89,16 @@ namespace Kafka.Streams.Tests.Integration
 //            results.sort(KStreamAggregationIntegrationTest::compare);
 
 //            Assert.Equal(results, (Array.asList(
-//                new KeyValueTimestamp("A", "A", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("A", "A:A", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("B", "B", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("B", "B:B", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("C", "C", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("C", "C:C", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("D", "D", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("D", "D:D", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("E", "E", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("E", "E:E", mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();))));
+//                new KeyValueTimestamp("A", "A", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("A", "A:A", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("B", "B", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("B", "B:B", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("C", "C", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("C", "C:C", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("D", "D", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("D", "D:D", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("E", "E", mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("E", "E:E", mockTime.NowAsEpochMilliseconds;))));
 //        }
 
 //        private static int compare<K, V>(KeyValueTimestamp<K, V> o1,
@@ -120,10 +120,10 @@ namespace Kafka.Streams.Tests.Integration
 //        [Fact]
 //        public void shouldReduceWindowed()
 //        {// throws Exception
-//            long firstBatchTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            long firstBatchTimestamp = mockTime.NowAsEpochMilliseconds;;
 //            mockTime.sleep(1000);
 //            produceMessages(firstBatchTimestamp);
-//            long secondBatchTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            long secondBatchTimestamp = mockTime.NowAsEpochMilliseconds;;
 //            produceMessages(secondBatchTimestamp);
 //            produceMessages(secondBatchTimestamp);
 
@@ -195,7 +195,7 @@ namespace Kafka.Streams.Tests.Integration
 //        [Fact]
 //        public void shouldAggregate()
 //        {// throws Exception
-//            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//            produceMessages(mockTime.NowAsEpochMilliseconds;);
 //            groupedStream.aggregate(
 //                initializer,
 //                aggregator,
@@ -205,7 +205,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //            startStreams();
 
-//            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//            produceMessages(mockTime.NowAsEpochMilliseconds;);
 
 //            List<KeyValueTimestamp<string, int>> results = receiveMessages(
 //                new Serdes.String().Deserializer(),
@@ -215,26 +215,26 @@ namespace Kafka.Streams.Tests.Integration
 //            results.sort(KStreamAggregationIntegrationTest::compare);
 
 //            Assert.Equal(results, (Array.asList(
-//                new KeyValueTimestamp("A", 1, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("A", 2, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("B", 1, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("B", 2, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("C", 1, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("C", 2, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("D", 1, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("D", 2, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("E", 1, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("E", 2, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();)
+//                new KeyValueTimestamp("A", 1, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("A", 2, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("B", 1, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("B", 2, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("C", 1, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("C", 2, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("D", 1, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("D", 2, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("E", 1, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("E", 2, mockTime.NowAsEpochMilliseconds;)
 //            )));
 //        }
 
 //        [Fact]
 //        public void shouldAggregateWindowed()
 //        {// throws Exception
-//            long firstTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            long firstTimestamp = mockTime.NowAsEpochMilliseconds;;
 //            mockTime.sleep(1000);
 //            produceMessages(firstTimestamp);
-//            long secondTimestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            long secondTimestamp = mockTime.NowAsEpochMilliseconds;;
 //            produceMessages(secondTimestamp);
 //            produceMessages(secondTimestamp);
 
@@ -310,7 +310,7 @@ namespace Kafka.Streams.Tests.Integration
 //        {// throws Exception
 //            startStreams();
 
-//            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//            produceMessages(mockTime.NowAsEpochMilliseconds;);
 
 //            List<KeyValueTimestamp<string, long>> results = receiveMessages(
 //                new Serdes.String().Deserializer(),
@@ -319,23 +319,23 @@ namespace Kafka.Streams.Tests.Integration
 //            results.sort(KStreamAggregationIntegrationTest::compare);
 
 //            Assert.Equal(results, (Array.asList(
-//                new KeyValueTimestamp("A", 1L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("A", 2L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("B", 1L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("B", 2L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("C", 1L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("C", 2L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("D", 1L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("D", 2L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("E", 1L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();),
-//                new KeyValueTimestamp("E", 2L, mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();)
+//                new KeyValueTimestamp("A", 1L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("A", 2L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("B", 1L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("B", 2L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("C", 1L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("C", 2L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("D", 1L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("D", 2L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("E", 1L, mockTime.NowAsEpochMilliseconds;),
+//                new KeyValueTimestamp("E", 2L, mockTime.NowAsEpochMilliseconds;)
 //            )));
 //        }
 
 //        [Fact]
 //        public void shouldCount()
 //        {// throws Exception
-//            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//            produceMessages(mockTime.NowAsEpochMilliseconds;);
 
 //            groupedStream.count(Materialized.As("count-by-key"))
 //                    .toStream()
@@ -347,7 +347,7 @@ namespace Kafka.Streams.Tests.Integration
 //        [Fact]
 //        public void shouldCountWithInternalStore()
 //        {// throws Exception
-//            produceMessages(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+//            produceMessages(mockTime.NowAsEpochMilliseconds;);
 
 //            groupedStream.count()
 //                    .toStream()
@@ -359,7 +359,7 @@ namespace Kafka.Streams.Tests.Integration
 //        [Fact]
 //        public void shouldGroupByKey()
 //        {// throws Exception
-//            long timestamp = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//            long timestamp = mockTime.NowAsEpochMilliseconds;;
 //            produceMessages(timestamp);
 //            produceMessages(timestamp);
 
@@ -400,7 +400,7 @@ namespace Kafka.Streams.Tests.Integration
 //                                                                            KeyValuePair.Create("jo", "pause"),
 //                                                                            KeyValuePair.Create("emily", "pause"));
 
-//            long t1 = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(); - TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
+//            long t1 = mockTime.NowAsEpochMilliseconds; - TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
 //            IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(
 //                    userSessionsStream,
 //                    t1Messages,
@@ -512,7 +512,7 @@ namespace Kafka.Streams.Tests.Integration
 //                                                                    KeyValuePair.Create("jo", "pause"),
 //                                                                    KeyValuePair.Create("emily", "pause"));
 
-//    long t1 = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//    long t1 = mockTime.NowAsEpochMilliseconds;;
 //    IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(
 //            userSessionsStream,
 //            t1Messages,
@@ -627,10 +627,10 @@ namespace Kafka.Streams.Tests.Integration
 //    [Fact]
 //public void shouldCountUnlimitedWindows()
 //{// throws Exception
-//    long startTime = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(); - TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS) + 1;
-//    long incrementTime = Duration.ofDays(1).TotalMilliseconds;
+//    long startTime = mockTime.NowAsEpochMilliseconds; - TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS) + 1;
+//    long incrementTime = TimeSpan.ofDays(1).TotalMilliseconds;
 
-//    long t1 = mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(); - TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
+//    long t1 = mockTime.NowAsEpochMilliseconds; - TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
 //    List<KeyValuePair<string, string>> t1Messages = Array.asList(KeyValuePair.Create("bob", "start"),
 //                                                                    KeyValuePair.Create("penny", "start"),
 //                                                                    KeyValuePair.Create("jo", "pause"),

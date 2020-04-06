@@ -65,7 +65,7 @@
 //        {
 //            try
 //            {
-//                context.schedule(Duration.FromMilliseconds(0L), null, null);
+//                context.schedule(TimeSpan.FromMilliseconds(0L), null, null);
 //                Assert.True(false, "Should have thrown ArgumentException");
 //            }
 //            catch (ArgumentException expected)
@@ -79,7 +79,7 @@
 //        {
 //            try
 //            {
-//                context.schedule(Duration.ofNanos(999_999L), null, null);
+//                context.schedule(TimeSpan.ofNanos(999_999L), null, null);
 //                Assert.True(false, "Should have thrown ArgumentException");
 //            }
 //            catch (ArgumentException expected)

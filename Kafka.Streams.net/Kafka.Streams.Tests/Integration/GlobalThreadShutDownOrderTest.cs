@@ -9,7 +9,7 @@
 //using Kafka.Streams.State.KeyValues;
 //using Kafka.Streams.Tests.Helpers;
 //using Kafka.Streams.Tests.Mocks;
-//using NodaTime;
+//
 //using System;
 //using System.Collections.Generic;
 
@@ -97,7 +97,7 @@
 //                30000,
 //                "Has not processed record within 30 seconds");
 
-//            kafkaStreams.close(Duration.ofSeconds(30));
+//            kafkaStreams.close(TimeSpan.ofSeconds(30));
 
 //            List<long> expectedRetrievedValues = new List<long> { 1L, 2L, 3L, 4L };
 //            Assert.Equal(expectedRetrievedValues, retrievedValuesList);

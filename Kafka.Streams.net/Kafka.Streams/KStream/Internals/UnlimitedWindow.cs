@@ -1,4 +1,6 @@
-using NodaTime;
+using Confluent.Kafka;
+using Kafka.Common.Extensions;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -23,13 +25,13 @@ namespace Kafka.Streams.KStream.Internals
          * @param startMs the start timestamp of the window (inclusive)
          * @throws ArgumentException if {@code start} is negative
          */
-        public UnlimitedWindow(Instant start)
-            : base(start, Duration.MaxValue)
+        public UnlimitedWindow(DateTime start)
+            : base(start, TimeSpan.MaxValue)
         {
         }
 
-        public UnlimitedWindow(long start)
-            : this(Instant.FromUnixTimeMilliseconds(start))
+        public UnlimitedWindow(long startMs)
+            : this(Timestamp.UnixTimestampMsToDateTime(startMs))
         {
         }
 

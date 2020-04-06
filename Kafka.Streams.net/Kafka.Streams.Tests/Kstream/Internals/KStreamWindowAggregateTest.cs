@@ -25,7 +25,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<Windowed<string>, string> table2 = builder
 //                .Stream(topic1, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(5)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonized").withValueSerde(Serdes.String()));
 
 //            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
@@ -101,7 +101,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<Windowed<string>, string> table1 = builder
 //                .Stream(topic1, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(5)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonized").withValueSerde(Serdes.String()));
 
 //            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
@@ -110,7 +110,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<Windowed<string>, string> table2 = builder
 //                .Stream(topic2, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//                .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(5)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic2-Canonized").withValueSerde(Serdes.String()));
 //            table2.toStream().process(supplier);
 
@@ -217,7 +217,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        builder
 //            .Stream(topic, Consumed.With(Serdes.String(), Serdes.String()))
 //            .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//            .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)))
+//            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(5)))
 //            .aggregate(
 //                MockInitializer.STRING_INIT,
 //                MockAggregator.toStringInstance("+"),
@@ -242,7 +242,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        IKStream<string, string> stream1 = builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()));
 //        stream1.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//               .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(5)).until(100))
+//               .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(5)).until(100))
 //               .aggregate(
 //                   () => "",
 //                   MockAggregator.toStringInstance("+"),
@@ -298,7 +298,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        IKStream<string, string> stream1 = builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()));
 //        stream1.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//               .windowedBy(TimeWindows.of(Duration.FromMilliseconds(10)).advanceBy(Duration.FromMilliseconds(10)).grace(Duration.FromMilliseconds(90L)))
+//               .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(10)).grace(TimeSpan.FromMilliseconds(90L)))
 //               .aggregate(
 //                   () => "",
 //                   MockAggregator.toStringInstance("+"),

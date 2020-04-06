@@ -6,7 +6,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //using Kafka.Streams.KStream;
 //using Kafka.Streams.KStream.Interfaces;
 //using Kafka.Streams.Topologies;
-//using NodaTime;
+//
 //using System.Collections.Generic;
 //using System.Text.RegularExpressions;
 
@@ -28,7 +28,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            IValueJoiner<string, string, string> valueJoiner = (v, v2) => v + v2;
 
 
-//            IKStream<string, string> joinedStream = stream.join(streamII, valueJoiner, JoinWindows.of(Duration.FromMilliseconds(5000)));
+//            IKStream<string, string> joinedStream = stream.join(streamII, valueJoiner, JoinWindows.of(TimeSpan.FromMilliseconds(5000)));
 
 //            // build step one
 //            Assert.Equal(expectedJoinedTopology, builder.Build().describe().ToString());
@@ -63,7 +63,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 //            // second repartition
 //            changedKeyStream.groupByKey(Grouped.As("windowed-repartition"))
-//                .windowedBy(TimeWindows.of(Duration.FromSeconds(5)))
+//                .windowedBy(TimeWindows.of(TimeSpan.FromSeconds(5)))
 //                .count(Materialized.As("windowed-count-store"))
 //                .toStream()
 //                .map((k, v) => KeyValuePair.Create(k.Key, v)).To("windowed-count", Produced.With(Serdes.String(), Serdes.Long()));
@@ -108,7 +108,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            IKStream<string, string> mappedKeyStream = inputStream.selectKey((k, v) => k + v);
 
 //            mappedKeyStream.mapValues(v => v.toUppercase(Locale.getDefault())).groupByKey().count().toStream().To("output");
-//            mappedKeyStream.flatMapValues(v => new List<string> { v.Split("\\s" })).groupByKey().windowedBy(TimeWindows.of(Duration.FromMilliseconds(5000))).count().toStream().To("windowed-output");
+//            mappedKeyStream.flatMapValues(v => new List<string> { v.Split("\\s" })).groupByKey().windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(5000))).count().toStream().To("windowed-output");
 
 //            return builder.Build(properties);
 
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            IKStream<string, string> mappedKeyStream = inputStream.selectKey((k, v) => k + v).through("through-topic");
 
 //            mappedKeyStream.groupByKey().count().toStream().To("output");
-//            mappedKeyStream.groupByKey().windowedBy(TimeWindows.of(Duration.FromMilliseconds(5000))).count().toStream().To("windowed-output");
+//            mappedKeyStream.groupByKey().windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(5000))).count().toStream().To("windowed-output");
 
 //            return builder.Build(properties);
 

@@ -102,8 +102,8 @@
 //                Stores.windowStoreBuilder(
 //                    Stores.inMemoryWindowStore(
 //                        "window-store",
-//                        Duration.FromMilliseconds(10L),
-//                        Duration.FromMilliseconds(2L),
+//                        TimeSpan.FromMilliseconds(10L),
+//                        TimeSpan.FromMilliseconds(2L),
 //                        false),
 //                    Serdes.String(),
 //                    Serdes.String()),
@@ -112,8 +112,8 @@
 //                Stores.timestampedWindowStoreBuilder(
 //                    Stores.inMemoryWindowStore(
 //                        "timestamped-window-store",
-//                        Duration.FromMilliseconds(10L),
-//                        Duration.FromMilliseconds(2L),
+//                        TimeSpan.FromMilliseconds(10L),
+//                        TimeSpan.FromMilliseconds(2L),
 //                        false),
 //                    Serdes.String(),
 //                    Serdes.String()),
@@ -336,7 +336,7 @@
 //                clientSupplier.consumer,
 //                new StoreChangelogReader(
 //                    clientSupplier.restoreConsumer,
-//                    Duration.TimeSpan.Zero,
+//                    TimeSpan.TimeSpan.Zero,
 //                    new MockStateRestoreListener(),
 //                    new LogContext("test-stream-task ")),
 //                streamsConfig,

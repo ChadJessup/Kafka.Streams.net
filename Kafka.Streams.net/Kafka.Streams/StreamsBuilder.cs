@@ -27,7 +27,6 @@ using Confluent.Kafka;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Clients.Producers;
 using Kafka.Streams.State.KeyValues;
-using NodaTime;
 using Kafka.Streams.Interfaces;
 
 namespace Kafka.Streams
@@ -100,7 +99,7 @@ namespace Kafka.Streams
 
                 serviceCollection.TryAddSingleton(configuration);
                 serviceCollection.TryAddSingleton(serviceCollection);
-                serviceCollection.TryAddSingleton<IClock>(SystemClock.Instance);
+                serviceCollection.TryAddSingleton<IClock, SystemClock>();
 
                 this.AddNodes(serviceCollection);
                 this.AddThreads(serviceCollection);

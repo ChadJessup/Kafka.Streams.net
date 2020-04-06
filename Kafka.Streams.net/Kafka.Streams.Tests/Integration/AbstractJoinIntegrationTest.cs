@@ -120,7 +120,7 @@
 
 //        public void Cleanup()
 //        {// throws InterruptedException
-//            producer.close(Duration.FromMilliseconds(0));
+//            producer.close(TimeSpan.FromMilliseconds(0));
 //            CLUSTER.deleteAllTopicsAndWait(120000);
 //        }
 

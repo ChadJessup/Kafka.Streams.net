@@ -33,37 +33,37 @@ namespace Kafka.Streams.Tests.Kstream
 //        {
 //            Assert.Equal(
 //                "name should be set",
-//                untilTimeLimit(Duration.FromMilliseconds(2), unbounded()).withName("myname"),
+//                untilTimeLimit(TimeSpan.FromMilliseconds(2), unbounded()).withName("myname"),
 //                (new SuppressedInternal<>("myname", FromMilliseconds(2), unbounded(), null, false))
 //            );
 
 //            Assert.Equal(
 //                "time alone should be set",
-//                untilTimeLimit(Duration.FromMilliseconds(2), unbounded()),
+//                untilTimeLimit(TimeSpan.FromMilliseconds(2), unbounded()),
 //                (new SuppressedInternal<>(null, FromMilliseconds(2), unbounded(), null, false))
 //            );
 
 //            Assert.Equal(
 //                "time and unbounded buffer should be set",
-//                untilTimeLimit(Duration.FromMilliseconds(2), unbounded()),
+//                untilTimeLimit(TimeSpan.FromMilliseconds(2), unbounded()),
 //                (new SuppressedInternal<>(null, FromMilliseconds(2), unbounded(), null, false))
 //            );
 
 //            Assert.Equal(
 //                "time and keys buffer should be set",
-//                untilTimeLimit(Duration.FromMilliseconds(2), maxRecords(2)),
+//                untilTimeLimit(TimeSpan.FromMilliseconds(2), maxRecords(2)),
 //                (new SuppressedInternal<>(null, FromMilliseconds(2), maxRecords(2), null, false))
 //            );
 
 //            Assert.Equal(
 //                "time and size buffer should be set",
-//                untilTimeLimit(Duration.FromMilliseconds(2), maxBytes(2)),
+//                untilTimeLimit(TimeSpan.FromMilliseconds(2), maxBytes(2)),
 //                (new SuppressedInternal<>(null, FromMilliseconds(2), maxBytes(2), null, false))
 //            );
 
 //            Assert.Equal(
 //                "all constraints should be set",
-//                untilTimeLimit(Duration.FromMilliseconds(2L), maxRecords(3L).withMaxBytes(2L)),
+//                untilTimeLimit(TimeSpan.FromMilliseconds(2L), maxRecords(3L).withMaxBytes(2L)),
 //                (new SuppressedInternal<>(null, FromMilliseconds(2), new EagerBufferConfigImpl(3L, 2L), null, false))
 //            );
 //        }

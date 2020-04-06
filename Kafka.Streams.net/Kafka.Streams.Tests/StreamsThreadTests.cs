@@ -255,10 +255,10 @@ namespace Kafka.Streams.Tests
 
             IStreamThread thread = TestUtils.CreateStreamThread(sb);
 
-            thread.SetNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds());
+            thread.SetNow(mockTime.NowAsEpochMilliseconds);
             thread.MaybeCommit();
             mockTime.Sleep(commitInterval - 10L);
-            thread.SetNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds());
+            thread.SetNow(mockTime.NowAsEpochMilliseconds);
             thread.MaybeCommit();
         }
 
@@ -381,10 +381,10 @@ namespace Kafka.Streams.Tests
         //                       new LogContext(""),
         //                       new AtomicInteger()
         //                   );
-        //            thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+        //            thread.setNow(mockTime.NowAsEpochMilliseconds;);
         //            thread.maybeCommit();
         //            mockTime.sleep(commitInterval - 10L);
-        //            thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+        //            thread.setNow(mockTime.NowAsEpochMilliseconds;);
         //            thread.maybeCommit();
 
         //            EasyMock.verify(TaskManager);
@@ -417,10 +417,10 @@ namespace Kafka.Streams.Tests
         //                       new LogContext(""),
         //                       new AtomicInteger()
         //                   );
-        //            thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+        //            thread.setNow(mockTime.NowAsEpochMilliseconds;);
         //            thread.maybeCommit();
         //            mockTime.sleep(commitInterval + 1);
-        //            thread.setNow(mockTime.GetCurrentInstant().ToUnixTimeMilliseconds(););
+        //            thread.setNow(mockTime.NowAsEpochMilliseconds;);
         //            thread.maybeCommit();
 
         //            EasyMock.verify(TaskManager);
@@ -633,7 +633,7 @@ namespace Kafka.Streams.Tests
         //        }
 
         //        
-        //            public ConsumeResult<K, V> poll(Duration timeout)
+        //            public ConsumeResult<K, V> poll(TimeSpan timeout)
         //{
         //            Assert.NotNull(streamThread);
         //            if (shutdownOnPoll)
@@ -1138,8 +1138,8 @@ namespace Kafka.Streams.Tests
         //            
         //            public void init(IProcessorContext context)
         //    {
-        //        context.schedule(Duration.FromMilliseconds(100L), PunctuationType.STREAM_TIME, punctuatedStreamTime::add);
-        //        context.schedule(Duration.FromMilliseconds(100L), PunctuationType.WALL_CLOCK_TIME, punctuatedWallClockTime::add);
+        //        context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, punctuatedStreamTime::add);
+        //        context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.WALL_CLOCK_TIME, punctuatedWallClockTime::add);
         //    }
 
         //    

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamWindowAggregate<K, V, Agg, W> : IKStreamAggProcessorSupplier<K, Windowed<K>, V, Agg>
+        where Agg: V
         where W : Window
     {
         private readonly ILogger log = new LoggerFactory().CreateLogger<KStreamWindowAggregate<K, V, Agg, W>>();

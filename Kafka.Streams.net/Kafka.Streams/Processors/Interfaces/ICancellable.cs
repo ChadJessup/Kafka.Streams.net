@@ -1,7 +1,7 @@
 namespace Kafka.Streams.Processors.Interfaces
 {
     /**
-     * Cancellable interface returned in {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator)}.
+     * Cancellable interface returned in {@link IProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator)}.
      *
      * @see Punctuator
      */

@@ -8,7 +8,7 @@
 //using Kafka.Streams.State.TimeStamped;
 //using Kafka.Streams.Tasks;
 //using Moq;
-//using NodaTime;
+//
 //using System.Collections.Generic;
 //using System.Linq;
 //using Xunit;
@@ -38,8 +38,8 @@
 //                Stores.WindowStoreBuilder(
 //                    Stores.InMemoryWindowStore(
 //                        "w-store",
-//                        Duration.FromMilliseconds(10L),
-//                        Duration.FromMilliseconds(2L),
+//                        TimeSpan.FromMilliseconds(10L),
+//                        TimeSpan.FromMilliseconds(2L),
 //                        false),
 //                    Serdes.String(),
 //                    Serdes.String()).Build());
@@ -48,8 +48,8 @@
 //                Stores.TimestampedWindowStoreBuilder(
 //                    Stores.InMemoryWindowStore(
 //                        "ts-w-store",
-//                        Duration.FromMilliseconds(10L),
-//                        Duration.FromMilliseconds(2L),
+//                        TimeSpan.FromMilliseconds(10L),
+//                        TimeSpan.FromMilliseconds(2L),
 //                        false),
 //                    Serdes.String(),
 //                    Serdes.String()).Build());

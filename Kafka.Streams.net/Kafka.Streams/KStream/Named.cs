@@ -49,14 +49,14 @@ namespace Kafka.Streams.KStream
 
         public static void Validate(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (name == null)
             {
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if (name.Equals(".") || name.Equals(".."))
+            if (name.Length == 0 || name.Equals(".") || name.Equals(".."))
             {
-                throw new ArgumentException("Name cannot be \".\" or \"..\"");
+                throw new ArgumentException("Name cannot be \"\", \".\", or \"..\"");
             }
 
             if (name.Length > MAX_NAME_LENGTH)

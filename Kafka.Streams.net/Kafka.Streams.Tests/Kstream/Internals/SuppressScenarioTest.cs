@@ -129,7 +129,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //            .count();
 //        valueCounts
-//            .suppress(untilTimeLimit(Duration.FromMilliseconds(2L), unbounded()))
+//            .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(2L), unbounded()))
 //            .toStream()
 //            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //        valueCounts
@@ -204,7 +204,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .count(Materialized.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
-//        .suppress(untilTimeLimit(Duration.FromMilliseconds(long.MaxValue), maxRecords(1L).emitEarlyWhenFull()))
+//        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(long.MaxValue), maxRecords(1L).emitEarlyWhenFull()))
 //        .toStream()
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
@@ -272,7 +272,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        .count();
 //    valueCounts
 //        // this is a bit brittle, but I happen to know that the entries are a little over 100 bytes in size.
-//        .suppress(untilTimeLimit(Duration.FromMilliseconds(long.MaxValue), maxBytes(200L).emitEarlyWhenFull()))
+//        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(long.MaxValue), maxBytes(200L).emitEarlyWhenFull()))
 //        .toStream()
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
@@ -331,7 +331,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKTable<Windowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
-//        .windowedBy(TimeWindows.of(Duration.FromMilliseconds(2L)).grace(Duration.FromMilliseconds(1L)))
+//        .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(1L)))
 //        .count(Materialize.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled());
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
@@ -384,7 +384,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKTable<Windowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
-//        .windowedBy(TimeWindows.of(Duration.FromMilliseconds(2L)).grace(Duration.FromMilliseconds(2L)))
+//        .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(2L)))
 //        .count(Materialize.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled().WithKeySerde(STRING_SERDE));
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
@@ -441,7 +441,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKTable<Windowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
-//        .windowedBy(SessionWindows.with(Duration.FromMilliseconds(5L)).grace(Duration.FromMilliseconds(0L)))
+//        .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(0L)))
 //        .count(Materialize.As < string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled());
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
@@ -497,7 +497,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    builder
 //        .Table("topic", Consumed.With(Serdes.String(), Serdes.String()))
-//        .suppress(untilTimeLimit(Duration.FromMilliseconds(10), unbounded()))
+//        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(10), unbounded()))
 //        .groupBy(KeyValuePair.Create, Grouped.with(Serdes.String(), Serdes.String()))
 //        .count()
 //        .toStream()
@@ -526,7 +526,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    IKTable<string, string> right = builder
 //        .Table("right", Consumed.With(Serdes.String(), Serdes.String()))
-//        .suppress(untilTimeLimit(Duration.FromMilliseconds(10), unbounded()));
+//        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(10), unbounded()));
 
 //    left
 //        .outerJoin(right, (l, r) => string.Format("(%s,%s)", l, r))
@@ -613,7 +613,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    IKTable<string, string> left = builder
 //        .Table("left", Consumed.With(Serdes.String(), Serdes.String()))
-//        .suppress(untilTimeLimit(Duration.FromMilliseconds(10), unbounded()));
+//        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(10), unbounded()));
 
 //    IKTable<string, string> right = builder
 //        .Table("right", Consumed.With(Serdes.String(), Serdes.String()));

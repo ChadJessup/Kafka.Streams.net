@@ -243,8 +243,8 @@
 //        //
 //        //    for (int i = 0; i < 10; i++)
 //        //    {
-//        //        Assert.Equal(i, Math.Round(totalMetric.measurable().measure(config, time.GetCurrentInstant().ToUnixTimeMilliseconds();)));
-//        //        sensor.record(latency, time.GetCurrentInstant().ToUnixTimeMilliseconds());
+//        //        Assert.Equal(i, Math.Round(totalMetric.measurable().measure(config, time.NowAsEpochMilliseconds;)));
+//        //        sensor.record(latency, time.NowAsEpochMilliseconds);
 //        //    }
 //        //
 //        //}

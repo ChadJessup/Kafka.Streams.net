@@ -101,7 +101,7 @@ namespace Kafka.Streams.KStream
          *
          * @param timeDifferenceMs join window interval in milliseconds
          * @throws ArgumentException if {@code timeDifferenceMs} is negative
-         * @deprecated Use {@link #of(Duration)} instead.
+         * @deprecated Use {@link #of(TimeSpan)} instead.
          */
         [Obsolete]
         public static JoinWindows Of(TimeSpan timeDifferenceMs)
@@ -123,7 +123,7 @@ namespace Kafka.Streams.KStream
          *
          * @param timeDifferenceMs relative window start time in milliseconds
          * @throws ArgumentException if the resulting window size is negative
-         * @deprecated Use {@link #before(Duration)} instead.
+         * @deprecated Use {@link #before(TimeSpan)} instead.
          */
         [Obsolete]
         public JoinWindows Before(TimeSpan timeDifferenceMs)
@@ -140,7 +140,7 @@ namespace Kafka.Streams.KStream
          *
          * @param timeDifferenceMs relative window end time in milliseconds
          * @throws ArgumentException if the resulting window size is negative
-         * @deprecated Use {@link #after(Duration)} instead
+         * @deprecated Use {@link #after(TimeSpan)} instead
          */
         [Obsolete]
         public JoinWindows After(TimeSpan timeDifferenceMs)
@@ -212,7 +212,7 @@ namespace Kafka.Streams.KStream
          * @param durationMs the window retention time in milliseconds
          * @return itself
          * @throws ArgumentException if {@code durationMs} is smaller than the window size
-         * @deprecated since 2.1. Use {@link JoinWindows#grace(Duration)} instead.
+         * @deprecated since 2.1. Use {@link JoinWindows#grace(TimeSpan)} instead.
          */
         [Obsolete]
         public new JoinWindows Until(TimeSpan durationMs)
@@ -237,7 +237,7 @@ namespace Kafka.Streams.KStream
          *
          * @return the window maintain duration
          * @deprecated since 2.1. This function should not be used anymore, since {@link JoinWindows#until(long)}
-         *             is deprecated in favor of {@link JoinWindows#grace(Duration)}.
+         *             is deprecated in favor of {@link JoinWindows#grace(TimeSpan)}.
          */
 
         [Obsolete]

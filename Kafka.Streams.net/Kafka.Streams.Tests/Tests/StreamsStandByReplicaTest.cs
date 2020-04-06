@@ -120,7 +120,7 @@ namespace Kafka.Streams.Tests.Tests
 //    }
 
 //    private static void shutdown(KafkaStreams streams) {
-//        streams.close(Duration.ofSeconds(10));
+//        streams.close(TimeSpan.ofSeconds(10));
 //    }
 
 //    private static bool confirmCorrectConfigs(StreamsConfig properties) {

@@ -152,7 +152,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    );
 //    private StoreChangelogReader changelogReader = new StoreChangelogReader(
 //        restoreStateConsumer,
-//        Duration.TimeSpan.Zero,
+//        TimeSpan.TimeSpan.Zero,
 //        stateRestoreListener,
 //        new LogContext("standby-task-test ")
 //    );
@@ -331,7 +331,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //            consumer,
 //            new StoreChangelogReader(
 //                restoreStateConsumer,
-//                Duration.TimeSpan.Zero,
+//                TimeSpan.TimeSpan.Zero,
 //                stateRestoreListener,
 //                new LogContext("standby-task-test ")
 //            ),

@@ -135,7 +135,7 @@
 //    private MockProducer<byte[], byte[]> producer;
 //    private MockConsumer<byte[], byte[]> restoreStateConsumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
 //    private StateRestoreListener stateRestoreListener = new MockStateRestoreListener();
-//    private StoreChangelogReader changelogReader = new StoreChangelogReader(restoreStateConsumer, Duration.TimeSpan.Zero, stateRestoreListener, new LogContext("stream-task-test "))
+//    private StoreChangelogReader changelogReader = new StoreChangelogReader(restoreStateConsumer, TimeSpan.TimeSpan.Zero, stateRestoreListener, new LogContext("stream-task-test "))
 //    {
 
 
@@ -650,7 +650,7 @@
 //        task = createStatelessTask(createConfig(false));
 //        task.initializeStateStores();
 //        task.initializeTopology();
-//        long now = time.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//        long now = time.NowAsEpochMilliseconds;;
 //        time.sleep(10);
 //        Assert.True(task.maybePunctuateSystemTime());
 //        processorSystemTime.mockProcessor.scheduleCancellable.cancel();
@@ -736,32 +736,32 @@
 
 //        task.addRecords(partition1, Collections.singleton(new ConsumeResult<>(topic1, 1, 0, bytes, bytes)));
 
-//        Assert.False(task.isProcessable(time.GetCurrentInstant().ToUnixTimeMilliseconds();));
+//        Assert.False(task.isProcessable(time.NowAsEpochMilliseconds;));
 
-//        Assert.False(task.isProcessable(time.GetCurrentInstant().ToUnixTimeMilliseconds(); + 50L));
+//        Assert.False(task.isProcessable(time.NowAsEpochMilliseconds; + 50L));
 
-//        Assert.True(task.isProcessable(time.GetCurrentInstant().ToUnixTimeMilliseconds(); + 100L));
+//        Assert.True(task.isProcessable(time.NowAsEpochMilliseconds; + 100L));
 //        Assert.Equal(1.0, metrics.metric(enforcedProcessMetric).metricValue());
 
 //        // once decided to enforce, continue doing that
-//        Assert.True(task.isProcessable(time.GetCurrentInstant().ToUnixTimeMilliseconds(); + 101L));
+//        Assert.True(task.isProcessable(time.NowAsEpochMilliseconds; + 101L));
 //        Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
 //        task.addRecords(partition2, Collections.singleton(new ConsumeResult<>(topic2, 1, 0, bytes, bytes)));
 
-//        Assert.True(task.isProcessable(time.GetCurrentInstant().ToUnixTimeMilliseconds(); + 130L));
+//        Assert.True(task.isProcessable(time.NowAsEpochMilliseconds; + 130L));
 //        Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
 //        // one resumed to normal processing, the timer should be reset
 //        task.process();
 
-//        Assert.False(task.isProcessable(time.GetCurrentInstant().ToUnixTimeMilliseconds(); + 150L));
+//        Assert.False(task.isProcessable(time.NowAsEpochMilliseconds; + 150L));
 //        Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
-//        Assert.False(task.isProcessable(time.GetCurrentInstant().ToUnixTimeMilliseconds(); + 249L));
+//        Assert.False(task.isProcessable(time.NowAsEpochMilliseconds; + 249L));
 //        Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
-//        Assert.True(task.isProcessable(time.GetCurrentInstant().ToUnixTimeMilliseconds(); + 250L));
+//        Assert.True(task.isProcessable(time.NowAsEpochMilliseconds; + 250L));
 //        Assert.Equal(3.0, metrics.metric(enforcedProcessMetric).metricValue());
 //    }
 
@@ -772,7 +772,7 @@
 //        task = createStatelessTask(createConfig(false));
 //        task.initializeStateStores();
 //        task.initializeTopology();
-//        long now = time.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//        long now = time.NowAsEpochMilliseconds;;
 //        time.sleep(10);
 //        Assert.True(task.maybePunctuateSystemTime());
 //        time.sleep(10);
@@ -805,7 +805,7 @@
 //        task = createStatelessTask(createConfig(false));
 //        task.initializeStateStores();
 //        task.initializeTopology();
-//        long now = time.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//        long now = time.NowAsEpochMilliseconds;;
 //        time.sleep(100);
 //        Assert.True(task.maybePunctuateSystemTime());
 //        Assert.False(task.maybePunctuateSystemTime());
@@ -1640,7 +1640,7 @@
 
 //            public void punctuate(long timestamp)
 //        {
-//            recordCollector.send("result-topic1", 3, 5, null, 0, time.GetCurrentInstant().ToUnixTimeMilliseconds();,
+//            recordCollector.send("result-topic1", 3, 5, null, 0, time.NowAsEpochMilliseconds;,
 //                    new IntegerSerializer(), new IntegerSerializer());
 //        }
 //    });

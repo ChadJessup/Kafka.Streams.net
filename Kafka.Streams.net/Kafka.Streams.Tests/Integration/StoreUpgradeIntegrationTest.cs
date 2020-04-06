@@ -91,7 +91,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    public void shutdown() {
 //        if (kafkaStreams != null) {
-//            kafkaStreams.close(Duration.ofSeconds(30L));
+//            kafkaStreams.close(TimeSpan.ofSeconds(30L));
 //            kafkaStreams.cleanUp();
 //        }
 //    }
@@ -124,18 +124,18 @@ namespace Kafka.Streams.Tests.Integration
 //        processKeyValueAndVerifyPlainCount(1, singletonList(KeyValuePair.Create(1, 1L)));
 
 //        processKeyValueAndVerifyPlainCount(1, singletonList(KeyValuePair.Create(1, 2L)));
-//        long lastUpdateKeyOne = persistentStore ? -1L : CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds(); - 1L;
+//        long lastUpdateKeyOne = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processKeyValueAndVerifyPlainCount(2, asList(
 //            KeyValuePair.Create(1, 2L),
 //            KeyValuePair.Create(2, 1L)));
-//        long lastUpdateKeyTwo = persistentStore ? -1L : CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds(); - 1L;
+//        long lastUpdateKeyTwo = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processKeyValueAndVerifyPlainCount(3, asList(
 //            KeyValuePair.Create(1, 2L),
 //            KeyValuePair.Create(2, 1L),
 //            KeyValuePair.Create(3, 1L)));
-//        long lastUpdateKeyThree = persistentStore ? -1L : CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds(); - 1L;
+//        long lastUpdateKeyThree = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processKeyValueAndVerifyPlainCount(4, asList(
 //            KeyValuePair.Create(1, 2L),
@@ -154,7 +154,7 @@ namespace Kafka.Streams.Tests.Integration
 //            KeyValuePair.Create(2, 1L),
 //            KeyValuePair.Create(3, 1L),
 //            KeyValuePair.Create(4, 3L)));
-//        long lastUpdateKeyFour = persistentStore ? -1L : CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds(); - 1L;
+//        long lastUpdateKeyFour = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        kafkaStreams.close();
 //        kafkaStreams = null;
@@ -179,7 +179,7 @@ namespace Kafka.Streams.Tests.Integration
 //        verifyCountWithTimestamp(3, 1L, lastUpdateKeyThree);
 //        verifyCountWithTimestamp(4, 3L, lastUpdateKeyFour);
 
-//        long currentTime = CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//        long currentTime = CLUSTER.time.NowAsEpochMilliseconds;;
 //        processKeyValueAndVerifyCountWithTimestamp(1, currentTime + 42L, asList(
 //            KeyValuePair.Create(1, ValueAndTimestamp.Make(3L, currentTime + 42L)),
 //            KeyValuePair.Create(2, ValueAndTimestamp.Make(1L, lastUpdateKeyTwo)),
@@ -474,8 +474,8 @@ namespace Kafka.Streams.Tests.Integration
 //                Stores.windowStoreBuilder(
 //                    Stores.inMemoryWindowStore(
 //                        STORE_NAME,
-//                        Duration.FromMilliseconds(1000L),
-//                        Duration.FromMilliseconds(1000L),
+//                        TimeSpan.FromMilliseconds(1000L),
+//                        TimeSpan.FromMilliseconds(1000L),
 //                        false),
 //                Serdes.Int(),
 //                Serdes.Long()))
@@ -488,8 +488,8 @@ namespace Kafka.Streams.Tests.Integration
 //                Stores.timestampedWindowStoreBuilder(
 //                    Stores.inMemoryWindowStore(
 //                        STORE_NAME,
-//                        Duration.FromMilliseconds(1000L),
-//                        Duration.FromMilliseconds(1000L),
+//                        TimeSpan.FromMilliseconds(1000L),
+//                        TimeSpan.FromMilliseconds(1000L),
 //                        false),
 //            Serdes.Int(),
 //            Serdes.Long()))
@@ -512,8 +512,8 @@ namespace Kafka.Streams.Tests.Integration
 //                Stores.windowStoreBuilder(
 //                    Stores.PersistentWindowStore(
 //                        STORE_NAME,
-//                        Duration.FromMilliseconds(1000L),
-//                        Duration.FromMilliseconds(1000L),
+//                        TimeSpan.FromMilliseconds(1000L),
+//                        TimeSpan.FromMilliseconds(1000L),
 //                        false),
 //                    Serdes.Int(),
 //                    Serdes.Long()))
@@ -526,8 +526,8 @@ namespace Kafka.Streams.Tests.Integration
 //                Stores.timestampedWindowStoreBuilder(
 //                    Stores.PersistentTimestampedWindowStore(
 //                        STORE_NAME,
-//                        Duration.FromMilliseconds(1000L),
-//                        Duration.FromMilliseconds(1000L),
+//                        TimeSpan.FromMilliseconds(1000L),
+//                        TimeSpan.FromMilliseconds(1000L),
 //                        false),
 //                    Serdes.Int(),
 //                    Serdes.Long()))
@@ -552,18 +552,18 @@ namespace Kafka.Streams.Tests.Integration
 
 //        processWindowedKeyValueAndVerifyPlainCount(1, singletonList(
 //            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L)));
-//        long lastUpdateKeyOne = persistentStore ? -1L : CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds(); - 1L;
+//        long lastUpdateKeyOne = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processWindowedKeyValueAndVerifyPlainCount(2, asList(
 //            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
 //            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L)));
-//        long lastUpdateKeyTwo = persistentStore ? -1L : CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds(); - 1L;
+//        long lastUpdateKeyTwo = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processWindowedKeyValueAndVerifyPlainCount(3, asList(
 //            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
 //            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
 //            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L)));
-//        long lastUpdateKeyThree = persistentStore ? -1L : CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds(); - 1L;
+//        long lastUpdateKeyThree = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processWindowedKeyValueAndVerifyPlainCount(4, asList(
 //            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
@@ -582,7 +582,7 @@ namespace Kafka.Streams.Tests.Integration
 //            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
 //            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L),
 //            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), 3L)));
-//        long lastUpdateKeyFour = persistentStore ? -1L : CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds(); - 1L;
+//        long lastUpdateKeyFour = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        kafkaStreams.close();
 //        kafkaStreams = null;
@@ -596,7 +596,7 @@ namespace Kafka.Streams.Tests.Integration
 //        verifyWindowedCountWithTimestamp(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L, lastUpdateKeyThree);
 //        verifyWindowedCountWithTimestamp(new Windowed<>(4, new TimeWindow(0L, 1000L)), 3L, lastUpdateKeyFour);
 
-//        long currentTime = CLUSTER.time.GetCurrentInstant().ToUnixTimeMilliseconds();;
+//        long currentTime = CLUSTER.time.NowAsEpochMilliseconds;;
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(1, currentTime + 42L, asList(
 //            KeyValuePair.Create(
 //                new Windowed<>(1, new TimeWindow(0L, 1000L)),
@@ -686,8 +686,8 @@ namespace Kafka.Streams.Tests.Integration
 //            Stores.windowStoreBuilder(
 //                Stores.PersistentWindowStore(
 //                    STORE_NAME,
-//                    Duration.FromMilliseconds(1000L),
-//                    Duration.FromMilliseconds(1000L),
+//                    TimeSpan.FromMilliseconds(1000L),
+//                    TimeSpan.FromMilliseconds(1000L),
 //                    false),
 //                Serdes.Int(),
 //                Serdes.Long()))
@@ -742,8 +742,8 @@ namespace Kafka.Streams.Tests.Integration
 //            Stores.timestampedWindowStoreBuilder(
 //                Stores.PersistentWindowStore(
 //                    STORE_NAME,
-//                    Duration.FromMilliseconds(1000L),
-//                    Duration.FromMilliseconds(1000L),
+//                    TimeSpan.FromMilliseconds(1000L),
+//                    TimeSpan.FromMilliseconds(1000L),
 //                    false),
 //                Serdes.Int(),
 //                Serdes.Long()))

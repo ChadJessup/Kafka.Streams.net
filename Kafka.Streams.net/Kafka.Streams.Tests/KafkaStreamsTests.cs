@@ -578,7 +578,7 @@ namespace Kafka.Streams.Tests
         //        System.currentTimeMillis());
 
         //        Assert.True("Timed out waiting to receive single message", latch.wait(30, TimeUnit.SECONDS));
-        //        Assert.False(streams.close(Duration.FromMilliseconds(10)));
+        //        Assert.False(streams.close(TimeSpan.FromMilliseconds(10)));
         //    }
         //    finally
         //    {
@@ -690,7 +690,7 @@ namespace Kafka.Streams.Tests
         //    try
         //    {
         //        var streams = new KafkaStreams(builder.Build(), props);
-        //        streams.close(Duration.FromMilliseconds(-1L));
+        //        streams.close(TimeSpan.FromMilliseconds(-1L));
         //        Assert.False(true, "should not accept negative close parameter");
         //    }
         //    catch (ArgumentException e)
@@ -703,7 +703,7 @@ namespace Kafka.Streams.Tests
         //public void shouldNotBlockInCloseForZeroDuration() //// throws InterruptedException {
         //{
         //    var streams = new KafkaStreams(builder.Build(), props);
-        //    IThread th = new Thread(() => streams.close(Duration.FromMilliseconds(0L)));
+        //    IThread th = new Thread(() => streams.close(TimeSpan.FromMilliseconds(0L)));
 
         //    th.start();
 

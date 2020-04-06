@@ -191,8 +191,8 @@
 
 //                    supplier = Stores.PersistentTimestampedWindowStore(
 //                        materialized.storeName(),
-//                        Duration.FromMilliseconds(retentionPeriod),
-//                        Duration.FromMilliseconds(windows.size()),
+//                        TimeSpan.FromMilliseconds(retentionPeriod),
+//                        TimeSpan.FromMilliseconds(windows.size()),
 //                        false
 //                    );
 

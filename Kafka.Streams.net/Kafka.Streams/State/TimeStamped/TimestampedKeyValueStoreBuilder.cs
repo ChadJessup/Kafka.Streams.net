@@ -1,7 +1,8 @@
+using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValues;
-using NodaTime;
+
 using System;
 
 namespace Kafka.Streams.State.TimeStamped

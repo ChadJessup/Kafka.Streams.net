@@ -67,7 +67,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //        [Fact]
 //        public void shouldExtractGraceFromKStreamWindowAggregateNode()
 //        {
-//            TimeWindow windows = TimeWindows.of(Duration.FromMilliseconds(10L)).grace(Duration.FromMilliseconds(1234L));
+//            TimeWindow windows = TimeWindows.of(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(1234L));
 //            StatefulProcessorNode<string, long> node = new StatefulProcessorNode<>(
 //                "asdf",
 //                new ProcessorParameters<>(
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //        [Fact]
 //        public void shouldExtractGraceFromKStreamSessionWindowAggregateNode()
 //        {
-//            SessionWindows windows = SessionWindows.with(Duration.FromMilliseconds(10L)).grace(Duration.FromMilliseconds(1234L));
+//            SessionWindows windows = SessionWindows.with(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(1234L));
 
 //            StatefulProcessorNode<string, long> node = new StatefulProcessorNode<>(
 //                    "asdf",
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //        [Fact]
 //        public void shouldExtractGraceFromSessionAncestorThroughStatefulParent()
 //        {
-//            SessionWindows windows = SessionWindows.with(Duration.FromMilliseconds(10L)).grace(Duration.FromMilliseconds(1234L));
+//            SessionWindows windows = SessionWindows.with(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(1234L));
 //            StatefulProcessorNode<string, long> graceGrandparent = new StatefulProcessorNode<>(
 //                    "asdf",
 
@@ -160,7 +160,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //        [Fact]
 //        public void shouldExtractGraceFromSessionAncestorThroughStatelessParent()
 //        {
-//            SessionWindows windows = SessionWindows.with(Duration.FromMilliseconds(10L)).grace(Duration.FromMilliseconds(1234L));
+//            SessionWindows windows = SessionWindows.with(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(1234L));
 //            StatefulProcessorNode<string, long> graceGrandparent = new StatefulProcessorNode<>(
 //                    "asdf",
 
@@ -198,7 +198,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 //                new ProcessorParameters<>(
 //                    new KStreamSessionWindowAggregate<string, long, int>(
-//                        SessionWindows.with(Duration.FromMilliseconds(10L)).grace(Duration.FromMilliseconds(1234L)),
+//                        SessionWindows.with(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(1234L)),
 
 //                        "asdf",
 
@@ -217,7 +217,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 //                new ProcessorParameters<>(
 //                    new KStreamWindowAggregate<string, long, int, TimeWindow>(
-//                        TimeWindows.of(Duration.FromMilliseconds(10L)).grace(Duration.FromMilliseconds(4321L)),
+//                        TimeWindows.of(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(4321L)),
 
 //                        "asdf",
 

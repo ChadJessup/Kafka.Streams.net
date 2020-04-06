@@ -1,7 +1,8 @@
+using Kafka.Common;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.State.KeyValues;
-using NodaTime;
+
 using System;
 using System.Collections.Generic;
 
@@ -136,7 +137,7 @@ namespace Kafka.Streams.KStream.Internals
                 materializedInternal.WithValueSerde(Serdes.Long());
             }
 
-            var kstreamAggregate = new KStreamAggregate<K, V, long>(
+            var kstreamAggregate = new KStreamAggregate<K, long, V>(
                     materializedInternal.StoreName,
                     aggregateBuilder.countInitializer,
                     aggregateBuilder.countAggregator);
@@ -175,14 +176,14 @@ namespace Kafka.Streams.KStream.Internals
         //}
 
         private IKTable<K, T> DoAggregate<T>(
-            IKStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
+            IKStreamAggProcessorSupplier<K, K, T, V> aggregateSupplier,
             string functionName,
             MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
         {
             var tkvsm = new TimestampedKeyValueStoreMaterializer<K, T>(this.clock, materializedInternal);
             var materialized = tkvsm.Materialize();
 
-            return aggregateBuilder.Build(
+            return aggregateBuilder.Build<K, T>(
                 functionName,
                 materialized,
                 aggregateSupplier,

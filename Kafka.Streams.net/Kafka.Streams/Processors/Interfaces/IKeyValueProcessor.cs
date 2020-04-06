@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors
           * framework may later re-use the processor by calling {@code #init()} again.
           * <p>
           * The provided {@link IProcessorContext<K, V> context} can be used to access topology and record meta data, to
-          * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
+          * {@link IProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) schedule} a method to be
           * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
           *
           * @param context the context; may not be null

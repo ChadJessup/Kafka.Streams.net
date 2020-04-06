@@ -1,10 +1,13 @@
-﻿using NodaTime;
+﻿using Confluent.Kafka;
+using System;
 
 namespace Kafka.Streams.KStream
 {
     public abstract class Window
     {
-        public Interval Interval { get; }
+        public TimeSpan Interval { get; }
+        public DateTime StartTime { get; }
+        public DateTime EndTime { get; }
 
         /**
          * Create a new window for the given start and end time.
@@ -13,18 +16,25 @@ namespace Kafka.Streams.KStream
          * @param endMs   the end timestamp of the window
          * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
          */
-        public Window(Instant startTime, Instant endTime)
+        public Window(DateTime startTime, DateTime endTime)
         {
-            this.Interval = new Interval(startTime, endTime);
+            this.Interval = endTime - startTime;
+            this.StartTime = startTime;
+            this.EndTime = endTime;
         }
 
-        public Window(Duration duration)
-            : this(SystemClock.Instance.GetCurrentInstant(), duration)
+        public Window(long startMs, long endMs)
+            : this(Timestamp.UnixTimestampMsToDateTime(startMs), Timestamp.UnixTimestampMsToDateTime(endMs))
         {
         }
 
-        public Window(Instant startTime, Duration duration)
-            : this(startTime, duration == Duration.MaxValue ? Instant.FromUnixTimeMilliseconds((long)duration.TotalMilliseconds - startTime.ToUnixTimeMilliseconds()) : startTime + duration)
+        public Window(TimeSpan duration)
+            : this(DateTime.UtcNow, duration)
+        {
+        }
+
+        public Window(DateTime startTime, TimeSpan duration)
+            : this(startTime, duration == TimeSpan.MaxValue ? DateTime.MaxValue : startTime + duration)
         {
         }
 
@@ -34,9 +44,7 @@ namespace Kafka.Streams.KStream
          * @return The start timestamp of this window.
          */
         public long Start()
-        {
-            return this.Interval.Start.ToUnixTimeMilliseconds();
-        }
+            => Timestamp.DateTimeToUnixTimestampMs(this.StartTime);
 
         /**
          * Return the end timestamp of this window.
@@ -44,9 +52,7 @@ namespace Kafka.Streams.KStream
          * @return The end timestamp of this window.
          */
         public long End()
-        {
-            return this.Interval.End.ToUnixTimeMilliseconds();
-        }
+            => Timestamp.DateTimeToUnixTimestampMs(this.EndTime);
 
         /**
          * Check if the given window overlaps with this window.
@@ -87,8 +93,8 @@ namespace Kafka.Streams.KStream
         public override string ToString()
         {
             return "Window{" +
-                $"startMs={this.Interval.Start.ToUnixTimeMilliseconds()}" +
-                $", endMs={this.Interval.End.ToUnixTimeMilliseconds()}" +
+                $"startMs={this.Start()}" +
+                $", endMs={this.End()}" +
                 '}';
         }
     }

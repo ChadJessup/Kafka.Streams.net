@@ -5,7 +5,7 @@ namespace Kafka.Streams.Tests.Kstream
 //using Kafka.Streams.Kafka.Streams;
 //using Kafka.Streams.KStream;
 //using Kafka.Streams.KStream.Interfaces;
-//using NodaTime;
+//
 
 //namespace .kafka.streams.kstream
 //{
@@ -106,8 +106,8 @@ namespace Kafka.Streams.Tests.Kstream
 //                                                                         .selectKey((k, v) => k)
 //                                                                         .groupByKey(Grouped.As("grouping"));
 
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(10L))).count().toStream().To("output-one");
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(30L))).count().toStream().To("output-two");
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10L))).count().toStream().To("output-one");
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(30L))).count().toStream().To("output-two");
 
 //            string topologyString = builder.Build().describe().ToString();
 //            Assert.Equal(1, (getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern)));
@@ -122,11 +122,11 @@ namespace Kafka.Streams.Tests.Kstream
 //                                                                         .selectKey((k, v) => k)
 //                                                                         .groupByKey(Grouped.As("grouping"));
 
-//            TimeWindowedKStream<string, string> timeWindowedKStream = kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(10L)));
+//            TimeWindowedKStream<string, string> timeWindowedKStream = kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10L)));
 
 //            timeWindowedKStream.count().toStream().To("output-one");
 //            timeWindowedKStream.reduce((v, v2) => v + v2).toStream().To("output-two");
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(30L))).count().toStream().To("output-two");
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(30L))).count().toStream().To("output-two");
 
 //            string topologyString = builder.Build().describe().ToString();
 //            Assert.Equal(1, (getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern)));
@@ -141,11 +141,11 @@ namespace Kafka.Streams.Tests.Kstream
 //                                                                         .selectKey((k, v) => k)
 //                                                                         .groupByKey(Grouped.As("grouping"));
 
-//            SessionWindowedKStream<string, string> sessionWindowedKStream = kGroupedStream.windowedBy(SessionWindows.with(Duration.FromMilliseconds(10L)));
+//            SessionWindowedKStream<string, string> sessionWindowedKStream = kGroupedStream.windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(10L)));
 
 //            sessionWindowedKStream.count().toStream().To("output-one");
 //            sessionWindowedKStream.reduce((v, v2) => v + v2).toStream().To("output-two");
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(30L))).count().toStream().To("output-two");
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(30L))).count().toStream().To("output-two");
 
 //            string topologyString = builder.Build().describe().ToString();
 //            Assert.Equal(1, (getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern)));
@@ -172,8 +172,8 @@ namespace Kafka.Streams.Tests.Kstream
 //            KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
 //                                                                         .selectKey((k, v) => k)
 //                                                                         .groupByKey();
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(10L))).count().toStream().To("output-one");
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(30L))).count().toStream().To("output-two");
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10L))).count().toStream().To("output-one");
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(30L))).count().toStream().To("output-two");
 //            string topologyString = builder.Build().describe().ToString();
 //            Assert.Equal(2, (getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern)));
 //        }
@@ -196,8 +196,8 @@ namespace Kafka.Streams.Tests.Kstream
 //            KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
 //                                                                         .selectKey((k, v) => k)
 //                                                                         .groupByKey(Grouped.As("grouping"));
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(10L))).count();
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(30L))).count();
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10L))).count();
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(30L))).count();
 //            var properties = new StreamsConfig();
 //            properties.put(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION, StreamsConfigPropertyNames.OPTIMIZE);
 //            Topology topology = builder.Build(properties);
@@ -217,10 +217,10 @@ namespace Kafka.Streams.Tests.Kstream
 //                IKStream<string, string> stream3 = builder.Stream<string, string>("topic3").selectKey((k, v) => k);
 
 //                IKStream<string, string> joined = stream1.join(stream2, (v1, v2) => v1 + v2,
-//                                                                    JoinWindows.of(Duration.FromMilliseconds(30L)),
+//                                                                    JoinWindows.of(TimeSpan.FromMilliseconds(30L)),
 //                                                                    Joined.named("join-repartition"));
 
-//                joined.join(stream3, (v1, v2) => v1 + v2, JoinWindows.of(Duration.FromMilliseconds(30L)),
+//                joined.join(stream3, (v1, v2) => v1 + v2, JoinWindows.of(TimeSpan.FromMilliseconds(30L)),
 //                                                          Joined.named("join-repartition"));
 //                builder.Build();
 //                Assert.False(true, "Should not build re-using repartition topic name");
@@ -240,8 +240,8 @@ namespace Kafka.Streams.Tests.Kstream
 //            KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
 //                                                                         .selectKey((k, v) => k)
 //                                                                         .groupByKey(Grouped.As("grouping"));
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(10L))).count();
-//            kGroupedStream.windowedBy(TimeWindows.of(Duration.FromMilliseconds(30L))).count();
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10L))).count();
+//            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(30L))).count();
 //            builder.Build(properties);
 //        }
 
@@ -390,11 +390,11 @@ namespace Kafka.Streams.Tests.Kstream
 //            {
 //                if (otherOperations)
 //                {
-//                    selectKeyStream.filter((k, v) => true).mapValues(v => v).groupByKey(Grouped.As(groupedTimeWindowRepartitionTopicName)).windowedBy(TimeWindows.of(Duration.FromMilliseconds(10L))).count();
+//                    selectKeyStream.filter((k, v) => true).mapValues(v => v).groupByKey(Grouped.As(groupedTimeWindowRepartitionTopicName)).windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10L))).count();
 //                }
 //                else
 //                {
-//                    selectKeyStream.groupByKey(Grouped.As(groupedTimeWindowRepartitionTopicName)).windowedBy(TimeWindows.of(Duration.FromMilliseconds(10L))).count();
+//                    selectKeyStream.groupByKey(Grouped.As(groupedTimeWindowRepartitionTopicName)).windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10L))).count();
 //                }
 //            }
 //            else
@@ -425,22 +425,22 @@ namespace Kafka.Streams.Tests.Kstream
 //            {
 //                if (otherOperations)
 //                {
-//                    selectKeyStream.filter((k, v) => true).mapValues(v => v).groupByKey(Grouped.As(groupedSessionWindowRepartitionTopicName)).windowedBy(SessionWindows.with(Duration.FromMilliseconds(10L))).count();
+//                    selectKeyStream.filter((k, v) => true).mapValues(v => v).groupByKey(Grouped.As(groupedSessionWindowRepartitionTopicName)).windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(10L))).count();
 //                }
 //                else
 //                {
-//                    selectKeyStream.groupByKey(Grouped.As(groupedSessionWindowRepartitionTopicName)).windowedBy(SessionWindows.with(Duration.FromMilliseconds(10L))).count();
+//                    selectKeyStream.groupByKey(Grouped.As(groupedSessionWindowRepartitionTopicName)).windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(10L))).count();
 //                }
 //            }
 //            else
 //            {
 //                if (otherOperations)
 //                {
-//                    selectKeyStream.filter((k, v) => true).mapValues(v => v).groupBy(kvMapper, Grouped.As(groupedSessionWindowRepartitionTopicName)).windowedBy(SessionWindows.with(Duration.FromMilliseconds(10L))).count();
+//                    selectKeyStream.filter((k, v) => true).mapValues(v => v).groupBy(kvMapper, Grouped.As(groupedSessionWindowRepartitionTopicName)).windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(10L))).count();
 //                }
 //                else
 //                {
-//                    selectKeyStream.groupBy(kvMapper, Grouped.As(groupedSessionWindowRepartitionTopicName)).windowedBy(SessionWindows.with(Duration.FromMilliseconds(10L))).count();
+//                    selectKeyStream.groupBy(kvMapper, Grouped.As(groupedSessionWindowRepartitionTopicName)).windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(10L))).count();
 //                }
 //            }
 
@@ -505,7 +505,7 @@ namespace Kafka.Streams.Tests.Kstream
 
 //            var joinRepartitionTopicName = "my-join";
 //            updatedStreamOne.join(updatedStreamTwo, (v1, v2) => v1 + v2,
-//                    JoinWindows.of(Duration.FromMilliseconds(1000L)), Joined.with(Serdes.String(), Serdes.String(), Serdes.String(), joinRepartitionTopicName));
+//                    JoinWindows.of(TimeSpan.FromMilliseconds(1000L)), Joined.with(Serdes.String(), Serdes.String(), Serdes.String(), joinRepartitionTopicName));
 
 //            return builder.Build().describe().ToString();
 //        }
@@ -555,7 +555,7 @@ namespace Kafka.Streams.Tests.Kstream
 
 //            mappedStream.filter((k, v) => k.equals("A"))
 //                    .join(countStream, (v1, v2) => v1 + ":" + v2.ToString(),
-//                            JoinWindows.of(Duration.FromMilliseconds(5000L)),
+//                            JoinWindows.of(TimeSpan.FromMilliseconds(5000L)),
 //                            Joined.with(Serdes.String(), Serdes.String(), Serdes.Long(), fourthRepartitionTopicName))
 //                    .To(JOINED_TOPIC);
 
