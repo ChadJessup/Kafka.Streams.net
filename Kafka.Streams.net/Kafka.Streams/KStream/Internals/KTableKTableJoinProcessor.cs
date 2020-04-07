@@ -6,7 +6,7 @@ using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableKTableJoinProcessor<K, R, V1, V2> : AbstractProcessor<K, Change<V1>>
+    public class KTableKTableJoinProcessor<K, R, V1, V2> : AbstractProcessor<K, IChange<V1>>
     {
         private readonly IKTableValueGetter<K, V2> valueGetter;
         private readonly string storeName;
@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals
             valueGetter.Init(context, this.storeName);
         }
 
-        public override void Process(K key, Change<V1> change)
+        public override void Process(K key, IChange<V1> change)
         {
             // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
             if (key == null)

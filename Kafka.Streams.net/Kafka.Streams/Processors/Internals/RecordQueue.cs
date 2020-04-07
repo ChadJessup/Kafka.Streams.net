@@ -19,8 +19,8 @@ namespace Kafka.Streams.Processors.Internals
      */
     public abstract class RecordQueue
     {
-        public static long UNKNOWN = ConsumerRecord.NO_TIMESTAMP;
-        protected ILogger log { get; set; }
+        public static long UNKNOWN { get; } = ConsumerRecord.NO_TIMESTAMP;
+        protected ILogger<RecordQueue> logger { get; set; }
 
         /// <summary>
         /// The partition with which this queue is associated.

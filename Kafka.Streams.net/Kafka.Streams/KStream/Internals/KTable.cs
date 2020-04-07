@@ -8,7 +8,6 @@ using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.TimeStamped;
 using Microsoft.Extensions.Logging;
-
 using System;
 using System.Collections.Generic;
 
@@ -39,14 +38,13 @@ namespace Kafka.Streams.KStream.Internals
     public class KTable<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
         where S : IStateStore
     {
-        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, S, V>>();
         private readonly IProcessorSupplier<K, V> processorSupplier;
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         public string? QueryableStoreName { get; private set; }
         private bool sendOldValues = false;
 
         public KTable(
-            IClock clock,
+            KafkaStreamsContext context,
             string name,
             ISerde<K>? keySerde,
             ISerde<V>? valSerde,
@@ -57,7 +55,7 @@ namespace Kafka.Streams.KStream.Internals
             InternalStreamsBuilder builder)
             : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
         {
-            this.clock = clock;
+            this.context = context;
             this.processorSupplier = processorSupplier;
             this.QueryableStoreName = queryableStoreName;
         }
@@ -92,9 +90,9 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal?.QueryableStoreName();
 
                 // only materialize if materialized is specified and it has queryable name
-                storeBuilder = queryableStoreName != null
-                    ? (new TimestampedKeyValueStoreMaterializer<K, V>(this.clock, materializedInternal)).Materialize()
-                    : null;
+                //storeBuilder = queryableStoreName != null
+                //    ? (new TimestampedKeyValueStoreMaterializer<K, V>(this.clock, materializedInternal)).Materialize()
+                //    : null;
             }
             else
             {
@@ -106,35 +104,23 @@ namespace Kafka.Streams.KStream.Internals
 
             var name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KTable.FILTER_NAME);
 
-            static ProcessorParameters<K, VR> UnsafeCastProcessorParametersToCompletelyDifferentType<VR>(
-                ProcessorParameters<K, Change<V>> processorParameters)
-            {
-                var convert = (IProcessorSupplier<K, VR>)processorParameters.ProcessorSupplier;
-                var converted = new ProcessorParameters<K, VR>(
-                    convert,
-                    processorParameters.ProcessorName);
-
-                return converted;
-            }
-
             IKTableProcessorSupplier<K, V, V> processorSupplier = new KTableFilter<K, V>(
                 this,
                 predicate,
                 filterNot,
                 queryableStoreName);
 
-            var pp = new ProcessorParameters<K, Change<V>>(processorSupplier, name);
-            var processorParameters = UnsafeCastProcessorParametersToCompletelyDifferentType<V>(pp);
+            var processorParameters = new ProcessorParameters<K, IChange<V>>(processorSupplier, name);
 
-            StreamsGraphNode tableNode = new TableProcessorNode<K, V>(
+            var tableNode = new TableProcessorNode<K, V, ITimestampedKeyValueStore<K, V>>(
                name,
                processorParameters,
-               storeBuilder);
+               null);// storeBuilder);
 
             builder.AddGraphNode<K, V>(this.streamsGraphNode, tableNode);
 
             return new KTable<K, S, V>(
-                this.clock,
+                this.context,
                 name,
                 keySerde,
                 valueSerde,
@@ -470,22 +456,22 @@ namespace Kafka.Streams.KStream.Internals
             var name = new NamedInternal(named)
                 .OrElseGenerateWithPrefix(builder, KTable.TOSTREAM_NAME);
 
-            IProcessorSupplier<K, Change<V>> kStreamMapValues =
-                new KStreamMapValues<K, Change<V>, V>(
+            IProcessorSupplier<K, IChange<V>> kStreamMapValues =
+                new KStreamMapValues<K, IChange<V>, V>(
                     (key, change) => change.NewValue);
 
             //ProcessorParameters<K, V> processorParameters = UnsafeCastProcessorParametersToCompletelyDifferentType<V>(
             //new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
 
-            var toStreamNode = new ProcessorGraphNode<K, Change<V>>(
+            var toStreamNode = new ProcessorGraphNode<K, IChange<V>>(
                name,
-               new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
+               new ProcessorParameters<K, IChange<V>>(kStreamMapValues, name));
 
             builder.AddGraphNode<K, V>(this.streamsGraphNode, toStreamNode);
 
             // we can inherit parent key and value serde
             return new KStream<K, V>(
-                this.clock,
+                this.context,
                 name,
                 keySerde,
                 valSerde,
@@ -747,8 +733,8 @@ namespace Kafka.Streams.KStream.Internals
             var joinThisName = renamed.SuffixWithOrElseGet("-join-this", builder, KTable.JOINTHIS_NAME);
             var joinOtherName = renamed.SuffixWithOrElseGet("-join-other", builder, KTable.JOINOTHER_NAME);
 
-            var joinThisProcessorParameters = new ProcessorParameters<K, Change<V>>(joinThis, joinThisName);
-            var joinOtherProcessorParameters = new ProcessorParameters<K, Change<VO>>(joinOther, joinOtherName);
+            var joinThisProcessorParameters = new ProcessorParameters<K, IChange<V>>(joinThis, joinThisName);
+            var joinOtherProcessorParameters = new ProcessorParameters<K, IChange<VO>>(joinOther, joinOtherName);
 
             ISerde<K>? keySerde;
             ISerde<VR>? valueSerde;
@@ -761,10 +747,10 @@ namespace Kafka.Streams.KStream.Internals
 
                 valueSerde = materializedInternal.ValueSerde;
                 queryableStoreName = materializedInternal.StoreName;
-                storeBuilder = new TimestampedKeyValueStoreMaterializer<K, VR>(
-                        this.clock, 
-                        materializedInternal)
-                    .Materialize();
+                //storeBuilder = new TimestampedKeyValueStoreMaterializer<K, VR>(
+                //        this.clock, 
+                //        materializedInternal)
+                //    .Materialize();
             }
             else
             {

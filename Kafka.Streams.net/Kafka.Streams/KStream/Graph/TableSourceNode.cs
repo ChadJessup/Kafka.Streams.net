@@ -20,12 +20,12 @@ namespace Kafka.Streams.Nodes
     {
         private readonly MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal;
         private readonly ProcessorParameters<K, V> processorParameters;
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         private readonly string sourceName;
         private readonly bool isGlobalKTable;
 
         public TableSourceNode(
-            IClock clock,
+            KafkaStreamsContext context,
             string nodeName,
             string sourceName,
             string topic,
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Nodes
                   new List<string> { topic },
                   consumedInternal)
         {
-            this.clock = clock;
+            this.context = context;
             this.sourceName = sourceName;
             this.isGlobalKTable = isGlobalKTable;
             this.processorParameters = processorParameters;
@@ -56,10 +56,10 @@ namespace Kafka.Streams.Nodes
                    "} " + base.ToString();
         }
 
-        public static TableSourceNodeBuilder<K, V> TableSourceNodeBuilder<T>(IClock clock)
+        public static TableSourceNodeBuilder<K, V> TableSourceNodeBuilder<T>(KafkaStreamsContext context)
             where T : IStateStore
         {
-            return new TableSourceNodeBuilder<K, V>(clock);
+            return new TableSourceNodeBuilder<K, V>(context);
         }
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
@@ -81,7 +81,7 @@ namespace Kafka.Streams.Nodes
             // should be expanded for other types of stores as well.
             IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder =
                new TimestampedKeyValueStoreMaterializer<K, V>(
-                   this.clock,
+                   this.context,
                    materializedInternal).Materialize();
 
             if (isGlobalKTable)
@@ -106,7 +106,10 @@ namespace Kafka.Streams.Nodes
                     consumedInternal.ValueDeserializer(),
                     new[] { topicName });
 
-                topologyBuilder.AddProcessor(processorParameters.ProcessorName, processorParameters.ProcessorSupplier, sourceName);
+                topologyBuilder.AddProcessor<K, V>(
+                    processorParameters.ProcessorName,
+                    processorParameters.ProcessorSupplier,
+                    sourceName);
 
                 // only add state store if the source KTable should be materialized
                 var ktableSource = (KTableSource<K, V>)processorParameters.ProcessorSupplier;

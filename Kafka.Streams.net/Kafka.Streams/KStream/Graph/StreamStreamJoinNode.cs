@@ -70,23 +70,21 @@ namespace Kafka.Streams.KStream.Internals.Graph
             var thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.ProcessorName;
             var otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.ProcessorName;
 
-            topologyBuilder.AddProcessor(thisProcessorName, ThisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
-            topologyBuilder.AddProcessor(otherProcessorName, OtherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
+            topologyBuilder.AddProcessor<K, V1>(thisProcessorName, ThisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
+            topologyBuilder.AddProcessor<K, V1>(otherProcessorName, OtherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
 
-            topologyBuilder.AddProcessor(
+            topologyBuilder.AddProcessor<K, V1>(
                 MergeProcessorParameters().ProcessorName,
                 MergeProcessorParameters().ProcessorSupplier,
                 thisProcessorName, otherProcessorName);
 
-            //topologyBuilder.addStateStore(
-            //    thisWindowStoreBuilder,
-            //    thisWindowedStreamProcessorName,
-            //    otherProcessorName);
+            topologyBuilder.AddStateStore<K, V1, IWindowStore<K, V1>>(
+                thisWindowStoreBuilder,
+                new[] { otherProcessorName });
 
-            //topologyBuilder.addStateStore(
-            //    otherWindowStoreBuilder,
-            //    otherWindowedStreamProcessorName,
-            //    thisProcessorName);
+            topologyBuilder.AddStateStore<K, V2, IWindowStore<K, V2>>(
+                otherWindowStoreBuilder,
+                new[] { thisProcessorName });
         }
     }
 }

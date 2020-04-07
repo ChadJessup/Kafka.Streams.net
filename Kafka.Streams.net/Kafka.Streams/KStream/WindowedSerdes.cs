@@ -20,7 +20,7 @@ using System;
 
 namespace Kafka.Streams.KStream
 {
-    public class WindowedSerdes
+    public static class WindowedSerdes
     {
         /**
          * Construct a {@code TimeWindowedSerde} object for the specified inner class type.

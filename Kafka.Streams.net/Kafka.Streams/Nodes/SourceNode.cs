@@ -23,7 +23,6 @@ namespace Kafka.Streams.Nodes
         private IProcessorContext context;
         private readonly IDeserializer<K> keyDeserializer;
         private readonly IDeserializer<V> valDeserializer;
-        public ITimestampExtractor? TimestampExtractor { get; }
 
         public SourceNode(
             IClock clock,

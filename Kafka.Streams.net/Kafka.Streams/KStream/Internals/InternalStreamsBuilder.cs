@@ -29,7 +29,7 @@ namespace Kafka.Streams.KStream.Internals
             public const string TopologyRoot = "root";
         }
 
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         private readonly ILogger<InternalStreamsBuilder> logger;
         private readonly IServiceProvider services;
 
@@ -46,11 +46,11 @@ namespace Kafka.Streams.KStream.Internals
 
         public InternalStreamsBuilder(
             ILogger<InternalStreamsBuilder> logger,
-            IClock clock,
+            KafkaStreamsContext context,
             IServiceProvider services,
             InternalTopologyBuilder internalTopologyBuilder)
         {
-            this.clock = clock;
+            this.context = context;
             this.logger = logger;
             this.services = services;
             this.InternalTopologyBuilder = internalTopologyBuilder;
@@ -73,7 +73,7 @@ namespace Kafka.Streams.KStream.Internals
             this.AddGraphNode<K, V>(new HashSet<StreamsGraphNode> { root }, streamSourceNode);
 
             return new KStream<K, V>(
-                this.clock,
+                this.context,
                 name,
                 consumed.keySerde,
                 consumed.valueSerde,
@@ -93,7 +93,7 @@ namespace Kafka.Streams.KStream.Internals
             AddGraphNode<K, V>(root, streamPatternSourceNode);
 
             return new KStream<K, V>(
-                this.clock,
+                this.context,
                 name,
                 consumed.keySerde,
                 consumed.valueSerde,
@@ -122,7 +122,7 @@ namespace Kafka.Streams.KStream.Internals
 
             var processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
 
-            var tableSourceNode = TableSourceNode<K, V>.TableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
+            var tableSourceNode = TableSourceNode<K, V>.TableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.context)
                  .WithTopic(topic)
                  .WithSourceName(sourceName)
                  .WithNodeName(tableSourceName)
@@ -134,7 +134,7 @@ namespace Kafka.Streams.KStream.Internals
             AddGraphNode<K, V>(root, tableSourceNode);
 
             return new KTable<K, IKeyValueStore<Bytes, byte[]>, V>(
-                this.clock,
+                this.context,
                 tableSourceName,
                 consumed.keySerde,
                 consumed.valueSerde,
@@ -161,7 +161,7 @@ namespace Kafka.Streams.KStream.Internals
             var tableSource = ActivatorUtilities.CreateInstance<KTableSource<K, V>>(this.services, storeName, storeName);
             var processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
 
-            var tableSourceNode = TableSourceNode<K, V>.TableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
+            var tableSourceNode = TableSourceNode<K, V>.TableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.context)
                   .WithTopic(topic)
                   .IsGlobalKTable(true)
                   .WithSourceName(sourceName)

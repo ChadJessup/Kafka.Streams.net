@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Kafka.Streams.State.KeyValues;
 
@@ -39,17 +40,15 @@ namespace Kafka.Streams.State.Windowed
 
         public bool MoveNext()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void Reset()
         {
-            throw new System.NotImplementedException();
         }
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

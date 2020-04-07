@@ -1,4 +1,6 @@
-﻿namespace Kafka.Streams
+﻿using System;
+
+namespace Kafka.Streams
 {
     public class KeyValueTimestamp<K, V>
     {
@@ -27,14 +29,14 @@
 
             var that = (KeyValueTimestamp<K, V>)o;
 
-            return Timestamp == that.Timestamp &&
-                this.Key.Equals(that.Key) &&
-                this.Value.Equals(that.Value);
+            return Timestamp == that.Timestamp
+                && this.Key.Equals(that.Key)
+                && this.Value.Equals(that.Value);
         }
 
         public override int GetHashCode()
         {
-            return (Key, Value, Timestamp).GetHashCode();
+            return HashCode.Combine(this.Key, this.Value, this.Timestamp);
         }
     }
 }

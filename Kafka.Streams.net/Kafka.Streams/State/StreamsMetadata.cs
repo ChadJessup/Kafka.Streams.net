@@ -17,7 +17,7 @@ namespace Kafka.Streams.State
          * Sentinel to indicate that the StreamsMetadata is currently unavailable. This can occur during rebalance
          * operations.
          */
-        public static StreamsMetadata NOT_AVAILABLE = new StreamsMetadata(
+        public static StreamsMetadata NOT_AVAILABLE { get; } = new StreamsMetadata(
             new HostInfo("unavailable", -1),
             new HashSet<string>(),
             new HashSet<TopicPartition>());

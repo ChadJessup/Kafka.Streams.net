@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaToCsharpAnalyzers.Test"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaToCsharpAnalyzers.Vsix", "..\..\JavaToCsharpAnalyzers\JavaToCsharpAnalyzers.Vsix\JavaToCsharpAnalyzers.Vsix.csproj", "{8E3192F5-D4E8-4D58-AC24-5FF092FDEF73}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.RocksDB", "..\Kafka.Streams.RocksDB\Kafka.Streams.RocksDB.csproj", "{1E31C55F-0C77-463B-810B-CF99979B620C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.RocksDB.Tests", "..\Kafka.Streams.RocksDB.Tests\Kafka.Streams.RocksDB.Tests.csproj", "{DA7F7714-6E08-47D8-AF31-5BED63993E08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -216,6 +220,30 @@ Global
 		{8E3192F5-D4E8-4D58-AC24-5FF092FDEF73}.Release|x64.Build.0 = Release|Any CPU
 		{8E3192F5-D4E8-4D58-AC24-5FF092FDEF73}.Release|x86.ActiveCfg = Release|Any CPU
 		{8E3192F5-D4E8-4D58-AC24-5FF092FDEF73}.Release|x86.Build.0 = Release|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Debug|x64.Build.0 = Debug|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Debug|x86.Build.0 = Debug|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Release|x64.ActiveCfg = Release|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Release|x64.Build.0 = Release|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Release|x86.ActiveCfg = Release|Any CPU
+		{1E31C55F-0C77-463B-810B-CF99979B620C}.Release|x86.Build.0 = Release|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Debug|x64.Build.0 = Debug|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Debug|x86.Build.0 = Debug|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Release|x64.ActiveCfg = Release|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Release|x64.Build.0 = Release|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Release|x86.ActiveCfg = Release|Any CPU
+		{DA7F7714-6E08-47D8-AF31-5BED63993E08}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

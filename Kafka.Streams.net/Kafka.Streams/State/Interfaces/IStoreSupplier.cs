@@ -28,5 +28,7 @@ namespace Kafka.Streams.State.Interfaces
          * @return metricsScope
          */
         //string MetricsScope();
+
+        void SetName(string name);
     }
 }

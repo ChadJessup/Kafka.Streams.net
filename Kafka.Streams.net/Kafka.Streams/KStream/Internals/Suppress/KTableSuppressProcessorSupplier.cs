@@ -6,9 +6,9 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 {
     public class KTableSuppressProcessorSupplier<K, V, S> : IKTableProcessorSupplier<K, V, V>
     {
-        private SuppressedInternal<K> suppress;
-        private readonly string storeName;
+        private readonly SuppressedInternal<K> suppress;
         private readonly IKTable<K, V> parentKTable;
+        private readonly string storeName;
 
         public KTableSuppressProcessorSupplier(
             SuppressedInternal<K> suppress,
@@ -23,12 +23,14 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             parentKTable.EnableSendingOldValues();
         }
 
-        public IKeyValueProcessor<K, Change<V>> Get()
+        public IKeyValueProcessor<K, IChange<V>> Get()
         {
-            return (IKeyValueProcessor<K, Change<V>>)new KTableSuppressProcessor<K, Change<V>>(
+            return (IKeyValueProcessor<K, IChange<V>>)new KTableSuppressProcessor<K, IChange<V>>(
                 suppress, storeName);
         }
 
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
 
         public IKTableValueGetterSupplier<K, V> View()
         {

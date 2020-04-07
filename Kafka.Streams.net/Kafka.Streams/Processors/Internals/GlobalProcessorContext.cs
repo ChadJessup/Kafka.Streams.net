@@ -125,7 +125,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public ICancellable Schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
+        public override ICancellable Schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
         {
             throw new InvalidOperationException("this should not happen: schedule() not supported in global processor context.");
         }

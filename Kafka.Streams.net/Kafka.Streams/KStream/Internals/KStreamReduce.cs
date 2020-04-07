@@ -18,6 +18,8 @@ namespace Kafka.Streams.KStream.Internals
             return null;// new KStreamReduceProcessor();
         }
 
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
 
         public void EnableSendingOldValues()
         {

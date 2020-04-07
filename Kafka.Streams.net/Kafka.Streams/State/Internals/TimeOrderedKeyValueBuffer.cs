@@ -14,7 +14,7 @@ namespace Kafka.Streams.State.Internals
 
         ValueAndTimestamp<V> PriorValueForBuffered(K key);
 
-        void Put(long time, K key, Change<V> value, ProcessorRecordContext recordContext);
+        void Put(long time, K key, IChange<V> value, ProcessorRecordContext recordContext);
 
         int NumRecords();
 

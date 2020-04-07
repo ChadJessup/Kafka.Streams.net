@@ -45,7 +45,7 @@ namespace Kafka.Streams.Tests.Tests
         {
             string badString = "foo=bar;baz=boo";
             var e = Assert.Throws<ArgumentException>(() => SystemTestUtil.ParseConfigs(badString));
-            Assert.Equal("Provided string [ foo=bar;baz=boo ] does not have expected key-value pair separator of ','", e.Message);
+            Assert.Equal("Provided string [ foo=bar;baz=boo ] does not have expected key-value pair separator of ',' (Parameter 'formattedConfigs')", e.Message);
         }
 
         [Fact]

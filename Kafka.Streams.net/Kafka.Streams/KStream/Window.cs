@@ -87,7 +87,7 @@ namespace Kafka.Streams.KStream
 
         public override int GetHashCode()
         {
-            return this.Interval.GetHashCode();
+            return HashCode.Combine(this.Interval);
         }
 
         public override string ToString()

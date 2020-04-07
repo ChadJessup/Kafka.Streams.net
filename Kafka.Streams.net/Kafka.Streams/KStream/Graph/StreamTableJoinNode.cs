@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             IProcessorSupplier<K, V> IProcessorSupplier = processorParameters.ProcessorSupplier;
 
             // Stream - Table join (Global or KTable)
-            topologyBuilder.AddProcessor(processorName, IProcessorSupplier, ParentNodeNames());
+            topologyBuilder.AddProcessor<K, V>(processorName, IProcessorSupplier, ParentNodeNames());
 
             // Steam - KTable join only
             if (otherJoinSideNodeName != null)

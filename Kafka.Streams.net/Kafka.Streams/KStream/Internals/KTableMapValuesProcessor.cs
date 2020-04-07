@@ -6,7 +6,7 @@ using Kafka.Streams.State.TimeStamped;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableMapValuesProcessor<K, V, V1> : AbstractProcessor<K, Change<V>>
+    public class KTableMapValuesProcessor<K, V, V1> : AbstractProcessor<K, IChange<V>>
     {
         private ITimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
@@ -39,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public override void Process(K key, Change<V> change)
+        public override void Process(K key, IChange<V> change)
         {
             if (change is null)
             {

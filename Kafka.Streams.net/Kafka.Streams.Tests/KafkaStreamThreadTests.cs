@@ -58,13 +58,13 @@ namespace Kafka.Streams.Tests
             var sc = new ServiceCollection().AddSingleton(this.config);
 
             this.streamsBuilder = new StreamsBuilder(sc);
-            var services = this.streamsBuilder.Services;
+            var services = this.streamsBuilder.Context.Services;
             this.stateDirectory = services.GetRequiredService<StateDirectory>();
 
-            this.internalStreamsBuilder = this.streamsBuilder.InternalStreamsBuilder;
-            this.internalTopologyBuilder = this.streamsBuilder.InternalTopologyBuilder;
+            this.internalStreamsBuilder = this.streamsBuilder.Context.InternalStreamsBuilder;
+            this.internalTopologyBuilder = this.streamsBuilder.Context.InternalTopologyBuilder;
             this.internalTopologyBuilder.SetApplicationId(this.applicationId);
-            this.streamsMetadataState = this.streamsBuilder.Services.GetRequiredService<StreamsMetadataState>();
+            this.streamsMetadataState = this.streamsBuilder.Context.Services.GetRequiredService<StreamsMetadataState>();
         }
 
         [Fact]

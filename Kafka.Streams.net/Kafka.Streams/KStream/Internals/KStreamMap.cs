@@ -24,5 +24,8 @@ namespace Kafka.Streams.KStream.Internals
         {
             return new KStreamMapProcessor<K, V>();
         }
+
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
     }
 }

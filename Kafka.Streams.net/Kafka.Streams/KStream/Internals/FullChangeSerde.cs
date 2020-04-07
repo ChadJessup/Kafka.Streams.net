@@ -1,19 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 using System;
@@ -46,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals
             return inner;
         }
 
-        public Change<byte[]> SerializeParts(string topic, Change<T> data)
+        public IChange<byte[]> SerializeParts(string topic, IChange<T> data)
         {
             if (data == null)
             {
@@ -61,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
             return new Change<byte[]>(newBytes, oldBytes);
         }
 
-        public Change<T> DeserializeParts(string topic, Change<byte[]> serialChange)
+        public IChange<T> DeserializeParts(string topic, IChange<byte[]> serialChange)
         {
             if (serialChange == null)
             {
@@ -80,7 +65,7 @@ namespace Kafka.Streams.KStream.Internals
          * We used to serialize a Change into a single byte[]. Now, we don't anymore, but we still keep this logic here
          * so that we can produce the legacy string.Format to test that we can still deserialize it.
          */
-        public static byte[] MergeChangeArraysIntoSingleLegacyFormattedArray(Change<byte[]> serialChange)
+        public static byte[] MergeChangeArraysIntoSingleLegacyFormattedArray(IChange<byte[]> serialChange)
         {
             if (serialChange == null)
             {
@@ -111,7 +96,7 @@ namespace Kafka.Streams.KStream.Internals
          * We used to serialize a Change into a single byte[]. Now, we don't anymore, but we still
          * need to be able to read it (so that we can load the state store from previously-written changelog records).
          */
-        public static Change<byte[]> DecomposeLegacyFormattedArrayIntoChangeArrays(byte[] data)
+        public static IChange<byte[]> DecomposeLegacyFormattedArrayIntoChangeArrays(byte[] data)
         {
             if (data == null)
             {

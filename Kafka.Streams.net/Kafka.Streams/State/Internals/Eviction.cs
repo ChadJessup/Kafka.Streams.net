@@ -1,15 +1,16 @@
 ﻿using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors.Internals;
+using System;
 
 namespace Kafka.Streams.State.Internals
 {
     public class Eviction<K, V>
     {
         public K key { get; }
-        public Change<V> value { get; }
+        public IChange<V> value { get; }
         public ProcessorRecordContext recordContext { get; }
 
-        public Eviction(K key, Change<V> value, ProcessorRecordContext recordContext)
+        public Eviction(K key, IChange<V> value, ProcessorRecordContext recordContext)
         {
             this.key = key;
             this.value = value;
@@ -36,7 +37,7 @@ namespace Kafka.Streams.State.Internals
 
         public override int GetHashCode()
         {
-            return (key, value, recordContext).GetHashCode();
+            return HashCode.Combine(this.key, this.value, this.recordContext);
         }
     }
 }

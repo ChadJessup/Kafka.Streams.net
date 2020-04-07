@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
             this.queryableName = queryableName;
         }
 
-        public IKeyValueProcessor<K, Change<V>> Get()
+        public IKeyValueProcessor<K, IChange<V>> Get()
         {
             return new KTableFilterProcessor<K, V>(
                 this.queryableName,
@@ -32,6 +32,9 @@ namespace Kafka.Streams.KStream.Internals
                 this.filterNot,
                 this.predicate);
         }
+
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
 
         public void EnableSendingOldValues()
         {

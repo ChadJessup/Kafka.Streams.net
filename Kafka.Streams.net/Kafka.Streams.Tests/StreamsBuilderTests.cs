@@ -49,7 +49,7 @@ namespace Kafka.Streams.Tests
             builder.Build();
 
             ProcessorTopology topology =
-                builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
+                builder.Context.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
             Assert.Single(topology.StateStores);
 

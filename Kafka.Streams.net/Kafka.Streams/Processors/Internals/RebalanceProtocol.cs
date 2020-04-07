@@ -4,8 +4,8 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class RebalanceProtocol
     {
-        public static RebalanceProtocol EAGER = new RebalanceProtocol(0);
-        public static RebalanceProtocol COOPERATIVE = new RebalanceProtocol(1);
+        public static RebalanceProtocol EAGER { get; } = new RebalanceProtocol(0);
+        public static RebalanceProtocol COOPERATIVE { get; } = new RebalanceProtocol(1);
 
         private readonly byte id;
 

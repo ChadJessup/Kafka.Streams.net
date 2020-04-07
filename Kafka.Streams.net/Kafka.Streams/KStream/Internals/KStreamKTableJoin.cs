@@ -34,5 +34,7 @@ namespace Kafka.Streams.KStream.Internals
                 leftJoin);
         }
 
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
     }
 }

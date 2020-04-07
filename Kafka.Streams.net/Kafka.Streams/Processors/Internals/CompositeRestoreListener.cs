@@ -7,7 +7,7 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class CompositeRestoreListener : IRecordBatchingStateRestoreCallback, IStateRestoreListener
     {
-        public static NoOpStateRestoreListener NO_OP_STATE_RESTORE_LISTENER = new NoOpStateRestoreListener();
+        public static NoOpStateRestoreListener NO_OP_STATE_RESTORE_LISTENER { get; } = new NoOpStateRestoreListener();
         private readonly IRecordBatchingStateRestoreCallback internalBatchingRestoreCallback;
         private readonly IStateRestoreListener storeRestoreListener;
         private IStateRestoreListener userRestoreListener = NO_OP_STATE_RESTORE_LISTENER;

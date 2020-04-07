@@ -20,12 +20,13 @@ namespace Kafka.Streams.KStream.Internals
             this.queryableName = queryableName;
         }
 
-
-        public IKeyValueProcessor<K, Change<V>> Get()
+        public IKeyValueProcessor<K, IChange<V>> Get()
         {
-            return new KTableMapValuesProcessor<K, V, Change<V>>(null);// this.mapper);
+            return new KTableMapValuesProcessor<K, V, IChange<V>>(null);// this.mapper);
         }
 
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
 
         public IKTableValueGetterSupplier<K, V1> View()
         {

@@ -24,5 +24,8 @@ namespace Kafka.Streams.KStream.Internals
 
         //public static implicit operator KStreamMapValues<K, V1, V>(KStreamMapValues<K, V, V1> toSwap)
         //    => new KStreamMapValues<K, V1, V>(toSwap.swappedMapper);
+
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
     }
 }

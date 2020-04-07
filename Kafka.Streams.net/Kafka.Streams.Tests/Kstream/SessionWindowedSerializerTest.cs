@@ -16,8 +16,8 @@ namespace Kafka.Streams.Tests
         public SessionWindowedSerializerTest()
         {
             var streamsBuilder = TestUtils.GetStreamsBuilder(new StreamsConfig(this.props));
-            this.sessionWindowedKeySerializer = new SessionWindowedSerializer<string>(streamsBuilder.Services);
-            this.sessionWindowedValueSerializer = new SessionWindowedSerializer<byte[]>(streamsBuilder.Services);
+            this.sessionWindowedKeySerializer = new SessionWindowedSerializer<string>(streamsBuilder.Context.Services);
+            this.sessionWindowedValueSerializer = new SessionWindowedSerializer<byte[]>(streamsBuilder.Context.Services);
 
             props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
             props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);

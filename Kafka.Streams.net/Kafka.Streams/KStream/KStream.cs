@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
         public const string ForEachName = "KSTREAM-FOREACH-";
 
         public static IStoreBuilder<IWindowStore<K, V>> JoinWindowStoreBuilder<K, V>(
-            IClock clock,
+            KafkaStreamsContext context,
             string joinName,
             JoinWindows windows,
             ISerde<K> keySerde,
@@ -54,9 +54,9 @@ namespace Kafka.Streams.KStream.Internals
                 throw new ArgumentNullException(nameof(windows));
             }
 
-            return Stores.WindowStoreBuilder(
-                clock,
-                Stores.PersistentWindowStore(
+            return context.StoresFactory.WindowStoreBuilder(
+                context.Clock,
+                context.StoresFactory.PersistentWindowStore(
                     joinName + "-store",
                     windows.Size() + windows.GracePeriod(),
                     windows.Size(),
@@ -68,11 +68,11 @@ namespace Kafka.Streams.KStream.Internals
 
     public class KStream<K, V> : AbstractStream<K, V>, IKStream<K, V>
     {
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         private readonly bool repartitionRequired;
 
         public KStream(
-            IClock clock,
+            KafkaStreamsContext context,
             string name,
             ISerde<K>? keySerde,
             ISerde<V>? valueSerde,
@@ -88,7 +88,7 @@ namespace Kafka.Streams.KStream.Internals
                   streamsGraphNode,
                   builder)
         {
-            this.clock = clock;
+            this.context = context;
             this.repartitionRequired = repartitionRequired;
         }
 
@@ -109,7 +109,7 @@ namespace Kafka.Streams.KStream.Internals
             builder.AddGraphNode<K, V>(this.streamsGraphNode, filterProcessorNode);
 
             return new KStream<K, V>(
-                this.clock,
+                this.context,
                 name,
                 keySerde,
                 valSerde,
@@ -136,7 +136,7 @@ namespace Kafka.Streams.KStream.Internals
             builder.AddGraphNode<K, V>(this.streamsGraphNode, filterNotProcessorNode);
 
             return new KStream<K, V>(
-                this.clock,
+                this.context,
                     name,
                     keySerde,
                     valSerde,
@@ -163,7 +163,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // key serde cannot be preserved
             return new KStream<KR, V>(
-                this.clock,
+                this.context,
                 selectKeyProcessorNode.NodeName,
                 null,
                 valSerde,
@@ -206,7 +206,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // key and value serde cannot be preserved
             return new KStream<KR, VR>(
-                this.clock,
+                this.context,
                     name,
                     null,
                     null,
@@ -243,7 +243,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // value serde cannot be preserved
             return new KStream<K, VR>(
-                this.clock,
+                this.context,
                 name,
                 keySerde,
                 valueSerde: null,
@@ -286,7 +286,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // key and value serde cannot be preserved
             return new KStream<KR, VR>(
-                this.clock,
+                this.context,
                 name,
                 null,
                 null,
@@ -336,7 +336,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // value serde cannot be preserved
             return new KStream<K, VR>(
-                this.clock,
+                this.context,
                 name,
                 keySerde,
                 null,
@@ -407,7 +407,7 @@ namespace Kafka.Streams.KStream.Internals
                 builder.AddGraphNode<K, V>(branchNode, branchChildNode);
 
                 branchChildren[i] = new KStream<K, V>(
-                    this.clock,
+                    this.context,
                     childNames[i],
                     keySerde,
                     valSerde,
@@ -457,7 +457,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // drop the serde as we cannot safely use either one to represent both streams
             return new KStream<K, V>(
-                this.clock,
+                this.context,
                 name,
                 null,
                 null,
@@ -651,7 +651,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // cannot inherit key and value serde
             return new KStream<K1, V1>(
-                this.clock,
+                this.context,
                 name,
                 null,
                 null,
@@ -714,7 +714,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // cannot inherit value serde
             return new KStream<K, VR>(
-                this.clock,
+                this.context,
                 name,
                 keySerde,
                 null,
@@ -781,7 +781,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // cannot inherit value serde
             return new KStream<K, VR>(
-                this.clock,
+                this.context,
                 name,
                 keySerde,
                 null,
@@ -844,7 +844,7 @@ namespace Kafka.Streams.KStream.Internals
             Joined<K, V, VO> joined)
         {
             var kStreamJoin = new KStreamJoin(
-                this.clock,
+                this.context,
                 this.builder,
                 leftOuter: false,
                 rightOuter: false);
@@ -879,7 +879,7 @@ namespace Kafka.Streams.KStream.Internals
                 joiner,
                 windows,
                 joined,
-                new KStreamJoin(this.clock, this.builder, true, true));
+                new KStreamJoin(this.context, this.builder, true, true));
         }
 
         private IKStream<K, VR> DoJoin<VO, VR>(
@@ -951,7 +951,7 @@ namespace Kafka.Streams.KStream.Internals
             builder.AddGraphNode<K, V>(this.streamsGraphNode, optimizableRepartitionNode);
 
             return new KStream<K, V>(
-                this.clock,
+                this.context,
                 repartitionedSourceName,
                 repartitionKeySerde,
                 repartitionValueSerde,
@@ -1024,7 +1024,7 @@ namespace Kafka.Streams.KStream.Internals
                 joiner,
                 windows,
                 joined,
-                new KStreamJoin(this.clock, this.builder, true, false));
+                new KStreamJoin(this.context, this.builder, true, false));
         }
 
         public IKStream<K, VR> Join<VO, VR>(
@@ -1175,7 +1175,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // do not have serde for joined result
             return new KStream<K, VR>(
-                this.clock,
+                this.context,
                 name,
                 keySerde,
                 null,
@@ -1221,7 +1221,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // do not have serde for joined result
             return new KStream<K, VR>(
-                this.clock,
+                this.context,
                 name,
                 joined.KeySerde ?? keySerde,
                 null,
@@ -1255,7 +1255,7 @@ namespace Kafka.Streams.KStream.Internals
             builder.AddGraphNode<K, V>(this.streamsGraphNode, selectKeyMapNode);
 
             return new KGroupedStream<KR, V>(
-                this.clock,
+                this.context,
                 selectKeyMapNode.NodeName,
                 sourceNodes,
                 groupedInternal,
@@ -1282,7 +1282,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             var groupedInternal = new GroupedInternal<K, V>(grouped);
             return new KGroupedStream<K, V>(
-                this.clock,
+                this.context,
                 name,
                 sourceNodes,
                 groupedInternal,

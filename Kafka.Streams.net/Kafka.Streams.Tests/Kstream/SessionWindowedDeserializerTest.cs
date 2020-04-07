@@ -16,8 +16,8 @@ namespace Kafka.Streams.Tests
         public SessionWindowedDeserializerTest()
         {
             var streamsBuilder = TestUtils.GetStreamsBuilder(new StreamsConfig(this.props));
-            this.sessionWindowedKeyDeserializer = new SessionWindowedDeserializer<string>(streamsBuilder.Services);
-            this.sessionWindowedValueDeserializer = new SessionWindowedDeserializer<byte[]>(streamsBuilder.Services);
+            this.sessionWindowedKeyDeserializer = new SessionWindowedDeserializer<string>(streamsBuilder.Context.Services);
+            this.sessionWindowedValueDeserializer = new SessionWindowedDeserializer<byte[]>(streamsBuilder.Context.Services);
 
             props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
             props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);

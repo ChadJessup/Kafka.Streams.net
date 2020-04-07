@@ -38,6 +38,9 @@ namespace Kafka.Streams.KStream.Internals
                 this.sendOldValues);
         }
 
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
+
         // when source ktable requires sending old values, we just
         // need to set the queryable name as the store name to enforce materialization
         public void EnableSendingOldValues()

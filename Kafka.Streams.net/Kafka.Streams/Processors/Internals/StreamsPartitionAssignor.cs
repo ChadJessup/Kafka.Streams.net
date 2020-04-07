@@ -5,10 +5,10 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class StreamsPartitionAssignor : IConsumerPartitionAssignor//, Configurable
     {
-        public static int UNKNOWN = -1;
+        public const int UNKNOWN = -1;
+        protected HashSet<int> supportedVersions { get; } = new HashSet<int>();
         private const int VERSION_THREE = 3;
         private const int EARLIEST_PROBEABLE_VERSION = VERSION_THREE;
-        protected HashSet<int> supportedVersions = new HashSet<int>();
 
         public enum Error
         {

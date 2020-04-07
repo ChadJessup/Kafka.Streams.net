@@ -6,7 +6,7 @@ using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableFilterProcessor<K, V> : AbstractProcessor<K, Change<V>>
+    public class KTableFilterProcessor<K, V> : AbstractProcessor<K, IChange<V>>
     {
         private readonly string? queryableName;
         private readonly bool sendOldValues;
@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public override void Process(K key, Change<V> change)
+        public override void Process(K key, IChange<V> change)
         {
             if (change is null)
             {

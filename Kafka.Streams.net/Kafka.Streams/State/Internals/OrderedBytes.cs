@@ -2,9 +2,8 @@ using Kafka.Streams.KStream.Internals;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class OrderedBytes
+    public static class OrderedBytes
     {
-
         private const int MIN_KEY_LENGTH = 1;
         /**
          * Returns the upper byte range for a key with a given fixed size maximum suffix

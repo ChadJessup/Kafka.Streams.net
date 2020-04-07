@@ -10,7 +10,7 @@ namespace Kafka.Streams.State.Queryable
      * These can be used with {@link KafkaStreams#store(string, QueryableStoreType)}.
      * To access and query the {@link IStateStore}s that are part of a {@link Topology}.
      */
-    public class QueryableStoreTypes
+    public static class QueryableStoreTypes
     {
         /**
          * A {@link QueryableStoreType} that accepts {@link IReadOnlyKeyValueStore}.

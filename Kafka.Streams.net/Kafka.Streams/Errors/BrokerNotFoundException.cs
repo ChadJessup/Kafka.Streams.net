@@ -14,23 +14,13 @@ namespace Kafka.Streams.Errors
      */
     public class BrokerNotFoundException : StreamsException
     {
-        public BrokerNotFoundException(Confluent.Kafka.Error error) : base(error)
+        public BrokerNotFoundException(string message)
+            : base(message)
         {
         }
 
-        public BrokerNotFoundException(ErrorCode code) : base(code)
-        {
-        }
-
-        public BrokerNotFoundException(Confluent.Kafka.Error error, Exception innerException) : base(error, innerException)
-        {
-        }
-
-        public BrokerNotFoundException(string message) : base(message)
-        {
-        }
-
-        public BrokerNotFoundException(string message, Exception innerException) : base(message, innerException)
+        public BrokerNotFoundException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }

@@ -5,7 +5,7 @@ using Kafka.Streams.State.TimeStamped;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableKTableJoinMergeProcessor<K, V> : AbstractProcessor<K, Change<V>>
+    public class KTableKTableJoinMergeProcessor<K, V> : AbstractProcessor<K, IChange<V>>
     {
         private readonly string queryableName;
         private ITimestampedKeyValueStore<K, V>? store;
@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public override void Process(K key, Change<V> value)
+        public override void Process(K key, IChange<V> value)
         {
             if (value is null)
             {

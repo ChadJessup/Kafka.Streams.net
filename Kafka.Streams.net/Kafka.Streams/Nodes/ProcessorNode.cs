@@ -68,7 +68,7 @@ namespace Kafka.Streams.Nodes
         // TODO: 'children' can be removed when #forward() via index is removed
         public List<IProcessorNode> Children { get; }
         protected Dictionary<string, IProcessorNode> ChildByName { get; }
-        public ITimestampExtractor? TimestampExtractor { get; }
+        public ITimestampExtractor? TimestampExtractor { get; protected set; }
 
         private readonly IKeyValueProcessor? processor;
 
@@ -117,7 +117,7 @@ namespace Kafka.Streams.Nodes
 
     public class ProcessorNode<K, V> : ProcessorNode, IProcessorNode<K, V>, IProcessorNode
     {
-        private readonly IKeyValueProcessor<K, V>? processor;
+        private readonly IKeyValueProcessor? processor;
 
         public ProcessorNode(IClock clock, string name)
             : this(clock, name, null, null)
@@ -127,14 +127,19 @@ namespace Kafka.Streams.Nodes
         public ProcessorNode(
             IClock clock,
             string name,
-            IKeyValueProcessor<K, V>? processor,
+            IKeyValueProcessor? processor,
             HashSet<string>? stateStores)
             : base(clock, name, stateStores, processor)
         {
             this.processor = processor;
         }
 
-        public IProcessorNode<K, V> GetChild(string childName)
+        public override IProcessorNode GetChild(string childName)
+        {
+            return ChildByName[childName];
+        }
+
+        IProcessorNode<K, V> IProcessorNode<K, V>.GetChild(string childName)
         {
             return (IProcessorNode<K, V>)ChildByName[childName];
         }
@@ -165,6 +170,6 @@ namespace Kafka.Streams.Nodes
     public interface IProcessorNode<K, V> : IProcessorNode
     {
         void AddChild(IProcessorNode<K, V> child);
-        IProcessorNode<K, V> GetChild(string childName);
+        new IProcessorNode<K, V> GetChild(string childName);
     }
 }

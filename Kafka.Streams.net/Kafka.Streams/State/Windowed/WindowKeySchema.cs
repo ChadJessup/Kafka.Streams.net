@@ -5,7 +5,7 @@ using System;
 
 namespace Kafka.Streams.State.Windowed
 {
-    public class WindowKeySchema
+    public static class WindowKeySchema
     {
         private const int SEQNUM_SIZE = 4;
         private const int TIMESTAMP_SIZE = 8;

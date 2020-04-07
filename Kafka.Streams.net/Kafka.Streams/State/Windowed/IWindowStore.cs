@@ -70,7 +70,7 @@ namespace Kafka.Streams.State.Windowed
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException if the given key is {@code null}
          */
-        IWindowStoreIterator<V> Fetch(
+        new IWindowStoreIterator<V> Fetch(
             K key,
             long timeFrom,
             long timeTo);
@@ -96,7 +96,7 @@ namespace Kafka.Streams.State.Windowed
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException if one of the given keys is {@code null}
          */
-        IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
+        new IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
 
         //public IKeyValueIterator<Windowed<K>, V> fetch(
         //    K from,
@@ -119,9 +119,7 @@ namespace Kafka.Streams.State.Windowed
          * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          */
-        IKeyValueIterator<Windowed<K>, V> FetchAll(
-            long timeFrom,
-            long timeTo);
+        new IKeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo);
 
         void Add(K key, V value);
 

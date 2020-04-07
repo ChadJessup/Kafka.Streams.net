@@ -31,7 +31,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            topologyBuilder.AddProcessor(processorParameters.ProcessorName, processorParameters.ProcessorSupplier, ParentNodeNames());
+            topologyBuilder.AddProcessor<K, V>(
+                processorParameters.ProcessorName,
+                processorParameters.ProcessorSupplier,
+                ParentNodeNames());
         }
     }
 }

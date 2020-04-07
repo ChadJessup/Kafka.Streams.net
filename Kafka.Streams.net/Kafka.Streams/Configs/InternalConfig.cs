@@ -281,7 +281,7 @@
 
     public static class InternalConfig
     {
-        public static string TASK_MANAGER_FOR_PARTITION_ASSIGNOR = "__task.manager.instance__";
-        public static string ASSIGNMENT_ERROR_CODE = "__assignment.error.code__";
+        public const string TASK_MANAGER_FOR_PARTITION_ASSIGNOR = "__task.manager.instance__";
+        public const string ASSIGNMENT_ERROR_CODE = "__assignment.error.code__";
     }
 }

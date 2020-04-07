@@ -5,10 +5,8 @@ using Kafka.Streams.State.Interfaces;
 
 namespace Kafka.Streams.Processors.Internals
 {
-    public class StateRestoreCallbackAdapter
+    public static class StateRestoreCallbackAdapter
     {
-        private StateRestoreCallbackAdapter() { }
-
         public static IRecordBatchingStateRestoreCallback Adapt(IStateRestoreCallback restoreCallback)
         {
             restoreCallback = restoreCallback ?? throw new ArgumentNullException(nameof(restoreCallback));

@@ -60,6 +60,6 @@ namespace Kafka.Streams.KStream
          * @param name The name to be used for the suppression node and changelog topic
          * @return The same configuration with the addition of the given {@code name}.
          */
-        ISuppressed<K> WithName(string name);
+        new ISuppressed<K> WithName(string name);
     }
 }

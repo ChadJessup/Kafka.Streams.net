@@ -13,12 +13,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private ConsumedInternal<K, V> consumedInternal;
         private MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal;
         private ProcessorParameters<K, V> processorParameters;
-        private bool _isGlobalKTable = false;
-        private readonly IClock clock;
+        private bool isGlobalKTable = false;
+        private readonly KafkaStreamsContext context;
 
-        public TableSourceNodeBuilder(IClock clock)
+        public TableSourceNodeBuilder(KafkaStreamsContext context)
         {
-            this.clock = clock;
+            this.context = context;
         }
 
         public TableSourceNodeBuilder<K, V> WithSourceName(string sourceName)
@@ -59,7 +59,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public TableSourceNodeBuilder<K, V> IsGlobalKTable(bool isGlobaKTable)
         {
-            this._isGlobalKTable = isGlobaKTable;
+            this.isGlobalKTable = isGlobaKTable;
 
             return this;
         }
@@ -67,14 +67,14 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public TableSourceNode<K, V> Build()
         {
             return new TableSourceNode<K, V>(
-                this.clock,
+                this.context,
                 nodeName,
                 sourceName,
                 topic,
                 consumedInternal,
                 materializedInternal,
                 processorParameters,
-                _isGlobalKTable);
+                isGlobalKTable);
         }
     }
 }

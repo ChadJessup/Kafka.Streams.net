@@ -81,7 +81,7 @@ namespace Kafka.Streams.Tests
             sp.AddSingleton(mockClientSupplier.Object);
             var streamsBuilder = new StreamsBuilder(sp);
 
-            streamsBuilder.InternalTopologyBuilder.AddSource<string, string>(
+            streamsBuilder.Context.InternalTopologyBuilder.AddSource<string, string>(
                 null,
                 "source1",
                 null,

@@ -11,16 +11,16 @@ namespace Kafka.Streams.KStream.Internals
     {
         private readonly bool leftOuter;
         private readonly bool rightOuter;
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         private readonly InternalStreamsBuilder builder;
 
         public KStreamJoin(
-            IClock clock,
+            KafkaStreamsContext context,
             InternalStreamsBuilder builder,
             bool leftOuter,
             bool rightOuter)
         {
-            this.clock = clock;
+            this.context = context;
             this.builder = builder;
             this.leftOuter = leftOuter;
             this.rightOuter = rightOuter;
@@ -57,10 +57,10 @@ namespace Kafka.Streams.KStream.Internals
             StreamsGraphNode otherStreamsGraphNode = ((AbstractStream<K1, V2>)other).streamsGraphNode;
 
             IStoreBuilder<IWindowStore<K1, V1>> thisWindowStore =
-               KStream.JoinWindowStoreBuilder(this.clock, joinThisName, windows, joined.KeySerde, joined.ValueSerde);
+               KStream.JoinWindowStoreBuilder(this.context, joinThisName, windows, joined.KeySerde, joined.ValueSerde);
 
             IStoreBuilder<IWindowStore<K1, V2>> otherWindowStore =
-               KStream.JoinWindowStoreBuilder(this.clock, joinOtherName, windows, joined.KeySerde, joined.OtherValueSerde);
+               KStream.JoinWindowStoreBuilder(this.context, joinOtherName, windows, joined.KeySerde, joined.OtherValueSerde);
 
             var thisWindowedStream = new KStreamJoinWindow<K1, V1>(thisWindowStore.name);
 
@@ -119,7 +119,7 @@ namespace Kafka.Streams.KStream.Internals
             // do not have serde for joined result;
             // also for key serde we do not inherit from either since we cannot tell if these two serdes are different
             return new KStream<K1, R>(
-                this.clock,
+                this.context,
                 joinMergeName,
                 joined.KeySerde,
                 null,

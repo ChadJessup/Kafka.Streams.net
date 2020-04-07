@@ -1,5 +1,4 @@
 ﻿using Kafka.Streams.Processors;
-using Kafka.Streams.Processors.Internals;
 using System.Collections.Generic;
 using Xunit;
 
@@ -7,7 +6,6 @@ namespace Kafka.Streams.Tests.Mocks
 {
     public class MockProcessorSupplier<K, V> : IProcessorSupplier<K, V>
     {
-
         private readonly long scheduleInterval;
         private readonly PunctuationType punctuationType;
         private readonly List<MockProcessor<K, V>> processors = new List<MockProcessor<K, V>>();
@@ -34,6 +32,8 @@ namespace Kafka.Streams.Tests.Mocks
             processors.Add(processor);
             return processor;
         }
+
+        IKeyValueProcessor IProcessorSupplier.Get() => this.Get();
 
         // get the captured processor assuming that only one processor gets returned from this supplier
         public MockProcessor<K, V> TheCapturedProcessor()

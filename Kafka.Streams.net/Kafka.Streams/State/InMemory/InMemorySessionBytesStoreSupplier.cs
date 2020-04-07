@@ -5,7 +5,7 @@ namespace Kafka.Streams.State.Internals
 {
     public class InMemorySessionBytesStoreSupplier : ISessionBytesStoreSupplier
     {
-        public string Name { get; }
+        public string Name { get; protected set; }
         public TimeSpan RetentionPeriod { get; }
 
         public InMemorySessionBytesStoreSupplier(
@@ -30,6 +30,11 @@ namespace Kafka.Streams.State.Internals
         public long SegmentIntervalMs()
         {
             return 1;
+        }
+
+        public void SetName(string name)
+        {
+            throw new NotImplementedException();
         }
     }
 }

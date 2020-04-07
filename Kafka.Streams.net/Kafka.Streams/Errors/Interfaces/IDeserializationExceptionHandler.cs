@@ -23,12 +23,12 @@ namespace Kafka.Streams.Errors.Interfaces
     }
 
     /**
- * Enumeration that describes the response from the exception handler.
- */
+     * Enumeration that describes the response from the exception handler.
+     */
     public class DeserializationHandlerResponse
     {
         public static DeserializationHandlerResponses Response { get; }
-        public static DeserializationHandlerResponse FAIL { get; set; }
+        public static DeserializationHandlerResponse FAIL { get; }
     }
 
     public enum DeserializationHandlerResponses

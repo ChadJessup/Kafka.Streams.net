@@ -9,9 +9,8 @@ namespace Kafka.Streams.KStream.Internals
     public class KTableKTableInnerJoin<K, S, R, V1, V2> : KTableKTableAbstractJoin<K, S, R, V1, V2>
         where S : IStateStore
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KTableKTableInnerJoin<K, S, R, V1, V2>>();
         private readonly string storeName;
-        private IKeyValueMapper<K, V1, K> keyValueMapper = new KeyValueMapper<K, V1, K>((key, value) => key);
+        private readonly IKeyValueMapper<K, V1, K> keyValueMapper = new KeyValueMapper<K, V1, K>((key, value) => key);
 
         public KTableKTableInnerJoin(
             KTable<K, S, V1> table1,
@@ -23,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
             this.storeName = storeName;
         }
 
-        public override IKeyValueProcessor<K, Change<V1>> Get()
+        public override IKeyValueProcessor<K, IChange<V1>> Get()
         {
             return new KTableKTableJoinProcessor<K, R, V1, V2>(
                 valueGetterSupplier2.Get(),

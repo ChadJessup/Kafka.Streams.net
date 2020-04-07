@@ -55,7 +55,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             topologyBuilder.AddInternalTopic(RepartitionTopic);
 
-            topologyBuilder.AddProcessor(
+            topologyBuilder.AddProcessor<K, V>(
                 ProcessorParameters.ProcessorName,
                 ProcessorParameters.ProcessorSupplier,
                 ParentNodeNames());

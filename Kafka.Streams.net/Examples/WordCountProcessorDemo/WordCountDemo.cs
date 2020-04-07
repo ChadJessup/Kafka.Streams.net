@@ -59,7 +59,11 @@ namespace WordCountProcessorDemo
 
             var latch = new ManualResetEvent(initialState: false);
 
-            StreamsBuilder builder = new StreamsBuilder(services);
+            StreamsBuilder builder = new StreamsBuilder(services)
+                .WithRocksDBPersistentStore(options =>
+                {
+                    options.EnableStatistics();
+                });
 
             builder
                 .Stream<string, string>("TextLinesTopic")

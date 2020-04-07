@@ -3,7 +3,7 @@ using Kafka.Streams.State.Interfaces;
 namespace Kafka.Streams.State.KeyValues
 {
     /**
-     * A store supplier that can be used to create one or more {@link KeyValueStore KeyValueStore&lt;Byte, byte[]&gt;} instances of type &lt;Byte, byte[]&gt;.
+     * A store supplier that can be used to create one or more {@link KeyValueStore KeyValueStore&lt;Byte, byte[]&gt;} instances of type {Byte, byte[]}.
      *
      * For any stores implementing the {@link KeyValueStore KeyValueStore&lt;Byte, byte[]&gt;} interface, null value bytes are considered as "not exist". This means:
      *
@@ -11,6 +11,10 @@ namespace Kafka.Streams.State.KeyValues
      * 2. If the key does not exist, get operations should return null value bytes.
      */
     public interface IKeyValueBytesStoreSupplier : IStoreSupplier<IKeyValueStore<Bytes, byte[]>>
+    {
+    }
+
+    public interface ITimestampedKeyValueBytesStoreSupplier : IKeyValueBytesStoreSupplier, IStoreSupplier<IKeyValueStore<Bytes, byte[]>>
     {
     }
 }

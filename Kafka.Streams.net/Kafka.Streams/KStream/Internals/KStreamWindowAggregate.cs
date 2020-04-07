@@ -39,6 +39,9 @@ namespace Kafka.Streams.KStream.Internals
                 this.aggregator);
         }
 
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
+
         public void EnableSendingOldValues()
         {
             sendOldValues = true;

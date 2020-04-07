@@ -14,10 +14,12 @@ namespace Kafka.Streams.KStream.Internals
             this.mapper = mapper;
         }
 
-
         public IKeyValueProcessor<K, V> Get()
         {
             return new KStreamFlatMapProcessor<K, V>();
         }
+
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
     }
 }

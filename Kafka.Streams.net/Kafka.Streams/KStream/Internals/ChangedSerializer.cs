@@ -1,25 +1,10 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class ChangedSerializer<T> : ISerializer<Change<T>>
+    public class ChangedSerializer<T> : ISerializer<IChange<T>>
     {
         private const int NEWFLAG_SIZE = 1;
 
@@ -39,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
          * @throws StreamsException if both old and new values of data are null, or if
          * both values are not null
          */
-        public byte[] Serialize(Change<T> data, SerializationContext context)
+        public byte[] Serialize(IChange<T> data, SerializationContext context)
         {
             byte[] serializedKey;
 

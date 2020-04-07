@@ -12,13 +12,13 @@ namespace Kafka.Streams.Factories
     public class ProcessorNodeFactory<K, V> : NodeFactory<K, V>, IProcessorNodeFactory
     {
         public HashSet<string> stateStoreNames { get; } = new HashSet<string>();
-        private readonly IProcessorSupplier<K, V> supplier;
+        private readonly IProcessorSupplier supplier;
 
         public ProcessorNodeFactory(
             IClock clock,
             string name,
             string[] predecessors,
-            IProcessorSupplier<K, V> supplier)
+            IProcessorSupplier supplier)
             : base(clock, name, predecessors.Select(p => p).ToArray())
         {
             this.supplier = supplier;

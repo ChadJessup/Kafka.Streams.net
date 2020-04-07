@@ -10,13 +10,18 @@ namespace Kafka.Streams.Processors
      * @param the type of keys
      * @param the type of values
      */
-    public interface IProcessorSupplier<K, V>
+    public interface IProcessorSupplier
+    {
+        IKeyValueProcessor Get();
+    }
+
+    public interface IProcessorSupplier<K, V> : IProcessorSupplier
     {
         /**
          * Return a new {@link IProcessor} instance.
          *
          * @return  a new {@link IProcessor} instance
          */
-        IKeyValueProcessor<K, V> Get();
+        new IKeyValueProcessor<K, V> Get();
     }
 }

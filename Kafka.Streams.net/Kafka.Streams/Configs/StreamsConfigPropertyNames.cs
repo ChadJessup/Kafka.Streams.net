@@ -382,7 +382,7 @@
         /// Note that if this setting is set to be greater than 1 and there are failed sends, there is a risk of
         /// message re-ordering due to retries (i.e., if retries are enabled).
         /// </summary>
-        public static string MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION = "max.in.flight.requests.per.connection";
+        public const string MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION = "max.in.flight.requests.per.connection";
         // private static string WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_DOC = "Added to a windows maintainMs to ensure data is not deleted from the log prematurely. Allows for clock drift. Default is 1 day";
     }
 }

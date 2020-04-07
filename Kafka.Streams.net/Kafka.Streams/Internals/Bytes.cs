@@ -12,8 +12,8 @@ namespace Kafka.Streams
     //TODO: chad - 8/3/2019 - ReadOnlySpan should work here.
     public class Bytes : IComparable<Bytes>
     {
-        public static LexicographicByteArrayComparator BYTES_LEXICO_COMPARATOR = new LexicographicByteArrayComparator();
-        public static byte[] EMPTY = Array.Empty<byte>();
+        public static LexicographicByteArrayComparator BYTES_LEXICO_COMPARATOR { get; } = new LexicographicByteArrayComparator();
+        public static byte[] EMPTY { get; } = Array.Empty<byte>();
 
         private static readonly char[] HEX_CHARS_UPPER = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 

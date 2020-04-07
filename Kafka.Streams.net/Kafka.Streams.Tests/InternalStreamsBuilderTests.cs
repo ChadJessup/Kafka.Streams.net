@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests
     {
         private const string APP_ID = "app-id";
         private readonly StreamsBuilder streamsBuilder = new StreamsBuilder();
-        private InternalStreamsBuilder Builder => streamsBuilder.InternalStreamsBuilder;
+        private InternalStreamsBuilder Builder => streamsBuilder.Context.InternalStreamsBuilder;
 
         private readonly string storePrefix = "prefix-";
         private readonly ConsumedInternal<string, string> consumed = new ConsumedInternal<string, string>();
@@ -38,7 +38,7 @@ namespace Kafka.Streams.Tests
             Assert.Equal("Y-0000000001", Builder.NewProcessorName("Y-"));
             Assert.Equal("Z-0000000002", Builder.NewProcessorName("Z-"));
 
-            InternalStreamsBuilder newBuilder = new StreamsBuilder().InternalStreamsBuilder;
+            InternalStreamsBuilder newBuilder = new StreamsBuilder().Context.InternalStreamsBuilder;
 
             Assert.Equal("X-0000000000", newBuilder.NewProcessorName("X-"));
             Assert.Equal("Y-0000000001", newBuilder.NewProcessorName("Y-"));
@@ -52,7 +52,7 @@ namespace Kafka.Streams.Tests
             Assert.Equal("Y-STATE-STORE-0000000001", Builder.NewStoreName("Y-"));
             Assert.Equal("Z-STATE-STORE-0000000002", Builder.NewStoreName("Z-"));
 
-            InternalStreamsBuilder newBuilder = new StreamsBuilder().InternalStreamsBuilder;
+            InternalStreamsBuilder newBuilder = new StreamsBuilder().Context.InternalStreamsBuilder;
 
             Assert.Equal("X-STATE-STORE-0000000000", newBuilder.NewStoreName("X-"));
             Assert.Equal("Y-STATE-STORE-0000000001", newBuilder.NewStoreName("Y-"));

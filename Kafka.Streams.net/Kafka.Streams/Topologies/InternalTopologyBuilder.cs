@@ -386,7 +386,7 @@ namespace Kafka.Streams.Topologies
 
         public void AddProcessor<K, V>(
             string name,
-            IProcessorSupplier<K, V> supplier,
+            IProcessorSupplier supplier,
             string predecessorNames)
         {
             AddProcessor<K, V>(
@@ -397,7 +397,7 @@ namespace Kafka.Streams.Topologies
 
         public void AddProcessor<K, V>(
             string name,
-            IProcessorSupplier<K, V> supplier,
+            IProcessorSupplier supplier,
             params string[] predecessorNames)
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
@@ -473,7 +473,7 @@ namespace Kafka.Streams.Topologies
                         throw new ArgumentNullException(nameof(processorName));
                     }
 
-                    ConnectProcessorAndStateStore<K, V>(processorName, storeBuilder.name);
+                    ConnectProcessorAndStateStore(processorName, storeBuilder.name);
                 }
             }
 
@@ -483,7 +483,7 @@ namespace Kafka.Streams.Topologies
         public void AddGlobalStore<K, V, T>(
             IStoreBuilder<T> storeBuilder,
             string sourceName,
-            ITimestampExtractor timestampExtractor,
+            ITimestampExtractor? timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
             string topic,
@@ -492,7 +492,7 @@ namespace Kafka.Streams.Topologies
             where T : IStateStore
         {
             storeBuilder = storeBuilder ?? throw new ArgumentNullException(nameof(storeBuilder));
-            ValidateGlobalStoreArguments<K, V>(
+            ValidateGlobalStoreArguments(
                 sourceName,
                 topic,
                 processorName,
@@ -565,10 +565,9 @@ namespace Kafka.Streams.Topologies
                 throw new TopologyException("Must provide at least one state store name.");
             }
 
-            foreach (var stateStoreName in stateStoreNames)
+            foreach (var stateStoreName in stateStoreNames.Where(storeName => storeName != null))
             {
-                //stateStoreName = stateStoreName ?? throw new ArgumentNullException(nameof(stateStoreName));
-                //connectProcessorAndStateStore(processorName, stateStoreName);
+                ConnectProcessorAndStateStore(processorName, stateStoreName);
             }
 
             _nodeGroups = null;
@@ -609,29 +608,34 @@ namespace Kafka.Streams.Topologies
             topic = topic ?? throw new ArgumentNullException(nameof(topic));
             stateUpdateSupplier = stateUpdateSupplier ?? throw new ArgumentNullException(nameof(stateUpdateSupplier));
             processorName = processorName ?? throw new ArgumentNullException(nameof(processorName));
+
             if (nodeFactories.ContainsKey(sourceName))
             {
                 throw new TopologyException("IProcessor " + sourceName + " is already.Added.");
             }
+
             if (nodeFactories.ContainsKey(processorName))
             {
                 throw new TopologyException("IProcessor " + processorName + " is already.Added.");
             }
+
             if (stateFactories.ContainsKey(storeName) || globalStateBuilders.ContainsKey(storeName))
             {
                 throw new TopologyException("IStateStore " + storeName + " is already.Added.");
             }
+
             if (loggingEnabled)
             {
                 throw new TopologyException("IStateStore " + storeName + " for global table must not have logging enabled.");
             }
+
             if (sourceName.Equals(processorName))
             {
                 throw new TopologyException("sourceName and processorName must be different.");
             }
         }
 
-        private void ConnectProcessorAndStateStore<K, V>(
+        private void ConnectProcessorAndStateStore(
             string processorName,
             string stateStoreName)
         {
@@ -640,10 +644,12 @@ namespace Kafka.Streams.Topologies
                 throw new TopologyException("Global IStateStore " + stateStoreName +
                         " can be used by a IProcessor without being specified; it should not be explicitly passed.");
             }
+            
             if (!stateFactories.ContainsKey(stateStoreName))
             {
                 throw new TopologyException("IStateStore " + stateStoreName + " is not.Added yet.");
             }
+            
             if (!nodeFactories.ContainsKey(processorName))
             {
                 throw new TopologyException("IProcessor " + processorName + " is not.Added yet.");
@@ -661,7 +667,7 @@ namespace Kafka.Streams.Topologies
             stateStoreFactory.Users.Add(processorName);
 
             var nodeFactory = nodeFactories[processorName];
-            if (nodeFactory is ProcessorNodeFactory<K, V> processorNodeFactory)
+            if (nodeFactory is IProcessorNodeFactory processorNodeFactory)
             {
                 processorNodeFactory.AddStateStore(stateStoreName);
                 ConnectStateStoreNameToSourceTopicsOrPattern(stateStoreName, processorNodeFactory);
@@ -672,28 +678,28 @@ namespace Kafka.Streams.Topologies
             }
         }
 
-        private HashSet<SourceNodeFactory<K, V>> FindSourcesForProcessorPredecessors<K, V>(IEnumerable<string> predecessors)
+        private HashSet<ISourceNodeFactory> FindSourcesForProcessorPredecessors(IEnumerable<string> predecessors)
         {
-            var sourceNodes = new HashSet<SourceNodeFactory<K, V>>();
+            var sourceNodes = new HashSet<ISourceNodeFactory>();
             foreach (var predecessor in predecessors)
             {
                 var nodeFactory = nodeFactories[predecessor];
-                if (nodeFactory is SourceNodeFactory<K, V>)
+                if (nodeFactory is ISourceNodeFactory sourceNodeFactory)
                 {
-                    sourceNodes.Add((SourceNodeFactory<K, V>)nodeFactory);
+                    sourceNodes.Add(sourceNodeFactory);
                 }
-                else if (nodeFactory is ProcessorNodeFactory<K, V>)
+                else if (nodeFactory is IProcessorNodeFactory)
                 {
-                    sourceNodes.AddRange(FindSourcesForProcessorPredecessors<K, V>(((ProcessorNodeFactory<K, V>)nodeFactory).Predecessors));
+                    sourceNodes.AddRange(FindSourcesForProcessorPredecessors(nodeFactory.Predecessors));
                 }
             }
 
             return sourceNodes;
         }
 
-        private void ConnectStateStoreNameToSourceTopicsOrPattern<K, V>(
+        private void ConnectStateStoreNameToSourceTopicsOrPattern(
             string stateStoreName,
-            ProcessorNodeFactory<K, V> processorNodeFactory)
+            IProcessorNodeFactory processorNodeFactory)
         {
             // we should never update the mapping from state store names to source topics if the store name already exists
             // in the map; this scenario is possible, for example, that a state store underlying a source KTable is
@@ -707,7 +713,7 @@ namespace Kafka.Streams.Topologies
             var sourceTopics = new HashSet<string>();
             var sourcePatterns = new HashSet<Regex>();
             var sourceNodesForPredecessor =
-                FindSourcesForProcessorPredecessors<K, V>(processorNodeFactory.Predecessors);
+                FindSourcesForProcessorPredecessors(processorNodeFactory.Predecessors);
 
             foreach (var sourceNodeFactory in sourceNodesForPredecessor)
             {

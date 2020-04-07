@@ -21,7 +21,7 @@ namespace Kafka.Streams.Processors.Internals
      */
     public class StreamsMetadataState
     {
-        public static HostInfo UNKNOWN_HOST = new HostInfo("unknown", -1);
+        public static HostInfo UNKNOWN_HOST { get; } = new HostInfo("unknown", -1);
         private readonly InternalTopologyBuilder builder;
         private readonly List<StreamsMetadata> allMetadata = new List<StreamsMetadata>();
         private readonly HashSet<string> globalStores;

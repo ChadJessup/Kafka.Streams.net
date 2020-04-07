@@ -37,5 +37,8 @@ namespace Kafka.Streams.KStream.Internals
                 joinBeforeMs: this.joinBeforeMs,
                 joinAfterMs: this.joinAfterMs);
         }
+
+        IKeyValueProcessor IProcessorSupplier.Get()
+            => this.Get();
     }
 }

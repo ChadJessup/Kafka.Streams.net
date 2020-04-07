@@ -3,14 +3,13 @@ using Kafka.Streams.Processors;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableMapProcessor<K, V> : AbstractProcessor<K, Change<V>>
+    public class KTableMapProcessor<K, V> : AbstractProcessor<K, IChange<V>>
     {
 
         /**
          * @throws StreamsException if key is null
          */
-
-        public override void Process(K key, Change<V> change)
+        public override void Process(K key, IChange<V> change)
         {
             // the original key should never be null
             if (key == null)

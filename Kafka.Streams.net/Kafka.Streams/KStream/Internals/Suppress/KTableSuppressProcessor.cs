@@ -6,7 +6,7 @@ using System;
 
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    public class KTableSuppressProcessor<K, V> : IKeyValueProcessor<K, Change<V>>
+    public class KTableSuppressProcessor<K, V> : IKeyValueProcessor<K, IChange<V>>
     {
         private readonly long suppressDurationMillis;
         private readonly ITimeDefinition<K> bufferTimeDefinition;
@@ -44,15 +44,14 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             //buffer.setSerdesIfNull((ISerde<K>)context.keySerde, (ISerde<V>)context.valueSerde);
         }
 
-
-        public void Process(K key, Change<V> value)
+        public void Process(K key, IChange<V> value)
         {
             observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.Timestamp);
             Buffer(key, value);
             EnforceConstraints();
         }
 
-        private void Buffer(K key, Change<V> value)
+        private void Buffer(K key, IChange<V> value)
         {
             var bufferTime = bufferTimeDefinition.Time(internalProcessorContext, key);
 
@@ -96,7 +95,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             return false; // buffer.numRecords() > maxRecords || buffer.bufferSize() > maxBytes;
         }
 
-        private bool ShouldForward(Change<V> value)
+        private bool ShouldForward(IChange<V> value)
         {
             return value.NewValue != null || !safeToDropTombstones;
         }

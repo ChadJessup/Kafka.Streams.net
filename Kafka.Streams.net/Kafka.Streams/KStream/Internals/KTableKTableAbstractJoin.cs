@@ -7,8 +7,8 @@ namespace Kafka.Streams.KStream.Internals
     public abstract class KTableKTableAbstractJoin<K, S, R, V1, V2> : IKTableProcessorSupplier<K, V1, R>
         where S : IStateStore
     {
-        private KTable<K, S, V1> table1;
-        private KTable<K, S, V2> table2;
+        private readonly KTable<K, S, V1> table1;
+        private readonly KTable<K, S, V2> table2;
         protected IKTableValueGetterSupplier<K, V1> valueGetterSupplier1 { get; }
         protected IKTableValueGetterSupplier<K, V2> valueGetterSupplier2 { get; }
         protected IValueJoiner<V1, V2, R> joiner { get; }
@@ -36,6 +36,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         public abstract IKTableValueGetterSupplier<K, R> View();
-        public abstract IKeyValueProcessor<K, Change<V1>> Get();
+        public abstract IKeyValueProcessor<K, IChange<V1>> Get();
+        IKeyValueProcessor IProcessorSupplier.Get() => this.Get();
     }
 }

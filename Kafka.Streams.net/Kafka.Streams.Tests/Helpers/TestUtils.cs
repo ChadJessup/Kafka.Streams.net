@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Kafka.Streams.Tests.Helpers
 {
-    internal static class TestUtils
+    public static class TestUtils
     {
         internal static void WaitForCondition(
             Func<bool> condition,
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Helpers
 
             //clientSupplier.SetClusterForAdminClient(createCluster());
 
-            var thread = streamsBuilder.Services.GetRequiredService<IStreamThread>();
+            var thread = streamsBuilder.Context.GetRequiredService<IStreamThread>();
 
             return thread;
         }
