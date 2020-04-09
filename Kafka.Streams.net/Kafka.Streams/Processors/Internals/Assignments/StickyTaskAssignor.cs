@@ -77,7 +77,7 @@
 
 //            // try and assign any remaining unassigned tasks to clients that previously
 //            // have seen the task.
-//            for (IEnumerator<TaskId> iterator = unassigned.iterator(); iterator.hasNext();)
+//            for (IEnumerator<TaskId> iterator = unassigned.iterator(); iterator.HasNext();)
 //            {
 //                TaskId taskId = iterator.MoveNext();
 //                HashSet<ID> clientIds = previousStandbyTaskAssignment[taskId];

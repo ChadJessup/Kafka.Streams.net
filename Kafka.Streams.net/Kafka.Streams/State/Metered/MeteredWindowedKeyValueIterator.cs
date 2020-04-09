@@ -1,73 +1,64 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream;
+using Kafka.Streams.State.KeyValues;
 
-//using Kafka.Common.Metrics;
-//using Kafka.Common.Utils;
-//using Kafka.Common.Utils.Interfaces;
-//using Kafka.Streams.KStream;
-//using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Streams.State.Interfaces;
+namespace Kafka.Streams.State.Metered
+{
+    public class MeteredWindowedKeyValueIterator<K, V> : IKeyValueIterator<Windowed<K>, V>
+    {
+        private IKeyValueIterator<Windowed<Bytes>, byte[]> iter;
+        private IStateSerdes<K, V> serdes;
+        private long startNs;
+        private KafkaStreamsContext context;
 
-//namespace Kafka.Streams.State.Metered
-//{
-//    public class MeteredWindowedKeyValueIterator<K, V> : IKeyValueIterator<Windowed<K>, V>
-//    {
-//        private IKeyValueIterator<Windowed<Bytes>, byte[]> iter;
-//        private Sensor sensor;
-//        private IStreamsMetrics metrics;
-//        private StateSerdes<K, V> serdes;
-//        private long startNs;
-//        private ITime time;
+        public MeteredWindowedKeyValueIterator(
+            KafkaStreamsContext context,
+            IKeyValueIterator<Windowed<Bytes>, byte[]> iter,
+            IStateSerdes<K, V> serdes)
+        {
+            this.iter = iter ?? throw new ArgumentNullException(nameof(iter));
+            this.serdes = serdes ?? throw new ArgumentNullException(nameof(serdes));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
 
-//        MeteredWindowedKeyValueIterator(IKeyValueIterator<Windowed<Bytes>, byte[]> iter,
-//                                        Sensor sensor,
-//                                        IStreamsMetrics metrics,
-//                                        StateSerdes<K, V> serdes,
-//                                        ITime time)
-//        {
-//            this.iter = iter;
-//            this.sensor = sensor;
-//            this.metrics = metrics;
-//            this.serdes = serdes;
-//            this.startNs = time.nanoseconds();
-//            this.time = time;
-//        }
+            this.startNs = context.Clock.NowAsEpochNanoseconds;
+        }
 
-//        public override bool hasNext()
-//        {
-//            return iter.hasNext();
-//        }
+        private Windowed<K> WindowedKey(Windowed<Bytes> bytesKey)
+        {
+            K key = serdes.KeyFrom(bytesKey.Key.Get());
 
-//        public override KeyValuePair<Windowed<K>, V> next()
-//        {
-//            KeyValuePair<Windowed<Bytes>, byte[]> next = iter.MoveNext();
-//            return KeyValuePair.pair(windowedKey(next.key), serdes.valueFrom(next.value));
-//        }
+            return new Windowed<K>(key, bytesKey.window);
+        }
 
-//        private Windowed<K> windowedKey(Windowed<Bytes> bytesKey)
-//        {
-//            K key = serdes.keyFrom(bytesKey.key()());
-//            return new Windowed<>(key, bytesKey.window());
-//        }
+        public KeyValuePair<Windowed<K>, V> Current
+        {
+            get
+            {
+                KeyValuePair<Windowed<Bytes>, byte[]> next = iter.Current;
+                return KeyValuePair.Create(WindowedKey(next.Key), serdes.ValueFrom(next.Value));
+            }
+        }
 
-//        public override void Remove()
-//        {
-//            iter.Remove();
-//        }
+        object IEnumerator.Current => this.iter.Current;
 
-//        public override void close()
-//        {
-//            try
-//            {
-//                iter.close();
-//            }
-//            finally
-//            {
-//                metrics.recordLatency(sensor, startNs, time.nanoseconds());
-//            }
-//        }
+        public void Close()
+        {
+            try
+            {
+                iter.Close();
+            }
+            finally
+            {
+                //metrics.recordLatency(sensor, startNs, time.nanoseconds());
+            }
+        }
 
-//        public override Windowed<K> peekNextKey()
-//        {
-//            return windowedKey(iter.peekNextKey());
-//        }
-//    }
-//}
+        public Windowed<K> PeekNextKey() => WindowedKey(this.iter.PeekNextKey());
+        public bool MoveNext() => this.iter.MoveNext();
+        public void Reset() => this.iter.Reset();
+        public void Dispose() => this.iter.Dispose();
+    }
+}

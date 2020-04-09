@@ -17,9 +17,9 @@
 //        }
 
 
-//        public long peekNextKey()
+//        public long PeekNextKey()
 //        {
-//            if (!hasNext())
+//            if (!HasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }
@@ -29,7 +29,7 @@
 
 //        public KeyValuePair<long, byte[]> next()
 //        {
-//            if (!hasNext())
+//            if (!HasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }

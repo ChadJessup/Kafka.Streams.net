@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableMapValueGetter<K, V, K1, V1> : IKTableValueGetter<K, KeyValuePair<K1, V1>>
+    public class KTableMapValueGetter<K, V> : IKTableValueGetter<K, V>
     {
         private readonly IKTableValueGetter<K, V> parentGetter;
         private IProcessorContext context;
-        private readonly IKeyValueMapper<K, V, KeyValuePair<K1, V1>> mapper;
+        private readonly IKeyValueMapper<K, V, V> mapper;
 
         public KTableMapValueGetter(IKTableValueGetter<K, V> parentGetter)
         {
@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
             this.parentGetter.Init(context, storeName);
         }
 
-        public ValueAndTimestamp<KeyValuePair<K1, V1>>? Get(K key)
+        public ValueAndTimestamp<V>? Get(K key)
         {
             var valueAndTimestamp = parentGetter.Get(key);
 

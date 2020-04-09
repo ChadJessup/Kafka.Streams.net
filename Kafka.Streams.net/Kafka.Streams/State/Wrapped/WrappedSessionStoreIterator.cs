@@ -16,14 +16,14 @@
 //            bytesIterator.close();
 //        }
 
-//        public override Windowed<Bytes> peekNextKey()
+//        public override Windowed<Bytes> PeekNextKey()
 //        {
-//            return SessionKeySchema.from(bytesIterator.peekNextKey());
+//            return SessionKeySchema.from(bytesIterator.PeekNextKey());
 //        }
 
-//        public override bool hasNext()
+//        public override bool HasNext()
 //        {
-//            return bytesIterator.hasNext();
+//            return bytesIterator.HasNext();
 //        }
 
 //        public override KeyValuePair<Windowed<Bytes>, byte[]> next()

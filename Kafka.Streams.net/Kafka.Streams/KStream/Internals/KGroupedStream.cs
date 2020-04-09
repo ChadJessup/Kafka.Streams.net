@@ -139,9 +139,10 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             var kstreamAggregate = new KStreamAggregate<K, long, V>(
-                    materializedInternal.StoreName,
-                    aggregateBuilder.countInitializer,
-                    aggregateBuilder.countAggregator);
+                this.context,
+                materializedInternal.StoreName,
+                aggregateBuilder.countInitializer,
+                aggregateBuilder.countAggregator);
 
             return DoAggregate(
                 kstreamAggregate,

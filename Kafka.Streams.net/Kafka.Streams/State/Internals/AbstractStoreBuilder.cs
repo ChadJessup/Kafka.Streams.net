@@ -1,4 +1,3 @@
-using Kafka.Common;
 using Kafka.Streams.Interfaces;
 
 using System;
@@ -15,23 +14,20 @@ namespace Kafka.Streams.State.Internals
 
         public ISerde<K> keySerde { get; }
         public ISerde<V> valueSerde { get; }
-        public IClock clock { get; }
+        public KafkaStreamsContext context { get; }
         public bool enableCaching { get; private set; }
         public bool enableLogging { get; private set; } = true;
 
         public AbstractStoreBuilder(
+            KafkaStreamsContext context,
             string name,
             ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            IClock clock)
+            ISerde<V> valueSerde)
         {
-            name = name ?? throw new ArgumentNullException(nameof(name));
-            clock = clock ?? throw new ArgumentNullException(nameof(clock));
-
-            this.name = name;
-            this.keySerde = keySerde;
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.name = name ?? throw new ArgumentNullException(nameof(name));
             this.valueSerde = valueSerde;
-            this.clock = clock;
+            this.keySerde = keySerde;
         }
 
         public IStoreBuilder<T> WithCachingEnabled()

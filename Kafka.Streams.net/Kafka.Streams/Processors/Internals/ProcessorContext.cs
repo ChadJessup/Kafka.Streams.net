@@ -55,7 +55,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws StreamsException if an attempt is made to access this state store from an unknown node
          */
-        public override IStateStore GetStateStore(string name)
+        public override IStateStore GetStateStore(KafkaStreamsContext context, string name)
         {
             if (GetCurrentNode() == null)
             {
@@ -67,23 +67,23 @@ namespace Kafka.Streams.Processors.Internals
             {
                 if (global is ITimestampedKeyValueStore<K, V>)
                 {
-                    return new TimestampedKeyValueStoreReadOnlyDecorator<K, V>((ITimestampedKeyValueStore<K, V>)global);
+                    return new TimestampedKeyValueStoreReadOnlyDecorator<K, V>(context, (ITimestampedKeyValueStore<K, V>)global);
                 }
                 else if (global is IKeyValueStore<K, V>)
                 {
-                    return new KeyValueStoreReadOnlyDecorator<K, V>((IKeyValueStore<K, V>)global);
+                    return new KeyValueStoreReadOnlyDecorator<K, V>(context, (IKeyValueStore<K, V>)global);
                 }
                 else if (global is ITimestampedWindowStore<K, V>)
                 {
-                    return new TimestampedWindowStoreReadOnlyDecorator<K, V>((ITimestampedWindowStore<K, V>)global);
+                    return new TimestampedWindowStoreReadOnlyDecorator<K, V>(context, (ITimestampedWindowStore<K, V>)global);
                 }
                 else if (global is IWindowStore<K, V>)
                 {
-                    return new WindowStoreReadOnlyDecorator<K, V>((IWindowStore<K, V>)global);
+                    return new WindowStoreReadOnlyDecorator<K, V>(context, (IWindowStore<K, V>)global);
                 }
                 else if (global is ISessionStore<K, V>)
                 {
-                    return new SessionStoreReadOnlyDecorator<K, V>((ISessionStore<K, V>)global);
+                    return new SessionStoreReadOnlyDecorator<K, V>(context, (ISessionStore<K, V>)global);
                 }
 
                 return global;
@@ -104,23 +104,23 @@ namespace Kafka.Streams.Processors.Internals
 
             if (store is ITimestampedKeyValueStore<K, V>)
             {
-                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>((ITimestampedKeyValueStore<K, V>)store);
+                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>(context, (ITimestampedKeyValueStore<K, V>)store);
             }
             else if (store is IKeyValueStore<K, V>)
             {
-                return new KeyValueStoreReadWriteDecorator<K, V>((IKeyValueStore<K, V>)store);
+                return new KeyValueStoreReadWriteDecorator<K, V>(context, (IKeyValueStore<K, V>)store);
             }
             else if (store is ITimestampedWindowStore<K, V>)
             {
-                return new TimestampedWindowStoreReadWriteDecorator<K, V>((ITimestampedWindowStore<K, V>)store);
+                return new TimestampedWindowStoreReadWriteDecorator<K, V>(context, (ITimestampedWindowStore<K, V>)store);
             }
             else if (store is IWindowStore<K, V>)
             {
-                return new WindowStoreReadWriteDecorator<K, V>((IWindowStore<K, V>)store);
+                return new WindowStoreReadWriteDecorator<K, V>(context, (IWindowStore<K, V>)store);
             }
             else if (store is ISessionStore<K, V>)
             {
-                return new SessionStoreReadWriteDecorator<K, V>((ISessionStore<K, V>)store);
+                return new SessionStoreReadWriteDecorator<K, V>(context, (ISessionStore<K, V>)store);
             }
 
             return store;

@@ -5,51 +5,53 @@ using Kafka.Streams.State.KeyValues;
 namespace Kafka.Streams.Processors.Internals
 {
     public class KeyValueStoreReadWriteDecorator<K, V>
-        : StateStoreReadWriteDecorator<IKeyValueStore<K, V>>
+        : StateStoreReadWriteDecorator<IKeyValueStore<K, V>, K, V>
         , IKeyValueStore<K, V>
     {
 
-        public KeyValueStoreReadWriteDecorator(IKeyValueStore<K, V> inner)
-            : base(inner)
+        public KeyValueStoreReadWriteDecorator(
+            KafkaStreamsContext context,
+            IKeyValueStore<K, V> inner)
+            : base(context, inner)
         {
         }
 
         public V Get(K key)
         {
-            return wrapped.Get(key);
+            return Wrapped.Get(key);
         }
 
         public IKeyValueIterator<K, V> Range(K from, K to)
         {
-            return wrapped.Range(from, to);
+            return Wrapped.Range(from, to);
         }
 
         public IKeyValueIterator<K, V> All()
         {
-            return wrapped.All();
+            return Wrapped.All();
         }
 
         public long approximateNumEntries
-            => wrapped.approximateNumEntries;
+            => Wrapped.approximateNumEntries;
 
         public void Put(K key, V value)
         {
-            wrapped.Add(key, value);
+            Wrapped.Add(key, value);
         }
 
         public V PutIfAbsent(K key, V value)
         {
-            return wrapped.PutIfAbsent(key, value);
+            return Wrapped.PutIfAbsent(key, value);
         }
 
         public void PutAll(List<KeyValuePair<K, V>> entries)
         {
-            wrapped.PutAll(entries);
+            Wrapped.PutAll(entries);
         }
 
         public V Delete(K key)
         {
-            return wrapped.Delete(key);
+            return Wrapped.Delete(key);
         }
 
         public void Add(K key, V value)

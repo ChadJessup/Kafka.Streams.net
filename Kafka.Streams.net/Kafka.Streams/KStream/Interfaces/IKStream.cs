@@ -537,6 +537,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
         IKStream<K, VR> FlatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper);
+        IKStream<K, VR> FlatMapValues<VR>(Func<V, IEnumerable<VR>> mapper);
 
         //IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
         //    where VR : IEnumerable<VR>;

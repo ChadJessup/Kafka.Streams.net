@@ -621,7 +621,7 @@ namespace Kafka.Streams.Tests.Integration
 //IKeyValueIterator<Windowed<string>, string> bob = sessionStore.Fetch("bob");
 //Assert.Equal(bob.MoveNext(), (KeyValuePair.Create(new Windowed<>("bob", new SessionWindow(t1, t1)), "start")));
 //        Assert.Equal(bob.MoveNext(), (KeyValuePair.Create(new Windowed<>("bob", new SessionWindow(t3, t4)), "pause:resume")));
-//        Assert.False(bob.hasNext());
+//        Assert.False(bob.HasNext());
 //    }
 
 //    [Fact]

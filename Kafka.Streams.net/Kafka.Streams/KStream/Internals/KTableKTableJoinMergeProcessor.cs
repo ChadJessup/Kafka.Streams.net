@@ -7,13 +7,15 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableKTableJoinMergeProcessor<K, V> : AbstractProcessor<K, IChange<V>>
     {
+        private readonly KafkaStreamsContext context;
         private readonly string queryableName;
         private ITimestampedKeyValueStore<K, V>? store;
         private TimestampedTupleForwarder<K, V>? tupleForwarder;
         private readonly bool sendOldValues;
 
-        public KTableKTableJoinMergeProcessor(string queryableName)
+        public KTableKTableJoinMergeProcessor(KafkaStreamsContext context, string queryableName)
         {
+            this.context = context;
             this.queryableName = queryableName;
         }
 
@@ -27,7 +29,7 @@ namespace Kafka.Streams.KStream.Internals
             base.Init(context);
             if (queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.context, queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<K, V>(
                     store,
                     context,

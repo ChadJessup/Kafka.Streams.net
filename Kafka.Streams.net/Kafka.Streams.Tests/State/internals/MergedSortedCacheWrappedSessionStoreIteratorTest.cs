@@ -63,7 +63,7 @@
 //    public void ShouldHaveNextFromStore()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
-//        Assert.True(mergeIterator.hasNext());
+//        Assert.True(mergeIterator.HasNext());
 //    }
 
 //    [Fact]
@@ -77,14 +77,14 @@
 //    public void ShouldPeekNextKeyFromStore()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
-//        Assert.Equal(mergeIterator.peekNextKey(), (new Windowed<>(storeKey, storeWindow)));
+//        Assert.Equal(mergeIterator.PeekNextKey(), (new Windowed<>(storeKey, storeWindow)));
 //    }
 
 //    [Fact]
 //    public void ShouldHaveNextFromCache()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
-//        Assert.True(mergeIterator.hasNext());
+//        Assert.True(mergeIterator.HasNext());
 //    }
 
 //    [Fact]
@@ -98,7 +98,7 @@
 //    public void ShouldPeekNextKeyFromCache()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
-//        Assert.Equal(mergeIterator.peekNextKey(), (new Windowed<>(cacheKey, cacheWindow)));
+//        Assert.Equal(mergeIterator.PeekNextKey(), (new Windowed<>(cacheKey, cacheWindow)));
 //    }
 
 //    [Fact]
@@ -107,7 +107,7 @@
 //        MergedSortedCacheSessionStoreIterator iterator = createIterator(storeKvs, cacheKvs);
 //        Assert.Equal(iterator.MoveNext(), (KeyValuePair.Create(new Windowed<>(storeKey, storeWindow), storeKey.Get())));
 //        Assert.Equal(iterator.MoveNext(), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey.Get())));
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    private MergedSortedCacheSessionStoreIterator CreateIterator(Iterator<KeyValuePair<Windowed<Bytes>, byte[]>> storeKvs,

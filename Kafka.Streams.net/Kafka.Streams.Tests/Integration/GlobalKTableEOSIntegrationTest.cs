@@ -238,7 +238,7 @@
 //                }
 //                Dictionary<long, string> result = new HashMap<>();
 //                Iterator<KeyValuePair<long, string>> it = store.all();
-//                while (it.hasNext())
+//                while (it.HasNext())
 //                {
 //                    KeyValuePair<long, string> kv = it.MoveNext();
 //                    result.put(kv.key, kv.value);
@@ -278,7 +278,7 @@
 //                }
 //                Dictionary<long, string> result = new HashMap<>();
 //                Iterator<KeyValuePair<long, string>> it = store.all();
-//                while (it.hasNext())
+//                while (it.HasNext())
 //                {
 //                    KeyValuePair<long, string> kv = it.MoveNext();
 //                    result.put(kv.key, kv.value);

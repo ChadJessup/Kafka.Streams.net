@@ -203,7 +203,7 @@
 
 //            IKeyValueIterator<string, ValueAndTimestamp<string>> iterator = metered.Range(key, key);
 //            Assert.Equal(iterator.MoveNext().value, (valueAndTimestamp));
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //            iterator.close();
 
 //            KafkaMetric metric = metric("range-rate");
@@ -220,7 +220,7 @@
 
 //            IKeyValueIterator<string, ValueAndTimestamp<string>> iterator = metered.all();
 //            Assert.Equal(iterator.MoveNext().value, (valueAndTimestamp));
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //            iterator.close();
 
 //            KafkaMetric metric = metric(new MetricName("all-rate", "stream-scope-metrics", "", tags));

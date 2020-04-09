@@ -463,7 +463,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        try (IKeyValueIterator<Windowed<byte[]>, ValueAndTimestamp<long>> iterator =
 //                 ((ITimestampedWindowStore) context.getStateMgr().getStore(storeName)).all()) {
 
-//            while (iterator.hasNext()) {
+//            while (iterator.HasNext()) {
 //                KeyValuePair<Windowed<byte[]>, ValueAndTimestamp<long>> next = iterator.MoveNext();
 //                int deserializedKey = Serializers.Int32.deserialize(null, next.key.Key);
 //                result.Add(KeyValuePair.Create(new Windowed<>(deserializedKey, next.key.window()), next.value));

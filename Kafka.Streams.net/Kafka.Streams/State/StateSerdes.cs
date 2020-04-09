@@ -34,9 +34,9 @@ namespace Kafka.Streams.State
     * @param <K> key type of serde
     * @param <V> value type of serde
     */
-    public class StateSerdes<K, V>
+    public class StateSerdes<K, V> : IStateSerdes<K, V>
     {
-        private readonly string topic;
+        public string Topic { get; }
         private readonly ISerde<K> keySerde;
         private readonly ISerde<V> valueSerde;
 
@@ -53,7 +53,7 @@ namespace Kafka.Streams.State
          */
         public StateSerdes(string topic, ISerde<K> keySerde, ISerde<V> valueSerde)
         {
-            this.topic = topic ?? throw new ArgumentNullException(nameof(topic));
+            this.Topic = topic ?? throw new ArgumentNullException(nameof(topic));
             this.keySerde = keySerde ?? throw new ArgumentNullException(nameof(keySerde));
             this.valueSerde = valueSerde ?? throw new ArgumentNullException(nameof(valueSerde));
         }
@@ -100,7 +100,7 @@ namespace Kafka.Streams.State
             => keySerde.Deserializer.Deserialize(
                 rawKey,
                 isNull: rawKey == null,
-                new SerializationContext(MessageComponentType.Key, topic));
+                new SerializationContext(MessageComponentType.Key, Topic));
 
         /**
          * Deserialize the value from raw bytes.
@@ -112,7 +112,7 @@ namespace Kafka.Streams.State
             => valueSerde.Deserializer.Deserialize(
                 RawValue,
                 RawValue == null,
-                new SerializationContext(MessageComponentType.Value, topic));
+                new SerializationContext(MessageComponentType.Value, Topic));
 
         /**
          * Serialize the given key.
@@ -124,7 +124,7 @@ namespace Kafka.Streams.State
         {
             try
             {
-                return keySerde.Serializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
+                return keySerde.Serializer.Serialize(key, new SerializationContext(MessageComponentType.Key, Topic));
             }
             catch (InvalidCastException e)
             {
@@ -149,7 +149,7 @@ namespace Kafka.Streams.State
         {
             try
             {
-                return valueSerde.Serializer.Serialize(value, new SerializationContext(MessageComponentType.Value, topic));
+                return valueSerde.Serializer.Serialize(value, new SerializationContext(MessageComponentType.Value, Topic));
             }
             catch (InvalidCastException e)
             {
@@ -165,7 +165,7 @@ namespace Kafka.Streams.State
                     serializerClass = ValueSerializer().GetType();
                     valueClass = value == null ? "unknown because value is null" : value.GetType().FullName;
                 }
-                
+
                 throw new StreamsException(
                         $"A serializer ({serializerClass.FullName}) is not compatible to the actual value type " +
                         $"(value type: {valueClass}). Change the default Serdes in StreamConfig or " +

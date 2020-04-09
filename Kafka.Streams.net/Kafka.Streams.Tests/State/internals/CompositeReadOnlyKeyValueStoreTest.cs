@@ -106,8 +106,8 @@
 //            keyValueIterator.MoveNext();
 //            try
 //            {
-//                keyValueIterator.peekNextKey();
-//                Assert.True(false, "Should have thrown NoSuchElementException with peekNextKey()");
+//                keyValueIterator.PeekNextKey();
+//                Assert.True(false, "Should have thrown NoSuchElementException with PeekNextKey()");
 //            }
 //            catch (NoSuchElementException e) { }
 //        }

@@ -46,9 +46,9 @@ namespace Kafka.Streams.Processors.Internals
             del.Register(store, stateRestoreCallback);
         }
 
-        public IStateStore GetStateStore(string name)
+        public IStateStore GetStateStore(KafkaStreamsContext context, string name)
         {
-            return del.GetStateStore(name);
+            return del.GetStateStore(context, name);
         }
 
         [Obsolete]

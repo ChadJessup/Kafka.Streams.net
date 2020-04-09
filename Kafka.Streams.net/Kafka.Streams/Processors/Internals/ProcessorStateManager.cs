@@ -102,14 +102,14 @@ namespace Kafka.Streams.Processors.Internals
                 checkpointFile = null;
             }
 
-            this.logger.LogDebug("Created state store manager for task {}", taskId);
+            this.logger.LogDebug($"Created state store manager for task {taskId}");
         }
 
         public static string StoreChangelogTopic(
             string applicationId,
             string storeName)
         {
-            return applicationId + "-" + storeName + STATE_CHANGELOG_TOPIC_SUFFIX;
+            return $"{applicationId}-{storeName}{STATE_CHANGELOG_TOPIC_SUFFIX}";
         }
 
         public void Register(
@@ -131,7 +131,7 @@ namespace Kafka.Streams.Processors.Internals
 
             if (registeredStores.ContainsKey(storeName) && registeredStores[storeName] != null)
             {
-                throw new ArgumentException(string.Format("%sStore %s has already been registered.", logPrefix, storeName));
+                throw new ArgumentException($"{logPrefix}Store {storeName} has already been registered.");
             }
 
             // check that the underlying change log topic exist or not
@@ -146,8 +146,8 @@ namespace Kafka.Streams.Processors.Internals
                 {
                     logger.LogTrace("Preparing standby replica of persistent state store {} with changelog topic {}", storeName, topic);
 
-                    restoreCallbacks.Add(topic, stateRestoreCallback);
-                    recordConverters.Add(topic, recordConverter);
+                    restoreCallbacks?.Add(topic, stateRestoreCallback);
+                    recordConverters?.Add(topic, recordConverter);
                 }
                 else
                 {

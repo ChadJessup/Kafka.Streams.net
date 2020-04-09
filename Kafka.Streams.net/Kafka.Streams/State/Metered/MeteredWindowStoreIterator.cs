@@ -30,9 +30,9 @@
 //            this.time = time;
 //        }
 
-//        public override bool hasNext()
+//        public override bool HasNext()
 //        {
-//            return iter.hasNext();
+//            return iter.HasNext();
 //        }
 
 //        public override KeyValuePair<long, V> next()
@@ -58,9 +58,9 @@
 //            }
 //        }
 
-//        public override long peekNextKey()
+//        public override long PeekNextKey()
 //        {
-//            return iter.peekNextKey();
+//            return iter.PeekNextKey();
 //        }
 //    }
 //}

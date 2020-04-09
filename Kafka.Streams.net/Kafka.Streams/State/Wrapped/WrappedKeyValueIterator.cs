@@ -18,16 +18,16 @@
 //        }
 
 
-//        public Windowed<Bytes> peekNextKey()
+//        public Windowed<Bytes> PeekNextKey()
 //        {
-//            byte[] nextKey = bytesIterator.peekNextKey().Get();
+//            byte[] nextKey = bytesIterator.PeekNextKey().Get();
 //            return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
 //        }
 
 
-//        public bool hasNext()
+//        public bool HasNext()
 //        {
-//            return bytesIterator.hasNext();
+//            return bytesIterator.HasNext();
 //        }
 
 

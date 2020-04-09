@@ -172,7 +172,7 @@ namespace Kafka.Streams.KStream.Internals
 
             this.AddGraphNode<K, V>(root, tableSourceNode);
 
-            return new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(storeName), materialized.QueryableStoreName());
+            return new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(context, storeName), materialized.QueryableStoreName());
         }
 
         public string NewProcessorName(string prefix)

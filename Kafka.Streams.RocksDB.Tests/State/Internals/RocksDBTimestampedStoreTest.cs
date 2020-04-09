@@ -187,7 +187,7 @@
 //                assertArrayEquals("key8".getBytes(), keyValue.key.Get());
 //                assertArrayEquals(new byte[] { 't', 'i', 'm', 'e', 's', 't', 'a', 'm', 'p', '+', '8', '8', '8', '8', '8', '8', '8', '8' }, keyValue.value);
 //            }
-//            Assert.False(itAll.hasNext());
+//            Assert.False(itAll.HasNext());
 //            itAll.close();
 
 //            IKeyValueIterator<Bytes, byte[]> it =
@@ -209,7 +209,7 @@
 //                // unknown timestamp == -1 plus value == 55555
 //                assertArrayEquals(new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, '5', '5', '5', '5', '5' }, keyValue.value);
 //            }
-//            Assert.False(it.hasNext());
+//            Assert.False(it.HasNext());
 //            it.close();
 //        }
 

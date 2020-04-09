@@ -13,15 +13,15 @@ namespace Kafka.Streams.State.TimeStamped
         private readonly IWindowBytesStoreSupplier storeSupplier;
 
         public TimestampedWindowStoreBuilder(
+            KafkaStreamsContext context,
             IWindowBytesStoreSupplier storeSupplier,
             ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            IClock clock)
+            ISerde<V> valueSerde)
             : base(
+                  context,
                   storeSupplier.Name,
                   keySerde,
-                  valueSerde == null ? null : new ValueAndTimestampSerde<V>(valueSerde),
-                  clock)
+                  valueSerde == null ? null : new ValueAndTimestampSerde<V>(valueSerde))
         {
             storeSupplier = storeSupplier ?? throw new ArgumentNullException(nameof(storeSupplier));
 

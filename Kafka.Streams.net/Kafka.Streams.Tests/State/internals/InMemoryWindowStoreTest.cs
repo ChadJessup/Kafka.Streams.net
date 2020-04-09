@@ -47,7 +47,7 @@
 //        public void ShouldRestore()
 //        {
 //            // should be empty initially
-//            Assert.False(windowStore.all().hasNext());
+//            Assert.False(windowStore.all().HasNext());
 
 //            StateSerdes<int, string> serdes = new StateSerdes<int, string>("", Serdes.Int(),
 //                Serdes.String());
@@ -68,7 +68,7 @@
 //            Assert.Equal(windowedPair(1, "one", 0L), iterator.MoveNext());
 //            Assert.Equal(windowedPair(2, "two", WINDOW_SIZE), iterator.MoveNext());
 //            Assert.Equal(windowedPair(3, "three", 2 * WINDOW_SIZE), iterator.MoveNext());
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //        }
 
 //        [Fact]
@@ -92,14 +92,14 @@
 //            Assert.Equal(new KeyValuePair<long, string>(15L, "two"), iterator2.MoveNext());
 //            Assert.Equal(new KeyValuePair<long, string>(10L, "two"), iterator1.MoveNext());
 
-//            Assert.False(iterator1.hasNext());
-//            Assert.False(iterator2.hasNext());
+//            Assert.False(iterator1.HasNext());
+//            Assert.False(iterator2.HasNext());
 
 //            iterator1.close();
 //            iterator2.close();
 
 //            // Make sure expired records are removed now that open iterators are closed
-//            Assert.False(windowStore.Fetch(1, 0L, 50L).hasNext());
+//            Assert.False(windowStore.Fetch(1, 0L, 50L).HasNext());
 //        }
 
 //        [Fact]
@@ -141,7 +141,7 @@
 //            Assert.Equal(windowedPair(1, "three", RETENTION_PERIOD / 2), iterator.MoveNext());
 //            Assert.Equal(windowedPair(1, "four", 3 * (RETENTION_PERIOD / 4)), iterator.MoveNext());
 //            Assert.Equal(windowedPair(1, "five", RETENTION_PERIOD), iterator.MoveNext());
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 
 //            iterator = windowStore.fetchAll(0L, currentTime);
 
@@ -150,7 +150,7 @@
 //            Assert.Equal(windowedPair(1, "four", 3 * (RETENTION_PERIOD / 4)), iterator.MoveNext());
 //            Assert.Equal(windowedPair(1, "five", RETENTION_PERIOD), iterator.MoveNext());
 //            Assert.Equal(windowedPair(1, "six", 5 * (RETENTION_PERIOD / 4)), iterator.MoveNext());
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //        }
 
 //    }

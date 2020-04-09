@@ -270,6 +270,7 @@ namespace Kafka.Streams.RocksDbState
             }
 
             Put(key, null);
+
             return oldValue;
         }
 
@@ -460,6 +461,16 @@ namespace Kafka.Streams.RocksDbState
         }
 
         public void Add(Bytes key, byte[] value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddToBatch(KeyValuePair<byte[], byte[]> record)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write()
         {
             throw new NotImplementedException();
         }

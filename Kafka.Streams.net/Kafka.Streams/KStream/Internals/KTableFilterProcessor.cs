@@ -8,6 +8,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableFilterProcessor<K, V> : AbstractProcessor<K, IChange<V>>
     {
+        private readonly KafkaStreamsContext context;
         private readonly string? queryableName;
         private readonly bool sendOldValues;
         private readonly bool filterNot;
@@ -16,11 +17,13 @@ namespace Kafka.Streams.KStream.Internals
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
         public KTableFilterProcessor(
+            KafkaStreamsContext context,
             string? queryableName, 
             bool sendOldValues,
             bool filterNot,
             Func<K, V, bool> predicate)
         {
+            this.context = context;
             this.queryableName = queryableName;
             this.sendOldValues = sendOldValues;
             this.filterNot = filterNot;
@@ -37,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
             base.Init(context);
             if (this.queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.context, queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<K, V>(
                     store,
                     context,

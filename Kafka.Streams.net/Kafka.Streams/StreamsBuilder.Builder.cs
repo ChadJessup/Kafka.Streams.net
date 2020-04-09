@@ -144,7 +144,7 @@ namespace Kafka.Streams
             /// <param name="serviceCollection"></param>
             private void AddNullModels(IServiceCollection serviceCollection)
             {
-                serviceCollection.AddSingleton(new NullTimestampedKeyValueBytesStoreSupplier());
+                serviceCollection.AddSingleton(new NullStoreSupplier());
             }
 
             protected virtual IServiceCollection AddFactories(IServiceCollection serviceCollection)

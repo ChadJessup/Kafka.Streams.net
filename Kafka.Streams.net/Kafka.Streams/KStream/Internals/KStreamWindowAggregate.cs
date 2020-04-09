@@ -11,6 +11,7 @@ namespace Kafka.Streams.KStream.Internals
         private readonly ILogger log = new LoggerFactory().CreateLogger<KStreamWindowAggregate<K, V, Agg, W>>();
 
         private readonly string storeName;
+        private readonly KafkaStreamsContext context;
         private readonly Windows<W> windows;
         private readonly IInitializer<Agg> initializer;
         private readonly IAggregator<K, V, Agg> aggregator;
@@ -18,11 +19,13 @@ namespace Kafka.Streams.KStream.Internals
         private bool sendOldValues = false;
 
         public KStreamWindowAggregate(
+            KafkaStreamsContext context,
             Windows<W> windows,
             string storeName,
             IInitializer<Agg> initializer,
             IAggregator<K, V, Agg> aggregator)
         {
+            this.context = context;
             this.windows = windows;
             this.storeName = storeName;
             this.initializer = initializer;
@@ -32,6 +35,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKeyValueProcessor<K, V> Get()
         {
             return new KStreamWindowAggregateProcessor<K, V, Agg, W>(
+                this.context,
                 this.windows,
                 this.storeName,
                 this.sendOldValues,
@@ -64,11 +68,6 @@ namespace Kafka.Streams.KStream.Internals
             //                return new string[] {storeName};
             //            }
             //        };
-        }
-
-        public IProcessorSupplier<Windowed<K>, Agg> GetSwappedProcessorSupplier()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

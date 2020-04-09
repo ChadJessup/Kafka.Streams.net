@@ -17,9 +17,9 @@
 //        }
 
 
-//        public bool hasNext()
+//        public bool HasNext()
 //        {
-//            return iter.hasNext();
+//            return iter.HasNext();
 //        }
 
 
@@ -51,9 +51,9 @@
 //        }
 
 
-//        public K peekNextKey()
+//        public K PeekNextKey()
 //        {
-//            return serdes.keyFrom(iter.peekNextKey()());
+//            return serdes.keyFrom(iter.PeekNextKey()());
 //        }
 //    }
 //}

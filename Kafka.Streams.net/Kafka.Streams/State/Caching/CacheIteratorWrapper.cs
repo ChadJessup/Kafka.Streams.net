@@ -1,165 +1,198 @@
-﻿//using Kafka.Common.Utils;
-//using Kafka.Streams.KStream;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.State.Sessions;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class CacheIteratorWrapper : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
-//    {
-//        private long segmentInterval;
+namespace Kafka.Streams.State.Internals
+{
+    public class CacheIteratorWrapper : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
+    {
+        private long segmentInterval;
 
-//        private Bytes keyFrom;
-//        private Bytes keyTo;
-//        private long latestSessionStartTime;
-//        private long lastSegmentId;
+        private Bytes keyFrom;
+        private Bytes keyTo;
+        private long latestSessionStartTime;
+        private long lastSegmentId;
 
-//        private long currentSegmentId;
-//        private Bytes cacheKeyFrom;
-//        private Bytes cacheKeyTo;
+        private long currentSegmentId;
+        private Bytes cacheKeyFrom;
+        private Bytes cacheKeyTo;
 
-//        private MemoryLRUCacheBytesIterator current;
+        private MemoryLRUCacheBytesIterator current;
 
-//        public CacheIteratorWrapper(
-//            Bytes key,
-//            long earliestSessionEndTime,
-//            long latestSessionStartTime)
-//            : this(key, key, earliestSessionEndTime, latestSessionStartTime)
-//        {
-//        }
+        public KeyValuePair<Bytes, LRUCacheEntry> Current { get; }
+        object IEnumerator.Current { get; }
 
-//        public CacheIteratorWrapper(Bytes keyFrom,
-//                                     Bytes keyTo,
-//                                     long earliestSessionEndTime,
-//                                     long latestSessionStartTime)
-//        {
-//            this.keyFrom = keyFrom;
-//            this.keyTo = keyTo;
-//            this.latestSessionStartTime = latestSessionStartTime;
-//            this.lastSegmentId = cacheFunction.segmentId(maxObservedTimestamp);
-//            this.segmentInterval = cacheFunction.getSegmentInterval();
+        public CacheIteratorWrapper(
+            Bytes key,
+            long earliestSessionEndTime,
+            long latestSessionStartTime)
+            : this(key, key, earliestSessionEndTime, latestSessionStartTime)
+        {
+        }
 
-//            this.currentSegmentId = cacheFunction.segmentId(earliestSessionEndTime);
+        public CacheIteratorWrapper(
+            Bytes keyFrom,
+            Bytes keyTo,
+            long earliestSessionEndTime,
+            long latestSessionStartTime)
+        {
+            this.keyFrom = keyFrom;
+            this.keyTo = keyTo;
+            this.latestSessionStartTime = latestSessionStartTime;
+            // this.lastSegmentId = cacheFunction.segmentId(maxObservedTimestamp);
+            // this.segmentInterval = cacheFunction.getSegmentInterval();
 
-//            setCacheKeyRange(earliestSessionEndTime, currentSegmentLastTime());
+            // this.currentSegmentId = cacheFunction.segmentId(earliestSessionEndTime);
 
-//            this.current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
-//        }
+            SetCacheKeyRange(earliestSessionEndTime, CurrentSegmentLastTime());
 
+            // this.current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
+        }
 
-//        public bool hasNext()
-//        {
-//            if (current == null)
-//            {
-//                return false;
-//            }
+        public bool HasNext()
+        {
+            if (current == null)
+            {
+                return false;
+            }
 
-//            if (current.hasNext())
-//            {
-//                return true;
-//            }
+            if (current.HasNext())
+            {
+                return true;
+            }
 
-//            while (!current.hasNext())
-//            {
-//                getNextSegmentIterator();
-//                if (current == null)
-//                {
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
+            while (!current.HasNext())
+            {
+                GetNextSegmentIterator();
+                if (current == null)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
+        public Bytes PeekNextKey()
+        {
+            if (!HasNext())
+            {
+                throw new KeyNotFoundException();
+            }
 
-//        public Bytes peekNextKey()
-//        {
-//            if (!hasNext())
-//            {
-//                throw new NoSuchElementException();
-//            }
-//            return current.peekNextKey();
-//        }
-
-
-//        public KeyValuePair<Bytes, LRUCacheEntry> peekNext()
-//        {
-//            if (!hasNext())
-//            {
-//                throw new NoSuchElementException();
-//            }
-//            return current.peekNext();
-//        }
+            return current.PeekNextKey();
+        }
 
 
-//        public KeyValuePair<Bytes, LRUCacheEntry> next()
-//        {
-//            if (!hasNext())
-//            {
-//                throw new NoSuchElementException();
-//            }
-//            return current.MoveNext();
-//        }
+        public KeyValuePair<Bytes, LRUCacheEntry> PeekNext()
+        {
+            if (!HasNext())
+            {
+                throw new KeyNotFoundException();
+            }
+
+            return current.Current;
+        }
 
 
-//        public void close()
-//        {
-//            current.close();
-//        }
+        public KeyValuePair<Bytes, LRUCacheEntry> Next()
+        {
+            if (!HasNext())
+            {
+                throw new KeyNotFoundException();
+            }
 
-//        private long currentSegmentBeginTime()
-//        {
-//            return currentSegmentId * segmentInterval;
-//        }
+            return current.Current;
+        }
 
-//        private long currentSegmentLastTime()
-//        {
-//            return currentSegmentBeginTime() + segmentInterval - 1;
-//        }
 
-//        private void getNextSegmentIterator()
-//        {
-//            ++currentSegmentId;
-//            lastSegmentId = cacheFunction.segmentId(maxObservedTimestamp);
+        public void Close()
+        {
+            current.Close();
+        }
 
-//            if (currentSegmentId > lastSegmentId)
-//            {
-//                current = null;
-//                return;
-//            }
+        private long CurrentSegmentBeginTime()
+        {
+            return currentSegmentId * segmentInterval;
+        }
 
-//            setCacheKeyRange(currentSegmentBeginTime(), currentSegmentLastTime());
+        private long CurrentSegmentLastTime()
+        {
+            return CurrentSegmentBeginTime() + segmentInterval - 1;
+        }
 
-//            current.close();
-//            current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
-//        }
+        private void GetNextSegmentIterator()
+        {
+            ++currentSegmentId;
+            //lastSegmentId = cacheFunction.segmentId(maxObservedTimestamp);
 
-//        private void setCacheKeyRange(long lowerRangeEndTime, long upperRangeEndTime)
-//        {
-//            if (cacheFunction.segmentId(lowerRangeEndTime) != cacheFunction.segmentId(upperRangeEndTime))
-//            {
-//                throw new InvalidOperationException("Error iterating over segments: segment interval has changed");
-//            }
+            if (currentSegmentId > lastSegmentId)
+            {
+                current = null;
+                return;
+            }
 
-//            if (keyFrom == keyTo)
-//            {
-//                cacheKeyFrom = cacheFunction.cacheKey(segmentLowerRangeFixedSize(keyFrom, lowerRangeEndTime));
-//                cacheKeyTo = cacheFunction.cacheKey(segmentUpperRangeFixedSize(keyTo, upperRangeEndTime));
-//            }
-//            else
-//            {
-//                cacheKeyFrom = cacheFunction.cacheKey(keySchema.lowerRange(keyFrom, lowerRangeEndTime), currentSegmentId);
-//                cacheKeyTo = cacheFunction.cacheKey(keySchema.upperRange(keyTo, latestSessionStartTime), currentSegmentId);
-//            }
-//        }
+            SetCacheKeyRange(CurrentSegmentBeginTime(), CurrentSegmentLastTime());
 
-//        private Bytes segmentLowerRangeFixedSize(Bytes key, long segmentBeginTime)
-//        {
-//            Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(0, Math.Max(0, segmentBeginTime)));
-//            return SessionKeySchema.toBinary(sessionKey);
-//        }
+            current.Close();
+            // current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
+        }
 
-//        private Bytes segmentUpperRangeFixedSize(Bytes key, long segmentEndTime)
-//        {
-//            Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(Math.Min(latestSessionStartTime, segmentEndTime), segmentEndTime));
-//            return SessionKeySchema.toBinary(sessionKey);
-//        }
-//    }
-//}
+        private void SetCacheKeyRange(long lowerRangeEndTime, long upperRangeEndTime)
+        {
+            // if (cacheFunction.segmentId(lowerRangeEndTime) != cacheFunction.segmentId(upperRangeEndTime))
+            // {
+            //     throw new InvalidOperationException("Error iterating over segments: segment interval has changed");
+            // }
+
+            if (keyFrom == keyTo)
+            {
+                // cacheKeyFrom = cacheFunction.cacheKey(SegmentLowerRangeFixedSize(keyFrom, lowerRangeEndTime));
+                // cacheKeyTo = cacheFunction.cacheKey(SegmentUpperRangeFixedSize(keyTo, upperRangeEndTime));
+            }
+            else
+            {
+                // cacheKeyFrom = cacheFunction.cacheKey(keySchema.lowerRange(keyFrom, lowerRangeEndTime), currentSegmentId);
+                // cacheKeyTo = cacheFunction.cacheKey(keySchema.upperRange(keyTo, latestSessionStartTime), currentSegmentId);
+            }
+        }
+
+        private Bytes SegmentLowerRangeFixedSize(Bytes key, long segmentBeginTime)
+        {
+            Windowed<Bytes> sessionKey = new Windowed<Bytes>(
+                key,
+                new SessionWindow(0, Math.Max(0, segmentBeginTime)));
+
+            return SessionKeySchema.ToBinary(sessionKey);
+        }
+
+        private Bytes SegmentUpperRangeFixedSize(Bytes key, long segmentEndTime)
+        {
+            Windowed<Bytes> sessionKey = new Windowed<Bytes>(key, new SessionWindow(Math.Min(latestSessionStartTime, segmentEndTime), segmentEndTime));
+            return SessionKeySchema.ToBinary(sessionKey);
+        }
+
+        KeyValuePair<Bytes, LRUCacheEntry>? IPeekingKeyValueIterator<Bytes, LRUCacheEntry>.PeekNext()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool MoveNext()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

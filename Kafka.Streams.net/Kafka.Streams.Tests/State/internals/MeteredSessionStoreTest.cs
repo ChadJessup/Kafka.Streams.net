@@ -140,7 +140,7 @@
 
 //            IKeyValueIterator<Windowed<string>, string> iterator = metered.findSessions(key, 0, 0);
 //            Assert.Equal(iterator.MoveNext().value, (key));
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //            iterator.close();
 
 //            KafkaMetric metric = metric("fetch-rate");
@@ -158,7 +158,7 @@
 
 //            IKeyValueIterator<Windowed<string>, string> iterator = metered.findSessions(key, key, 0, 0);
 //            Assert.Equal(iterator.MoveNext().value, (key));
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //            iterator.close();
 
 //            KafkaMetric metric = metric("fetch-rate");
@@ -191,7 +191,7 @@
 
 //            IKeyValueIterator<Windowed<string>, string> iterator = metered.Fetch(key);
 //            Assert.Equal(iterator.MoveNext().value, (key));
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //            iterator.close();
 
 //            KafkaMetric metric = metric("fetch-rate");
@@ -209,7 +209,7 @@
 
 //            IKeyValueIterator<Windowed<string>, string> iterator = metered.Fetch(key, key);
 //            Assert.Equal(iterator.MoveNext().value, (key));
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //            iterator.close();
 
 //            KafkaMetric metric = metric("fetch-rate");

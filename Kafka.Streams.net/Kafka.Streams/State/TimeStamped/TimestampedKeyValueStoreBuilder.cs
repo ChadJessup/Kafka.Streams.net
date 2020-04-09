@@ -2,7 +2,7 @@ using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValues;
-
+using Kafka.Streams.State.Metered;
 using System;
 
 namespace Kafka.Streams.State.TimeStamped
@@ -13,15 +13,15 @@ namespace Kafka.Streams.State.TimeStamped
         private readonly IKeyValueBytesStoreSupplier storeSupplier;
 
         public TimestampedKeyValueStoreBuilder(
+            KafkaStreamsContext context,
             IKeyValueBytesStoreSupplier storeSupplier,
             ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            IClock clock)
+            ISerde<V> valueSerde)
             : base(
+                context,
                 storeSupplier.Name,
                 keySerde,
-                valueSerde == null ? null : new ValueAndTimestampSerde<V>(valueSerde),
-                clock)
+                valueSerde == null ? null : new ValueAndTimestampSerde<V>(valueSerde))
         {
             storeSupplier = storeSupplier ?? throw new ArgumentNullException(nameof(storeSupplier));
 
@@ -36,21 +36,19 @@ namespace Kafka.Streams.State.TimeStamped
             {
                 if (store.Persistent())
                 {
-                    store = null; // new KeyValueToTimestampedKeyValueByteStoreAdapter(store);
+                    store = new KeyValueToTimestampedKeyValueByteStoreAdapter(store);
                 }
                 else
                 {
-                    store = null; // new InMemoryTimestampedKeyValueStoreMarker(store);
+                    store = new InMemoryTimestampedKeyValueStoreMarker(store);
                 }
             }
 
-            return null;
-            //new MeteredTimestampedKeyValueStore<>(
-            //    maybeWrapCaching(maybeWrapLogging(store)),
-            //    storeSupplier.metricsScope(),
-            //    time,
-            //    keySerde,
-            //    valueSerde);
+            return new MeteredTimestampedKeyValueStore<K, V>(
+                this.context,
+                store,
+                keySerde,
+                valueSerde);
         }
     }
 }

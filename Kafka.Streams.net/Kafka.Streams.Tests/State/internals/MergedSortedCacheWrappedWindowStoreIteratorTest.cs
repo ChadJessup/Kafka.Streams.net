@@ -75,7 +75,7 @@
 //            cacheIterator, storeIterator
 //        );
 //        int index = 0;
-//        while (iterator.hasNext()) {
+//        while (iterator.HasNext()) {
 //            KeyValuePair<long, byte[]> next = iterator.MoveNext();
 //            KeyValuePair<long, byte[]> expected = expectedKvPairs.Get(index++);
 //            assertArrayEquals(expected.value, next.value);
@@ -97,9 +97,9 @@
 //        MergedSortedCacheWindowStoreIterator iterator = new MergedSortedCacheWindowStoreIterator(
 //            cacheIterator, storeIterator
 //        );
-//        Assert.Equal(iterator.peekNextKey(), (0L));
+//        Assert.Equal(iterator.PeekNextKey(), (0L));
 //        iterator.MoveNext();
-//        Assert.Equal(iterator.peekNextKey(), (10L));
+//        Assert.Equal(iterator.PeekNextKey(), (10L));
 //        iterator.close();
 //    }
 
@@ -112,9 +112,9 @@
 //        IKeyValueIterator<long, byte[]> storeIterator = new DelegatingPeekingKeyValueIterator<>("store", new KeyValueIteratorStub<>(windowStoreKvPairs.iterator()));
 //        ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.Range(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(fromBytes), SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(toBytes));
 //        MergedSortedCacheWindowStoreIterator iterator = new MergedSortedCacheWindowStoreIterator(cacheIterator, storeIterator);
-//        Assert.Equal(iterator.peekNextKey(), (0L));
+//        Assert.Equal(iterator.PeekNextKey(), (0L));
 //        iterator.MoveNext();
-//        Assert.Equal(iterator.peekNextKey(), (10L));
+//        Assert.Equal(iterator.PeekNextKey(), (10L));
 //        iterator.close();
 //    }
 //}

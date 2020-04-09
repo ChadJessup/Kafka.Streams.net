@@ -15,15 +15,15 @@
 //        }
 
 
-//        public long peekNextKey()
+//        public long PeekNextKey()
 //        {
-//            return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey().Get());
+//            return WindowKeySchema.extractStoreTimestamp(bytesIterator.PeekNextKey().Get());
 //        }
 
 
-//        public bool hasNext()
+//        public bool HasNext()
 //        {
-//            return bytesIterator.hasNext();
+//            return bytesIterator.HasNext();
 //        }
 
 

@@ -13,6 +13,7 @@ namespace Kafka.Streams.KStream.Internals
         where W : Window
     {
         private readonly string storeName;
+        private readonly KafkaStreamsContext context;
         private readonly bool sendOldValues;
         private readonly IInitializer<Agg> initializer;
         private readonly IAggregator<K, V, Agg> aggregator;
@@ -23,12 +24,14 @@ namespace Kafka.Streams.KStream.Internals
         private long observedStreamTime = Timestamp.Default.UnixTimestampMs;
 
         public KStreamWindowAggregateProcessor(
+            KafkaStreamsContext context,
             Windows<W> windows,
             string storeName,
             bool sendOldValues,
             IInitializer<Agg> initializer,
             IAggregator<K, V, Agg> aggregator)
         {
+            this.context = context;
             this.sendOldValues = sendOldValues;
             this.initializer = initializer;
             this.aggregator = aggregator;
@@ -43,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
             base.Init(context);
             internalProcessorContext = (IInternalProcessorContext)context;
 
-            windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(storeName);
+            windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(this.context, storeName);
 
             tupleForwarder = new TimestampedTupleForwarder<Windowed<K>, Agg>(
                 windowStore,

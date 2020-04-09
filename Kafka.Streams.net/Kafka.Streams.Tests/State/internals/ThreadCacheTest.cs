@@ -228,8 +228,8 @@
 //            Bytes theByte = Bytes.Wrap(new byte[] { 0 });
 //            cache.put(ns, theByte, dirtyEntry(theByte.Get()));
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, theByte, Bytes.Wrap(new byte[] { 1 }));
-//            Assert.Equal(theByte, iterator.peekNextKey());
-//            Assert.Equal(theByte, iterator.peekNextKey());
+//            Assert.Equal(theByte, iterator.PeekNextKey());
+//            Assert.Equal(theByte, iterator.PeekNextKey());
 //        }
 
 //        [Fact]
@@ -239,7 +239,7 @@
 //            Bytes theByte = Bytes.Wrap(new byte[] { 0 });
 //            cache.put(ns, theByte, dirtyEntry(theByte.Get()));
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, theByte, Bytes.Wrap(new byte[] { 1 }));
-//            Assert.Equal(iterator.peekNextKey(), iterator.MoveNext().key);
+//            Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
 //        }
 
 //        [Fact]// (expected = NoSuchElementException)
@@ -247,7 +247,7 @@
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, Bytes.Wrap(new byte[] { 0 }), Bytes.Wrap(new byte[] { 1 }));
-//            iterator.peekNextKey();
+//            iterator.PeekNextKey();
 //        }
 
 //        [Fact]
@@ -255,7 +255,7 @@
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, Bytes.Wrap(new byte[] { 0 }), Bytes.Wrap(new byte[] { 1 }));
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //        }
 
 //        [Fact]
@@ -269,9 +269,9 @@
 //            }
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, Bytes.Wrap(new byte[] { 1 }), Bytes.Wrap(new byte[] { 4 }));
 //            int bytesIndex = 1;
-//            while (iterator.hasNext())
+//            while (iterator.HasNext())
 //            {
-//                Bytes peekedKey = iterator.peekNextKey();
+//                Bytes peekedKey = iterator.PeekNextKey();
 //                KeyValuePair<Bytes, LRUCacheEntry> next = iterator.MoveNext();
 //                assertArrayEquals(bytes[bytesIndex], peekedKey.Get());
 //                assertArrayEquals(bytes[bytesIndex], next.key.Get());
@@ -299,7 +299,7 @@
 
 //            ThreadCache.MemoryLRUCacheBytesIterator range = cache.Range(ns, Bytes.Wrap(new byte[] { 0 }), Bytes.Wrap(new byte[] { 5 }));
 
-//            Assert.Equal(Bytes.Wrap(new byte[] { 1 }), range.peekNextKey());
+//            Assert.Equal(Bytes.Wrap(new byte[] { 1 }), range.PeekNextKey());
 //        }
 
 //        [Fact]

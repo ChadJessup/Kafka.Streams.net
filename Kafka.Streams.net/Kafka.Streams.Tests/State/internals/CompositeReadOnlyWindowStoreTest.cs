@@ -56,7 +56,7 @@
 //        public void ShouldReturnEmptyIteratorIfNoData()
 //        {
 //            IWindowStoreIterator<string> iterator = windowStore.Fetch("my-key", ofEpochMilli(0L), ofEpochMilli(25L));
-//            Assert.Equal(false, iterator.hasNext());
+//            Assert.Equal(false, iterator.HasNext());
 //        }
 
 //        [Fact]
@@ -120,7 +120,7 @@
 //                    StateStoreProviderStub(false), QueryableStoreTypes.windowStore(), "foo");
 //            IWindowStoreIterator<object> windowStoreIterator = store.Fetch("key", ofEpochMilli(1), ofEpochMilli(10));
 
-//            Assert.False(windowStoreIterator.hasNext());
+//            Assert.False(windowStoreIterator.HasNext());
 //        }
 
 //        [Fact]

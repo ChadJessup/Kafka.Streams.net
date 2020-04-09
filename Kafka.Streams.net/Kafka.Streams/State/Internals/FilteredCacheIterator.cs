@@ -1,129 +1,129 @@
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
-//using Kafka.Common.Utils;
-//using Kafka.Streams.State.Interfaces;
-//using System;
-//using System.Collections;
+namespace Kafka.Streams.State.Internals
+{
+    public class FilteredCacheIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
+    {
+        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
+        private bool hasNextCondition;
+        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class FilteredCacheIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
-//    {
-//        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
-//        private HasNextCondition hasNextCondition;
-//        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
+        public KeyValuePair<Bytes, LRUCacheEntry> Current { get; }
+        object IEnumerator.Current { get; }
 
-//        public KeyValuePair<Bytes, LRUCacheEntry> Current { get; }
-//        object IEnumerator.Current { get; }
-
-//        public FilteredCacheIterator(
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-//            HasNextCondition hasNextCondition,
-//            ICacheFunction cacheFunction)
-//        {
-//            this.cacheIterator = cacheIterator;
-//            this.hasNextCondition = hasNextCondition;
-//            this.wrappedIterator = null; // new IPeekingKeyValueIterator<Bytes, LRUCacheEntry>()
-//                                         //    {
-
-
-//            //    public KeyValuePair<Bytes, LRUCacheEntry> peekNext()
-//            //    {
-//            //        return cachedPair(cacheIterator.peekNext());
-//            //    }
+        public FilteredCacheIterator(
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+            bool hasNextCondition,
+            ICacheFunction cacheFunction)
+        {
+            this.cacheIterator = cacheIterator;
+            this.hasNextCondition = hasNextCondition;
+            this.wrappedIterator = null; // new IPeekingKeyValueIterator<Bytes, LRUCacheEntry>()
+                                         //    {
 
 
-//            //    public void close()
-//            //    {
-//            //        cacheIterator.close();
-//            //    }
+            //    public KeyValuePair<Bytes, LRUCacheEntry> PeekNext()
+            //    {
+            //        return cachedPair(cacheIterator.PeekNext());
+            //    }
 
 
-//            //    public Bytes peekNextKey()
-//            //    {
-//            //        return cacheFunction.key(cacheIterator.peekNextKey());
-//            //    }
+            //    public void close()
+            //    {
+            //        cacheIterator.close();
+            //    }
 
 
-//            //    public bool hasNext()
-//            //    {
-//            //        return cacheIterator.hasNext();
-//            //    }
+            //    public Bytes PeekNextKey()
+            //    {
+            //        return cacheFunction.key(cacheIterator.PeekNextKey());
+            //    }
 
 
-//            //    public KeyValuePair<Bytes, LRUCacheEntry> next()
-//            //    {
-//            //        return cachedPair(cacheIterator.MoveNext());
-//            //    }
-
-//            //    private KeyValuePair<Bytes, LRUCacheEntry> cachedPair(KeyValuePair<Bytes, LRUCacheEntry> next)
-//            //    {
-//            //        return KeyValuePair.pair(cacheFunction.key(next.key), next.value);
-//            //    }
+            //    public bool HasNext()
+            //    {
+            //        return cacheIterator.HasNext();
+            //    }
 
 
-//            //    public void Remove()
-//            //    {
-//            //        cacheIterator.Remove();
-//            //    }
-//            //};
-//        }
+            //    public KeyValuePair<Bytes, LRUCacheEntry> next()
+            //    {
+            //        return cachedPair(cacheIterator.MoveNext());
+            //    }
 
-//        public void close()
-//        {
-//            // no-op
-//        }
+            //    private KeyValuePair<Bytes, LRUCacheEntry> cachedPair(KeyValuePair<Bytes, LRUCacheEntry> next)
+            //    {
+            //        return KeyValuePair.pair(cacheFunction.key(next.key), next.value);
+            //    }
 
-//        public Bytes peekNextKey()
-//        {
-//            if (!hasNext())
-//            {
-//                throw new IndexOutOfRangeException();
-//            }
-//            return cacheIterator.peekNextKey();
-//        }
 
-//        public bool hasNext()
-//        {
-//            return hasNextCondition.hasNext(wrappedIterator);
-//        }
+            //    public void Remove()
+            //    {
+            //        cacheIterator.Remove();
+            //    }
+            //};
+        }
 
-//        public KeyValuePair<Bytes, LRUCacheEntry> MoveNext()
-//        {
-//            if (!hasNext())
-//            {
-//                throw new IndexOutOfRangeException();
-//            }
+        public void Close()
+        {
+            // no-op
+        }
 
-//            return cacheIterator.peekNext();
-//        }
+        public Bytes PeekNextKey()
+        {
+            if (!HasNext())
+            {
+                throw new IndexOutOfRangeException();
+            }
 
-//        public void Remove()
-//        {
-//            throw new InvalidOperationException();
-//        }
+            return cacheIterator.PeekNextKey();
+        }
 
-//        public KeyValuePair<Bytes, LRUCacheEntry> peekNext()
-//        {
-//            if (!hasNext())
-//            {
-//                throw new IndexOutOfRangeException();
-//            }
-//            return cacheIterator.peekNext();
-//        }
+        public bool HasNext()
+        {
+            return hasNextCondition; //.HasNext(wrappedIterator);
+        }
 
-//        bool IEnumerator.MoveNext()
-//        {
-//            throw new NotImplementedException();
-//        }
+        public KeyValuePair<Bytes, LRUCacheEntry>? MoveNext()
+        {
+            if (!HasNext())
+            {
+                throw new IndexOutOfRangeException();
+            }
 
-//        public void Reset()
-//        {
-//            throw new NotImplementedException();
-//        }
+            return cacheIterator.PeekNext();
+        }
 
-//        public void Dispose()
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+        public void Remove()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public KeyValuePair<Bytes, LRUCacheEntry>? PeekNext()
+        {
+            if (!HasNext())
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            return cacheIterator.PeekNext();
+        }
+
+        bool IEnumerator.MoveNext()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Reset()
+        {
+        }
+
+        public void Dispose()
+        {
+        }
+    }
+}

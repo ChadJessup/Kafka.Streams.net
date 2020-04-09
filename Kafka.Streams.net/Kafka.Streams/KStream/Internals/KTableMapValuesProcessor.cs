@@ -10,12 +10,16 @@ namespace Kafka.Streams.KStream.Internals
     {
         private ITimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
+        private readonly KafkaStreamsContext context;
         private readonly IValueMapperWithKey<K, V, V1> mapper;
         private readonly string queryableName;
         private readonly bool sendOldValues;
 
-        public KTableMapValuesProcessor(IValueMapperWithKey<K, V, V1> mapper)
+        public KTableMapValuesProcessor(
+            KafkaStreamsContext context,
+            IValueMapperWithKey<K, V, V1> mapper)
         {
+            this.context = context;
             this.mapper = mapper;
         }
 
@@ -29,7 +33,7 @@ namespace Kafka.Streams.KStream.Internals
             base.Init(context);
             if (queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V1>)context.GetStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V1>)context.GetStateStore(this.context, queryableName);
 
                 tupleForwarder = new TimestampedTupleForwarder<K, V1>(
                     store,

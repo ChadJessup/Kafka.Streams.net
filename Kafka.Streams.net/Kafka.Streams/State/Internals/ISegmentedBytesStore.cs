@@ -1,4 +1,3 @@
-
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
 

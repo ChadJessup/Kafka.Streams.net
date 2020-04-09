@@ -11,11 +11,15 @@ namespace Kafka.Streams.State.Windowed
         private readonly IWindowBytesStoreSupplier storeSupplier;
 
         public WindowStoreBuilder(
+            KafkaStreamsContext context,
             IWindowBytesStoreSupplier storeSupplier,
             ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            IClock clock)
-            : base(storeSupplier.Name, keySerde, valueSerde, clock)
+            ISerde<V> valueSerde)
+            : base(
+                  context,
+                  storeSupplier.Name,
+                  keySerde,
+                  valueSerde)
         {
             this.storeSupplier = storeSupplier;
         }

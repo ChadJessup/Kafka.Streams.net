@@ -559,7 +559,7 @@
 //            {
 //                long timestamp = context.Timestamp;
 //                IKeyValueIterator<Windowed<int>, byte[]> iter = store.Fetch(key - 10, key + 10, ofEpochMilli(timestamp - 1000L), ofEpochMilli(timestamp));
-//                while (iter.hasNext())
+//                while (iter.HasNext())
 //                {
 //                    iter.MoveNext();
 //                }

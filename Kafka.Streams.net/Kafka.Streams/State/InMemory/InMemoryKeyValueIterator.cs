@@ -14,9 +14,9 @@
 //        }
 
 
-//        public bool hasNext()
+//        public bool HasNext()
 //        {
-//            return iter.hasNext();
+//            return iter.HasNext();
 //        }
 
 
@@ -39,9 +39,9 @@
 //        }
 
 
-//        public Bytes peekNextKey()
+//        public Bytes PeekNextKey()
 //        {
-//            throw new InvalidOperationException("peekNextKey() not supported in " + GetType().getName());
+//            throw new InvalidOperationException("PeekNextKey() not supported in " + GetType().getName());
 //        }
 //    }
 //}

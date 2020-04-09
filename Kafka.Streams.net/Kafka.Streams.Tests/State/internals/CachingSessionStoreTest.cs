@@ -53,8 +53,8 @@
 
 //            verifyWindowedKeyValue(a.MoveNext(), new Windowed<>(keyA, new SessionWindow(0, 0)), "1");
 //            verifyWindowedKeyValue(b.MoveNext(), new Windowed<>(keyB, new SessionWindow(0, 0)), "1");
-//            Assert.False(a.hasNext());
-//            Assert.False(b.hasNext());
+//            Assert.False(a.HasNext());
+//            Assert.False(b.HasNext());
 //        }
 
 //        [Fact]
@@ -70,7 +70,7 @@
 //            verifyWindowedKeyValue(all.MoveNext(), new Windowed<>(keyA, new SessionWindow(0, 0)), "1");
 //            verifyWindowedKeyValue(all.MoveNext(), new Windowed<>(keyAA, new SessionWindow(0, 0)), "1");
 //            verifyWindowedKeyValue(all.MoveNext(), new Windowed<>(keyB, new SessionWindow(0, 0)), "1");
-//            Assert.False(all.hasNext());
+//            Assert.False(all.HasNext());
 //        }
 
 //        [Fact]
@@ -85,7 +85,7 @@
 //            IKeyValueIterator<Windowed<Bytes>, byte[]> some = cachingStore.findSessions(keyAA, keyB, 0, 0);
 //            verifyWindowedKeyValue(some.MoveNext(), new Windowed<>(keyAA, new SessionWindow(0, 0)), "1");
 //            verifyWindowedKeyValue(some.MoveNext(), new Windowed<>(keyB, new SessionWindow(0, 0)), "1");
-//            Assert.False(some.hasNext());
+//            Assert.False(some.HasNext());
 //        }
 
 //        [Fact]
@@ -144,7 +144,7 @@
 
 //            IKeyValueIterator<Windowed<Bytes>, byte[]> rangeIter =
 //                cachingStore.findSessions(keyA, 0, 0);
-//            Assert.False(rangeIter.hasNext());
+//            Assert.False(rangeIter.HasNext());
 
 //            Assert.Null(cachingStore.FetchSession(keyA, 0, 0));
 //            Assert.Equal(cachingStore.FetchSession(keyB, 0, 0), ("2".getBytes()));
@@ -166,7 +166,7 @@
 //            Assert.Equal(a1, results.MoveNext().key);
 //            Assert.Equal(a2, results.MoveNext().key);
 //            Assert.Equal(a3, results.MoveNext().key);
-//            Assert.False(results.hasNext());
+//            Assert.False(results.HasNext());
 //        }
 
 //        [Fact]
@@ -186,7 +186,7 @@
 //            IKeyValueIterator<Windowed<Bytes>, byte[]> rangeResults =
 //                cachingStore.findSessions(keyA, keyAA, 0, SEGMENT_INTERVAL * 2);
 //            HashSet<Windowed<Bytes>> keys = new HashSet<>();
-//            while (rangeResults.hasNext())
+//            while (rangeResults.HasNext())
 //            {
 //                keys.Add(rangeResults.MoveNext().key);
 //            }
@@ -340,8 +340,8 @@
 
 //            Assert.Equal(singleKeyIterator.MoveNext(), keyRangeIterator.MoveNext());
 //            Assert.Equal(singleKeyIterator.MoveNext(), keyRangeIterator.MoveNext());
-//            Assert.False(singleKeyIterator.hasNext());
-//            Assert.False(keyRangeIterator.hasNext());
+//            Assert.False(singleKeyIterator.HasNext());
+//            Assert.False(keyRangeIterator.HasNext());
 //        }
 
 //        [Fact]
@@ -440,7 +440,7 @@
 //            Bytes keyTo = Bytes.Wrap(Serdes.Int().Serializer.Serialize("", 1));
 
 //            IKeyValueIterator<Windowed<Bytes>, byte[]> iterator = cachingStore.findSessions(keyFrom, keyTo, 0L, 10L);
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 
 //            List<string> messages = appender.getMessages();
 //            Assert.Equal(messages, hasItem("Returning empty iterator for fetch with invalid key range: from > to. "

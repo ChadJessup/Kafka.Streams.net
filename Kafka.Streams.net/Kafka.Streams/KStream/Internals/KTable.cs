@@ -38,7 +38,7 @@ namespace Kafka.Streams.KStream.Internals
     public class KTable<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
         where S : IStateStore
     {
-        private readonly IProcessorSupplier<K, V> processorSupplier;
+        private readonly IProcessorSupplier processorSupplier;
         private readonly KafkaStreamsContext context;
         public string? QueryableStoreName { get; private set; }
         private bool sendOldValues = false;
@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<V>? valSerde,
             HashSet<string> sourceNodes,
             string? queryableStoreName,
-            IProcessorSupplier<K, V> processorSupplier,
+            IProcessorSupplier processorSupplier,
             StreamsGraphNode streamsGraphNode,
             InternalStreamsBuilder builder)
             : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
@@ -90,9 +90,9 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal?.QueryableStoreName();
 
                 // only materialize if materialized is specified and it has queryable name
-                //storeBuilder = queryableStoreName != null
-                //    ? (new TimestampedKeyValueStoreMaterializer<K, V>(this.clock, materializedInternal)).Materialize()
-                //    : null;
+                storeBuilder = queryableStoreName != null
+                    ? new TimestampedKeyValueStoreMaterializer<K, V>(this.context, materializedInternal).Materialize()
+                    : null;
             }
             else
             {
@@ -105,6 +105,7 @@ namespace Kafka.Streams.KStream.Internals
             var name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KTable.FILTER_NAME);
 
             IKTableProcessorSupplier<K, V, V> processorSupplier = new KTableFilter<K, V>(
+                this.context,
                 this,
                 predicate,
                 filterNot,
@@ -115,7 +116,7 @@ namespace Kafka.Streams.KStream.Internals
             var tableNode = new TableProcessorNode<K, V, ITimestampedKeyValueStore<K, V>>(
                name,
                processorParameters,
-               null);// storeBuilder);
+               storeBuilder);
 
             builder.AddGraphNode<K, V>(this.streamsGraphNode, tableNode);
 
@@ -126,7 +127,7 @@ namespace Kafka.Streams.KStream.Internals
                 valueSerde,
                 sourceNodes,
                 queryableStoreName,
-                (IProcessorSupplier<K, V>)processorSupplier,
+                processorSupplier,
                 tableNode,
                 builder);
         }
@@ -711,7 +712,7 @@ namespace Kafka.Streams.KStream.Internals
                 other.EnableSendingOldValues();
             }
 
-            KTableKTableAbstractJoin<K, S, VR, V, VO>? joinThis  = null;
+            KTableKTableAbstractJoin<K, S, VR, V, VO>? joinThis = null;
             KTableKTableAbstractJoin<K, S, VR, VO, V>? joinOther = null;
 
             if (!leftOuter)
@@ -846,7 +847,7 @@ namespace Kafka.Streams.KStream.Internals
                 // whenever a source ktable is required for getter, it should be materialized
                 source.Materialize();
 
-                return new KTableSourceValueGetterSupplier<K, V>(source.queryableName);
+                return new KTableSourceValueGetterSupplier<K, V>(this.context, source.queryableName);
             }
             else if (processorSupplier is IKStreamAggProcessorSupplier)
             {

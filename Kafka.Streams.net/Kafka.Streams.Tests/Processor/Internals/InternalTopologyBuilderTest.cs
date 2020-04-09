@@ -732,32 +732,32 @@
 
 //            Iterator<TopologyDescription.Node> iterator = ((InternalTopologyBuilder.Subtopology)builder.describe().subtopologies().iterator().MoveNext()).nodesInOrder();
 
-//            Assert.True(iterator.hasNext());
+//            Assert.True(iterator.HasNext());
 //            InternalTopologyBuilder.AbstractNode node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
 //            Assert.Equal("source1", node.name);
 //            Assert.Equal(6, node.size);
 
-//            Assert.True(iterator.hasNext());
+//            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
 //            Assert.Equal("source2", node.name);
 //            Assert.Equal(4, node.size);
 
-//            Assert.True(iterator.hasNext());
+//            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
 //            Assert.Equal("processor2", node.name);
 //            Assert.Equal(3, node.size);
 
-//            Assert.True(iterator.hasNext());
+//            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
 //            Assert.Equal("processor1", node.name);
 //            Assert.Equal(2, node.size);
 
-//            Assert.True(iterator.hasNext());
+//            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
 //            Assert.Equal("processor3", node.name);
 //            Assert.Equal(2, node.size);
 
-//            Assert.True(iterator.hasNext());
+//            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
 //            Assert.Equal("sink1", node.name);
 //            Assert.Equal(1, node.size);

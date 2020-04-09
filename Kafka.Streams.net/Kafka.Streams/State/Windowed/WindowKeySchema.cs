@@ -76,7 +76,7 @@ namespace Kafka.Streams.State.Windowed
             K key,
             long timestamp,
             int seqnum,
-            StateSerdes<K, object> serdes)
+            IStateSerdes<K, object> serdes)
         {
             byte[] serializedKey = serdes.RawKey(key);
             return ToStoreKeyBinary(serializedKey, timestamp, seqnum);
@@ -93,7 +93,7 @@ namespace Kafka.Streams.State.Windowed
         public static Bytes ToStoreKeyBinary<K>(
             Windowed<K> timeKey,
             int seqnum,
-            StateSerdes<K, object> serdes)
+            IStateSerdes<K, object> serdes)
         {
             byte[] serializedKey = serdes.RawKey(timeKey.Key);
 
@@ -123,7 +123,7 @@ namespace Kafka.Streams.State.Windowed
 
         static K ExtractStoreKey<K>(
             byte[] binaryKey,
-            StateSerdes<K, object> serdes)
+            IStateSerdes<K, object> serdes)
         {
             byte[] bytes = new byte[binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE];
             Array.Copy(binaryKey, 0, bytes, 0, bytes.Length);

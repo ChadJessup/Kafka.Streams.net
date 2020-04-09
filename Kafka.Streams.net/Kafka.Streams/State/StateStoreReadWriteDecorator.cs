@@ -5,13 +5,13 @@ using System;
 
 namespace Kafka.Streams.Processors.Internals
 {
-    public abstract class StateStoreReadWriteDecorator<T> : WrappedStateStore<T>
-        where T : IStateStore
+    public abstract class StateStoreReadWriteDecorator<S, K, V> : WrappedStateStore<S, K, V>
+        where S : IStateStore
     {
-        protected static readonly string ERROR_MESSAGE = "This method may only be called by Kafka Streams";
+        protected const string ERROR_MESSAGE = "This method may only be called by Kafka Streams";
 
-        public StateStoreReadWriteDecorator(T inner)
-            : base(inner)
+        public StateStoreReadWriteDecorator(KafkaStreamsContext context, S inner)
+            : base(context, inner)
         {
         }
 

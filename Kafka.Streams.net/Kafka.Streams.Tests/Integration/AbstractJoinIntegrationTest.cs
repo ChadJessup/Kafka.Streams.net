@@ -260,7 +260,7 @@
 //                Assert.Equal(onlyEntry.key, expectedFinalResult.Key);
 //                Assert.Equal(onlyEntry.value.Value, (expectedFinalResult.Value));
 //                Assert.Equal(onlyEntry.value.Timestamp, (expectedFinalResult.Timestamp));
-//                Assert.Equal(all.hasNext(), (false));
+//                Assert.Equal(all.HasNext(), (false));
 //            }
 //            finally
 //            {

@@ -285,7 +285,7 @@
 //            if (predicate())
 //            {
 //                KeyValuePair<BufferKey, BufferValue> next = null;
-//                if (@delegate.hasNext())
+//                if (@delegate.HasNext())
 //                {
 //                    next = @delegate.MoveNext();
 //                }
@@ -316,7 +316,7 @@
 //                    memBufferSize -= computeRecordSize(next.Key.key, bufferValue);
 
 //                    // peek at the next record so we can update the minTimestamp
-//                    if (@delegate.hasNext())
+//                    if (@delegate.HasNext())
 //                    {
 //                        next = @delegate.MoveNext();
 //                        minTimestamp = next == null ? long.MaxValue : next.Key.time;

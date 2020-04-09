@@ -6,13 +6,12 @@ using System.Collections.Generic;
 namespace Kafka.Streams.State.Internals
 {
     public class ChangeLoggingKeyValueBytesStore
-        : WrappedStateStore<IKeyValueStore<Bytes, byte[]>>, IKeyValueStore<Bytes, byte[]>
+        : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, Bytes, byte[]>, IKeyValueStore<Bytes, byte[]>
     {
-
         public StoreChangeLogger<Bytes, byte[]> changeLogger { get; }
 
-        public ChangeLoggingKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
-            : base(inner)
+        public ChangeLoggingKeyValueBytesStore(KafkaStreamsContext context, IKeyValueStore<Bytes, byte[]> inner)
+            : base(context, inner)
         {
         }
 
@@ -39,13 +38,13 @@ namespace Kafka.Streams.State.Internals
         }
 
         public long approximateNumEntries
-            => wrapped.approximateNumEntries;
+            => Wrapped.approximateNumEntries;
 
         public void Add(
             Bytes key,
             byte[] value)
         {
-            wrapped.Add(key, value);
+            Wrapped.Add(key, value);
             Log(key, value);
         }
 
@@ -53,7 +52,7 @@ namespace Kafka.Streams.State.Internals
             Bytes key,
             byte[] value)
         {
-            var previous = wrapped.PutIfAbsent(key, value);
+            var previous = Wrapped.PutIfAbsent(key, value);
             if (previous == null)
             {
                 // then it was absent
@@ -65,7 +64,7 @@ namespace Kafka.Streams.State.Internals
 
         public void PutAll(List<KeyValuePair<Bytes, byte[]>> entries)
         {
-            wrapped.PutAll(entries);
+            Wrapped.PutAll(entries);
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
                 Log(entry.Key, entry.Value);
@@ -74,26 +73,26 @@ namespace Kafka.Streams.State.Internals
 
         public byte[] Delete(Bytes key)
         {
-            var oldValue = wrapped.Delete(key);
+            var oldValue = Wrapped.Delete(key);
             Log(key, null);
             return oldValue;
         }
 
         public byte[] Get(Bytes key)
         {
-            return wrapped.Get(key);
+            return Wrapped.Get(key);
         }
 
         public IKeyValueIterator<Bytes, byte[]> Range(
             Bytes from,
             Bytes to)
         {
-            return wrapped.Range(from, to);
+            return Wrapped.Range(from, to);
         }
 
         public IKeyValueIterator<Bytes, byte[]> All()
         {
-            return wrapped.All();
+            return Wrapped.All();
         }
 
         void Log(Bytes key, byte[] value)

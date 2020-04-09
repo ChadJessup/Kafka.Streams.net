@@ -19,7 +19,7 @@ namespace Kafka.Streams.NullModels
 
         public IKeyValueIterator<Bytes, byte[]> All()
         {
-            return new NullKeyValueIterator();
+            return new NullKeyValueIterator<Bytes, byte[]>();
         }
 
         public void Close()
@@ -51,6 +51,6 @@ namespace Kafka.Streams.NullModels
         public byte[] PutIfAbsent(Bytes key, byte[] value) => this.EmptyBytes;
 
         public IKeyValueIterator<Bytes, byte[]> Range(Bytes from, Bytes to)
-            => new NullKeyValueIterator();
+            => new NullKeyValueIterator<Bytes, byte[]>();
     }
 }

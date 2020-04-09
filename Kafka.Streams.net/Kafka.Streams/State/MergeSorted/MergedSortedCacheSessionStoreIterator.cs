@@ -1,47 +1,53 @@
+using System.Collections.Generic;
+using Kafka.Streams.KStream;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.Sessions;
 
-//    class MergedSortedCacheSessionStoreIterator : AbstractMergedSortedCacheStoreIterator<Windowed<Bytes>, Windowed<Bytes>, byte[], byte[]>
-//    {
+namespace Kafka.Streams.State.MergeSorted
+{
+    public class MergedSortedCacheSessionStoreIterator : AbstractMergedSortedCacheStoreIterator<Windowed<Bytes>, Windowed<Bytes>, byte[], byte[]>
+    {
+        private SegmentedCacheFunction cacheFunction;
 
-//        private SegmentedCacheFunction cacheFunction;
+        public MergedSortedCacheSessionStoreIterator(
+            KafkaStreamsContext context,
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator,
+            SegmentedCacheFunction cacheFunction)
+            : base(context, cacheIterator, storeIterator)
+        {
+            this.cacheFunction = cacheFunction;
+        }
 
-//        MergedSortedCacheSessionStoreIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-//                                              IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator,
-//                                              SegmentedCacheFunction cacheFunction)
-//        {
-//            base(cacheIterator, storeIterator);
-//            this.cacheFunction = cacheFunction;
-//        }
+        public override KeyValuePair<Windowed<Bytes>, byte[]> DeserializeStorePair(KeyValuePair<Windowed<Bytes>, byte[]> pair)
+        {
+            return pair;
+        }
 
-//        public override KeyValuePair<Windowed<Bytes>, byte[]> deserializeStorePair(KeyValuePair<Windowed<Bytes>, byte[]> pair)
-//        {
-//            return pair;
-//        }
+        public override Windowed<Bytes> DeserializeCacheKey(Bytes cacheKey)
+        {
+            byte[] binaryKey = cacheFunction.Key(cacheKey).Get();
+            byte[] keyBytes = SessionKeySchema.ExtractKeyBytes(binaryKey);
+            Window window = SessionKeySchema.ExtractWindow(binaryKey);
 
+            return new Windowed<Bytes>(Bytes.Wrap(keyBytes), window);
+        }
 
-//        Windowed<Bytes> deserializeCacheKey(Bytes cacheKey)
-//        {
-//            byte[] binaryKey = cacheFunction.key(cacheKey)[];
-//            byte[] keyBytes = SessionKeySchema.extractKeyBytes(binaryKey);
-//            Window window = SessionKeySchema.extractWindow(binaryKey);
-//            return new Windowed<>(Bytes.Wrap(keyBytes), window);
-//        }
+        public override byte[] DeserializeCacheValue(LRUCacheEntry cacheEntry)
+        {
+            return cacheEntry.Value();
+        }
 
+        public override Windowed<Bytes> DeserializeStoreKey(Windowed<Bytes> key)
+        {
+            return key;
+        }
 
-
-//        byte[] deserializeCacheValue(LRUCacheEntry cacheEntry)
-//        {
-//            return cacheEntry.value();
-//        }
-
-//        public override Windowed<Bytes> deserializeStoreKey(Windowed<Bytes> key)
-//        {
-//            return key;
-//        }
-
-//        public override int compare(Bytes cacheKey, Windowed<Bytes> storeKey)
-//        {
-//            Bytes storeKeyBytes = SessionKeySchema.toBinary(storeKey);
-//            return cacheFunction.compareSegmentedKeys(cacheKey, storeKeyBytes);
-//        }
-//    }
-//}
+        public override int Compare(Bytes cacheKey, Windowed<Bytes> storeKey)
+        {
+            Bytes storeKeyBytes = SessionKeySchema.ToBinary(storeKey);
+            return cacheFunction.CompareSegmentedKeys(cacheKey, storeKeyBytes);
+        }
+    }
+}

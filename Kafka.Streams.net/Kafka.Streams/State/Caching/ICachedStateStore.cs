@@ -1,6 +1,15 @@
+using System;
+using Kafka.Streams.KStream;
+
 namespace Kafka.Streams.State.Internals
 {
+    public delegate void FlushListener<in TKey, in TValue>(TKey key, TValue oldValue, TValue newValue, long timeStamp);
+
     public interface ICachedStateStore
+    {
+    }
+
+    public interface ICachedStateStore<K, V> : ICachedStateStore
     {
         /**
          * Set the {@link CacheFlushListener} to be notified when entries are flushed from the
@@ -8,8 +17,6 @@ namespace Kafka.Streams.State.Internals
          * @param listener
          * @param sendOldValues
          */
-        bool SetFlushListener<K, V>(
-            ICacheFlushListener<K, V> listener,
-            bool sendOldValues);
+        bool SetFlushListener(FlushListener<K, V> listener, bool sendOldValues);
     }
 }

@@ -9,17 +9,20 @@ namespace Kafka.Streams.KStream.Internals
     public class KTableSourceProcessor<K, V> : AbstractProcessor<K, V>
     {
         private readonly ILogger<KTableSourceProcessor<K, V>> logger;
+        private readonly KafkaStreamsContext context;
         private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
         private readonly string queryableName;
         private readonly bool sendOldValues;
 
         public KTableSourceProcessor(
+            KafkaStreamsContext context,
             ILogger<KTableSourceProcessor<K, V>> logger,
             string queryableName,
             bool sendOldValues)
         {
             this.logger = logger;
+            this.context = context;
             this.queryableName = queryableName;
             this.sendOldValues = sendOldValues;
         }
@@ -30,7 +33,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.context, queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<K, V>(
                     store,
                     context,

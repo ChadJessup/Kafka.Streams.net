@@ -117,7 +117,11 @@ namespace Kafka.Streams.Tests.State
         [Fact]
         public void ShouldThrowIfSupplierIsNullForWindowStoreBuilder()
         {
-            Assert.Throws<ArgumentNullException>(() => this.storesFactory.WindowStoreBuilder(null, null, Serdes.ByteArray(), Serdes.ByteArray()));
+            Assert.Throws<ArgumentNullException>(() => this.storesFactory.WindowStoreBuilder(
+                null,
+                null,
+                Serdes.ByteArray(),
+                Serdes.ByteArray()));
         }
 
         [Fact]
@@ -129,7 +133,11 @@ namespace Kafka.Streams.Tests.State
         [Fact]
         public void ShouldThrowIfSupplierIsNullForSessionStoreBuilder()
         {
-            Assert.Throws<ArgumentNullException>(() => this.storesFactory.SessionStoreBuilder(null, Serdes.ByteArray(), Serdes.ByteArray()));
+            Assert.Throws<ArgumentNullException>(() => this.storesFactory.SessionStoreBuilder(
+                this.streamsBuilder.Context,
+                null,
+                Serdes.ByteArray(),
+                Serdes.ByteArray()));
         }
 
         //[Fact]
@@ -186,11 +194,11 @@ namespace Kafka.Streams.Tests.State
         public void ShouldBuildKeyValueStore()
         {
             IKeyValueStore<string, string> store = this.storesFactory.KeyValueStoreBuilder(
-                null,
+                this.streamsBuilder.Context,
                 this.storesFactory.PersistentKeyValueStore("name"),
                 Serdes.String(),
-                Serdes.String()
-            ).Build();
+                Serdes.String())
+            .Build();
 
             Assert.NotNull(store);
         }
@@ -212,7 +220,7 @@ namespace Kafka.Streams.Tests.State
         public void ShouldBuildTimestampedKeyValueStoreThatWrapsKeyValueStore()
         {
             ITimestampedKeyValueStore<string, string> store = this.storesFactory.TimestampedKeyValueStoreBuilder(
-                null,
+                this.streamsBuilder.Context,
                 this.storesFactory.PersistentKeyValueStore("name"),
                 Serdes.String(),
                 Serdes.String()
@@ -238,7 +246,7 @@ namespace Kafka.Streams.Tests.State
         public void ShouldBuildWindowStore()
         {
             IWindowStore<string, string> store = this.storesFactory.WindowStoreBuilder(
-                null,
+                this.streamsBuilder.Context,
                 this.storesFactory.PersistentWindowStore("store", TimeSpan.FromMilliseconds(3L), TimeSpan.FromMilliseconds(3L), true),
                 Serdes.String(),
                 Serdes.String()
@@ -250,7 +258,7 @@ namespace Kafka.Streams.Tests.State
         public void ShouldBuildTimestampedWindowStore()
         {
             ITimestampedWindowStore<string, string> store = this.storesFactory.TimestampedWindowStoreBuilder(
-                null,
+                this.streamsBuilder.Context,
                 this.storesFactory.PersistentTimestampedWindowStore("store", TimeSpan.FromMilliseconds(3L), TimeSpan.FromMilliseconds(3L), true),
                 Serdes.String(),
                 Serdes.String()
@@ -262,7 +270,7 @@ namespace Kafka.Streams.Tests.State
         public void ShouldBuildTimestampedWindowStoreThatWrapsWindowStore()
         {
             ITimestampedWindowStore<string, string> store = this.storesFactory.TimestampedWindowStoreBuilder(
-                null,
+                this.streamsBuilder.Context,
                 this.storesFactory.PersistentWindowStore("store", TimeSpan.FromMilliseconds(3L), TimeSpan.FromMilliseconds(3L), true),
                 Serdes.String(),
                 Serdes.String()

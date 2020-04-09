@@ -1,155 +1,194 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Kafka.Streams.State.KeyValues;
 
-//public abstract class AbstractMergedSortedCacheStoreIterator<K, KS, V, VS> : KeyValueIterator<K, V>
-//{
-//    private PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
-//    private KeyValueIterator<KS, VS> storeIterator;
+namespace Kafka.Streams.State.Internals
+{
+    public abstract class AbstractMergedSortedCacheStoreIterator<K, KS, V, VS> : IKeyValueIterator<K, V>
+    {
+        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
+        private IKeyValueIterator<KS, VS> storeIterator;
+        private readonly KafkaStreamsContext context;
 
-//    AbstractMergedSortedCacheStoreIterator(
-//        PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-//        KeyValueIterator<KS, VS> storeIterator)
-//    {
-//        this.cacheIterator = cacheIterator;
-//        this.storeIterator = storeIterator;
-//    }
+        public KeyValuePair<K, V> Current { get; }
+        object IEnumerator.Current { get; }
 
-//    abstract int compare(Bytes cacheKey, KS storeKey);
+        public AbstractMergedSortedCacheStoreIterator(
+            KafkaStreamsContext context,
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+            IKeyValueIterator<KS, VS> storeIterator)
+        {
+            this.context = context;
+            this.cacheIterator = cacheIterator;
+            this.storeIterator = storeIterator;
+        }
 
-//    abstract K deserializeStoreKey(KS key);
+        public abstract int Compare(Bytes cacheKey, KS storeKey);
+        public abstract K DeserializeStoreKey(KS key);
+        public abstract KeyValuePair<K, V> DeserializeStorePair(KeyValuePair<KS, VS> pair);
+        public abstract K DeserializeCacheKey(Bytes cacheKey);
+        public abstract V DeserializeCacheValue(LRUCacheEntry cacheEntry);
 
-//    abstract KeyValuePair<K, V> deserializeStorePair(KeyValuePair<KS, VS> pair);
+        private bool IsDeletedCacheEntry(KeyValuePair<Bytes, LRUCacheEntry>? nextFromCache)
+        {
+            return nextFromCache?.Value.Value() == null;
+        }
 
-//    abstract K deserializeCacheKey(Bytes cacheKey);
+        public bool HasNext()
+        {
+            // skip over items deleted from cache, and corresponding store items if they have the same key
+            while (cacheIterator.MoveNext() && IsDeletedCacheEntry(cacheIterator.PeekNext()))
+            {
+                if (storeIterator.Current.Key != null)
+                {
+                    KS nextStoreKey = storeIterator.PeekNextKey();
+                    // advance the store iterator if the key is the same as the deleted cache key
+                    if (Compare(cacheIterator.PeekNextKey(), nextStoreKey) == 0)
+                    {
+                        storeIterator.MoveNext();
+                    }
+                }
+                cacheIterator.MoveNext();
+            }
 
-//    abstract V deserializeCacheValue(LRUCacheEntry cacheEntry);
+            return cacheIterator.MoveNext() || storeIterator.MoveNext();
+        }
 
-//    private bool isDeletedCacheEntry(KeyValuePair<Bytes, LRUCacheEntry> nextFromCache)
-//{
-//        return nextFromCache.value.value() == null;
-//    }
+        public KeyValuePair<K, V> Next()
+        {
+            if (!HasNext())
+            {
+                throw new KeyNotFoundException();
+            }
 
-//    public override bool hasNext()
-//{
-//        // skip over items deleted from cache, and corresponding store items if they have the same key
-//        while (cacheIterator.hasNext() && isDeletedCacheEntry(cacheIterator.peekNext()))
-//{
-//            if (storeIterator.hasNext())
-//{
-//                KS nextStoreKey = storeIterator.peekNextKey();
-//                // advance the store iterator if the key is the same as the deleted cache key
-//                if (compare(cacheIterator.peekNextKey(), nextStoreKey) == 0)
-//{
-//                    storeIterator.MoveNext();
-//                }
-//            }
-//            cacheIterator.MoveNext();
-//        }
+            Bytes nextCacheKey = cacheIterator.MoveNext()
+                ? cacheIterator.PeekNextKey()
+                : null;
 
-//        return cacheIterator.hasNext() || storeIterator.hasNext();
-//    }
+            KS nextStoreKey = storeIterator.MoveNext()
+                ? storeIterator.PeekNextKey()
+                : default;
 
-//    public override KeyValuePair<K, V> next()
-//{
-//        if (!hasNext())
-//{
-//            throw new NoSuchElementException();
-//        }
+            if (nextCacheKey == null)
+            {
+                return NextStoreValue(nextStoreKey);
+            }
 
-//        Bytes nextCacheKey = cacheIterator.hasNext() ? cacheIterator.peekNextKey() : null;
-//        KS nextStoreKey = storeIterator.hasNext() ? storeIterator.peekNextKey() : null;
+            if (nextStoreKey == null)
+            {
+                return nextCacheValue(nextCacheKey);
+            }
 
-//        if (nextCacheKey == null)
-//{
-//            return nextStoreValue(nextStoreKey);
-//        }
+            int comparison = Compare(nextCacheKey, nextStoreKey);
+            if (comparison > 0)
+            {
+                return NextStoreValue(nextStoreKey);
+            }
+            else if (comparison < 0)
+            {
+                return nextCacheValue(nextCacheKey);
+            }
+            else
+            {
+                // skip the same keyed element
+                storeIterator.MoveNext();
 
-//        if (nextStoreKey == null)
-//{
-//            return nextCacheValue(nextCacheKey);
-//        }
+                return nextCacheValue(nextCacheKey);
+            }
+        }
 
-//        int comparison = compare(nextCacheKey, nextStoreKey);
-//        if (comparison > 0)
-//{
-//            return nextStoreValue(nextStoreKey);
-//        } else if (comparison < 0)
-//{
-//            return nextCacheValue(nextCacheKey);
-//        } else
-//{
-//            // skip the same keyed element
-//            storeIterator.MoveNext();
-//            return nextCacheValue(nextCacheKey);
-//        }
-//    }
+        private KeyValuePair<K, V> NextStoreValue(KS nextStoreKey)
+        {
+            KeyValuePair<KS, VS> next = storeIterator.Current;
 
-//    private KeyValuePair<K, V> nextStoreValue(KS nextStoreKey)
-//{
-//        KeyValuePair<KS, VS> next = storeIterator.MoveNext();
+            if (!next.Key.Equals(nextStoreKey))
+            {
+                throw new InvalidOperationException("Next record key is not the peeked key value; this should not happen");
+            }
 
-//        if (!next.key.Equals(nextStoreKey))
-//{
-//            throw new InvalidOperationException("Next record key is not the peeked key value; this should not happen");
-//        }
+            return DeserializeStorePair(next);
+        }
 
-//        return deserializeStorePair(next);
-//    }
+        private KeyValuePair<K, V> nextCacheValue(Bytes nextCacheKey)
+        {
+            KeyValuePair<Bytes, LRUCacheEntry> next = cacheIterator.Current;
 
-//    private KeyValuePair<K, V> nextCacheValue(Bytes nextCacheKey)
-//{
-//        KeyValuePair<Bytes, LRUCacheEntry> next = cacheIterator.MoveNext();
+            if (!next.Key.Equals(nextCacheKey))
+            {
+                throw new InvalidOperationException("Next record key is not the peeked key value; this should not happen");
+            }
 
-//        if (!next.key.Equals(nextCacheKey))
-//{
-//            throw new InvalidOperationException("Next record key is not the peeked key value; this should not happen");
-//        }
+            return KeyValuePair.Create(DeserializeCacheKey(next.Key), DeserializeCacheValue(next.Value));
+        }
 
-//        return KeyValuePair.pair(deserializeCacheKey(next.key), deserializeCacheValue(next.value));
-//    }
+        public K PeekNextKey()
+        {
+            if (!HasNext())
+            {
+                throw new IndexOutOfRangeException();
+            }
 
-//    public override K peekNextKey()
-//{
-//        if (!hasNext())
-//{
-//            throw new NoSuchElementException();
-//        }
+            Bytes nextCacheKey = cacheIterator.MoveNext()
+                ? cacheIterator.PeekNextKey()
+                : null;
 
-//        Bytes nextCacheKey = cacheIterator.hasNext() ? cacheIterator.peekNextKey() : null;
-//        KS nextStoreKey = storeIterator.hasNext() ? storeIterator.peekNextKey() : null;
+            KS nextStoreKey = storeIterator.MoveNext()
+                ? storeIterator.PeekNextKey()
+                : default;
 
-//        if (nextCacheKey == null)
-//{
-//            return deserializeStoreKey(nextStoreKey);
-//        }
+            if (nextCacheKey == null)
+            {
+                return DeserializeStoreKey(nextStoreKey);
+            }
 
-//        if (nextStoreKey == null)
-//{
-//            return deserializeCacheKey(nextCacheKey);
-//        }
+            if (nextStoreKey == null)
+            {
+                return DeserializeCacheKey(nextCacheKey);
+            }
 
-//        int comparison = compare(nextCacheKey, nextStoreKey);
-//        if (comparison > 0)
-//{
-//            return deserializeStoreKey(nextStoreKey);
-//        } else if (comparison < 0)
-//{
-//            return deserializeCacheKey(nextCacheKey);
-//        } else
-//{
-//            // skip the same keyed element
-//            storeIterator.MoveNext();
-//            return deserializeCacheKey(nextCacheKey);
-//        }
-//    }
+            int comparison = Compare(nextCacheKey, nextStoreKey);
+            if (comparison > 0)
+            {
+                return DeserializeStoreKey(nextStoreKey);
+            }
+            else if (comparison < 0)
+            {
+                return DeserializeCacheKey(nextCacheKey);
+            }
+            else
+            {
+                // skip the same keyed element
+                storeIterator.MoveNext();
 
-//    public override void Remove()
-//{
-//        throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
-//    }
+                return DeserializeCacheKey(nextCacheKey);
+            }
+        }
 
-//    public override void close()
-//{
-//        cacheIterator.close();
-//        storeIterator.close();
-//    }
-//}
+        public void Remove()
+        {
+            throw new InvalidOperationException("Remove() is not supported in " + GetType().FullName);
+        }
 
+        public void Close()
+        {
+            cacheIterator.Close();
+            storeIterator.Close();
+        }
+
+        public bool MoveNext()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

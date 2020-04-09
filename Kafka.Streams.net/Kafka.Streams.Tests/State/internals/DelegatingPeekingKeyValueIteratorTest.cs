@@ -51,9 +51,9 @@
 //        {
 //            store.Add("A", "A");
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
-//            Assert.Equal("A", peekingIterator.peekNextKey());
-//            Assert.Equal("A", peekingIterator.peekNextKey());
-//            Assert.True(peekingIterator.hasNext());
+//            Assert.Equal("A", peekingIterator.PeekNextKey());
+//            Assert.Equal("A", peekingIterator.PeekNextKey());
+//            Assert.True(peekingIterator.HasNext());
 //            peekingIterator.close();
 //        }
 
@@ -62,9 +62,9 @@
 //        {
 //            store.Add("A", "A");
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
-//            Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.peekNext());
-//            Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.peekNext());
-//            Assert.True(peekingIterator.hasNext());
+//            Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.PeekNext());
+//            Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.PeekNext());
+//            Assert.True(peekingIterator.HasNext());
 //            peekingIterator.close();
 //        }
 
@@ -79,9 +79,9 @@
 
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
 //            int index = 0;
-//            while (peekingIterator.hasNext())
+//            while (peekingIterator.HasNext())
 //            {
-//                string peekNext = peekingIterator.peekNextKey();
+//                string peekNext = peekingIterator.PeekNextKey();
 //                string key = peekingIterator.MoveNext().key;
 //                Assert.Equal(kvs[index], peekNext);
 //                Assert.Equal(kvs[index], key);
@@ -103,7 +103,7 @@
 //        public void ShouldThrowNoSuchElementWhenNoMoreItemsLeftAndPeekNextCalled()
 //        {
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
-//            peekingIterator.peekNextKey();
+//            peekingIterator.PeekNextKey();
 //            peekingIterator.close();
 //        }
 

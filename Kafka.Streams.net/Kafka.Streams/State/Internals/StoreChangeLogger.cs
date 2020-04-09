@@ -16,7 +16,7 @@ namespace Kafka.Streams.State.Internals
         public StoreChangeLogger(
             string storeName,
             IProcessorContext context,
-            StateSerdes<K, V> serialization)
+            IStateSerdes<K, V> serialization)
             : this(storeName, context, context.TaskId.partition, serialization)
         {
         }
@@ -25,7 +25,7 @@ namespace Kafka.Streams.State.Internals
             string storeName,
             IProcessorContext context,
             int partition,
-            StateSerdes<K, V> serialization)
+            IStateSerdes<K, V> serialization)
         {
             topic = ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, storeName);
             this.context = context;

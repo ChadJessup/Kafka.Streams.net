@@ -202,7 +202,7 @@ namespace Kafka.Streams.Processors
             initialized = false;
         }
 
-        public virtual IStateStore GetStateStore(string name)
+        public virtual IStateStore GetStateStore(KafkaStreamsContext context, string name)
         {
             throw new NotImplementedException();
         }

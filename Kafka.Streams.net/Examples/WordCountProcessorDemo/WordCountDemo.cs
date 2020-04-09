@@ -67,7 +67,7 @@ namespace WordCountProcessorDemo
 
             builder
                 .Stream<string, string>("TextLinesTopic")
-                .FlatMapValues(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()))
+                .FlatMapValues(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList())
                 .GroupBy((key, word) => word)
                 .Count(Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("Counts"))
                 .ToStream()
@@ -76,6 +76,7 @@ namespace WordCountProcessorDemo
                         Serdes.String(),
                         Serdes.Long()));
 
+            //.FlatMapValues(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()))
             // Make the topology injectable
             var topology = builder.Build();
             services.AddSingleton(topology);

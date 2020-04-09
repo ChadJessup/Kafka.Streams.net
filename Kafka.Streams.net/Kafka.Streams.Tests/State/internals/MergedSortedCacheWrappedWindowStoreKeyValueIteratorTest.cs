@@ -43,7 +43,7 @@
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
 //                createIterator(storeKvs, Collections.emptyIterator());
-//            Assert.True(mergeIterator.hasNext());
+//            Assert.True(mergeIterator.HasNext());
 //        }
 
 //        [Fact]
@@ -59,7 +59,7 @@
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
 //                createIterator(storeKvs, Collections.emptyIterator());
-//            Assert.Equal(convertWindowedKey(mergeIterator.peekNextKey()), (new Windowed<>(storeKey, storeWindow)));
+//            Assert.Equal(convertWindowedKey(mergeIterator.PeekNextKey()), (new Windowed<>(storeKey, storeWindow)));
 //        }
 
 //        [Fact]
@@ -67,7 +67,7 @@
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
 //                createIterator(Collections.emptyIterator(), cacheKvs);
-//            Assert.True(mergeIterator.hasNext());
+//            Assert.True(mergeIterator.HasNext());
 //        }
 
 //        [Fact]
@@ -83,7 +83,7 @@
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
 //                createIterator(Collections.emptyIterator(), cacheKvs);
-//            Assert.Equal(convertWindowedKey(mergeIterator.peekNextKey()), (new Windowed<string>(cacheKey, cacheWindow)));
+//            Assert.Equal(convertWindowedKey(mergeIterator.PeekNextKey()), (new Windowed<string>(cacheKey, cacheWindow)));
 //        }
 
 //        [Fact]
@@ -92,7 +92,7 @@
 //            MergedSortedCacheWindowStoreKeyValueIterator iterator = createIterator(storeKvs, cacheKvs);
 //            Assert.Equal(convertKeyValuePair(iterator.MoveNext()), (KeyValuePair.Create(new Windowed<string>(storeKey, storeWindow), storeKey)));
 //            Assert.Equal(convertKeyValuePair(iterator.MoveNext()), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey)));
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //        }
 
 //        private KeyValuePair<Windowed<string>, string> ConvertKeyValuePair(KeyValuePair<Windowed<Bytes>, byte[]> next)

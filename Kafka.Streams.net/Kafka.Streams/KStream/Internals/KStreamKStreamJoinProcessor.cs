@@ -9,17 +9,20 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamKStreamJoinProcessor<K, V1, V2, R> : AbstractProcessor<K, V1>
     {
         private IWindowStore<K, V2> otherWindow;
-        private readonly bool outer;
+        private readonly KafkaStreamsContext context;
         private readonly IValueJoiner<V1, V2, R> joiner;
         private readonly TimeSpan joinBeforeMs;
         private readonly TimeSpan joinAfterMs;
+        private readonly bool outer;
 
         public KStreamKStreamJoinProcessor(
+            KafkaStreamsContext context,
             bool outer,
             IValueJoiner<V1, V2, R> joiner,
             TimeSpan joinBeforeMs,
             TimeSpan joinAfterMs)
         {
+            this.context = context;
             this.outer = outer;
             this.joiner = joiner;
             this.joinBeforeMs = joinBeforeMs;
@@ -29,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals
         public override void Init(IProcessorContext context)
         {
             base.Init(context);
-            otherWindow = (IWindowStore<K, V2>)context.GetStateStore(otherWindow.Name);
+            otherWindow = (IWindowStore<K, V2>)context.GetStateStore(this.context, otherWindow.Name);
         }
 
         public override void Process(K key, V1 value)

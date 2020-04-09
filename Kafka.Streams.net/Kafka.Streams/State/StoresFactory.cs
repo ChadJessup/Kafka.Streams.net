@@ -1,6 +1,7 @@
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
+using Kafka.Streams.KStream;
 using Kafka.Streams.NullModels;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValues;
@@ -76,16 +77,12 @@ namespace Kafka.Streams.State
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
 
-            var keyValueBytesStoreSupplier = this.services.GetService<IKeyValueBytesStoreSupplier>();
-
             // Since libraries provide this functionality, we
             // want to handle the case where no library was
             // added.
             // If null, provide the Null supplier instead.
-            if (keyValueBytesStoreSupplier == null)
-            {
-                keyValueBytesStoreSupplier = this.services.GetRequiredService<NullTimestampedKeyValueBytesStoreSupplier>();
-            }
+            var keyValueBytesStoreSupplier = this.services.GetService<IKeyValueBytesStoreSupplier>()
+                ?? this.services.GetRequiredService<NullStoreSupplier>();
 
             keyValueBytesStoreSupplier.SetName(name);
             return keyValueBytesStoreSupplier;
@@ -113,7 +110,7 @@ namespace Kafka.Streams.State
             // If null, provide the Null supplier instead.
             if (timeStampedKeyValueBytesStoreSupplier == null)
             {
-                timeStampedKeyValueBytesStoreSupplier = this.services.GetRequiredService<NullTimestampedKeyValueBytesStoreSupplier>();
+                timeStampedKeyValueBytesStoreSupplier = this.services.GetRequiredService<NullStoreSupplier>();
             }
 
             timeStampedKeyValueBytesStoreSupplier.SetName(name);
@@ -360,7 +357,10 @@ namespace Kafka.Streams.State
                     $"Got size=[{windowSize}], retention=[{retentionPeriod}]");
             }
 
-            return null;
+            var windowBytesStoreSupplier = this.services.GetService<IWindowBytesStoreSupplier>()
+                ?? this.services.GetRequiredService<NullStoreSupplier>();
+
+            return windowBytesStoreSupplier;
             //new RocksDbWindowBytesStoreSupplier(
             //    name,
             //    retentionPeriod,
@@ -385,38 +385,39 @@ namespace Kafka.Streams.State
          * @return an instance of {@link WindowBytesStoreSupplier}
          * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
          */
-        // public IWindowBytesStoreSupplier InMemoryWindowStore(
-        //     string name,
-        //     TimeSpan retentionPeriod,
-        //     TimeSpan windowSize,
-        //     bool retainDuplicates)
-        // {
-        //     name = name ?? throw new ArgumentNullException(nameof(name));
-        // 
-        //     string repartitionPeriodErrorMessagePrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-        //     var retentionMs = ApiUtils.ValidateMillisecondDuration(retentionPeriod, repartitionPeriodErrorMessagePrefix);
-        //     if (retentionMs.TotalMilliseconds < 0L)
-        //     {
-        //         throw new System.ArgumentException("retentionPeriod cannot be negative");
-        //     }
-        // 
-        //     string windowSizeErrorMessagePrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
-        //     var windowSizeMs = ApiUtils.ValidateMillisecondDuration(windowSize, windowSizeErrorMessagePrefix);
-        // 
-        //     if (windowSizeMs.TotalMilliseconds < 0L)
-        //     {
-        //         throw new ArgumentException("windowSize cannot be negative");
-        //     }
-        // 
-        //     if (windowSizeMs > retentionMs)
-        //     {
-        //         throw new System.ArgumentException("The retention period of the window store "
-        //             + name + " must be no smaller than its window size. Got size=["
-        //             + windowSize + "], retention=[" + retentionPeriod + "]");
-        //     }
-        // 
-        //     return new InMemoryWindowBytesStoreSupplier(name, retentionMs, windowSizeMs, retainDuplicates);
-        // }
+        public IWindowBytesStoreSupplier InMemoryWindowStore(
+            string name,
+            TimeSpan retentionPeriod,
+            TimeSpan windowSize,
+            bool retainDuplicates)
+        {
+            name = name ?? throw new ArgumentNullException(nameof(name));
+
+            string repartitionPeriodErrorMessagePrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var retentionMs = ApiUtils.ValidateMillisecondDuration(retentionPeriod, repartitionPeriodErrorMessagePrefix);
+            if (retentionMs.TotalMilliseconds < 0L)
+            {
+                throw new ArgumentException("retentionPeriod cannot be negative");
+            }
+
+            string windowSizeErrorMessagePrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
+            var windowSizeMs = ApiUtils.ValidateMillisecondDuration(windowSize, windowSizeErrorMessagePrefix);
+
+            if (windowSizeMs.TotalMilliseconds < 0L)
+            {
+                throw new ArgumentException("windowSize cannot be negative");
+            }
+
+            if (windowSizeMs > retentionMs)
+            {
+                throw new ArgumentException("The retention period of the window store "
+                    + name + " must be no smaller than its window size. Got size=["
+                    + windowSize + "], retention=[" + retentionPeriod + "]");
+            }
+
+            return new NullStoreSupplier();
+            //new InMemoryWindowBytesStoreSupplier(name, retentionMs, windowSizeMs, retainDuplicates);
+        }
 
         /**
          * Create a persistent {@link SessionBytesStoreSupplier}.
@@ -440,6 +441,9 @@ namespace Kafka.Streams.State
             {
                 throw new ArgumentException("retentionPeriod cannot be negative");
             }
+
+            var persistentSessionStore = this.services.GetService<ISessionBytesStoreSupplier>()
+                ?? this.services.GetRequiredService<NullStoreSupplier>();
 
             return null;// new RocksDbSessionBytesStoreSupplier(name, retentionPeriodMs);
         }
@@ -503,18 +507,23 @@ namespace Kafka.Streams.State
          * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
          */
         public IStoreBuilder<IKeyValueStore<K, V>> KeyValueStoreBuilder<K, V>(
-            IClock clock,
+            KafkaStreamsContext context,
             IKeyValueBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
             return new KeyValueStoreBuilder<K, V>(
+                context,
                 supplier,
                 keySerde,
-                valueSerde,
-                clock);
+                valueSerde);
         }
 
         /**
@@ -533,7 +542,7 @@ namespace Kafka.Streams.State
          * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
          */
         public IStoreBuilder<ITimestampedKeyValueStore<K, V>> TimestampedKeyValueStoreBuilder<K, V>(
-            IClock clock,
+            KafkaStreamsContext context,
             IKeyValueBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
@@ -541,10 +550,10 @@ namespace Kafka.Streams.State
             supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
             return new TimestampedKeyValueStoreBuilder<K, V>(
+                context,
                 supplier,
                 keySerde,
-                valueSerde,
-                clock);
+                valueSerde);
         }
 
         /**
@@ -562,7 +571,7 @@ namespace Kafka.Streams.State
          * @return an instance of {@link StoreBuilder} than can build a {@link WindowStore}
          */
         public IStoreBuilder<IWindowStore<K, V>> WindowStoreBuilder<K, V>(
-            IClock clock,
+            KafkaStreamsContext context,
             IWindowBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
@@ -570,10 +579,10 @@ namespace Kafka.Streams.State
             supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
             return new WindowStoreBuilder<K, V>(
+                context,
                 supplier,
                 keySerde,
-                valueSerde,
-                clock);
+                valueSerde);
         }
 
         /**
@@ -592,7 +601,7 @@ namespace Kafka.Streams.State
          * @return an instance of {@link StoreBuilder} that can build a {@link TimestampedWindowStore}
          */
         public IStoreBuilder<ITimestampedWindowStore<K, V>> TimestampedWindowStoreBuilder<K, V>(
-            IClock clock,
+            KafkaStreamsContext context,
             IWindowBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
@@ -600,10 +609,10 @@ namespace Kafka.Streams.State
             supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
             return new TimestampedWindowStoreBuilder<K, V>(
+                context,
                 supplier,
                 keySerde,
-                valueSerde,
-                clock);
+                valueSerde);
         }
 
         /**
@@ -618,6 +627,7 @@ namespace Kafka.Streams.State
          * @return an instance of {@link StoreBuilder} than can build a {@link ISessionStore}
          */
         public IStoreBuilder<ISessionStore<K, V>> SessionStoreBuilder<K, V>(
+            KafkaStreamsContext context,
             ISessionBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
@@ -625,7 +635,7 @@ namespace Kafka.Streams.State
         {
             supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
-            return null; // new SessionStoreBuilder<>(supplier, keySerde, valueSerde, Time.SYSTEM);
+            return new SessionStoreBuilder<K, V>(context, supplier, keySerde, valueSerde);
         }
     }
 }

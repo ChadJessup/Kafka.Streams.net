@@ -902,7 +902,7 @@
 //            try
 //            {
 //                (IKeyValueIterator<string, long> range = myCount.Range("go", "kafka"));
-//                while (range.hasNext())
+//                while (range.HasNext())
 //                {
 //                    countRangeResults.Add(range.MoveNext());
 //                }
@@ -911,7 +911,7 @@
 //        try
 //            {
 //                (IKeyValueIterator<string, long> all = myCount.all());
-//                while (all.hasNext())
+//                while (all.HasNext())
 //                {
 //                    countAllResults.Add(all.MoveNext());
 //                }
@@ -1051,7 +1051,7 @@
 //        {
 //            IWindowStoreIterator<long> fetch =
 //                store.Fetch(key, ofEpochMilli(0), ofEpochMilli(System.currentTimeMillis()));
-//            if (fetch.hasNext())
+//            if (fetch.HasNext())
 //            {
 //                KeyValuePair<long, long> next = fetch.MoveNext();
 //                return Collections.singletonMap(key, next.Value);

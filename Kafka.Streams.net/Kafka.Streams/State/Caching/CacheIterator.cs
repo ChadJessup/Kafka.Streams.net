@@ -17,9 +17,9 @@
 //        }
 
 
-//        public bool hasNext()
+//        public bool HasNext()
 //        {
-//            return keys.hasNext();
+//            return keys.HasNext();
 //        }
 
 
@@ -42,7 +42,7 @@
 //        }
 
 
-//        public Bytes peekNextKey()
+//        public Bytes PeekNextKey()
 //        {
 //            throw new InvalidOperationException("peekNextKey not supported");
 //        }

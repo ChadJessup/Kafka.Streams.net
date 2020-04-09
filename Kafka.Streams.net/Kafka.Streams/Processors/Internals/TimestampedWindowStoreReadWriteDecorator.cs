@@ -7,8 +7,10 @@ namespace Kafka.Streams.Processors.Internals
         : WindowStoreReadWriteDecorator<K, ValueAndTimestamp<V>>
         , ITimestampedWindowStore<K, V>
     {
-        public TimestampedWindowStoreReadWriteDecorator(ITimestampedWindowStore<K, V> inner)
-            : base(inner)
+        public TimestampedWindowStoreReadWriteDecorator(
+            KafkaStreamsContext context,
+            ITimestampedWindowStore<K, V> inner)
+            : base(context, inner)
         {
         }
     }

@@ -96,23 +96,23 @@
 //                Bytes.Wrap("a".getBytes()),
 //                Bytes.Wrap("z".getBytes()));
 
-//            Assert.True(iterator.hasNext());
-//            Assert.Equal("a", new string(iterator.peekNextKey().Get()));
+//            Assert.True(iterator.HasNext());
+//            Assert.Equal("a", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("a", "1"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.True(iterator.hasNext());
-//            Assert.Equal("b", new string(iterator.peekNextKey().Get()));
+//            Assert.True(iterator.HasNext());
+//            Assert.Equal("b", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("b", "2"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.True(iterator.hasNext());
-//            Assert.Equal("c", new string(iterator.peekNextKey().Get()));
+//            Assert.True(iterator.HasNext());
+//            Assert.Equal("c", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("c", "3"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.True(iterator.hasNext());
-//            Assert.Equal("d", new string(iterator.peekNextKey().Get()));
+//            Assert.True(iterator.HasNext());
+//            Assert.Equal("d", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("d", "4"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //        }
 
 //        [Fact]
@@ -126,7 +126,7 @@
 
 //            iterator.currentIterator = segmentOne.all();
 //            segmentOne.close();
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //        }
 
 //        [Fact]
@@ -138,15 +138,15 @@
 //                Bytes.Wrap("a".getBytes()),
 //                Bytes.Wrap("b".getBytes()));
 
-//            Assert.True(iterator.hasNext());
-//            Assert.Equal("a", new string(iterator.peekNextKey().Get()));
+//            Assert.True(iterator.HasNext());
+//            Assert.Equal("a", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("a", "1"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.True(iterator.hasNext());
-//            Assert.Equal("b", new string(iterator.peekNextKey().Get()));
+//            Assert.True(iterator.HasNext());
+//            Assert.Equal("b", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("b", "2"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.False(iterator.hasNext());
+//            Assert.False(iterator.HasNext());
 //        }
 
 //        [Fact]// (expected = NoSuchElementException)
@@ -158,7 +158,7 @@
 //                Bytes.Wrap("f".getBytes()),
 //                Bytes.Wrap("h".getBytes()));
 
-//            iterator.peekNextKey();
+//            iterator.PeekNextKey();
 //        }
 
 //        [Fact]// (expected = NoSuchElementException)

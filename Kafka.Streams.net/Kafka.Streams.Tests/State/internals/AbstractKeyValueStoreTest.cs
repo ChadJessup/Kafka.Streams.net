@@ -78,7 +78,7 @@
 //        private static Dictionary<int, string> GetContents(IKeyValueIterator<int, string> iter)
 //        {
 //            HashDictionary<int, string> result = new HashMap<>();
-//            while (iter.hasNext())
+//            while (iter.HasNext())
 //            {
 //                KeyValuePair<int, string> entry = iter.MoveNext();
 //                result.put(entry.key, entry.value);
@@ -399,7 +399,7 @@
 //        List<KeyValuePair<int, string>> expectedReturned = Array.asList(KeyValuePair.Create(1, "one"), KeyValuePair.Create(2, "two"));
 //        Iterator<KeyValuePair<int, string>> iterator = store.all();
 
-//        while (iterator.hasNext())
+//        while (iterator.HasNext())
 //        {
 //            allReturned.Add(iterator.MoveNext());
 //        }
@@ -429,7 +429,7 @@
 //        Iterator<KeyValuePair<int, string>> iterator = store.Range(2, 2);
 
 //        Assert.Equal(iterator.MoveNext().value, store.Get(2));
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -451,7 +451,7 @@
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
 //        IKeyValueIterator<int, string> iterator = store.Range(-1, 1);
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 
 //        List<string> messages = appender.getMessages();
 //        Assert.Equal(messages, hasItem("Returning empty iterator for fetch with invalid key range: from > to. "

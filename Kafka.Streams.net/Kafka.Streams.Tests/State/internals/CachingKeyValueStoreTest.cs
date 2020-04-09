@@ -202,7 +202,7 @@
 //            int items = AddItemsToCache();
 //            IKeyValueIterator<Bytes, byte[]> all = store.all();
 //            List<Bytes> results = new ArrayList<>();
-//            while (all.hasNext())
+//            while (all.HasNext())
 //            {
 //                results.Add(all.MoveNext().key);
 //            }
@@ -215,7 +215,7 @@
 //            int items = AddItemsToCache();
 //            IKeyValueIterator<Bytes, byte[]> range = store.Range(bytesKey(string.valueOf(0)), bytesKey(string.valueOf(items)));
 //            List<Bytes> results = new ArrayList<>();
-//            while (range.hasNext())
+//            while (range.HasNext())
 //            {
 //                results.Add(range.MoveNext().key);
 //            }
@@ -228,8 +228,8 @@
 //            store.put(BytesKey("a"), BytesValue("a"));
 //            store.delete(BytesKey("a"));
 //            Assert.Null(store.Get(BytesKey("a")));
-//            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).hasNext());
-//            Assert.False(store.all().hasNext());
+//            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).HasNext());
+//            Assert.False(store.all().HasNext());
 //        }
 
 //        [Fact]
@@ -239,8 +239,8 @@
 //            store.flush();
 //            store.delete(BytesKey("a"));
 //            Assert.Null(store.Get(BytesKey("a")));
-//            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).hasNext());
-//            Assert.False(store.all().hasNext());
+//            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).HasNext());
+//            Assert.False(store.all().HasNext());
 //        }
 
 //        [Fact]

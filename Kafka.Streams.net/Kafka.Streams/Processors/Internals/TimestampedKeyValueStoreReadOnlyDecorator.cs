@@ -8,8 +8,8 @@ namespace Kafka.Streams.Processors.Internals
         , ITimestampedKeyValueStore<K, V>
     {
 
-        public TimestampedKeyValueStoreReadOnlyDecorator(ITimestampedKeyValueStore<K, V> inner)
-            : base(inner)
+        public TimestampedKeyValueStoreReadOnlyDecorator(KafkaStreamsContext context, ITimestampedKeyValueStore<K, V> inner)
+            : base(context, inner)
         {
         }
     }

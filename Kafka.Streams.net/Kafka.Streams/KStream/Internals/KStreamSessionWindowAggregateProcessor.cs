@@ -66,7 +66,7 @@
 //                )
 //            )
 //            {
-//                while (iterator.hasNext())
+//                while (iterator.HasNext())
 //                {
 //                    KeyValuePair<Windowed<K>, Agg> next = iterator.MoveNext();
 //                    merged.Add(next);

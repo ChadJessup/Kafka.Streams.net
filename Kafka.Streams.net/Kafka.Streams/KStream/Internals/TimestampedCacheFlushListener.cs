@@ -1,4 +1,5 @@
 using Kafka.Streams.Nodes;
+using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
@@ -30,12 +31,13 @@ namespace Kafka.Streams.KStream.Internals
         {
             var prev = context.GetCurrentNode();
             context.SetCurrentNode(myNode);
+
             try
             {
-                //context.Forward(
-                //    key,
-                //    new Change<ValueAndTimestamp<V>>(newValue, oldValue),
-                //    To.All().WithTimestamp(newValue != null ? newValue.timestamp : timestamp));
+                context.Forward(
+                    key,
+                    new Change<ValueAndTimestamp<V>>(newValue, oldValue),
+                    To.All().WithTimestamp(newValue != null ? newValue.Timestamp : timestamp));
             }
             finally
             {

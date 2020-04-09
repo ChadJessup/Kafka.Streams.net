@@ -79,7 +79,7 @@
 //        public void ShouldReturnEmptyIteratorIfNoData()
 //        {
 //            IKeyValueIterator<Windowed<string>, long> result = sessionStore.Fetch("b");
-//            Assert.False(result.hasNext());
+//            Assert.False(result.HasNext());
 //        }
 
 //        [Fact]
@@ -110,7 +110,7 @@
 
 //            IKeyValueIterator<Windowed<string>, long> result = sessionStore.Fetch("foo");
 //            Assert.Equal(KeyValuePair.Create(expectedKey, 1L), result.MoveNext());
-//            Assert.False(result.hasNext());
+//            Assert.False(result.HasNext());
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)

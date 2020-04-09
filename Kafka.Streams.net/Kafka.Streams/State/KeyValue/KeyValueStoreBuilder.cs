@@ -1,7 +1,7 @@
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Internals;
-
+using Kafka.Streams.State.Metered;
 using System;
 
 namespace Kafka.Streams.State.KeyValues
@@ -11,11 +11,11 @@ namespace Kafka.Streams.State.KeyValues
         private readonly IKeyValueBytesStoreSupplier storeSupplier;
 
         public KeyValueStoreBuilder(
+            KafkaStreamsContext context,
             IKeyValueBytesStoreSupplier storeSupplier,
             ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            IClock clock)
-            : base(storeSupplier.Name, keySerde, valueSerde, clock)
+            ISerde<V> valueSerde)
+            : base(context, storeSupplier.Name, keySerde, valueSerde)
         {
             storeSupplier = storeSupplier ?? throw new ArgumentNullException(nameof(storeSupplier));
             this.storeSupplier = storeSupplier;
@@ -23,13 +23,11 @@ namespace Kafka.Streams.State.KeyValues
 
         public override IKeyValueStore<K, V> Build()
         {
-            return null;
-                // new MeteredKeyValueStore<K, V>(
-                // maybeWrapCaching(maybeWrapLogging(storeSupplier)),
-                // storeSupplier.metricsScope(),
-                // this.clock,
-                // keySerde,
-                // valueSerde);
+            return new MeteredKeyValueStore<K, V>(
+                this.context,
+                storeSupplier.Get(),
+                keySerde,
+                valueSerde);
         }
     }
 }

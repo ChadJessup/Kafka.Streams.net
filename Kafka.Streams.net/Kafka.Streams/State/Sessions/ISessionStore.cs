@@ -18,7 +18,6 @@ namespace Kafka.Streams.State.Sessions
      */
     public interface ISessionStore<K, AGG> : IStateStore, IReadOnlySessionStore<K, AGG>
     {
-
         /**
          * Fetch any sessions with the matching key and the sessions end is &ge; earliestSessionEndTime and the sessions
          * start is &le; latestSessionStartTime

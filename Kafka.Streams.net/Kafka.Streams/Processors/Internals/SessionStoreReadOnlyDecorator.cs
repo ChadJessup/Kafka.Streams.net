@@ -6,11 +6,13 @@ using System;
 namespace Kafka.Streams.Processors.Internals
 {
     public class SessionStoreReadOnlyDecorator<K, AGG>
-        : StateStoreReadOnlyDecorator<ISessionStore<K, AGG>>
-        , ISessionStore<K, AGG>
+        : StateStoreReadOnlyDecorator<ISessionStore<K, AGG>, K, AGG>,
+        ISessionStore<K, AGG>
     {
-        public SessionStoreReadOnlyDecorator(ISessionStore<K, AGG> inner)
-            : base(inner)
+        public SessionStoreReadOnlyDecorator(
+            KafkaStreamsContext context,
+            ISessionStore<K, AGG> inner)
+            : base(context, inner)
         {
         }
 
@@ -19,7 +21,10 @@ namespace Kafka.Streams.Processors.Internals
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            return wrapped.FindSessions(key, earliestSessionEndTime, latestSessionStartTime);
+            return Wrapped.FindSessions(
+                key,
+                earliestSessionEndTime,
+                latestSessionStartTime);
         }
 
         public IKeyValueIterator<Windowed<K>, AGG> FindSessions(
@@ -28,7 +33,11 @@ namespace Kafka.Streams.Processors.Internals
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            return wrapped.FindSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
+            return Wrapped.FindSessions(
+                keyFrom,
+                keyTo,
+                earliestSessionEndTime,
+                latestSessionStartTime);
         }
 
         public void Remove(Windowed<K> sessionKey)
@@ -36,25 +45,24 @@ namespace Kafka.Streams.Processors.Internals
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public void Put(Windowed<K> sessionKey,
-                        AGG aggregate)
+        public void Put(Windowed<K> sessionKey, AGG aggregate)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
         public AGG FetchSession(K key, long startTime, long endTime)
         {
-            return wrapped.FetchSession(key, startTime, endTime);
+            return Wrapped.FetchSession(key, startTime, endTime);
         }
 
         public IKeyValueIterator<Windowed<K>, AGG> Fetch(K key)
         {
-            return wrapped.Fetch(key);
+            return Wrapped.Fetch(key);
         }
 
         public IKeyValueIterator<Windowed<K>, AGG> Fetch(K from, K to)
         {
-            return wrapped.Fetch(from, to);
+            return Wrapped.Fetch(from, to);
         }
     }
 }

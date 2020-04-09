@@ -31,20 +31,20 @@
 //            }
 //        }
 
-//        public override Bytes peekNextKey()
+//        public override Bytes PeekNextKey()
 //        {
-//            if (!hasNext())
+//            if (!HasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }
-//            return currentIterator.peekNextKey();
+//            return currentIterator.PeekNextKey();
 //        }
 
-//        public override bool hasNext()
+//        public override bool HasNext()
 //        {
 //            bool hasNext = false;
 //            while ((currentIterator == null || !(hasNext = hasNextConditionHasNext()) || !currentSegment.isOpen())
-//                    && segments.hasNext())
+//                    && segments.HasNext())
 //            {
 //                close();
 //                currentSegment = segments.MoveNext();
@@ -83,7 +83,7 @@
 
 //        public KeyValuePair<Bytes, byte[]> next()
 //        {
-//            if (!hasNext())
+//            if (!HasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }

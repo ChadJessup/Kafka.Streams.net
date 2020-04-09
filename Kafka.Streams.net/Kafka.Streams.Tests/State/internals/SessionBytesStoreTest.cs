@@ -193,10 +193,10 @@
 //            sessionStore.remove(new Windowed<string>("a", new SessionWindow(0, 1000)));
 
 //            IKeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 0L, 1000L);
-//            Assert.False(results.hasNext());
+//            Assert.False(results.HasNext());
 
 //            IKeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 1500L, 2500L);
-//            Assert.True(results.hasNext());
+//            Assert.True(results.HasNext());
 //        }
 //    }
 
@@ -208,10 +208,10 @@
 //        sessionStore.Put(new Windowed<string>("a", new SessionWindow(0, 1000)), null);
 
 //        IKeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 0L, 1000L);
-//        Assert.False(results.hasNext());
+//        Assert.False(results.HasNext());
 
 //        IKeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 1500L, 2500L);
-//        Assert.True(results.hasNext());
+//        Assert.True(results.HasNext());
 //    }
 
 //    [Fact]
@@ -306,10 +306,10 @@
 
 //        IKeyValueIterator<Windowed<string>, long> iterator = sessionStore.findSessions("a", 0L, 20);
 
-//        Assert.Equal(iterator.peekNextKey(), new Windowed<string>("a", new SessionWindow(0L, 0L)));
-//        Assert.Equal(iterator.peekNextKey(), iterator.MoveNext().key);
-//        Assert.Equal(iterator.peekNextKey(), iterator.MoveNext().key);
-//        Assert.False(iterator.hasNext());
+//        Assert.Equal(iterator.PeekNextKey(), new Windowed<string>("a", new SessionWindow(0L, 0L)));
+//        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
+//        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -348,10 +348,10 @@
 //        sessionStore.put(new Windowed<string>("c", new SessionWindow(100, 500)), 3L);
 
 //        IKeyValueIterator<Windowed<string>, long> iterator = sessionStore.Fetch("a");
-//        Assert.True(iterator.hasNext());
+//        Assert.True(iterator.HasNext());
 //        sessionStore.close();
 
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -367,8 +367,8 @@
 
 //        Assert.Equal(singleKeyIterator.MoveNext(), rangeIterator.MoveNext());
 //        Assert.Equal(singleKeyIterator.MoveNext(), rangeIterator.MoveNext());
-//        Assert.False(singleKeyIterator.hasNext());
-//        Assert.False(rangeIterator.hasNext());
+//        Assert.False(singleKeyIterator.HasNext());
+//        Assert.False(rangeIterator.HasNext());
 //    }
 
 //    [Fact]
@@ -485,7 +485,7 @@
 //            .deserialize("", Serdes.Int().Serializer.Serialize("", 1));
 
 //        IKeyValueIterator<Windowed<string>, long> iterator = sessionStore.findSessions(keyFrom, keyTo, 0L, 10L);
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 
 //        List<string> messages = appender.getMessages();
 //        Assert.Equal(messages,
@@ -498,7 +498,7 @@
 //    {
 //        HashSet<V> results = new HashSet<V>();
 
-//        while (iterator.hasNext())
+//        while (iterator.HasNext())
 //        {
 //            results.Add(iterator.MoveNext().value);
 //        }
@@ -509,7 +509,7 @@
 //    {
 //        HashSet<KeyValuePair<K, V>> results = new HashSet<KeyValuePair<K, V>>();
 
-//        while (iterator.hasNext())
+//        while (iterator.HasNext())
 //        {
 //            results.Add(iterator.MoveNext());
 //        }

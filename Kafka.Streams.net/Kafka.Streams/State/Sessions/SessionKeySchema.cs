@@ -1,164 +1,188 @@
+using Confluent.Kafka;
+using Kafka.Common.Utils;
+using Kafka.Streams.Internals;
+using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
+using System;
+using System.Collections.Generic;
 
-//using Confluent.Kafka;
-//using Kafka.Common.Utils;
-//using Kafka.Streams.KStream;
-//using Kafka.Streams.KStream.Internals;
-//using System;
-//using System.Collections.Generic;
+namespace Kafka.Streams.State.Sessions
+{
+    public class SessionKeySchema : IKeySchema
+    {
+        private static int TIMESTAMP_SIZE = 8;
+        private static int SUFFIX_SIZE = 2 * TIMESTAMP_SIZE;
+        private static byte[] MIN_SUFFIX = new byte[SUFFIX_SIZE];
 
-//namespace Kafka.Streams.State.Sessions
-//{
-//    public class SessionKeySchema : ISegmentedBytesStore.KeySchema
-//    {
+        public Bytes UpperRangeFixedSize(Bytes key, long to)
+        {
+            Windowed<Bytes> sessionKey = new Windowed<Bytes>(key, new SessionWindow(to, long.MaxValue));
+            return SessionKeySchema.ToBinary(sessionKey);
+        }
 
-//        private static int TIMESTAMP_SIZE = 8;
-//        private static int SUFFIX_SIZE = 2 * TIMESTAMP_SIZE;
-//        private static byte[] MIN_SUFFIX = new byte[SUFFIX_SIZE];
+        public Bytes LowerRangeFixedSize(Bytes key, long from)
+        {
+            Windowed<Bytes> sessionKey = new Windowed<Bytes>(key, new SessionWindow(0, Math.Max(0, from)));
+            return SessionKeySchema.ToBinary(sessionKey);
+        }
 
-//        public override Bytes upperRangeFixedSize(Bytes key, long to)
-//        {
-//            Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(to, long.MaxValue));
-//            return SessionKeySchema.toBinary(sessionKey);
-//        }
+        public Bytes UpperRange(Bytes key, long to)
+        {
+            byte[] maxSuffix = new ByteBuffer().Allocate(SUFFIX_SIZE)
+                // the end timestamp can be as large as possible as long as it's larger than start time
+                .PutLong(long.MaxValue)
+                // this is the start timestamp
+                .PutLong(to)
+                .Array();
+            return OrderedBytes.UpperRange(key, maxSuffix);
+        }
 
-//        public override Bytes lowerRangeFixedSize(Bytes key, long from)
-//        {
-//            Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(0, Math.Max(0, from)));
-//            return SessionKeySchema.toBinary(sessionKey);
-//        }
+        public Bytes LowerRange(Bytes key, long from)
+        {
+            return OrderedBytes.LowerRange(key, MIN_SUFFIX);
+        }
 
-//        public override Bytes upperRange(Bytes key, long to)
-//        {
-//            byte[] maxSuffix = new ByteBuffer().Allocate(SUFFIX_SIZE)
-//                // the end timestamp can be as large as possible as long as it's larger than start time
-//                .putLong(long.MaxValue)
-//                // this is the start timestamp
-//                .putLong(to)
-//                .array();
-//            return OrderedBytes.upperRange(key, maxSuffix);
-//        }
+        public long SegmentTimestamp(Bytes key)
+        {
+            return SessionKeySchema.ExtractEndTimestamp(key.Get());
+        }
 
-//        public override Bytes lowerRange(Bytes key, long from)
-//        {
-//            return OrderedBytes.lowerRange(key, MIN_SUFFIX);
-//        }
+        //public override HasNextCondition hasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to)
+        //{
+        //    //        return iterator=>
+        //    //{
+        //    //            while (iterator.HasNext())
+        //    //            {
+        //    //                Bytes bytes = iterator.PeekNextKey();
+        //    //                Windowed<Bytes> windowedKey = SessionKeySchema.from(bytes);
+        //    //                if ((binaryKeyFrom == null || windowedKey.key().CompareTo(binaryKeyFrom) >= 0)
+        //    //                    && (binaryKeyTo == null || windowedKey.key().CompareTo(binaryKeyTo) <= 0)
+        //    //                    && windowedKey.window().end() >= from
+        //    //                    && windowedKey.window().start() <= to)
+        //    //                {
+        //    //                    return true;
+        //    //                }
+        //    //                iterator.MoveNext();
+        //    //            }
+        //    //            return false;
+        //    //        };
+        //}
 
-//        public override long segmentTimestamp(Bytes key)
-//        {
-//            return SessionKeySchema.extractEndTimestamp(key());
-//        }
+        public List<S> SegmentsToSearch<S>(ISegments<S> segments, long from, long to)
+             where S : ISegment
+        {
+            if (segments is null)
+            {
+                throw new ArgumentNullException(nameof(segments));
+            }
 
-//        public override HasNextCondition hasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to)
-//        {
-//            //        return iterator=>
-//            //{
-//            //            while (iterator.hasNext())
-//            //            {
-//            //                Bytes bytes = iterator.peekNextKey();
-//            //                Windowed<Bytes> windowedKey = SessionKeySchema.from(bytes);
-//            //                if ((binaryKeyFrom == null || windowedKey.key().CompareTo(binaryKeyFrom) >= 0)
-//            //                    && (binaryKeyTo == null || windowedKey.key().CompareTo(binaryKeyTo) <= 0)
-//            //                    && windowedKey.window().end() >= from
-//            //                    && windowedKey.window().start() <= to)
-//            //                {
-//            //                    return true;
-//            //                }
-//            //                iterator.MoveNext();
-//            //            }
-//            //            return false;
-//            //        };
-//        }
+            return segments.GetSegments(from, long.MaxValue);
+        }
 
-//        public override List<S> segmentsToSearch<S>(
-//            Segments<S> segments,
-//            long from,
-//            long to)
-//        {
-//            return segments.segments(from, long.MaxValue);
-//        }
+        private static K ExtractKey<K>(
+            byte[] binaryKey,
+            IDeserializer<K> deserializer,
+            string topic)
+        {
+            return deserializer.Deserialize(topic, ExtractKeyBytes(binaryKey), isKey: true);
+        }
 
-//        private static K extractKey(byte[] binaryKey,
-//                                        IDeserializer<K> deserializer,
-//                                        string topic)
-//        {
-//            return deserializer.Deserialize(topic, extractKeyBytes(binaryKey));
-//        }
+        public static byte[] ExtractKeyBytes(byte[] binaryKey)
+        {
+            byte[] bytes = new byte[binaryKey.Length - 2 * TIMESTAMP_SIZE];
+            Array.Copy(binaryKey, 0, bytes, 0, bytes.Length);
 
-//        static byte[] extractKeyBytes(byte[] binaryKey)
-//        {
-//            byte[] bytes = new byte[binaryKey.Length - 2 * TIMESTAMP_SIZE];
-//            System.arraycopy(binaryKey, 0, bytes, 0, bytes.Length);
-//            return bytes;
-//        }
+            return bytes;
+        }
 
-//        static long extractEndTimestamp(byte[] binaryKey)
-//        {
-//            return new ByteBuffer().Wrap(binaryKey).GetLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
-//        }
+        static long ExtractEndTimestamp(byte[] binaryKey)
+        {
+            return new ByteBuffer()
+                .Wrap(binaryKey)
+                .GetLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
+        }
 
-//        static long extractStartTimestamp(byte[] binaryKey)
-//        {
-//            return new ByteBuffer().Wrap(binaryKey).GetLong(binaryKey.Length - TIMESTAMP_SIZE);
-//        }
+        static long ExtractStartTimestamp(byte[] binaryKey)
+        {
+            return new ByteBuffer()
+                .Wrap(binaryKey)
+                .GetLong(binaryKey.Length - TIMESTAMP_SIZE);
+        }
 
-//        static Window extractWindow(byte[] binaryKey)
-//        {
-//            ByteBuffer buffer = new ByteBuffer().Wrap(binaryKey);
-//            long start = buffer.GetLong(binaryKey.Length - TIMESTAMP_SIZE);
-//            long end = buffer.GetLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
-//            return new SessionWindow(start, end);
-//        }
+        public static Window ExtractWindow(byte[] binaryKey)
+        {
+            ByteBuffer buffer = new ByteBuffer().Wrap(binaryKey);
+            long start = buffer.GetLong(binaryKey.Length - TIMESTAMP_SIZE);
+            long end = buffer.GetLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
+            
+            return new SessionWindow(start, end);
+        }
 
-//        public static Windowed<K> from(byte[] binaryKey,
-//                                           IDeserializer<K> keyDeserializer,
-//                                           string topic)
-//        {
-//            K key = extractKey(binaryKey, keyDeserializer, topic);
-//            Window window = extractWindow(binaryKey);
-//            return new Windowed<>(key, window);
-//        }
+        public static Windowed<K> From<K>(
+            byte[] binaryKey,
+            IDeserializer<K> keyDeserializer,
+            string topic)
+        {
+            K key = ExtractKey(binaryKey, keyDeserializer, topic);
+            Window window = ExtractWindow(binaryKey);
 
-//        public static Windowed<Bytes> from(Bytes bytesKey)
-//        {
-//            byte[] binaryKey = Array.Empty();
-//            Window window = extractWindow(binaryKey);
-//            return new Windowed<Bytes>(Bytes.Wrap(extractKeyBytes(binaryKey)), window);
-//        }
+            return new Windowed<K>(key, window);
+        }
 
-//        public static Windowed<K> from<K>(
-//            Windowed<Bytes> keyBytes,
-//            IDeserializer<K> keyDeserializer,
-//            string topic)
-//        {
-//            K key = keyDeserializer.Deserialize(keyBytes.key, new SerializationContext(MessageComponentType.Key, topic);
-//            return new Windowed<K>(key, keyBytes.window);
-//        }
+        public static Windowed<Bytes> From(Bytes bytesKey)
+        {
+            byte[] binaryKey = Array.Empty<byte>();
+            Window window = ExtractWindow(binaryKey);
+            return new Windowed<Bytes>(Bytes.Wrap(ExtractKeyBytes(binaryKey)), window);
+        }
 
-//        public static byte[] toBinary<K>(
-//            Windowed<K> sessionKey,
-//            ISerializer<K> serializer,
-//            string topic)
-//        {
-//            byte[] bytes = serializer.Serialize(topic, sessionKey.key);
-//            return toBinary(Bytes.Wrap(bytes), sessionKey.window.start(), sessionKey.window.end())[];
-//        }
+        public static Windowed<K> From<K>(
+            Windowed<Bytes> keyBytes,
+            IDeserializer<K> keyDeserializer,
+            string topic)
+        {
+            K key = keyDeserializer.Deserialize(topic, keyBytes.Key, isKey: true);
+            return new Windowed<K>(key, keyBytes.window);
+        }
 
-//        public static Bytes toBinary(Windowed<Bytes> sessionKey)
-//        {
-//            return toBinary(sessionKey.key, sessionKey.window.start(), sessionKey.window.end());
-//        }
+        public static byte[] ToBinary<K>(
+            Windowed<K> sessionKey,
+            ISerializer<K> serializer,
+            string topic)
+        {
+            byte[] bytes = serializer.Serialize(topic, sessionKey.Key, isKey: true);
+            return ToBinary(
+                    Bytes.Wrap(bytes),
+                    sessionKey.window.Start(),
+                    sessionKey.window.End())
+                .Get();
+        }
 
-//        public static Bytes toBinary(
-//            Bytes key,
-//            long startTime,
-//            long endTime)
-//        {
-//            byte[] bytes = key[];
-//            ByteBuffer buf = new ByteBuffer().Allocate(bytes.Length + 2 * TIMESTAMP_SIZE);
-//            buf.Add(bytes);
-//            buf.putLong(endTime);
-//            buf.putLong(startTime);
-//            return Bytes.Wrap(buf.array());
-//        }
-//    }
-//}
+        public static Bytes ToBinary(Windowed<Bytes> sessionKey)
+        {
+            return ToBinary(sessionKey.Key, sessionKey.window.Start(), sessionKey.window.End());
+        }
+
+        public static Bytes ToBinary(
+            Bytes key,
+            long startTime,
+            long endTime)
+        {
+            byte[] bytes = key.Get();
+            ByteBuffer buf = new ByteBuffer()
+                .Allocate(bytes.Length + 2 * TIMESTAMP_SIZE);
+
+            buf.Add(bytes);
+            buf.PutLong(endTime);
+            buf.PutLong(startTime);
+            return Bytes.Wrap(buf.Array());
+        }
+
+        public bool HasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

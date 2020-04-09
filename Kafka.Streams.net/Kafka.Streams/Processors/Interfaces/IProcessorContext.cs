@@ -73,7 +73,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * @param name The store name
          * @return The state store instance
          */
-        IStateStore GetStateStore(string name);
+        IStateStore GetStateStore(KafkaStreamsContext context, string name);
 
         /**
          * Schedules a periodic operation for processors. A processor may call this method during

@@ -6,17 +6,17 @@ using System;
 namespace Kafka.Streams.Processors.Internals
 {
     public class WindowStoreReadWriteDecorator<K, V>
-        : StateStoreReadWriteDecorator<IWindowStore<K, V>>
+        : StateStoreReadWriteDecorator<IWindowStore<K, V>, K, V>
         , IWindowStore<K, V>
     {
-        public WindowStoreReadWriteDecorator(IWindowStore<K, V> inner)
-            : base(inner)
+        public WindowStoreReadWriteDecorator(KafkaStreamsContext context, IWindowStore<K, V> inner)
+            : base(context, inner)
         {
         }
 
         public void Put(K key, V value)
         {
-            wrapped.Add(key, value);
+            Wrapped.Add(key, value);
         }
 
         public void Put(
@@ -24,12 +24,12 @@ namespace Kafka.Streams.Processors.Internals
             V value,
             long windowStartTimestamp)
         {
-            wrapped.Put(key, value, windowStartTimestamp);
+            Wrapped.Put(key, value, windowStartTimestamp);
         }
 
         public V Fetch(K key, long time)
         {
-            return wrapped.Fetch(key, time);
+            return Wrapped.Fetch(key, time);
         }
 
         public IWindowStoreIterator<V> Fetch(
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processors.Internals
             long timeFrom,
             long timeTo)
         {
-            return wrapped.Fetch(key, timeFrom, timeTo);
+            return Wrapped.Fetch(key, timeFrom, timeTo);
         }
 
         public IKeyValueIterator<Windowed<K>, V> Fetch(
@@ -46,17 +46,17 @@ namespace Kafka.Streams.Processors.Internals
             long timeFrom,
             long timeTo)
         {
-            return wrapped.Fetch(from, to, timeFrom, timeTo);
+            return Wrapped.Fetch(from, to, timeFrom, timeTo);
         }
 
         public IKeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo)
         {
-            return wrapped.FetchAll(timeFrom, timeTo);
+            return Wrapped.FetchAll(timeFrom, timeTo);
         }
 
         public IKeyValueIterator<Windowed<K>, V> All()
         {
-            return wrapped.All();
+            return Wrapped.All();
         }
 
         public IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to)

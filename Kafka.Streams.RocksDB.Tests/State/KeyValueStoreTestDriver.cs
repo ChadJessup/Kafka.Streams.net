@@ -338,7 +338,7 @@
 //    {
 //        int size = 0;
 //        IKeyValueIterator iterator = store.all<K, V>();
-//        while (iterator.hasNext())
+//        while (iterator.HasNext())
 //        {
 //            iterator.MoveNext();
 //            ++size;

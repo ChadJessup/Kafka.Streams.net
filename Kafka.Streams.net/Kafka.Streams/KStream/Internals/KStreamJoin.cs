@@ -76,18 +76,20 @@ namespace Kafka.Streams.KStream.Internals
             builder.AddGraphNode<K1, V1>(otherStreamsGraphNode, otherWindowedStreamsNode);
 
             var joinThis = new KStreamKStreamJoin<K1, R, V1, V2>(
-               otherWindowStore.name,
-               windows.beforeMs,
-               windows.afterMs,
-               joiner,
-               leftOuter);
+                this.context,
+                otherWindowStore.name,
+                windows.beforeMs,
+                windows.afterMs,
+                joiner,
+                leftOuter);
 
             var joinOther = new KStreamKStreamJoin<K1, R, V2, V1>(
-               thisWindowStore.name,
-               windows.afterMs,
-               windows.beforeMs,
-               AbstractStream<K1, V1>.ReverseJoiner(joiner),
-               rightOuter);
+                this.context,
+                thisWindowStore.name,
+                windows.afterMs,
+                windows.beforeMs,
+                AbstractStream<K1, V1>.ReverseJoiner(joiner),
+                rightOuter);
 
             var joinMerge = new KStreamPassThrough<K1, R>();
 

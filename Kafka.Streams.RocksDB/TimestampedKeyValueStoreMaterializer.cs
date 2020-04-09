@@ -33,7 +33,7 @@ namespace Kafka.Streams.KStream.Internals
 
             IStoreBuilder<ITimestampedKeyValueStore<K, V>> builder =
                 this.context.StoresFactory.TimestampedKeyValueStoreBuilder(
-                   this.context.Clock,
+                   this.context,
                    supplier,
                    materialized?.KeySerde,
                    materialized?.ValueSerde);

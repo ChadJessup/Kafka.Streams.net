@@ -5,31 +5,33 @@ using System.Collections.Generic;
 namespace Kafka.Streams.Processors.Internals
 {
     public class KeyValueStoreReadOnlyDecorator<K, V>
-        : StateStoreReadOnlyDecorator<IKeyValueStore<K, V>>
+        : StateStoreReadOnlyDecorator<IKeyValueStore<K, V>, K, V>
         , IKeyValueStore<K, V>
     {
-        public KeyValueStoreReadOnlyDecorator(IKeyValueStore<K, V> inner)
-            : base(inner)
+        public KeyValueStoreReadOnlyDecorator(
+            KafkaStreamsContext context,
+            IKeyValueStore<K, V> inner)
+            : base(context, inner)
         {
         }
 
         public V Get(K key)
         {
-            return wrapped.Get(key);
+            return Wrapped.Get(key);
         }
 
         public IKeyValueIterator<K, V> Range(K from, K to)
         {
-            return wrapped.Range(from, to);
+            return Wrapped.Range(from, to);
         }
 
         public IKeyValueIterator<K, V> All()
         {
-            return wrapped.All();
+            return Wrapped.All();
         }
 
         public long approximateNumEntries
-            => wrapped.approximateNumEntries;
+            => Wrapped.approximateNumEntries;
 
         public void Put(K key, V value)
         {

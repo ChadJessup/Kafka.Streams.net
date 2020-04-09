@@ -95,15 +95,15 @@
 //            public void close() { }
 
 
-//            public Windowed<K> peekNextKey()
+//            public Windowed<K> PeekNextKey()
 //            {
-//                throw new UnsupportedOperationException("peekNextKey() not supported in " + getClass().getName());
+//                throw new UnsupportedOperationException("PeekNextKey() not supported in " + getClass().getName());
 //            }
 
 
-//            public bool hasNext()
+//            public bool HasNext()
 //            {
-//                return iterator.hasNext();
+//                return iterator.HasNext();
 //            }
 
 
@@ -154,15 +154,15 @@
 //            public void close() { }
 
 
-//        public Windowed<K> peekNextKey()
+//        public Windowed<K> PeekNextKey()
 //        {
-//            throw new UnsupportedOperationException("peekNextKey() not supported in " + getClass().getName());
+//            throw new UnsupportedOperationException("PeekNextKey() not supported in " + getClass().getName());
 //        }
 
 
-//        public bool hasNext()
+//        public bool HasNext()
 //        {
-//            return iterator.hasNext();
+//            return iterator.HasNext();
 //        }
 
 
@@ -217,15 +217,15 @@
 //            public void close() { }
 
 
-//    public Windowed<K> peekNextKey()
+//    public Windowed<K> PeekNextKey()
 //    {
-//        throw new UnsupportedOperationException("peekNextKey() not supported in " + getClass().getName());
+//        throw new UnsupportedOperationException("PeekNextKey() not supported in " + getClass().getName());
 //    }
 
 
-//    public bool hasNext()
+//    public bool HasNext()
 //    {
-//        return iterator.hasNext();
+//        return iterator.HasNext();
 //    }
 
 
@@ -315,13 +315,13 @@
 
 //    public long PeekNextKey()
 //    {
-//        throw new UnsupportedOperationException("peekNextKey() not supported in " + getClass().getName());
+//        throw new UnsupportedOperationException("PeekNextKey() not supported in " + getClass().getName());
 //    }
 
 
 //    public bool HasNext()
 //    {
-//        return underlying.hasNext();
+//        return underlying.HasNext();
 //    }
 
 

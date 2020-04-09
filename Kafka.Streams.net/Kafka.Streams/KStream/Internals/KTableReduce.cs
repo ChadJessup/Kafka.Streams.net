@@ -4,6 +4,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableReduce<K, V> : IKTableProcessorSupplier<K, V, V>
     {
+        private readonly KafkaStreamsContext context;
         private readonly string storeName;
         private readonly IReducer<V> addReducer;
         private readonly IReducer<V> removeReducer;
@@ -11,15 +12,16 @@ namespace Kafka.Streams.KStream.Internals
         private bool sendOldValues = false;
 
         public KTableReduce(
+            KafkaStreamsContext context,
             string storeName,
             IReducer<V> addReducer,
             IReducer<V> removeReducer)
         {
+            this.context = context;
             this.storeName = storeName;
             this.addReducer = addReducer;
             this.removeReducer = removeReducer;
         }
-
 
         public void EnableSendingOldValues()
         {
@@ -28,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKeyValueProcessor<K, IChange<V>> Get()
         {
-            return null;// new KTableReduceProcessor<K, V>();
+            return null;//new KTableReduceProcessor<K, V>();
         }
 
         IKeyValueProcessor IProcessorSupplier.Get()
@@ -36,7 +38,9 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTableValueGetterSupplier<K, V> View()
         {
-            return new KTableMaterializedValueGetterSupplier<K, V>(storeName);
+            return new KTableMaterializedValueGetterSupplier<K, V>(
+                this.context,
+                storeName);
         }
     }
 }

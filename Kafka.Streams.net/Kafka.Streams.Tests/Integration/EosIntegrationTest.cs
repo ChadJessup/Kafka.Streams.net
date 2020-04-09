@@ -765,7 +765,7 @@
 //    Assert.NotNull(store);
 
 //    IKeyValueIterator<long, long> it = store.all();
-//    while (it.hasNext())
+//    while (it.HasNext())
 //    {
 //        Assert.True(expectedStoreContent.remove(it.MoveNext()));
 //    }

@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.Internals
         {
         }
 
-        LRUCacheEntry(byte[] value,
+        public LRUCacheEntry(byte[] value,
                       Headers headers,
                       bool isDirty,
                       long offset,

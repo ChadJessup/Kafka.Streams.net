@@ -21,9 +21,9 @@
 //            this.windowSize = windowSize;
 //        }
 
-//        public Windowed<Bytes> peekNextKey()
+//        public Windowed<Bytes> PeekNextKey()
 //        {
-//            if (!hasNext())
+//            if (!HasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }
@@ -32,7 +32,7 @@
 
 //        public KeyValuePair<Windowed<Bytes>, byte[]> next()
 //        {
-//            if (!hasNext())
+//            if (!HasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }

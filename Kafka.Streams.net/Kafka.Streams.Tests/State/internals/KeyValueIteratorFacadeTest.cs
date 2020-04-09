@@ -21,21 +21,21 @@
 //        [Fact]
 //        public void ShouldForwardHasNext()
 //        {
-//            expect(mockedKeyValueIterator.hasNext()).andReturn(true).andReturn(false);
+//            expect(mockedKeyValueIterator.HasNext()).andReturn(true).andReturn(false);
 //            replay(mockedKeyValueIterator);
 
-//            Assert.True(keyValueIteratorFacade.hasNext());
-//            Assert.False(keyValueIteratorFacade.hasNext());
+//            Assert.True(keyValueIteratorFacade.HasNext());
+//            Assert.False(keyValueIteratorFacade.HasNext());
 //            verify(mockedKeyValueIterator);
 //        }
 
 //        [Fact]
 //        public void ShouldForwardPeekNextKey()
 //        {
-//            expect(mockedKeyValueIterator.peekNextKey()).andReturn("key");
+//            expect(mockedKeyValueIterator.PeekNextKey()).andReturn("key");
 //            replay(mockedKeyValueIterator);
 
-//            Assert.Equal(keyValueIteratorFacade.peekNextKey(), "key");
+//            Assert.Equal(keyValueIteratorFacade.PeekNextKey(), "key");
 //            verify(mockedKeyValueIterator);
 //        }
 

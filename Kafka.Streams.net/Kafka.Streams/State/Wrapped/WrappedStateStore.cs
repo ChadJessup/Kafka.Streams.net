@@ -1,3 +1,4 @@
+using System;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.TimeStamped;
@@ -33,70 +34,53 @@ namespace Kafka.Streams.State.Internals
         public abstract bool IsOpen();
         public abstract bool Persistent();
 
-        public bool IsPresent()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public abstract bool SetFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues);
+        public abstract bool IsPresent();
     }
 
-    public abstract class WrappedStateStore<S> : WrappedStateStore
+    public abstract class WrappedStateStore<K, V> : WrappedStateStore
+    {
+        public abstract bool SetFlushListener(FlushListener<K, V> listener, bool sendOldValues);
+    }
+
+    public abstract class WrappedStateStore<S, K, V> : WrappedStateStore<K, V>, ICachedStateStore
         where S : IStateStore
     {
-        public S wrapped { get; }
+        public KafkaStreamsContext Context { get; }
+        public S Wrapped { get; }
 
-        public WrappedStateStore(S wrapped)
+        public WrappedStateStore(KafkaStreamsContext context, S wrapped)
         {
-            this.wrapped = wrapped;
+            this.Context = context;
+            this.Wrapped = wrapped;
         }
 
-        public override void Init(IProcessorContext context, IStateStore root)
-        {
-            wrapped.Init(context, root);
-        }
+        public override void Init(IProcessorContext context, IStateStore root) => Wrapped.Init(context, root);
 
-        public override bool SetFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues)
+        public override string Name => Wrapped.Name;
+
+        public override IStateStore GetWrappedStateStore() => this.Wrapped;
+        public override bool Persistent() => Wrapped.Persistent();
+        public override bool IsOpen() => Wrapped.IsOpen();
+        public override bool SetFlushListener(FlushListener<K, V> listener, bool sendOldValues)
         {
-            if (wrapped is ICachedStateStore)
+            if (Wrapped is ICachedStateStore)
             {
-                return ((ICachedStateStore)wrapped).SetFlushListener(listener, sendOldValues);
+                return ((ICachedStateStore<K, V>)Wrapped).SetFlushListener(listener, sendOldValues);
             }
 
             return false;
         }
 
-        public override string Name => wrapped.Name;
-
-        public override IStateStore GetWrappedStateStore()
-            => this.wrapped;
-
-        public override bool Persistent()
-        {
-            return wrapped.Persistent();
-        }
-
-        public override bool IsOpen()
-        {
-            return wrapped.IsOpen();
-        }
-
         protected void ValidateStoreOpen()
         {
-            if (!wrapped.IsOpen())
+            if (!Wrapped.IsOpen())
             {
-                throw new InvalidStateStoreException("Store " + wrapped.Name + " is currently closed.");
+                throw new InvalidStateStoreException("Store " + Wrapped.Name + " is currently closed.");
             }
         }
 
-        public override void Flush()
-        {
-            wrapped.Flush();
-        }
-
-        public override void Close()
-        {
-            wrapped.Close();
-        }
+        public override bool IsPresent() => Wrapped.IsPresent();
+        public override void Flush() => Wrapped.Flush();
+        public override void Close() => Wrapped.Close();
     }
 }

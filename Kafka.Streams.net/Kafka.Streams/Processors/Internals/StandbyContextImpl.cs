@@ -36,7 +36,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public override IStateStore GetStateStore(string name)
+        public override IStateStore GetStateStore(KafkaStreamsContext context, string name)
         {
             throw new InvalidOperationException("this should not happen: getStateStore() not supported in standby tasks.");
         }

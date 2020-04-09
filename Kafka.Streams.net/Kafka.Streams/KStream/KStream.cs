@@ -55,7 +55,7 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             return context.StoresFactory.WindowStoreBuilder(
-                context.Clock,
+                context,
                 context.StoresFactory.PersistentWindowStore(
                     joinName + "-store",
                     windows.Size() + windows.GracePeriod(),
@@ -309,13 +309,13 @@ namespace Kafka.Streams.KStream.Internals
         public IKStream<K, VR> FlatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
             => FlatMapValues(mapper, NamedInternal.Empty());
 
-        //public IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
-        //    where VR : IEnumerable<VR>
-        //{
-        //    var vm = new ValueMapper<V, IEnumerable<VR>>(mapper);
+        public IKStream<K, VR> FlatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
+        {
+            var vm = new ValueMapper<V, IEnumerable<VR>>(mapper);
 
-        //    return flatMapValues(vm);
-        //}
+            return this.FlatMapValues(vm);
+        }
+
 
         public IKStream<K, VR> FlatMapValues<VR>(
             IValueMapperWithKey<K, V, IEnumerable<VR>> mapper,
@@ -1053,11 +1053,19 @@ namespace Kafka.Streams.KStream.Internals
                    joined.KeySerde,
                    joined.ValueSerde);
 
-                return thisStreamRepartitioned.DoStreamTableJoin(other, joiner, joined, false);
+                return thisStreamRepartitioned.DoStreamTableJoin(
+                    other,
+                    joiner,
+                    joined,
+                    leftJoin: false);
             }
             else
             {
-                return DoStreamTableJoin(other, joiner, joined, false);
+                return DoStreamTableJoin(
+                    other,
+                    joiner,
+                    joined,
+                    leftJoin: false);
             }
         }
 

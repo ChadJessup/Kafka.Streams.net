@@ -686,10 +686,10 @@
 //        windowStore.put(1, "three", 3L);
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, ofEpochMilli(1L), ofEpochMilli(3L));
-//        Assert.True(iterator.hasNext());
+//        Assert.True(iterator.HasNext());
 //        windowStore.close();
 
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -743,7 +743,7 @@
 
 //        windowStore.put(1, null);
 //        iterator = windowStore.Fetch(1, 0, currentTime);
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -823,8 +823,8 @@
 
 //        Assert.Equal(singleKeyIterator.MoveNext().value, keyRangeIterator.MoveNext().value);
 //        Assert.Equal(singleKeyIterator.MoveNext().value, keyRangeIterator.MoveNext().value);
-//        Assert.False(singleKeyIterator.hasNext());
-//        Assert.False(keyRangeIterator.hasNext());
+//        Assert.False(singleKeyIterator.HasNext());
+//        Assert.False(keyRangeIterator.HasNext());
 //    }
 
 //    [Fact]
@@ -834,7 +834,7 @@
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
 //        IKeyValueIterator iterator = windowStore.Fetch(-1, 1, 0L, 10L);
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 
 //        List<string> messages = appender.getMessages();
 //        Assert.Equal(messages,
@@ -898,7 +898,7 @@
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0L, 10L);
 
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -910,12 +910,12 @@
 
 //        IKeyValueIterator<Windowed<int>, string> iterator = windowStore.fetchAll(0L, currentTime);
 
-//        Assert.True(iterator.hasNext());
-//        Windowed<int> nextKey = iterator.peekNextKey();
+//        Assert.True(iterator.HasNext());
+//        Windowed<int> nextKey = iterator.PeekNextKey();
 
-//        Assert.Equal(iterator.peekNextKey(), nextKey);
-//        Assert.Equal(iterator.peekNextKey(), iterator.MoveNext().key);
-//        Assert.False(iterator.hasNext());
+//        Assert.Equal(iterator.PeekNextKey(), nextKey);
+//        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -925,12 +925,12 @@
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0L, 10L);
 
-//        Assert.True(iterator.hasNext());
-//        long nextKey = iterator.peekNextKey();
+//        Assert.True(iterator.HasNext());
+//        long nextKey = iterator.PeekNextKey();
 
-//        Assert.Equal(iterator.peekNextKey(), nextKey);
-//        Assert.Equal(iterator.peekNextKey(), iterator.MoveNext().key);
-//        Assert.False(iterator.hasNext());
+//        Assert.Equal(iterator.PeekNextKey(), nextKey);
+//        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -959,7 +959,7 @@
 //        Assert.Equal(windowedPair(1, "two", WINDOW_SIZE * 10), iterator.MoveNext());
 //        Assert.Equal(windowedPair(1, "three", WINDOW_SIZE * 20), iterator.MoveNext());
 //        Assert.Equal(windowedPair(2, "four", WINDOW_SIZE * 30), iterator.MoveNext());
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 //    }
 
 //    [Fact]
@@ -989,7 +989,7 @@
 //        Assert.Equal(new KeyValuePair<long, string>(0L, "one-2"), iterator.MoveNext());
 //        Assert.Equal(new KeyValuePair<long, string>(WINDOW_SIZE * 10, "two"), iterator.MoveNext());
 //        Assert.Equal(new KeyValuePair<long, string>(WINDOW_SIZE * 10, "two-2"), iterator.MoveNext());
-//        Assert.False(iterator.hasNext());
+//        Assert.False(iterator.HasNext());
 //    }
 
 
@@ -1041,7 +1041,7 @@
 //    {
 //        HashSet<KeyValuePair<K, V>> results = new HashSet<KeyValuePair<K, V>>();
 
-//        while (iterator.hasNext())
+//        while (iterator.HasNext())
 //        {
 //            results.Add(iterator.MoveNext());
 //        }

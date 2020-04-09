@@ -13,15 +13,18 @@ namespace Kafka.Streams.KStream.Internals
         private ITimestampedKeyValueStore<K, T> store;
         private readonly IInitializer<T> initializer;
         private readonly IAggregator<K, V, T> aggregator;
+        private readonly KafkaStreamsContext context;
         private readonly bool sendOldValues;
         private readonly string storeName;
 
         public KStreamAggregateProcessor(
+            KafkaStreamsContext context,
             string storeName,
             bool sendOldValues,
             IInitializer<T> initializer,
             IAggregator<K, V, T> aggregator)
         {
+            this.context = context;
             this.storeName = storeName;
             this.sendOldValues = sendOldValues;
             this.initializer = initializer;
@@ -36,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             base.Init(context);
-            store = (ITimestampedKeyValueStore<K, T>)context.GetStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, T>)context.GetStateStore(this.context, storeName);
             tupleForwarder = new TimestampedTupleForwarder<K, T>(
                 store,
                 context,

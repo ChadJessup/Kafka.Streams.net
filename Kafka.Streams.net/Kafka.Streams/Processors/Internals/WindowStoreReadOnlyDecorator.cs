@@ -6,11 +6,13 @@ using System;
 namespace Kafka.Streams.Processors.Internals
 {
     public class WindowStoreReadOnlyDecorator<K, V>
-            : StateStoreReadOnlyDecorator<IWindowStore<K, V>>
+            : StateStoreReadOnlyDecorator<IWindowStore<K, V>, K, V>
             , IWindowStore<K, V>
     {
-        public WindowStoreReadOnlyDecorator(IWindowStore<K, V> inner)
-            : base(inner)
+        public WindowStoreReadOnlyDecorator(
+            KafkaStreamsContext context,
+            IWindowStore<K, V> inner)
+            : base(context, inner)
         {
         }
 
@@ -26,7 +28,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public V Fetch(K key, long time)
         {
-            return wrapped.Fetch(key, time);
+            return Wrapped.Fetch(key, time);
         }
 
         [Obsolete]
@@ -35,12 +37,12 @@ namespace Kafka.Streams.Processors.Internals
             long timeFrom,
             long timeTo)
         {
-            return wrapped.Fetch(key, timeFrom, timeTo);
+            return Wrapped.Fetch(key, timeFrom, timeTo);
         }
 
         public IKeyValueIterator<Windowed<K>, V> All()
         {
-            return wrapped.All();
+            return Wrapped.All();
         }
 
         public IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo)

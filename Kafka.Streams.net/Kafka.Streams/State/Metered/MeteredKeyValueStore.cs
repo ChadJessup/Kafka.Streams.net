@@ -1,281 +1,299 @@
-//using Kafka.Common.Utils;
-//using Kafka.Common.Utils.Interfaces;
-//using Kafka.Streams.Errors;
-//using Kafka.Streams.Interfaces;
-//using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Streams.Processors.Internals;
-//using Kafka.Streams.State.Interfaces;
-//
-//using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValues;
 
-//namespace Kafka.Streams.State.Metered
-//{
-//    /**
-//     * A Metered {@link KeyValueStore} wrapper that is used for recording operation metrics, and hence its
-//     * inner KeyValueStore implementation do not need to provide its own metrics collecting functionality.
-//     * The inner {@link KeyValueStore} of this is of type &lt;Bytes,byte[]&gt;, hence we use {@link Serde}s
-//     * to convert from &lt;K,V&gt; to &lt;Bytes,byte[]&gt;
-//     * @param <K>
-//     * @param <V>
-//     */
-//    public class MeteredKeyValueStore<K, V>
-//        : WrappedStateStore<IKeyValueStore<Bytes, byte[]>>, IKeyValueStore<K, V>
-//    {
-//        ISerde<K> keySerde;
-//        ISerde<V> valueSerde;
-//        StateSerdes<K, V> serdes;
+namespace Kafka.Streams.State.Metered
+{
+    /**
+     * A Metered {@link KeyValueStore} wrapper that is used for recording operation metrics, and hence its
+     * inner KeyValueStore implementation do not need to provide its own metrics collecting functionality.
+     * The inner {@link KeyValueStore} of this is of type &lt;Bytes,byte[]&gt;, hence we use {@link Serde}s
+     * to convert from &lt;K,V&gt; to &lt;Bytes,byte[]&gt;
+     * @param <K>
+     * @param <V>
+     */
+    public class MeteredKeyValueStore<K, V>
+        : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, K, V>,
+        IKeyValueStore<K, V>
+    {
+        protected KafkaStreamsContext Context { get; }
+        protected ISerde<K> KeySerde { get; }
+        protected ISerde<V> ValueSerde { get; }
+        protected IStateSerdes<K, V> Serdes { get; set; }
 
-//        protected IClock clock;
-//        private string taskName;
+        private string taskName;
 
-//        public MeteredKeyValueStore(
-//            IKeyValueStore<Bytes, byte[]> inner,
-//            string metricScope,
-//            IClock clock,
-//            ISerde<K> keySerde,
-//            ISerde<V> valueSerde)
-//            : base(inner)
-//        {
-//            this.clock = clock;
-//            this.keySerde = keySerde;
-//            this.valueSerde = valueSerde;
-//        }
+        public MeteredKeyValueStore(
+            KafkaStreamsContext context,
+            IKeyValueStore<Bytes, byte[]> inner,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+            : base(context, inner)
+        {
+            this.Context = context;
+            this.KeySerde = keySerde;
+            this.ValueSerde = valueSerde;
+        }
 
-//        public void init(
-//            IProcessorContext context,
-//            IStateStore root)
-//        {
-//            taskName = context.taskId.ToString();
+        public override void Init(IProcessorContext context, IStateStore root)
+        {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
 
-//            initStoreSerde(context);
+            if (root is null)
+            {
+                throw new ArgumentNullException(nameof(root));
+            }
 
-//            //putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            //putIfAbsentTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-if-absent", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            //putAllTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-all", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            //getTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "get", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            //allTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "all", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            //rangeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "range", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            //flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            //deleteTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "delete", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            //Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            taskName = context.TaskId.ToString();
 
-//            // register and possibly restore the state from the logs
-//            if (restoreTime.shouldRecord())
-//            {
-//                //            measureLatency(
-//                //                () =>
-//                //{
-//                //    base.Init(context, root);
-//                //    return null;
-//                //},
-//                //            restoreTime);
-//            }
-//            else
-//            {
-//                base.Init(context, root);
-//            }
-//        }
+            InitStoreSerde(context);
+
+            base.Init(context, root);
+
+            //putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //putIfAbsentTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-if-absent", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //putAllTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-all", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //getTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "get", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //allTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "all", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //rangeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "range", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //deleteTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "delete", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+
+            // register and possibly restore the state from the logs
+            //if (restoreTime.shouldRecord())
+            //{
+            //    //            measureLatency(
+            //    //                () =>
+            //    //{
+            //    //    base.Init(context, root);
+            //    //    return null;
+            //    //},
+            //    //            restoreTime);
+            //}
+            //else
+            //{
+            //    base.Init(context, root);
+            //}
+        }
+
+        protected virtual void InitStoreSerde(IProcessorContext context)
+        {
+            var ks = KeySerde ?? (ISerde<K>)context.KeySerde;
+            var vs = ValueSerde ?? (ISerde<V>)context.ValueSerde;
+
+            this.Serdes = new StateSerdes<K, V>(
+                ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, this.Name),
+                ks,
+                vs);
+        }
 
 
-//        void initStoreSerde(IProcessorContext context)
-//        {
-//            serdes = new StateSerdes<K, V>(
-//                ProcessorStateManager.storeChangelogTopic(context.applicationId, name),
-//                keySerde == null ? (ISerde<K>)context.Serializer.keySerde : keySerde,
-//                valueSerde == null ? (ISerde<V>)context.valueSerde : valueSerde);
-//        }
+        public bool? SetFlushListener(ICacheFlushListener<K, V> listener, bool sendOldValues)
+        {
+            IKeyValueStore<Bytes, byte[]> wrapped = this.Wrapped;
+            if (wrapped is ICachedStateStore)
+            {
+                return null;
+                //return ((CachedStateStore<byte[], byte[]>)wrapped].setFlushListener(
+                //   (rawKey, rawNewValue, rawOldValue, timestamp) => listener.apply(
+                //       serdes.keyFrom(rawKey),
+                //       rawNewValue != null ? serdes.valueFrom(rawNewValue) : null,
+                //       rawOldValue != null ? serdes.valueFrom(rawOldValue) : null,
+                //       timestamp
+                //   ),
+                //   sendOldValues);
+            }
 
+            return false;
+        }
 
-//        public bool setFlushListener(ICacheFlushListener<K, V> listener,
-//                                        bool sendOldValues)
-//        {
-//            IKeyValueStore<Bytes, byte[]> wrapped = wrapped;
-//            if (wrapped is CachedStateStore)
-//            {
-//                return null;
-//                //return ((CachedStateStore<byte[], byte[]>)wrapped].setFlushListener(
-//                //   (rawKey, rawNewValue, rawOldValue, timestamp) => listener.apply(
-//                //       serdes.keyFrom(rawKey),
-//                //       rawNewValue != null ? serdes.valueFrom(rawNewValue) : null,
-//                //       rawOldValue != null ? serdes.valueFrom(rawOldValue) : null,
-//                //       timestamp
-//                //   ),
-//                //   sendOldValues);
-//            }
-//            return false;
-//        }
+        public V Get(K key)
+        {
+            return default;
+            //try
+            //{
+            //    if (getTime.shouldRecord())
+            //    {
+            //        return measureLatency(() => outerValue(wrapped[KeyBytes(key)]), getTime);
+            //    }
+            //    else
+            //    {
+            //        return outerValue(wrapped[KeyBytes(key)]);
+            //    }
+            //}
+            //catch (ProcessorStateException e)
+            //{
+            //    string message = string.Format(e.ToString(), key);
+            //    throw new ProcessorStateException(message, e);
+            //}
+        }
 
-//        public V get(K key)
-//        {
-//            try
-//            {
-//                if (getTime.shouldRecord())
-//                {
-//                    return measureLatency(() => outerValue(wrapped[keyBytes(key)]), getTime);
-//                }
-//                else
-//                {
-//                    return outerValue(wrapped[keyBytes(key)]);
-//                }
-//            }
-//            catch (ProcessorStateException e)
-//            {
-//                string message = string.Format(e.ToString(), key);
-//                throw new ProcessorStateException(message, e);
-//            }
-//        }
+        public void Put(K key, V value)
+        {
+            //try
+            //{
+            //    if (putTime.shouldRecord())
+            //    {
+            //        //                measureLatency(() =>
+            //        //{
+            //        //    wrapped.Add(keyBytes(key), serdes.RawValue(value));
+            //        //    return null;
+            //        //}, putTime);
+            //    }
+            //    else
+            //    {
+            //        wrapped.Add(KeyBytes(key), serdes.RawValue(value));
+            //    }
+            //}
+            //catch (ProcessorStateException e)
+            //{
+            //    string message = string.Format(e.ToString(), key, value);
+            //    throw new ProcessorStateException(message, e);
+            //}
+        }
 
-//        public void put(K key, V value)
-//        {
-//            try
-//            {
-//                if (putTime.shouldRecord())
-//                {
-//                    //                measureLatency(() =>
-//                    //{
-//                    //    wrapped.Add(keyBytes(key), serdes.RawValue(value));
-//                    //    return null;
-//                    //}, putTime);
-//                }
-//                else
-//                {
-//                    wrapped.Add(keyBytes(key), serdes.RawValue(value));
-//                }
-//            }
-//            catch (ProcessorStateException e)
-//            {
-//                string message = string.Format(e.ToString(), key, value);
-//                throw new ProcessorStateException(message, e);
-//            }
-//        }
+        public V PutIfAbsent(K key, V value)
+        {
+            return default;
+            //if (PutIfAbsentTime.shouldRecord())
+            //{
+            //    return measureLatency(
+            //        () => outerValue(wrapped.putIfAbsent(KeyBytes(key), serdes.RawValue(value))),
+            //        PutIfAbsentTime);
+            //}
+            //else
+            //{
+            //    return outerValue(wrapped.PutIfAbsent(KeyBytes(key), serdes.RawValue(value)));
+            //}
+        }
 
-//        public V putIfAbsent(K key, V value)
-//        {
-//            if (putIfAbsentTime.shouldRecord())
-//            {
-//                return measureLatency(
-//                    () => outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.RawValue(value))),
-//                    putIfAbsentTime);
-//            }
-//            else
-//            {
-//                return outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.RawValue(value)));
-//            }
-//        }
+        public void PutAll(List<KeyValuePair<K, V>> entries)
+        {
+            //if (PutAllTime.shouldRecord())
+            //{
+            //    //            measureLatency(
+            //    //                () =>
+            //    //{
+            //    //    wrapped.putAll(innerEntries(entries));
+            //    //    return null;
+            //    //},
+            //    //            putAllTime);
+            //}
+            //else
+            //{
+            //    wrapped.PutAll(InnerEntries(entries));
+            //}
+        }
 
-//        public void putAll(List<KeyValuePair<K, V>> entries)
-//        {
-//            if (putAllTime.shouldRecord())
-//            {
-//                //            measureLatency(
-//                //                () =>
-//                //{
-//                //    wrapped.putAll(innerEntries(entries));
-//                //    return null;
-//                //},
-//                //            putAllTime);
-//            }
-//            else
-//            {
-//                wrapped.putAll(innerEntries(entries));
-//            }
-//        }
+        public V Delete(K key)
+        {
+            return default;
+            //try
+            //{
+            //    if (DeleteTime.shouldRecord())
+            //    {
+            //        return default; // measureLatency(() => outerValue(wrapped.delete(KeyBytes(key))), deleteTime);
+            //    }
+            //    else
+            //    {
+            //        return outerValue(wrapped.Delete(KeyBytes(key)));
+            //    }
+            //}
+            //catch (ProcessorStateException e)
+            //{
+            //    string message = string.Format(e.ToString(), key);
+            //    throw new ProcessorStateException(message, e);
+            //}
+        }
 
-//        public V delete(K key)
-//        {
-//            try
-//            {
-//                if (deleteTime.shouldRecord())
-//                {
-//                    return measureLatency(() => outerValue(wrapped.delete(keyBytes(key))), deleteTime);
-//                }
-//                else
-//                {
-//                    return outerValue(wrapped.delete(keyBytes(key)));
-//                }
-//            }
-//            catch (ProcessorStateException e)
-//            {
-//                string message = string.Format(e.ToString(), key);
-//                throw new ProcessorStateException(message, e);
-//            }
-//        }
+        public IKeyValueIterator<K, V> Range(K from, K to)
+            => null;//new MeteredKeyValueIterator(
+                    // wrapped.Range(Bytes.Wrap(serdes.RawKey(from)), Bytes.Wrap(serdes.RawKey(to))),
+                    // rangeTime);
 
-//        public IKeyValueIterator<K, V> range(K from, K to)
-//        {
-//            return new MeteredKeyValueIterator(
-//                wrapped.Range(Bytes.Wrap(serdes.rawKey(from)), Bytes.Wrap(serdes.rawKey(to))),
-//                rangeTime);
-//        }
+        public IKeyValueIterator<K, V> All()
+        {
+            return null;// new MeteredKeyValueIterator(wrapped.All(), allTime);
+        }
 
-//        public IKeyValueIterator<K, V> all()
-//        {
-//            return new MeteredKeyValueIterator(wrapped.all(), allTime);
-//        }
+        public override void Flush()
+        {
+            //if (flushTime.shouldRecord())
+            //{
+            //    //            measureLatency(
+            //    //                () =>
+            //    //{
+            //    //    base.flush();
+            //    //    return null;
+            //    //},
+            //    //            flushTime);
+            //}
+            //else
+            //{
+            //    base.Flush();
+            //}
+        }
 
-//        public void flush()
-//        {
-//            if (flushTime.shouldRecord())
-//            {
-//                //            measureLatency(
-//                //                () =>
-//                //{
-//                //    base.flush();
-//                //    return null;
-//                //},
-//                //            flushTime);
-//            }
-//            else
-//            {
-//                base.flush();
-//            }
-//        }
+        public long approximateNumEntries => Wrapped.approximateNumEntries;
 
-//        public long approximateNumEntries
-//         => wrapped.approximateNumEntries;
+        public override void Close()
+        {
+            base.Close();
+            //metrics.removeAllStoreLevelSensors(taskName, name);
+        }
 
-//        public void close()
-//        {
-//            base.close();
-//            //metrics.removeAllStoreLevelSensors(taskName, name);
-//        }
+        //private interface Action<V>
+        //{
+        //    V execute();
+        //}
 
-//        private interface Action<V>
-//        {
-//            V execute();
-//        }
+        // private V measureLatency(Action<V> action)
+        // {
+        //     long startNs = clock.nanoseconds();
+        //     try
+        //     {
+        //         return action.execute();
+        //     }
+        //     finally
+        //     {
+        //         metrics.recordLatency(sensor, startNs, clock.nanoseconds());
+        //     }
+        // }
 
-//        private V measureLatency(Action<V> action)
-//        {
-//            long startNs = clock.nanoseconds();
-//            try
-//            {
-//                return action.execute();
-//            }
-//            finally
-//            {
-//                metrics.recordLatency(sensor, startNs, clock.nanoseconds());
-//            }
-//        }
+        private V outerValue(byte[] value)
+        {
+            return default; // value != null ? serdes.ValueFrom(value) : null;
+        }
 
-//        private V outerValue(byte[] value)
-//        {
-//            return value != null ? serdes.valueFrom(value) : null;
-//        }
+        private Bytes KeyBytes(K key)
+        {
+            return Bytes.Wrap(Serdes.RawKey(key));
+        }
 
-//        private Bytes keyBytes(K key)
-//        {
-//            return Bytes.Wrap(serdes.rawKey(key));
-//        }
+        private List<KeyValuePair<Bytes, byte[]>> InnerEntries(List<KeyValuePair<K, V>> from)
+        {
+            List<KeyValuePair<Bytes, byte[]>> byteEntries = new List<KeyValuePair<Bytes, byte[]>>();
+            foreach (KeyValuePair<K, V> entry in from)
+            {
+                //byteEntries.Add(KeyValuePair.Create<K, V>(
+                //    Bytes.Wrap(serdes.RawKey(entry.Key)),
+                //        serdes.RawValue(entry.Value)));
+            }
 
-//        private List<KeyValuePair<Bytes, byte[]>> innerEntries(List<KeyValuePair<K, V>> from)
-//        {
-//            List<KeyValuePair<Bytes, byte[]>> byteEntries = new List<KeyValuePair<Bytes, byte[]>>();
-//            foreach (KeyValuePair<K, V> entry in from)
-//            {
-//                byteEntries.Add(KeyValuePair<K, V>.Pair(Bytes.Wrap(serdes.rawKey(entry.Key)), serdes.RawValue(entry.Value)));
-//            }
-//            return byteEntries;
-//        }
-//    }
-//}
+            return byteEntries;
+        }
+
+        public void Add(K key, V value)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}

@@ -340,7 +340,7 @@ namespace Kafka.Streams.Tests.Integration
 //                    try { 
 // (IKeyValueIterator<K, V> all = store.all());
 //                        List<KeyValuePair<K, V>> storeContent = new LinkedList<>();
-//                        while (all.hasNext()) {
+//                        while (all.HasNext()) {
 //                            storeContent.Add(all.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
@@ -415,7 +415,7 @@ namespace Kafka.Streams.Tests.Integration
 //                    try { 
 // (IKeyValueIterator<K, ValueAndTimestamp<V>> all = store.all());
 //                        List<KeyValuePair<K, ValueAndTimestamp<V>>> storeContent = new LinkedList<>();
-//                        while (all.hasNext()) {
+//                        while (all.HasNext()) {
 //                            storeContent.Add(all.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
@@ -451,7 +451,7 @@ namespace Kafka.Streams.Tests.Integration
 //                    try { 
 // (IKeyValueIterator<K, ValueAndTimestamp<V>> all = store.all());
 //                        List<KeyValuePair<K, ValueAndTimestamp<V>>> storeContent = new LinkedList<>();
-//                        while (all.hasNext()) {
+//                        while (all.HasNext()) {
 //                            storeContent.Add(all.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
@@ -818,7 +818,7 @@ namespace Kafka.Streams.Tests.Integration
 //                    try { 
 // (IKeyValueIterator<Windowed<K>, V> all = store.all());
 //                        List<KeyValuePair<Windowed<K>, V>> storeContent = new LinkedList<>();
-//                        while (all.hasNext()) {
+//                        while (all.HasNext()) {
 //                            storeContent.Add(all.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
@@ -893,7 +893,7 @@ namespace Kafka.Streams.Tests.Integration
 //                    try { 
 // (IKeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> all = store.all());
 //                        List<KeyValuePair<Windowed<K>, ValueAndTimestamp<V>>> storeContent = new LinkedList<>();
-//                        while (all.hasNext()) {
+//                        while (all.HasNext()) {
 //                            storeContent.Add(all.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);

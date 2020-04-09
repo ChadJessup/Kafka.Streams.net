@@ -305,7 +305,7 @@
 //            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.all();
 //            HashSet<string> keys = new HashSet<>();
 
-//            while (iterator.hasNext())
+//            while (iterator.HasNext())
 //            {
 //                keys.Add(stringDeserializer.deserialize(null, iterator.MoveNext().key.Get()));
 //            }
@@ -331,7 +331,7 @@
 //            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.all();
 //            HashSet<string> keys = new HashSet<>();
 
-//            while (iterator.hasNext())
+//            while (iterator.HasNext())
 //            {
 //                keys.Add(stringDeserializer.deserialize(null, iterator.MoveNext().key.Get()));
 //            }
@@ -391,7 +391,7 @@
 //            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.all();
 //            HashSet<string> keys = new HashSet<>();
 
-//            while (iterator.hasNext())
+//            while (iterator.HasNext())
 //            {
 //                keys.Add(stringDeserializer.deserialize(null, iterator.MoveNext().key.Get()));
 //            }

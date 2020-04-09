@@ -1,253 +1,243 @@
+using System;
+using System.Collections.Generic;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.Sessions;
 
-//using Kafka.Streams.State.Interfaces;
-//using Kafka.Common.Utils;
-//using Kafka.Streams.KStream;
-//using Kafka.Streams.Interfaces;
-//using Kafka.Common.Utils.Interfaces;
-//using Kafka.Streams.Processors.Internals.Metrics;
-//using Kafka.Common.Metrics;
-//using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Streams.Processors.Internals;
-//using System.Collections.Generic;
-//using Kafka.Streams.Errors;
+namespace Kafka.Streams.State.Metered
+{
+    public class MeteredSessionStore<K, V>
+        : WrappedStateStore<ISessionStore<Bytes, byte[]>, K, V>,
+        ISessionStore<K, V>
+    {
+        //private string metricScope;
+        private ISerde<K> keySerde;
+        private ISerde<V> valueSerde;
+        private IStateSerdes<K, V> serdes;
+        private string taskName;
 
-//namespace Kafka.Streams.State.Metered
-//{
-//    public class MeteredSessionStore<K, V>
-//        : WrappedStateStore<ISessionStore<Bytes, byte[]>, Windowed<K>, V>,
-//        ISessionStore<K, V>
-//    {
-//        private string metricScope;
-//        private ISerde<K> keySerde;
-//        private ISerde<V> valueSerde;
-//        private ITime time;
-//        private StateSerdes<K, V> serdes;
-//        private StreamsMetricsImpl metrics;
-//        private Sensor putTime;
-//        private Sensor fetchTime;
-//        private Sensor flushTime;
-//        private Sensor removeTime;
-//        private string taskName;
+        public MeteredSessionStore(
+            KafkaStreamsContext context,
+            ISessionStore<Bytes, byte[]> inner,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+            : base(context, inner)
+        {
+            //this.metricScope = metricScope;
+            this.keySerde = keySerde;
+            this.valueSerde = valueSerde;
+        }
 
-//        public MeteredSessionStore(
-//            ISessionStore<Bytes, byte[]> inner,
-//            string metricScope,
-//            ISerde<K> keySerde,
-//            ISerde<V> valueSerde,
-//            ITime time)
-//            : base(inner)
-//        {
-//            this.metricScope = metricScope;
-//            this.keySerde = keySerde;
-//            this.valueSerde = valueSerde;
-//            this.time = time;
-//        }
+        public override void Init(
+            IProcessorContext context,
+            IStateStore root)
+        {
+            //noinspection unchecked
+            this.serdes = new StateSerdes<K, V>(
+                ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, Name),
+                keySerde ?? (ISerde<K>)context.KeySerde,
+                valueSerde ?? (ISerde<V>)context.ValueSerde);
 
+            taskName = context.TaskId.ToString();
+            //string metricsGroup = "stream-" + metricScope + "-metrics";
+            //Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
+            //Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name);
 
-//        public override void init(
-//            IProcessorContext<K, V> context,
-//            IStateStore root)
-//        {
-//            //noinspection unchecked
-//            serdes = new StateSerdes<K, V>(
-//                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name),
-//                keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
-//                valueSerde == null ? (ISerde<V>)context.valueSerde : valueSerde);
-//            metrics = (StreamsMetricsImpl)context.metrics;
+            //putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //fetchTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "fetch", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //removeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Remove", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name, taskTags, storeTags);
 
-//            taskName = context.taskId.ToString();
-//            string metricsGroup = "stream-" + metricScope + "-metrics";
-//            Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
-//            Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name);
+            // register and possibly restore the state from the logs
+            long startNs = this.Context.Clock.NowAsEpochNanoseconds;
+            try
+            {
+                base.Init(context, root);
+            }
+            finally
+            {
+                //metrics.recordLatency(
+                //    restoreTime,
+                //    startNs,
+                //    time.nanoseconds()
+                //);
+            }
+        }
 
-//            putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            fetchTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "fetch", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            removeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Remove", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-//            Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+        public override bool SetFlushListener(
+            FlushListener<K, V> listener,
+            bool sendOldValues)
+        {
+            ISessionStore<Bytes, byte[]> wrapped = this.Wrapped;
+            if (wrapped is ICachedStateStore)
+            {
+                return ((ICachedStateStore<byte[], byte[]>)wrapped)
+                   .SetFlushListener((key, newValue, oldValue, timestamp) =>
+                   {
+                       var nv = serdes.ValueFrom(newValue);
+                       var ov = serdes.ValueFrom(oldValue);
 
-//            // register and possibly restore the state from the logs
-//            long startNs = time.nanoseconds();
-//            try
-//            {
-//                base.Init(context, root);
-//            }
-//            finally
-//            {
-//                metrics.recordLatency(
-//                    restoreTime,
-//                    startNs,
-//                    time.nanoseconds()
-//                );
-//            }
-//        }
+                       var windowed = SessionKeySchema.From(
+                           key,
+                           serdes.KeyDeserializer(),
+                           serdes.Topic);
 
+                       listener?.Invoke(
+                           default, //windowed,
+                           nv,
+                           ov,
+                           timestamp);
+                   },
+                   sendOldValues);
+            }
 
-//        public override bool setFlushListener(
-//            ICacheFlushListener<Windowed<K>, V> listener,
-//            bool sendOldValues)
-//        {
-//            ISessionStore<Bytes, byte[]> wrapped = wrapped;
-//            if (wrapped is CachedStateStore<K, V>)
-//            {
-//                return ((CachedStateStore<byte[], byte[]>)wrapped).setFlushListener(
-//                   (key, newValue, oldValue, timestamp) => listener.apply(
-//                       SessionKeySchema.from(key, serdes.keyDeserializer(), serdes.Topic),
-//                       newValue != null ? serdes.valueFrom(newValue) : null,
-//                       oldValue != null ? serdes.valueFrom(oldValue) : null,
-//                       timestamp),
-//                   sendOldValues);
-//            }
+            return false;
+        }
 
-//            return false;
-//        }
+        public void Put(Windowed<K> sessionKey, V aggregate)
+        {
+            sessionKey = sessionKey ?? throw new ArgumentNullException(nameof(sessionKey));
+            long startNs = this.Context.Clock.NowAsEpochNanoseconds;
+            try
+            {
+                Bytes key = KeyBytes(sessionKey.Key);
+                Wrapped.Put(new Windowed<Bytes>(key, sessionKey.window), serdes.RawValue(aggregate));
+            }
+            catch (ProcessorStateException e)
+            {
+                string message = string.Format(e.Message, sessionKey.Key, aggregate);
+                throw new ProcessorStateException(message, e);
+            }
+            finally
+            {
+                //metrics.recordLatency(putTime, startNs, time.nanoseconds());
+            }
+        }
 
-//        public override void put(
-//            Windowed<K> sessionKey,
-//            V aggregate)
-//        {
-//            sessionKey = sessionKey ?? throw new ArgumentNullException(nameof(sessionKey));
-//            long startNs = time.nanoseconds();
-//            try
-//            {
-//                Bytes key = keyBytes(sessionKey.key);
-//                wrapped.Add(new Windowed<K>(key, sessionKey.window), serdes.RawValue(aggregate));
-//            }
-//            catch (ProcessorStateException e)
-//            {
-//                string message = string.Format(e.Message, sessionKey.key, aggregate);
-//                throw new ProcessorStateException(message, e);
-//            }
-//            finally
-//            {
-//                metrics.recordLatency(putTime, startNs, time.nanoseconds());
-//            }
-//        }
+        public void Remove(Windowed<K> sessionKey)
+        {
+            sessionKey = sessionKey ?? throw new ArgumentNullException(nameof(sessionKey));
+            long startNs = this.Context.Clock.NowAsEpochNanoseconds;
+            try
+            {
+                Bytes key = KeyBytes(sessionKey.Key);
+                Wrapped.Remove(new Windowed<Bytes>(key, sessionKey.window));
+            }
+            catch (ProcessorStateException e)
+            {
+                string message = string.Format(e.ToString(), sessionKey.Key);
+                throw new ProcessorStateException(message, e);
+            }
+            finally
+            {
+                //metrics.recordLatency(removeTime, startNs, time.nanoseconds());
+            }
+        }
 
-//        public override void Remove(Windowed<K> sessionKey)
-//        {
-//            sessionKey = sessionKey ?? throw new ArgumentNullException(nameof(sessionKey));
-//            long startNs = time.nanoseconds();
-//            try
-//            {
-//                Bytes key = keyBytes(sessionKey.key());
-//                wrapped.Remove(new Windowed<>(key, sessionKey.window()));
-//            }
-//            catch (ProcessorStateException e)
-//            {
-//                string message = string.Format(e.ToString(), sessionKey.key());
-//                throw new ProcessorStateException(message, e);
-//            }
-//            finally
-//            {
-//                metrics.recordLatency(removeTime, startNs, time.nanoseconds());
-//            }
-//        }
+        public V FetchSession(K key, long startTime, long endTime)
+        {
+            key = key ?? throw new ArgumentNullException(nameof(key));
+            Bytes bytesKey = KeyBytes(key);
+            long startNs = this.Context.Clock.NowAsEpochNanoseconds;
+            try
+            {
+                byte[] result = Wrapped.FetchSession(bytesKey, startTime, endTime);
+                if (result == null)
+                {
+                    return default;
+                }
+                return serdes.ValueFrom(result);
+            }
+            finally
+            {
+                //metrics.recordLatency(flushTime, startNs, time.nanoseconds());
+            }
+        }
 
-//        public override V fetchSession(K key, long startTime, long endTime)
-//        {
-//            key = key ?? throw new ArgumentNullException(nameof(key));
-//            Bytes bytesKey = keyBytes(key);
-//            long startNs = time.nanoseconds();
-//            try
-//            {
-//                byte[] result = wrapped.FetchSession(bytesKey, startTime, endTime);
-//                if (result == null)
-//                {
-//                    return default;
-//                }
-//                return serdes.valueFrom(result);
-//            }
-//            finally
-//            {
-//                metrics.recordLatency(flushTime, startNs, time.nanoseconds());
-//            }
-//        }
+        public IKeyValueIterator<Windowed<K>, V> Fetch(K key)
+        {
+            key = key ?? throw new ArgumentNullException(nameof(key));
+            return new MeteredWindowedKeyValueIterator<K, V>(
+                this.Context,
+                Wrapped.Fetch(KeyBytes(key)),
+                serdes);
+        }
 
-//        public override IKeyValueIterator<Windowed<K>, V> fetch(K key)
-//        {
-//            key = key ?? throw new ArgumentNullException(nameof(key));
-//            return new MeteredWindowedKeyValueIterator<>(
-//                wrapped.Fetch(keyBytes(key)),
-//                fetchTime,
-//                metrics,
-//                serdes,
-//                time);
-//        }
+        public IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to)
+        {
+            from = from ?? throw new ArgumentNullException(nameof(from));
+            to = to ?? throw new ArgumentNullException(nameof(to));
 
-//        public override IKeyValueIterator<Windowed<K>, V> fetch(K from,
-//                                                      K to)
-//        {
-//            from = from ?? throw new ArgumentNullException(nameof(from));
-//            to = to ?? throw new ArgumentNullException(nameof(to));
-//            return new MeteredWindowedKeyValueIterator<>(
-//                wrapped.Fetch(keyBytes(from), keyBytes(to)),
-//                fetchTime,
-//                metrics,
-//                serdes,
-//                time);
-//        }
+            return new MeteredWindowedKeyValueIterator<K, V>(
+                this.Context,
+                Wrapped.Fetch(KeyBytes(from), KeyBytes(to)),
+                serdes);
+        }
 
-//        public override IKeyValueIterator<Windowed<K>, V> findSessions(K key,
-//                                                             long earliestSessionEndTime,
-//                                                             long latestSessionStartTime)
-//        {
-//            key = key ?? throw new ArgumentNullException(nameof(key));
-//            Bytes bytesKey = keyBytes(key);
-//            return new MeteredWindowedKeyValueIterator<>(
-//                wrapped.findSessions(
-//                    bytesKey,
-//                    earliestSessionEndTime,
-//                    latestSessionStartTime),
-//                fetchTime,
-//                metrics,
-//                serdes,
-//                time);
-//        }
+        public IKeyValueIterator<Windowed<K>, V> FindSessions(
+            K key,
+            long earliestSessionEndTime,
+            long latestSessionStartTime)
+        {
+            key = key ?? throw new ArgumentNullException(nameof(key));
+            Bytes bytesKey = KeyBytes(key);
+            return new MeteredWindowedKeyValueIterator<K, V>(
+                this.Context,
+                Wrapped.FindSessions(
+                    bytesKey,
+                    earliestSessionEndTime,
+                    latestSessionStartTime),
+                serdes);
+        }
 
-//        public override IKeyValueIterator<Windowed<K>, V> findSessions(K keyFrom,
-//                                                             K keyTo,
-//                                                             long earliestSessionEndTime,
-//                                                             long latestSessionStartTime)
-//        {
-//            keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
-//            keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
-//            Bytes bytesKeyFrom = keyBytes(keyFrom);
-//            Bytes bytesKeyTo = keyBytes(keyTo);
-//            return new MeteredWindowedKeyValueIterator<>(
-//                wrapped.findSessions(
-//                    bytesKeyFrom,
-//                    bytesKeyTo,
-//                    earliestSessionEndTime,
-//                    latestSessionStartTime),
-//                fetchTime,
-//                metrics,
-//                serdes,
-//                time);
-//        }
+        public IKeyValueIterator<Windowed<K>, V> FindSessions(
+            K keyFrom,
+            K keyTo,
+            long earliestSessionEndTime,
+            long latestSessionStartTime)
+        {
+            keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
+            keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
+            Bytes bytesKeyFrom = KeyBytes(keyFrom);
+            Bytes bytesKeyTo = KeyBytes(keyTo);
+            return new MeteredWindowedKeyValueIterator<K, V>(
+                this.Context,
+                Wrapped.FindSessions(
+                    bytesKeyFrom,
+                    bytesKeyTo,
+                    earliestSessionEndTime,
+                    latestSessionStartTime),
+                serdes);
+        }
 
-//        public override void flush()
-//        {
-//            long startNs = time.nanoseconds();
-//            try
-//            {
-//                base.flush();
-//            }
-//            finally
-//            {
-//                metrics.recordLatency(flushTime, startNs, time.nanoseconds());
-//            }
-//        }
+        public override void Flush()
+        {
+            long startNs = this.Context.Clock.NowAsEpochNanoseconds;
+            try
+            {
+                base.Flush();
+            }
+            finally
+            {
+                // metrics.recordLatency(flushTime, startNs, time.nanoseconds());
+            }
+        }
 
-//        public override void close()
-//        {
-//            base.close();
-//            metrics.removeAllStoreLevelSensors(taskName, name);
-//        }
+        public override void Close()
+        {
+            base.Close();
+            //metrics.removeAllStoreLevelSensors(taskName, name);
+        }
 
-//        private Bytes keyBytes(K key)
-//        {
-//            return Bytes.Wrap(serdes.rawKey(key));
-//        }
-//    }
-//}
+        private Bytes KeyBytes(K key)
+        {
+            return Bytes.Wrap(serdes.RawKey(key));
+        }
+    }
+}

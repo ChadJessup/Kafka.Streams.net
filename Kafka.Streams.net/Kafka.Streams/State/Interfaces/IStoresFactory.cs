@@ -1,5 +1,6 @@
 ﻿using System;
 using Kafka.Common;
+using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
@@ -19,10 +20,10 @@ namespace Kafka.Streams.Interfaces
         IWindowBytesStoreSupplier PersistentWindowStore(string name, TimeSpan retentionPeriod, TimeSpan windowSize, bool retainDuplicates);
 
         ITimestampedKeyValueBytesStoreSupplier PersistentTimestampedKeyValueStore(string name);
-        IStoreBuilder<ISessionStore<K, V>> SessionStoreBuilder<K, V>(ISessionBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde) where V : class;
-        IStoreBuilder<IKeyValueStore<K, V>> KeyValueStoreBuilder<K, V>(IClock clock, IKeyValueBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
-        IStoreBuilder<ITimestampedKeyValueStore<K, V>> TimestampedKeyValueStoreBuilder<K, V>(IClock clock, IKeyValueBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
-        IStoreBuilder<ITimestampedWindowStore<K, V>> TimestampedWindowStoreBuilder<K, V>(IClock clock, IWindowBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
-        IStoreBuilder<IWindowStore<K, V>> WindowStoreBuilder<K, V>(IClock clock, IWindowBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
+        IStoreBuilder<ISessionStore<K, V>> SessionStoreBuilder<K, V>(KafkaStreamsContext context, ISessionBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde) where V : class;
+        IStoreBuilder<IKeyValueStore<K, V>> KeyValueStoreBuilder<K, V>(KafkaStreamsContext context, IKeyValueBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
+        IStoreBuilder<ITimestampedKeyValueStore<K, V>> TimestampedKeyValueStoreBuilder<K, V>(KafkaStreamsContext context, IKeyValueBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
+        IStoreBuilder<ITimestampedWindowStore<K, V>> TimestampedWindowStoreBuilder<K, V>(KafkaStreamsContext context, IWindowBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
+        IStoreBuilder<IWindowStore<K, V>> WindowStoreBuilder<K, V>(KafkaStreamsContext context, IWindowBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
     }
 }

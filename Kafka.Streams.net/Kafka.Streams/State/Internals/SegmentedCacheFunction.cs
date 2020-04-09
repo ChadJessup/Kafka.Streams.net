@@ -1,83 +1,85 @@
+using System;
+using Kafka.Common.Utils;
+using Kafka.Streams.Internals;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.State.Interfaces;
 
+namespace Kafka.Streams.State.Internals
+{
+    public class SegmentedCacheFunction : ICacheFunction
+    {
+        private static int SEGMENT_ID_BYTES = 8;
 
-//using Kafka.Common.Utils;
-//using Kafka.Streams.State.Interfaces;
+        private IKeySchema keySchema;
+        private long segmentInterval;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class SegmentedCacheFunction : ICacheFunction
-//    {
+        public SegmentedCacheFunction(IKeySchema keySchema, long segmentInterval)
+        {
+            this.keySchema = keySchema;
+            this.segmentInterval = segmentInterval;
+        }
 
-//        private static int SEGMENT_ID_BYTES = 8;
+        public Bytes Key(Bytes cacheKey)
+        {
+            return Bytes.Wrap(BytesFromCacheKey(cacheKey));
+        }
 
-//        private KeySchema keySchema;
-//        private long segmentInterval;
+        public Bytes CacheKey(Bytes key)
+        {
+            return CacheKey(key, SegmentId(key));
+        }
 
-//        SegmentedCacheFunction(KeySchema keySchema, long segmentInterval)
-//        {
-//            this.keySchema = keySchema;
-//            this.segmentInterval = segmentInterval;
-//        }
+        Bytes CacheKey(Bytes key, long segmentId)
+        {
+            byte[] keyBytes = key.Get();
+            ByteBuffer buf = new ByteBuffer().Allocate(SEGMENT_ID_BYTES + keyBytes.Length);
+            buf.PutLong(segmentId).Add(keyBytes);
 
-//        public override Bytes key(Bytes cacheKey)
-//        {
-//            return Bytes.Wrap(bytesFromCacheKey(cacheKey));
-//        }
+            return Bytes.Wrap(buf.Array());
+        }
 
-//        public override Bytes cacheKey(Bytes key)
-//        {
-//            return cacheKey(key, segmentId(key));
-//        }
+        static byte[] BytesFromCacheKey(Bytes cacheKey)
+        {
+            byte[] binaryKey = new byte[cacheKey.Get().Length - SEGMENT_ID_BYTES];
+            Array.Copy(cacheKey.Get(), SEGMENT_ID_BYTES, binaryKey, 0, binaryKey.Length);
 
-//        Bytes cacheKey(Bytes key, long segmentId)
-//        {
-//            byte[] keyBytes = key[];
-//            ByteBuffer buf = sizeof(new ByteBuffer().Allocate(SEGMENT_ID) + keyBytes.Length);
-//            buf.putLong(segmentId).Add(keyBytes);
-//            return Bytes.Wrap(buf.array());
-//        }
+            return binaryKey;
+        }
 
-//        static byte[] bytesFromCacheKey(Bytes cacheKey)
-//        {
-//            byte[] binaryKey = sizeof(new byte[cacheKey[].Length - SEGMENT_ID)];
-//            System.arraycopy(cacheKey(), SEGMENT_ID_BYTES, binaryKey, 0, binaryKey.Length);
-//            return binaryKey;
-//        }
+        public long SegmentId(Bytes key)
+        {
+            return SegmentId(keySchema.SegmentTimestamp(key));
+        }
 
-//        public long segmentId(Bytes key)
-//        {
-//            return segmentId(keySchema.segmentTimestamp(key));
-//        }
+        long SegmentId(long timestamp)
+        {
+            return timestamp / segmentInterval;
+        }
 
-//        long segmentId(long timestamp)
-//        {
-//            return timestamp / segmentInterval;
-//        }
+        long GetSegmentInterval()
+        {
+            return segmentInterval;
+        }
 
-//        long getSegmentInterval()
-//        {
-//            return segmentInterval;
-//        }
+        public int CompareSegmentedKeys(Bytes cacheKey, Bytes storeKey)
+        {
+            long storeSegmentId = SegmentId(storeKey);
+            long cacheSegmentId = new ByteBuffer().Wrap(cacheKey.Get()).GetLong();
 
-//        int compareSegmentedKeys(Bytes cacheKey, Bytes storeKey)
-//        {
-//            long storeSegmentId = segmentId(storeKey);
-//            long cacheSegmentId = new ByteBuffer().Wrap(cacheKey()).GetLong();
+            int segmentCompare = cacheSegmentId.CompareTo(storeSegmentId);
+            if (segmentCompare == 0)
+            {
+                byte[] cacheKeyBytes = cacheKey.Get();
+                byte[] storeKeyBytes = storeKey.Get();
 
-//            int segmentCompare = long.compare(cacheSegmentId, storeSegmentId);
-//            if (segmentCompare == 0)
-//            {
-//                byte[] cacheKeyBytes = cacheKey[];
-//                byte[] storeKeyBytes = storeKey[];
-//                return Bytes.BYTES_LEXICO_COMPARATOR.compare(
-//                    cacheKeyBytes, SEGMENT_ID_BYTES, cacheKeyBytes.Length - SEGMENT_ID_BYTES,
-//                    storeKeyBytes, 0, storeKeyBytes.Length
-//                );
-//            }
-//            else
-//            {
-//                return segmentCompare;
-//            }
-//        }
-//    }
-//}
+                return Bytes.BYTES_LEXICO_COMPARATOR.Compare(
+                    cacheKeyBytes, SEGMENT_ID_BYTES, cacheKeyBytes.Length - SEGMENT_ID_BYTES,
+                    storeKeyBytes, 0, storeKeyBytes.Length);
+            }
+            else
+            {
+                return segmentCompare;
+            }
+        }
+    }
+}
