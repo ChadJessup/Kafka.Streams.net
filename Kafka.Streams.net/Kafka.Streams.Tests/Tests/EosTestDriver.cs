@@ -27,16 +27,16 @@ namespace Kafka.Streams.Tests.Tests
 //            Runtime.getRuntime().addShutdownHook(new Thread(() =>
 //            {
 //                System.Console.Out.WriteLine("Terminating");
-//                System.Console.Out.flush();
+//                System.Console.Out.Flush();
 //                isRunning = false;
 //            }));
 
 //            StreamsConfig producerProps = new StreamsConfig();
-//            producerProps.put(ProducerConfig.CLIENT_ID_CONFIG, "EosTest");
-//            producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//            producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, IntegerSerializer);
-//        producerProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+//            producerProps.Put(ProducerConfig.CLIENT_ID_CONFIG, "EosTest");
+//            producerProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//            producerProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, IntegerSerializer);
+//        producerProps.Put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
 //        KafkaProducer<string, int> producer = new KafkaProducer<>(producerProps);
 
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Tests.Tests
 //        producer.send(record, (metadata, exception) => {
 //                if (exception != null) {
 //                    exception.printStackTrace(System.Console.Error);
-//                    System.Console.Error.flush();
+//                    System.Console.Error.Flush();
 //                    if (exception is TimeoutException) {
 //                        try {
 //                            // message == org.apache.kafka.common.errors.TimeoutException: Expiring 4 record(s) for data-0: 30004 ms has passed since last attempt plus backoff time
@@ -65,19 +65,19 @@ namespace Kafka.Streams.Tests.Tests
 //            updateNumRecordsProduces(1);
 //            if (numRecordsProduced % 1000 == 0) {
 //                System.Console.Out.WriteLine(numRecordsProduced + " records produced");
-//                System.Console.Out.flush();
+//                System.Console.Out.Flush();
 //            }
 //            Utils.sleep(rand.nextInt(10));
 //        }
-//        producer.close();
+//        producer.Close();
 //        System.Console.Out.WriteLine("Producer closed: " + numRecordsProduced + " records produced");
 
 //        StreamsConfig props = new StreamsConfig();
-//props.put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
-//        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
-//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
-//        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.ToString().toLowerCase(Locale.ROOT));
+//props.Put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
+//        props.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//        props.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
+//        props.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
+//        props.Put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.ToString().toLowerCase(Locale.ROOT));
 
 //        try { 
 // (KafkaConsumer<byte[], byte[]> consumer = new KafkaConsumer<>(props));
@@ -90,17 +90,17 @@ namespace Kafka.Streams.Tests.Tests
 //                System.Console.Out.WriteLine("End-offset for " + tp + " is " + consumer.position(tp));
 //            }
 //        }
-//        System.Console.Out.flush();
+//        System.Console.Out.Flush();
 //    }
 
 //    public static void verify(string kafka, bool withRepartitioning)
 //{
 //    StreamsConfig props = new StreamsConfig();
-//    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
-//    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
-//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
-//        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.ToString().toLowerCase(Locale.ROOT));
+//    props.Put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
+//    props.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//    props.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
+//        props.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
+//        props.Put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.ToString().toLowerCase(Locale.ROOT));
 
 //        Dictionary<TopicPartition, long> committedOffsets;
 //        try { 
@@ -176,7 +176,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        // do not modify: required test output
 //        System.Console.Out.WriteLine("ALL-RECORDS-DELIVERED");
-//        System.Console.Out.flush();
+//        System.Console.Out.Flush();
 //    }
 
 //    private static void ensureStreamsApplicationDown(Admin adminClient)
@@ -222,7 +222,7 @@ namespace Kafka.Streams.Tests.Tests
 //        string topic = entry.getKey().Topic;
 //        if (topic.equals("data") || withRepartitioning && topic.equals("repartition"))
 //        {
-//            committedOffsets.put(entry.getKey(), entry.getValue().Offset);
+//            committedOffsets.Put(entry.getKey(), entry.getValue().Offset);
 //        }
 //    }
 
@@ -249,7 +249,7 @@ namespace Kafka.Streams.Tests.Tests
 //            {
 //                maxWaitTime = System.currentTimeMillis() + MAX_IDLE_TIME_MS;
 //                TopicPartition tp = new TopicPartition(record.Topic, record.Partition);
-//                maxReceivedOffsetPerPartition.put(tp, record.Offset);
+//                maxReceivedOffsetPerPartition.Put(tp, record.Offset);
 //                long readEndOffset = readEndOffsets.Get(tp);
 //                if (record.Offset < readEndOffset)
 //                {
@@ -264,7 +264,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            foreach (TopicPartition tp in readEndOffsets.keySet())
 //            {
-//                maxConsumerPositionPerPartition.put(tp, consumer.position(tp));
+//                maxConsumerPositionPerPartition.Put(tp, consumer.position(tp));
 //                if (consumer.position(tp) >= readEndOffsets.Get(tp))
 //                {
 //                    consumer.pause(Collections.singletonList(tp));
@@ -276,10 +276,10 @@ namespace Kafka.Streams.Tests.Tests
 
 //        if (!allRecordsReceived)
 //        {
-//            System.Console.Error.println("Pause partitions (ie, received all data): " + consumer.paused());
+//            System.Console.Error.println("Pause partitions (ie, received All data): " + consumer.paused());
 //            System.Console.Error.println("Max received offset per partition: " + maxReceivedOffsetPerPartition);
 //            System.Console.Error.println("Max consumer position per partition: " + maxConsumerPositionPerPartition);
-//            throw new RuntimeException("FAIL: did not receive all records after " + (MAX_IDLE_TIME_MS / 1000) + " sec idle time.");
+//            throw new RuntimeException("FAIL: did not receive All records after " + (MAX_IDLE_TIME_MS / 1000) + " sec idle time.");
 //        }
 
 //        return recordPerTopicPerPartition;
@@ -393,7 +393,7 @@ namespace Kafka.Streams.Tests.Tests
 //                {
 //                    min = Math.min(min, value);
 //                }
-//                currentMinPerKey.put(key, min);
+//                currentMinPerKey.Put(key, min);
 
 //                if (!receivedKey.equals(key) || receivedValue != min)
 //                {
@@ -443,7 +443,7 @@ namespace Kafka.Streams.Tests.Tests
 //                {
 //                    sum += value;
 //                }
-//                currentSumPerKey.put(key, sum);
+//                currentSumPerKey.Put(key, sum);
 
 //                if (!receivedKey.equals(key) || receivedValue != sum)
 //                {
@@ -490,7 +490,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    max = int.MIN_VALUE;
 //                }
 //                max = Math.max(max, value);
-//                currentMinPerKey.put(key, max);
+//                currentMinPerKey.Put(key, max);
 
 //                if (!receivedKey.equals(key) || receivedValue != max)
 //                {
@@ -534,7 +534,7 @@ namespace Kafka.Streams.Tests.Tests
 //                {
 //                    cnt = 0L;
 //                }
-//                currentSumPerKey.put(key, ++cnt);
+//                currentSumPerKey.Put(key, ++cnt);
 
 //                if (!receivedKey.equals(key) || receivedValue != cnt)
 //                {
@@ -567,11 +567,11 @@ namespace Kafka.Streams.Tests.Tests
 //        }
 
 //        StreamsConfig producerProps = new StreamsConfig();
-//        producerProps.put(ProducerConfig.CLIENT_ID_CONFIG, "VerifyProducer");
-//        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//        producerProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+//        producerProps.Put(ProducerConfig.CLIENT_ID_CONFIG, "VerifyProducer");
+//        producerProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//        producerProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//        producerProps.Put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
 //        try { 
 // (KafkaProducer<string, string> producer = new KafkaProducer<>(producerProps));
@@ -581,7 +581,7 @@ namespace Kafka.Streams.Tests.Tests
 //producer.send(record, (metadata, exception) => {
 //                    if (exception != null) {
 //                        exception.printStackTrace(System.Console.Error);
-//                        System.Console.Error.flush();
+//                        System.Console.Error.Flush();
 //                        Exit.exit(1);
 //                    }
 //                });
@@ -623,7 +623,7 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //        }
 //        if (!partitions.isEmpty()) {
-//            throw new RuntimeException("Could not read all verification records. Did not receive any new record within the last " + (MAX_IDLE_TIME_MS / 1000) + " sec.");
+//            throw new RuntimeException("Could not read All verification records. Did not receive any new record within the last " + (MAX_IDLE_TIME_MS / 1000) + " sec.");
 //        }
 //    }
 

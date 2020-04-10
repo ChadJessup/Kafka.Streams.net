@@ -13,17 +13,18 @@ namespace Kafka.Streams.Processors.Internals
     {
         private static readonly IRecordCollector NO_OP_COLLECTOR = new NoOpRecordCollector();
         public StandbyContextImpl(
-            ILoggerFactory loggerFactory,
+            KafkaStreamsContext context,
             ILogger<StandbyContextImpl<K, V>> logger,
             TaskId id,
             StreamsConfig config,
             ProcessorStateManager stateMgr)
          : base(
+               context,
             id,
             config,
             stateMgr,
             new ThreadCache(
-                loggerFactory.CreateLogger<ThreadCache>(),//($"stream-thread [{Thread.CurrentThread.Name}] ",
+                context.CreateLogger<ThreadCache>(),//($"stream-thread [{Thread.CurrentThread.Name}] ",
                 0))
         {
         }
@@ -36,7 +37,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public override IStateStore GetStateStore(KafkaStreamsContext context, string name)
+        public override IStateStore GetStateStore(string Name)
         {
             throw new InvalidOperationException("this should not happen: getStateStore() not supported in standby tasks.");
         }

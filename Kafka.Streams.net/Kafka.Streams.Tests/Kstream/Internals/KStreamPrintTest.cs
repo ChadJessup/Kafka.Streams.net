@@ -52,7 +52,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            {
 //                printProcessor.process(record.key, record.value);
 //            }
-//            printProcessor.close();
+//            printProcessor.Close();
 
 //            string[] flushOutData = new string(byteOutStream.toByteArray(), StandardCharsets.UTF_8).Split("\\r*\\n");
 //            for (var i = 0; i < flushOutData.Length; i++)

@@ -121,10 +121,10 @@
 
 //            StreamsConfig properties = new StreamsConfig();
 //            string applicationId = "applicationId";
-//            properties.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//            properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+//            properties.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//            properties.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 //            stateDir = TestUtils.GetTempDirectory();
-//            properties.put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
+//            properties.Put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
 
 //            StreamsConfig streamsConfig = new StreamsConfig(properties);
 //            MockClientSupplier clientSupplier = new MockClientSupplier();
@@ -142,7 +142,7 @@
 //                processorTopology,
 //                new TaskId(0, 0));
 //            taskOne.initializeStateStores();
-//            tasks.put(new TaskId(0, 0), taskOne);
+//            tasks.Put(new TaskId(0, 0), taskOne);
 
 //            StreamTask taskTwo = CreateStreamsTask(
 //                streamsConfig,
@@ -150,7 +150,7 @@
 //                processorTopology,
 //                new TaskId(0, 1));
 //            taskTwo.initializeStateStores();
-//            tasks.put(new TaskId(0, 1), taskTwo);
+//            tasks.Put(new TaskId(0, 1), taskTwo);
 
 //            threadMock = EasyMock.createNiceMock(StreamThread);
 //            provider = new StreamThreadStateStoreProvider(threadMock);
@@ -269,7 +269,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfKVStoreClosed()
 //        {
 //            mockThread(true);
-//            taskOne.getStore("kv-store").close();
+//            taskOne.getStore("kv-store").Close();
 //            provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore());
 //        }
 
@@ -277,7 +277,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfTsKVStoreClosed()
 //        {
 //            mockThread(true);
-//            taskOne.getStore("timestamped-kv-store").close();
+//            taskOne.getStore("timestamped-kv-store").Close();
 //            provider.Stores("timestamped-kv-store", QueryableStoreTypes.TimestampedKeyValueStore());
 //        }
 
@@ -285,7 +285,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfWindowStoreClosed()
 //        {
 //            mockThread(true);
-//            taskOne.getStore("window-store").close();
+//            taskOne.getStore("window-store").Close();
 //            provider.Stores("window-store", QueryableStoreTypes.windowStore());
 //        }
 
@@ -293,7 +293,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfTsWindowStoreClosed()
 //        {
 //            mockThread(true);
-//            taskOne.getStore("timestamped-window-store").close();
+//            taskOne.getStore("timestamped-window-store").Close();
 //            provider.Stores("timestamped-window-store", QueryableStoreTypes.timestampedWindowStore());
 //        }
 
@@ -373,8 +373,8 @@
 //        clientSupplier.restoreConsumer.assign(Array.asList(tp1, tp2));
 
 //        Dictionary<TopicPartition, long> offsets = new HashMap<>();
-//        offsets.put(tp1, 0L);
-//        offsets.put(tp2, 0L);
+//        offsets.Put(tp1, 0L);
+//        offsets.Put(tp2, 0L);
 
 //        clientSupplier.restoreConsumer.updateBeginningOffsets(offsets);
 //        clientSupplier.restoreConsumer.updateEndOffsets(offsets);

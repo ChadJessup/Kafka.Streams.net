@@ -66,7 +66,7 @@
 
 
 //            StreamsConfig props = new StreamsConfig();
-//            props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+//            props.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
 //            // cycle out Streams instances as long as the test is running.
 //            while (driver.isAlive())
@@ -99,7 +99,7 @@
 //            }
 //            finally
 //            {
-//                // whether or not the assertions failed, tell all the streams instances to stop
+//                // whether or not the assertions failed, tell All the streams instances to stop
 //                foreach (SmokeTestClient client in clients)
 //                {
 //                    client.closeAsync();
@@ -108,7 +108,7 @@
 //                // then, wait for them to stop
 //                foreach (SmokeTestClient client in clients)
 //                {
-//                    client.close();
+//                    client.Close();
 //                }
 //            }
 

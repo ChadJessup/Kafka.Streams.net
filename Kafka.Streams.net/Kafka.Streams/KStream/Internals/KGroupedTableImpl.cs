@@ -13,14 +13,14 @@
 //        private StreamsGraphNode repartitionGraphNode;
 
 //        public KGroupedTableImpl(InternalStreamsBuilder builder,
-//                           string name,
+//                           string Name,
 //                           HashSet<string> sourceNodes,
 //                           GroupedInternal<K, V> groupedInternal,
 //                           StreamsGraphNode streamsGraphNode)
-//            : base(name, groupedInternal.keySerde, groupedInternal.valueSerde, sourceNodes, streamsGraphNode, builder)
+//            : base(Name, groupedInternal.keySerde, groupedInternal.valueSerde, sourceNodes, streamsGraphNode, builder)
 //        {
 
-//            this.userProvidedRepartitionTopicName = groupedInternal.name;
+//            this.userProvidedRepartitionTopicName = groupedInternal.Name;
 //        }
 
 //        private IKTable<K, V> doAggregate(

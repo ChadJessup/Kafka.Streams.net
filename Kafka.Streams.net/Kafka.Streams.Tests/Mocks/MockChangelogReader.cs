@@ -12,17 +12,17 @@ namespace Kafka.Streams.Tests.Mocks
 
         public void Register(StateRestorer restorer)
         {
-            registered.Add(restorer.partition);
+            this.registered.Add(restorer.partition);
         }
 
         public List<TopicPartition> Restore(IRestoringTasks active)
         {
-            return registered;
+            return this.registered;
         }
 
         public Dictionary<TopicPartition, long> GetRestoredOffsets()
         {
-            return _restoredOffsets;
+            return this._restoredOffsets;
         }
 
         void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
@@ -32,12 +32,12 @@ namespace Kafka.Streams.Tests.Mocks
 
         public void Reset()
         {
-            registered.Clear();
+            this.registered.Clear();
         }
 
         public bool AsRegistered(TopicPartition partition)
         {
-            return registered.Contains(partition);
+            return this.registered.Contains(partition);
         }
     }
 }

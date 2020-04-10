@@ -164,10 +164,10 @@ namespace Kafka.Streams.Tests.Helpers
         public override string ToString()
         {
             return $"{this.GetType().FullName}[" +
-                "key=" + Key +
-                "value=" + Value +
-                "headers=" + Headers +
-                "recordTime=" + RecordTime +
+                "key=" + this.Key +
+                "value=" + this.Value +
+                "headers=" + this.Headers +
+                "recordTime=" + this.RecordTime +
                 "]";
         }
 
@@ -178,21 +178,21 @@ namespace Kafka.Streams.Tests.Helpers
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (TestRecord<K, V>)o;
-            return Headers.Equals(that.Headers)
-                    && Key.Equals(that.Key)
-                    && Value.Equals(that.Value)
-                    && RecordTime.Equals(that.RecordTime);
+            return this.Headers.Equals(that.Headers)
+                    && this.Key.Equals(that.Key)
+                    && this.Value.Equals(that.Value)
+                    && this.RecordTime.Equals(that.RecordTime);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Headers, Key, Value, RecordTime);
+            return HashCode.Combine(this.Headers, this.Key, this.Value, this.RecordTime);
         }
     }
 }

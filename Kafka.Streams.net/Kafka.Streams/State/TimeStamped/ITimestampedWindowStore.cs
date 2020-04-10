@@ -15,7 +15,7 @@ namespace Kafka.Streams.State.TimeStamped
      * @param Type of keys
      * @param Type of values
      */
-    public interface ITimestampedWindowStore<K, V> : ITimestampedWindowStore, IWindowStore<K, ValueAndTimestamp<V>>
+    public interface ITimestampedWindowStore<K, V> : ITimestampedWindowStore, IWindowStore<K, IValueAndTimestamp<V>>
     {
     }
 }

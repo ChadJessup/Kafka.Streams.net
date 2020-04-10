@@ -25,10 +25,10 @@
 //            //deserializer.configure(configs, isKey);
 //        }
 
-//        public void close()
+//        public void Close()
 //        {
-//            //serializer.close();
-//            //deserializer.close();
+//            //serializer.Close();
+//            //deserializer.Close();
 //        }
 //    }
 //}

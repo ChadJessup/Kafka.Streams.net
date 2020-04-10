@@ -25,7 +25,7 @@ namespace Kafka.Streams.State.TimeStamped
 
         public int CompareTo(TimestampedSegment segment)
         {
-            return id.CompareTo(segment.id);
+            return this.id.CompareTo(segment.id);
         }
 
         public override void OpenDB(IProcessorContext context)
@@ -37,22 +37,22 @@ namespace Kafka.Streams.State.TimeStamped
 
         public override string ToString()
         {
-            return "TimestampedSegment(id=" + id + ", name=" + Name + ")";
+            return "TimestampedSegment(id=" + this.id + ", Name=" + this.Name + ")";
         }
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
+            if (obj == null || this.GetType() != obj.GetType())
             {
                 return false;
             }
             TimestampedSegment segment = (TimestampedSegment)obj;
-            return id == segment.id;
+            return this.id == segment.id;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(id);
+            return HashCode.Combine(this.id);
         }
     }
 }

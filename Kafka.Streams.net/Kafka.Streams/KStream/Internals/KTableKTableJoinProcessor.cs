@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
         public override void Init(IProcessorContext context)
         {
             base.Init(context);
-            valueGetter.Init(context, this.storeName);
+            this.valueGetter.Init(context, this.storeName);
         }
 
         public override void Process(K key, IChange<V1> change)
@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream.Internals
 
             long resultTimestamp;
 
-            var valueAndTimestampRight = valueGetter.Get(key);
+            var valueAndTimestampRight = this.valueGetter.Get(key);
             V2 valueRight = ValueAndTimestamp.GetValueOrNull(valueAndTimestampRight);
             if (valueRight == null)
             {
@@ -59,24 +59,24 @@ namespace Kafka.Streams.KStream.Internals
 
             R newValue = default;
             R oldValue = default;
-            resultTimestamp = Math.Max(Context.Timestamp, valueAndTimestampRight.Timestamp);
+            resultTimestamp = Math.Max(this.Context.Timestamp, valueAndTimestampRight.Timestamp);
 
             if (change.NewValue != null)
             {
-                newValue = joiner.Apply(change.NewValue, valueRight);
+                newValue = this.joiner.Apply(change.NewValue, valueRight);
             }
 
-            if (sendOldValues && change.OldValue != null)
+            if (this.sendOldValues && change.OldValue != null)
             {
-                oldValue = joiner.Apply(change.OldValue, valueRight);
+                oldValue = this.joiner.Apply(change.OldValue, valueRight);
             }
 
-            Context.Forward(key, new Change<R>(newValue, oldValue), To.All().WithTimestamp(resultTimestamp));
+            this.Context.Forward(key, new Change<R>(newValue, oldValue), To.All().WithTimestamp(resultTimestamp));
         }
 
         public override void Close()
         {
-            valueGetter.Close();
+            this.valueGetter.Close();
         }
     }
 }

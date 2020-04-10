@@ -38,10 +38,10 @@
      * </pre>
      * Note the following:
      * - RUNNING state will transit to REBALANCING if any of its threads is in PARTITION_REVOKED state
-     * - REBALANCING state will transit to RUNNING if all of its threads are in RUNNING state
-     * - Any state except NOT_RUNNING can go to PENDING_SHUTDOWN (whenever close is called)
-     * - Of special importance: If the global stream thread dies, or all stream threads die (or both) then
-     *   the instance will be in the ERROR state. The user will need to close it.
+     * - REBALANCING state will transit to RUNNING if All of its threads are in RUNNING state
+     * - Any state except NOT_RUNNING can go to PENDING_SHUTDOWN (whenever Close is called)
+     * - Of special importance: If the global stream thread dies, or All stream threads die (or both) then
+     *   the instance will be in the ERROR state. The user will need to Close it.
      */
     public enum KafkaStreamsThreadStates
     {

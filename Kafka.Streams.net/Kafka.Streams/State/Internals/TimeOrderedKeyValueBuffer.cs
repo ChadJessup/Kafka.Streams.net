@@ -9,17 +9,11 @@ namespace Kafka.Streams.State.Internals
     public interface ITimeOrderedKeyValueBuffer<K, V> : IStateStore
     {
         void SetSerdesIfNull(ISerde<K> keySerde, ISerde<V> valueSerde);
-
         void EvictWhile(ISupplier<bool> predicate, IConsumer<K, Eviction<K, V>> callback);
-
-        ValueAndTimestamp<V> PriorValueForBuffered(K key);
-
+        IValueAndTimestamp<V> PriorValueForBuffered(K key);
         void Put(long time, K key, IChange<V> value, ProcessorRecordContext recordContext);
-
         int NumRecords();
-
         long BufferSize();
-
         long MinTimestamp();
     }
 }

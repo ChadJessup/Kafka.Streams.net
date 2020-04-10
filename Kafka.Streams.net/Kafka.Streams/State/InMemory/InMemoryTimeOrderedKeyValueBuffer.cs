@@ -53,9 +53,9 @@
 //            this.valueSerde = FullChangeSerde.Wrap(valueSerde);
 //        }
 
-//        public override string name => storeName;
+//        public override string Name => storeName;
 
-//        public override bool persistent()
+//        public override bool Persistent()
 //        {
 //            return false;
 //        }
@@ -66,7 +66,7 @@
 //            this.valueSerde = this.valueSerde == null ? FullChangeSerde.Wrap(valueSerde) : this.valueSerde;
 //        }
 
-//        public void init(IProcessorContext<K, V> context, IStateStore root)
+//        public void Init(IProcessorContext context, IStateStore root)
 //        {
 //            IInternalProcessorContext<K, V> internalProcessorContext = (IInternalProcessorContext)context;
 
@@ -84,12 +84,12 @@
 //            partition = context.taskId.partition;
 //        }
 
-//        public bool isOpen()
+//        public bool IsOpen()
 //        {
 //            return open;
 //        }
 
-//        public override void close()
+//        public override void Close()
 //        {
 //            open = false;
 //            index.clear();
@@ -100,11 +100,11 @@
 //            updateBufferMetrics();
 //        }
 
-//        public override void flush()
+//        public override void Flush()
 //        {
 //            if (loggingEnabled)
 //            {
-//                // counting on this getting called before the record collector's flush
+//                // counting on this getting called before the record collector's Flush
 //                foreach (Bytes key in dirtyKeys)
 //                {
 
@@ -373,7 +373,7 @@
 //            }
 //        }
 
-//        public override void put(long time,
+//        public override void Put(long time,
 //                        K key,
 //                        Change<V> value,
 //                        ProcessorRecordContext recordContext)

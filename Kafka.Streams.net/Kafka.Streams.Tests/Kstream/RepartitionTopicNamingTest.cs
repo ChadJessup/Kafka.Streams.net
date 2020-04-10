@@ -67,7 +67,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            Assert.Equal(unOptimizedTopology, (EXPECTED_UNOPTIMIZED_TOPOLOGY));
 //            // now 4 repartition topic
 //            Assert.Equal(4, (getCountOfRepartitionTopicsFound(unOptimizedTopology, repartitionTopicPattern)));
-//            // all 4 named repartition topics present
+//            // All 4 named repartition topics present
 //            Assert.True(unOptimizedTopology.Contains(firstRepartitionTopicName + "-repartition"));
 //            Assert.True(unOptimizedTopology.Contains(secondRepartitionTopicName + "-repartition"));
 //            Assert.True(unOptimizedTopology.Contains(thirdRepartitionTopicName + "-repartition"));
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Kstream
 
 //        }
 
-//        // can't use same repartition topic name
+//        // can't use same repartition topic Name
 //        [Fact]
 //        public void shouldFailWithSameRepartitionTopicName()
 //        {
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tests.Kstream
 //                                                  .groupByKey(Grouped.As("grouping"))
 //                                                  .count().toStream();
 //                builder.Build();
-//                Assert.False(true, "Should not build re-using repartition topic name");
+//                Assert.False(true, "Should not build re-using repartition topic Name");
 //            }
 //            catch (TopologyException te)
 //            {
@@ -199,13 +199,13 @@ namespace Kafka.Streams.Tests.Kstream
 //            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10L))).count();
 //            kGroupedStream.windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(30L))).count();
 //            var properties = new StreamsConfig();
-//            properties.put(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION, StreamsConfigPropertyNames.OPTIMIZE);
+//            properties.Put(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION, StreamsConfigPropertyNames.OPTIMIZE);
 //            Topology topology = builder.Build(properties);
 //            Assert.Equal(getCountOfRepartitionTopicsFound(topology.describe().ToString(), repartitionTopicPattern), (1));
 //        }
 
 
-//        // can't use same repartition topic name in joins
+//        // can't use same repartition topic Name in joins
 //        [Fact]
 //        public void shouldFailWithSameRepartitionTopicNameInJoin()
 //        {
@@ -223,7 +223,7 @@ namespace Kafka.Streams.Tests.Kstream
 //                joined.join(stream3, (v1, v2) => v1 + v2, JoinWindows.of(TimeSpan.FromMilliseconds(30L)),
 //                                                          Joined.named("join-repartition"));
 //                builder.Build();
-//                Assert.False(true, "Should not build re-using repartition topic name");
+//                Assert.False(true, "Should not build re-using repartition topic Name");
 //            }
 //            catch (TopologyException te)
 //            {
@@ -236,7 +236,7 @@ namespace Kafka.Streams.Tests.Kstream
 //        {
 //            var builder = new StreamsBuilder();
 //            var properties = new StreamsConfig();
-//            properties.put(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION, StreamsConfigPropertyNames.OPTIMIZE);
+//            properties.Put(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION, StreamsConfigPropertyNames.OPTIMIZE);
 //            KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
 //                                                                         .selectKey((k, v) => k)
 //                                                                         .groupByKey(Grouped.As("grouping"));
@@ -493,7 +493,7 @@ namespace Kafka.Streams.Tests.Kstream
 
 //            if (includeOtherOperations)
 //            {
-//                // without naming the join, the repartition topic name would change due to operator changing before join performed
+//                // without naming the join, the repartition topic Name would change due to operator changing before join performed
 //                updatedStreamOne = initialStreamOne.selectKey((k, v) => k + v).filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + v));
 //                updatedStreamTwo = initialStreamTwo.selectKey((k, v) => k + v).filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + v));
 //            }
@@ -561,7 +561,7 @@ namespace Kafka.Streams.Tests.Kstream
 
 //            var properties = new StreamsConfig();
 
-//            properties.put(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION, optimizationConfig);
+//            properties.Put(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION, optimizationConfig);
 //            return builder.Build(properties);
 //        }
 

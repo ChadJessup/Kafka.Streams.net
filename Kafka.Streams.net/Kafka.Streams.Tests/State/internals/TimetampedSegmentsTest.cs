@@ -77,7 +77,7 @@
 
 //        public void Close()
 //        {
-//            segments.close();
+//            segments.Close();
 //        }
 
 //        [Fact]
@@ -115,9 +115,9 @@
 //            Assert.True(new DirectoryInfo(context.stateDir(), "test/test.0").isDirectory());
 //            Assert.True(new DirectoryInfo(context.stateDir(), "test/test." + SEGMENT_INTERVAL).isDirectory());
 //            Assert.True(new DirectoryInfo(context.stateDir(), "test/test." + 2 * SEGMENT_INTERVAL).isDirectory());
-//            Assert.True(segment1.isOpen());
-//            Assert.True(segment2.isOpen());
-//            Assert.True(segment3.isOpen());
+//            Assert.True(segment1.IsOpen());
+//            Assert.True(segment2.IsOpen());
+//            Assert.True(segment3.IsOpen());
 //        }
 
 //        [Fact]
@@ -134,9 +134,9 @@
 //            TimestampedSegment segment1 = segments.getOrCreateSegmentIfLive(0, context, -1L);
 //            TimestampedSegment segment2 = segments.getOrCreateSegmentIfLive(1, context, -1L);
 //            TimestampedSegment segment3 = segments.getOrCreateSegmentIfLive(7, context, SEGMENT_INTERVAL * 7L);
-//            Assert.False(segment1.isOpen());
-//            Assert.False(segment2.isOpen());
-//            Assert.True(segment3.isOpen());
+//            Assert.False(segment1.IsOpen());
+//            Assert.False(segment2.IsOpen());
+//            Assert.True(segment3.IsOpen());
 //            Assert.False(new DirectoryInfo(context.stateDir(), "test/test.0").Exists);
 //            Assert.False(new DirectoryInfo(context.stateDir(), "test/test." + SEGMENT_INTERVAL).Exists);
 //            Assert.True(new DirectoryInfo(context.stateDir(), "test/test." + 7 * SEGMENT_INTERVAL).Exists);
@@ -154,7 +154,7 @@
 //        public void ShouldGetCorrectSegmentString()
 //        {
 //            TimestampedSegment segment = segments.getOrCreateSegmentIfLive(0, context, -1L);
-//            Assert.Equal("TimestampedSegment(id=0, name=test.0)", segment.ToString());
+//            Assert.Equal("TimestampedSegment(id=0, Name=test.0)", segment.ToString());
 //        }
 
 //        [Fact]
@@ -163,11 +163,11 @@
 //            TimestampedSegment first = segments.getOrCreateSegmentIfLive(0, context, -1L);
 //            TimestampedSegment second = segments.getOrCreateSegmentIfLive(1, context, -1L);
 //            TimestampedSegment third = segments.getOrCreateSegmentIfLive(2, context, -1L);
-//            segments.close();
+//            segments.Close();
 
-//            Assert.False(first.isOpen());
-//            Assert.False(second.isOpen());
-//            Assert.False(third.isOpen());
+//            Assert.False(first.IsOpen());
+//            Assert.False(second.IsOpen());
+//            Assert.False(third.IsOpen());
 //        }
 
 //        [Fact]
@@ -179,17 +179,17 @@
 //            segments.getOrCreateSegmentIfLive(2, context, -1L);
 //            segments.getOrCreateSegmentIfLive(3, context, -1L);
 //            segments.getOrCreateSegmentIfLive(4, context, -1L);
-//            // close existing.
-//            segments.close();
+//            // Close existing.
+//            segments.Close();
 
 //            segments = new TimestampedSegments("test", 4, 1);
 //            segments.openExisting(context, -1L);
 
-//            Assert.True(segments.getSegmentForTimestamp(0).isOpen());
-//            Assert.True(segments.getSegmentForTimestamp(1).isOpen());
-//            Assert.True(segments.getSegmentForTimestamp(2).isOpen());
-//            Assert.True(segments.getSegmentForTimestamp(3).isOpen());
-//            Assert.True(segments.getSegmentForTimestamp(4).isOpen());
+//            Assert.True(segments.getSegmentForTimestamp(0).IsOpen());
+//            Assert.True(segments.getSegmentForTimestamp(1).IsOpen());
+//            Assert.True(segments.getSegmentForTimestamp(2).IsOpen());
+//            Assert.True(segments.getSegmentForTimestamp(3).IsOpen());
+//            Assert.True(segments.getSegmentForTimestamp(4).IsOpen());
 //        }
 
 //        [Fact]
@@ -334,7 +334,7 @@
 //        public void ShouldClearSegmentsOnClose()
 //        {
 //            segments.getOrCreateSegmentIfLive(0, context, -1L);
-//            segments.close();
+//            segments.Close();
 //            Assert.Equal(segments.getSegmentForTimestamp(0), nullValue());
 //        }
 

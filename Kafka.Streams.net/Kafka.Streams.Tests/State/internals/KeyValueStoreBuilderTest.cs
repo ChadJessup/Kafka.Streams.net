@@ -53,7 +53,7 @@
 //        public void SetUp()
 //        {
 //            EasyMock.expect(supplier.Get()).andReturn(inner);
-//            EasyMock.expect(supplier.name()).andReturn("name");
+//            EasyMock.expect(supplier.Name()).andReturn("Name");
 //            EasyMock.replay(supplier);
 //            builder = new KeyValueStoreBuilder<>(
 //                supplier,

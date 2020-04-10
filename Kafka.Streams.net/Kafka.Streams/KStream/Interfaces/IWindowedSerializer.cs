@@ -3,8 +3,8 @@ using Confluent.Kafka;
 
 namespace Kafka.Streams.KStream.Interfaces
 {
-    public interface IWindowedSerializer<T> : ISerializer<Windowed<T>>
+    public interface IWindowedSerializer<T> : ISerializer<IWindowed<T>>
     {
-        byte[] SerializeBaseKey(string topic, Windowed<T> data);
+        byte[] SerializeBaseKey(string topic, IWindowed<T> data);
     }
 }

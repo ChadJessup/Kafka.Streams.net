@@ -32,7 +32,7 @@ namespace Kafka.Streams.Tasks
 
         void Close(bool clean, bool isZombie);
 
-        IStateStore GetStore(string name);
+        IStateStore GetStore(string Name);
 
         string applicationId { get; }
 

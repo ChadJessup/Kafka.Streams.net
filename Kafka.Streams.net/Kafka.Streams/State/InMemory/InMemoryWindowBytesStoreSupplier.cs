@@ -7,18 +7,18 @@
 //{
 //    public class InMemoryWindowBytesStoreSupplier : IWindowBytesStoreSupplier
 //    {
-//        private string name;
+//        private string Name;
 //        private long retentionPeriod;
 //        private long windowSize;
 //        private bool retainDuplicates;
 
 //        public InMemoryWindowBytesStoreSupplier(
-//            string name,
+//            string Name,
 //            long retentionPeriod,
 //            long windowSize,
 //            bool retainDuplicates)
 //        {
-//            this.name = name;
+//            this.Name = Name;
 //            this.retentionPeriod = retentionPeriod;
 //            this.windowSize = windowSize;
 //            this.retainDuplicates = retainDuplicates;
@@ -27,7 +27,7 @@
 //        public IWindowStore<Bytes, byte[]> get()
 //        {
 //            return new InMemoryWindowStore(
-//                name,
+//                Name,
 //                retentionPeriod,
 //                windowSize,
 //                retainDuplicates,

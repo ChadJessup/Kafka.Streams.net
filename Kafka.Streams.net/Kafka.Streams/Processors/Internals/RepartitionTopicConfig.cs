@@ -23,21 +23,21 @@
 //                return false;
 //            }
 //            RepartitionTopicConfig that = (RepartitionTopicConfig)o;
-//            return Objects.Equals(name, that.name) &&
+//            return Objects.Equals(Name, that.Name) &&
 //                   Objects.Equals(topicConfigs, that.topicConfigs);
 //        }
 
 
 //        public int GetHashCode()
 //        {
-//            return Objects.hash(name, topicConfigs);
+//            return Objects.hash(Name, topicConfigs);
 //        }
 
 
 //        public string ToString()
 //        {
 //            return "RepartitionTopicConfig(" +
-//                    "name=" + name +
+//                    "Name=" + Name +
 //                    ", topicConfigs=" + topicConfigs +
 //                    ")";
 //        }

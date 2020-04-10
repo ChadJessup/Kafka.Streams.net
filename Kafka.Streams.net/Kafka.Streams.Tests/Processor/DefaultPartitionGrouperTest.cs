@@ -61,14 +61,14 @@
 
 //            int topicGroupId = 0;
 
-//            topicGroups.put(topicGroupId, mkSet("topic1"));
-//            expectedPartitionsForTask.put(new TaskId(topicGroupId, 0), mkSet(new TopicPartition("topic1", 0)));
-//            expectedPartitionsForTask.put(new TaskId(topicGroupId, 1), mkSet(new TopicPartition("topic1", 1)));
-//            expectedPartitionsForTask.put(new TaskId(topicGroupId, 2), mkSet(new TopicPartition("topic1", 2)));
+//            topicGroups.Put(topicGroupId, mkSet("topic1"));
+//            expectedPartitionsForTask.Put(new TaskId(topicGroupId, 0), mkSet(new TopicPartition("topic1", 0)));
+//            expectedPartitionsForTask.Put(new TaskId(topicGroupId, 1), mkSet(new TopicPartition("topic1", 1)));
+//            expectedPartitionsForTask.Put(new TaskId(topicGroupId, 2), mkSet(new TopicPartition("topic1", 2)));
 
-//            topicGroups.put(++topicGroupId, mkSet("topic2"));
-//            expectedPartitionsForTask.put(new TaskId(topicGroupId, 0), mkSet(new TopicPartition("topic2", 0)));
-//            expectedPartitionsForTask.put(new TaskId(topicGroupId, 1), mkSet(new TopicPartition("topic2", 1)));
+//            topicGroups.Put(++topicGroupId, mkSet("topic2"));
+//            expectedPartitionsForTask.Put(new TaskId(topicGroupId, 0), mkSet(new TopicPartition("topic2", 0)));
+//            expectedPartitionsForTask.Put(new TaskId(topicGroupId, 1), mkSet(new TopicPartition("topic2", 1)));
 
 //            Assert.Equal(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
 //        }
@@ -82,14 +82,14 @@
 
 //            int topicGroupId = 0;
 
-//            topicGroups.put(topicGroupId, mkSet("topic1", "topic2"));
-//            expectedPartitionsForTask.put(
+//            topicGroups.Put(topicGroupId, mkSet("topic1", "topic2"));
+//            expectedPartitionsForTask.Put(
 //                new TaskId(topicGroupId, 0),
 //                mkSet(new TopicPartition("topic1", 0), new TopicPartition("topic2", 0)));
-//            expectedPartitionsForTask.put(
+//            expectedPartitionsForTask.Put(
 //                new TaskId(topicGroupId, 1),
 //                mkSet(new TopicPartition("topic1", 1), new TopicPartition("topic2", 1)));
-//            expectedPartitionsForTask.put(
+//            expectedPartitionsForTask.Put(
 //                new TaskId(topicGroupId, 2),
 //                mkSet(new TopicPartition("topic1", 2)));
 
@@ -104,7 +104,7 @@
 
 //            int topicGroupId = 0;
 
-//            topicGroups.put(topicGroupId, mkSet("topic1", "unknownTopic", "topic2"));
+//            topicGroups.Put(topicGroupId, mkSet("topic1", "unknownTopic", "topic2"));
 //            grouper.partitionGroups(topicGroups, metadata);
 //        }
 //    }

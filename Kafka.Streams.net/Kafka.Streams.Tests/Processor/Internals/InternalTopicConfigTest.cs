@@ -21,7 +21,7 @@
 //        [Fact]
 //        public void ShouldAugmentRetentionMsWithWindowedChangelog()
 //        {
-//            WindowedChangelogTopicConfig topicConfig = new WindowedChangelogTopicConfig("name", Collections.< string, string > emptyMap());
+//            WindowedChangelogTopicConfig topicConfig = new WindowedChangelogTopicConfig("Name", Collections.< string, string > emptyMap());
 //            topicConfig.setRetentionMs(10);
 //            Assert.Equal("30", topicConfig.getProperties(Collections.< string, string > emptyMap(), 20).Get(TopicConfig.RETENTION_MS_CONFIG));
 //        }
@@ -30,10 +30,10 @@
 //        public void ShouldUseSuppliedConfigs()
 //        {
 //            Dictionary<string, string> configs = new HashMap<>();
-//            configs.put("retention.ms", "1000");
-//            configs.put("retention.bytes", "10000");
+//            configs.Put("retention.ms", "1000");
+//            configs.Put("retention.bytes", "10000");
 
-//            UnwindowedChangelogTopicConfig topicConfig = new UnwindowedChangelogTopicConfig("name", configs);
+//            UnwindowedChangelogTopicConfig topicConfig = new UnwindowedChangelogTopicConfig("Name", configs);
 
 //            Dictionary<string, string> properties = topicConfig.getProperties(Collections.< string, string > emptyMap(), 0);
 //            Assert.Equal("1000", properties.Get("retention.ms"));
@@ -44,8 +44,8 @@
 //        public void ShouldUseSuppliedConfigsForRepartitionConfig()
 //        {
 //            Dictionary<string, string> configs = new HashMap<>();
-//            configs.put("retention.ms", "1000");
-//            RepartitionTopicConfig topicConfig = new RepartitionTopicConfig("name", configs);
+//            configs.Put("retention.ms", "1000");
+//            RepartitionTopicConfig topicConfig = new RepartitionTopicConfig("Name", configs);
 //            Assert.Equal("1000", topicConfig.getProperties(Collections.< string, string > emptyMap(), 0).Get(TopicConfig.RETENTION_MS_CONFIG));
 //        }
 //    }

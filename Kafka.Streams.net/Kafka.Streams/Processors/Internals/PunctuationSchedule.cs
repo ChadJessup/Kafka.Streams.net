@@ -18,7 +18,7 @@ namespace Kafka.Streams.Processors.Internals
             IPunctuator punctuator)
             : this(node, time, interval, punctuator, new RepointableCancellable())
         {
-            cancellable.SetSchedule(this);
+            this.cancellable.SetSchedule(this);
         }
 
         public PunctuationSchedule(
@@ -36,17 +36,17 @@ namespace Kafka.Streams.Processors.Internals
 
         public IProcessorNode Node()
         {
-            return value;
+            return this.value;
         }
 
         public void MarkCancelled()
         {
-            isCancelled = true;
+            this.isCancelled = true;
         }
 
         public PunctuationSchedule Next(long currTimestamp)
         {
-            var nextPunctuationTime = timestamp + interval;
+            var nextPunctuationTime = this.timestamp + this.interval;
             if (currTimestamp >= nextPunctuationTime)
             {
                 // we missed one ore more punctuations
@@ -54,13 +54,13 @@ namespace Kafka.Streams.Processors.Internals
                 // - when using STREAM_TIME punctuation and there was a gap i.e., no data was
                 //   received for at least 2*interval
                 // - when using WALL_CLOCK_TIME and there was a gap i.e., punctuation was delayed for at least 2*interval (GC pause, overload, ...)
-                var intervalsMissed = (currTimestamp - timestamp) / interval;
-                nextPunctuationTime = timestamp + (intervalsMissed + 1) * interval;
+                var intervalsMissed = (currTimestamp - this.timestamp) / this.interval;
+                nextPunctuationTime = this.timestamp + (intervalsMissed + 1) * this.interval;
             }
 
-            var nextSchedule = new PunctuationSchedule(value, nextPunctuationTime, interval, punctuator, cancellable);
+            var nextSchedule = new PunctuationSchedule(this.value, nextPunctuationTime, this.interval, this.punctuator, this.cancellable);
 
-            cancellable.SetSchedule(nextSchedule);
+            this.cancellable.SetSchedule(nextSchedule);
 
             return nextSchedule;
         }

@@ -14,7 +14,7 @@
 //namespace Kafka.Streams.Tests.Integration
 //{
 //    /**
-//     * Tests all available joins of Kafka Streams DSL.
+//     * Tests All available joins of Kafka Streams DSL.
 //     */
 
 
@@ -26,7 +26,7 @@
 
 //        public TemporaryFolder testFolder = new TemporaryFolder(TestUtils.GetTempDirectory());
 
-//        // @Parameterized.Parameters(name = "caching enabled = {0}")
+//        // @Parameterized.Parameters(Name = "caching enabled = {0}")
 //        public static Collection<object[]> Data()
 //        {
 //            List<object[]> values = new ArrayList<>();
@@ -84,23 +84,23 @@
 
 //        public static void SetupConfigsAndUtils()
 //        {
-//            PRODUCER_CONFIG.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            PRODUCER_CONFIG.put(ProducerConfig.ACKS_CONFIG, "all");
-//            PRODUCER_CONFIG.put(ProducerConfig.RETRIES_CONFIG, 0);
-//            PRODUCER_CONFIG.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.Long().Serializer);
-//            PRODUCER_CONFIG.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            PRODUCER_CONFIG.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            PRODUCER_CONFIG.Put(ProducerConfig.ACKS_CONFIG, "All");
+//            PRODUCER_CONFIG.Put(ProducerConfig.RETRIES_CONFIG, 0);
+//            PRODUCER_CONFIG.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.Long().Serializer);
+//            PRODUCER_CONFIG.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
-//            RESULT_CONSUMER_CONFIG.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            RESULT_CONSUMER_CONFIG.put(ConsumerConfig.GROUP_ID_CONFIG, appID + "-result-consumer");
-//            RESULT_CONSUMER_CONFIG.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//            RESULT_CONSUMER_CONFIG.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer);
-//            RESULT_CONSUMER_CONFIG.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
+//            RESULT_CONSUMER_CONFIG.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            RESULT_CONSUMER_CONFIG.Put(ConsumerConfig.GROUP_ID_CONFIG, appID + "-result-consumer");
+//            RESULT_CONSUMER_CONFIG.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            RESULT_CONSUMER_CONFIG.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer);
+//            RESULT_CONSUMER_CONFIG.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
 
-//            STREAMS_CONFIG.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//            STREAMS_CONFIG.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            STREAMS_CONFIG.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Long().getClass());
-//            STREAMS_CONFIG.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            STREAMS_CONFIG.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL);
+//            STREAMS_CONFIG.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            STREAMS_CONFIG.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            STREAMS_CONFIG.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Long().getClass());
+//            STREAMS_CONFIG.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            STREAMS_CONFIG.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL);
 //        }
 
 //        void PrepareEnvironment()
@@ -109,10 +109,10 @@
 
 //            if (!cacheEnabled)
 //            {
-//                STREAMS_CONFIG.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//                STREAMS_CONFIG.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
 //            }
 
-//            STREAMS_CONFIG.put(StreamsConfig.STATE_DIR_CONFIG, testFolder.getRoot().getPath());
+//            STREAMS_CONFIG.Put(StreamsConfig.STATE_DIR_CONFIG, testFolder.getRoot().getPath());
 
 //            producer = new KafkaProducer<>(PRODUCER_CONFIG);
 //        }
@@ -120,7 +120,7 @@
 
 //        public void Cleanup()
 //        {// throws InterruptedException
-//            producer.close(TimeSpan.FromMilliseconds(0));
+//            producer.Close(TimeSpan.FromMilliseconds(0));
 //            CLUSTER.deleteAllTopicsAndWait(120000);
 //        }
 
@@ -193,7 +193,7 @@
 //            }
 //            finally
 //            {
-//                streams.close();
+//                streams.Close();
 //            }
 //        }
 
@@ -241,7 +241,7 @@
 //            }
 //            finally
 //            {
-//                streams.close();
+//                streams.Close();
 //            }
 //        }
 
@@ -252,19 +252,19 @@
 //        {
 //            IReadOnlyKeyValueStore<long, ValueAndTimestamp<string>> store = streams.store(queryableName, QueryableStoreTypes.TimestampedKeyValueStore());
 
-//            IKeyValueIterator<long, ValueAndTimestamp<string>> all = store.all();
-//            KeyValuePair<long, ValueAndTimestamp<string>> onlyEntry = all.MoveNext();
+//            IKeyValueIterator<long, ValueAndTimestamp<string>> All = store.All();
+//            KeyValuePair<long, ValueAndTimestamp<string>> onlyEntry = All.MoveNext();
 
 //            try
 //            {
 //                Assert.Equal(onlyEntry.key, expectedFinalResult.Key);
 //                Assert.Equal(onlyEntry.value.Value, (expectedFinalResult.Value));
 //                Assert.Equal(onlyEntry.value.Timestamp, (expectedFinalResult.Timestamp));
-//                Assert.Equal(all.HasNext(), (false));
+//                Assert.Equal(All.HasNext(), (false));
 //            }
 //            finally
 //            {
-//                all.close();
+//                All.Close();
 //            }
 //        }
 

@@ -6,17 +6,17 @@ namespace Kafka.Streams.KStream
     public static class Grouped
     {
         /**
-         * Create a {@link Grouped} instance with the provided name used as part of the repartition topic if required.
+         * Create a {@link Grouped} instance with the provided Name used as part of the repartition topic if required.
          *
-         * @param name the name used for a repartition topic if required
-         * @return a new {@link Grouped} configured with the name
+         * @param Name the Name used for a repartition topic if required
+         * @return a new {@link Grouped} configured with the Name
          * @see KStream#groupByKey(Grouped)
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
-        public static Grouped<K, V> As<K, V>(string name)
+        public static Grouped<K, V> As<K, V>(string Name)
         {
-            return new Grouped<K, V>(name, null, null);
+            return new Grouped<K, V>(Name, null, null);
         }
 
         /**
@@ -48,23 +48,23 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Create a {@link Grouped} instance with the provided  name, keySerde, and valueSerde. If the keySerde and/or the valueSerde is
+         * Create a {@link Grouped} instance with the provided  Name, keySerde, and valueSerde. If the keySerde and/or the valueSerde is
          * {@code null} the default value for the respective serde from config will be used.
          *
-         * @param name       the name used as part of the repartition topic name if required
+         * @param Name       the Name used as part of the repartition topic Name if required
          * @param keySerde   the {@link Serde} used for serializing the key. If {@code null} the default key serde from config will be used
          * @param valueSerde the {@link Serde} used for serializing the value. If {@code null} the default value serde from config will be used
-         * @return a new {@link Grouped} configured with the name, keySerde, and valueSerde
+         * @return a new {@link Grouped} configured with the Name, keySerde, and valueSerde
          * @see KStream#groupByKey(Grouped)
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
         public static Grouped<K, V> With<K, V>(
-            string name,
+            string Name,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
-            return new Grouped<K, V>(name, keySerde, valueSerde);
+            return new Grouped<K, V>(Name, keySerde, valueSerde);
         }
 
         /**
@@ -87,7 +87,7 @@ namespace Kafka.Streams.KStream
     }
 
     /**
-     * The that is used to capture the key and value {@link Serde}s and set the part of name used for
+     * The that is used to capture the key and value {@link Serde}s and set the part of Name used for
      * repartition topics when performing {@link KStream#groupBy(KeyValueMapper, Grouped)}, {@link
      * KStream#groupByKey(Grouped)}, or {@link KTable#groupBy(KeyValueMapper, Grouped)} operations.  Note
      * that Kafka Streams does not always create repartition topics for grouping operations.
@@ -101,9 +101,9 @@ namespace Kafka.Streams.KStream
         public ISerde<V>? ValueSerde { get; private set; }
         public string? Name { get; }
 
-        public Grouped(string? name, ISerde<K>? keySerde, ISerde<V>? valueSerde)
+        public Grouped(string? Name, ISerde<K>? keySerde, ISerde<V>? valueSerde)
         {
-            this.Name = name;
+            this.Name = Name;
             this.KeySerde = keySerde;
             this.ValueSerde = valueSerde;
         }
@@ -114,15 +114,15 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Perform the grouping operation with the name for a repartition topic if required.  Note
+         * Perform the grouping operation with the Name for a repartition topic if required.  Note
          * that Kafka Streams does not always create repartition topics for grouping operations.
          *
-         * @param name the name used for the processor name and as part of the repartition topic name if required
-         * @return a new {@link Grouped} instance configured with the name
+         * @param Name the Name used for the processor Name and as part of the repartition topic Name if required
+         * @return a new {@link Grouped} instance configured with the Name
          * */
-        public Grouped<K, V> WithName(string name)
+        public Grouped<K, V> WithName(string Name)
         {
-            return new Grouped<K, V>(name, this.KeySerde, this.ValueSerde);
+            return new Grouped<K, V>(Name, this.KeySerde, this.ValueSerde);
         }
 
         /**

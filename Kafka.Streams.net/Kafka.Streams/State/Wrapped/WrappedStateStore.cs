@@ -54,18 +54,18 @@ namespace Kafka.Streams.State.Internals
             this.Wrapped = wrapped;
         }
 
-        public override void Init(IProcessorContext context, IStateStore root) => Wrapped.Init(context, root);
+        public override void Init(IProcessorContext context, IStateStore root) => this.Wrapped.Init(context, root);
 
-        public override string Name => Wrapped.Name;
+        public override string Name => this.Wrapped.Name;
 
         public override IStateStore GetWrappedStateStore() => this.Wrapped;
-        public override bool Persistent() => Wrapped.Persistent();
-        public override bool IsOpen() => Wrapped.IsOpen();
+        public override bool Persistent() => this.Wrapped.Persistent();
+        public override bool IsOpen() => this.Wrapped.IsOpen();
         public override bool SetFlushListener(FlushListener<K, V> listener, bool sendOldValues)
         {
-            if (Wrapped is ICachedStateStore)
+            if (this.Wrapped is ICachedStateStore)
             {
-                return ((ICachedStateStore<K, V>)Wrapped).SetFlushListener(listener, sendOldValues);
+                return ((ICachedStateStore<K, V>)this.Wrapped).SetFlushListener(listener, sendOldValues);
             }
 
             return false;
@@ -73,14 +73,14 @@ namespace Kafka.Streams.State.Internals
 
         protected void ValidateStoreOpen()
         {
-            if (!Wrapped.IsOpen())
+            if (!this.Wrapped.IsOpen())
             {
-                throw new InvalidStateStoreException("Store " + Wrapped.Name + " is currently closed.");
+                throw new InvalidStateStoreException("Store " + this.Wrapped.Name + " is currently closed.");
             }
         }
 
-        public override bool IsPresent() => Wrapped.IsPresent();
-        public override void Flush() => Wrapped.Flush();
-        public override void Close() => Wrapped.Close();
+        public override bool IsPresent() => this.Wrapped.IsPresent();
+        public override void Flush() => this.Wrapped.Flush();
+        public override void Close() => this.Wrapped.Close();
     }
 }

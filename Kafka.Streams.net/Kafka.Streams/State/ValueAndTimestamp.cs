@@ -12,7 +12,7 @@ namespace Kafka.Streams.State
          * @param <V> the type of the value
          * @return the wrapped {@code value} of {@code valueAndTimestamp} if not {@code null}; otherwise {@code null}
          */
-        public static V GetValueOrNull<V>(ValueAndTimestamp<V>? valueAndTimestamp)
+        public static V GetValueOrNull<V>(IValueAndTimestamp<V>? valueAndTimestamp)
         {
             if (valueAndTimestamp == null)
             {
@@ -31,11 +31,11 @@ namespace Kafka.Streams.State
          * @return a new {@link ValueAndTimestamp} instance if the provide {@code value} is not {@code null};
          *         otherwise {@code null} is returned
          */
-        public static ValueAndTimestamp<V>? Make<V>(V value, long timestamp)
+        public static IValueAndTimestamp<V>? Make<V>(V value, long timestamp)
         {
             return value == null
                 ? null
-                : new ValueAndTimestamp<V>(value, timestamp);
+                : new ValueAndTimestamp2<V>(value, timestamp);
         }
     }
 
@@ -44,11 +44,22 @@ namespace Kafka.Streams.State
      *
      * @param <V>
      */
-    public class ValueAndTimestamp<V>
+
+    public interface IValueAndTimestamp
+    {
+        long Timestamp { get; }
+    }
+
+    public interface IValueAndTimestamp<V> : IValueAndTimestamp
+    {
+        V Value { get; }
+    }
+
+    public class ValueAndTimestamp2<V> : IValueAndTimestamp<V>
     {
         public V Value { get; }
         public long Timestamp { get; }
-        public ValueAndTimestamp(V value, long timestamp)
+        public ValueAndTimestamp2(V value, long timestamp)
         {
             value = value ?? throw new ArgumentNullException(nameof(value));
 
@@ -57,7 +68,7 @@ namespace Kafka.Streams.State
         }
 
         public override string ToString()
-            => "<" + Value + "," + Timestamp + ">";
+            => "<" + this.Value + "," + this.Timestamp + ">";
 
         public override bool Equals(object o)
         {
@@ -66,15 +77,15 @@ namespace Kafka.Streams.State
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
-            var that = (ValueAndTimestamp<object>)o;
+            var that = (IValueAndTimestamp<object>)o;
 
-            return Timestamp == that.Timestamp
-                && Value.Equals(that.Value);
+            return this.Timestamp == that.Timestamp
+                && this.Value.Equals(that.Value);
         }
 
         public override int GetHashCode()

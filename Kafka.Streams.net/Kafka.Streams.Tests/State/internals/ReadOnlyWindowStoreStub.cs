@@ -59,19 +59,19 @@
 
 //        public IWindowStoreIterator<V> Fetch(K key, Instant from, Instant to)
 //        {// throws ArgumentException
-//            return fetch(
+//            return Fetch(
 //                key,
 //                ApiUtils.validateMillisecondInstant(from, prepareMillisCheckFailMsgPrefix(from, "from")),
 //                ApiUtils.validateMillisecondInstant(to, prepareMillisCheckFailMsgPrefix(to, "to")));
 //        }
 
-//        public IKeyValueIterator<Windowed<K>, V> All()
+//        public IKeyValueIterator<IWindowed<K>, V> All()
 //        {
 //            if (!open)
 //            {
 //                throw new InvalidStateStoreException("Store is not open");
 //            }
-//            List<KeyValuePair<Windowed<K>, V>> results = new ArrayList<>();
+//            List<KeyValuePair<IWindowed<K>, V>> results = new ArrayList<>();
 //            foreach (long now in data.Keys)
 //            {
 //                var kvMap = data[now];
@@ -79,23 +79,23 @@
 //                {
 //                    foreach (var entry in kvMap.entrySet())
 //                    {
-//                        results.Add(new KeyValuePair<Windowed<K>, V>(
-//                            new Windowed<K>(
+//                        results.Add(new KeyValuePair<IWindowed<K>, V>(
+//                            new IWindowed<K>(
 //                                entry.getKey(),
 //                                new TimeWindow(now, now + windowSize)), entry.getValue()));
 //                    }
 //                }
 //            }
-//            Iterator<KeyValuePair<Windowed<K>, V>> iterator = results.iterator();
+//            Iterator<KeyValuePair<IWindowed<K>, V>> iterator = results.iterator();
 
-//            return new IKeyValueIterator<Windowed<K>, V>()
+//            return new IKeyValueIterator<IWindowed<K>, V>()
 //            {
 
 
-//            public void close() { }
+//            public void Close() { }
 
 
-//            public Windowed<K> PeekNextKey()
+//            public IWindowed<K> PeekNextKey()
 //            {
 //                throw new UnsupportedOperationException("PeekNextKey() not supported in " + getClass().getName());
 //            }
@@ -107,7 +107,7 @@
 //            }
 
 
-//            public KeyValuePair<Windowed<K>, V> next()
+//            public KeyValuePair<IWindowed<K>, V> next()
 //            {
 //                return iterator.MoveNext();
 //            }
@@ -123,13 +123,13 @@
 
 
 
-//    public IKeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo)
+//    public IKeyValueIterator<IWindowed<K>, V> FetchAll(long timeFrom, long timeTo)
 //    {
 //        if (!open)
 //        {
 //            throw new InvalidStateStoreException("Store is not open");
 //        }
-//        List<KeyValuePair<Windowed<K>, V>> results = new ArrayList<>();
+//        List<KeyValuePair<IWindowed<K>, V>> results = new ArrayList<>();
 //        foreach (long now in data.keySet())
 //        {
 //            if (!(now >= timeFrom && now <= timeTo))
@@ -141,20 +141,20 @@
 //            {
 //                foreach (Entry<K, V> entry in kvMap.entrySet())
 //                {
-//                    results.Add(KeyValuePair.Create(new Windowed<>(entry.getKey(), new TimeWindow(now, now + windowSize)), entry.getValue()));
+//                    results.Add(KeyValuePair.Create(new IWindowed<>(entry.getKey(), new TimeWindow(now, now + windowSize)), entry.getValue()));
 //                }
 //            }
 //        }
-//        Iterator<KeyValuePair<Windowed<K>, V>> iterator = results.iterator();
+//        Iterator<KeyValuePair<IWindowed<K>, V>> iterator = results.iterator();
 
-//        return new IKeyValueIterator<Windowed<K>, V>()
+//        return new IKeyValueIterator<IWindowed<K>, V>()
 //        {
 
 
-//            public void close() { }
+//            public void Close() { }
 
 
-//        public Windowed<K> PeekNextKey()
+//        public IWindowed<K> PeekNextKey()
 //        {
 //            throw new UnsupportedOperationException("PeekNextKey() not supported in " + getClass().getName());
 //        }
@@ -166,7 +166,7 @@
 //        }
 
 
-//        public KeyValuePair<Windowed<K>, V> next()
+//        public KeyValuePair<IWindowed<K>, V> next()
 //        {
 //            return iterator.MoveNext();
 //        }
@@ -181,22 +181,22 @@
 //}
 
 
-//public IKeyValueIterator<Windowed<K>, V> FetchAll(Instant from, Instant to)
+//public IKeyValueIterator<IWindowed<K>, V> FetchAll(Instant from, Instant to)
 //{// throws ArgumentException
-//    return fetchAll(
+//    return FetchAll(
 //        ApiUtils.validateMillisecondInstant(from, prepareMillisCheckFailMsgPrefix(from, "from")),
 //        ApiUtils.validateMillisecondInstant(to, prepareMillisCheckFailMsgPrefix(to, "to")));
 //}
 
 
 
-//public IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo)
+//public IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo)
 //{
 //    if (!open)
 //    {
 //        throw new InvalidStateStoreException("Store is not open");
 //    }
-//    List<KeyValuePair<Windowed<K>, V>> results = new ArrayList<>();
+//    List<KeyValuePair<IWindowed<K>, V>> results = new ArrayList<>();
 //    for (long now = timeFrom; now <= timeTo; now++)
 //    {
 //        NavigableDictionary<K, V> kvMap = data.Get(now);
@@ -204,20 +204,20 @@
 //        {
 //            foreach (Entry<K, V> entry in kvMap.subMap(from, true, to, true).entrySet())
 //            {
-//                results.Add(KeyValuePair.Create(new Windowed<>(entry.getKey(), new TimeWindow(now, now + windowSize)), entry.getValue()));
+//                results.Add(KeyValuePair.Create(new IWindowed<>(entry.getKey(), new TimeWindow(now, now + windowSize)), entry.getValue()));
 //            }
 //        }
 //    }
-//    Iterator<KeyValuePair<Windowed<K>, V>> iterator = results.iterator();
+//    Iterator<KeyValuePair<IWindowed<K>, V>> iterator = results.iterator();
 
-//    return new IKeyValueIterator<Windowed<K>, V>()
+//    return new IKeyValueIterator<IWindowed<K>, V>()
 //    {
 
 
-//            public void close() { }
+//            public void Close() { }
 
 
-//    public Windowed<K> PeekNextKey()
+//    public IWindowed<K> PeekNextKey()
 //    {
 //        throw new UnsupportedOperationException("PeekNextKey() not supported in " + getClass().getName());
 //    }
@@ -229,7 +229,7 @@
 //    }
 
 
-//    public KeyValuePair<Windowed<K>, V> next()
+//    public KeyValuePair<IWindowed<K>, V> next()
 //    {
 //        return iterator.MoveNext();
 //    }
@@ -243,12 +243,12 @@
 //};
 //    }
 
-//     public IKeyValueIterator<Windowed<K>, V> Fetch(K from,
+//     public IKeyValueIterator<IWindowed<K>, V> Fetch(K from,
 //                                                            K to,
 //                                                            Instant fromTime,
 //                                                            Instant toTime)
 //{// throws ArgumentException
-//    return fetch(
+//    return Fetch(
 //        from,
 //        to,
 //        ApiUtils.validateMillisecondInstant(fromTime, prepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
@@ -259,9 +259,9 @@
 //{
 //    if (!data.containsKey(timestamp))
 //    {
-//        data.put(timestamp, new TreeMap<>());
+//        data.Put(timestamp, new TreeMap<>());
 //    }
-//    data.Get(timestamp).put(key, value);
+//    data.Get(timestamp).Put(key, value);
 //}
 
 

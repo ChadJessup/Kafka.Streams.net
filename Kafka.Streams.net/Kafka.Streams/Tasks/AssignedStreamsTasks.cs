@@ -22,13 +22,13 @@ namespace Kafka.Streams.Tasks
 
         public StreamTask RestoringTaskFor(TopicPartition partition)
         {
-            return restoringByPartition[partition];
+            return this.restoringByPartition[partition];
         }
 
         public override List<StreamTask> AllTasks()
         {
             List<StreamTask> tasks = base.AllTasks();
-            tasks.AddRange(restoring.Values);
+            tasks.AddRange(this.restoring.Values);
 
             return tasks;
         }
@@ -37,26 +37,26 @@ namespace Kafka.Streams.Tasks
         public override HashSet<TaskId> AllAssignedTaskIds()
         {
             HashSet<TaskId> taskIds = base.AllAssignedTaskIds();
-            taskIds.UnionWith(restoring.Keys);
+            taskIds.UnionWith(this.restoring.Keys);
             return taskIds;
         }
 
 
         public override bool AllTasksRunning()
         {
-            return base.AllTasksRunning() && !restoring.Any();
+            return base.AllTasksRunning() && !this.restoring.Any();
         }
 
         public RuntimeException CloseAllRestoringTasks()
         {
             RuntimeException exception = null;
 
-            logger.LogTrace("Closing all restoring stream tasks {}", restoring.Keys);
-            IEnumerator<StreamTask> restoringTaskIterator = restoring.Values.GetEnumerator();
+            this.logger.LogTrace("Closing All restoring stream tasks {}", this.restoring.Keys);
+            IEnumerator<StreamTask> restoringTaskIterator = this.restoring.Values.GetEnumerator();
             while (restoringTaskIterator.MoveNext())
             {
                 StreamTask task = restoringTaskIterator.Current;
-                logger.LogDebug("Closing restoring task {}", task.id);
+                this.logger.LogDebug("Closing restoring task {}", task.id);
                 try
                 {
 
@@ -64,7 +64,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (RuntimeException e)
                 {
-                    logger.LogError("Failed to Remove restoring task {} due to the following error:", task.id, e);
+                    this.logger.LogError("Failed to Remove restoring task {} due to the following error:", task.id, e);
                     if (exception == null)
                     {
                         exception = e;
@@ -76,9 +76,9 @@ namespace Kafka.Streams.Tasks
                 }
             }
 
-            restoring.Clear();
-            restoredPartitions.Clear();
-            restoringByPartition.Clear();
+            this.restoring.Clear();
+            this.restoredPartitions.Clear();
+            this.restoringByPartition.Clear();
 
             return exception;
         }
@@ -90,52 +90,52 @@ namespace Kafka.Streams.Tasks
                 return;
             }
 
-            logger.LogTrace("Stream task changelog partitions that have completed restoring so far: {}", restored);
-            restoredPartitions.UnionWith(restored);
-            for (IEnumerator<KeyValuePair<TaskId, StreamTask>> it = restoring.GetEnumerator(); it.MoveNext();)
+            this.logger.LogTrace("Stream task changelog partitions that have completed restoring so far: {}", restored);
+            this.restoredPartitions.UnionWith(restored);
+            for (IEnumerator<KeyValuePair<TaskId, StreamTask>> it = this.restoring.GetEnumerator(); it.MoveNext();)
             {
                 KeyValuePair<TaskId, StreamTask> entry = it.Current;
                 StreamTask task = entry.Value;
-                if (restoredPartitions.All(p => task.changelogPartitions.Contains(p)))
+                if (this.restoredPartitions.All(p => task.changelogPartitions.Contains(p)))
                 {
-                    TransitionToRunning(task);
-                    restoring.Remove(it.Current.Key);
+                    this.TransitionToRunning(task);
+                    this.restoring.Remove(it.Current.Key);
 
-                    logger.LogTrace("Stream task {} completed restoration as all its changelog partitions {} have been applied to restore state",
+                    this.logger.LogTrace("Stream task {} completed restoration as All its changelog partitions {} have been applied to restore state",
                         task.id,
                         task.changelogPartitions);
                 }
                 else
                 {
 
-                    if (logger.IsEnabled(LogLevel.Trace))
+                    if (this.logger.IsEnabled(LogLevel.Trace))
                     {
                         var outstandingPartitions = new HashSet<TopicPartition>(task.changelogPartitions);
-                        outstandingPartitions.RemoveWhere(op => restoredPartitions.Contains(op));
+                        outstandingPartitions.RemoveWhere(op => this.restoredPartitions.Contains(op));
 
-                        logger.LogTrace("Stream task {} cannot resume processing yet since some of its changelog partitions have not completed restoring: {}",
+                        this.logger.LogTrace("Stream task {} cannot resume processing yet since some of its changelog partitions have not completed restoring: {}",
                             task.id,
                             outstandingPartitions);
                     }
                 }
             }
-            if (AllTasksRunning())
+            if (this.AllTasksRunning())
             {
-                restoredPartitions.Clear();
+                this.restoredPartitions.Clear();
             }
         }
 
         public void AddToRestoring(StreamTask task)
         {
-            restoring.Add(task.id, task);
+            this.restoring.Add(task.id, task);
             foreach (TopicPartition topicPartition in task.partitions)
             {
-                restoringByPartition.Add(topicPartition, task);
+                this.restoringByPartition.Add(topicPartition, task);
             }
 
             foreach (TopicPartition topicPartition in task.changelogPartitions)
             {
-                restoringByPartition.Add(topicPartition, task);
+                this.restoringByPartition.Add(topicPartition, task);
             }
         }
 
@@ -148,7 +148,7 @@ namespace Kafka.Streams.Tasks
             var committed = 0;
             RuntimeException firstException = null;
 
-            for (IEnumerator<StreamTask> it = running.Values.GetEnumerator(); it.MoveNext();)
+            for (IEnumerator<StreamTask> it = this.running.Values.GetEnumerator(); it.MoveNext();)
             {
                 StreamTask task = it.Current;
                 try
@@ -158,14 +158,14 @@ namespace Kafka.Streams.Tasks
                     {
                         task.Commit();
                         committed++;
-                        logger.LogDebug("Committed active task {} per user request in", task.id);
+                        this.logger.LogDebug("Committed active task {} per user request in", task.id);
                     }
                 }
                 catch (InvalidOperationException e)
                 {
-                    logger.LogInformation(e, "Failed to commit {} since it got migrated to another thread already. " +
+                    this.logger.LogInformation(e, "Failed to commit {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
-                    RuntimeException fatalException = CloseZombieTask(task);
+                    RuntimeException fatalException = this.CloseZombieTask(task);
                     if (fatalException != null)
                     {
                         throw fatalException;
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (Exception t)
                 {
-                    logger.LogError("Failed to commit StreamTask {} due to the following error:",
+                    this.logger.LogError("Failed to commit StreamTask {} due to the following error:",
                             task.id,
                             t);
                     if (firstException == null)
@@ -197,12 +197,12 @@ namespace Kafka.Streams.Tasks
 
         /**
          * Returns a map of offsets up to which the records can be deleted; this function should only be called
-         * after the commit call to make sure all consumed offsets are actually committed as well
+         * after the commit call to make sure All consumed offsets are actually committed as well
          */
         public Dictionary<TopicPartition, long> RecordsToDelete()
         {
             var recordsToDelete = new Dictionary<TopicPartition, long>();
-            foreach (var task in running.Values)
+            foreach (var task in this.running.Values)
             {
                 foreach (var record in task.PurgableOffsets())
                 {
@@ -220,7 +220,7 @@ namespace Kafka.Streams.Tasks
         {
             var processed = 0;
 
-            IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.GetEnumerator();
+            IEnumerator<KeyValuePair<TaskId, StreamTask>> it = this.running.GetEnumerator();
             while (it.MoveNext())
             {
                 StreamTask task = it.Current.Value;
@@ -234,9 +234,9 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    logger.LogInformation(e, "Failed to process stream task {} since it got migrated to another thread already. " +
+                    this.logger.LogInformation(e, "Failed to process stream task {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
-                    RuntimeException fatalException = CloseZombieTask(task);
+                    RuntimeException fatalException = this.CloseZombieTask(task);
                     if (fatalException != null)
                     {
                         throw fatalException;
@@ -248,7 +248,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (RuntimeException e)
                 {
-                    logger.LogError("Failed to process stream task {} due to the following error:", task.id, e);
+                    this.logger.LogError("Failed to process stream task {} due to the following error:", task.id, e);
 
                     throw;
                 }
@@ -263,7 +263,7 @@ namespace Kafka.Streams.Tasks
         public int Punctuate()
         {
             var punctuated = 0;
-            IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.GetEnumerator();
+            IEnumerator<KeyValuePair<TaskId, StreamTask>> it = this.running.GetEnumerator();
             while (it.MoveNext())
             {
                 StreamTask task = it.Current.Value;
@@ -281,10 +281,10 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    logger.LogInformation(e, "Failed to punctuate stream task {} since it got migrated to another thread already. " +
+                    this.logger.LogInformation(e, "Failed to punctuate stream task {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
 
-                    RuntimeException fatalException = CloseZombieTask(task);
+                    RuntimeException fatalException = this.CloseZombieTask(task);
                     if (fatalException != null)
                     {
                         throw fatalException;
@@ -296,7 +296,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (KafkaException e)
                 {
-                    logger.LogError("Failed to punctuate stream task {} due to the following error:", task.id, e);
+                    this.logger.LogError("Failed to punctuate stream task {} due to the following error:", task.id, e);
 
                     throw;
                 }
@@ -307,16 +307,16 @@ namespace Kafka.Streams.Tasks
         public override void Clear()
         {
             base.Clear();
-            restoring.Clear();
-            restoringByPartition.Clear();
-            restoredPartitions.Clear();
+            this.restoring.Clear();
+            this.restoringByPartition.Clear();
+            this.restoredPartitions.Clear();
         }
 
         public new string ToString(string indent)
         {
             var builder = new StringBuilder();
             builder.Append(base.ToString(indent));
-            Describe(builder, restoring.Values.ToList(), indent, "Restoring:");
+            this.Describe(builder, this.restoring.Values.ToList(), indent, "Restoring:");
             return builder.ToString();
         }
     }

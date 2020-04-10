@@ -30,7 +30,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            StreamsConfig config = new StreamsConfig();
 //            config.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsUpgradeTest");
-//            config.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
+//            config.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
 
 //            KafkaClientSupplier kafkaClientSupplier;
 //            if (streamsProperties.containsKey("test.future.metadata"))
@@ -50,10 +50,10 @@ namespace Kafka.Streams.Tests.Tests
 //            Runtime.getRuntime().addShutdownHook(new Thread(() =>
 //            {
 //                System.Console.Out.WriteLine("closing Kafka Streams instance");
-//                System.Console.Out.flush();
-//                streams.close();
+//                System.Console.Out.Flush();
+//                streams.Close();
 //                System.Console.Out.WriteLine("UPGRADE-TEST-CLIENT-CLOSED");
-//                System.Console.Out.flush();
+//                System.Console.Out.Flush();
 
 //            }));
 //        }
@@ -64,7 +64,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            public Consumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
 //            {
-//                config.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, FutureStreamsPartitionAssignor.getName());
+//                config.Put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, FutureStreamsPartitionAssignor.getName());
 //            return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
 //        }
 //    }
@@ -190,7 +190,7 @@ namespace Kafka.Streams.Tests.Tests
 //                        .putInt(0, SubscriptionInfo.LATEST_SUPPORTED_VERSION)
 //                        .putInt(4, SubscriptionInfo.LATEST_SUPPORTED_VERSION));
 
-//                    downgradedSubscriptions.put(
+//                    downgradedSubscriptions.Put(
 //                        entry.getKey(),
 //                        new Subscription(
 //                            subscription.topics(),
@@ -210,7 +210,7 @@ namespace Kafka.Streams.Tests.Tests
 //            foreach (Map.Entry<string, Assignment> entry in assignment.entrySet())
 //            {
 //                Assignment singleAssignment = entry.getValue();
-//                newAssignment.put(
+//                newAssignment.Put(
 //                    entry.getKey(),
 //                    new Assignment(
 //                        singleAssignment.partitions(),
@@ -321,8 +321,8 @@ namespace Kafka.Streams.Tests.Tests
 //                }
 //                catch (BufferUnderflowException expectedWhenAllDataCopied) { }
 
-//                System.Console.Out.flush();
-//                System.Console.Out.close();
+//                System.Console.Out.Flush();
+//                System.Console.Out.Close();
 
 //                return new ByteBuffer().Wrap(baos.toByteArray());
 //            }

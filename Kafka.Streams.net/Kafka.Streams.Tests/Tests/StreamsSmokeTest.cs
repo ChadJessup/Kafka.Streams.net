@@ -61,7 +61,7 @@ namespace Kafka.Streams.Tests.Tests
 //                streamsProperties.setProperty(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
 //                new SmokeTestClient(UUID.randomUUID().ToString()).start(streamsProperties);
 //                break;
-//            case "close-deadlock-test":
+//            case "Close-deadlock-test":
 //                ShutdownDeadlockTest test = new ShutdownDeadlockTest(kafka);
 //                test.start();
 //                break;

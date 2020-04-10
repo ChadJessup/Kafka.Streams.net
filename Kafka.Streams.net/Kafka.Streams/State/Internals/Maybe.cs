@@ -57,8 +57,8 @@
 
 //        public override int GetHashCode()
 //        {
-//            // Since all undefined maybes are equal, we can hard-code their GetHashCode() to -1.
-//            // Since all defined null maybes are equal, we can hard-code their GetHashCode() to 0.
+//            // Since All undefined maybes are equal, we can hard-code their GetHashCode() to -1.
+//            // Since All defined null maybes are equal, we can hard-code their GetHashCode() to 0.
 //            return defined ? nullableValue == null ? 0 : nullableValue.GetHashCode() : -1;
 //        }
 

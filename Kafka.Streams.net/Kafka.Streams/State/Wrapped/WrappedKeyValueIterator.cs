@@ -5,7 +5,7 @@
 
 //namespace Kafka.Streams.State.Internals
 //{
-//    public class WrappedKeyValueIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
+//    public class WrappedKeyValueIterator : IKeyValueIterator<IWindowed<Bytes>, byte[]>
 //    {
 //        IKeyValueIterator<Bytes, byte[]> bytesIterator;
 //        long windowSize;
@@ -18,7 +18,7 @@
 //        }
 
 
-//        public Windowed<Bytes> PeekNextKey()
+//        public IWindowed<Bytes> PeekNextKey()
 //        {
 //            byte[] nextKey = bytesIterator.PeekNextKey().Get();
 //            return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
@@ -31,7 +31,7 @@
 //        }
 
 
-//        public KeyValuePair<Windowed<Bytes>, byte[]> next()
+//        public KeyValuePair<IWindowed<Bytes>, byte[]> next()
 //        {
 //            KeyValuePair<Bytes, byte[]> next = bytesIterator.MoveNext();
 //            return KeyValuePair.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value);
@@ -44,9 +44,9 @@
 //        }
 
 
-//        public void close()
+//        public void Close()
 //        {
-//            bytesIterator.close();
+//            bytesIterator.Close();
 //        }
 //    }
 //}

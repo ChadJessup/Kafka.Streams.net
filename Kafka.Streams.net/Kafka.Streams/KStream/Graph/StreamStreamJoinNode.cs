@@ -53,11 +53,11 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             return "StreamStreamJoinNode{" +
-                   "thisWindowedStreamProcessorParameters=" + thisWindowedStreamProcessorParameters +
-                   ", otherWindowedStreamProcessorParameters=" + otherWindowedStreamProcessorParameters +
-                   ", thisWindowStoreBuilder=" + thisWindowStoreBuilder +
-                   ", otherWindowStoreBuilder=" + otherWindowStoreBuilder +
-                   ", joined=" + joined +
+                   "thisWindowedStreamProcessorParameters=" + this.thisWindowedStreamProcessorParameters +
+                   ", otherWindowedStreamProcessorParameters=" + this.otherWindowedStreamProcessorParameters +
+                   ", thisWindowStoreBuilder=" + this.thisWindowStoreBuilder +
+                   ", otherWindowStoreBuilder=" + this.otherWindowStoreBuilder +
+                   ", joined=" + this.joined +
                    "} " + base.ToString();
         }
 
@@ -65,25 +65,25 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            var thisProcessorName = ThisProcessorParameters().ProcessorName;
-            var otherProcessorName = OtherProcessorParameters().ProcessorName;
-            var thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.ProcessorName;
-            var otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.ProcessorName;
+            var thisProcessorName = this.ThisProcessorParameters().ProcessorName;
+            var otherProcessorName = this.OtherProcessorParameters().ProcessorName;
+            var thisWindowedStreamProcessorName = this.thisWindowedStreamProcessorParameters.ProcessorName;
+            var otherWindowedStreamProcessorName = this.otherWindowedStreamProcessorParameters.ProcessorName;
 
-            topologyBuilder.AddProcessor<K, V1>(thisProcessorName, ThisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
-            topologyBuilder.AddProcessor<K, V1>(otherProcessorName, OtherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
+            topologyBuilder.AddProcessor<K, V1>(thisProcessorName, this.ThisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
+            topologyBuilder.AddProcessor<K, V1>(otherProcessorName, this.OtherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
 
             topologyBuilder.AddProcessor<K, V1>(
-                MergeProcessorParameters().ProcessorName,
-                MergeProcessorParameters().ProcessorSupplier,
+                this.MergeProcessorParameters().ProcessorName,
+                this.MergeProcessorParameters().ProcessorSupplier,
                 thisProcessorName, otherProcessorName);
 
             topologyBuilder.AddStateStore<K, V1, IWindowStore<K, V1>>(
-                thisWindowStoreBuilder,
+                this.thisWindowStoreBuilder,
                 new[] { otherProcessorName });
 
             topologyBuilder.AddStateStore<K, V2, IWindowStore<K, V2>>(
-                otherWindowStoreBuilder,
+                this.otherWindowStoreBuilder,
                 new[] { thisProcessorName });
         }
     }

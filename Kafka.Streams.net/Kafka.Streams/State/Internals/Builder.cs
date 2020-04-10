@@ -32,7 +32,7 @@
 
 
 //            public bool loggingEnabled { get; }
-//            public string name => storeName;
+//            public string Name => storeName;
 //        }
 //    }
 //}

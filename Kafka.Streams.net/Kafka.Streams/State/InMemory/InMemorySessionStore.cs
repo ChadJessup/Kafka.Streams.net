@@ -28,10 +28,10 @@ namespace Kafka.Streams.State.Internals
         private volatile bool open = false;
 
         public InMemorySessionStore(
-            string name,
+            string Name,
             TimeSpan retentionPeriod)
         {
-            this.Name = name;
+            this.Name = Name;
             this.retentionPeriod = retentionPeriod;
             //this.metricScope = metricScope;
         }
@@ -44,33 +44,33 @@ namespace Kafka.Streams.State.Internals
             string taskName = context.TaskId.ToString();
             // expiredRecordSensor = metrics.storeLevelSensor(
             //     taskName,
-            //     name,
+            //     Name,
             //     EXPIRED_WINDOW_RECORD_DROP,
             //     RecordingLevel.INFO
             // );
             //addInvocationRateAndCount(
             //     expiredRecordSensor,
             //     "stream-" + metricScope + "-metrics",
-            //     metrics.tagMap("task-id", taskName, metricScope + "-id", name),
+            //     metrics.tagMap("task-id", taskName, metricScope + "-id", Name),
             //     EXPIRED_WINDOW_RECORD_DROP
             // );
 
             if (root != null)
             {
-                // context.Register(root, (key, value) => put(SessionKeySchema.from(Bytes.Wrap(key)), value));
+                // context.Register(root, (key, value) => Put(SessionKeySchema.from(Bytes.Wrap(key)), value));
             }
 
-            open = true;
+            this.open = true;
         }
 
-        public void Put(Windowed<Bytes> sessionKey, byte[] aggregate)
+        public void Put(IWindowed<Bytes> sessionKey, byte[] aggregate)
         {
-            RemoveExpiredSegments();
+            this.RemoveExpiredSegments();
 
             long windowEndTimestamp = sessionKey.window.End();
-            observedStreamTime = Math.Max(observedStreamTime, windowEndTimestamp);
+            this.observedStreamTime = Math.Max(this.observedStreamTime, windowEndTimestamp);
 
-            if (windowEndTimestamp <= observedStreamTime - retentionPeriod.TotalMilliseconds)
+            if (windowEndTimestamp <= this.observedStreamTime - this.retentionPeriod.TotalMilliseconds)
             {
                 //expiredRecordSensor.record();
                 //LOG.LogDebug("Skipping record for expired segment.");
@@ -86,14 +86,14 @@ namespace Kafka.Streams.State.Internals
                 }
                 else
                 {
-                    Remove(sessionKey);
+                    this.Remove(sessionKey);
                 }
             }
         }
 
-        public void Remove(Windowed<Bytes> sessionKey)
+        public void Remove(IWindowed<Bytes> sessionKey)
         {
-            ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = endTimeMap[sessionKey.window.End()];
+            ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = this.endTimeMap[sessionKey.window.End()];
             if (keyMap == null)
             {
                 return;
@@ -112,21 +112,21 @@ namespace Kafka.Streams.State.Internals
                 keyMap.Remove(sessionKey.Key, out var _);
                 if (!keyMap.Any())
                 {
-                    endTimeMap.Remove(sessionKey.window.End(), out var _);
+                    this.endTimeMap.Remove(sessionKey.window.End(), out var _);
                 }
             }
         }
 
         public byte[]? FetchSession(Bytes key, long startTime, long endTime)
         {
-            RemoveExpiredSegments();
+            this.RemoveExpiredSegments();
 
             key = key ?? throw new ArgumentNullException(nameof(key));
 
             // Only need to search if the record hasn't expired yet
-            if (endTime > observedStreamTime - retentionPeriod.TotalMilliseconds)
+            if (endTime > this.observedStreamTime - this.retentionPeriod.TotalMilliseconds)
             {
-                ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = endTimeMap[endTime];
+                ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = this.endTimeMap[endTime];
                 if (keyMap != null)
                 {
                     ConcurrentDictionary<long, byte[]> startTimeMap = keyMap[key];
@@ -141,24 +141,24 @@ namespace Kafka.Streams.State.Internals
         }
 
         [Obsolete]
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes key,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
 
-            RemoveExpiredSegments();
+            this.RemoveExpiredSegments();
 
-            return RegisterNewIterator(
+            return this.RegisterNewIterator(
                 key,
                 key,
                 latestSessionStartTime,
-                endTimeMap.GetEnumerator());//.tailMap(earliestSessionEndTime, true)
+                this.endTimeMap.GetEnumerator());//.tailMap(earliestSessionEndTime, true)
         }
 
         [Obsolete]
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes keyFrom,
             Bytes keyTo,
             long earliestSessionEndTime,
@@ -167,48 +167,48 @@ namespace Kafka.Streams.State.Internals
             keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
             keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
 
-            RemoveExpiredSegments();
+            this.RemoveExpiredSegments();
 
             if (keyFrom.CompareTo(keyTo) > 0)
             {
-                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
                     + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
                     "Note that the built-in numerical serdes do not follow this for negative numbers");
                 return null;// KeyValueIterators.EMPTY_ITERATOR;
             }
 
-            return RegisterNewIterator(
+            return this.RegisterNewIterator(
                 keyFrom,
                 keyTo,
                 latestSessionStartTime,
-                endTimeMap.GetEnumerator()); //.tailMap(earliestSessionEndTime, true)
+                this.endTimeMap.GetEnumerator()); //.tailMap(earliestSessionEndTime, true)
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes key)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes key)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
 
-            RemoveExpiredSegments();
+            this.RemoveExpiredSegments();
 
-            return RegisterNewIterator(
+            return this.RegisterNewIterator(
                 key,
                 key,
                 long.MaxValue,
-                endTimeMap.GetEnumerator());
+                this.endTimeMap.GetEnumerator());
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
         {
             from = from ?? throw new ArgumentNullException(nameof(from));
             to = to ?? throw new ArgumentNullException(nameof(to));
 
-            RemoveExpiredSegments();
+            this.RemoveExpiredSegments();
 
-            return RegisterNewIterator(
+            return this.RegisterNewIterator(
                 from,
                 to,
                 long.MaxValue,
-                endTimeMap.GetEnumerator());
+                this.endTimeMap.GetEnumerator());
         }
 
         public bool Persistent()
@@ -218,7 +218,7 @@ namespace Kafka.Streams.State.Internals
 
         public bool IsOpen()
         {
-            return open;
+            return this.open;
         }
 
         public void Flush()
@@ -228,25 +228,25 @@ namespace Kafka.Streams.State.Internals
 
         public void Close()
         {
-            if (openIterators.Count != 0)
+            if (this.openIterators.Count != 0)
             {
-                LOG.LogWarning($"Closing {openIterators.Count} open iterators for store {Name}");
-                foreach (var it in openIterators)
+                LOG.LogWarning($"Closing {this.openIterators.Count} open iterators for store {this.Name}");
+                foreach (var it in this.openIterators)
                 {
                     it.Close();
                 }
             }
 
-            endTimeMap.Clear();
-            openIterators.Clear();
-            open = false;
+            this.endTimeMap.Clear();
+            this.openIterators.Clear();
+            this.open = false;
         }
 
         private void RemoveExpiredSegments()
         {
-            long minLiveTime = Math.Max(0L, observedStreamTime - (long)retentionPeriod.TotalMilliseconds + 1);
+            long minLiveTime = Math.Max(0L, this.observedStreamTime - (long)this.retentionPeriod.TotalMilliseconds + 1);
 
-            foreach (var it in openIterators)
+            foreach (var it in this.openIterators)
             {
                 minLiveTime = Math.Min(minLiveTime, it.MinTime());
             }
@@ -261,7 +261,7 @@ namespace Kafka.Streams.State.Internals
             IEnumerator<KeyValuePair<long, ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>>>> endTimeIterator)
         {
             InMemorySessionStoreIterator iterator = null;// new InMemorySessionStoreIterator(keyFrom, keyTo, latestSessionStartTime, endTimeIterator, it => openIterators.Remove(it));
-            openIterators.Add(iterator);
+            this.openIterators.Add(iterator);
             return iterator;
         }
 

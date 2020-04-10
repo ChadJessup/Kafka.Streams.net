@@ -63,7 +63,7 @@ namespace Kafka.Streams.Threads.GlobalStream
             this.logPrefix = this.logger.BeginScope($"global-stream-thread [{this.ThreadClientId}] ");
             this.globalConsumer = this.clientSupplier.GetGlobalConsumer();
 
-            this.Thread = new Thread(Run);
+            this.Thread = new Thread(this.Run);
 
             //this.time = time;
             //this.cache = new ThreadCache(logContext, cacheSizeBytes, streamsMetrics);
@@ -71,7 +71,7 @@ namespace Kafka.Streams.Threads.GlobalStream
 
         public void Run()
         {
-            using StateConsumer? stateConsumer = Initialize();
+            using StateConsumer? stateConsumer = this.Initialize();
 
             if (stateConsumer == null)
             {
@@ -92,7 +92,7 @@ namespace Kafka.Streams.Threads.GlobalStream
 
             try
             {
-                while (IsRunning())
+                while (this.IsRunning())
                 {
                     stateConsumer.PollAndUpdate();
                 }
@@ -112,12 +112,12 @@ namespace Kafka.Streams.Threads.GlobalStream
                 }
                 catch (IOException e)
                 {
-                    logger.LogError("Failed to close state maintainer due to the following error:", e);
+                    this.logger.LogError("Failed to Close state maintainer due to the following error:", e);
                 }
 
                 this.State.SetState(GlobalStreamThreadStates.DEAD);
 
-                logger.LogInformation("Shutdown complete");
+                this.logger.LogInformation("Shutdown complete");
             }
         }
 
@@ -144,7 +144,7 @@ namespace Kafka.Streams.Threads.GlobalStream
 
                 var stateConsumer = new StateConsumer(
                     null,
-                    globalConsumer,
+                    this.globalConsumer,
                     null,
                     //new GlobalStateUpdateTask(
                     //    topology,
@@ -153,7 +153,7 @@ namespace Kafka.Streams.Threads.GlobalStream
                     //    config.defaultDeserializationExceptionHandler(),
                     //    logContext
                     //),
-                    clock,
+                    this.clock,
                     TimeSpan.FromMilliseconds((double)this.config.PollMs),
                     this.config.CommitIntervalMs);
 
@@ -168,11 +168,11 @@ namespace Kafka.Streams.Threads.GlobalStream
 
                 this.logger.LogError(errorMsg, fatalException);
 
-                startupException = new StreamsException(errorMsg, fatalException);
+                this.startupException = new StreamsException(errorMsg, fatalException);
             }
             catch (StreamsException fatalException)
             {
-                startupException = fatalException;
+                this.startupException = fatalException;
             }
             catch(ArgumentNullException argumentNullException)
             {
@@ -180,7 +180,7 @@ namespace Kafka.Streams.Threads.GlobalStream
             }
             catch (Exception fatalException)
             {
-                startupException = new StreamsException("Exception caught during initialization of GlobalStreamThread", fatalException);
+                this.startupException = new StreamsException("Exception caught during initialization of GlobalStreamThread", fatalException);
             }
 
             return null;
@@ -191,12 +191,12 @@ namespace Kafka.Streams.Threads.GlobalStream
         {
             this.Thread.Start();
 
-            while (!IsRunning())
+            while (!this.IsRunning())
             {
                 Thread.Sleep(1);
-                if (startupException != null)
+                if (this.startupException != null)
                 {
-                    throw startupException;
+                    throw this.startupException;
                 }
             }
         }
@@ -218,7 +218,7 @@ namespace Kafka.Streams.Threads.GlobalStream
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!this.disposedValue)
             {
                 if (disposing)
                 {
@@ -228,7 +228,7 @@ namespace Kafka.Streams.Threads.GlobalStream
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                this.disposedValue = true;
             }
         }
 
@@ -243,7 +243,7 @@ namespace Kafka.Streams.Threads.GlobalStream
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
+            this.Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }

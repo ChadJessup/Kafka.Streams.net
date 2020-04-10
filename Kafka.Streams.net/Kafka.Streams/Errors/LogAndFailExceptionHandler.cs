@@ -1,27 +1,30 @@
+using System;
+using Confluent.Kafka;
+using Kafka.Streams.Errors.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
+using Microsoft.Extensions.Logging;
 
-//    public class LogAndFailExceptionHandler : IDeserializationExceptionHandler
-//    {
+namespace Kafka.Streams.Error
+{
+    public class LogAndFailExceptionHandler : IDeserializationExceptionHandler
+    {
+        private readonly ILogger<LogAndFailExceptionHandler> logger;
 
-//        private static ILogger log = new LoggerFactory().CreateLogger<LogAndFailExceptionHandler>();
+        public LogAndFailExceptionHandler(ILogger<LogAndFailExceptionHandler> logger)
+        {
+            this.logger = logger;
+        }
 
+        public DeserializationHandlerResponse Handle(
+            IProcessorContext context,
+            ConsumeResult<byte[], byte[]> record,
+            Exception exception)
+        {
+            this.logger.LogError(exception,
+                "Exception caught during Deserialization, " +
+                      $"taskId: {context.TaskId}, topic: {record.Topic}, partition: {record.Partition}, offset: {record.Offset}");
 
-//        public DeserializationHandlerResponse handle(IProcessorContext context,
-//                                                      ConsumeResult<byte[], byte[]> record,
-//                                                      Exception exception)
-//        {
-
-//            log.LogError("Exception caught during Deserialization, " +
-//                      "taskId: {}, topic: {}, partition: {}, offset: {}",
-//                      context.taskId, record.Topic, record.Partition, record.offset(),
-//                      exception);
-
-//            return DeserializationHandlerResponse.FAIL;
-//        }
-
-
-//        public void configure(Dictionary<string, object> configs)
-//        {
-//            // ignore
-//        }
-//    }
-//}
+            return DeserializationHandlerResponse.FAIL;
+        }
+    }
+}

@@ -37,6 +37,6 @@ namespace Kafka.Streams.State.Windowed
         }
 
         public TimeSpan RetentionPeriod
-            => storeSupplier.RetentionPeriod;
+            => this.storeSupplier.RetentionPeriod;
     }
 }

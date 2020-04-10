@@ -10,8 +10,8 @@ namespace Kafka.Streams.State.Interfaces
         DirectoryInfo BaseDir { get; }
 
         /**
-         * @throws ArgumentException if the store name has already been registered or if it is not a valid name
-         * (e.g., when it conflicts with the names of internal topics, like the checkpoint file name)
+         * @throws ArgumentException if the store Name has already been registered or if it is not a valid Name
+         * (e.g., when it conflicts with the names of internal topics, like the checkpoint file Name)
          * @throws StreamsException if the store's change log does not contain the partition
          */
         void Register(IStateStore store, IStateRestoreCallback stateRestoreCallback);
@@ -24,8 +24,8 @@ namespace Kafka.Streams.State.Interfaces
 
         void Close(bool clean);
 
-        IStateStore? GetGlobalStore(string name);
+        IStateStore? GetGlobalStore(string Name);
 
-        IStateStore? GetStore(string name);
+        IStateStore? GetStore(string Name);
     }
 }

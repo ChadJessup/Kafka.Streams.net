@@ -21,7 +21,7 @@ namespace Kafka.Streams.Tests.Helpers
                     { StreamsConfigPropertyNames.NumberOfStreamThreads, numberOfThreads.ToString() },
                     { StreamsConfigPropertyNames.ApplicationId, applicationId },
                     { StreamsConfigPropertyNames.BUFFERED_RECORDS_PER_PARTITION_CONFIG, "3" },
-                    { StreamsConfigPropertyNames.DefaultTimestampExtractorClass, typeof(MockTimestampExtractor).FullName },
+                    { StreamsConfigPropertyNames.DefaultTimestampExtractorClass, typeof(MockTimestampExtractor).AssemblyQualifiedName },
                     { StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName },
                     { StreamsConfigPropertyNames.ProcessingGuarantee, enableEoS? StreamsConfigPropertyNames.ExactlyOnce : StreamsConfigPropertyNames.AtLeastOnce },
                     { StreamsConfigPropertyNames.GroupId, "testGroupId" },

@@ -21,12 +21,12 @@ namespace Kafka.Streams.RocksDbState
             {
                 using var batch = new WriteBatch();
 
-                rocksDBStore.DbAccessor.PrepareBatchForRestore(records, batch);
-                rocksDBStore.Write(batch);
+                this.rocksDBStore.DbAccessor.PrepareBatchForRestore(records, batch);
+                this.rocksDBStore.Write(batch);
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error restoring batch to store " + rocksDBStore.Name, e);
+                throw new ProcessorStateException("Error restoring batch to store " + this.rocksDBStore.Name, e);
             }
         }
 
@@ -36,7 +36,7 @@ namespace Kafka.Streams.RocksDbState
             long startingOffset,
             long endingOffset)
         {
-            rocksDBStore.ToggleDbForBulkLoading(true);
+            this.rocksDBStore.ToggleDbForBulkLoading(true);
         }
 
         public override void OnRestoreEnd(
@@ -44,7 +44,7 @@ namespace Kafka.Streams.RocksDbState
             string storeName,
             long totalRestored)
         {
-            rocksDBStore.ToggleDbForBulkLoading(false);
+            this.rocksDBStore.ToggleDbForBulkLoading(false);
         }
     }
 }

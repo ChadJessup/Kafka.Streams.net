@@ -67,13 +67,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            [Fact]
 //            public void windowedZeroTimeLimitShouldImmediatelyEmit()
 //            {
-//                Harness<Windowed<string>, long> harness =
+//                Harness<IWindowed<string>, long> harness =
 //                    new Harness<>(untilTimeLimit(TimeSpan.Zero, unbounded()), timeWindowedSerdeFrom<string>(), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = ARBITRARY_LONG;
 //                context.setRecordMetadata("", 0, 0L, null, timestamp);
-//                Windowed<string> key = new Windowed<>("hey", new TimeWindow(0L, 100L));
+//                IWindowed<string> key = new IWindowed<>("hey", new TimeWindow(0L, 100L));
 //                Change<long> value = ARBITRARY_CHANGE;
 //                harness.processor.process(key, value);
 
@@ -109,7 +109,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            [Fact]
 //            public void finalResultsSuppressionShouldBufferAndEmitAtGraceExpiration()
 //            {
-//                Harness<Windowed<string>, long> harness =
+//                Harness<IWindowed<string>, long> harness =
 //                    new Harness<>(finalResults(TimeSpan.FromMilliseconds(1L)), timeWindowedSerdeFrom<string>(), 1L), long());
 //                MockInternalProcessorContext context = harness.context;
 
@@ -117,7 +117,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                var recordTime = 99L;
 //                var windowEnd = 100L;
 //                context.setRecordMetadata("topic", 0, 0, null, recordTime);
-//                Windowed<string> key = new Windowed<>("hey", new TimeWindow(windowStart, windowEnd));
+//                IWindowed<string> key = new IWindowed<>("hey", new TimeWindow(windowStart, windowEnd));
 //                Change<long> value = ARBITRARY_CHANGE;
 //                harness.processor.process(key, value);
 //                Assert.Equal(context.forwarded(), asSize(0));
@@ -128,7 +128,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                var recordTime2 = 100L;
 //                var windowEnd2 = 101L;
 //                context.setRecordMetadata("topic", 0, 1, null, recordTime2);
-//                harness.processor.process(new Windowed<>("dummyKey1", new TimeWindow(windowStart2, windowEnd2)), ARBITRARY_CHANGE);
+//                harness.processor.process(new IWindowed<>("dummyKey1", new TimeWindow(windowStart2, windowEnd2)), ARBITRARY_CHANGE);
 //                Assert.Equal(context.forwarded(), asSize(0));
 
 //                // ok, now it's time to emit "hey"
@@ -136,7 +136,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                var recordTime3 = 101L;
 //                var windowEnd3 = 102L;
 //                context.setRecordMetadata("topic", 0, 1, null, recordTime3);
-//                harness.processor.process(new Windowed<>("dummyKey2", new TimeWindow(windowStart3, windowEnd3)), ARBITRARY_CHANGE);
+//                harness.processor.process(new IWindowed<>("dummyKey2", new TimeWindow(windowStart3, windowEnd3)), ARBITRARY_CHANGE);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
@@ -152,7 +152,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            [Fact]
 //            public void finalResultsWithZeroGraceShouldStillBufferUntilTheWindowEnd()
 //            {
-//                Harness<Windowed<string>, long> harness =
+//                Harness<IWindowed<string>, long> harness =
 //                    new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
@@ -161,13 +161,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                var timestamp = 5L;
 //                var windowEnd = 100L;
 //                context.setRecordMetadata("", 0, 0L, null, timestamp);
-//                Windowed<string> key = new Windowed<>("hey", new TimeWindow(0, windowEnd));
+//                IWindowed<string> key = new IWindowed<>("hey", new TimeWindow(0, windowEnd));
 //                Change<long> value = ARBITRARY_CHANGE;
 //                harness.processor.process(key, value);
 //                Assert.Equal(context.forwarded(), asSize(0));
 
 //                context.setRecordMetadata("", 0, 1L, null, windowEnd);
-//                harness.processor.process(new Windowed<>("dummyKey", new TimeWindow(windowEnd, windowEnd + 100L)), ARBITRARY_CHANGE);
+//                harness.processor.process(new IWindowed<>("dummyKey", new TimeWindow(windowEnd, windowEnd + 100L)), ARBITRARY_CHANGE);
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
@@ -178,13 +178,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            [Fact]
 //            public void finalResultsWithZeroGraceAtWindowEndShouldImmediatelyEmit()
 //            {
-//                Harness<Windowed<string>, long> harness =
+//                Harness<IWindowed<string>, long> harness =
 //        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
 //                context.setRecordMetadata("", 0, 0L, null, timestamp);
-//                Windowed<string> key = new Windowed<>("hey", new TimeWindow(0, 100L));
+//                IWindowed<string> key = new IWindowed<>("hey", new TimeWindow(0, 100L));
 //                Change<long> value = ARBITRARY_CHANGE;
 //                harness.processor.process(key, value);
 
@@ -201,13 +201,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            [Fact]
 //            public void finalResultsShouldDropTombstonesForTimeWindows()
 //            {
-//                Harness<Windowed<string>, long> harness =
+//                Harness<IWindowed<string>, long> harness =
 //        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), timeWindowedSerdeFrom<string>(), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
 //                context.setRecordMetadata("", 0, 0L, null, timestamp);
-//                Windowed<string> key = new Windowed<>("hey", new TimeWindow(0, 100L));
+//                IWindowed<string> key = new IWindowed<>("hey", new TimeWindow(0, 100L));
 //                Change<long> value = new Change<>(null, ARBITRARY_LONG);
 //                harness.processor.process(key, value);
 
@@ -222,13 +222,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            [Fact]
 //            public void finalResultsShouldDropTombstonesForSessionWindows()
 //            {
-//                Harness<Windowed<string>, long> harness =
+//                Harness<IWindowed<string>, long> harness =
 //        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), sessionWindowedSerdeFrom(string)), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
 //                context.setRecordMetadata("", 0, 0L, null, timestamp);
-//                Windowed<string> key = new Windowed<>("hey", new SessionWindow(0L, 0L));
+//                IWindowed<string> key = new IWindowed<>("hey", new SessionWindow(0L, 0L));
 //                Change<long> value = new Change<>(null, ARBITRARY_LONG);
 //                harness.processor.process(key, value);
 
@@ -242,13 +242,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            [Fact]
 //            public void suppressShouldNotDropTombstonesForTimeWindows()
 //            {
-//                Harness<Windowed<string>, long> harness =
+//                Harness<IWindowed<string>, long> harness =
 //        new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
 //                context.setRecordMetadata("", 0, 0L, null, timestamp);
-//                Windowed<string> key = new Windowed<>("hey", new TimeWindow(0L, 100L));
+//                IWindowed<string> key = new IWindowed<>("hey", new TimeWindow(0L, 100L));
 //                Change<long> value = new Change<>(null, ARBITRARY_LONG);
 //                harness.processor.process(key, value);
 
@@ -266,13 +266,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            [Fact]
 //            public void suppressShouldNotDropTombstonesForSessionWindows()
 //            {
-//                Harness<Windowed<string>, long> harness =
+//                Harness<IWindowed<string>, long> harness =
 //        new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), sessionWindowedSerdeFrom(string)), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
 //                context.setRecordMetadata("", 0, 0L, null, timestamp);
-//                Windowed<string> key = new Windowed<>("hey", new SessionWindow(0L, 0L));
+//                IWindowed<string> key = new IWindowed<>("hey", new SessionWindow(0L, 0L));
 //                Change<long> value = new Change<>(null, ARBITRARY_LONG);
 //                harness.processor.process(key, value);
 
@@ -437,7 +437,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            };
 //        }
 
-//        private static <K> ISerde<Windowed<K>> timeWindowedSerdeFrom(Class<K> rawType, long windowSize)
+//        private static <K> ISerde<IWindowed<K>> timeWindowedSerdeFrom(Class<K> rawType, long windowSize)
 //        {
 //            ISerde<K> kSerde = Serdes.SerdeFrom(rawType);
 //            return new Serdes.WrapperSerde<>(

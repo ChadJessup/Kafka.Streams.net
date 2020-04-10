@@ -12,21 +12,21 @@
 
 
 //    public class FinalResultsSuppressionBuilder<K> : ISuppressed<K>, INamedSuppressed<K>
-//        where K : Windowed<K>
+//        where K : IWindowed<K>
 //    {
-//        private string name;
+//        private string Name;
 //        private IStrictBufferConfig bufferConfig;
 
-//        public FinalResultsSuppressionBuilder(string name, IStrictBufferConfig bufferConfig)
+//        public FinalResultsSuppressionBuilder(string Name, IStrictBufferConfig bufferConfig)
 //        {
-//            this.name = name;
+//            this.Name = Name;
 //            this.bufferConfig = bufferConfig;
 //        }
 
 //        public SuppressedInternal<K> buildFinalResultsSuppression(TimeSpan gracePeriod)
 //        {
 //            return new SuppressedInternal<K>(
-//                name,
+//                Name,
 //                gracePeriod,
 //                bufferConfig,
 //                ITimeDefinition.WindowEndTimeDefinition.instance(),
@@ -35,9 +35,9 @@
 //        }
 
 
-//        public ISuppressed<K> withName(string name)
+//        public ISuppressed<K> withName(string Name)
 //        {
-//            return new FinalResultsSuppressionBuilder<K>(name, bufferConfig);
+//            return new FinalResultsSuppressionBuilder<K>(Name, bufferConfig);
 //        }
 
 
@@ -53,19 +53,19 @@
 //            }
 
 //            FinalResultsSuppressionBuilder<K> that = (FinalResultsSuppressionBuilder<K>) o;
-//            return name.Equals(that.name) &&
+//            return Name.Equals(that.Name) &&
 //                bufferConfig.Equals(that.bufferConfig);
 //        }
 
 //        public int hashCode()
 //        {
-//            return (name, bufferConfig).GetHashCode();
+//            return (Name, bufferConfig).GetHashCode();
 //        }
 
 //        public override string ToString()
 //        {
 //            return "FinalResultsSuppressionBuilder{" +
-//                "name='" + name + '\'' +
+//                "Name='" + Name + '\'' +
 //                ", bufferConfig=" + bufferConfig +
 //                '}';
 //        }

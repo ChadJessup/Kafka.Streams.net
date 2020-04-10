@@ -231,17 +231,17 @@ namespace Kafka.Common
 
         /**
          * Get the metadata for the specified partition
-         * @param topicPartition The topic and partition to fetch LogInformation for
+         * @param topicPartition The topic and partition to Fetch LogInformation for
          * @return The metadata about the given topic and partition, or null if none is found
          */
         public PartitionMetadata partition(TopicPartition topicPartition)
         {
-            return partitionsByTopicPartition[topicPartition];
+            return this.partitionsByTopicPartition[topicPartition];
         }
 
         /**
          * Get the list of partitions for this topic
-         * @param topic The topic name
+         * @param topic The topic Name
          * @return A list of partitions
          */
         //public List<PartitionMetadata> partitionsForTopic(string topic)
@@ -264,7 +264,7 @@ namespace Kafka.Common
 
         /**
          * Get the list of available partitions for this topic
-         * @param topic The topic name
+         * @param topic The topic Name
          * @return A list of partitions
          */
         //public List<PartitionMetadata> availablePartitionsForTopic(string topic)
@@ -283,19 +283,19 @@ namespace Kafka.Common
         //}
 
         /**
-         * Get all topics.
-         * @return a set of all topics
+         * Get All topics.
+         * @return a set of All topics
          */
         public HashSet<string> topics()
         {
-            return new HashSet<string>(partitionsByTopic.Keys);
+            return new HashSet<string>(this.partitionsByTopic.Keys);
         }
 
 
         public override string ToString()
         {
-            return "Cluster(id = " + clusterResource.clusterId() + ", nodes = " + this.nodes +
-                ", partitions = " + this.partitionsByTopicPartition.Values + ", controller = " + controller + ")";
+            return "Cluster(id = " + this.clusterResource.clusterId() + ", nodes = " + this.nodes +
+                ", partitions = " + this.partitionsByTopicPartition.Values + ", controller = " + this.controller + ")";
         }
 
         public override bool Equals(object o)
@@ -305,20 +305,20 @@ namespace Kafka.Common
 
             Cluster cluster = (Cluster)o;
 
-            return isBootstrapConfigured == cluster.isBootstrapConfigured
-                && Equals(nodes, cluster.nodes)
-                && Equals(unauthorizedTopics, cluster.unauthorizedTopics)
-                && Equals(invalidTopics, cluster.invalidTopics)
-                && Equals(internalTopics, cluster.internalTopics)
-                && Equals(controller, cluster.controller)
-                && Equals(partitionsByTopicPartition, cluster.partitionsByTopicPartition)
-                && Equals(clusterResource, cluster.clusterResource);
+            return this.isBootstrapConfigured == cluster.isBootstrapConfigured
+                && Equals(this.nodes, cluster.nodes)
+                && Equals(this.unauthorizedTopics, cluster.unauthorizedTopics)
+                && Equals(this.invalidTopics, cluster.invalidTopics)
+                && Equals(this.internalTopics, cluster.internalTopics)
+                && Equals(this.controller, cluster.controller)
+                && Equals(this.partitionsByTopicPartition, cluster.partitionsByTopicPartition)
+                && Equals(this.clusterResource, cluster.clusterResource);
         }
 
         public override int GetHashCode()
         {
-            return (isBootstrapConfigured, nodes, unauthorizedTopics, invalidTopics, internalTopics, controller,
-                    partitionsByTopicPartition, clusterResource).GetHashCode();
+            return (this.isBootstrapConfigured, this.nodes, this.unauthorizedTopics, this.invalidTopics, this.internalTopics, this.controller,
+                    this.partitionsByTopicPartition, this.clusterResource).GetHashCode();
         }
     }
 }

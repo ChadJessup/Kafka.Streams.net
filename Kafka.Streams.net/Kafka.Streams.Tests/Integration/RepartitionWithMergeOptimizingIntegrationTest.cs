@@ -81,8 +81,8 @@
 //        public void SetUp()
 //        {// throws Exception
 //            StreamsConfig props = new StreamsConfig();
-//            props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 1024 * 10);
-//            props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 5000);
+//            props.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 1024 * 10);
+//            props.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 5000);
 
 //            streamsConfiguration = StreamsTestUtils.getStreamsConfig(
 //                "maybe-optimized-with-merge-test-app",
@@ -177,7 +177,7 @@
 //            List<KeyValuePair<string, string>> expectedStringCountKeyValues = Array.asList(KeyValuePair.Create("A", "6"), KeyValuePair.Create("B", "6"), KeyValuePair.Create("C", "6"));
 //            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(consumerConfig2, COUNT_STRING_TOPIC, expectedStringCountKeyValues);
 
-//            streams.close(TimeSpan.ofSeconds(5));
+//            streams.Close(TimeSpan.ofSeconds(5));
 //        }
 
 

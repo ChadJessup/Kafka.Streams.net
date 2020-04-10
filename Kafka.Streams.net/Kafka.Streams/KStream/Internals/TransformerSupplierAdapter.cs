@@ -22,13 +22,13 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Init(IProcessorContext context)
         {
-            transformer.Init(context);
+            this.transformer.Init(context);
         }
 
 
         public IEnumerable<KeyValuePair<KOut, VOut>> Transform(KIn key, VIn value)
         {
-            var pair = transformer.Transform(key, value);
+            var pair = this.transformer.Transform(key, value);
 
             // if (pair != null)
             // {
@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Close()
         {
-            transformer.Close();
+            this.transformer.Close();
         }
     };
 }

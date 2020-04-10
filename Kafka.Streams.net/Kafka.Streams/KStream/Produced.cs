@@ -33,9 +33,9 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Create an instance of {@link Produced} with provided processor name.
+         * Create an instance of {@link Produced} with provided processor Name.
          *
-         * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
+         * @param processorName the processor Name to be used. If {@code null} a default processor Name will be generated
          * @param         key type
          * @param         value type
          * @return a new instance of {@link Produced}
@@ -201,25 +201,25 @@ namespace Kafka.Streams.KStream
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var produced = (Produced<object, object>)o;
 
-            return KeySerde.Equals(produced.KeySerde)
-                && ValueSerde.Equals(produced.ValueSerde)
-                && Partitioner.Equals(produced.Partitioner);
+            return this.KeySerde.Equals(produced.KeySerde)
+                && this.ValueSerde.Equals(produced.ValueSerde)
+                && this.Partitioner.Equals(produced.Partitioner);
         }
 
         public override int GetHashCode()
-            => (this.KeySerde, this.ValueSerde, Partitioner)
+            => (this.KeySerde, this.ValueSerde, this.Partitioner)
                 .GetHashCode();
 
-        public Produced<K, V> WithName(string name)
+        public Produced<K, V> WithName(string Name)
         {
-            this.ProcessorName = name;
+            this.ProcessorName = Name;
             return this;
         }
     }

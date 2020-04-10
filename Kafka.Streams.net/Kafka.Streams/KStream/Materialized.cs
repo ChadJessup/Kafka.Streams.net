@@ -14,7 +14,7 @@ namespace Kafka.Streams.KStream
     {
         /**
         * Materialize a {@link IStateStore} with the provided key and value {@link Serde}s.
-        * An internal name will be used for the store.
+        * An internal Name will be used for the store.
         *
         * @param keySerde      the key {@link Serde} to use. If the {@link Serde} is null, then the default key
         *                      serde from configs will be used
@@ -33,9 +33,9 @@ namespace Kafka.Streams.KStream
                 .WithValueSerde(valueSerde);
 
         /**
-         * Materialize a {@link IStateStore} with the given name.
+         * Materialize a {@link IStateStore} with the given Name.
          *
-         * @param storeName  the name of the underlying {@link KTable} state store; valid characters are ASCII
+         * @param storeName  the Name of the underlying {@link KTable} state store; valid characters are ASCII
          * alphanumerics, '.', '_' and '-'.
          * @param       key type of the store
          * @param       value type of the store
@@ -51,9 +51,9 @@ namespace Kafka.Streams.KStream
 
 
         /**
-         * Materialize a {@link IStateStore} with the given name.
+         * Materialize a {@link IStateStore} with the given Name.
          *
-         * @param storeName  the name of the underlying {@link KTable} state store; valid characters are ASCII
+         * @param storeName  the Name of the underlying {@link KTable} state store; valid characters are ASCII
          * alphanumerics, '.', '_' and '-'.
          * @param       key type of the store
          * @param       value type of the store
@@ -70,7 +70,7 @@ namespace Kafka.Streams.KStream
 
         /**
          * Materialize a {@link IStateStore} with the provided key and value {@link Serde}s.
-         * An internal name will be used for the store.
+         * An internal Name will be used for the store.
          *
          * @param keySerde      the key {@link Serde} to use. If the {@link Serde} is null, then the default key
          *                      serde from configs will be used
@@ -146,7 +146,7 @@ namespace Kafka.Streams.KStream
     /**
      * Used to describe how a {@link IStateStore} should be materialized.
      * You can either provide a custom {@link IStateStore} backend through one of the provided methods accepting a supplier
-     * or use the default RocksDb backends by providing just a store name.
+     * or use the default RocksDb backends by providing just a store Name.
      * <p>
      * For example, you can read a topic as {@link KTable} and force a state store materialization to access the content
      * via Interactive Queries API:
@@ -154,7 +154,7 @@ namespace Kafka.Streams.KStream
      * StreamsBuilder builder = new StreamsBuilder();
      * KTable<int, int> table = builder.table(
      *   "topicName",
-     *   Materialized.As("queryable-store-name"));
+     *   Materialized.As("queryable-store-Name"));
      * }</pre>
      *
      * @param type of record key
@@ -185,7 +185,7 @@ namespace Kafka.Streams.KStream
          * Set the valueSerde the materialized {@link IStateStore} will use.
          *
          * @param valueSerde the value {@link Serde} to use. If the {@link Serde} is null, then the default value
-         *                   serde from configs will be used. If the serialized bytes is null for put operations,
+         *                   serde from configs will be used. If the serialized bytes is null for Put operations,
          *                   it is treated as delete operation
          * @return itself
          */
@@ -251,7 +251,7 @@ namespace Kafka.Streams.KStream
          * Set the valueSerde the materialized {@link IStateStore} will use.
          *
          * @param valueSerde the value {@link Serde} to use. If the {@link Serde} is null, then the default value
-         *                   serde from configs will be used. If the serialized bytes is null for put operations,
+         *                   serde from configs will be used. If the serialized bytes is null for Put operations,
          *                   it is treated as delete operation
          * @return itself
          */
@@ -285,7 +285,7 @@ namespace Kafka.Streams.KStream
          */
         public Materialized<K, V, S> WithLoggingEnabled(Dictionary<string, string> config)
         {
-            LoggingEnabled = true;
+            this.LoggingEnabled = true;
             this.TopicConfig = config;
 
             return this;
@@ -297,7 +297,7 @@ namespace Kafka.Streams.KStream
          */
         public Materialized<K, V, S> WithLoggingDisabled()
         {
-            LoggingEnabled = false;
+            this.LoggingEnabled = false;
             this.TopicConfig.Clear();
 
             return this;
@@ -309,7 +309,7 @@ namespace Kafka.Streams.KStream
          */
         public Materialized<K, V, S> WithCachingEnabled()
         {
-            CachingEnabled = true;
+            this.CachingEnabled = true;
 
             return this;
         }
@@ -320,7 +320,7 @@ namespace Kafka.Streams.KStream
          */
         public Materialized<K, V, S> WithCachingDisabled()
         {
-            CachingEnabled = false;
+            this.CachingEnabled = false;
 
             return this;
         }

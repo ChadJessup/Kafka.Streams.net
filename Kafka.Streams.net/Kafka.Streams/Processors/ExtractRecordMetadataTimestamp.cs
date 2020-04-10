@@ -42,7 +42,7 @@ namespace Kafka.Streams.Processors
 
             if (timestamp < 0)
             {
-                return OnInvalidTimestamp(record, timestamp, partitionTime);
+                return this.OnInvalidTimestamp(record, timestamp, partitionTime);
             }
 
             return timestamp;

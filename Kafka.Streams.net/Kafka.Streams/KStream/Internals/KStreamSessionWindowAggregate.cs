@@ -4,7 +4,7 @@
 
 //namespace Kafka.Streams.KStream.Internals
 //{
-//    public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggIProcessorSupplier<K, Windowed<K>, V, Agg>
+//    public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggIProcessorSupplier<K, IWindowed<K>, V, Agg>
 //    {
 //        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamSessionWindowAggregate>();
 
@@ -54,12 +54,12 @@
 //        }
 
 
-//        public IKTableValueGetterSupplier<Windowed<K>, Agg> view()
+//        public IKTableValueGetterSupplier<IWindowed<K>, Agg> view()
 //        {
-//            //    return new IKTableValueGetterSupplier<Windowed<K>, Agg>()
+//            //    return new IKTableValueGetterSupplier<IWindowed<K>, Agg>()
 //            //    {
 
-//            //        public IKTableValueGetter<Windowed<K>, Agg> get()
+//            //        public IKTableValueGetter<IWindowed<K>, Agg> get()
 //            //    {
 //            //        return new KTableSessionWindowValueGetter();
 //            //    }

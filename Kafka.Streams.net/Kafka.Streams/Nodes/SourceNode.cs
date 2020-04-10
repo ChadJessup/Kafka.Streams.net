@@ -9,8 +9,8 @@ namespace Kafka.Streams.Nodes
 {
     public class SourceNode : ProcessorNode, ISourceNode
     {
-        public SourceNode(IClock clock, string name, HashSet<string>? stateStores)
-            : base(clock, name, stateStores, null)
+        public SourceNode(IClock clock, string Name, HashSet<string>? stateStores)
+            : base(clock, Name, stateStores, null)
         {
         }
     }
@@ -26,12 +26,12 @@ namespace Kafka.Streams.Nodes
 
         public SourceNode(
             IClock clock,
-            string name,
+            string Name,
             List<string> topics,
             ITimestampExtractor? timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer)
-            : base(clock, name)
+            : base(clock, Name)
         {
             this.sourceNode = new SourceNode(clock, Name, null);
 
@@ -43,11 +43,11 @@ namespace Kafka.Streams.Nodes
 
         public SourceNode(
             IClock clock,
-            string name,
+            string Name,
             List<string> topics,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer)
-            : this(clock, name, topics, null, keyDeserializer, valDeserializer)
+            : this(clock, Name, topics, null, keyDeserializer, valDeserializer)
         {
         }
 
@@ -58,12 +58,12 @@ namespace Kafka.Streams.Nodes
 
         public virtual K DeserializeKey(string topic, Headers headers, byte[] data)
         {
-            return keyDeserializer.Deserialize(data, false, new SerializationContext(MessageComponentType.Key, topic));
+            return this.keyDeserializer.Deserialize(data, false, new SerializationContext(MessageComponentType.Key, topic));
         }
 
         public virtual V DeserializeValue(string topic, Headers headers, byte[] data)
         {
-            return valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
+            return this.valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
         }
 
         public override void Init(IInternalProcessorContext context)
@@ -92,7 +92,7 @@ namespace Kafka.Streams.Nodes
 
         public override void Process(K key, V value)
         {
-            context.Forward(key, value);
+            this.context.Forward(key, value);
             //sourceNodeForwardSensor.record();
         }
 
@@ -101,7 +101,7 @@ namespace Kafka.Streams.Nodes
          */
         public override string ToString()
         {
-            return ToString("");
+            return this.ToString("");
         }
 
         /**
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Nodes
         {
             StringBuilder sb = new StringBuilder(base.ToString(indent));
             sb.Append(indent).Append("\ttopics:\t\t[");
-            foreach (string topic in topics)
+            foreach (string topic in this.topics)
             {
                 sb.Append(topic);
                 sb.Append(", ");

@@ -43,8 +43,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             return "StatefulProcessorNode{" +
-                $"storeNames=[{string.Join(',', storeNames)}]" +
-                $", storeBuilder={storeBuilder}" +
+                $"storeNames=[{string.Join(',', this.storeNames)}]" +
+                $", storeBuilder={this.storeBuilder}" +
                 "} " + base.ToString();
         }
 
@@ -53,17 +53,17 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            var processorName = processorParameters.ProcessorName;
-            var IProcessorSupplier = processorParameters.ProcessorSupplier;
+            var processorName = this.processorParameters.ProcessorName;
+            var IProcessorSupplier = this.processorParameters.ProcessorSupplier;
 
-            topologyBuilder.AddProcessor<K, V>(processorName, IProcessorSupplier, ParentNodeNames());
+            topologyBuilder.AddProcessor<K, V>(processorName, IProcessorSupplier, this.ParentNodeNames());
 
-            if (storeNames != null && storeNames.Length > 0)
+            if (this.storeNames != null && this.storeNames.Length > 0)
             {
-                topologyBuilder.ConnectProcessorAndStateStores(processorName, storeNames);
+                topologyBuilder.ConnectProcessorAndStateStores(processorName, this.storeNames);
             }
 
-            if (storeBuilder != null)
+            if (this.storeBuilder != null)
             {
                 //topologyBuilder.addStateStore(storeBuilder, processorName);
             }

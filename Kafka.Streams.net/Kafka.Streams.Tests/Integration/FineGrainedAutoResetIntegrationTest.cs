@@ -177,7 +177,7 @@
 //                actualValues.Add(receivedKeyValue.Value);
 //            }
 
-//            streams.close();
+//            streams.Close();
 //            Collections.sort(actualValues);
 //            Collections.sort(expectedReceivedValues);
 //            Assert.Equal(actualValues, (expectedReceivedValues));
@@ -201,7 +201,7 @@
 
 //            consumer.commitSync(invalidOffsets);
 
-//            consumer.close();
+//            consumer.Close();
 //        }
 
 //        [Fact]
@@ -271,7 +271,7 @@
 //            streams.start();
 //            TestUtils.WaitForCondition(() => uncaughtExceptionHandler.correctExceptionThrown,
 //                    "The expected NoOffsetForPartitionException was never thrown");
-//            streams.close();
+//            streams.Close();
 //        }
 
 

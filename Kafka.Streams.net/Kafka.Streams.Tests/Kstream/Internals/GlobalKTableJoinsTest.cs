@@ -42,9 +42,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .process(supplier);
 
 //            Dictionary<string, ValueAndTimestamp<string>> expected = new HashMap<>();
-//            expected.put("1", ValueAndTimestamp.Make("a+A", 2L));
-//            expected.put("2", ValueAndTimestamp.Make("b+B", 10L));
-//            expected.put("3", ValueAndTimestamp.Make("c+null", 3L));
+//            expected.Put("1", ValueAndTimestamp.Make("a+A", 2L));
+//            expected.Put("2", ValueAndTimestamp.Make("b+B", 10L));
+//            expected.Put("3", ValueAndTimestamp.Make("c+null", 3L));
 
 //            verifyJoin(expected, supplier);
 //        }
@@ -58,8 +58,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .process(supplier);
 
 //            Dictionary<string, ValueAndTimestamp<string>> expected = new HashMap<>();
-//            expected.put("1", ValueAndTimestamp.Make("a+A", 2L));
-//            expected.put("2", ValueAndTimestamp.Make("b+B", 10L));
+//            expected.Put("1", ValueAndTimestamp.Make("a+A", 2L));
+//            expected.Put("2", ValueAndTimestamp.Make("b+B", 10L));
 
 //            verifyJoin(expected, supplier);
 //        }

@@ -84,7 +84,7 @@
 //                    {
 //                        System.Console.Out.WriteLine("REBALANCING => RUNNING");
 //                    }
-//                    System.Console.Out.flush();
+//                    System.Console.Out.Flush();
 //                }
 //            });
 
@@ -93,10 +93,10 @@
 //            Runtime.getRuntime().addShutdownHook(new Thread(() =>
 //            {
 //                System.Console.Out.WriteLine("closing Kafka Streams instance");
-//                System.Console.Out.flush();
-//                streams.close(TimeSpan.FromMilliseconds(5000));
+//                System.Console.Out.Flush();
+//                streams.Close(TimeSpan.FromMilliseconds(5000));
 //                System.Console.Out.WriteLine("NAMED_REPARTITION_TEST Streams Stopped");
-//                System.Console.Out.flush();
+//                System.Console.Out.Flush();
 //            }));
 //        }
 //    }

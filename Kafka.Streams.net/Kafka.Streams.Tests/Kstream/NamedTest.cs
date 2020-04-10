@@ -24,9 +24,9 @@ namespace Kafka.Streams.Tests
             Array.Fill(longString, 'a');
             string[] invalidNames = { "", "foo bar", "..", "foo:bar", "foo=bar", ".", new string(longString) };
 
-            foreach (var name in invalidNames)
+            foreach (var Name in invalidNames)
             {
-                Assert.Throws<ArgumentException>(() => Named.Validate(name));
+                Assert.Throws<ArgumentException>(() => Named.Validate(Name));
             }
         }
     }

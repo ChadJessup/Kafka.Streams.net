@@ -12,8 +12,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public SessionWindowTest()
         {
-            this.window = new SessionWindow(start, end);
-            this.timeWindow = new TimeWindow(start, end);
+            this.window = new SessionWindow(this.start, this.end);
+            this.timeWindow = new TimeWindow(this.start, this.end);
         }
 
         [Fact]
@@ -23,9 +23,9 @@ namespace Kafka.Streams.KStream.Internals
              * This:        [-------]
              * Other: [---]
              */
-            Assert.False(window.Overlap(new SessionWindow(0, 25)));
-            Assert.False(window.Overlap(new SessionWindow(0, start - 1)));
-            Assert.False(window.Overlap(new SessionWindow(start - 1, start - 1)));
+            Assert.False(this.window.Overlap(new SessionWindow(0, 25)));
+            Assert.False(this.window.Overlap(new SessionWindow(0, this.start - 1)));
+            Assert.False(this.window.Overlap(new SessionWindow(this.start - 1, this.start - 1)));
         }
 
         [Fact]
@@ -35,17 +35,17 @@ namespace Kafka.Streams.KStream.Internals
              * This:        [-------]
              * Other: [---------]
              */
-            Assert.True(window.Overlap(new SessionWindow(0, start)));
-            Assert.True(window.Overlap(new SessionWindow(0, start + 1)));
-            Assert.True(window.Overlap(new SessionWindow(0, 75)));
-            Assert.True(window.Overlap(new SessionWindow(0, end - 1)));
-            Assert.True(window.Overlap(new SessionWindow(0, end)));
+            Assert.True(this.window.Overlap(new SessionWindow(0, this.start)));
+            Assert.True(this.window.Overlap(new SessionWindow(0, this.start + 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(0, 75)));
+            Assert.True(this.window.Overlap(new SessionWindow(0, this.end - 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(0, this.end)));
 
-            Assert.True(window.Overlap(new SessionWindow(start - 1, start)));
-            Assert.True(window.Overlap(new SessionWindow(start - 1, start + 1)));
-            Assert.True(window.Overlap(new SessionWindow(start - 1, 75)));
-            Assert.True(window.Overlap(new SessionWindow(start - 1, end - 1)));
-            Assert.True(window.Overlap(new SessionWindow(start - 1, end)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start - 1, this.start)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start - 1, this.start + 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start - 1, 75)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start - 1, this.end - 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start - 1, this.end)));
         }
 
         [Fact]
@@ -55,17 +55,17 @@ namespace Kafka.Streams.KStream.Internals
              * This:        [-------]
              * Other: [------------------]
              */
-            Assert.True(window.Overlap(new SessionWindow(0, end)));
-            Assert.True(window.Overlap(new SessionWindow(0, end + 1)));
-            Assert.True(window.Overlap(new SessionWindow(0, 150)));
+            Assert.True(this.window.Overlap(new SessionWindow(0, this.end)));
+            Assert.True(this.window.Overlap(new SessionWindow(0, this.end + 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(0, 150)));
 
-            Assert.True(window.Overlap(new SessionWindow(start - 1, end)));
-            Assert.True(window.Overlap(new SessionWindow(start - 1, end + 1)));
-            Assert.True(window.Overlap(new SessionWindow(start - 1, 150)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start - 1, this.end)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start - 1, this.end + 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start - 1, 150)));
 
-            Assert.True(window.Overlap(new SessionWindow(start, end)));
-            Assert.True(window.Overlap(new SessionWindow(start, end + 1)));
-            Assert.True(window.Overlap(new SessionWindow(start, 150)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start, this.end)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start, this.end + 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start, 150)));
         }
 
         [Fact]
@@ -75,11 +75,11 @@ namespace Kafka.Streams.KStream.Internals
              * This:        [-------]
              * Other:         [---]
              */
-            Assert.True(window.Overlap(new SessionWindow(start, start)));
-            Assert.True(window.Overlap(new SessionWindow(start, 75)));
-            Assert.True(window.Overlap(new SessionWindow(start, end)));
-            Assert.True(window.Overlap(new SessionWindow(75, end)));
-            Assert.True(window.Overlap(new SessionWindow(end, end)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start, this.start)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start, 75)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start, this.end)));
+            Assert.True(this.window.Overlap(new SessionWindow(75, this.end)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.end, this.end)));
         }
 
         [Fact]
@@ -89,12 +89,12 @@ namespace Kafka.Streams.KStream.Internals
              * This:        [-------]
              * Other:           [-------]
              */
-            Assert.True(window.Overlap(new SessionWindow(start, end + 1)));
-            Assert.True(window.Overlap(new SessionWindow(start, 150)));
-            Assert.True(window.Overlap(new SessionWindow(75, end + 1)));
-            Assert.True(window.Overlap(new SessionWindow(75, 150)));
-            Assert.True(window.Overlap(new SessionWindow(end, end + 1)));
-            Assert.True(window.Overlap(new SessionWindow(end, 150)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start, this.end + 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.start, 150)));
+            Assert.True(this.window.Overlap(new SessionWindow(75, this.end + 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(75, 150)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.end, this.end + 1)));
+            Assert.True(this.window.Overlap(new SessionWindow(this.end, 150)));
         }
 
         [Fact]
@@ -104,15 +104,15 @@ namespace Kafka.Streams.KStream.Internals
              * This:        [-------]
              * Other:                  [---]
              */
-            Assert.False(window.Overlap(new SessionWindow(end + 1, end + 1)));
-            Assert.False(window.Overlap(new SessionWindow(end + 1, 150)));
-            Assert.False(window.Overlap(new SessionWindow(125, 150)));
+            Assert.False(this.window.Overlap(new SessionWindow(this.end + 1, this.end + 1)));
+            Assert.False(this.window.Overlap(new SessionWindow(this.end + 1, 150)));
+            Assert.False(this.window.Overlap(new SessionWindow(125, 150)));
         }
 
         [Fact]
         public void CannotCompareSessionWindowWithDifferentWindowType()
         {
-            Assert.Throws<ArgumentException>(() => window.Overlap(timeWindow));
+            Assert.Throws<ArgumentException>(() => this.window.Overlap(this.timeWindow));
         }
     }
 }

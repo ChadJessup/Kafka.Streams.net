@@ -17,7 +17,7 @@
 //        private static ILogger LOG = new LoggerFactory().CreateLogger<InMemoryWindowStore>();
 //        private static int SEQNUM_SIZE = 4;
 
-//        private string name;
+//        private string Name;
 //        private string metricScope;
 //        private IInternalProcessorContext context;
 //        //private Sensor expiredRecordSensor;
@@ -33,16 +33,16 @@
 
 //        private volatile bool open = false;
 
-//        string IStateStore.name { get; }
+//        string IStateStore.Name { get; }
 
 //        public InMemoryWindowStore(
-//            string name,
+//            string Name,
 //            long retentionPeriod,
 //            long windowSize,
 //            bool retainDuplicates,
 //            string metricScope)
 //        {
-//            this.name = name;
+//            this.Name = Name;
 //            this.retentionPeriod = retentionPeriod;
 //            this.windowSize = windowSize;
 //            this.retainDuplicates = retainDuplicates;
@@ -57,14 +57,14 @@
 //            string taskName = context.taskId.ToString();
 //            //expiredRecordSensor = metrics.storeLevelSensor(
 //            //    taskName,
-//            //    name,
+//            //    Name,
 //            //    EXPIRED_WINDOW_RECORD_DROP,
 //            //    RecordingLevel.INFO
 //            //);
 //            //addInvocationRateAndCount(
 //            //     expiredRecordSensor,
 //            //     "stream-" + metricScope + "-metrics",
-//            //     metrics.tagMap("task-id", taskName, metricScope + "-id", name),
+//            //     metrics.tagMap("task-id", taskName, metricScope + "-id", Name),
 //            //     EXPIRED_WINDOW_RECORD_DROP
 //            // );
 
@@ -72,18 +72,18 @@
 //            {
 //                //            context.register(root, (key, value) =>
 //                //{
-//                //    put(Bytes.Wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
+//                //    Put(Bytes.Wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
 //                //});
 //            }
 //            open = true;
 //        }
 
-//        public void put(Bytes key, byte[] value)
+//        public void Put(Bytes key, byte[] value)
 //        {
-//            put(key, value, context.Timestamp);
+//            Put(key, value, context.Timestamp);
 //        }
 
-//        public void put(Bytes key, byte[] value, long windowStartTimestamp)
+//        public void Put(Bytes key, byte[] value, long windowStartTimestamp)
 //        {
 //            removeExpiredSegments();
 //            maybeUpdateSeqnumForDups();
@@ -118,7 +118,7 @@
 //            }
 //        }
 
-//        public byte[] fetch(Bytes key, long windowStartTimestamp)
+//        public byte[] Fetch(Bytes key, long windowStartTimestamp)
 //        {
 
 //            key = key ?? throw new ArgumentNullException(nameof(key));
@@ -142,7 +142,7 @@
 //        }
 
 //        [System.Obsolete]
-//        public IWindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
+//        public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
 //        {
 
 //            key = key ?? throw new ArgumentNullException(nameof(key));
@@ -162,7 +162,7 @@
 //        }
 
 //        [System.Obsolete]
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from,
 //                                                               Bytes to,
 //                                                               long timeFrom,
 //                                                               long timeTo)
@@ -174,7 +174,7 @@
 
 //            if (from.CompareTo(to) > 0)
 //            {
-//                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+//                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
 //                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
 //                    "Note that the built-in numerical serdes do not follow this for negative numbers");
 //                return KeyValueIterators.emptyIterator();
@@ -193,7 +193,7 @@
 //        }
 
 //        [System.Obsolete]
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
 //        {
 //            removeExpiredSegments();
 
@@ -209,7 +209,7 @@
 //                null, null, segmentMap.subMap(minTime, true, timeTo, true).iterator());
 //        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> all()
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
 //        {
 //            removeExpiredSegments();
 
@@ -219,29 +219,29 @@
 //                null, null, segmentMap.tailMap(minTime, false).iterator());
 //        }
 
-//        public bool persistent()
+//        public bool Persistent()
 //        {
 //            return false;
 //        }
 
-//        public bool isOpen()
+//        public bool IsOpen()
 //        {
 //            return open;
 //        }
 
-//        public void flush()
+//        public void Flush()
 //        {
 //            // do-nothing since it is in-memory
 //        }
 
-//        public void close()
+//        public void Close()
 //        {
 //            if (openIterators.Count != 0)
 //            {
-//                LOG.LogWarning("Closing {} open iterators for store {}", openIterators.size(), name);
+//                LOG.LogWarning("Closing {} open iterators for store {}", openIterators.size(), Name);
 //                foreach (InMemoryWindowStoreIteratorWrapper it in openIterators)
 //                {
-//                    it.close();
+//                    it.Close();
 //                }
 //            }
 
@@ -330,12 +330,12 @@
 //            throw new NotImplementedException();
 //        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, long timeFrom, long timeTo)
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, long timeFrom, long timeTo)
 //        {
 //            throw new NotImplementedException();
 //        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
 //        {
 //            throw new NotImplementedException();
 //        }
@@ -385,17 +385,17 @@
 //            throw new NotImplementedException();
 //        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime fromTime, DateTime toTime)
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime fromTime, DateTime toTime)
 //        {
 //            throw new NotImplementedException();
 //        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> All()
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
 //        {
 //            throw new NotImplementedException();
 //        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
 //        {
 //            throw new NotImplementedException();
 //        }
@@ -468,7 +468,7 @@
 //                }
 //            }
 
-//            public void close()
+//            public void Close()
 //            {
 //                next = null;
 //                recordIterator = null;

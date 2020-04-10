@@ -46,11 +46,11 @@ namespace Kafka.Streams.State.Internals
         }
     }
 
-    public class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
+    public class ValueAndTimestampDeserializer<V> : IDeserializer<IValueAndTimestamp<V>>
     {
         private static readonly IDeserializer<long> LONG_DESERIALIZER = Serdes.Long().Deserializer;
 
-        public IDeserializer<V> valueDeserializer;
+        public IDeserializer<V> valueDeserializer { get; }
         private readonly IDeserializer<long> timestampDeserializer;
 
         public ValueAndTimestampDeserializer(IDeserializer<V> valueDeserializer)
@@ -58,7 +58,7 @@ namespace Kafka.Streams.State.Internals
             valueDeserializer = valueDeserializer ?? throw new ArgumentNullException(nameof(valueDeserializer));
 
             this.valueDeserializer = valueDeserializer;
-            timestampDeserializer = Serdes.Long().Deserializer;
+            this.timestampDeserializer = Serdes.Long().Deserializer;
         }
 
         public void Configure(
@@ -69,33 +69,31 @@ namespace Kafka.Streams.State.Internals
             // timestampDeserializer.Configure(configs, isKey);
         }
 
-        public ValueAndTimestamp<V> Deserialize(
-            string topic,
-            byte[] valueAndTimestamp)
+        public IValueAndTimestamp<V>? Deserialize(string topic, byte[] valueAndTimestamp)
         {
             if (valueAndTimestamp == null)
             {
                 return null;
             }
 
-            var timestamp = timestampDeserializer.Deserialize(ValueAndTimestampDeserializer.RawTimestamp(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
-            V value = valueDeserializer.Deserialize(ValueAndTimestampDeserializer.RawValue(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
+            var timestamp = this.timestampDeserializer.Deserialize(ValueAndTimestampDeserializer.RawTimestamp(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
+            V value = this.valueDeserializer.Deserialize(ValueAndTimestampDeserializer.RawValue(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
 
             return ValueAndTimestamp.Make(value, timestamp);
         }
 
         public void Close()
         {
-            // valueDeserializer.close();
-            // timestampDeserializer.close();
+            // valueDeserializer.Close();
+            // timestampDeserializer.Close();
         }
 
-        public ValueAndTimestamp<V> Deserialize(
+        public IValueAndTimestamp<V>? Deserialize(
             ReadOnlySpan<byte> data,
             bool isNull,
             SerializationContext context)
         {
-            return Deserialize(context.Topic, data.ToArray());
+            return this.Deserialize(context.Topic, data.ToArray());
         }
     }
 }

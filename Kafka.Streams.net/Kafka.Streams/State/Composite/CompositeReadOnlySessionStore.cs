@@ -14,7 +14,7 @@
 //            this.storeName = storeName;
 //        }
 
-//        public override IKeyValueIterator<Windowed<K>, V> fetch(K key)
+//        public override IKeyValueIterator<IWindowed<K>, V> Fetch(K key)
 //        {
 //            key = key ?? throw new ArgumentNullException(nameof(key));
 //            List<ReadOnlySessionStore<K, V>> stores = storeProvider.stores(storeName, queryableStoreType);
@@ -22,10 +22,10 @@
 //            {
 //                try
 //                {
-//                    IKeyValueIterator<Windowed<K>, V> result = store.Fetch(key);
+//                    IKeyValueIterator<IWindowed<K>, V> result = store.Fetch(key);
 //                    if (!result.HasNext())
 //                    {
-//                        result.close();
+//                        result.Close();
 //                    }
 //                    else
 //                    {
@@ -43,11 +43,11 @@
 //            return KeyValueIterators.emptyIterator();
 //        }
 
-//        public override IKeyValueIterator<Windowed<K>, V> fetch(K from, K to)
+//        public override IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to)
 //        {
 //            from = from ?? throw new ArgumentNullException(nameof(from));
 //            to = to ?? throw new ArgumentNullException(nameof(to));
-//            INextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.Fetch(from, to);
+//            INextIteratorFunction<IWindowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.Fetch(from, to);
 //            return new DelegatingPeekingKeyValueIterator<>(storeName,
 //                                                           new CompositeKeyValueIterator<>(
 //                                                                   storeProvider.stores(storeName, queryableStoreType).iterator(),

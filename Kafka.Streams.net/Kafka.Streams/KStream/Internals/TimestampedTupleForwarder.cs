@@ -8,7 +8,7 @@ namespace Kafka.Streams.KStream.Internals
     /**
      * This is used to determine if a processor should forward values to child nodes.
      * Forwarding by this only occurs when caching is not enabled. If caching is enabled,
-     * forwarding occurs in the flush listener when the cached store flushes.
+     * forwarding occurs in the Flush listener when the cached store flushes.
      *
      * @param the type of the key
      * @param the type of the value
@@ -36,11 +36,11 @@ namespace Kafka.Streams.KStream.Internals
             V newValue,
             V oldValue)
         {
-            if (!cachingEnabled)
+            if (!this.cachingEnabled)
             {
-                context.Forward(key, new Change<V>(
+                this.context.Forward(key, new Change<V>(
                     newValue,
-                    sendOldValues ? oldValue : default));
+                    this.sendOldValues ? oldValue : default));
             }
         }
 
@@ -50,13 +50,13 @@ namespace Kafka.Streams.KStream.Internals
             V oldValue,
             long timestamp)
         {
-            if (!cachingEnabled)
+            if (!this.cachingEnabled)
             {
-                context.Forward(
+                this.context.Forward(
                     key,
                     new Change<V>(
                         newValue,
-                        sendOldValues ? oldValue : default),
+                        this.sendOldValues ? oldValue : default),
                     To.All().WithTimestamp(timestamp));
             }
         }

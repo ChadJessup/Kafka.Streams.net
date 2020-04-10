@@ -188,17 +188,17 @@
 //            //static {
 //            config = getStreamsConfig();
 //            // Value must be a string to test className => class conversion
-//            config.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBConfigSetter.getName());
-//            config.put("user.supplied.config", "user-suppplied-value");
+//            config.Put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBConfigSetter.getName());
+//            config.Put("user.supplied.config", "user-suppplied-value");
 //        //}
 
 //        TestProcessorContext(MockStreamsMetrics metrics)
-//            : base(new TaskId(0, 0), new StreamsConfig(config), metrics, new StateManagerStub(), new ThreadCache(new LogContext("name "), 0, metrics))
+//            : base(new TaskId(0, 0), new StreamsConfig(config), metrics, new StateManagerStub(), new ThreadCache(new LogContext("Name "), 0, metrics))
 //            {
 //            }
 
 
-//            public IStateStore GetStateStore(string name)
+//            public IStateStore GetStateStore(string Name)
 //            {
 //                return null;
 //            }

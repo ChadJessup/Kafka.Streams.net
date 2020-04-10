@@ -41,15 +41,15 @@
 //            new TaskId(0, 1), new TaskId(1, 0));
 //        private Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks = new HashMap<TaskId, HashSet<TopicPartition>>() {
 //        {
-//            put(new TaskId(1, 1),
+//            Put(new TaskId(1, 1),
 //                Utils.mkSet(new TopicPartition("t1", 1), new TopicPartition("t2", 1)));
-//        put(new TaskId(2, 0),
+//        Put(new TaskId(2, 0),
 //                Utils.mkSet(new TopicPartition("t3", 0), new TopicPartition("t3", 0)));
 //        }
 //    };
 //    private Dictionary<HostInfo, HashSet<TopicPartition>> globalAssignment = new HashMap<HostInfo, HashSet<TopicPartition>>() {
 //        {
-//            put(new HostInfo("localhost", 80),
+//            Put(new HostInfo("localhost", 80),
 //                Utils.mkSet(new TopicPartition("t1", 1), new TopicPartition("t3", 3)));
 //        }
 //    };

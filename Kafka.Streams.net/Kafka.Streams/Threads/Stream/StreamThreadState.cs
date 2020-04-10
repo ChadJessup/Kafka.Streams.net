@@ -35,7 +35,7 @@ namespace Kafka.Streams.Threads.Stream
         {
             get
             {
-                lock (stateLock)
+                lock (this.stateLock)
                 {
                     return this.currentState;
                 }
@@ -43,7 +43,7 @@ namespace Kafka.Streams.Threads.Stream
 
             protected set
             {
-                lock (stateLock)
+                lock (this.stateLock)
                 {
                     this.currentState = value;
                 }
@@ -72,24 +72,24 @@ namespace Kafka.Streams.Threads.Stream
         {
             StreamThreadStates oldState;
 
-            lock (stateLock)
+            lock (this.stateLock)
             {
                 oldState = this.CurrentState;
 
                 if (this.CurrentState == StreamThreadStates.PENDING_SHUTDOWN
                     && newState != StreamThreadStates.DEAD)
                 {
-                    logger.LogDebug($"Ignoring request to transit from PENDING_SHUTDOWN to {newState}: only DEAD state is a valid next state");
+                    this.logger.LogDebug($"Ignoring request to transit from PENDING_SHUTDOWN to {newState}: only DEAD state is a valid next state");
 
-                    // when the state is already in PENDING_SHUTDOWN, all other transitions will be
+                    // when the state is already in PENDING_SHUTDOWN, All other transitions will be
                     // refused but we do not throw exception here
                     return false;
                 }
                 else if (this.CurrentState == StreamThreadStates.DEAD)
                 {
-                    logger.LogDebug($"Ignoring request to transit from DEAD to {newState}: no valid next state after DEAD");
+                    this.logger.LogDebug($"Ignoring request to transit from DEAD to {newState}: no valid next state after DEAD");
 
-                    // when the state is already in NOT_RUNNING, all its transitions
+                    // when the state is already in NOT_RUNNING, All its transitions
                     // will be refused but we do not throw exception here
                     return false;
                 }

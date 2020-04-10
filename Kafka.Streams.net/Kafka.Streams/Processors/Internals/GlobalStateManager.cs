@@ -57,15 +57,15 @@ namespace Kafka.Streams.Processors.Internals
             this.eosEnabled = config.EnableIdempotence;
             this.BaseDir = stateDirectory.GlobalStateDir();
             this.checkpointFileCache = new Dictionary<TopicPartition, long?>();
-            this.checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(BaseDir.FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)));
+            this.checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(this.BaseDir.FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)));
 
-            // Find non persistent store's topics
+            // Find non Persistent store's topics
             var storeToChangelogTopic = topology?.StoreToChangelogTopic ?? new Dictionary<string, string>();
             foreach (var store in topology?.globalStateStores ?? Enumerable.Empty<IStateStore>())
             {
                 if (!store.Persistent())
                 {
-                    globalNonPersistentStoresTopics.Add(storeToChangelogTopic[store.Name]);
+                    this.globalNonPersistentStoresTopics.Add(storeToChangelogTopic[store.Name]);
                 }
             }
 
@@ -91,9 +91,9 @@ namespace Kafka.Streams.Processors.Internals
         {
             try
             {
-                if (!stateDirectory.LockGlobalState())
+                if (!this.stateDirectory.LockGlobalState())
                 {
-                    throw new LockException($"Failed to lock the global state directory: {BaseDir}");
+                    throw new LockException($"Failed to lock the global state directory: {this.BaseDir}");
                 }
             }
             catch (IOException e)
@@ -110,24 +110,24 @@ namespace Kafka.Streams.Processors.Internals
             {
                 try
                 {
-                    stateDirectory.UnlockGlobalState();
+                    this.stateDirectory.UnlockGlobalState();
                 }
                 catch (IOException e1)
                 {
-                    logger.LogError("Failed to unlock the global state directory", e);
+                    this.logger.LogError("Failed to unlock the global state directory", e);
                 }
 
                 throw new StreamsException("Failed to read checkpoints for global state globalStores", e);
             }
 
-            var stateStores = topology?.globalStateStores;
+            var stateStores = this.topology?.globalStateStores;
             foreach (IStateStore stateStore in stateStores ?? Enumerable.Empty<IStateStore>())
             {
-                globalStoreNames.Add(stateStore.Name);
-                stateStore.Init(globalProcessorContext, stateStore);
+                this.globalStoreNames.Add(stateStore.Name);
+                stateStore.Init(this.globalProcessorContext, stateStore);
             }
 
-            return globalStoreNames;
+            return this.globalStoreNames;
         }
 
 
@@ -136,27 +136,27 @@ namespace Kafka.Streams.Processors.Internals
             IInternalProcessorContext processorContext)
         {
             StateManagerUtil.ReinitializeStateStoresForPartitions(
-                logger,
-                eosEnabled,
-                BaseDir,
-                globalStores,
-                topology?.StoreToChangelogTopic,
+                this.logger,
+                this.eosEnabled,
+                this.BaseDir,
+                this.globalStores,
+                this.topology?.StoreToChangelogTopic,
                 partitions,
                 processorContext,
-                checkpointFile,
-                checkpointFileCache);
+                this.checkpointFile,
+                this.checkpointFileCache);
 
-            globalConsumer.Assign(partitions);
-            globalConsumer.SeekToBeginning(partitions);
+            this.globalConsumer.Assign(partitions);
+            this.globalConsumer.SeekToBeginning(partitions);
         }
 
 
-        public IStateStore? GetGlobalStore(string name)
-            => globalStores.GetValueOrDefault(name);
+        public IStateStore? GetGlobalStore(string Name)
+            => this.globalStores.GetValueOrDefault(Name);
 
 
-        public IStateStore? GetStore(string name)
-            => GetGlobalStore(name);
+        public IStateStore? GetStore(string Name)
+            => this.GetGlobalStore(Name);
 
         public void Register(
             IStateStore store,
@@ -164,12 +164,12 @@ namespace Kafka.Streams.Processors.Internals
         {
             store = store ?? throw new ArgumentNullException(nameof(store));
 
-            if (globalStores.ContainsKey(store.Name))
+            if (this.globalStores.ContainsKey(store.Name))
             {
                 throw new ArgumentException($"Global Store {store.Name} has already been registered");
             }
 
-            if (!globalStoreNames.Contains(store.Name))
+            if (!this.globalStoreNames.Contains(store.Name))
             {
                 throw new ArgumentException($"Trying to register store {store.Name} that is not a known global store");
             }
@@ -179,8 +179,8 @@ namespace Kafka.Streams.Processors.Internals
                 throw new ArgumentException($"The stateRestoreCallback provided for store {store.Name} was null");
             }
 
-            logger.LogInformation($"Restoring state for global store {store.Name}");
-            List<TopicPartition> topicPartitions = TopicPartitionsForStore(store);
+            this.logger.LogInformation($"Restoring state for global store {store.Name}");
+            List<TopicPartition> topicPartitions = this.TopicPartitionsForStore(store);
             Dictionary<TopicPartition, long> highWatermarks = null;
 
             var attempts = 0;
@@ -192,24 +192,24 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 catch (TimeoutException retryableException)
                 {
-                    if (++attempts > retries)
+                    if (++attempts > this.retries)
                     {
-                        logger.LogError("Failed to get end offsets for topic partitions of global store {} after {} retry attempts. " +
+                        this.logger.LogError("Failed to get end offsets for topic partitions of global store {} after {} retry attempts. " +
                             "You can increase the number of retries via configuration parameter `retries`.",
                             store.Name,
-                            retries,
+                            this.retries,
                             retryableException);
 
                         throw new StreamsException(string.Format("Failed to get end offsets for topic partitions of global store %s after %d retry attempts. " +
-                                "You can increase the number of retries via configuration parameter `retries`.", store.Name, retries),
+                                "You can increase the number of retries via configuration parameter `retries`.", store.Name, this.retries),
                             retryableException);
                     }
 
-                    logger.LogDebug("Failed to get end offsets for partitions {}, backing off for {} ms to retry (attempt {} of {})",
+                    this.logger.LogDebug("Failed to get end offsets for partitions {}, backing off for {} ms to retry (attempt {} of {})",
                         topicPartitions,
-                        retryBackoffMs,
+                        this.retryBackoffMs,
                         attempts,
-                        retries,
+                        this.retries,
                         retryableException);
                     //                  Utils.sleep(retryBackoffMs);
                 }
@@ -217,25 +217,25 @@ namespace Kafka.Streams.Processors.Internals
 
             try
             {
-                RestoreState(
+                this.RestoreState(
                     stateRestoreCallback,
                     topicPartitions,
                     highWatermarks,
                     store.Name,
                     StateManagerUtil.ConverterForStore(store));
 
-                globalStores.Add(store.Name, store);
+                this.globalStores.Add(store.Name, store);
             }
             finally
             {
-                globalConsumer.Unsubscribe();
+                this.globalConsumer.Unsubscribe();
             }
 
         }
 
         private List<TopicPartition> TopicPartitionsForStore(IStateStore store)
         {
-            var sourceTopic = topology.StoreToChangelogTopic[store.Name];
+            var sourceTopic = this.topology.StoreToChangelogTopic[store.Name];
             var partitionInfos = new List<PartitionMetadata>();
             var attempts = 0;
             while (true)
@@ -250,25 +250,25 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 catch (TimeoutException retryableException)
                 {
-                    if (++attempts > retries)
+                    if (++attempts > this.retries)
                     {
-                        logger.LogError("Failed to get partitions for topic {} after {} retry attempts due to timeout. " +
+                        this.logger.LogError("Failed to get partitions for topic {} after {} retry attempts due to timeout. " +
                                 "The broker may be transiently unavailable at the moment. " +
                                 "You can increase the number of retries via configuration parameter `retries`.",
                             null, //sourceTopic,
-                            retries,
+                            this.retries,
                             retryableException);
                         //throw new StreamsException(string.Format("Failed to get partitions for topic %s after %d retry attempts due to timeout. " +
                         //    "The broker may be transiently unavailable at the moment. " +
                         //    "You can increase the number of retries via configuration parameter `retries`.", sourceTopic, retries),
                         //    retryableException);
                     }
-                    logger.LogDebug("Failed to get partitions for topic {} due to timeout. The broker may be transiently unavailable at the moment. " +
+                    this.logger.LogDebug("Failed to get partitions for topic {} due to timeout. The broker may be transiently unavailable at the moment. " +
                             "Backing off for {} ms to retry (attempt {} of {})",
                         null, //sourceTopic,
-                        retryBackoffMs,
+                        this.retryBackoffMs,
                         attempts,
-                        retries,
+                        this.retries,
                         retryableException);
                     //                    Utils.sleep(retryBackoffMs);
                 }
@@ -297,24 +297,24 @@ namespace Kafka.Streams.Processors.Internals
         {
             foreach (TopicPartition topicPartition in topicPartitions)
             {
-                globalConsumer.Assign(topicPartition);
-                var checkpoint = checkpointFileCache[topicPartition];
+                this.globalConsumer.Assign(topicPartition);
+                var checkpoint = this.checkpointFileCache[topicPartition];
 
-                globalConsumer.Seek(new TopicPartitionOffset(topicPartition, new Offset(checkpoint ?? 0)));
+                this.globalConsumer.Seek(new TopicPartitionOffset(topicPartition, new Offset(checkpoint ?? 0)));
 
-                long offset = globalConsumer.Position(topicPartition);
+                long offset = this.globalConsumer.Position(topicPartition);
                 var highWatermark = highWatermarks[topicPartition];
                 IRecordBatchingStateRestoreCallback stateRestoreAdapter =
                     StateRestoreCallbackAdapter.Adapt(stateRestoreCallback);
 
-                stateRestoreListener.OnRestoreStart(topicPartition, storeName, offset, highWatermark);
+                this.stateRestoreListener.OnRestoreStart(topicPartition, storeName, offset, highWatermark);
                 var restoreCount = 0L;
 
                 while (offset < highWatermark)
                 {
                     try
                     {
-                        ConsumerRecords<byte[], byte[]> records = globalConsumer.Poll(pollTime);
+                        ConsumerRecords<byte[], byte[]> records = this.globalConsumer.Poll(this.pollTime);
                         var restoreRecords = new List<ConsumeResult<byte[], byte[]>>();
 
                         //foreach (ConsumeResult<byte[], byte[]> record in records.records(topicPartition))
@@ -325,32 +325,32 @@ namespace Kafka.Streams.Processors.Internals
                         //    }
                         //}
 
-                        offset = globalConsumer.Position(topicPartition);
+                        offset = this.globalConsumer.Position(topicPartition);
                         stateRestoreAdapter.RestoreBatch(restoreRecords);
-                        stateRestoreListener.OnBatchRestored(topicPartition, storeName, offset, restoreRecords.Count);
+                        this.stateRestoreListener.OnBatchRestored(topicPartition, storeName, offset, restoreRecords.Count);
                         restoreCount += restoreRecords.Count;
                     }
                     catch (Exception recoverableException) //InvalidOffsetException
                     {
-                        logger.LogWarning("Restoring GlobalStore {} failed due to: {}. Deleting global store to recreate from scratch.",
+                        this.logger.LogWarning("Restoring GlobalStore {} failed due to: {}. Deleting global store to recreate from scratch.",
                             storeName,
                             recoverableException.ToString());
                         //                        reinitializeStateStoresForPartitions(recoverableException.partitions(), globalProcessorContext);
 
-                        stateRestoreListener.OnRestoreStart(topicPartition, storeName, offset, highWatermark);
+                        this.stateRestoreListener.OnRestoreStart(topicPartition, storeName, offset, highWatermark);
                         restoreCount = 0L;
                     }
                 }
 
-                stateRestoreListener.OnRestoreEnd(topicPartition, storeName, restoreCount);
-                checkpointFileCache.Add(topicPartition, offset);
+                this.stateRestoreListener.OnRestoreEnd(topicPartition, storeName, restoreCount);
+                this.checkpointFileCache.Add(topicPartition, offset);
             }
         }
 
         public void Flush()
         {
-            logger.LogDebug("Flushing all global globalStores registered in the state manager");
-            foreach (KeyValuePair<string, IStateStore?> entry in globalStores)
+            this.logger.LogDebug("Flushing All global globalStores registered in the state manager");
+            foreach (KeyValuePair<string, IStateStore?> entry in this.globalStores)
             {
                 if (entry.Value != null)
                 {
@@ -358,13 +358,13 @@ namespace Kafka.Streams.Processors.Internals
                     try
                     {
 
-                        logger.LogTrace("Flushing global store={}", store.Name);
+                        this.logger.LogTrace("Flushing global store={}", store.Name);
                         store.Flush();
                     }
                     catch (Exception e)
                     {
                         //throw new ProcessorStateException(
-                        //    string.Format("Failed to flush global state store %s", store.name), e);
+                        //    string.Format("Failed to Flush global state store %s", store.Name), e);
                     }
                 }
                 else
@@ -380,13 +380,13 @@ namespace Kafka.Streams.Processors.Internals
             try
             {
 
-                if (!globalStores.Any())
+                if (!this.globalStores.Any())
                 {
                     return;
                 }
 
                 var closeFailed = new StringBuilder();
-                foreach (KeyValuePair<string, IStateStore?> entry in globalStores)
+                foreach (KeyValuePair<string, IStateStore?> entry in this.globalStores)
                 {
                     if (true)//entry.Value.isPresent())
                     {
@@ -394,12 +394,12 @@ namespace Kafka.Streams.Processors.Internals
                         //    try
                         //    {
 
-                        //        entry.Value().close();
+                        //        entry.Value().Close();
                         //    }
                         //    catch (RuntimeException e)
                         //    {
-                        //        log.LogError("Failed to close global state store {}", entry.Key, e);
-                        //        closeFailed.Append("Failed to close global state store:")
+                        //        log.LogError("Failed to Close global state store {}", entry.Key, e);
+                        //        closeFailed.Append("Failed to Close global state store:")
                         //                   .Append(entry.Key)
                         //                   .Append(". Reason: ")
                         //                   .Append(e)
@@ -411,12 +411,12 @@ namespace Kafka.Streams.Processors.Internals
                     else
                     {
 
-                        logger.LogInformation("Skipping to close non-initialized store {}", entry.Key);
+                        this.logger.LogInformation("Skipping to Close non-initialized store {}", entry.Key);
                     }
                 }
                 //if (closeFailed.Length > 0)
                 //{
-                //    throw new ProcessorStateException("Exceptions caught during close of 1 or more global state globalStores\n" + closeFailed);
+                //    throw new ProcessorStateException("Exceptions caught during Close of 1 or more global state globalStores\n" + closeFailed);
                 //}
             }
             finally
@@ -432,11 +432,11 @@ namespace Kafka.Streams.Processors.Internals
 
             var filteredOffsets = new Dictionary<TopicPartition, long?>();
 
-            // Skip non persistent store
-            foreach (var topicPartitionOffset in checkpointFileCache)
+            // Skip non Persistent store
+            foreach (var topicPartitionOffset in this.checkpointFileCache)
             {
                 var topic = topicPartitionOffset.Key.Topic;
-                if (!globalNonPersistentStoresTopics.Contains(topic))
+                if (!this.globalNonPersistentStoresTopics.Contains(topic))
                 {
                     filteredOffsets.Add(topicPartitionOffset.Key, topicPartitionOffset.Value);
                 }
@@ -445,17 +445,17 @@ namespace Kafka.Streams.Processors.Internals
             try
             {
 
-                checkpointFile.Write(filteredOffsets);
+                this.checkpointFile.Write(filteredOffsets);
             }
             catch (IOException e)
             {
-                logger.LogWarning("Failed to write offset checkpoint file to {} for global stores: {}", checkpointFile, e);
+                this.logger.LogWarning("Failed to write offset checkpoint file to {} for global stores: {}", this.checkpointFile, e);
             }
         }
 
         public Dictionary<TopicPartition, long?> Checkpointed()
         {
-            return checkpointFileCache;
+            return this.checkpointFileCache;
         }
     }
 }

@@ -28,31 +28,31 @@ namespace Kafka.Streams.State.Sessions
         {
             return new MeteredSessionStore<K, V>(
                 this.context,
-                MaybeWrapCaching(MaybeWrapLogging(storeSupplier.Get())),
-                keySerde,
-                valueSerde);
+                this.MaybeWrapCaching(this.MaybeWrapLogging(this.storeSupplier.Get())),
+                this.keySerde,
+                this.valueSerde);
         }
 
         private ISessionStore<Bytes, byte[]> MaybeWrapCaching(ISessionStore<Bytes, byte[]> inner)
         {
-            if (!enableCaching)
+            if (!this.enableCaching)
             {
                 return inner;
             }
 
-            return new CachingSessionStore(this.context, inner, storeSupplier.SegmentIntervalMs());
+            return new CachingSessionStore(this.context, inner, this.storeSupplier.SegmentIntervalMs());
         }
 
         private ISessionStore<Bytes, byte[]> MaybeWrapLogging(ISessionStore<Bytes, byte[]> inner)
         {
-            if (!enableLogging)
+            if (!this.enableLogging)
             {
                 return inner;
             }
 
-            return new ChangeLoggingSessionBytesStore(context, inner);
+            return new ChangeLoggingSessionBytesStore(this.context, inner);
         }
 
-        public TimeSpan RetentionPeriod() => storeSupplier.RetentionPeriod;
+        public TimeSpan RetentionPeriod() => this.storeSupplier.RetentionPeriod;
     }
 }

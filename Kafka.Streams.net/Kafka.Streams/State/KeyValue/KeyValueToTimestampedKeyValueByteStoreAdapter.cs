@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.KeyValues
         {
             if (!store.Persistent())
             {
-                throw new ArgumentException("Provided store must be a persistent store, but it is not.");
+                throw new ArgumentException("Provided store must be a Persistent store, but it is not.");
             }
 
             this.store = store;
@@ -29,14 +29,14 @@ namespace Kafka.Streams.State.KeyValues
 
         public void Put(Bytes key, byte[] valueWithTimestamp)
         {
-            store.Add(key, valueWithTimestamp == null
+            this.store.Add(key, valueWithTimestamp == null
                 ? null
                 : RawValue(valueWithTimestamp));
         }
 
         public byte[] PutIfAbsent(Bytes key, byte[] valueWithTimestamp)
         {
-            return ConvertToTimestampedFormat(store.PutIfAbsent(
+            return ConvertToTimestampedFormat(this.store.PutIfAbsent(
                 key,
                 valueWithTimestamp == null
                 ? null
@@ -48,42 +48,42 @@ namespace Kafka.Streams.State.KeyValues
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
                 byte[] valueWithTimestamp = entry.Value;
-                store.Add(entry.Key, valueWithTimestamp == null ? null : RawValue(valueWithTimestamp));
+                this.store.Add(entry.Key, valueWithTimestamp == null ? null : RawValue(valueWithTimestamp));
             }
         }
 
         public byte[] Delete(Bytes key)
         {
-            return ConvertToTimestampedFormat(store.Delete(key));
+            return ConvertToTimestampedFormat(this.store.Delete(key));
         }
 
         public void Init(IProcessorContext context, IStateStore root)
         {
-            store.Init(context, root);
+            this.store.Init(context, root);
         }
 
         public void Flush()
         {
-            store.Flush();
+            this.store.Flush();
         }
 
-        public void Close() => store.Close();
+        public void Close() => this.store.Close();
         public bool Persistent() => true;
-        public bool IsOpen() => store.IsOpen();
+        public bool IsOpen() => this.store.IsOpen();
 
         public byte[] Get(Bytes key)
         {
-            return ConvertToTimestampedFormat(store.Get(key)) ?? Array.Empty<byte>();
+            return ConvertToTimestampedFormat(this.store.Get(key)) ?? Array.Empty<byte>();
         }
 
         public IKeyValueIterator<Bytes, byte[]> Range(Bytes from, Bytes to)
         {
-            return new KeyValueToTimestampedKeyValueIteratorAdapter<Bytes>(store.Range(from, to));
+            return new KeyValueToTimestampedKeyValueIteratorAdapter<Bytes>(this.store.Range(from, to));
         }
 
         public IKeyValueIterator<Bytes, byte[]> All()
         {
-            return new KeyValueToTimestampedKeyValueIteratorAdapter<Bytes>(store.All());
+            return new KeyValueToTimestampedKeyValueIteratorAdapter<Bytes>(this.store.All());
         }
     }
 }

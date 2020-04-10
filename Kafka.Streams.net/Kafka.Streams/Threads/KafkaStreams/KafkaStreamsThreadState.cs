@@ -33,7 +33,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         {
             get
             {
-                lock (stateLock)
+                lock (this.stateLock)
                 {
                     return this.currentState;
                 }
@@ -41,7 +41,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
             private set
             {
-                lock (stateLock)
+                lock (this.stateLock)
                 {
                     this.currentState = value;
                 }
@@ -66,14 +66,14 @@ namespace Kafka.Streams.Threads.KafkaStreams
         {
             KafkaStreamsThreadStates oldState;
 
-            lock (stateLock)
+            lock (this.stateLock)
             {
                 oldState = this.CurrentState;
 
                 if (this.CurrentState == KafkaStreamsThreadStates.PENDING_SHUTDOWN
                     && newState != KafkaStreamsThreadStates.NOT_RUNNING)
                 {
-                    // when the state is already in PENDING_SHUTDOWN, all other transitions than NOT_RUNNING (due to thread dying) will be
+                    // when the state is already in PENDING_SHUTDOWN, All other transitions than NOT_RUNNING (due to thread dying) will be
                     // refused but we do not throw exception here, to allow appropriate error handling
                     return false;
                 }
@@ -81,8 +81,8 @@ namespace Kafka.Streams.Threads.KafkaStreams
                     && (newState == KafkaStreamsThreadStates.PENDING_SHUTDOWN
                         || newState == KafkaStreamsThreadStates.NOT_RUNNING))
                 {
-                    // when the state is already in NOT_RUNNING, its transition to PENDING_SHUTDOWN or NOT_RUNNING (due to consecutive close calls)
-                    // will be refused but we do not throw exception here, to allow idempotent close calls
+                    // when the state is already in NOT_RUNNING, its transition to PENDING_SHUTDOWN or NOT_RUNNING (due to consecutive Close calls)
+                    // will be refused but we do not throw exception here, to allow idempotent Close calls
                     return false;
                 }
                 else if (this.CurrentState == KafkaStreamsThreadStates.REBALANCING

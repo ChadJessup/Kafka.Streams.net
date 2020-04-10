@@ -19,7 +19,7 @@ namespace Kafka.Streams.Tests
 
         public ConsumeResult<K, V> Poll(TimeSpan timeout)
         {
-            Assert.NotNull(streamThread);
+            Assert.NotNull(this.streamThread);
             //if (shutdownOnPoll)
             {
                 //  streamThread.Shutdown();

@@ -230,7 +230,7 @@
 //        Metrics metrics = new Metrics();
 //        Sensor sensor = metrics.sensor("skipped-records");
 //        LogCaptureAppender logCaptureAppender = LogCaptureAppender.CreateAndRegister();
-//        MetricName metricName = new MetricName("name", "group", "description", Collections.emptyMap());
+//        MetricName metricName = new MetricName("Name", "group", "description", Collections.emptyMap());
 //        sensor.Add(metricName, new WindowedSum());
 //        RecordCollector collector = new RecordCollectorImpl(
 //            "test",
@@ -274,7 +274,7 @@
 //        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
 
 //        try {
-//            collector.flush();
+//            collector.Flush();
 //            Assert.True(false, "Should have thrown StreamsException");
 //        } catch (StreamsException expected) { /* ok */ }
 //    }
@@ -300,7 +300,7 @@
 
 //        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
 
-//        collector.flush();
+//        collector.Flush();
 //    }
 
     
@@ -325,7 +325,7 @@
 //        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
 
 //        try {
-//            collector.close();
+//            collector.Close();
 //            Assert.True(false, "Should have thrown StreamsException");
 //        } catch (StreamsException expected) { /* ok */ }
 //    }
@@ -351,7 +351,7 @@
 
 //        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
 
-//        collector.close();
+//        collector.Close();
 //    }
 
     
@@ -437,7 +437,7 @@
 //                new Metrics().sensor("skipped-records")
 //        );
 
-//        collector.close();
+//        collector.Close();
 //    }
 
 //    private static class CustomStringSerializer : Serdes.String().Serializer

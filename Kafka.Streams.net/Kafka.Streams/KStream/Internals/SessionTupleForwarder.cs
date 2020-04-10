@@ -8,7 +8,7 @@
 
 //        SessionTupleForwarder(IStateStore store,
 //                               IProcessorContext context,
-//                               ICacheFlushListener<Windowed<K>, V> flushListener,
+//                               ICacheFlushListener<IWindowed<K>, V> flushListener,
 //                               bool sendOldValues)
 //        {
 //            this.context = context;
@@ -16,7 +16,7 @@
 //            cachingEnabled = ((WrappedStateStore)store).setFlushListener(flushListener, sendOldValues);
 //        }
 
-//        public void maybeForward(Windowed<K> key,
+//        public void maybeForward(IWindowed<K> key,
 //                                  V newValue,
 //                                  V oldValue)
 //        {

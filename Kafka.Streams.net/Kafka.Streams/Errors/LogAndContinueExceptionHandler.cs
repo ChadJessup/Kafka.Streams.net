@@ -18,21 +18,16 @@ namespace Kafka.Streams.Errors
         public LogAndContinueExceptionHandler(ILogger<LogAndContinueExceptionHandler> logger)
             => this.logger = logger;
 
-        public DeserializationHandlerResponses Handle<K, V>(
+        public DeserializationHandlerResponse Handle(
             IProcessorContext context,
             ConsumeResult<byte[], byte[]> record,
             Exception exception)
         {
-            logger.LogWarning(exception, 
+            this.logger.LogWarning(exception, 
                 "Exception caught during Deserialization, " +
                      $"taskId: {context.TaskId}, topic: {record.Topic}, partition: {record.Partition}, offset: {record.Offset}");
 
-            return DeserializationHandlerResponses.CONTINUE;
-        }
-
-        public void Configure(Dictionary<string, object> configs)
-        {
-            // ignore
+            return DeserializationHandlerResponse.CONTINUE;
         }
     }
 }

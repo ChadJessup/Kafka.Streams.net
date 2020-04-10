@@ -23,56 +23,56 @@ namespace Kafka.Streams.State.Internals
 
         public Bytes? PeekNextKey()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return nextEntry?.Key;
+            return this.nextEntry?.Key;
         }
 
         public KeyValuePair<Bytes, LRUCacheEntry>? PeekNext()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return nextEntry;
+            return this.nextEntry;
         }
 
 
         public bool HasNext()
         {
-            if (nextEntry != null)
+            if (this.nextEntry != null)
             {
                 return true;
             }
 
-            while (underlying.MoveNext() && nextEntry == null)
+            while (this.underlying.MoveNext() && this.nextEntry == null)
             {
-                InternalNext();
+                this.InternalNext();
             }
 
-            return nextEntry != null;
+            return this.nextEntry != null;
         }
 
         public KeyValuePair<Bytes, LRUCacheEntry>? Next()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            var result = nextEntry;
-            nextEntry = null;
+            var result = this.nextEntry;
+            this.nextEntry = null;
 
             return result;
         }
 
         private void InternalNext()
         {
-            KeyValuePair<Bytes, LRUNode> mapEntry = underlying.Current;
+            KeyValuePair<Bytes, LRUNode> mapEntry = this.underlying.Current;
             Bytes cacheKey = mapEntry.Key;
             LRUCacheEntry entry = mapEntry.Value.entry;
 
@@ -81,7 +81,7 @@ namespace Kafka.Streams.State.Internals
                 return;
             }
 
-            nextEntry = new KeyValuePair<Bytes, LRUCacheEntry>(cacheKey, entry);
+            this.nextEntry = new KeyValuePair<Bytes, LRUCacheEntry>(cacheKey, entry);
         }
 
         public void Remove()

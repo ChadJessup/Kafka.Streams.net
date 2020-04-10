@@ -18,7 +18,7 @@ namespace Kafka.Streams.KStream.Internals
         private readonly bool repartitionRequired;
         private readonly string userProvidedRepartitionTopicName;
         private readonly HashSet<string> sourceNodes;
-        private readonly string name;
+        private readonly string Name;
         private readonly StreamsGraphNode streamsGraphNode;
         private StreamsGraphNode repartitionNode;
 
@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals
             GroupedInternal<K, V> groupedInternal,
             bool repartitionRequired,
             HashSet<string> sourceNodes,
-            string name,
+            string Name,
             StreamsGraphNode streamsGraphNode)
         {
             this.context = context;
@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream.Internals
             this.valueSerde = groupedInternal.ValueSerde;
             this.repartitionRequired = repartitionRequired;
             this.sourceNodes = sourceNodes;
-            this.name = name;
+            this.Name = Name;
             this.streamsGraphNode = streamsGraphNode;
             this.userProvidedRepartitionTopicName = groupedInternal.Name;
         }
@@ -54,36 +54,36 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<KR> keySerde,
             ISerde<VR> valSerde)
         {
-            if (queryableStoreName != null && !queryableStoreName.Equals(storeBuilder.name))
+            if (queryableStoreName != null && !queryableStoreName.Equals(storeBuilder.Name))
             {
-                throw new ArgumentException($"{nameof(queryableStoreName)} must match {nameof(storeBuilder.name)}");
+                throw new ArgumentException($"{nameof(queryableStoreName)} must match {nameof(storeBuilder.Name)}");
             }
 
-            var aggFunctionName = builder.NewProcessorName(functionName);
+            var aggFunctionName = this.builder.NewProcessorName(functionName);
 
-            var sourceName = this.name;
-            StreamsGraphNode parentNode = streamsGraphNode;
+            var sourceName = this.Name;
+            StreamsGraphNode parentNode = this.streamsGraphNode;
 
-            if (repartitionRequired)
+            if (this.repartitionRequired)
             {
                 OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder
                     = OptimizableRepartitionNode.GetOptimizableRepartitionNodeBuilder<K, V>();
 
-                var repartitionTopicPrefix = userProvidedRepartitionTopicName ?? storeBuilder.name;
+                var repartitionTopicPrefix = this.userProvidedRepartitionTopicName ?? storeBuilder.Name;
 
-                sourceName = CreateRepartitionSource(repartitionTopicPrefix, repartitionNodeBuilder);
+                sourceName = this.CreateRepartitionSource(repartitionTopicPrefix, repartitionNodeBuilder);
 
                 // First time through we need to create a repartition node.
                 // Any subsequent calls to GroupedStreamAggregateBuilder#build we check if
-                // the user has provided a name for the repartition topic, is so we re-use
+                // the user has provided a Name for the repartition topic, is so we re-use
                 // the existing repartition node, otherwise we create a new one.
-                if (repartitionNode == null || userProvidedRepartitionTopicName == null)
+                if (this.repartitionNode == null || this.userProvidedRepartitionTopicName == null)
                 {
-                    repartitionNode = repartitionNodeBuilder.Build();
+                    this.repartitionNode = repartitionNodeBuilder.Build();
                 }
 
-                builder.AddGraphNode<K, V>(parentNode, repartitionNode);
-                parentNode = repartitionNode;
+                this.builder.AddGraphNode<K, V>(parentNode, this.repartitionNode);
+                parentNode = this.repartitionNode;
             }
 
             var statefulProcessorNode =
@@ -92,18 +92,18 @@ namespace Kafka.Streams.KStream.Internals
                    new ProcessorParameters<KR, VR>(aggregateSupplier, aggFunctionName),
                    storeBuilder);
 
-            builder.AddGraphNode<KR, VR>(parentNode, statefulProcessorNode);
+            this.builder.AddGraphNode<KR, VR>(parentNode, statefulProcessorNode);
 
             return new KTable<KR, IKeyValueStore<Bytes, byte[]>, VR>(
                 this.context,
                 aggFunctionName,
                 keySerde,
                 valSerde,
-                sourceName.Equals(this.name) ? sourceNodes : new HashSet<string> { sourceName },
+                sourceName.Equals(this.Name) ? this.sourceNodes : new HashSet<string> { sourceName },
                 queryableStoreName,
                 aggregateSupplier,
                 statefulProcessorNode,
-                builder);
+                this.builder);
         }
 
         /**
@@ -113,9 +113,9 @@ namespace Kafka.Streams.KStream.Internals
             string repartitionTopicNamePrefix,
             OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder)
             => KStream<K, V>.CreateRepartitionedSource(
-                builder,
-                keySerde,
-                valueSerde,
+                this.builder,
+                this.keySerde,
+                this.valueSerde,
                 repartitionTopicNamePrefix,
                 optimizableRepartitionNodeBuilder);
     }

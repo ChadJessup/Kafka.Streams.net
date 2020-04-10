@@ -82,12 +82,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            public IKStream<K, V> randomFilter()
 //            {
-//                string name = builder.NewProcessorName("RANDOM-FILTER-");
+//                string Name = builder.NewProcessorName("RANDOM-FILTER-");
 //                ProcessorGraphNode<K, V> processorNode = new ProcessorGraphNode<>(
-//                    name,
-//                    new ProcessorParameters<>(new ExtendedKStreamDummy<>(), name));
+//                    Name,
+//                    new ProcessorParameters<>(new ExtendedKStreamDummy<>(), Name));
 //                builder.AddGraphNode<K, V>(this.streamsGraphNode, processorNode);
-//                return new KStream<K, V>(name, null, null, sourceNodes, false, processorNode, builder);
+//                return new KStream<K, V>(Name, null, null, sourceNodes, false, processorNode, builder);
 //            }
 //        }
 

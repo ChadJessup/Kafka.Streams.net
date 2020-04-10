@@ -27,26 +27,26 @@ namespace Kafka.Streams.Processors
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (TaskMetadata)o;
-            return taskId.Equals(that.taskId)
-                && topicPartitions.Equals(that.topicPartitions);
+            return this.taskId.Equals(that.taskId)
+                && this.topicPartitions.Equals(that.topicPartitions);
         }
 
         public override int GetHashCode()
         {
-            return (taskId, topicPartitions).GetHashCode();
+            return (this.taskId, this.topicPartitions).GetHashCode();
         }
 
         public override string ToString()
         {
             return "TaskMetadata{" +
-                    "taskId=" + taskId +
-                    ", topicPartitions=" + topicPartitions +
+                    "taskId=" + this.taskId +
+                    ", topicPartitions=" + this.topicPartitions +
                     '}';
         }
     }

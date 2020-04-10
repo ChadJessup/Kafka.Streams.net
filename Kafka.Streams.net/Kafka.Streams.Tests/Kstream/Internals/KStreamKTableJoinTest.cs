@@ -95,7 +95,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        public void cleanup()
 //        {
-//            driver.close();
+//            driver.Close();
 //        }
 
 //        private void pushToStream(int messageCount, string valuePrefix)
@@ -156,23 +156,23 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            pushToTable(2, "Y");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce two items.
+//            // push All four items to the primary stream. this should produce two items.
 //            pushToStream(4, "X");
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+Y0", 0),
 //                    new KeyValueTimestamp<>(1, "X1+Y1", 1));
 
-//            // push all items to the table. this should not produce any item
+//            // push All items to the table. this should not produce any item
 //            pushToTable(4, "YY");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce four items.
+//            // push All four items to the primary stream. this should produce four items.
 //            pushToStream(4, "X");
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+YY0", 0),
 //                    new KeyValueTimestamp<>(1, "X1+YY1", 1),
 //                    new KeyValueTimestamp<>(2, "X2+YY2", 2),
 //                    new KeyValueTimestamp<>(3, "X3+YY3", 3));
 
-//            // push all items to the table. this should not produce any item
+//            // push All items to the table. this should not produce any item
 //            pushToTable(4, "YYY");
 //            processor.checkAndClearProcessResult(EMPTY);
 //        }
@@ -184,7 +184,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            pushToTable(2, "Y");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce two items.
+//            // push All four items to the primary stream. this should produce two items.
 //            pushToStream(4, "X");
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+Y0", 0),
 //                    new KeyValueTimestamp<>(1, "X1+Y1", 1));
@@ -194,11 +194,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldClearTableEntryOnNullValueUpdates()
 //        {
-//            // push all four items to the table. this should not produce any item.
+//            // push All four items to the table. this should not produce any item.
 //            pushToTable(4, "Y");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce four items.
+//            // push All four items to the primary stream. this should produce four items.
 //            pushToStream(4, "X");
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+Y0", 0),
 //                    new KeyValueTimestamp<>(1, "X1+Y1", 1),
@@ -209,7 +209,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            pushNullValueToTable();
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce two items.
+//            // push All four items to the primary stream. this should produce two items.
 //            pushToStream(4, "XX");
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(2, "XX2+Y2", 2),
 //                    new KeyValueTimestamp<>(3, "XX3+Y3", 3));

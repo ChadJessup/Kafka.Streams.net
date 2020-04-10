@@ -90,8 +90,8 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        zookeeper = new EmbeddedZookeeper();
 //        log.debug("ZooKeeper instance is running at {}", zKConnectString());
 
-//        brokerConfig.put(KafkaConfig$.MODULE$.ZkConnectProp(), zKConnectString());
-//        brokerConfig.put(KafkaConfig$.MODULE$.PortProp(), DEFAULT_BROKER_PORT);
+//        brokerConfig.Put(KafkaConfig$.MODULE$.ZkConnectProp(), zKConnectString());
+//        brokerConfig.Put(KafkaConfig$.MODULE$.PortProp(), DEFAULT_BROKER_PORT);
 //        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.DeleteTopicEnableProp(), true);
 //        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.LogCleanerDedupeBufferSizeProp(), 2 * 1024 * 1024L);
 //        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.GroupMinSessionTimeoutMsProp(), 0);
@@ -100,7 +100,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
 
 //        for (int i = 0; i < brokers.Length; i++) {
-//            brokerConfig.put(KafkaConfig$.MODULE$.BrokerIdProp(), i);
+//            brokerConfig.Put(KafkaConfig$.MODULE$.BrokerIdProp(), i);
 //            log.debug("Starting a Kafka instance on port {} ...", brokerConfig.Get(KafkaConfig$.MODULE$.PortProp()));
 //            brokers[i] = new KafkaEmbedded(brokerConfig, time);
 
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //    private void putIfAbsent(StreamsConfig props, string propertyKey, object propertyValue) {
 //        if (!props.containsKey(propertyKey)) {
-//            brokerConfig.put(propertyKey, propertyValue);
+//            brokerConfig.Put(propertyKey, propertyValue);
 //        }
 //    }
 
@@ -157,7 +157,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * Create multiple Kafka topics each with 1 partition and a replication factor of 1.
 //     *
-//     * @param topics The name of the topics.
+//     * @param topics The Name of the topics.
 //     */
 //    public void createTopics(string... topics) {// throws InterruptedException
 //        foreach (string topic in topics) {
@@ -168,7 +168,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * Create a Kafka topic with 1 partition and a replication factor of 1.
 //     *
-//     * @param topic The name of the topic.
+//     * @param topic The Name of the topic.
 //     */
 //    public void createTopic(string topic) {// throws InterruptedException
 //        createTopic(topic, 1, 1, Collections.emptyMap());
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * Create a Kafka topic with the given parameters.
 //     *
-//     * @param topic       The name of the topic.
+//     * @param topic       The Name of the topic.
 //     * @param partitions  The number of partitions for this topic.
 //     * @param replication The replication factor for (the partitions of) this topic.
 //     */
@@ -188,7 +188,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * Create a Kafka topic with the given parameters.
 //     *
-//     * @param topic       The name of the topic.
+//     * @param topic       The Name of the topic.
 //     * @param partitions  The number of partitions for this topic.
 //     * @param replication The replication factor for (partitions of) this topic.
 //     * @param topicConfig Additional topic-level configuration settings.
@@ -208,7 +208,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * Deletes a topic returns immediately.
 //     *
-//     * @param topic the name of the topic
+//     * @param topic the Name of the topic
 //     */
 //    public void deleteTopic(string topic) {// throws InterruptedException
 //        deleteTopicsAndWait(-1L, topic);
@@ -217,7 +217,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * Deletes a topic and blocks for max 30 sec until the topic got deleted.
 //     *
-//     * @param topic the name of the topic
+//     * @param topic the Name of the topic
 //     */
 //    public void deleteTopicAndWait(string topic) {// throws InterruptedException
 //        deleteTopicsAndWait(TOPIC_DELETION_TIMEOUT, topic);
@@ -227,7 +227,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * Deletes a topic and blocks until the topic got deleted.
 //     *
 //     * @param timeoutMs the max time to wait for the topic to be deleted (does not block if {@code <= 0})
-//     * @param topic the name of the topic
+//     * @param topic the Name of the topic
 //     */
 //    public void deleteTopicAndWait(long timeoutMs, string topic) {// throws InterruptedException
 //        deleteTopicsAndWait(timeoutMs, topic);
@@ -236,26 +236,26 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * Deletes multiple topics returns immediately.
 //     *
-//     * @param topics the name of the topics
+//     * @param topics the Name of the topics
 //     */
 //    public void deleteTopics(string... topics) {// throws InterruptedException
 //        deleteTopicsAndWait(-1, topics);
 //    }
 
 //    /**
-//     * Deletes multiple topics and blocks for max 30 sec until all topics got deleted.
+//     * Deletes multiple topics and blocks for max 30 sec until All topics got deleted.
 //     *
-//     * @param topics the name of the topics
+//     * @param topics the Name of the topics
 //     */
 //    public void deleteTopicsAndWait(string... topics) {// throws InterruptedException
 //        deleteTopicsAndWait(TOPIC_DELETION_TIMEOUT, topics);
 //    }
 
 //    /**
-//     * Deletes multiple topics and blocks until all topics got deleted.
+//     * Deletes multiple topics and blocks until All topics got deleted.
 //     *
 //     * @param timeoutMs the max time to wait for the topics to be deleted (does not block if {@code <= 0})
-//     * @param topics the name of the topics
+//     * @param topics the Name of the topics
 //     */
 //    public void deleteTopicsAndWait(long timeoutMs, string... topics) {// throws InterruptedException
 //        foreach (string topic in topics) {
@@ -270,7 +270,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    }
 
 //    /**
-//     * Deletes all topics and blocks until all topics got deleted.
+//     * Deletes All topics and blocks until All topics got deleted.
 //     *
 //     * @param timeoutMs the max time to wait for the topics to be deleted (does not block if {@code <= 0})
 //     */

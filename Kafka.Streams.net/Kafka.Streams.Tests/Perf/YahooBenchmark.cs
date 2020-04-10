@@ -107,10 +107,10 @@
 //            System.Console.Out.WriteLine("Initializing topic " + topic);
 
 //            StreamsConfig props = new StreamsConfig();
-//            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, parent.props.Get(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
-//            props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-//            props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            props.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, parent.props.Get(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
+//            props.Put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
+//            props.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            props.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
 //            try
 //            {
@@ -144,10 +144,10 @@
 //            System.Console.Out.WriteLine("Initializing topic " + topic);
 
 //            StreamsConfig props = new StreamsConfig();
-//            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, parent.props.Get(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
-//            props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-//            props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
+//            props.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, parent.props.Get(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
+//            props.Put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
+//            props.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            props.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
 
 //            long startTime = System.currentTimeMillis();
 
@@ -157,7 +157,7 @@
 //                ProjectedEvent event = new ProjectedEvent();
 //        Dictionary<string, object> serdeProps = new HashMap<>();
 //        Serializer<ProjectedEvent> projectedEventSerializer = new JsonPOJOSerializer<>();
-//        serdeProps.put("JsonPOJOClass", ProjectedEvent);
+//        serdeProps.Put("JsonPOJOClass", ProjectedEvent);
 //            projectedEventSerializer.configure(serdeProps, false);
 
 //            for (int i = 0; i<numRecords; i++) {
@@ -270,10 +270,10 @@
 //    {
 //        Dictionary<string, object> serdeProps = new HashMap<>();
 //        Serializer<ProjectedEvent> projectedEventSerializer = new JsonPOJOSerializer<>();
-//        serdeProps.put("JsonPOJOClass", ProjectedEvent);
+//        serdeProps.Put("JsonPOJOClass", ProjectedEvent);
 //        projectedEventSerializer.configure(serdeProps, false);
 //        Deserializer<ProjectedEvent> projectedEventDeserializer = new JsonPOJODeserializer<>();
-//        serdeProps.put("JsonPOJOClass", ProjectedEvent);
+//        serdeProps.Put("JsonPOJOClass", ProjectedEvent);
 //        projectedEventDeserializer.configure(serdeProps, false);
 
 //        StreamsBuilder builder = new StreamsBuilder();

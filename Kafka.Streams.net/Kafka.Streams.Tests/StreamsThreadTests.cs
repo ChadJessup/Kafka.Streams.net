@@ -38,10 +38,10 @@ namespace Kafka.Streams.Tests
 
         public StreamThreadTests()
         {
-            processId = Guid.NewGuid();
+            this.processId = Guid.NewGuid();
             this.config = StreamsTestConfigs.GetStandardConfig();
 
-            this.stateDirectory = new StateDirectory(TestUtils.GetMockLogger<StateDirectory>(), config, mockTime);
+            this.stateDirectory = new StateDirectory(TestUtils.GetMockLogger<StateDirectory>(), this.config, this.mockTime);
 
             // internalTopologyBuilder = this.streamsBuilder.InternalTopologyBuilder;
             // internalTopologyBuilder.SetApplicationId(applicationId);
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tests
                 topic1);
 
             var ks = streamsBuilder.BuildKafkaStreams();
-            var thread = TestUtils.CreateStreamThread(streamsBuilder, clientId, eosEnabled: false);
+            var thread = TestUtils.CreateStreamThread(streamsBuilder, this.clientId, eosEnabled: false);
 
             var stateListener = new StateListenerStub();
             thread.SetStateListener(stateListener);
@@ -109,12 +109,12 @@ namespace Kafka.Streams.Tests
             Assert.Equal(StreamThreadStates.PARTITIONS_REVOKED, thread.State.CurrentState);
 
             //.Assign single partition
-            assignedPartitions = new List<TopicPartition> { t1p1 };
+            assignedPartitions = new List<TopicPartition> { this.t1p1 };
             thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), new Dictionary<TaskId, HashSet<TopicPartition>>());
 
             var mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
             mockConsumer.Assign(assignedPartitions);
-            mockConsumer.UpdateBeginningOffsets(new Dictionary<TopicPartition, long> { { t1p1, 0L } });
+            mockConsumer.UpdateBeginningOffsets(new Dictionary<TopicPartition, long> { { this.t1p1, 0L } });
             RebalanceListener.OnPartitionsAssigned(null,assignedPartitions);
             thread.RunOnce();
             Assert.Equal(StreamThreadStates.RUNNING, thread.State.CurrentState);
@@ -129,7 +129,7 @@ namespace Kafka.Streams.Tests
         public void TestStateChangeStartClose() //// throws Exception
         {
             var streamsBuilder = TestUtils.GetStreamsBuilder(this.config);
-            var thread = TestUtils.CreateStreamThread(streamsBuilder, clientId, false);
+            var thread = TestUtils.CreateStreamThread(streamsBuilder, this.clientId, false);
 
             var stateListener = new StateListenerStub();
             thread.SetStateListener(stateListener);
@@ -218,7 +218,7 @@ namespace Kafka.Streams.Tests
 
         //        //    string TaskGroupName = "stream-Task-metrics";
         //        //    Dictionary<string, string> TaskTags =
-        //        //       mkMap(mkEntry("Task-id", "all"), mkEntry("client-id", thread.getName()));
+        //        //       mkMap(mkEntry("Task-id", "All"), mkEntry("client-id", thread.getName()));
         //        //    Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //        //        "commit-latency-avg", TaskGroupName, descriptionIsNotVerified, TaskTags)));
         //        //    Assert.NotNull(metrics.metrics().Get(metrics.metricName(
@@ -232,7 +232,7 @@ namespace Kafka.Streams.Tests
         //        //    Assert.True(reporter.ContainsMbean(string.Format("kafka.streams:type=%s,client-id=%s",
         //        //               defaultGroupName,
         //        //               thread.getName())));
-        //        //    Assert.True(reporter.ContainsMbean("kafka.streams:type=stream-Task-metrics,client-id=" + thread.getName() + ",Task-id=all"));
+        //        //    Assert.True(reporter.ContainsMbean("kafka.streams:type=stream-Task-metrics,client-id=" + thread.getName() + ",Task-id=All"));
         //        //}
 
         [Fact]
@@ -241,7 +241,7 @@ namespace Kafka.Streams.Tests
             var commitInterval = 1000L;
             var props = StreamsTestConfigs.GetStandardConfig();
 
-            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, stateDir);
+            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, this.stateDir);
             props.Set(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG, commitInterval.ToString());
 
             var sc = new ServiceCollection().AddSingleton(props);
@@ -255,10 +255,10 @@ namespace Kafka.Streams.Tests
 
             IStreamThread thread = TestUtils.CreateStreamThread(sb);
 
-            thread.SetNow(mockTime.NowAsEpochMilliseconds);
+            thread.SetNow(this.mockTime.NowAsEpochMilliseconds);
             thread.MaybeCommit();
-            mockTime.Sleep(commitInterval - 10L);
-            thread.SetNow(mockTime.NowAsEpochMilliseconds);
+            this.mockTime.Sleep(commitInterval - 10L);
+            thread.SetNow(this.mockTime.NowAsEpochMilliseconds);
             thread.MaybeCommit();
         }
 
@@ -725,8 +725,8 @@ namespace Kafka.Streams.Tests
         //[Fact]
         //public void shouldNotNullPointerWhenStandbyTasksAssignedAndNoStateStoresForTopology()
         //{
-        //    internalTopologyBuilder.AddSource(null, "name", null, null, null, "topic");
-        //    internalTopologyBuilder.AddSink("out", "output", null, null, null, "name");
+        //    internalTopologyBuilder.AddSource(null, "Name", null, null, null, "topic");
+        //    internalTopologyBuilder.AddSink("out", "output", null, null, null, "Name");
 
         //    StreamThread thread = createStreamThread(clientId, config, false);
 
@@ -813,8 +813,8 @@ namespace Kafka.Streams.Tests
         //{
         //    StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
 
-        //    internalTopologyBuilder.AddSource(null, "name", null, null, null, topic1);
-        //    internalTopologyBuilder.AddSink("out", "output", null, null, null, "name");
+        //    internalTopologyBuilder.AddSource(null, "Name", null, null, null, topic1);
+        //    internalTopologyBuilder.AddSink("out", "output", null, null, null, "Name");
 
         //    thread.SetState(StreamThreadStates.STARTING);
         //    thread.RebalanceListener.onPartitionsRevoked(null);
@@ -850,8 +850,8 @@ namespace Kafka.Streams.Tests
         //{
         //    StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
 
-        //    internalTopologyBuilder.AddSource(null, "name", null, null, null, topic1);
-        //    internalTopologyBuilder.AddSink("out", "output", null, null, null, "name");
+        //    internalTopologyBuilder.AddSource(null, "Name", null, null, null, topic1);
+        //    internalTopologyBuilder.AddSink("out", "output", null, null, null, "Name");
 
         //    thread.SetState(StreamThreadStates.STARTING);
         //    thread.RebalanceListener.onPartitionsRevoked(null);
@@ -934,7 +934,7 @@ namespace Kafka.Streams.Tests
         //    thread.runOnce();
 
         //    ThreadMetadata threadMetadata = thread.threadMetadata();
-        //    Assert.Equal(StreamThreadStates.RUNNING.name(), threadMetadata.ThreadState);
+        //    Assert.Equal(StreamThreadStates.RUNNING.Name(), threadMetadata.ThreadState);
         //    Assert.True(threadMetadata.activeTasks.Contains(new TaskMetadata(Task1.ToString(), Utils.mkSet(t1p1))));
         //    Assert.True(threadMetadata.StandbyTasks.isEmpty());
         //}
@@ -979,7 +979,7 @@ namespace Kafka.Streams.Tests
         //    thread.runOnce();
 
         //    ThreadMetadata threadMetadata = thread.threadMetadata();
-        //    Assert.Equal(StreamThreadStates.RUNNING.name(), threadMetadata.ThreadState);
+        //    Assert.Equal(StreamThreadStates.RUNNING.Name(), threadMetadata.ThreadState);
         //    Assert.True(threadMetadata.StandbyTasks.Contains(new TaskMetadata(Task1.ToString(), Utils.mkSet(t1p1))));
         //    Assert.True(threadMetadata.activeTasks.isEmpty());
         //}
@@ -1136,7 +1136,7 @@ namespace Kafka.Streams.Tests
         //    List<long> punctuatedWallClockTime = new List<>();
         //    ProcessorSupplier<object, object> punctuateProcessor = () => new Processor<object, object>() {
         //            
-        //            public void init(IProcessorContext context)
+        //            public void Init(IProcessorContext context)
         //    {
         //        context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, punctuatedStreamTime::add);
         //        context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.WALL_CLOCK_TIME, punctuatedWallClockTime::add);
@@ -1148,7 +1148,7 @@ namespace Kafka.Streams.Tests
         //    { }
 
         //    
-        //            public void close() { }
+        //            public void Close() { }
         //};
 
         //internalStreamsBuilder.Stream(Collections.singleton(topic1), consumed).process(punctuateProcessor);
@@ -1211,14 +1211,14 @@ namespace Kafka.Streams.Tests
         //{
         //    StreamThread thread = createStreamThread(clientId, config, false);
         //    ThreadMetadata metadata = thread.threadMetadata();
-        //    Assert.Equal(StreamThreadStates.CREATED.name(), metadata.ThreadState);
+        //    Assert.Equal(StreamThreadStates.CREATED.Name(), metadata.ThreadState);
 
         //    thread.SetState(StreamThreadStates.STARTING);
         //    thread.SetState(StreamThreadStates.PARTITIONS_REVOKED);
         //    thread.SetState(StreamThreadStates.PARTITIONS_ASSIGNED);
         //    thread.SetState(StreamThreadStates.RUNNING);
         //    metadata = thread.threadMetadata();
-        //    Assert.Equal(StreamThreadStates.RUNNING.name(), metadata.ThreadState);
+        //    Assert.Equal(StreamThreadStates.RUNNING.Name(), metadata.ThreadState);
         //}
 
         //[Fact]
@@ -1551,7 +1551,7 @@ namespace Kafka.Streams.Tests
         //private void assertThreadMetadata.AsEmptyTasksWithState(ThreadMetadata metadata,
         //                                                         StreamThreadStates state)
         //{
-        //    Assert.Equal(state.name(), metadata.ThreadState);
+        //    Assert.Equal(state.Name(), metadata.ThreadState);
         //    Assert.True(metadata.activeTasks.isEmpty());
         //    Assert.True(metadata.StandbyTasks.isEmpty());
         //}

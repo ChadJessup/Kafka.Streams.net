@@ -16,7 +16,7 @@ namespace Kafka.Streams.State.Interfaces
          * Find instances of IStateStore that are accepted by {@link QueryableStoreType#accepts} and
          * have the provided storeName.
          *
-         * @param storeName             name of the store
+         * @param storeName             Name of the store
          * @param queryableStoreType    filter stores based on this queryableStoreType
          * @param                   The type of the Store
          * @return  List of the instances of the store in this topology. Empty List if not found

@@ -21,22 +21,22 @@ namespace Kafka.Streams.Tasks
         private readonly IProducer<byte[], byte[]> threadProducer;
 
         public TaskCreator(
+            KafkaStreamsContext context,
             ILogger<TaskCreator> logger,
             InternalTopologyBuilder builder,
             StreamsConfig config,
             StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader,
             ThreadCache? cache,
-            IClock clock,
             IKafkaClientSupplier clientSupplier,
             BaseProducer<byte[], byte[]> threadProducer)
         : base(
+            context,
             logger,
             builder,
             config,
             stateDirectory,
-            storeChangelogReader,
-            clock)
+            storeChangelogReader)
         {
             this.cache = cache;
             this.clientSupplier = clientSupplier;
@@ -44,39 +44,41 @@ namespace Kafka.Streams.Tasks
         }
 
         public override StreamTask CreateTask(
-            ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             TaskId taskId,
             string threadClientId,
             HashSet<TopicPartition> partitions)
         {
             return new StreamTask(
+                this.Context,
                 taskId,
                 new List<TopicPartition>(partitions),
-                builder.Build(taskId.topicGroupId),
+                this.builder.Build(taskId.topicGroupId),
                 consumer,
-                storeChangelogReader,
-                config,
-                stateDirectory,
-                cache,
-                clock,
-                new BasicProducerSupplier(CreateProducer(taskId, threadClientId)));
+                this.storeChangelogReader,
+                this.config,
+                this.stateDirectory,
+                this.cache,
+                new BasicProducerSupplier(
+                    this.CreateProducer(taskId, threadClientId)));
         }
 
-        public IProducer<byte[], byte[]> CreateProducer(TaskId id, string threadClientId)
+        public IProducer<byte[], byte[]> CreateProducer(
+            TaskId id,
+            string threadClientId)
         {
             // eos
-            if (threadProducer == null)
+            if (this.threadProducer == null)
             {
-                var producerConfigs = config.GetProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
+                var producerConfigs = this.config.GetProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
 
-                logger.LogInformation($"Creating producer client for task {id}");
-                producerConfigs.Set(StreamsConfigPropertyNames.TRANSACTIONAL_ID_CONFIG, $"{applicationId}-{id}");
+                this.logger.LogInformation($"Creating producer client for task {id}");
+                producerConfigs.Set(StreamsConfigPropertyNames.TRANSACTIONAL_ID_CONFIG, $"{this.applicationId}-{id}");
 
-                return clientSupplier.GetProducer(producerConfigs);
+                return this.clientSupplier.GetProducer(producerConfigs);
             }
 
-            return threadProducer;
+            return this.threadProducer;
         }
 
         private string GetTaskProducerClientId(string threadClientId, TaskId taskId)
@@ -84,15 +86,15 @@ namespace Kafka.Streams.Tasks
 
         public override void Close()
         {
-            if (threadProducer != null)
+            if (this.threadProducer != null)
             {
                 try
                 {
-                    threadProducer.Dispose();
+                    this.threadProducer.Dispose();
                 }
                 catch (Exception e)
                 {
-                    logger.LogError("Failed to close producer due to the following error:", e);
+                    this.logger.LogError("Failed to Close producer due to the following error:", e);
                 }
             }
         }

@@ -35,10 +35,10 @@ namespace Kafka.Streams.Tests.Tests
 //            System.exit(1);
 //        }
 
-//streamsProperties.put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-resilience");
-//        streamsProperties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//        streamsProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//        streamsProperties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//streamsProperties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-resilience");
+//        streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//        streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//        streamsProperties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
 
 
 //        // it is expected that max.poll.interval, retries, request.timeout and max.block.ms set
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tests.Tests
 //        }
 
 //        if (!confirmCorrectConfigs(streamsProperties)) {
-//            System.Console.Error.println(string.format("ERROR: Did not have all required configs expected  to contain %s %s %s %s",
+//            System.Console.Error.println(string.format("ERROR: Did not have All required configs expected  to contain %s %s %s %s",
 //                                             StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG),
 //                                             StreamsConfig.producerPrefix(ProducerConfig.RETRIES_CONFIG),
 //                                             StreamsConfig.producerPrefix(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG),
@@ -71,7 +71,7 @@ namespace Kafka.Streams.Tests.Tests
 //    System.Console.Out.WriteLine("received key " + key + " and value " + value);
 //    messagesProcessed++;
 //    System.Console.Out.WriteLine("processed" + messagesProcessed + "messages");
-//    System.Console.Out.flush();
+//    System.Console.Out.Flush();
 //}
 //            }).To(SINK_TOPIC);
 
@@ -82,8 +82,8 @@ namespace Kafka.Streams.Tests.Tests
 //            public void uncaughtException(Thread t, Throwable e)
 //{
 //    System.Console.Error.println("FATAL: An unexpected exception " + e);
-//    System.Console.Error.flush();
-//    streams.close(TimeSpan.ofSeconds(30));
+//    System.Console.Error.Flush();
+//    streams.Close(TimeSpan.ofSeconds(30));
 //}
 //        });
 //        System.Console.Out.WriteLine("Start Kafka Streams");
@@ -94,9 +94,9 @@ namespace Kafka.Streams.Tests.Tests
 
 //    public void run()
 //    {
-//        streams.close(TimeSpan.ofSeconds(30));
+//        streams.Close(TimeSpan.ofSeconds(30));
 //        System.Console.Out.WriteLine("Complete shutdown of streams resilience test app now");
-//        System.Console.Out.flush();
+//        System.Console.Out.Flush();
 //    }
 //}));
 
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Tests.Tests
 //    foreach (string part in parts)
 //    {
 //        string[] keyValue = part.Split("=");
-//        updatedConfigs.put(keyValue[KEY], keyValue[VALUE]);
+//        updatedConfigs.Put(keyValue[KEY], keyValue[VALUE]);
 //    }
 //    return updatedConfigs;
 //}

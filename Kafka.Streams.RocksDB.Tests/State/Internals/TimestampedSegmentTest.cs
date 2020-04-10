@@ -43,8 +43,8 @@ namespace Kafka.Streams.Tests.State.Internals
             Assert.Equal(segment, segment);
             Assert.Equal(segment, segmentSameId);
             Assert.NotEqual(segment, segmentDifferentId);
-            Assert.Null(segment);
-            //Assert.Equal(segment, "anyName");
+            Assert.NotNull(segment);
+            Assert.NotEqual("anyName", segment.ToString());
         }
 
         [Fact]

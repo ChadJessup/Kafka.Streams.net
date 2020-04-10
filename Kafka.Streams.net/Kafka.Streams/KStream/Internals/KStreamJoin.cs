@@ -37,21 +37,21 @@ namespace Kafka.Streams.KStream.Internals
             var renamed = new NamedInternal(joinedInternal.Name);
 
             var thisWindowStreamName = renamed.SuffixWithOrElseGet(
-                   "-this-windowed", builder, KStream.WINDOWED_NAME);
+                   "-this-windowed", this.builder, KStream.WINDOWED_NAME);
 
             var otherWindowStreamName = renamed.SuffixWithOrElseGet(
-                   "-other-windowed", builder, KStream.WINDOWED_NAME);
+                   "-other-windowed", this.builder, KStream.WINDOWED_NAME);
 
-            var joinThisName = rightOuter ?
-                   renamed.SuffixWithOrElseGet("-outer-this-join", builder, KStream.OUTERTHIS_NAME)
-                   : renamed.SuffixWithOrElseGet("-this-join", builder, KStream.JOINTHIS_NAME);
+            var joinThisName = this.rightOuter ?
+                   renamed.SuffixWithOrElseGet("-outer-this-join", this.builder, KStream.OUTERTHIS_NAME)
+                   : renamed.SuffixWithOrElseGet("-this-join", this.builder, KStream.JOINTHIS_NAME);
 
-            var joinOtherName = leftOuter ?
-                   renamed.SuffixWithOrElseGet("-outer-other-join", builder, KStream.OUTEROTHER_NAME)
-                   : renamed.SuffixWithOrElseGet("-other-join", builder, KStream.JOINOTHER_NAME);
+            var joinOtherName = this.leftOuter ?
+                   renamed.SuffixWithOrElseGet("-outer-other-join", this.builder, KStream.OUTEROTHER_NAME)
+                   : renamed.SuffixWithOrElseGet("-other-join", this.builder, KStream.JOINOTHER_NAME);
 
             var joinMergeName = renamed.SuffixWithOrElseGet(
-                   "-merge", builder, KStream.MERGE_NAME);
+                   "-merge", this.builder, KStream.MERGE_NAME);
 
             StreamsGraphNode thisStreamsGraphNode = ((AbstractStream<K1, V1>)lhs).streamsGraphNode;
             StreamsGraphNode otherStreamsGraphNode = ((AbstractStream<K1, V2>)other).streamsGraphNode;
@@ -62,34 +62,34 @@ namespace Kafka.Streams.KStream.Internals
             IStoreBuilder<IWindowStore<K1, V2>> otherWindowStore =
                KStream.JoinWindowStoreBuilder(this.context, joinOtherName, windows, joined.KeySerde, joined.OtherValueSerde);
 
-            var thisWindowedStream = new KStreamJoinWindow<K1, V1>(thisWindowStore.name);
+            var thisWindowedStream = new KStreamJoinWindow<K1, V1>(thisWindowStore.Name);
 
             var thisWindowStreamProcessorParams = new ProcessorParameters<K1, V1>(thisWindowedStream, thisWindowStreamName);
             var thisWindowedStreamsNode = new ProcessorGraphNode<K1, V1>(thisWindowStreamName, thisWindowStreamProcessorParams);
-            builder.AddGraphNode<K1, V1>(thisStreamsGraphNode, thisWindowedStreamsNode);
+            this.builder.AddGraphNode<K1, V1>(thisStreamsGraphNode, thisWindowedStreamsNode);
 
-            var otherWindowedStream = new KStreamJoinWindow<K1, V2>(otherWindowStore.name);
+            var otherWindowedStream = new KStreamJoinWindow<K1, V2>(otherWindowStore.Name);
 
             var otherWindowStreamProcessorParams = new ProcessorParameters<K1, V2>(otherWindowedStream, otherWindowStreamName);
             var otherWindowedStreamsNode = new ProcessorGraphNode<K1, V2>(otherWindowStreamName, otherWindowStreamProcessorParams);
 
-            builder.AddGraphNode<K1, V1>(otherStreamsGraphNode, otherWindowedStreamsNode);
+            this.builder.AddGraphNode<K1, V1>(otherStreamsGraphNode, otherWindowedStreamsNode);
 
             var joinThis = new KStreamKStreamJoin<K1, R, V1, V2>(
                 this.context,
-                otherWindowStore.name,
+                otherWindowStore.Name,
                 windows.beforeMs,
                 windows.afterMs,
                 joiner,
-                leftOuter);
+                this.leftOuter);
 
             var joinOther = new KStreamKStreamJoin<K1, R, V2, V1>(
                 this.context,
-                thisWindowStore.name,
+                thisWindowStore.Name,
                 windows.afterMs,
                 windows.beforeMs,
                 AbstractStream<K1, V1>.ReverseJoiner(joiner),
-                rightOuter);
+                this.rightOuter);
 
             var joinMerge = new KStreamPassThrough<K1, R>();
 
@@ -111,7 +111,7 @@ namespace Kafka.Streams.KStream.Internals
 
             StreamsGraphNode joinGraphNode = joinBuilder.Build();
 
-            builder.AddGraphNode<K1, V1>(new HashSet<StreamsGraphNode> { thisStreamsGraphNode, otherStreamsGraphNode }, joinGraphNode);
+            this.builder.AddGraphNode<K1, V1>(new HashSet<StreamsGraphNode> { thisStreamsGraphNode, otherStreamsGraphNode }, joinGraphNode);
 
             var allSourceNodes = new HashSet<string>(((KStream<K1, V1>)lhs).sourceNodes);
 
@@ -128,7 +128,7 @@ namespace Kafka.Streams.KStream.Internals
                 allSourceNodes,
                 false,
                 joinGraphNode,
-                builder);
+                this.builder);
         }
     }
 }

@@ -64,7 +64,7 @@
 //        {// throws Exception
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close();
+//                kafkaStreams.Close();
 //            }
 
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
@@ -243,7 +243,7 @@
 //                kafkaStreams.store(globalStore, QueryableStoreTypes.TimestampedKeyValueStore);
 
 //            Assert.Equal(4L, timestampedStore.approximateNumEntries);
-//            kafkaStreams.close();
+//            kafkaStreams.Close();
 
 //            StartStreams();
 //            store = kafkaStreams.store(globalStore, QueryableStoreTypes.KeyValueStore);

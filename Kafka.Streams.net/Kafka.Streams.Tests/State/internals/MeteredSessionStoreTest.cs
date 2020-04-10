@@ -81,7 +81,7 @@
 
 //        private readonly string key = "a";
 //        private readonly byte[] keyBytes = key.getBytes();
-//        private Windowed<Bytes> windowedKeyBytes = new Windowed<>(Bytes.Wrap(keyBytes), new SessionWindow(0, 0));
+//        private IWindowed<Bytes> windowedKeyBytes = new IWindowed<>(Bytes.Wrap(keyBytes), new SessionWindow(0, 0));
 
 
 //        public void Before()
@@ -95,7 +95,7 @@
 //            metrics.config().recordLevel(Sensor.RecordingLevel.DEBUG);
 //            expect(context.metrics()).andReturn(new MockStreamsMetrics(metrics));
 //            expect(context.taskId()).andReturn(taskId);
-//            expect(inner.name()).andReturn("metered").anyTimes();
+//            expect(inner.Name()).andReturn("metered").anyTimes();
 //        }
 
 //        private void Init()
@@ -113,19 +113,19 @@
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
 //                    "scope", "test", taskId.ToString(), "scope", "metered")));
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
-//                    "scope", "test", taskId.ToString(), "scope", "all")));
+//                    "scope", "test", taskId.ToString(), "scope", "All")));
 //        }
 
 //        [Fact]
 //        public void ShouldWriteBytesToInnerStoreAndRecordPutMetric()
 //        {
-//            inner.put(eq(windowedKeyBytes), aryEq(keyBytes));
+//            inner.Put(eq(windowedKeyBytes), aryEq(keyBytes));
 //            expectLastCall();
 //            Init();
 
-//            metered.put(new Windowed<>(key, new SessionWindow(0, 0)), key);
+//            metered.Put(new IWindowed<>(key, new SessionWindow(0, 0)), key);
 
-//            KafkaMetric metric = metric("put-rate");
+//            KafkaMetric metric = metric("Put-rate");
 //            Assert.True(((Double)metric.metricValue()) > 0);
 //            verify(inner);
 //        }
@@ -138,12 +138,12 @@
 //                            Collections.singleton(KeyValuePair.Create(windowedKeyBytes, keyBytes)).iterator()));
 //            Init();
 
-//            IKeyValueIterator<Windowed<string>, string> iterator = metered.findSessions(key, 0, 0);
+//            IKeyValueIterator<IWindowed<string>, string> iterator = metered.findSessions(key, 0, 0);
 //            Assert.Equal(iterator.MoveNext().value, (key));
 //            Assert.False(iterator.HasNext());
-//            iterator.close();
+//            iterator.Close();
 
-//            KafkaMetric metric = metric("fetch-rate");
+//            KafkaMetric metric = metric("Fetch-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }
@@ -156,12 +156,12 @@
 //                            Collections.singleton(KeyValuePair.Create(windowedKeyBytes, keyBytes)).iterator()));
 //            Init();
 
-//            IKeyValueIterator<Windowed<string>, string> iterator = metered.findSessions(key, key, 0, 0);
+//            IKeyValueIterator<IWindowed<string>, string> iterator = metered.findSessions(key, key, 0, 0);
 //            Assert.Equal(iterator.MoveNext().value, (key));
 //            Assert.False(iterator.HasNext());
-//            iterator.close();
+//            iterator.Close();
 
-//            KafkaMetric metric = metric("fetch-rate");
+//            KafkaMetric metric = metric("Fetch-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }
@@ -174,7 +174,7 @@
 
 //            Init();
 
-//            metered.remove(new Windowed<>(key, new SessionWindow(0, 0)));
+//            metered.remove(new IWindowed<>(key, new SessionWindow(0, 0)));
 
 //            KafkaMetric metric = metric("remove-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
@@ -189,12 +189,12 @@
 //                            Collections.singleton(KeyValuePair.Create(windowedKeyBytes, keyBytes)).iterator()));
 //            Init();
 
-//            IKeyValueIterator<Windowed<string>, string> iterator = metered.Fetch(key);
+//            IKeyValueIterator<IWindowed<string>, string> iterator = metered.Fetch(key);
 //            Assert.Equal(iterator.MoveNext().value, (key));
 //            Assert.False(iterator.HasNext());
-//            iterator.close();
+//            iterator.Close();
 
-//            KafkaMetric metric = metric("fetch-rate");
+//            KafkaMetric metric = metric("Fetch-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }
@@ -207,12 +207,12 @@
 //                            Collections.singleton(KeyValuePair.Create(windowedKeyBytes, keyBytes)).iterator()));
 //            Init();
 
-//            IKeyValueIterator<Windowed<string>, string> iterator = metered.Fetch(key, key);
+//            IKeyValueIterator<IWindowed<string>, string> iterator = metered.Fetch(key, key);
 //            Assert.Equal(iterator.MoveNext().value, (key));
 //            Assert.False(iterator.HasNext());
-//            iterator.close();
+//            iterator.Close();
 
-//            KafkaMetric metric = metric("fetch-rate");
+//            KafkaMetric metric = metric("Fetch-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }
@@ -237,7 +237,7 @@
 //        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerOnPutIfKeyIsNull()
 //        {
-//            metered.put(null, "a");
+//            metered.Put(null, "a");
 //        }
 
 //        [Fact]// (expected = NullPointerException)
@@ -310,9 +310,9 @@
 //            Assert.False(metered.setFlushListener(null, false));
 //        }
 
-//        private KafkaMetric Metric(string name)
+//        private KafkaMetric Metric(string Name)
 //        {
-//            return this.metrics.metric(new MetricName(name, "stream-scope-metrics", "", this.tags));
+//            return this.metrics.metric(new MetricName(Name, "stream-scope-metrics", "", this.tags));
 //        }
 
 //    }

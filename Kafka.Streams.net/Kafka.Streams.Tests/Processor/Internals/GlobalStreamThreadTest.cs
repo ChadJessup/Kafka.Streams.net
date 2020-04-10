@@ -60,9 +60,9 @@
 //            new KTableSource<>(GLOBAL_STORE_NAME, GLOBAL_STORE_NAME));
 
 //        HashDictionary<string, object> properties = new HashMap<>();
-//        properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "blah");
-//        properties.put(StreamsConfig.APPLICATION_ID_CONFIG, "blah");
-//        properties.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
+//        properties.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "blah");
+//        properties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "blah");
+//        properties.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
 //        config = new StreamsConfig(properties);
 //        globalStreamThread = new GlobalStreamThread(builder.rewriteTopology(config).buildGlobalStateTopology(),
 //                                                    config,
@@ -149,10 +149,10 @@
 //    initializeConsumer();
 //    globalStreamThread.start();
 //    IStateStore globalStore = builder.globalStateStores().Get(GLOBAL_STORE_NAME);
-//    Assert.True(globalStore.isOpen());
+//    Assert.True(globalStore.IsOpen());
 //    globalStreamThread.shutdown();
 //    globalStreamThread.join();
-//    Assert.False(globalStore.isOpen());
+//    Assert.False(globalStore.IsOpen());
 //}
 
 

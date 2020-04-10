@@ -17,15 +17,15 @@
 //        private readonly string testName;
 
 //        // As we add more buffer implementations/configurations, we can add them here
-//        // @Parameterized.Parameters(name = "{index}: test={0}")
+//        // @Parameterized.Parameters(Name = "{index}: test={0}")
 //        public static Collection<object[]> Parameters()
 //        {
 //            return singletonList(
 //                new object[] {
 //                "in-memory buffer",
-//                (Function<string, InMemoryTimeOrderedKeyValueBuffer<string, string>>) name =>
+//                (Function<string, InMemoryTimeOrderedKeyValueBuffer<string, string>>) Name =>
 //                    new InMemoryTimeOrderedKeyValueBuffer
-//                        .Builder<>(name, Serdes.String(), Serdes.String())
+//                        .Builder<>(Name, Serdes.String(), Serdes.String())
 //                        .Build()
 //                }
 //            );
@@ -56,7 +56,7 @@
 //        {
 //            try
 //            {
-//                buffer.close();
+//                buffer.Close();
 //                Utils.delete(context.stateDir());
 //            }
 //            catch (IOException e)
@@ -92,7 +92,7 @@
 //            buffer.Init(context, buffer);
 //            try
 //            {
-//                buffer.put(0, "asdf", null, GetContext(0));
+//                buffer.Put(0, "asdf", null, GetContext(0));
 //                Assert.True(false, "expected an exception");
 //            }
 //            catch (NullPointerException expected)
@@ -247,8 +247,8 @@
 
 //            ProcessorRecordContext recordContext = GetContext(0L);
 //            context.setRecordContext(recordContext);
-//            buffer.put(1L, "A", new Change<>("new-value", "old-value"), recordContext);
-//            buffer.put(1L, "B", new Change<>("new-value", null), recordContext);
+//            buffer.Put(1L, "A", new Change<>("new-value", "old-value"), recordContext);
+//            buffer.Put(1L, "B", new Change<>("new-value", null), recordContext);
 //            Assert.Equal(buffer.priorValueForBuffered("A"), (Maybe.defined(ValueAndTimestamp.Make("old-value", -1))));
 //            Assert.Equal(buffer.priorValueForBuffered("B"), (Maybe.defined(null)));
 //        }
@@ -266,8 +266,8 @@
 //            // replace "deleteme" with a tombstone
 //            buffer.evictWhile(() => buffer.minTimestamp() < 1, kv => { });
 
-//            // flush everything to the changelog
-//            buffer.flush();
+//            // Flush everything to the changelog
+//            buffer.Flush();
 
 //            // the buffer should serialize the buffer time and the value as byte[],
 //            // which we can't compare for equality using ProducerRecord.
@@ -357,7 +357,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "todelete".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + todeleteValue.Length).putLong(0L).put(todeleteValue).array()),
+//                                     new ByteBuffer().Allocate(long.BYTES + todeleteValue.Length).putLong(0L).Put(todeleteValue).array()),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
 //                                     1,
@@ -367,7 +367,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "asdf".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + asdfValue.Length).putLong(2L).put(asdfValue).array()),
+//                                     new ByteBuffer().Allocate(long.BYTES + asdfValue.Length).putLong(2L).Put(asdfValue).array()),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
 //                                     2,
@@ -377,7 +377,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "zxcv".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue1.Length).putLong(1L).put(zxcvValue1).array()),
+//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue1.Length).putLong(1L).Put(zxcvValue1).array()),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
 //                                     3,
@@ -387,7 +387,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "zxcv".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue2.Length).putLong(1L).put(zxcvValue2).array())
+//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue2.Length).putLong(1L).Put(zxcvValue2).array())
 //            ));
 
 //            Assert.Equal(buffer.numRecords(), (3));
@@ -415,7 +415,7 @@
 //            Assert.Equal(buffer.priorValueForBuffered("asdf"), (Maybe.defined(null)));
 //            Assert.Equal(buffer.priorValueForBuffered("zxcv"), (Maybe.defined(ValueAndTimestamp.Make("previous", -1))));
 
-//            // flush the buffer into a list in buffer order so we can make assertions about the contents.
+//            // Flush the buffer into a list in buffer order so we can make assertions about the contents.
 
 //            List<Eviction<string, string>> evicted = new LinkedList<>();
 //            buffer.evictWhile(() => true, evicted::add);
@@ -477,7 +477,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "todelete".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + todeleteValue.Length).putLong(0L).put(todeleteValue).array(),
+//                                     new ByteBuffer().Allocate(long.BYTES + todeleteValue.Length).putLong(0L).Put(todeleteValue).array(),
 //                                     v1FlagHeaders),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
@@ -488,7 +488,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "asdf".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + asdfValue.Length).putLong(2L).put(asdfValue).array(),
+//                                     new ByteBuffer().Allocate(long.BYTES + asdfValue.Length).putLong(2L).Put(asdfValue).array(),
 //                                     v1FlagHeaders),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
@@ -499,7 +499,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "zxcv".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue1.Length).putLong(1L).put(zxcvValue1).array(),
+//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue1.Length).putLong(1L).Put(zxcvValue1).array(),
 //                                     v1FlagHeaders),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
@@ -510,7 +510,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "zxcv".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue2.Length).putLong(1L).put(zxcvValue2).array(),
+//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue2.Length).putLong(1L).Put(zxcvValue2).array(),
 //                                     v1FlagHeaders)
 //            ));
 
@@ -539,7 +539,7 @@
 //            Assert.Equal(buffer.priorValueForBuffered("asdf"), (Maybe.defined(null)));
 //            Assert.Equal(buffer.priorValueForBuffered("zxcv"), (Maybe.defined(ValueAndTimestamp.Make("previous", -1))));
 
-//            // flush the buffer into a list in buffer order so we can make assertions about the contents.
+//            // Flush the buffer into a list in buffer order so we can make assertions about the contents.
 
 //            List<Eviction<string, string>> evicted = new LinkedList<>();
 //            buffer.evictWhile(() => true, evicted::add);
@@ -608,7 +608,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "todelete".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + todeleteValue.Length).put(todeleteValue).putLong(0L).array(),
+//                                     new ByteBuffer().Allocate(long.BYTES + todeleteValue.Length).Put(todeleteValue).putLong(0L).array(),
 //                                     v2FlagHeaders),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
@@ -619,7 +619,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "asdf".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + asdfValue.Length).put(asdfValue).putLong(2L).array(),
+//                                     new ByteBuffer().Allocate(long.BYTES + asdfValue.Length).Put(asdfValue).putLong(2L).array(),
 //                                     v2FlagHeaders),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
@@ -630,7 +630,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "zxcv".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue1.Length).put(zxcvValue1).putLong(1L).array(),
+//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue1.Length).Put(zxcvValue1).putLong(1L).array(),
 //                                     v2FlagHeaders),
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
@@ -641,7 +641,7 @@
 //                                     -1,
 //                                     -1,
 //                                     "zxcv".getBytes(UTF_8),
-//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue2.Length).put(zxcvValue2).putLong(1L).array(),
+//                                     new ByteBuffer().Allocate(long.BYTES + zxcvValue2.Length).Put(zxcvValue2).putLong(1L).array(),
 //                                     v2FlagHeaders)
 //            ));
 
@@ -670,7 +670,7 @@
 //            Assert.Equal(buffer.priorValueForBuffered("asdf"), (Maybe.defined(null)));
 //            Assert.Equal(buffer.priorValueForBuffered("zxcv"), (Maybe.defined(ValueAndTimestamp.Make("previous", -1))));
 
-//            // flush the buffer into a list in buffer order so we can make assertions about the contents.
+//            // Flush the buffer into a list in buffer order so we can make assertions about the contents.
 
 //            List<Eviction<string, string>> evicted = new LinkedList<>();
 //            buffer.evictWhile(() => true, evicted::add);
@@ -724,7 +724,7 @@
 //                                         -1,
 //                                         -1,
 //                                         "todelete".getBytes(UTF_8),
-//                                         new ByteBuffer().Allocate(long.BYTES + todeleteValue.Length).putLong(0L).put(todeleteValue).array(),
+//                                         new ByteBuffer().Allocate(long.BYTES + todeleteValue.Length).putLong(0L).Put(todeleteValue).array(),
 //                                         unknownFlagHeaders)
 //                ));
 //                Assert.True(false, "expected an exception");
@@ -748,7 +748,7 @@
 //        {
 //            ProcessorRecordContext recordContext = GetContext(recordTimestamp);
 //            context.setRecordContext(recordContext);
-//            buffer.put(streamTime, key, new Change<>(value, null), recordContext);
+//            buffer.Put(streamTime, key, new Change<>(value, null), recordContext);
 //        }
 
 //        private static BufferValue GetBufferValue(string value, long timestamp)

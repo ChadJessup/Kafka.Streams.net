@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             base.Init(context);
 
-            valueGetter.Init(context, this.storeName);
+            this.valueGetter.Init(context, this.storeName);
         }
 
         public override void Process(K1 key, V1 value)
@@ -51,26 +51,26 @@ namespace Kafka.Streams.KStream.Internals
             // thus, to be consistent and to avoid ambiguous null semantics, null values are ignored
             if (key == null || value == null)
             {
-                logger.LogWarning(
+                this.logger.LogWarning(
                     $"Skipping record due to null key or value. key=[{key}] " +
-                    $"value=[{value}] topic=[{Context.Topic}] partition=[{Context.Partition}] " +
-                    $"offset=[{Context.Offset}]");
+                    $"value=[{value}] topic=[{this.Context.Topic}] partition=[{this.Context.Partition}] " +
+                    $"offset=[{this.Context.Offset}]");
             }
             else
             {
-                K2 mappedKey = keyMapper.Apply(key, value);
-                V2 value2 = valueGetter.Get(mappedKey).Value;
+                K2 mappedKey = this.keyMapper.Apply(key, value);
+                V2 value2 = this.valueGetter.Get(mappedKey).Value;
 
-                if (leftJoin || value2 != null)
+                if (this.leftJoin || value2 != null)
                 {
-                    Context.Forward(key, joiner.Apply(value, value2));
+                    this.Context.Forward(key, this.joiner.Apply(value, value2));
                 }
             }
         }
 
         public override void Close()
         {
-            valueGetter.Close();
+            this.valueGetter.Close();
         }
     }
 }

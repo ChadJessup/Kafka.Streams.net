@@ -41,10 +41,10 @@
 
 //        public abstract void SetClassLoggerToDebug();
 
-//        private RecordCollectorImpl CreateRecordCollector(string name)
+//        private RecordCollectorImpl CreateRecordCollector(string Name)
 //        {
-//            return new RecordCollectorImpl(name,
-//                new LogContext(name),
+//            return new RecordCollectorImpl(Name,
+//                new LogContext(Name),
 //                new DefaultProductionExceptionHandler())
 ////                new Metrics().sensor("skipped-records"))
 //            {
@@ -72,7 +72,7 @@
 //    {
 //        windowStore = buildWindowStore(RETENTION_PERIOD, WINDOW_SIZE, false, Serdes.Int(), Serdes.String());
 
-//        RecordCollector recordCollector = createRecordCollector(windowStore.name());
+//        RecordCollector recordCollector = createRecordCollector(windowStore.Name());
 //        recordCollector.Init(producer);
 
 //        context = new InternalMockProcessorContext(
@@ -91,7 +91,7 @@
 
 //    public void After()
 //    {
-//        windowStore.close();
+//        windowStore.Close();
 //    }
 
 //    [Fact]
@@ -214,8 +214,8 @@
 //                ofEpochMilli(startTime + 12L - WINDOW_SIZE),
 //                ofEpochMilli(startTime + 12L + WINDOW_SIZE))));
 
-//        // Flush the store and verify all current entries were properly flushed ...
-//        windowStore.flush();
+//        // Flush the store and verify All current entries were properly flushed ...
+//        windowStore.Flush();
 
 //        Dictionary<int, HashSet<string>> entriesByKey = entriesByKey(changeLog, startTime);
 
@@ -237,15 +237,15 @@
 
 //        putFirstBatch(windowStore, startTime, context);
 
-//        KeyValuePair<Windowed<int>, string> zero = windowedPair(0, "zero", startTime + 0);
-//        KeyValuePair<Windowed<int>, string> one = windowedPair(1, "one", startTime + 1);
-//        KeyValuePair<Windowed<int>, string> two = windowedPair(2, "two", startTime + 2);
-//        KeyValuePair<Windowed<int>, string> four = windowedPair(4, "four", startTime + 4);
-//        KeyValuePair<Windowed<int>, string> five = windowedPair(5, "five", startTime + 5);
+//        KeyValuePair<IWindowed<int>, string> zero = windowedPair(0, "zero", startTime + 0);
+//        KeyValuePair<IWindowed<int>, string> one = windowedPair(1, "one", startTime + 1);
+//        KeyValuePair<IWindowed<int>, string> two = windowedPair(2, "two", startTime + 2);
+//        KeyValuePair<IWindowed<int>, string> four = windowedPair(4, "four", startTime + 4);
+//        KeyValuePair<IWindowed<int>, string> five = windowedPair(5, "five", startTime + 5);
 
 //        Assert.Equal(
 //            new HashSet<>(asList(zero, one, two, four, five)),
-//            toSet(windowStore.all())
+//            toSet(windowStore.All())
 //        );
 //    }
 
@@ -256,23 +256,23 @@
 
 //        putFirstBatch(windowStore, startTime, context);
 
-//        KeyValuePair<Windowed<int>, string> zero = windowedPair(0, "zero", startTime + 0);
-//        KeyValuePair<Windowed<int>, string> one = windowedPair(1, "one", startTime + 1);
-//        KeyValuePair<Windowed<int>, string> two = windowedPair(2, "two", startTime + 2);
-//        KeyValuePair<Windowed<int>, string> four = windowedPair(4, "four", startTime + 4);
-//        KeyValuePair<Windowed<int>, string> five = windowedPair(5, "five", startTime + 5);
+//        KeyValuePair<IWindowed<int>, string> zero = windowedPair(0, "zero", startTime + 0);
+//        KeyValuePair<IWindowed<int>, string> one = windowedPair(1, "one", startTime + 1);
+//        KeyValuePair<IWindowed<int>, string> two = windowedPair(2, "two", startTime + 2);
+//        KeyValuePair<IWindowed<int>, string> four = windowedPair(4, "four", startTime + 4);
+//        KeyValuePair<IWindowed<int>, string> five = windowedPair(5, "five", startTime + 5);
 
 //        Assert.Equal(
 //            new HashSet<>(asList(one, two, four)),
-//            toSet(windowStore.fetchAll(ofEpochMilli(startTime + 1), ofEpochMilli(startTime + 4)))
+//            toSet(windowStore.FetchAll(ofEpochMilli(startTime + 1), ofEpochMilli(startTime + 4)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(asList(zero, one, two)),
-//            toSet(windowStore.fetchAll(ofEpochMilli(startTime + 0), ofEpochMilli(startTime + 3)))
+//            toSet(windowStore.FetchAll(ofEpochMilli(startTime + 0), ofEpochMilli(startTime + 3)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(asList(one, two, four, five)),
-//            toSet(windowStore.fetchAll(ofEpochMilli(startTime + 1), ofEpochMilli(startTime + 5)))
+//            toSet(windowStore.FetchAll(ofEpochMilli(startTime + 1), ofEpochMilli(startTime + 5)))
 //        );
 //    }
 
@@ -283,11 +283,11 @@
 
 //        putFirstBatch(windowStore, startTime, context);
 
-//        KeyValuePair<Windowed<int>, string> zero = windowedPair(0, "zero", startTime + 0);
-//        KeyValuePair<Windowed<int>, string> one = windowedPair(1, "one", startTime + 1);
-//        KeyValuePair<Windowed<int>, string> two = windowedPair(2, "two", startTime + 2);
-//        KeyValuePair<Windowed<int>, string> four = windowedPair(4, "four", startTime + 4);
-//        KeyValuePair<Windowed<int>, string> five = windowedPair(5, "five", startTime + 5);
+//        KeyValuePair<IWindowed<int>, string> zero = windowedPair(0, "zero", startTime + 0);
+//        KeyValuePair<IWindowed<int>, string> one = windowedPair(1, "one", startTime + 1);
+//        KeyValuePair<IWindowed<int>, string> two = windowedPair(2, "two", startTime + 2);
+//        KeyValuePair<IWindowed<int>, string> four = windowedPair(4, "four", startTime + 4);
+//        KeyValuePair<IWindowed<int>, string> five = windowedPair(5, "five", startTime + 5);
 
 //        Assert.Equal(
 //            new HashSet<>(asList(zero, one)),
@@ -492,8 +492,8 @@
 //                ofEpochMilli(startTime + 13L - WINDOW_SIZE),
 //                ofEpochMilli(startTime + 13L))));
 
-//        // Flush the store and verify all current entries were properly flushed ...
-//        windowStore.flush();
+//        // Flush the store and verify All current entries were properly flushed ...
+//        windowStore.Flush();
 
 //        Dictionary<int, HashSet<string>> entriesByKey = entriesByKey(changeLog, startTime);
 //        Assert.Equal(Utils.mkSet("zero@0"), entriesByKey.Get(0));
@@ -602,8 +602,8 @@
 //            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 12L),
 //                ofEpochMilli(startTime + 12L + WINDOW_SIZE))));
 
-//        // Flush the store and verify all current entries were properly flushed ...
-//        windowStore.flush();
+//        // Flush the store and verify All current entries were properly flushed ...
+//        windowStore.Flush();
 
 //        Dictionary<int, HashSet<string>> entriesByKey = entriesByKey(changeLog, startTime);
 
@@ -627,16 +627,16 @@
 //        long startTime = SEGMENT_INTERVAL - 4L;
 
 //        setCurrentTime(startTime);
-//        windowStore.put(0, "zero");
+//        windowStore.Put(0, "zero");
 
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("zero")),
 //            toSet(windowStore.Fetch(0, ofEpochMilli(startTime - WINDOW_SIZE),
 //                ofEpochMilli(startTime + WINDOW_SIZE))));
 
-//        windowStore.put(0, "zero");
-//        windowStore.put(0, "zero+");
-//        windowStore.put(0, "zero++");
+//        windowStore.Put(0, "zero");
+//        windowStore.Put(0, "zero+");
+//        windowStore.Put(0, "zero++");
 
 //        Assert.Equal(
 //            new HashSet<>(asList("zero", "zero", "zero+", "zero++")),
@@ -669,8 +669,8 @@
 //                ofEpochMilli(startTime + 4L - WINDOW_SIZE),
 //                ofEpochMilli(startTime + 4L + WINDOW_SIZE))));
 
-//        // Flush the store and verify all current entries were properly flushed ...
-//        windowStore.flush();
+//        // Flush the store and verify All current entries were properly flushed ...
+//        windowStore.Flush();
 
 //        Dictionary<int, HashSet<string>> entriesByKey = entriesByKey(changeLog, startTime);
 
@@ -681,13 +681,13 @@
 //    public void ShouldCloseOpenIteratorsWhenStoreIsClosedAndNotThrowInvalidStateStoreExceptionOnHasNext()
 //    {
 //        setCurrentTime(0);
-//        windowStore.put(1, "one", 1L);
-//        windowStore.put(1, "two", 2L);
-//        windowStore.put(1, "three", 3L);
+//        windowStore.Put(1, "one", 1L);
+//        windowStore.Put(1, "two", 2L);
+//        windowStore.Put(1, "three", 3L);
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, ofEpochMilli(1L), ofEpochMilli(3L));
 //        Assert.True(iterator.HasNext());
-//        windowStore.close();
+//        windowStore.Close();
 
 //        Assert.False(iterator.HasNext());
 //    }
@@ -705,16 +705,16 @@
 
 //        windowStore.Init(context, windowStore);
 
-//        windowStore.put("a", "0001", 0);
-//        windowStore.put("aa", "0002", 0);
-//        windowStore.put("a", "0003", 1);
-//        windowStore.put("aa", "0004", 1);
-//        windowStore.put("a", "0005", 0x7a00000000000000L - 1);
+//        windowStore.Put("a", "0001", 0);
+//        windowStore.Put("aa", "0002", 0);
+//        windowStore.Put("a", "0003", 1);
+//        windowStore.Put("aa", "0004", 1);
+//        windowStore.Put("a", "0005", 0x7a00000000000000L - 1);
 
 //        Set expected = new HashSet<>(asList("0001", "0003", "0005"));
 //        Assert.Equal(toSet(windowStore.Fetch("a", ofEpochMilli(0), ofEpochMilli(long.MaxValue))), (expected));
 
-//        HashSet<KeyValuePair<Windowed<string>, string>> set =
+//        HashSet<KeyValuePair<IWindowed<string>, string>> set =
 //            toSet(windowStore.Fetch("a", "a", ofEpochMilli(0), ofEpochMilli(long.MaxValue)));
 //        Assert.Equal(set, (new HashSet<>(asList(
 //            windowedPair("a", "0001", 0, windowSize),
@@ -735,13 +735,13 @@
 
 //        long currentTime = 0;
 //        setCurrentTime(currentTime);
-//        windowStore.put(1, "one");
-//        windowStore.put(1, "one v2");
+//        windowStore.Put(1, "one");
+//        windowStore.Put(1, "one v2");
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0, currentTime);
 //        Assert.Equal(KeyValuePair.Create(currentTime, "one v2"), iterator.MoveNext());
 
-//        windowStore.put(1, null);
+//        windowStore.Put(1, null);
 //        iterator = windowStore.Fetch(1, 0, currentTime);
 //        Assert.False(iterator.HasNext());
 //    }
@@ -755,7 +755,7 @@
 //    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //    {
-//        windowStore.put(null, "anyValue");
+//        windowStore.Put(null, "anyValue");
 //    }
 
 //    [Fact]// (expected = NullPointerException)
@@ -789,15 +789,15 @@
 //        Bytes key1 = Bytes.Wrap(new byte[] { 0 });
 //        Bytes key2 = Bytes.Wrap(new byte[] { 0, 0 });
 //        Bytes key3 = Bytes.Wrap(new byte[] { 0, 0, 0 });
-//        windowStore.put(key1, "1", 0);
-//        windowStore.put(key2, "2", 0);
-//        windowStore.put(key3, "3", 0);
-//        windowStore.put(key1, "4", 1);
-//        windowStore.put(key2, "5", 1);
-//        windowStore.put(key3, "6", 59999);
-//        windowStore.put(key1, "7", 59999);
-//        windowStore.put(key2, "8", 59999);
-//        windowStore.put(key3, "9", 59999);
+//        windowStore.Put(key1, "1", 0);
+//        windowStore.Put(key2, "2", 0);
+//        windowStore.Put(key3, "3", 0);
+//        windowStore.Put(key1, "4", 1);
+//        windowStore.Put(key2, "5", 1);
+//        windowStore.Put(key3, "6", 59999);
+//        windowStore.Put(key1, "7", 59999);
+//        windowStore.Put(key2, "8", 59999);
+//        windowStore.Put(key3, "9", 59999);
 
 //        Set expectedKey1 = new HashSet<>(asList("1", "4", "7"));
 //        Assert.Equal(toSet(windowStore.Fetch(key1, ofEpochMilli(0), ofEpochMilli(long.MaxValue))),
@@ -813,13 +813,13 @@
 //    [Fact]
 //    public void ShouldReturnSameResultsForSingleKeyFetchAndEqualKeyRangeFetch()
 //    {
-//        windowStore.put(1, "one", 0L);
-//        windowStore.put(2, "two", 1L);
-//        windowStore.put(2, "two", 2L);
-//        windowStore.put(3, "three", 3L);
+//        windowStore.Put(1, "one", 0L);
+//        windowStore.Put(2, "two", 1L);
+//        windowStore.Put(2, "two", 2L);
+//        windowStore.Put(3, "three", 3L);
 
 //        IWindowStoreIterator<string> singleKeyIterator = windowStore.Fetch(2, 0L, 5L);
-//        IKeyValueIterator<Windowed<int>, string> keyRangeIterator = windowStore.Fetch(2, 2, 0L, 5L);
+//        IKeyValueIterator<IWindowed<int>, string> keyRangeIterator = windowStore.Fetch(2, 2, 0L, 5L);
 
 //        Assert.Equal(singleKeyIterator.MoveNext().value, keyRangeIterator.MoveNext().value);
 //        Assert.Equal(singleKeyIterator.MoveNext().value, keyRangeIterator.MoveNext().value);
@@ -838,7 +838,7 @@
 
 //        List<string> messages = appender.getMessages();
 //        Assert.Equal(messages,
-//            hasItem("Returning empty iterator for fetch with invalid key range: from > to. "
+//            hasItem("Returning empty iterator for Fetch with invalid key range: from > to. "
 //                + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. "
 //                + "Note that the built-in numerical serdes do not follow this for negative numbers"));
 //    }
@@ -850,11 +850,11 @@
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
 //        // Advance stream time by inserting record with large enough timestamp that records with timestamp 0 are expired
-//        windowStore.put(1, "initial record", 2 * RETENTION_PERIOD);
+//        windowStore.Put(1, "initial record", 2 * RETENTION_PERIOD);
 
 //        // Try inserting a record with timestamp 0 -- should be dropped
-//        windowStore.put(1, "late record", 0L);
-//        windowStore.put(1, "another on-time record", RETENTION_PERIOD + 1);
+//        windowStore.Put(1, "late record", 0L);
+//        windowStore.Put(1, "another on-time record", RETENTION_PERIOD + 1);
 
 //        LogCaptureAppender.Unregister(appender);
 
@@ -869,7 +869,7 @@
 //            mkMap(
 //                mkEntry("client-id", "mock"),
 //                mkEntry("task-id", "0_0"),
-//                mkEntry(metricScope + "-id", windowStore.name())
+//                mkEntry(metricScope + "-id", windowStore.Name())
 //            )
 //        ));
 
@@ -880,7 +880,7 @@
 //            mkMap(
 //                mkEntry("client-id", "mock"),
 //                mkEntry("task-id", "0_0"),
-//                mkEntry(metricScope + "-id", windowStore.name())
+//                mkEntry(metricScope + "-id", windowStore.Name())
 //            )
 //        ));
 
@@ -893,8 +893,8 @@
 //    [Fact]
 //    public void ShouldNotThrowExceptionWhenFetchRangeIsExpired()
 //    {
-//        windowStore.put(1, "one", 0L);
-//        windowStore.put(1, "two", 4 * RETENTION_PERIOD);
+//        windowStore.Put(1, "one", 0L);
+//        windowStore.Put(1, "two", 4 * RETENTION_PERIOD);
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0L, 10L);
 
@@ -906,12 +906,12 @@
 //    {
 //        long currentTime = 0;
 //        setCurrentTime(currentTime);
-//        windowStore.put(1, "one");
+//        windowStore.Put(1, "one");
 
-//        IKeyValueIterator<Windowed<int>, string> iterator = windowStore.fetchAll(0L, currentTime);
+//        IKeyValueIterator<IWindowed<int>, string> iterator = windowStore.FetchAll(0L, currentTime);
 
 //        Assert.True(iterator.HasNext());
-//        Windowed<int> nextKey = iterator.PeekNextKey();
+//        IWindowed<int> nextKey = iterator.PeekNextKey();
 
 //        Assert.Equal(iterator.PeekNextKey(), nextKey);
 //        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
@@ -921,7 +921,7 @@
 //    [Fact]
 //    public void TestValueIteratorPeek()
 //    {
-//        windowStore.put(1, "one", 0L);
+//        windowStore.Put(1, "one", 0L);
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0L, 10L);
 
@@ -938,23 +938,23 @@
 //    {
 //        long currentTime = 0;
 //        setCurrentTime(currentTime);
-//        windowStore.put(1, "one");
+//        windowStore.Put(1, "one");
 
 //        currentTime += WINDOW_SIZE * 10;
 //        setCurrentTime(currentTime);
-//        windowStore.put(1, "two");
+//        windowStore.Put(1, "two");
 
-//        IKeyValueIterator<Windowed<int>, string> iterator = windowStore.all();
-
-//        currentTime += WINDOW_SIZE * 10;
-//        setCurrentTime(currentTime);
-//        windowStore.put(1, "three");
+//        IKeyValueIterator<IWindowed<int>, string> iterator = windowStore.All();
 
 //        currentTime += WINDOW_SIZE * 10;
 //        setCurrentTime(currentTime);
-//        windowStore.put(2, "four");
+//        windowStore.Put(1, "three");
 
-//        // Iterator should return all records in store and not throw exception b/c some were added after fetch
+//        currentTime += WINDOW_SIZE * 10;
+//        setCurrentTime(currentTime);
+//        windowStore.Put(2, "four");
+
+//        // Iterator should return All records in store and not throw exception b/c some were added after Fetch
 //        Assert.Equal(windowedPair(1, "one", 0), iterator.MoveNext());
 //        Assert.Equal(windowedPair(1, "two", WINDOW_SIZE * 10), iterator.MoveNext());
 //        Assert.Equal(windowedPair(1, "three", WINDOW_SIZE * 20), iterator.MoveNext());
@@ -970,18 +970,18 @@
 
 //        long currentTime = 0;
 //        setCurrentTime(currentTime);
-//        windowStore.put(1, "one");
-//        windowStore.put(1, "one-2");
+//        windowStore.Put(1, "one");
+//        windowStore.Put(1, "one-2");
 
 //        currentTime += WINDOW_SIZE * 10;
 //        setCurrentTime(currentTime);
-//        windowStore.put(1, "two");
-//        windowStore.put(1, "two-2");
+//        windowStore.Put(1, "two");
+//        windowStore.Put(1, "two-2");
 
 //        currentTime += WINDOW_SIZE * 10;
 //        setCurrentTime(currentTime);
-//        windowStore.put(1, "three");
-//        windowStore.put(1, "three-2");
+//        windowStore.Put(1, "three");
+//        windowStore.Put(1, "three-2");
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0, WINDOW_SIZE * 10);
 
@@ -998,15 +998,15 @@
 //        InternalMockProcessorContext context)
 //    {
 //        context.setRecordContext(createRecordContext(startTime));
-//        store.put(0, "zero");
+//        store.Put(0, "zero");
 //        context.setRecordContext(createRecordContext(startTime + 1L));
-//        store.put(1, "one");
+//        store.Put(1, "one");
 //        context.setRecordContext(createRecordContext(startTime + 2L));
-//        store.put(2, "two");
+//        store.Put(2, "two");
 //        context.setRecordContext(createRecordContext(startTime + 4L));
-//        store.put(4, "four");
+//        store.Put(4, "four");
 //        context.setRecordContext(createRecordContext(startTime + 5L));
-//        store.put(5, "five");
+//        store.Put(5, "five");
 //    }
 
 //    private void PutSecondBatch(IWindowStore<int, string> store,
@@ -1014,17 +1014,17 @@
 //        InternalMockProcessorContext context)
 //    {
 //        context.setRecordContext(createRecordContext(startTime + 3L));
-//        store.put(2, "two+1");
+//        store.Put(2, "two+1");
 //        context.setRecordContext(createRecordContext(startTime + 4L));
-//        store.put(2, "two+2");
+//        store.Put(2, "two+2");
 //        context.setRecordContext(createRecordContext(startTime + 5L));
-//        store.put(2, "two+3");
+//        store.Put(2, "two+3");
 //        context.setRecordContext(createRecordContext(startTime + 6L));
-//        store.put(2, "two+4");
+//        store.Put(2, "two+4");
 //        context.setRecordContext(createRecordContext(startTime + 7L));
-//        store.put(2, "two+5");
+//        store.Put(2, "two+5");
 //        context.setRecordContext(createRecordContext(startTime + 8L));
-//        store.put(2, "two+6");
+//        store.Put(2, "two+6");
 //    }
 
 //    protected static HashSet<E> ToSet<E>(IWindowStoreIterator<E> iterator)
@@ -1066,14 +1066,14 @@
 //        return entriesByKey;
 //    }
 
-//    protected static KeyValuePair<Windowed<K>, V> WindowedPair<K, V>(K key, V value, long timestamp)
+//    protected static KeyValuePair<IWindowed<K>, V> WindowedPair<K, V>(K key, V value, long timestamp)
 //    {
 //        return windowedPair(key, value, timestamp, WINDOW_SIZE);
 //    }
 
-//    private static KeyValuePair<Windowed<K>, V> WindowedPair<K, V>(K key, V value, long timestamp, long windowSize)
+//    private static KeyValuePair<IWindowed<K>, V> WindowedPair<K, V>(K key, V value, long timestamp, long windowSize)
 //    {
-//        return KeyValuePair.Create(new Windowed<>(key, WindowKeySchema.timeWindowForSize(timestamp, windowSize)), value);
+//        return KeyValuePair.Create(new IWindowed<>(key, WindowKeySchema.timeWindowForSize(timestamp, windowSize)), value);
 //    }
 
 //    protected void SetCurrentTime(long currentTime)

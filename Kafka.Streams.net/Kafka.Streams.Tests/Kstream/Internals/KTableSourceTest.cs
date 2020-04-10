@@ -82,11 +82,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            KTableValueGetterSupplier<string, string> getterSupplier1 = table1.valueGetterSupplier();
 
 //            InternalTopologyBuilder topologyBuilder = TopologyWrapper.getInternalTopologyBuilder(topology);
-//            topologyBuilder.connectProcessorAndStateStores(table1.name, getterSupplier1.storeNames());
+//            topologyBuilder.connectProcessorAndStateStores(table1.Name, getterSupplier1.storeNames());
 
 //            var driver = new TopologyTestDriverWrapper(builder.Build(), props){
 //            IKTableValueGetter<string, string> getter1 = getterSupplier1.Get();
-//            getter1.Init(driver.setCurrentNodeForProcessorContext(table1.name));
+//            getter1.Init(driver.setCurrentNodeForProcessorContext(table1.Name));
 
 //            driver.PipeInput(recordFactory.Create(topic1, "A", "01", 10L));
 //            driver.PipeInput(recordFactory.Create(topic1, "B", "01", 20L));
@@ -127,7 +127,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var table1 = (IKTable<string, string>)builder.Table(topic1, stringConsumed);
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            Topology topology = builder.Build().AddProcessor("proc1", supplier, table1.name);
+//            Topology topology = builder.Build().AddProcessor("proc1", supplier, table1.Name);
 
 //            var driver = new TopologyTestDriver(topology, props);
 //            MockProcessor<string, int> proc1 = supplier.theCapturedProcessor();
@@ -165,7 +165,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Assert.True(table1.sendingOldValueEnabled());
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            Topology topology = builder.Build().AddProcessor("proc1", supplier, table1.name);
+//            Topology topology = builder.Build().AddProcessor("proc1", supplier, table1.Name);
 
 //            try
 //            {

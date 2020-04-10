@@ -2,19 +2,19 @@
 
 //namespace Kafka.Streams.KStream.Internals
 //{
-//    public class KTableSessionWindowValueGetter : IKTableValueGetter<Windowed<K>, Agg>
+//    public class KTableSessionWindowValueGetter : IKTableValueGetter<IWindowed<K>, Agg>
 //{
 //    private ISessionStore<K, Agg> store;
 
 
 
-//    public void init(IProcessorContext context)
+//    public void Init(IProcessorContext context)
 //    {
 //        store = (ISessionStore<K, Agg>)context.getStateStore(storeName);
 //    }
 
 
-//    public ValueAndTimestamp<Agg> get(Windowed<K> key)
+//    public ValueAndTimestamp<Agg> get(IWindowed<K> key)
 //    {
 //        return ValueAndTimestamp.Make(
 //            store.FetchSession(key.key(), key.window().start(), key.window().end()),
@@ -22,7 +22,7 @@
 //    }
 
 
-//    public void close()
+//    public void Close()
 //    {
 //    }
 //}

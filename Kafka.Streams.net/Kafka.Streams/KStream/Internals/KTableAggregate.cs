@@ -15,7 +15,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void EnableSendingOldValues()
         {
-            sendOldValues = true;
+            this.sendOldValues = true;
         }
 
         public IKeyValueProcessor<K, IChange<V>> Get()

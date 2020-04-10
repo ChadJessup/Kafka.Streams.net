@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Kafka.Streams.State.Internals
 {
 
-    public class ValueAndTimestampSerializer<V> : ISerializer<ValueAndTimestamp<V>>
+    public class ValueAndTimestampSerializer<V> : ISerializer<IValueAndTimestamp<V>>
     {
         public ISerializer<V> valueSerializer;
         private readonly ISerializer<long> timestampSerializer;
@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals
             valueSerializer = valueSerializer ?? throw new ArgumentNullException(nameof(valueSerializer));
 
             this.valueSerializer = valueSerializer;
-            timestampSerializer = Serdes.Long().Serializer;
+            this.timestampSerializer = Serdes.Long().Serializer;
         }
 
         public void Configure(
@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         public byte[] Serialize(
-            ValueAndTimestamp<V> data,
+            IValueAndTimestamp<V> data,
             SerializationContext context)
         {
             if (data == null)
@@ -38,7 +38,7 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            return Serialize(context.Topic, data.Value, data.Timestamp);
+            return this.Serialize(context.Topic, data.Value, data.Timestamp);
         }
 
         public byte[] Serialize(
@@ -51,8 +51,8 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            var RawValue = valueSerializer.Serialize(data, new SerializationContext(MessageComponentType.Value, topic));
-            var rawTimestamp = timestampSerializer.Serialize(timestamp, new SerializationContext(MessageComponentType.Value, topic));
+            var RawValue = this.valueSerializer.Serialize(data, new SerializationContext(MessageComponentType.Value, topic));
+            var rawTimestamp = this.timestampSerializer.Serialize(timestamp, new SerializationContext(MessageComponentType.Value, topic));
 
             return new ByteBuffer()
                 .Allocate(rawTimestamp.Length + RawValue.Length)
@@ -63,8 +63,8 @@ namespace Kafka.Streams.State.Internals
 
         public void Close()
         {
-            // valueSerializer.close();
-            // timestampSerializer.close();
+            // valueSerializer.Close();
+            // timestampSerializer.Close();
         }
     }
 }

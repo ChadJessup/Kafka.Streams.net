@@ -85,7 +85,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "B0+a0", 0),
 //                    new KeyValueTimestamp<>(1, "B1+a1", 0),
 //                    new KeyValueTimestamp<>(2, "B2+null", 0));
-//                // push all items to the other stream; this should produce five items
+//                // push All items to the other stream; this should produce five items
 //                // w1 = { 0:A0, 1:A1, 0:B0, 1:B1, 2:B2 }
 //                // w2 = { 0:a0, 1:a1 }
 //                // -=> w1 = { 0:A0, 1:A1, 0:B0, 1:B1, 2:B2 }
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    new KeyValueTimestamp<>(1, "A1+b1", 0),
 //                    new KeyValueTimestamp<>(1, "B1+b1", 0),
 //                    new KeyValueTimestamp<>(2, "B2+b2", 0));
-//                // push all four items to the primary stream; this should produce six items
+//                // push All four items to the primary stream; this should produce six items
 //                // w1 = { 0:A0, 1:A1, 0:B0, 1:B1, 2:B2 }
 //                // w2 = { 0:a0, 1:a1, 0:b0, 1:b1, 2:b2, 3:b3 }
 //                // -=> w1 = { 0:A0, 1:A1, 0:B0, 1:B1, 2:B2, 0:C0, 1:C1, 2:C2, 3:C3 }

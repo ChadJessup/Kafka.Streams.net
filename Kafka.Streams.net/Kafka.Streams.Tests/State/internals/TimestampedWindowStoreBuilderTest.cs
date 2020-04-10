@@ -54,8 +54,8 @@
 //        public void SetUp()
 //        {
 //            expect(supplier.Get()).andReturn(inner);
-//            expect(supplier.name()).andReturn("name");
-//            expect(inner.persistent()).andReturn(true).anyTimes();
+//            expect(supplier.Name()).andReturn("Name");
+//            expect(inner.Persistent()).andReturn(true).anyTimes();
 //            replay(supplier, inner);
 
 //            builder = new TimestampedWindowStoreBuilder<>(
@@ -130,14 +130,14 @@
 //            reset(supplier);
 //            expect(supplier.Get()).andReturn(new RocksDBTimestampedWindowStore(
 //                new RocksDBTimestampedSegmentedBytesStore(
-//                    "name",
+//                    "Name",
 //                    "metric-scope",
 //                    10L,
 //                    5L,
 //                    new WindowKeySchema()),
 //                false,
 //                1L));
-//            expect(supplier.name()).andReturn("name");
+//            expect(supplier.Name()).andReturn("Name");
 //            replay(supplier);
 
 //            ITimestampedWindowStore<string, string> store = builder
@@ -153,14 +153,14 @@
 //            reset(supplier);
 //            expect(supplier.Get()).andReturn(new RocksDBWindowStore(
 //                new RocksDBSegmentedBytesStore(
-//                    "name",
+//                    "Name",
 //                    "metric-scope",
 //                    10L,
 //                    5L,
 //                    new WindowKeySchema()),
 //                false,
 //                1L));
-//            expect(supplier.name()).andReturn("name");
+//            expect(supplier.Name()).andReturn("Name");
 //            replay(supplier);
 
 //            ITimestampedWindowStore<string, string> store = builder

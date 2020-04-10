@@ -39,7 +39,7 @@
 
 //        public void Setup()
 //        {
-//            // Create a new directory in which we'll put all of the state for this test, enabling running tests in parallel ...
+//            // Create a new directory in which we'll Put All of the state for this test, enabling running tests in parallel ...
 //            File localState = TestUtils.GempDirectory();
 //            props.Set(StreamsConfig.APPLICATION_ID_CONFIG, "processor-topology-test");
 //            props.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9091");
@@ -55,7 +55,7 @@
 //            props.Clear();
 //            if (driver != null)
 //            {
-//                driver.close();
+//                driver.Close();
 //            }
 //            driver = null;
 //        }
@@ -416,7 +416,7 @@
 //            IStoreBuilder<IKeyValueStore<string, string>> storeBuilder =
 //                    Stores.KeyValueStoreBuilder<string, string>(null, storeSupplier, Serdes.String(), Serdes.String());
 //            topology.AddSource("source", STRING_DESERIALIZER, STRING_DESERIALIZER, "topic")
-//                    .AddProcessor(processor, () => new StatefulProcessor(storeSupplier.name()), "source")
+//                    .AddProcessor(processor, () => new StatefulProcessor(storeSupplier.Name()), "source")
 //                    .addStateStore(storeBuilder, processor);
 //            return topology.getInternalBuilder("anyAppId").Build();
 //        }
@@ -427,7 +427,7 @@
 //            IStoreBuilder<IKeyValueStore<string, string>> storeBuilder =
 //                    Stores.KeyValueStoreBuilder(storeSupplier, Serdes.String(), Serdes.String()).withLoggingDisabled();
 //            topology.addGlobalStore(storeBuilder, "global", STRING_DESERIALIZER, STRING_DESERIALIZER, "topic", "processor",
-//                    define(new StatefulProcessor(storeSupplier.name())));
+//                    define(new StatefulProcessor(storeSupplier.Name())));
 //            return topology.getInternalBuilder("anyAppId").Build();
 //        }
 
@@ -599,7 +599,7 @@
 //        }
 
 //        /**
-//         * A processor that simply forwards all messages to all children.
+//         * A processor that simply forwards All messages to All children.
 //         */
 //        protected class ForwardingProcessor : AbstractProcessor<string, string>
 //        {
@@ -610,7 +610,7 @@
 //        }
 
 //        /**
-//         * A processor that simply forwards all messages to all children with advanced timestamps.
+//         * A processor that simply forwards All messages to All children with advanced timestamps.
 //         */
 //        protected class TimestampProcessor : AbstractProcessor<string, string>
 //        {

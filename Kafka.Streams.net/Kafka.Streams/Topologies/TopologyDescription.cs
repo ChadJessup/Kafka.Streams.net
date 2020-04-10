@@ -22,12 +22,12 @@ namespace Kafka.Streams.Topologies
 
         public void AddSubtopology(ISubtopology subtopology)
         {
-            subtopologies.Add(subtopology);
+            this.subtopologies.Add(subtopology);
         }
 
         public void AddGlobalStore(IGlobalStore globalStore)
         {
-            globalStores.Add(globalStore);
+            this.globalStores.Add(globalStore);
         }
 
         public override string ToString()
@@ -35,9 +35,9 @@ namespace Kafka.Streams.Topologies
             var sb = new StringBuilder();
             sb.Append("Topologies:\n ");
             ISubtopology[] sortedSubtopologies =
-                subtopologies.OrderByDescending(t => t.id).ToArray();
+                this.subtopologies.OrderByDescending(t => t.id).ToArray();
             IGlobalStore[] sortedGlobalStores =
-                globalStores.OrderByDescending(s => s.id).ToArray();
+                this.globalStores.OrderByDescending(s => s.id).ToArray();
             var expectedId = 0;
             var subtopologiesIndex = sortedSubtopologies.Length - 1;
             var globalStoresIndex = sortedGlobalStores.Length - 1;
@@ -84,19 +84,19 @@ namespace Kafka.Streams.Topologies
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (TopologyDescription)o;
-            return subtopologies.Equals(that.subtopologies)
-                && globalStores.Equals(that.globalStores);
+            return this.subtopologies.Equals(that.subtopologies)
+                && this.globalStores.Equals(that.globalStores);
         }
 
         public override int GetHashCode()
         {
-            return (subtopologies, globalStores).GetHashCode();
+            return (this.subtopologies, this.globalStores).GetHashCode();
         }
 
 

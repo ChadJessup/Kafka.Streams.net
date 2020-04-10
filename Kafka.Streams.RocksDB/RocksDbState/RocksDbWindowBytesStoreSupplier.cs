@@ -13,14 +13,14 @@ namespace Kafka.Streams.State.Internals
         public bool ReturnTimestampedStore { get; }
 
         public RocksDbWindowBytesStoreSupplier(
-            string name,
+            string Name,
             TimeSpan retentionPeriod,
             TimeSpan segmentInterval,
             TimeSpan windowSize,
             bool retainDuplicates,
             bool returnTimestampedStore)
         {
-            this.Name = name;
+            this.Name = Name;
             this.RetentionPeriod = retentionPeriod;
             this.SegmentInterval = segmentInterval;
             this.WindowSize = windowSize;
@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Internals
 
         public IWindowStore<Bytes, byte[]> Get()
         {
-            if (!ReturnTimestampedStore)
+            if (!this.ReturnTimestampedStore)
             {
                 return null;
                 // new RocksDbWindowStore(
@@ -68,7 +68,7 @@ namespace Kafka.Streams.State.Internals
             throw new System.NotImplementedException();
         }
 
-        public void SetName(string name)
+        public void SetName(string Name)
         {
             throw new NotImplementedException();
         }

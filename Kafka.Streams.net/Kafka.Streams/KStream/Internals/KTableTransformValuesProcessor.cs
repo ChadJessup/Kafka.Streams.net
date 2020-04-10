@@ -17,7 +17,7 @@
 //            this.valueTransformer = valueTransformer = valueTransformer ?? throw new ArgumentNullException(nameof(valueTransformer));
 //        }
 
-//        public void init(IProcessorContext context)
+//        public void Init(IProcessorContext context)
 //        {
 //            base.Init(context);
 //            valueTransformer.Init(new ForwardingDisabledProcessorContext<K, V>(context));
@@ -52,9 +52,9 @@
 //        }
 
 
-//        public void close()
+//        public void Close()
 //        {
-//            valueTransformer.close();
+//            valueTransformer.Close();
 //        }
 //    }
 //}

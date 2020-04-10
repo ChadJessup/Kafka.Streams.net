@@ -16,27 +16,27 @@ namespace Kafka.Streams.Factories
 
         public ProcessorNodeFactory(
             IClock clock,
-            string name,
+            string Name,
             string[] predecessors,
             IProcessorSupplier supplier)
-            : base(clock, name, predecessors.Select(p => p).ToArray())
+            : base(clock, Name, predecessors.Select(p => p).ToArray())
         {
             this.supplier = supplier;
         }
 
         public void AddStateStore(string stateStoreName)
         {
-            stateStoreNames.Add(stateStoreName);
+            this.stateStoreNames.Add(stateStoreName);
         }
 
         public override IProcessorNode Build()
         {
-            return new ProcessorNode<K, V>(this.Clock, Name, supplier.Get(), stateStoreNames);
+            return new ProcessorNode<K, V>(this.Clock, this.Name, this.supplier.Get(), this.stateStoreNames);
         }
 
         public override INode Describe()
         {
-            return new Processor(Name, new HashSet<string>(stateStoreNames));
+            return new Processor(this.Name, new HashSet<string>(this.stateStoreNames));
         }
     }
 }

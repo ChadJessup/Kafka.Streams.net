@@ -323,7 +323,7 @@
 
 //            string taskGroupName = "stream-task-metrics";
 //            Dictionary<string, string> taskTags =
-//                mkMap(mkEntry("task-id", "all"), mkEntry("client-id", thread.getName()));
+//                mkMap(mkEntry("task-id", "All"), mkEntry("client-id", thread.getName()));
 //            Assert.NotNull(metrics.metrics().Get(metrics.metricName(
 //                "commit-latency-avg", taskGroupName, descriptionIsNotVerified, taskTags)));
 //            Assert.NotNull(metrics.metrics().Get(metrics.metricName(
@@ -337,7 +337,7 @@
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=%s,client-id=%s",
 //                       defaultGroupName,
 //                       thread.getName())));
-//            Assert.True(reporter.containsMbean("kafka.streams:type=stream-task-metrics,client-id=" + thread.getName() + ",task-id=all"));
+//            Assert.True(reporter.containsMbean("kafka.streams:type=stream-task-metrics,client-id=" + thread.getName() + ",task-id=All"));
 //        }
 
 //        [Fact]
@@ -385,7 +385,7 @@
 //            internalTopologyBuilder.AddProcessor("processor2", () => new MockProcessor(PunctuationType.STREAM_TIME, 10L), "source1");
 
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100L);
+//            properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100L);
 //            StreamsConfig config = new StreamsConfig(StreamsTestUtils.getStreamsConfig(applicationId,
 //                "localhost:2171",
 //                Serdes.ByteArraySerde.getName(),
@@ -567,16 +567,16 @@
 //            // assign single partition
 //            assignedPartitions.Add(t1p1);
 //            assignedPartitions.Add(t1p2);
-//            activeTasks.put(task1, Collections.singleton(t1p1));
-//            activeTasks.put(task2, Collections.singleton(t1p2));
+//            activeTasks.Put(task1, Collections.singleton(t1p1));
+//            activeTasks.Put(task2, Collections.singleton(t1p2));
 
 //            thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 
 //            MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.consumer;
 //            mockConsumer.assign(assignedPartitions);
 //            Dictionary<TopicPartition, long> beginOffsets = new HashMap<>();
-//            beginOffsets.put(t1p1, 0L);
-//            beginOffsets.put(t1p2, 0L);
+//            beginOffsets.Put(t1p1, 0L);
+//            beginOffsets.Put(t1p2, 0L);
 //            mockConsumer.updateBeginningOffsets(beginOffsets);
 //            thread.rebalanceListener.onPartitionsAssigned(new HashSet<>(assignedPartitions));
 
@@ -606,16 +606,16 @@
 //            // assign single partition
 //            assignedPartitions.Add(t1p1);
 //            assignedPartitions.Add(t1p2);
-//            activeTasks.put(task1, Collections.singleton(t1p1));
-//            activeTasks.put(task2, Collections.singleton(t1p2));
+//            activeTasks.Put(task1, Collections.singleton(t1p1));
+//            activeTasks.Put(task2, Collections.singleton(t1p2));
 
 //            thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 
 //            MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.consumer;
 //            mockConsumer.assign(assignedPartitions);
 //            Dictionary<TopicPartition, long> beginOffsets = new HashMap<>();
-//            beginOffsets.put(t1p1, 0L);
-//            beginOffsets.put(t1p2, 0L);
+//            beginOffsets.Put(t1p1, 0L);
+//            beginOffsets.Put(t1p2, 0L);
 //            mockConsumer.updateBeginningOffsets(beginOffsets);
 //            thread.rebalanceListener.onPartitionsAssigned(new HashSet<>(assignedPartitions));
 
@@ -642,15 +642,15 @@
 //            // assign single partition
 //            assignedPartitions.Add(t1p1);
 //            assignedPartitions.Add(t1p2);
-//            activeTasks.put(task1, Collections.singleton(t1p1));
-//            activeTasks.put(task2, Collections.singleton(t1p2));
+//            activeTasks.Put(task1, Collections.singleton(t1p1));
+//            activeTasks.Put(task2, Collections.singleton(t1p2));
 
 //            thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 //            MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.consumer;
 //            mockConsumer.assign(assignedPartitions);
 //            Dictionary<TopicPartition, long> beginOffsets = new HashMap<>();
-//            beginOffsets.put(t1p1, 0L);
-//            beginOffsets.put(t1p2, 0L);
+//            beginOffsets.Put(t1p1, 0L);
+//            beginOffsets.Put(t1p2, 0L);
 //            mockConsumer.updateBeginningOffsets(beginOffsets);
 
 //            thread.rebalanceListener.onPartitionsAssigned(assignedPartitions);
@@ -847,8 +847,8 @@
 //    [Fact]
 //    public void ShouldNotNullPointerWhenStandbyTasksAssignedAndNoStateStoresForTopology()
 //    {
-//        internalTopologyBuilder.AddSource(null, "name", null, null, null, "topic");
-//        internalTopologyBuilder.AddSink("out", "output", null, null, null, "name");
+//        internalTopologyBuilder.AddSource(null, "Name", null, null, null, "topic");
+//        internalTopologyBuilder.AddSink("out", "output", null, null, null, "Name");
 
 //        StreamThread thread = createStreamThread(clientId, config, false);
 
@@ -858,7 +858,7 @@
 //        Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks = new HashMap<>();
 
 //        // assign single partition
-//        standbyTasks.put(task1, Collections.singleton(t1p1));
+//        standbyTasks.Put(task1, Collections.singleton(t1p1));
 
 //        thread.taskManager().setAssignmentMetadata(Collections.emptyMap(), standbyTasks);
 //        thread.taskManager().createTasks(Collections.emptyList());
@@ -886,7 +886,7 @@
 
 //        // assign single partition
 //        assignedPartitions.Add(t1p1);
-//        activeTasks.put(task1, Collections.singleton(t1p1));
+//        activeTasks.Put(task1, Collections.singleton(t1p1));
 
 //        thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 
@@ -936,8 +936,8 @@
 //    {
 //        StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
 
-//        internalTopologyBuilder.AddSource(null, "name", null, null, null, topic1);
-//        internalTopologyBuilder.AddSink("out", "output", null, null, null, "name");
+//        internalTopologyBuilder.AddSource(null, "Name", null, null, null, topic1);
+//        internalTopologyBuilder.AddSink("out", "output", null, null, null, "Name");
 
 //        thread.setState(StreamThread.State.STARTING);
 //        thread.rebalanceListener.onPartitionsRevoked(null);
@@ -947,7 +947,7 @@
 
 //        // assign single partition
 //        assignedPartitions.Add(t1p1);
-//        activeTasks.put(task1, Collections.singleton(t1p1));
+//        activeTasks.Put(task1, Collections.singleton(t1p1));
 
 //        thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 
@@ -973,8 +973,8 @@
 //    {
 //        StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
 
-//        internalTopologyBuilder.AddSource(null, "name", null, null, null, topic1);
-//        internalTopologyBuilder.AddSink("out", "output", null, null, null, "name");
+//        internalTopologyBuilder.AddSource(null, "Name", null, null, null, topic1);
+//        internalTopologyBuilder.AddSink("out", "output", null, null, null, "Name");
 
 //        thread.setState(StreamThread.State.STARTING);
 //        thread.rebalanceListener.onPartitionsRevoked(null);
@@ -984,7 +984,7 @@
 
 //        // assign single partition
 //        assignedPartitions.Add(t1p1);
-//        activeTasks.put(task1, Collections.singleton(t1p1));
+//        activeTasks.Put(task1, Collections.singleton(t1p1));
 
 //        thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 
@@ -1045,7 +1045,7 @@
 
 //        // assign single partition
 //        assignedPartitions.Add(t1p1);
-//        activeTasks.put(task1, Collections.singleton(t1p1));
+//        activeTasks.Put(task1, Collections.singleton(t1p1));
 
 //        thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 
@@ -1057,7 +1057,7 @@
 //        thread.runOnce();
 
 //        ThreadMetadata threadMetadata = thread.threadMetadata();
-//        Assert.Equal(StreamThread.State.RUNNING.name(), threadMetadata.threadState());
+//        Assert.Equal(StreamThread.State.RUNNING.Name(), threadMetadata.threadState());
 //        Assert.True(threadMetadata.activeTasks().Contains(new TaskMetadata(task1.ToString(), Utils.mkSet(t1p1))));
 //        Assert.True(threadMetadata.standbyTasks().isEmpty());
 //    }
@@ -1083,7 +1083,7 @@
 //        );
 
 //        HashDictionary<TopicPartition, long> offsets = new HashMap<>();
-//        offsets.put(new TopicPartition("stream-thread-test-count-one-changelog", 1), 0L);
+//        offsets.Put(new TopicPartition("stream-thread-test-count-one-changelog", 1), 0L);
 //        restoreConsumer.updateEndOffsets(offsets);
 //        restoreConsumer.updateBeginningOffsets(offsets);
 
@@ -1093,7 +1093,7 @@
 //        Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks = new HashMap<>();
 
 //        // assign single partition
-//        standbyTasks.put(task1, Collections.singleton(t1p1));
+//        standbyTasks.Put(task1, Collections.singleton(t1p1));
 
 //        thread.taskManager().setAssignmentMetadata(Collections.emptyMap(), standbyTasks);
 
@@ -1102,7 +1102,7 @@
 //        thread.runOnce();
 
 //        ThreadMetadata threadMetadata = thread.threadMetadata();
-//        Assert.Equal(StreamThread.State.RUNNING.name(), threadMetadata.threadState());
+//        Assert.Equal(StreamThread.State.RUNNING.Name(), threadMetadata.threadState());
 //        Assert.True(threadMetadata.standbyTasks().Contains(new TaskMetadata(task1.ToString(), Utils.mkSet(t1p1))));
 //        Assert.True(threadMetadata.activeTasks().isEmpty());
 //    }
@@ -1172,8 +1172,8 @@
 //        Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks = new HashMap<>();
 
 //        // assign single partition
-//        standbyTasks.put(task1, Collections.singleton(t1p1));
-//        standbyTasks.put(task3, Collections.singleton(t2p1));
+//        standbyTasks.Put(task1, Collections.singleton(t1p1));
+//        standbyTasks.Put(task3, Collections.singleton(t2p1));
 
 //        thread.taskManager().setAssignmentMetadata(Collections.emptyMap(), standbyTasks);
 
@@ -1260,7 +1260,7 @@
 //        {
 
 
-//            public void init(ProcessorContext context)
+//            public void Init(ProcessorContext context)
 //        {
 //            context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, punctuatedStreamTime::add);
 //            context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.WALL_CLOCK_TIME, punctuatedWallClockTime::add);
@@ -1272,7 +1272,7 @@
 //        { }
 
 
-//        public void close() { }
+//        public void Close() { }
 //    };
 
 //    internalStreamsBuilder.Stream(Collections.singleton(topic1), consumed).process(punctuateProcessor);
@@ -1288,7 +1288,7 @@
 
 //    // assign single partition
 //    assignedPartitions.Add(t1p1);
-//        activeTasks.put(task1, Collections.singleton(t1p1));
+//        activeTasks.Put(task1, Collections.singleton(t1p1));
 
 //        thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 
@@ -1335,14 +1335,14 @@
 //    {
 //        StreamThread thread = createStreamThread(clientId, config, false);
 //        ThreadMetadata metadata = thread.threadMetadata();
-//        Assert.Equal(StreamThread.State.CREATED.name(), metadata.threadState());
+//        Assert.Equal(StreamThread.State.CREATED.Name(), metadata.threadState());
 
 //        thread.setState(StreamThread.State.STARTING);
 //        thread.setState(StreamThread.State.PARTITIONS_REVOKED);
 //        thread.setState(StreamThread.State.PARTITIONS_ASSIGNED);
 //        thread.setState(StreamThread.State.RUNNING);
 //        metadata = thread.threadMetadata();
-//        Assert.Equal(StreamThread.State.RUNNING.name(), metadata.threadState());
+//        Assert.Equal(StreamThread.State.RUNNING.Name(), metadata.threadState());
 //    }
 
 //    [Fact]
@@ -1368,8 +1368,8 @@
 //                    System.Array.Empty<Node>())
 //            ));
 //        HashDictionary<TopicPartition, long> offsets = new HashMap<>();
-//        offsets.put(new TopicPartition("stream-thread-test-count-one-changelog", 0), 0L);
-//        offsets.put(new TopicPartition("stream-thread-test-count-one-changelog", 1), 0L);
+//        offsets.Put(new TopicPartition("stream-thread-test-count-one-changelog", 0), 0L);
+//        offsets.Put(new TopicPartition("stream-thread-test-count-one-changelog", 1), 0L);
 //        restoreConsumer.updateEndOffsets(offsets);
 //        restoreConsumer.updateBeginningOffsets(offsets);
 
@@ -1386,8 +1386,8 @@
 
 //        // assign single partition
 //        assignedPartitions.Add(t1p1);
-//        activeTasks.put(task1, Collections.singleton(t1p1));
-//        standbyTasks.put(task2, Collections.singleton(t1p2));
+//        activeTasks.Put(task1, Collections.singleton(t1p1));
+//        standbyTasks.Put(task2, Collections.singleton(t1p2));
 
 //        thread.taskManager().setAssignmentMetadata(activeTasks, standbyTasks);
 
@@ -1411,7 +1411,7 @@
 //        HashSet<TopicPartition> topicPartitionSet = Collections.singleton(topicPartition);
 
 //        Dictionary<TaskId, HashSet<TopicPartition>> activeTasks = new HashMap<>();
-//        activeTasks.put(new TaskId(0, 0), topicPartitionSet);
+//        activeTasks.Put(new TaskId(0, 0), topicPartitionSet);
 //        thread.taskManager().setAssignmentMetadata(activeTasks, Collections.emptyMap());
 
 //        mockConsumer.updatePartitions(
@@ -1678,7 +1678,7 @@
 //    private void AssertThreadMetadataHasEmptyTasksWithState(ThreadMetadata metadata,
 //                                                            StreamThread.State state)
 //    {
-//        Assert.Equal(state.name(), metadata.threadState());
+//        Assert.Equal(state.Name(), metadata.threadState());
 //        Assert.True(metadata.activeTasks().isEmpty());
 //        Assert.True(metadata.standbyTasks().isEmpty());
 //    }

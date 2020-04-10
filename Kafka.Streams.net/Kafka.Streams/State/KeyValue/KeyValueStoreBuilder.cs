@@ -25,9 +25,9 @@ namespace Kafka.Streams.State.KeyValues
         {
             return new MeteredKeyValueStore<K, V>(
                 this.context,
-                storeSupplier.Get(),
-                keySerde,
-                valueSerde);
+                this.storeSupplier.Get(),
+                this.keySerde,
+                this.valueSerde);
         }
     }
 }

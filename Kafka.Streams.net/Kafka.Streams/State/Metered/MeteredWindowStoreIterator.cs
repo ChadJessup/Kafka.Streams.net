@@ -1,66 +1,76 @@
+using System.Collections;
+using System.Collections.Generic;
+using Kafka.Streams.State.Windowed;
 
-//using Kafka.Common.Metrics;
-//using Kafka.Common.Utils.Interfaces;
-//using Kafka.Streams.Interfaces;
-//using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Streams.State.Interfaces;
+namespace Kafka.Streams.State.Metered
+{
+    public class MeteredWindowStoreIterator<V> : IWindowStoreIterator<V>
+    {
+        public KafkaStreamsContext Context { get; }
+        public KeyValuePair<long, V> Current { get; }
+        object IEnumerator.Current { get; }
 
-//namespace Kafka.Streams.State.Metered
-//{
-//    public class MeteredWindowStoreIterator<V> : IWindowStoreIterator<V>
-//    {
-//        private IWindowStoreIterator<byte[]> iter;
-//        private Sensor sensor;
-//        private IStreamsMetrics metrics;
-//        private StateSerdes<object, V> serdes;
-//        private long startNs;
-//        private ITime time;
+        private IWindowStoreIterator<byte[]> iter;
+        private IStateSerdes<long, V> serdes;
+        private long startNs;
 
-//        MeteredWindowStoreIterator(IWindowStoreIterator<byte[]> iter,
-//                                   Sensor sensor,
-//                                   IStreamMetrics metrics,
-//                                   StateSerdes<?, V> serdes,
-//                                   ITime time)
-//        {
-//            this.iter = iter;
-//            this.sensor = sensor;
-//            this.metrics = metrics;
-//            this.serdes = serdes;
-//            this.startNs = time.nanoseconds();
-//            this.time = time;
-//        }
+        public MeteredWindowStoreIterator(
+            KafkaStreamsContext context,
+            IWindowStoreIterator<byte[]> iter,
+            IStateSerdes<long, V> serdes)
+        {
+            this.Context = context;
+            this.iter = iter;
+            //this.sensor = sensor;
+            //this.metrics = metrics;
+            this.serdes = serdes;
+            this.startNs = context.Clock.NowAsEpochNanoseconds;
+        }
 
-//        public override bool HasNext()
-//        {
-//            return iter.HasNext();
-//        }
+        public bool HasNext()
+        {
+            return true;//iter.HasNext();
+        }
 
-//        public override KeyValuePair<long, V> next()
-//        {
-//            KeyValuePair<long, byte[]> next = iter.MoveNext();
-//            return KeyValuePair.pair(next.key, serdes.valueFrom(next.value));
-//        }
+        public KeyValuePair<long, V> next()
+        {
+            KeyValuePair<long, byte[]> next = iter.Current;
+            return KeyValuePair.Create(next.Key, serdes.ValueFrom(next.Value));
+        }
 
-//        public override void Remove()
-//        {
-//            iter.Remove();
-//        }
+        public void Remove()
+        {
+            //this.iter.Remove();
+        }
 
-//        public override void close()
-//        {
-//            try
-//            {
-//                iter.close();
-//            }
-//            finally
-//            {
-//                metrics.recordLatency(this.sensor, this.startNs, time.nanoseconds());
-//            }
-//        }
+        public void Close()
+        {
+            try
+            {
+                iter.Close();
+            }
+            finally
+            {
+//                metrics.recordLatency(this.sensor, this.startNs, this.Context.Clock.NowAsEpochNanoseconds);
+            }
+        }
 
-//        public override long PeekNextKey()
-//        {
-//            return iter.PeekNextKey();
-//        }
-//    }
-//}
+        public long PeekNextKey()
+        {
+            return iter.PeekNextKey();
+        }
+
+        public bool MoveNext()
+        {
+            return true;
+        }
+
+        public void Reset()
+        {
+        }
+
+        public void Dispose()
+        {
+        }
+    }
+}

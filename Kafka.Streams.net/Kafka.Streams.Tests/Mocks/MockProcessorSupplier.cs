@@ -28,8 +28,8 @@ namespace Kafka.Streams.Tests.Mocks
 
         public IKeyValueProcessor<K, V> Get()
         {
-            var processor = new MockProcessor<K, V>(punctuationType, scheduleInterval);
-            processors.Add(processor);
+            var processor = new MockProcessor<K, V>(this.punctuationType, this.scheduleInterval);
+            this.processors.Add(processor);
             return processor;
         }
 
@@ -38,20 +38,20 @@ namespace Kafka.Streams.Tests.Mocks
         // get the captured processor assuming that only one processor gets returned from this supplier
         public MockProcessor<K, V> TheCapturedProcessor()
         {
-            return CapturedProcessors(1)[0];
+            return this.CapturedProcessors(1)[0];
         }
 
         public int CapturedProcessorsCount()
         {
-            return processors.Count;
+            return this.processors.Count;
         }
 
         // get the captured processors with the expected number
         public List<MockProcessor<K, V>> CapturedProcessors(int expectedNumberOfProcessors)
         {
-            Assert.Equal(expectedNumberOfProcessors, processors.Count);
+            Assert.Equal(expectedNumberOfProcessors, this.processors.Count);
 
-            return processors;
+            return this.processors;
         }
     }
 }

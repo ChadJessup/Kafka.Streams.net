@@ -17,7 +17,7 @@ namespace Kafka.Streams.Topologies
             var size2 = ((AbstractNode)node2).Size;
 
             // it is possible that two nodes have the same sub-tree size (think two nodes connected via state stores)
-            // in this case default to processor name string
+            // in this case default to processor Name string
             if (size1 != size2)
             {
                 return size2 - size1;

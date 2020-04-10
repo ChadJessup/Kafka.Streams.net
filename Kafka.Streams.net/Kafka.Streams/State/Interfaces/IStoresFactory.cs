@@ -12,14 +12,14 @@ namespace Kafka.Streams.Interfaces
 {
     public interface IStoresFactory
     {
-        ISessionBytesStoreSupplier InMemorySessionStore(string name, TimeSpan retentionPeriod);
-        IKeyValueBytesStoreSupplier PersistentKeyValueStore(string name);
-        ISessionBytesStoreSupplier PersistentSessionStore(string name, long retentionPeriodMs);
-        IWindowBytesStoreSupplier PersistentTimestampedWindowStore(string name, TimeSpan retentionPeriod, TimeSpan windowSize, bool retainDuplicates);
-        IWindowBytesStoreSupplier PersistentWindowStore(string name, TimeSpan retentionPeriod, int numSegments, TimeSpan windowSize, bool retainDuplicates);
-        IWindowBytesStoreSupplier PersistentWindowStore(string name, TimeSpan retentionPeriod, TimeSpan windowSize, bool retainDuplicates);
+        ISessionBytesStoreSupplier InMemorySessionStore(string Name, TimeSpan retentionPeriod);
+        IKeyValueBytesStoreSupplier PersistentKeyValueStore(string Name);
+        ISessionBytesStoreSupplier PersistentSessionStore(string Name, long retentionPeriodMs);
+        IWindowBytesStoreSupplier PersistentTimestampedWindowStore(string Name, TimeSpan retentionPeriod, TimeSpan windowSize, bool retainDuplicates);
+        IWindowBytesStoreSupplier PersistentWindowStore(string Name, TimeSpan retentionPeriod, int numSegments, TimeSpan windowSize, bool retainDuplicates);
+        IWindowBytesStoreSupplier PersistentWindowStore(string Name, TimeSpan retentionPeriod, TimeSpan windowSize, bool retainDuplicates);
 
-        ITimestampedKeyValueBytesStoreSupplier PersistentTimestampedKeyValueStore(string name);
+        ITimestampedKeyValueBytesStoreSupplier PersistentTimestampedKeyValueStore(string Name);
         IStoreBuilder<ISessionStore<K, V>> SessionStoreBuilder<K, V>(KafkaStreamsContext context, ISessionBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde) where V : class;
         IStoreBuilder<IKeyValueStore<K, V>> KeyValueStoreBuilder<K, V>(KafkaStreamsContext context, IKeyValueBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);
         IStoreBuilder<ITimestampedKeyValueStore<K, V>> TimestampedKeyValueStoreBuilder<K, V>(KafkaStreamsContext context, IKeyValueBytesStoreSupplier supplier, ISerde<K> keySerde, ISerde<V> valueSerde);

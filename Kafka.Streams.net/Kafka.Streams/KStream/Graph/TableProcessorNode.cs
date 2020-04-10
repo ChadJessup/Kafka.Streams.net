@@ -36,27 +36,27 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            var processorName = processorParameters.ProcessorName;
-            topologyBuilder.AddProcessor<K, V>(processorName, processorParameters.ProcessorSupplier, ParentNodeNames());
+            var processorName = this.processorParameters.ProcessorName;
+            topologyBuilder.AddProcessor<K, V>(processorName, this.processorParameters.ProcessorSupplier, this.ParentNodeNames());
 
-            if (storeNames.Length > 0)
+            if (this.storeNames.Length > 0)
             {
-                topologyBuilder.ConnectProcessorAndStateStores(processorName, storeNames);
+                topologyBuilder.ConnectProcessorAndStateStores(processorName, this.storeNames);
             }
 
             // TODO: we are enforcing this as a keyvalue store, but it should go beyond any type of stores
-            if (storeBuilder != null)
+            if (this.storeBuilder != null)
             {
-                topologyBuilder.AddStateStore<K, V, T>(storeBuilder, new[] { processorName });
+                topologyBuilder.AddStateStore<K, V, T>(this.storeBuilder, new[] { processorName });
             }
         }
 
         public override string ToString()
         {
             return "TableProcessorNode{" +
-                ", processorParameters=" + processorParameters +
-                ", storeBuilder=" + (storeBuilder == null ? "null" : storeBuilder.name) +
-                ", storeNames=" + storeNames.ToJoinedString() +
+                ", processorParameters=" + this.processorParameters +
+                ", storeBuilder=" + (this.storeBuilder == null ? "null" : this.storeBuilder.Name) +
+                ", storeNames=" + this.storeNames.ToJoinedString() +
                 "} " + base.ToString();
         }
     }

@@ -64,16 +64,16 @@
 //        public void ShouldAvoidFlushingDeletionsWithoutDirtyKeys()
 //        {
 //            int added = AddItemsToCache();
-//            // all dirty entries should have been flushed
+//            // All dirty entries should have been flushed
 //            Assert.Equal(added, underlyingStore.approximateNumEntries);
 //            Assert.Equal(added, cacheFlushListener.forwarded.Count);
 
-//            store.put(BytesKey("key"), BytesValue("value"));
+//            store.Put(BytesKey("key"), BytesValue("value"));
 //            Assert.Equal(added, underlyingStore.approximateNumEntries);
 //            Assert.Equal(added, cacheFlushListener.forwarded.Count);
 
-//            store.put(BytesKey("key"), null);
-//            store.flush();
+//            store.Put(BytesKey("key"), null);
+//            store.Flush();
 //            Assert.Equal(added, underlyingStore.approximateNumEntries);
 //            Assert.Equal(added, cacheFlushListener.forwarded.Count);
 //        }
@@ -87,22 +87,22 @@
 //                context = new InternalMockProcessorContext(null, null, null, null, cache);
 //                context.setRecordContext(new ProcessorRecordContext(10, 0, 0, topic, null));
 //                store.Init(context, null);
-//                cache.flush("0_0-store");
-//                EasyMock.expectLastCall().andThrow(new NullPointerException("Simulating an error on flush"));
+//                cache.Flush("0_0-store");
+//                EasyMock.expectLastCall().andThrow(new NullPointerException("Simulating an error on Flush"));
 //                EasyMock.replay(cache);
-//                store.close();
+//                store.Close();
 //            }
 //            catch (NullPointerException npe)
 //            {
-//                Assert.False(underlyingStore.isOpen());
+//                Assert.False(underlyingStore.IsOpen());
 //            }
 //        }
 
 //        [Fact]
 //        public void ShouldPutGetToFromCache()
 //        {
-//            store.put(BytesKey("key"), BytesValue("value"));
-//            store.put(BytesKey("key2"), BytesValue("value2"));
+//            store.Put(BytesKey("key"), BytesValue("value"));
+//            store.Put(BytesKey("key2"), BytesValue("value2"));
 //            Assert.Equal(store.Get(BytesKey("key")), (BytesValue("value")));
 //            Assert.Equal(store.Get(BytesKey("key2")), (BytesValue("value2")));
 //            // nothing evicted so underlying store should be empty
@@ -124,7 +124,7 @@
 //        public void ShouldFlushEvictedItemsIntoUnderlyingStore()
 //        {
 //            int added = AddItemsToCache();
-//            // all dirty entries should have been flushed
+//            // All dirty entries should have been flushed
 //            Assert.Equal(added, underlyingStore.approximateNumEntries);
 //            Assert.Equal(added, store.approximateNumEntries);
 //            Assert.NotNull(underlyingStore.Get(Bytes.Wrap("0".getBytes())));
@@ -140,8 +140,8 @@
 //        [Fact]
 //        public void ShouldForwardDirtyItemsWhenFlushCalled()
 //        {
-//            store.put(BytesKey("1"), BytesValue("a"));
-//            store.flush();
+//            store.Put(BytesKey("1"), BytesValue("a"));
+//            store.Flush();
 //            Assert.Equal("a", cacheFlushListener.forwarded.Get("1").newValue);
 //            Assert.Null(cacheFlushListener.forwarded.Get("1").oldValue);
 //        }
@@ -150,24 +150,24 @@
 //        public void ShouldForwardOldValuesWhenEnabled()
 //        {
 //            store.setFlushListener(cacheFlushListener, true);
-//            store.put(BytesKey("1"), BytesValue("a"));
-//            store.flush();
+//            store.Put(BytesKey("1"), BytesValue("a"));
+//            store.Flush();
 //            Assert.Equal("a", cacheFlushListener.forwarded.Get("1").newValue);
 //            Assert.Null(cacheFlushListener.forwarded.Get("1").oldValue);
-//            store.put(BytesKey("1"), BytesValue("b"));
-//            store.put(BytesKey("1"), BytesValue("c"));
-//            store.flush();
+//            store.Put(BytesKey("1"), BytesValue("b"));
+//            store.Put(BytesKey("1"), BytesValue("c"));
+//            store.Flush();
 //            Assert.Equal("c", cacheFlushListener.forwarded.Get("1").newValue);
 //            Assert.Equal("a", cacheFlushListener.forwarded.Get("1").oldValue);
-//            store.put(BytesKey("1"), null);
-//            store.flush();
+//            store.Put(BytesKey("1"), null);
+//            store.Flush();
 //            Assert.Null(cacheFlushListener.forwarded.Get("1").newValue);
 //            Assert.Equal("c", cacheFlushListener.forwarded.Get("1").oldValue);
 //            cacheFlushListener.forwarded.Clear();
-//            store.put(BytesKey("1"), BytesValue("a"));
-//            store.put(BytesKey("1"), BytesValue("b"));
-//            store.put(BytesKey("1"), null);
-//            store.flush();
+//            store.Put(BytesKey("1"), BytesValue("a"));
+//            store.Put(BytesKey("1"), BytesValue("b"));
+//            store.Put(BytesKey("1"), null);
+//            store.Flush();
 //            Assert.Null(cacheFlushListener.forwarded.Get("1"));
 //            cacheFlushListener.forwarded.Clear();
 //        }
@@ -175,23 +175,23 @@
 //        [Fact]
 //        public void ShouldNotForwardOldValuesWhenDisabled()
 //        {
-//            store.put(BytesKey("1"), BytesValue("a"));
-//            store.flush();
+//            store.Put(BytesKey("1"), BytesValue("a"));
+//            store.Flush();
 //            Assert.Equal("a", cacheFlushListener.forwarded.Get("1").newValue);
 //            Assert.Null(cacheFlushListener.forwarded.Get("1").oldValue);
-//            store.put(BytesKey("1"), BytesValue("b"));
-//            store.flush();
+//            store.Put(BytesKey("1"), BytesValue("b"));
+//            store.Flush();
 //            Assert.Equal("b", cacheFlushListener.forwarded.Get("1").newValue);
 //            Assert.Null(cacheFlushListener.forwarded.Get("1").oldValue);
-//            store.put(BytesKey("1"), null);
-//            store.flush();
+//            store.Put(BytesKey("1"), null);
+//            store.Flush();
 //            Assert.Null(cacheFlushListener.forwarded.Get("1").newValue);
 //            Assert.Null(cacheFlushListener.forwarded.Get("1").oldValue);
 //            cacheFlushListener.forwarded.Clear();
-//            store.put(BytesKey("1"), BytesValue("a"));
-//            store.put(BytesKey("1"), BytesValue("b"));
-//            store.put(BytesKey("1"), null);
-//            store.flush();
+//            store.Put(BytesKey("1"), BytesValue("a"));
+//            store.Put(BytesKey("1"), BytesValue("b"));
+//            store.Put(BytesKey("1"), null);
+//            store.Flush();
 //            Assert.Null(cacheFlushListener.forwarded.Get("1"));
 //            cacheFlushListener.forwarded.Clear();
 //        }
@@ -200,11 +200,11 @@
 //        public void ShouldIterateAllStoredItems()
 //        {
 //            int items = AddItemsToCache();
-//            IKeyValueIterator<Bytes, byte[]> all = store.all();
+//            IKeyValueIterator<Bytes, byte[]> All = store.All();
 //            List<Bytes> results = new ArrayList<>();
-//            while (all.HasNext())
+//            while (All.HasNext())
 //            {
-//                results.Add(all.MoveNext().key);
+//                results.Add(All.MoveNext().key);
 //            }
 //            Assert.Equal(items, results.Count);
 //        }
@@ -225,86 +225,86 @@
 //        [Fact]
 //        public void ShouldDeleteItemsFromCache()
 //        {
-//            store.put(BytesKey("a"), BytesValue("a"));
+//            store.Put(BytesKey("a"), BytesValue("a"));
 //            store.delete(BytesKey("a"));
 //            Assert.Null(store.Get(BytesKey("a")));
 //            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).HasNext());
-//            Assert.False(store.all().HasNext());
+//            Assert.False(store.All().HasNext());
 //        }
 
 //        [Fact]
 //        public void ShouldNotShowItemsDeletedFromCacheButFlushedToStoreBeforeDelete()
 //        {
-//            store.put(BytesKey("a"), BytesValue("a"));
-//            store.flush();
+//            store.Put(BytesKey("a"), BytesValue("a"));
+//            store.Flush();
 //            store.delete(BytesKey("a"));
 //            Assert.Null(store.Get(BytesKey("a")));
 //            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).HasNext());
-//            Assert.False(store.all().HasNext());
+//            Assert.False(store.All().HasNext());
 //        }
 
 //        [Fact]
 //        public void ShouldClearNamespaceCacheOnClose()
 //        {
-//            store.put(BytesKey("a"), BytesValue("a"));
+//            store.Put(BytesKey("a"), BytesValue("a"));
 //            Assert.Equal(1, cache.Count);
-//            store.close();
+//            store.Close();
 //            Assert.Equal(0, cache.Count);
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToGetFromClosedCachingStore()
 //        {
-//            store.close();
+//            store.Close();
 //            store.Get(BytesKey("a"));
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToWriteToClosedCachingStore()
 //        {
-//            store.close();
-//            store.put(BytesKey("a"), BytesValue("a"));
+//            store.Close();
+//            store.Put(BytesKey("a"), BytesValue("a"));
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoRangeQueryOnClosedCachingStore()
 //        {
-//            store.close();
+//            store.Close();
 //            store.Range(BytesKey("a"), BytesKey("b"));
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoAllQueryOnClosedCachingStore()
 //        {
-//            store.close();
-//            store.all();
+//            store.Close();
+//            store.All();
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoGetApproxSizeOnClosedCachingStore()
 //        {
-//            store.close();
+//            store.Close();
 //            store.approximateNumEntries;
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoPutAllClosedCachingStore()
 //        {
-//            store.close();
+//            store.Close();
 //            store.putAll(Collections.singletonList(KeyValuePair.Create(BytesKey("a"), BytesValue("a"))));
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoPutIfAbsentClosedCachingStore()
 //        {
-//            store.close();
+//            store.Close();
 //            store.putIfAbsent(BytesKey("b"), BytesValue("c"));
 //        }
 
 //        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnPutWithNullKey()
 //        {
-//            store.put(null, BytesValue("c"));
+//            store.Put(null, BytesValue("c"));
 //        }
 
 //        [Fact]// (expected = NullPointerException)
@@ -358,7 +358,7 @@
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDeleteFromClosedCachingStore()
 //        {
-//            store.close();
+//            store.Close();
 //            store.delete(BytesKey("key"));
 //        }
 
@@ -369,7 +369,7 @@
 //            while (cachedSize < maxCacheSizeBytes)
 //            {
 //                string kv = string.valueOf(i++);
-//                store.put(BytesKey(kv), BytesValue(kv));
+//                store.Put(BytesKey(kv), BytesValue(kv));
 //                cachedSize += memoryCacheEntrySize(kv.getBytes(), kv.getBytes(), topic);
 //            }
 //            return i;
@@ -394,7 +394,7 @@
 //                              byte[] oldValue,
 //                              long timestamp)
 //            {
-//                forwarded.put(
+//                forwarded.Put(
 //                    keyDeserializer.deserialize(null, key),
 //                    new Change<>(
 //                        valueDesializer.deserialize(null, newValue),

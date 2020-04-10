@@ -10,7 +10,7 @@
 //{
 //    /**
 //     * A component that provides a {@link #context ProcessingContext} that can be supplied to a {@link IKeyValueStore} so that
-//     * all entries written to the Kafka topic by the store during {@link IKeyValueStore#flush()} are captured for testing purposes.
+//     * All entries written to the Kafka topic by the store during {@link IKeyValueStore#Flush()} are captured for testing purposes.
 //     * This class simplifies testing of various {@link IKeyValueStore} instances, especially those that use
 //     * {@link MeteredKeyValueStore} to monitor and write its entries to the Kafka topic.
 //     *
@@ -25,11 +25,11 @@
 //     *                                              .inMemory().Build();
 //     *
 //     * // Verify that the store reads and writes correctly ...
-//     * store.put(0, "zero");
-//     * store.put(1, "one");
-//     * store.put(2, "two");
-//     * store.put(4, "four");
-//     * store.put(5, "five");
+//     * store.Put(0, "zero");
+//     * store.Put(1, "one");
+//     * store.Put(2, "two");
+//     * store.Put(4, "four");
+//     * store.Put(5, "five");
 //     * Assert.Equal(5, driver.sizeOf(store));
 //     * Assert.Equal("zero", store.Get(0));
 //     * Assert.Equal("one", store.Get(1));
@@ -39,8 +39,8 @@
 //     * Assert.Null(store.Get(3));
 //     * store.delete(5);
 //     *
-//     * // Flush the store and verify all current entries were properly flushed ...
-//     * store.flush();
+//     * // Flush the store and verify All current entries were properly flushed ...
+//     * store.Flush();
 //     * Assert.Equal("zero", driver.flushedEntryStored(0));
 //     * Assert.Equal("one", driver.flushedEntryStored(1));
 //     * Assert.Equal("two", driver.flushedEntryStored(2));
@@ -195,12 +195,12 @@
 //        stateSerdes = serdes;
 
 //        var props = new StreamsConfig();
-//        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "application-id");
-//        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-//        props.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor);
-//        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, serdes.keySerde().getClass());
-//        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, ISerde.valueSerde().getClass());
-//        props.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBKeyValueStoreTest.TheRocksDbConfigSetter);
+//        props.Put(StreamsConfig.APPLICATION_ID_CONFIG, "application-id");
+//        props.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+//        props.Put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor);
+//        props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, serdes.keySerde().getClass());
+//        props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, ISerde.valueSerde().getClass());
+//        props.Put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBKeyValueStoreTest.TheRocksDbConfigSetter);
 
 //        // context = new InternalMockProcessorContext(stateDir, serdes.keySerde(), serdes.valueSerde(), recordCollector, null)
 //        // {
@@ -237,7 +237,7 @@
 //        else
 //        {
 //            // This is a normal add
-//            flushedEntries.put(key, value);
+//            flushedEntries.Put(key, value);
 //            flushedRemovals.remove(key);
 //        }
 //    }
@@ -307,8 +307,8 @@
 //     * Utility method that will count the number of {@link #addEntryToRestoreLog(object, object) restore entries} missing from the
 //     * supplied store.
 //     *
-//     * @param store the store that is to have all of the {@link #restoredEntries() restore entries}
-//     * @return the number of restore entries missing from the store, or 0 if all restore entries were found
+//     * @param store the store that is to have All of the {@link #restoredEntries() restore entries}
+//     * @return the number of restore entries missing from the store, or 0 if All restore entries were found
 //     * @see #addEntryToRestoreLog(object, object)
 //     */
 //    public int CheckForRestoredEntries(IKeyValueStore<K, V> store)
@@ -337,7 +337,7 @@
 //    public int SizeOf(IKeyValueStore<K, V> store)
 //    {
 //        int size = 0;
-//        IKeyValueIterator iterator = store.all<K, V>();
+//        IKeyValueIterator iterator = store.All<K, V>();
 //        while (iterator.HasNext())
 //        {
 //            iterator.MoveNext();
@@ -348,11 +348,11 @@
 //    }
 
 ///**
-// * Retrieve the value that the store {@link IKeyValueStore#flush() flushed} with the given key.
+// * Retrieve the value that the store {@link IKeyValueStore#Flush() flushed} with the given key.
 // *
 // * @param key the key
 // * @return the value that was flushed with the key, or {@code null} if no such key was flushed or if the entry with this
-// * key was removed upon flush
+// * key was removed upon Flush
 // */
 //public V FlushedEntryStored(K key)
 //{
@@ -360,7 +360,7 @@
 //}
 
 ///**
-// * Determine whether the store {@link IKeyValueStore#flush() flushed} the removal of the given key.
+// * Determine whether the store {@link IKeyValueStore#Flush() flushed} the removal of the given key.
 // *
 // * @param key the key
 // * @return {@code true} if the entry with the given key was removed when flushed, or {@code false} if the entry was not
@@ -388,7 +388,7 @@
 //}
 
 ///**
-// * Remove all {@link #flushedEntryStored(object) flushed entries}, {@link #flushedEntryRemoved(object) flushed removals},
+// * Remove All {@link #flushedEntryStored(object) flushed entries}, {@link #flushedEntryRemoved(object) flushed removals},
 // */
 //public void Clear()
 //{

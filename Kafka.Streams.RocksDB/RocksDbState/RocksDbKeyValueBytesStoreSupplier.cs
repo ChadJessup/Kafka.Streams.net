@@ -16,10 +16,10 @@ namespace Kafka.Streams.RocksDbState
 
         public virtual IKeyValueStore<Bytes, byte[]> Get()
         {
-            return new RocksDbStore(Name);
+            return new RocksDbStore(this.Name);
         }
 
-        public void SetName(string name)
-            => this.Name = name;
+        public void SetName(string Name)
+            => this.Name = Name;
     }
 }

@@ -38,14 +38,14 @@ namespace Kafka.Streams.Tests.Mocks
         public override void Init(IProcessorContext context)
         {
             base.Init(context);
-            if (scheduleInterval > 0L)
+            if (this.scheduleInterval > 0L)
             {
-                scheduleCancellable = context.Schedule(
-                    TimeSpan.FromMilliseconds(scheduleInterval),
-                    punctuationType,
+                this.scheduleCancellable = context.Schedule(
+                    TimeSpan.FromMilliseconds(this.scheduleInterval),
+                    this.punctuationType,
                     timestamp =>
                     {
-                        if (punctuationType == PunctuationType.STREAM_TIME)
+                        if (this.punctuationType == PunctuationType.STREAM_TIME)
                         {
                             Assert.Equal(timestamp, context.Timestamp);
                         }
@@ -53,9 +53,9 @@ namespace Kafka.Streams.Tests.Mocks
                         Assert.Equal(-1, context.Partition);
                         Assert.Equal(-1L, context.Offset);
 
-                        (punctuationType == PunctuationType.STREAM_TIME
-                            ? punctuatedStreamTime
-                            : punctuatedSystemTime)
+                        (this.punctuationType == PunctuationType.STREAM_TIME
+                            ? this.punctuatedStreamTime
+                            : this.punctuatedSystemTime)
                         .Add(timestamp);
                     });
             }
@@ -63,53 +63,53 @@ namespace Kafka.Streams.Tests.Mocks
 
         public override void Process(K key, V value)
         {
-            var keyValueTimestamp = new KeyValueTimestamp<K, V>(key, value, Context.Timestamp);
+            var keyValueTimestamp = new KeyValueTimestamp<K, V>(key, value, this.Context.Timestamp);
 
             if (value != null)
             {
-                lastValueAndTimestampPerKey.Add(key, ValueAndTimestamp.Make(value, Context.Timestamp));
+                this.lastValueAndTimestampPerKey.Add(key, ValueAndTimestamp.Make(value, this.Context.Timestamp));
             }
             else
             {
-                lastValueAndTimestampPerKey.Remove(key);
+                this.lastValueAndTimestampPerKey.Remove(key);
             }
 
-            processed.Add(keyValueTimestamp);
+            this.processed.Add(keyValueTimestamp);
 
-            if (commitRequested)
+            if (this.commitRequested)
             {
                 this.Context.Commit();
-                commitRequested = false;
+                this.commitRequested = false;
             }
         }
 
         public void CheckAndClearProcessResult(params KeyValueTimestamp<K, V>[] expected)
         {
-            Assert.Equal(expected.Length, processed.Count);
+            Assert.Equal(expected.Length, this.processed.Count);
             for (var i = 0; i < expected.Length; i++)
             {
-                Assert.Equal(expected[i], processed[i]);
+                Assert.Equal(expected[i], this.processed[i]);
             }
 
-            processed.Clear();
+            this.processed.Clear();
         }
 
         public void RequestCommit()
         {
-            commitRequested = true;
+            this.commitRequested = true;
         }
 
         public void CheckEmptyAndClearProcessResult()
         {
-            Assert.Empty(processed);
-            processed.Clear();
+            Assert.Empty(this.processed);
+            this.processed.Clear();
         }
 
         public void CheckAndClearPunctuateResult(PunctuationType type, params long[] expected)
         {
             var punctuated = type == PunctuationType.STREAM_TIME
-                ? punctuatedStreamTime
-                : punctuatedSystemTime;
+                ? this.punctuatedStreamTime
+                : this.punctuatedSystemTime;
 
             Assert.Equal(expected.Length, punctuated.Count);
 
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tests.Mocks
                 Assert.Equal(expected[i], punctuated[i]);
             }
 
-            processed.Clear();
+            this.processed.Clear();
         }
     }
 }

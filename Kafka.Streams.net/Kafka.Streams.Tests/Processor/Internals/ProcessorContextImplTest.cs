@@ -31,8 +31,8 @@
 //        private IKeyValueIterator<string, long> allIter;
 //        private IKeyValueIterator<string, ValueAndTimestamp<long>> timestampedAllIter;
 
-//        private List<IKeyValueIterator<Windowed<string>, long>> iters = new ArrayList<>(7);
-//        private List<IKeyValueIterator<Windowed<string>, ValueAndTimestamp<long>>> timestampedIters = new ArrayList<>(7);
+//        private List<IKeyValueIterator<IWindowed<string>, long>> iters = new ArrayList<>(7);
+//        private List<IKeyValueIterator<IWindowed<string>, ValueAndTimestamp<long>>> timestampedIters = new ArrayList<>(7);
 //        private IWindowStoreIterator windowStoreIter;
 
 
@@ -105,15 +105,15 @@
 //            doTest("GlobalKeyValueStore", (Consumer<IKeyValueStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                checkThrowsUnsupportedOperation(store::flush, "flush()");
-//                checkThrowsUnsupportedOperation(() => store.put("1", 1L), "put()");
+//                checkThrowsUnsupportedOperation(store::Flush, "Flush()");
+//                checkThrowsUnsupportedOperation(() => store.Put("1", 1L), "Put()");
 //                checkThrowsUnsupportedOperation(() => store.putIfAbsent("1", 1L), "putIfAbsent()");
 //                checkThrowsUnsupportedOperation(() => store.putAll(Collections.emptyList()), "putAll()");
 //                checkThrowsUnsupportedOperation(() => store.delete("1"), "delete()");
 
 //                Assert.Equal((long)VALUE, store.Get(KEY));
 //                Assert.Equal(rangeIter, store.Range("one", "two"));
-//                Assert.Equal(allIter, store.all());
+//                Assert.Equal(allIter, store.All());
 //                Assert.Equal(VALUE, store.approximateNumEntries);
 //            });
 //        }
@@ -124,15 +124,15 @@
 //            doTest("GlobalTimestampedKeyValueStore", (Consumer<ITimestampedKeyValueStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                checkThrowsUnsupportedOperation(store::flush, "flush()");
-//                checkThrowsUnsupportedOperation(() => store.put("1", ValueAndTimestamp.Make(1L, 2L)), "put()");
+//                checkThrowsUnsupportedOperation(store::Flush, "Flush()");
+//                checkThrowsUnsupportedOperation(() => store.Put("1", ValueAndTimestamp.Make(1L, 2L)), "Put()");
 //                checkThrowsUnsupportedOperation(() => store.putIfAbsent("1", ValueAndTimestamp.Make(1L, 2L)), "putIfAbsent()");
 //                checkThrowsUnsupportedOperation(() => store.putAll(Collections.emptyList()), "putAll()");
 //                checkThrowsUnsupportedOperation(() => store.delete("1"), "delete()");
 
 //                Assert.Equal(VALUE_AND_TIMESTAMP, store.Get(KEY));
 //                Assert.Equal(timestampedRangeIter, store.Range("one", "two"));
-//                Assert.Equal(timestampedAllIter, store.all());
+//                Assert.Equal(timestampedAllIter, store.All());
 //                Assert.Equal(VALUE, store.approximateNumEntries);
 //            });
 //        }
@@ -143,15 +143,15 @@
 //            doTest("GlobalWindowStore", (Consumer<IWindowStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                checkThrowsUnsupportedOperation(store::flush, "flush()");
-//                checkThrowsUnsupportedOperation(() => store.put("1", 1L, 1L), "put()");
-//                checkThrowsUnsupportedOperation(() => store.put("1", 1L), "put()");
+//                checkThrowsUnsupportedOperation(store::Flush, "Flush()");
+//                checkThrowsUnsupportedOperation(() => store.Put("1", 1L, 1L), "Put()");
+//                checkThrowsUnsupportedOperation(() => store.Put("1", 1L), "Put()");
 
-//                Assert.Equal(iters.Get(0), store.fetchAll(0L, 0L));
+//                Assert.Equal(iters.Get(0), store.FetchAll(0L, 0L));
 //                Assert.Equal(windowStoreIter, store.Fetch(KEY, 0L, 1L));
 //                Assert.Equal(iters.Get(1), store.Fetch(KEY, KEY, 0L, 1L));
 //                Assert.Equal((long)VALUE, store.Fetch(KEY, 1L));
-//                Assert.Equal(iters.Get(2), store.all());
+//                Assert.Equal(iters.Get(2), store.All());
 //            });
 //        }
 
@@ -161,15 +161,15 @@
 //            doTest("GlobalTimestampedWindowStore", (Consumer<ITimestampedWindowStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                checkThrowsUnsupportedOperation(store::flush, "flush()");
-//                checkThrowsUnsupportedOperation(() => store.put("1", ValueAndTimestamp.Make(1L, 1L), 1L), "put() [with timestamp]");
-//                checkThrowsUnsupportedOperation(() => store.put("1", ValueAndTimestamp.Make(1L, 1L)), "put() [no timestamp]");
+//                checkThrowsUnsupportedOperation(store::Flush, "Flush()");
+//                checkThrowsUnsupportedOperation(() => store.Put("1", ValueAndTimestamp.Make(1L, 1L), 1L), "Put() [with timestamp]");
+//                checkThrowsUnsupportedOperation(() => store.Put("1", ValueAndTimestamp.Make(1L, 1L)), "Put() [no timestamp]");
 
-//                Assert.Equal(timestampedIters.Get(0), store.fetchAll(0L, 0L));
+//                Assert.Equal(timestampedIters.Get(0), store.FetchAll(0L, 0L));
 //                Assert.Equal(windowStoreIter, store.Fetch(KEY, 0L, 1L));
 //                Assert.Equal(timestampedIters.Get(1), store.Fetch(KEY, KEY, 0L, 1L));
 //                Assert.Equal(VALUE_AND_TIMESTAMP, store.Fetch(KEY, 1L));
-//                Assert.Equal(timestampedIters.Get(2), store.all());
+//                Assert.Equal(timestampedIters.Get(2), store.All());
 //            });
 //        }
 
@@ -179,9 +179,9 @@
 //            doTest("GlobalSessionStore", (Consumer<ISessionStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                checkThrowsUnsupportedOperation(store::flush, "flush()");
+//                checkThrowsUnsupportedOperation(store::Flush, "Flush()");
 //                checkThrowsUnsupportedOperation(() => store.remove(null), "remove()");
-//                checkThrowsUnsupportedOperation(() => store.put(null, null), "put()");
+//                checkThrowsUnsupportedOperation(() => store.Put(null, null), "Put()");
 
 //                Assert.Equal(iters.Get(3), store.findSessions(KEY, 1L, 2L));
 //                Assert.Equal(iters.Get(4), store.findSessions(KEY, KEY, 1L, 2L));
@@ -196,10 +196,10 @@
 //            doTest("LocalKeyValueStore", (Consumer<IKeyValueStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                store.flush();
+//                store.Flush();
 //                Assert.True(flushExecuted);
 
-//                store.put("1", 1L);
+//                store.Put("1", 1L);
 //                Assert.True(putExecuted);
 
 //                store.putIfAbsent("1", 1L);
@@ -213,7 +213,7 @@
 
 //                Assert.Equal((long)VALUE, store.Get(KEY));
 //                Assert.Equal(rangeIter, store.Range("one", "two"));
-//                Assert.Equal(allIter, store.all());
+//                Assert.Equal(allIter, store.All());
 //                Assert.Equal(VALUE, store.approximateNumEntries);
 //            });
 //        }
@@ -224,10 +224,10 @@
 //            doTest("LocalTimestampedKeyValueStore", (Consumer<ITimestampedKeyValueStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                store.flush();
+//                store.Flush();
 //                Assert.True(flushExecuted);
 
-//                store.put("1", ValueAndTimestamp.Make(1L, 2L));
+//                store.Put("1", ValueAndTimestamp.Make(1L, 2L));
 //                Assert.True(putExecuted);
 
 //                store.putIfAbsent("1", ValueAndTimestamp.Make(1L, 2L));
@@ -241,7 +241,7 @@
 
 //                Assert.Equal(VALUE_AND_TIMESTAMP, store.Get(KEY));
 //                Assert.Equal(timestampedRangeIter, store.Range("one", "two"));
-//                Assert.Equal(timestampedAllIter, store.all());
+//                Assert.Equal(timestampedAllIter, store.All());
 //                Assert.Equal(VALUE, store.approximateNumEntries);
 //            });
 //        }
@@ -252,17 +252,17 @@
 //            doTest("LocalWindowStore", (Consumer<IWindowStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                store.flush();
+//                store.Flush();
 //                Assert.True(flushExecuted);
 
-//                store.put("1", 1L);
+//                store.Put("1", 1L);
 //                Assert.True(putExecuted);
 
-//                Assert.Equal(iters.Get(0), store.fetchAll(0L, 0L));
+//                Assert.Equal(iters.Get(0), store.FetchAll(0L, 0L));
 //                Assert.Equal(windowStoreIter, store.Fetch(KEY, 0L, 1L));
 //                Assert.Equal(iters.Get(1), store.Fetch(KEY, KEY, 0L, 1L));
 //                Assert.Equal((long)VALUE, store.Fetch(KEY, 1L));
-//                Assert.Equal(iters.Get(2), store.all());
+//                Assert.Equal(iters.Get(2), store.All());
 //            });
 //        }
 
@@ -272,20 +272,20 @@
 //            doTest("LocalTimestampedWindowStore", (Consumer<ITimestampedWindowStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                store.flush();
+//                store.Flush();
 //                Assert.True(flushExecuted);
 
-//                store.put("1", ValueAndTimestamp.Make(1L, 1L));
+//                store.Put("1", ValueAndTimestamp.Make(1L, 1L));
 //                Assert.True(putExecuted);
 
-//                store.put("1", ValueAndTimestamp.Make(1L, 1L), 1L);
+//                store.Put("1", ValueAndTimestamp.Make(1L, 1L), 1L);
 //                Assert.True(putWithTimestampExecuted);
 
-//                Assert.Equal(timestampedIters.Get(0), store.fetchAll(0L, 0L));
+//                Assert.Equal(timestampedIters.Get(0), store.FetchAll(0L, 0L));
 //                Assert.Equal(windowStoreIter, store.Fetch(KEY, 0L, 1L));
 //                Assert.Equal(timestampedIters.Get(1), store.Fetch(KEY, KEY, 0L, 1L));
 //                Assert.Equal(VALUE_AND_TIMESTAMP, store.Fetch(KEY, 1L));
-//                Assert.Equal(timestampedIters.Get(2), store.all());
+//                Assert.Equal(timestampedIters.Get(2), store.All());
 //            });
 //        }
 
@@ -295,13 +295,13 @@
 //            doTest("LocalSessionStore", (Consumer<ISessionStore<string, long>>)store => {
 //                verifyStoreCannotBeInitializedOrClosed(store);
 
-//                store.flush();
+//                store.Flush();
 //                Assert.True(flushExecuted);
 
 //                store.remove(null);
 //                Assert.True(removeExecuted);
 
-//                store.put(null, null);
+//                store.Put(null, null);
 //                Assert.True(putExecuted);
 
 //                Assert.Equal(iters.Get(3), store.findSessions(KEY, 1L, 2L));
@@ -322,10 +322,10 @@
 //            expect(keyValueStoreMock.approximateNumEntries).andReturn(VALUE);
 
 //            expect(keyValueStoreMock.Range("one", "two")).andReturn(rangeIter);
-//            expect(keyValueStoreMock.all()).andReturn(allIter);
+//            expect(keyValueStoreMock.All()).andReturn(allIter);
 
 
-//            keyValueStoreMock.put(anyString(), anyLong());
+//            keyValueStoreMock.Put(anyString(), anyLong());
 //            expectLastCall().andAnswer(() =>
 //            {
 //                putExecuted = true;
@@ -369,10 +369,10 @@
 //            expect(timestampedKeyValueStoreMock.approximateNumEntries).andReturn(VALUE);
 
 //            expect(timestampedKeyValueStoreMock.Range("one", "two")).andReturn(timestampedRangeIter);
-//            expect(timestampedKeyValueStoreMock.all()).andReturn(timestampedAllIter);
+//            expect(timestampedKeyValueStoreMock.All()).andReturn(timestampedAllIter);
 
 
-//            timestampedKeyValueStoreMock.put(anyString(), anyObject(ValueAndTimestamp));
+//            timestampedKeyValueStoreMock.Put(anyString(), anyObject(ValueAndTimestamp));
 //            expectLastCall().andAnswer(() =>
 //            {
 //                putExecuted = true;
@@ -411,13 +411,13 @@
 
 //            initStateStoreMock(windowStore);
 
-//            expect(windowStore.fetchAll(anyLong(), anyLong())).andReturn(iters.Get(0));
+//            expect(windowStore.FetchAll(anyLong(), anyLong())).andReturn(iters.Get(0));
 //            expect(windowStore.Fetch(anyString(), anyString(), anyLong(), anyLong())).andReturn(iters.Get(1));
 //            expect(windowStore.Fetch(anyString(), anyLong(), anyLong())).andReturn(windowStoreIter);
 //            expect(windowStore.Fetch(anyString(), anyLong())).andReturn(VALUE);
-//            expect(windowStore.all()).andReturn(iters.Get(2));
+//            expect(windowStore.All()).andReturn(iters.Get(2));
 
-//            windowStore.put(anyString(), anyLong());
+//            windowStore.Put(anyString(), anyLong());
 //            expectLastCall().andAnswer(() =>
 //            {
 //                putExecuted = true;
@@ -436,20 +436,20 @@
 
 //            initStateStoreMock(windowStore);
 
-//            expect(windowStore.fetchAll(anyLong(), anyLong())).andReturn(timestampedIters.Get(0));
+//            expect(windowStore.FetchAll(anyLong(), anyLong())).andReturn(timestampedIters.Get(0));
 //            expect(windowStore.Fetch(anyString(), anyString(), anyLong(), anyLong())).andReturn(timestampedIters.Get(1));
 //            expect(windowStore.Fetch(anyString(), anyLong(), anyLong())).andReturn(windowStoreIter);
 //            expect(windowStore.Fetch(anyString(), anyLong())).andReturn(VALUE_AND_TIMESTAMP);
-//            expect(windowStore.all()).andReturn(timestampedIters.Get(2));
+//            expect(windowStore.All()).andReturn(timestampedIters.Get(2));
 
-//            windowStore.put(anyString(), anyObject(ValueAndTimestamp));
+//            windowStore.Put(anyString(), anyObject(ValueAndTimestamp));
 //            expectLastCall().andAnswer(() =>
 //            {
 //                putExecuted = true;
 //                return null;
 //            });
 
-//            windowStore.put(anyString(), anyObject(ValueAndTimestamp), anyLong());
+//            windowStore.Put(anyString(), anyObject(ValueAndTimestamp), anyLong());
 //            expectLastCall().andAnswer(() =>
 //            {
 //                putWithTimestampExecuted = true;
@@ -473,7 +473,7 @@
 //            expect(sessionStore.Fetch(anyString())).andReturn(iters.Get(5));
 //            expect(sessionStore.Fetch(anyString(), anyString())).andReturn(iters.Get(6));
 
-//            sessionStore.put(anyObject(Windowed), anyLong());
+//            sessionStore.Put(anyObject(Windowed), anyLong());
 //            expectLastCall().andAnswer(() =>
 //            {
 //                putExecuted = true;
@@ -494,11 +494,11 @@
 
 //        private void InitStateStoreMock(IStateStore stateStore)
 //        {
-//            expect(stateStore.name()).andReturn(STORE_NAME);
-//            expect(stateStore.persistent()).andReturn(true);
-//            expect(stateStore.isOpen()).andReturn(true);
+//            expect(stateStore.Name()).andReturn(STORE_NAME);
+//            expect(stateStore.Persistent()).andReturn(true);
+//            expect(stateStore.IsOpen()).andReturn(true);
 
-//            stateStore.flush();
+//            stateStore.Flush();
 //            expectLastCall().andAnswer(() =>
 //            {
 //                flushExecuted = true;
@@ -506,16 +506,16 @@
 //            });
 //        }
 
-//        private void DoTest<IStateStore>(string name, Consumer<T> checker)
+//        private void DoTest<IStateStore>(string Name, Consumer<T> checker)
 //        {
 //            Processor processor = new Processor<string, long>()
 //            {
 
 
 
-//            public void init(ProcessorContext context)
+//            public void Init(ProcessorContext context)
 //            {
-//                T store = (T)context.getStateStore(name);
+//                T store = (T)context.getStateStore(Name);
 //                checker.accept(store);
 //            }
 
@@ -526,7 +526,7 @@
 //            }
 
 
-//            public void close()
+//            public void Close()
 //            {
 //                //No-op.
 //            }
@@ -537,20 +537,20 @@
 
 //    private void VerifyStoreCannotBeInitializedOrClosed(IStateStore store)
 //    {
-//        Assert.Equal(STORE_NAME, store.name());
-//        Assert.True(store.persistent());
-//        Assert.True(store.isOpen());
+//        Assert.Equal(STORE_NAME, store.Name());
+//        Assert.True(store.Persistent());
+//        Assert.True(store.IsOpen());
 
-//        checkThrowsUnsupportedOperation(() => store.Init(null, null), "init()");
-//        checkThrowsUnsupportedOperation(store::close, "close()");
+//        checkThrowsUnsupportedOperation(() => store.Init(null, null), "Init()");
+//        checkThrowsUnsupportedOperation(store::Close, "Close()");
 //    }
 
-//    private void CheckThrowsUnsupportedOperation(Runnable check, string name)
+//    private void CheckThrowsUnsupportedOperation(Runnable check, string Name)
 //    {
 //        try
 //        {
 //            check.run();
-//            Assert.True(false, name + " should throw exception");
+//            Assert.True(false, Name + " should throw exception");
 //        }
 //        catch (UnsupportedOperationException e)
 //        {

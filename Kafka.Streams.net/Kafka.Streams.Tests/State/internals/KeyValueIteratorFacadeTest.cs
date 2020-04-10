@@ -53,11 +53,11 @@
 //        [Fact]
 //        public void ShouldCloseInnerIterator()
 //        {
-//            mockedKeyValueIterator.close();
+//            mockedKeyValueIterator.Close();
 //            expectLastCall();
 //            replay(mockedKeyValueIterator);
 
-//            keyValueIteratorFacade.close();
+//            keyValueIteratorFacade.Close();
 //            verify(mockedKeyValueIterator);
 //        }
 //    }

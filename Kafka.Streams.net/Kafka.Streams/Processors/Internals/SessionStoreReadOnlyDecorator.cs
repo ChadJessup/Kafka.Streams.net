@@ -16,53 +16,53 @@ namespace Kafka.Streams.Processors.Internals
         {
         }
 
-        public IKeyValueIterator<Windowed<K>, AGG> FindSessions(
+        public IKeyValueIterator<IWindowed<K>, AGG> FindSessions(
             K key,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            return Wrapped.FindSessions(
+            return this.Wrapped.FindSessions(
                 key,
                 earliestSessionEndTime,
                 latestSessionStartTime);
         }
 
-        public IKeyValueIterator<Windowed<K>, AGG> FindSessions(
+        public IKeyValueIterator<IWindowed<K>, AGG> FindSessions(
             K keyFrom,
             K keyTo,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            return Wrapped.FindSessions(
+            return this.Wrapped.FindSessions(
                 keyFrom,
                 keyTo,
                 earliestSessionEndTime,
                 latestSessionStartTime);
         }
 
-        public void Remove(Windowed<K> sessionKey)
+        public void Remove(IWindowed<K> sessionKey)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public void Put(Windowed<K> sessionKey, AGG aggregate)
+        public void Put(IWindowed<K> sessionKey, AGG aggregate)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
         public AGG FetchSession(K key, long startTime, long endTime)
         {
-            return Wrapped.FetchSession(key, startTime, endTime);
+            return this.Wrapped.FetchSession(key, startTime, endTime);
         }
 
-        public IKeyValueIterator<Windowed<K>, AGG> Fetch(K key)
+        public IKeyValueIterator<IWindowed<K>, AGG> Fetch(K key)
         {
-            return Wrapped.Fetch(key);
+            return this.Wrapped.Fetch(key);
         }
 
-        public IKeyValueIterator<Windowed<K>, AGG> Fetch(K from, K to)
+        public IKeyValueIterator<IWindowed<K>, AGG> Fetch(K from, K to)
         {
-            return Wrapped.Fetch(from, to);
+            return this.Wrapped.Fetch(from, to);
         }
     }
 }

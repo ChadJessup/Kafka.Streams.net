@@ -17,13 +17,13 @@ namespace Kafka.Streams.Topologies
     {
         /**
          * All sub-topologies of the represented topology.
-         * @return set of all sub-topologies
+         * @return set of All sub-topologies
          */
         HashSet<ISubtopology> subtopologies { get; }
 
         /**
          * All global stores of the represented topology.
-         * @return set of all global stores
+         * @return set of All global stores
          */
         HashSet<IGlobalStore> globalStores { get; }
     }

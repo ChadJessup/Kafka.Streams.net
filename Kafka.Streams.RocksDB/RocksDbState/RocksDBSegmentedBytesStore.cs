@@ -4,12 +4,12 @@
 //    public class RocksDbSegmentedBytesStore : AbstractRocksDbSegmentedBytesStore<KeyValueSegment>
 //    {
 
-//        RocksDbSegmentedBytesStore(string name,
+//        RocksDbSegmentedBytesStore(string Name,
 //                                   string metricScope,
 //                                   long retention,
 //                                   long segmentInterval,
 //                                   KeySchema keySchema)
-//            : base(name, metricScope, keySchema, new KeyValueSegments(name, retention, segmentInterval))
+//            : base(Name, metricScope, keySchema, new KeyValueSegments(Name, retention, segmentInterval))
 //        {
 //        }
 //    }

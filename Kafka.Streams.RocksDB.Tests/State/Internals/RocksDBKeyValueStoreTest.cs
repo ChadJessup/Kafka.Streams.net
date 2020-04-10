@@ -45,8 +45,8 @@
 //        public void ShouldPerformRangeQueriesWithCachingDisabled()
 //        {
 //            context.setTime(1L);
-//            store.put(1, "hi");
-//            store.put(2, "goodbye");
+//            store.Put(1, "hi");
+//            store.Put(2, "goodbye");
 //            IKeyValueIterator<int, string> range = store.Range(1, 2);
 //            Assert.Equal("hi", range.MoveNext().value);
 //            Assert.Equal("goodbye", range.MoveNext().value);
@@ -57,9 +57,9 @@
 //        public void ShouldPerformAllQueriesWithCachingDisabled()
 //        {
 //            context.setTime(1L);
-//            store.put(1, "hi");
-//            store.put(2, "goodbye");
-//            IKeyValueIterator<int, string> range = store.all();
+//            store.Put(1, "hi");
+//            store.Put(2, "goodbye");
+//            IKeyValueIterator<int, string> range = store.All();
 //            Assert.Equal("hi", range.MoveNext().value);
 //            Assert.Equal("goodbye", range.MoveNext().value);
 //            Assert.False(range.HasNext());
@@ -69,15 +69,15 @@
 //        public void ShouldCloseOpenIteratorsWhenStoreClosedAndThrowInvalidStateStoreOnHasNextAndNext()
 //        {
 //            context.setTime(1L);
-//            store.put(1, "hi");
-//            store.put(2, "goodbye");
+//            store.Put(1, "hi");
+//            store.Put(2, "goodbye");
 //            IKeyValueIterator<int, string> iteratorOne = store.Range(1, 5);
 //            IKeyValueIterator<int, string> iteratorTwo = store.Range(1, 4);
 
 //            Assert.True(iteratorOne.HasNext());
 //            Assert.True(iteratorTwo.HasNext());
 
-//            store.close();
+//            store.Close();
 
 //            try
 //            {

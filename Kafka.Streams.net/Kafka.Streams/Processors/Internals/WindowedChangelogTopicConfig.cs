@@ -17,12 +17,12 @@ namespace Kafka.Streams.Processors.Internals
 
         private readonly long? retentionMs;
 
-        public WindowedChangelogTopicConfig(string name, Dictionary<string, string?> topicConfigs)
+        public WindowedChangelogTopicConfig(string Name, Dictionary<string, string?> topicConfigs)
         {
-            name = name ?? throw new ArgumentNullException(nameof(name));
-            //            Topic.validate(name);
+            Name = Name ?? throw new ArgumentNullException(nameof(Name));
+            //            Topic.validate(Name);
 
-            this.name = name;
+            this.Name = Name;
             this.topicConfigs = topicConfigs;
         }
 
@@ -41,13 +41,13 @@ namespace Kafka.Streams.Processors.Internals
             //topicConfig.putAll(defaultProperties);
             //topicConfig.putAll(topicConfigs);
 
-            if (retentionMs != null)
+            if (this.retentionMs != null)
             {
                 long? retentionValue;
 
                 try
                 {
-                    retentionValue = retentionMs + additionalRetentionMs;
+                    retentionValue = this.retentionMs + additionalRetentionMs;
                 }
                 catch (ArithmeticException)
                 {
@@ -75,30 +75,30 @@ namespace Kafka.Streams.Processors.Internals
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (WindowedChangelogTopicConfig)o;
 
-            return name.Equals(that.name) &&
-                    topicConfigs.Equals(that.topicConfigs) &&
-                    retentionMs.Equals(that.retentionMs);
+            return this.Name.Equals(that.Name) &&
+                    this.topicConfigs.Equals(that.topicConfigs) &&
+                    this.retentionMs.Equals(that.retentionMs);
         }
 
 
         public override int GetHashCode()
         {
-            return (name, topicConfigs, retentionMs).GetHashCode();
+            return (this.Name, this.topicConfigs, this.retentionMs).GetHashCode();
         }
 
         public override string ToString()
         {
             return "WindowedChangelogTopicConfig(" +
-                    "name=" + name +
-                    ", topicConfigs=" + topicConfigs +
-                    ", retentionMs=" + retentionMs +
+                    "Name=" + this.Name +
+                    ", topicConfigs=" + this.topicConfigs +
+                    ", retentionMs=" + this.retentionMs +
                     ")";
         }
     }

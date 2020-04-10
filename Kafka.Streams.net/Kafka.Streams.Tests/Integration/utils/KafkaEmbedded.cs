@@ -55,14 +55,14 @@
 //        private StreamsConfig EffectiveConfigFrom(StreamsConfig initialConfig)
 //        {
 //            StreamsConfig effectiveConfig = new StreamsConfig();
-//            //effectiveConfig.put(KafkaConfig$.MODULE$.BrokerIdProp(), 0);
-//            //effectiveConfig.put(KafkaConfig$.MODULE$.HostNameProp(), "localhost");
-//            //effectiveConfig.put(KafkaConfig$.MODULE$.PortProp(), "9092");
-//            //effectiveConfig.put(KafkaConfig$.MODULE$.NumPartitionsProp(), 1);
-//            //effectiveConfig.put(KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
-//            //effectiveConfig.put(KafkaConfig$.MODULE$.MessageMaxBytesProp(), 1000000);
-//            //effectiveConfig.put(KafkaConfig$.MODULE$.ControlledShutdownEnableProp(), true);
-//            //effectiveConfig.put(KafkaConfig$.MODULE$.ZkSessionTimeoutMsProp(), 10000);
+//            //effectiveConfig.Put(KafkaConfig$.MODULE$.BrokerIdProp(), 0);
+//            //effectiveConfig.Put(KafkaConfig$.MODULE$.HostNameProp(), "localhost");
+//            //effectiveConfig.Put(KafkaConfig$.MODULE$.PortProp(), "9092");
+//            //effectiveConfig.Put(KafkaConfig$.MODULE$.NumPartitionsProp(), 1);
+//            //effectiveConfig.Put(KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
+//            //effectiveConfig.Put(KafkaConfig$.MODULE$.MessageMaxBytesProp(), 1000000);
+//            //effectiveConfig.Put(KafkaConfig$.MODULE$.ControlledShutdownEnableProp(), true);
+//            //effectiveConfig.Put(KafkaConfig$.MODULE$.ZkSessionTimeoutMsProp(), 10000);
 
 //            effectiveConfig.SetAll(initialConfig);
 //            //effectiveConfig.setProperty(KafkaConfig$.MODULE$.LogDirProp(), logDir.FullName);
@@ -120,7 +120,7 @@
 //        /**
 //         * Create a Kafka topic with 1 partition and a replication factor of 1.
 //         *
-//         * @param topic The name of the topic.
+//         * @param topic The Name of the topic.
 //         */
 //        public void CreateTopic(string topic)
 //        {
@@ -130,7 +130,7 @@
 //        /**
 //         * Create a Kafka topic with the given parameters.
 //         *
-//         * @param topic       The name of the topic.
+//         * @param topic       The Name of the topic.
 //         * @param partitions  The number of partitions for this topic.
 //         * @param replication The replication factor for (the partitions of) this topic.
 //         */
@@ -142,7 +142,7 @@
 //        /**
 //         * Create a Kafka topic with the given parameters.
 //         *
-//         * @param topic       The name of the topic.
+//         * @param topic       The Name of the topic.
 //         * @param partitions  The number of partitions for this topic.
 //         * @param replication The replication factor for (partitions of) this topic.
 //         * @param topicConfig Additional topic-level configuration settings.
@@ -153,25 +153,25 @@
 //            int replication,
 //            Dictionary<string, string> topicConfig)
 //        {
-//            log.debug("Creating topic { name: {}, partitions: {}, replication: {}, config: {} }",
+//            log.debug("Creating topic { Name: {}, partitions: {}, replication: {}, config: {} }",
 //                topic, partitions, replication, topicConfig);
 //            NewTopic newTopic = new NewTopic(topic, partitions, (short)replication);
 //            newTopic.configs(topicConfig);
 
 //            Admin adminClient = createAdminClient();
-//            adminClient.createTopics(Collections.singletonList(newTopic)).all().Get();
+//            adminClient.createTopics(Collections.singletonList(newTopic)).All().Get();
 //        }
 
 //        public Admin createAdminClient()
 //        {
 //            StreamsConfig adminClientConfig = new StreamsConfig();
-//            adminClientConfig.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, BrokerList());
+//            adminClientConfig.Put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, BrokerList());
 //            //object listeners = effectiveConfig.Get(KafkaConfig$.MODULE$.ListenersProp());
 //            //if (listeners != null && listeners.ToString().Contains("SSL"))
 //            //{
-//            //    adminClientConfig.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, effectiveConfig.Get(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
-//            //    adminClientConfig.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, ((Password)effectiveConfig.Get(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG)).Value);
-//            //    adminClientConfig.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
+//            //    adminClientConfig.Put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, effectiveConfig.Get(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
+//            //    adminClientConfig.Put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, ((Password)effectiveConfig.Get(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG)).Value);
+//            //    adminClientConfig.Put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
 //            //}
 //            return Admin.Create(adminClientConfig);
 //        }
@@ -179,9 +179,9 @@
 
 //        public void deleteTopic(string topic)
 //        {
-//            log.debug("Deleting topic { name: {} }", topic);
+//            log.debug("Deleting topic { Name: {} }", topic);
 //            Admin adminClient = createAdminClient();
-//            adminClient.deleteTopics(Collections.singletonList(topic)).all().Get();
+//            adminClient.deleteTopics(Collections.singletonList(topic)).All().Get();
 //        }
 
 

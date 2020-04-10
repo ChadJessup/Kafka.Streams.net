@@ -31,14 +31,14 @@ namespace Kafka.Streams.KStream.Internals
         {
             base.Init(context);
 
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.context, queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<K, V>(
-                    store,
+                this.store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.queryableName);
+                this.tupleForwarder = new TimestampedTupleForwarder<K, V>(
+                    this.store,
                     context,
                     new TimestampedCacheFlushListener<K, V>(context),
-                    sendOldValues);
+                    this.sendOldValues);
             }
         }
 
@@ -47,26 +47,26 @@ namespace Kafka.Streams.KStream.Internals
             // if the key is null, then ignore the record
             if (key == null)
             {
-                logger.LogWarning(
+                this.logger.LogWarning(
                     "Skipping record due to null key. topic=[{}] partition=[{}] offset=[{}]",
-                    Context.Topic, Context.Partition, Context.Offset);
+                    this.Context.Topic, this.Context.Partition, this.Context.Offset);
 
                 return;
             }
 
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
-                ValueAndTimestamp<V> oldValueAndTimestamp = store.Get(key);
+                ValueAndTimestamp<V> oldValueAndTimestamp = this.store.Get(key);
 
                 V oldValue;
                 if (oldValueAndTimestamp != null)
                 {
                     oldValue = oldValueAndTimestamp.Value;
                     
-                    if (Context.Timestamp < oldValueAndTimestamp.Timestamp)
+                    if (this.Context.Timestamp < oldValueAndTimestamp.Timestamp)
                     {
-                        logger.LogWarning("Detected out-of-order KTable update for {} at offset {}, partition {}.",
-                            store.Name, Context.Offset, Context.Partition);
+                        this.logger.LogWarning("Detected out-of-order KTable update for {} at offset {}, partition {}.",
+                            this.store.Name, this.Context.Offset, this.Context.Partition);
                     }
                 }
                 else
@@ -74,14 +74,14 @@ namespace Kafka.Streams.KStream.Internals
                     oldValue = default;
                 }
 
-                store.Add(key, ValueAndTimestamp.Make(value, Context.Timestamp));
+                this.store.Add(key, ValueAndTimestamp.Make(value, this.Context.Timestamp));
 
-                tupleForwarder.MaybeForward(key, value, oldValue);
+                this.tupleForwarder.MaybeForward(key, value, oldValue);
             }
             else
             {
 
-                Context.Forward(key, new Change<V>(value, default));
+                this.Context.Forward(key, new Change<V>(value, default));
             }
         }
     }

@@ -10,7 +10,7 @@ namespace Kafka.Common
     // to unblock initial port...
     public class ScheduledThreadPoolExecutor
     {
-        public int ThreadCount => threads.Length;
+        public int ThreadCount => this.threads.Length;
         public EventHandler<Exception> OnException;
 
         private readonly ManualResetEvent waiter;
@@ -19,12 +19,12 @@ namespace Kafka.Common
 
         public ScheduledThreadPoolExecutor(int threadCount)
         {
-            waiter = new ManualResetEvent(false);
-            queue = new SortedSet<Tuple<DateTime, Action>>();
-            OnException += (o, e) => { };
-            threads = Enumerable.Range(0, threadCount).Select(i => new Thread(RunLoop)).ToArray();
+            this.waiter = new ManualResetEvent(false);
+            this.queue = new SortedSet<Tuple<DateTime, Action>>();
+            this.OnException += (o, e) => { };
+            this.threads = Enumerable.Range(0, threadCount).Select(i => new Thread(this.RunLoop)).ToArray();
 
-            foreach (var thread in threads)
+            foreach (var thread in this.threads)
             {
                 thread.Start();
             }
@@ -40,26 +40,26 @@ namespace Kafka.Common
 
                 try
                 {
-                    lock (waiter)
+                    lock (this.waiter)
                     {
-                        if (queue.Any())
+                        if (this.queue.Any())
                         {
-                            if (queue.First().Item1 <= DateTime.Now)
+                            if (this.queue.First().Item1 <= DateTime.Now)
                             {
-                                task = queue.First().Item2;
-                                queue.Remove(queue.First());
+                                task = this.queue.First().Item2;
+                                this.queue.Remove(this.queue.First());
                                 needToSleep = false;
                             }
                             else
                             {
-                                sleepingTime = queue.First().Item1 - DateTime.Now;
+                                sleepingTime = this.queue.First().Item1 - DateTime.Now;
                             }
                         }
                     }
 
                     if (needToSleep)
                     {
-                        waiter.WaitOne((int)sleepingTime.TotalMilliseconds);
+                        this.waiter.WaitOne((int)sleepingTime.TotalMilliseconds);
                     }
                     else
                     {
@@ -68,7 +68,7 @@ namespace Kafka.Common
                 }
                 catch (Exception e)
                 {
-                    OnException(task, e);
+                    this.OnException(task, e);
                 }
             }
         }

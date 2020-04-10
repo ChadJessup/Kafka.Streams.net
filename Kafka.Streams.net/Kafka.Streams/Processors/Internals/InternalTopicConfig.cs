@@ -10,7 +10,7 @@ namespace Kafka.Streams.Processors.Internals
      */
     public abstract class InternalTopicConfig
     {
-        public string name { get; protected set; }
+        public string Name { get; protected set; }
         public Dictionary<string, string?> topicConfigs { get; protected set; } = new Dictionary<string, string?>();
 
         public int numberOfPartitions { get; private set; } = StreamsPartitionAssignor.UNKNOWN;
@@ -37,8 +37,8 @@ namespace Kafka.Streams.Processors.Internals
         public override string ToString()
         {
             return "InternalTopicConfig(" +
-                    "name=" + name +
-                    ", topicConfigs=" + topicConfigs +
+                    "Name=" + this.Name +
+                    ", topicConfigs=" + this.topicConfigs +
                     ")";
         }
     }

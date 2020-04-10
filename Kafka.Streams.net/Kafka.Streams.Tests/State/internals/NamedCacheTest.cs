@@ -77,7 +77,7 @@
 //            {
 //                byte[] key = toInsert.Get(i).key.getBytes();
 //                byte[] value = toInsert.Get(i).value.getBytes();
-//                cache.put(Bytes.Wrap(key), new LRUCacheEntry(value, null, true, 1, 1, 1, ""));
+//                cache.Put(Bytes.Wrap(key), new LRUCacheEntry(value, null, true, 1, 1, 1, ""));
 //                LRUCacheEntry head = cache.first();
 //                LRUCacheEntry tail = cache.last();
 //                Assert.Equal(new string(head.Value), toInsert.Get(i).value);
@@ -93,16 +93,16 @@
 //        public void TestMetrics()
 //        {
 //            Dictionary<string, string> metricTags = new LinkedHashMap<>();
-//            metricTags.put("record-cache-id", underlyingStoreName);
-//            metricTags.put("task-id", taskIDString);
-//            metricTags.put("client-id", "test");
+//            metricTags.Put("record-cache-id", underlyingStoreName);
+//            metricTags.Put("task-id", taskIDString);
+//            metricTags.Put("client-id", "test");
 
 //            getMetricByNameFilterByTags(metrics.metrics(), "hitRatio-avg", "stream-record-cache-metrics", metricTags);
 //            getMetricByNameFilterByTags(metrics.metrics(), "hitRatio-min", "stream-record-cache-metrics", metricTags);
 //            getMetricByNameFilterByTags(metrics.metrics(), "hitRatio-max", "stream-record-cache-metrics", metricTags);
 
-//            // test "all"
-//            metricTags.put("record-cache-id", "all");
+//            // test "All"
+//            metricTags.Put("record-cache-id", "All");
 //            getMetricByNameFilterByTags(metrics.metrics(), "hitRatio-avg", "stream-record-cache-metrics", metricTags);
 //            getMetricByNameFilterByTags(metrics.metrics(), "hitRatio-min", "stream-record-cache-metrics", metricTags);
 //            getMetricByNameFilterByTags(metrics.metrics(), "hitRatio-max", "stream-record-cache-metrics", metricTags);
@@ -112,16 +112,16 @@
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-record-cache-metrics,client-id=test,task-id=%s,record-cache-id=%s",
 //                    taskIDString, underlyingStoreName)));
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-record-cache-metrics,client-id=test,task-id=%s,record-cache-id=%s",
-//                    taskIDString, "all")));
+//                    taskIDString, "All")));
 //        }
 
 //        [Fact]
 //        public void ShouldKeepTrackOfSize()
 //        {
 //            LRUCacheEntry value = new LRUCacheEntry(new byte[] { 0 });
-//            cache.put(Bytes.Wrap(new byte[] { 0 }), value);
-//            cache.put(Bytes.Wrap(new byte[] { 1 }), value);
-//            cache.put(Bytes.Wrap(new byte[] { 2 }), value);
+//            cache.Put(Bytes.Wrap(new byte[] { 0 }), value);
+//            cache.Put(Bytes.Wrap(new byte[] { 1 }), value);
+//            cache.Put(Bytes.Wrap(new byte[] { 2 }), value);
 //            long size = cache.sizeInBytes();
 //            // 1 byte key + 24 bytes overhead
 //            Assert.Equal((value.Count + 25) * 3, size);
@@ -130,9 +130,9 @@
 //        [Fact]
 //        public void ShouldPutGet()
 //        {
-//            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
-//            cache.put(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 11 }));
-//            cache.put(Bytes.Wrap(new byte[] { 2 }), new LRUCacheEntry(new byte[] { 12 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 11 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 2 }), new LRUCacheEntry(new byte[] { 12 }));
 
 //            assertArrayEquals(new byte[] { 10 }, cache.Get(Bytes.Wrap(new byte[] { 0 })).Value);
 //            assertArrayEquals(new byte[] { 11 }, cache.Get(Bytes.Wrap(new byte[] { 1 })).Value);
@@ -143,7 +143,7 @@
 //        [Fact]
 //        public void ShouldPutIfAbsent()
 //        {
-//            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
 //            cache.putIfAbsent(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 20 }));
 //            cache.putIfAbsent(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 30 }));
 
@@ -154,7 +154,7 @@
 //        [Fact]
 //        public void ShouldDeleteAndUpdateSize()
 //        {
-//            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
 //            LRUCacheEntry deleted = cache.delete(Bytes.Wrap(new byte[] { 0 }));
 //            assertArrayEquals(new byte[] { 10 }, deleted.Value);
 //            Assert.Equal(0, cache.sizeInBytes());
@@ -186,9 +186,9 @@
 //        [Fact]
 //        public void ShouldEvictEldestEntry()
 //        {
-//            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
-//            cache.put(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 20 }));
-//            cache.put(Bytes.Wrap(new byte[] { 2 }), new LRUCacheEntry(new byte[] { 30 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 20 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 2 }), new LRUCacheEntry(new byte[] { 30 }));
 
 //            cache.evict();
 //            Assert.Null(cache.Get(Bytes.Wrap(new byte[] { 0 })));
@@ -199,9 +199,9 @@
 //        public void ShouldFlushDirtEntriesOnEviction()
 //        {
 //            List<ThreadCache.DirtyEntry> flushed = new ArrayList<>();
-//            cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, headers, true, 0, 0, 0, ""));
-//            cache.put(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 20 }));
-//            cache.put(Bytes.Wrap(new byte[] { 2 }), new LRUCacheEntry(new byte[] { 30 }, headers, true, 0, 0, 0, ""));
+//            cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, headers, true, 0, 0, 0, ""));
+//            cache.Put(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 20 }));
+//            cache.Put(Bytes.Wrap(new byte[] { 2 }), new LRUCacheEntry(new byte[] { 30 }, headers, true, 0, 0, 0, ""));
 
 //            cache.setListener(new ThreadCache.DirtyEntryFlushListener()
 //            {
@@ -233,8 +233,8 @@
 //    [Fact]// (expected = IllegalStateException)
 //    public void ShouldThrowIllegalStateExceptionWhenTryingToOverwriteDirtyEntryWithCleanEntry()
 //    {
-//        cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, headers, true, 0, 0, 0, ""));
-//        cache.put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, null, false, 0, 0, 0, ""));
+//        cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, headers, true, 0, 0, 0, ""));
+//        cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, null, false, 0, 0, 0, ""));
 //    }
 
 //    [Fact]
@@ -249,9 +249,9 @@
 //            // no-op
 //        }
 //    });
-//        cache.put(Bytes.Wrap(new byte[]{0}), new LRUCacheEntry(null, headers, true, 0, 0, 0, ""));
-//        cache.put(Bytes.Wrap(new byte[]{1}), new LRUCacheEntry(new byte[]{20}, null, true, 0, 0, 0, ""));
-//        cache.flush();
+//        cache.Put(Bytes.Wrap(new byte[]{0}), new LRUCacheEntry(null, headers, true, 0, 0, 0, ""));
+//        cache.Put(Bytes.Wrap(new byte[]{1}), new LRUCacheEntry(new byte[]{20}, null, true, 0, 0, 0, ""));
+//        cache.Flush();
 //        Assert.Equal(1, cache.Count);
 //        Assert.NotNull(cache.Get(Bytes.Wrap(new byte[]{1})));
 //    }
@@ -261,9 +261,9 @@
 //    {
 //        LRUCacheEntry dirty = new LRUCacheEntry(new byte[] { 3 }, null, true, 0, 0, 0, "");
 //        LRUCacheEntry clean = new LRUCacheEntry(new byte[] { 3 });
-//        cache.put(Bytes.Wrap(new byte[] { 0 }), dirty);
-//        cache.put(Bytes.Wrap(new byte[] { 1 }), clean);
-//        cache.put(Bytes.Wrap(new byte[] { 2 }), clean);
+//        cache.Put(Bytes.Wrap(new byte[] { 0 }), dirty);
+//        cache.Put(Bytes.Wrap(new byte[] { 1 }), clean);
+//        cache.Put(Bytes.Wrap(new byte[] { 2 }), clean);
 //        Assert.Equal(3 * cache.head().Count, cache.sizeInBytes());
 //        cache.setListener(new ThreadCache.DirtyEntryFlushListener()
 //        {
@@ -271,7 +271,7 @@
 
 //            public void apply(List<ThreadCache.DirtyEntry> dirty)
 //        {
-//            cache.put(Bytes.Wrap(new byte[] { 3 }), clean);
+//            cache.Put(Bytes.Wrap(new byte[] { 3 }), clean);
 //            // evict key 1
 //            cache.evict();
 //            // evict key 2
@@ -283,7 +283,7 @@
 //        // Evict key 0
 //        cache.evict();
 //        Bytes entryFour = Bytes.Wrap(new byte[] { 4 });
-//    cache.put(entryFour, dirty);
+//    cache.Put(entryFour, dirty);
 
 //        // check that the LRU is still correct
 //        NamedCache.LRUNode head = cache.head();
@@ -318,10 +318,10 @@
 
 //            public void apply(List<ThreadCache.DirtyEntry> dirty)
 //        {
-//            cache.put(key, clean);
+//            cache.Put(key, clean);
 //        }
 //    });
-//        cache.put(key, dirty);
+//        cache.Put(key, dirty);
 //        cache.evict();
 //    }
 

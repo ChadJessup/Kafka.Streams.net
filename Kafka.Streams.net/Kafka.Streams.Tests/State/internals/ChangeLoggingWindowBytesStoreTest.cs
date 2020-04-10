@@ -59,7 +59,7 @@
 //                                Serializer<K> keySerializer,
 //                                Serializer<V> valueSerializer)
 //        {
-//            sent.put(key, value);
+//            sent.Put(key, value);
 //        }
 //    };
 
@@ -93,12 +93,12 @@
 //    [Fact]
 //    public void ShouldLogPuts()
 //    {
-//        inner.put(bytesKey, value, 0);
+//        inner.Put(bytesKey, value, 0);
 //        EasyMock.expectLastCall();
 
-//        init();
+//        Init();
 
-//        store.put(bytesKey, value);
+//        store.Put(bytesKey, value);
 
 //        assertArrayEquals(
 //            value,
@@ -113,7 +113,7 @@
 //            .expect(inner.Fetch(bytesKey, 0, 10))
 //            .andReturn(KeyValueIterators.emptyWindowStoreIterator());
 
-//        init();
+//        Init();
 
 //        store.Fetch(bytesKey, ofEpochMilli(0), ofEpochMilli(10));
 //        EasyMock.verify(inner);
@@ -126,7 +126,7 @@
 //            .expect(inner.Fetch(bytesKey, bytesKey, 0, 1))
 //            .andReturn(KeyValueIterators.emptyIterator());
 
-//        init();
+//        Init();
 
 //        store.Fetch(bytesKey, bytesKey, ofEpochMilli(0), ofEpochMilli(1));
 //        EasyMock.verify(inner);
@@ -136,12 +136,12 @@
 //    public void ShouldRetainDuplicatesWhenSet()
 //    {
 //        store = new ChangeLoggingWindowBytesStore(inner, true);
-//        inner.put(bytesKey, value, 0);
+//        inner.Put(bytesKey, value, 0);
 //        EasyMock.expectLastCall().times(2);
 
-//        init();
-//        store.put(bytesKey, value);
-//        store.put(bytesKey, value);
+//        Init();
+//        store.Put(bytesKey, value);
+//        store.Put(bytesKey, value);
 
 //        assertArrayEquals(value, (byte[])sent.Get(WindowKeySchema.toStoreKeyBinary(bytesKey, 0, 1)));
 //        assertArrayEquals(value, (byte[])sent.Get(WindowKeySchema.toStoreKeyBinary(bytesKey, 0, 2)));

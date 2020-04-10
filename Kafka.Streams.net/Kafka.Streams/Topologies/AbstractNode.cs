@@ -12,16 +12,16 @@ namespace Kafka.Streams.Topologies
         // size of the sub-topology rooted at this node, including the node itself
         public int Size { get; set; }
 
-        public AbstractNode(string name)
+        public AbstractNode(string Name)
         {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Name = Name ?? throw new ArgumentNullException(nameof(Name));
             this.Size = 1;
         }
 
         public virtual void AddPredecessor(INode predecessor)
-            => Predecessors.Add(predecessor);
+            => this.Predecessors.Add(predecessor);
 
         public void AddSuccessor(INode successor)
-            => Successors.Add(successor);
+            => this.Successors.Add(successor);
     }
 }

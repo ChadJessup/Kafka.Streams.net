@@ -8,13 +8,13 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class InMemorySessionStoreIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
+    public class InMemorySessionStoreIterator : IKeyValueIterator<IWindowed<Bytes>, byte[]>
     {
         private IEnumerator<KeyValuePair<long, Dictionary<Bytes, Dictionary<long, byte[]>>>> endTimeIterator;
         private IEnumerator<KeyValuePair<Bytes, Dictionary<long, byte[]>>> keyIterator;
         private IEnumerator<KeyValuePair<long, byte[]>>? recordIterator;
 
-        private KeyValuePair<Windowed<Bytes>, byte[]>? next;
+        private KeyValuePair<IWindowed<Bytes>, byte[]>? next;
         private Bytes currentKey;
         private long currentEndTime;
 
@@ -24,7 +24,7 @@ namespace Kafka.Streams.State.Internals
 
         private IClosingCallback callback;
 
-        public KeyValuePair<Windowed<Bytes>, byte[]> Current { get; }
+        public KeyValuePair<IWindowed<Bytes>, byte[]> Current { get; }
         object IEnumerator.Current { get; }
 
         public InMemorySessionStoreIterator(
@@ -40,29 +40,29 @@ namespace Kafka.Streams.State.Internals
 
             this.endTimeIterator = endTimeIterator;
             this.callback = callback;
-            SetAllIterators();
+            this.SetAllIterators();
         }
 
 
         public bool MoveNext()
         {
-            if (next != null)
+            if (this.next != null)
             {
                 return true;
             }
-            else if (recordIterator == null)
+            else if (this.recordIterator == null)
             {
                 return false;
             }
             else
             {
-                next = GetNext();
-                return next != null;
+                this.next = this.GetNext();
+                return this.next != null;
             }
         }
 
 
-        public Windowed<Bytes> PeekNextKey()
+        public IWindowed<Bytes> PeekNextKey()
         {
             if (!this.MoveNext())
             {
@@ -72,90 +72,90 @@ namespace Kafka.Streams.State.Internals
             return this.Next().Value.Key;
         }
 
-        public KeyValuePair<Windowed<Bytes>, byte[]>? Next()
+        public KeyValuePair<IWindowed<Bytes>, byte[]>? Next()
         {
             if (!this.MoveNext())
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            KeyValuePair<Windowed<Bytes>, byte[]>? ret = next;
-            next = null;
+            KeyValuePair<IWindowed<Bytes>, byte[]>? ret = this.next;
+            this.next = null;
             return ret;
         }
 
         public void Close()
         {
-            next = null;
-            recordIterator = null;
-            callback.DeregisterIterator(this);
+            this.next = null;
+            this.recordIterator = null;
+            this.callback.DeregisterIterator(this);
         }
 
         public long MinTime()
         {
-            return currentEndTime;
+            return this.currentEndTime;
         }
 
         // getNext is only called when either recordIterator or segmentIterator has a next
         // Note this does not guarantee a next record exists as the next segments may not contain any keys in range
-        private KeyValuePair<Windowed<Bytes>, byte[]>? GetNext()
+        private KeyValuePair<IWindowed<Bytes>, byte[]>? GetNext()
         {
-            if (!recordIterator.MoveNext())
+            if (!this.recordIterator.MoveNext())
             {
-                GetNextIterators();
+                this.GetNextIterators();
             }
 
-            if (recordIterator == null)
+            if (this.recordIterator == null)
             {
                 return null;
             }
 
-            KeyValuePair<long, byte[]> nextRecord = recordIterator.Current;
-            SessionWindow sessionWindow = new SessionWindow(nextRecord.Key, currentEndTime);
-            Windowed<Bytes> windowedKey = new Windowed<Bytes>(currentKey, sessionWindow);
+            KeyValuePair<long, byte[]> nextRecord = this.recordIterator.Current;
+            SessionWindow sessionWindow = new SessionWindow(nextRecord.Key, this.currentEndTime);
+            IWindowed<Bytes> windowedKey = new IWindowed<Bytes>(this.currentKey, sessionWindow);
 
             return KeyValuePair.Create(windowedKey, nextRecord.Value);
         }
 
         // Called when the inner two (key and starttime) iterators are empty to roll to the next endTimestamp
-        // Rolls all three iterators forward until recordIterator has a next entry
+        // Rolls All three iterators forward until recordIterator has a next entry
         // Sets recordIterator to null if there are no records to return
         private void SetAllIterators()
         {
-            while (endTimeIterator.MoveNext())
+            while (this.endTimeIterator.MoveNext())
             {
-                var nextEndTimeEntry = endTimeIterator.Current;
-                currentEndTime = nextEndTimeEntry.Key;
+                var nextEndTimeEntry = this.endTimeIterator.Current;
+                this.currentEndTime = nextEndTimeEntry.Key;
                 //keyIterator = nextEndTimeEntry.Value.subMap(keyFrom, true, keyTo, true).GetEnumerator();
 
-                if (SetInnerIterators())
+                if (this.SetInnerIterators())
                 {
                     return;
                 }
             }
 
-            recordIterator = null;
+            this.recordIterator = null;
         }
 
         // Rolls the inner two iterators (key and record) forward until recordIterators has a next entry
         // Returns false if no more records are found (for the current end time)
         private bool SetInnerIterators()
         {
-            while (keyIterator.MoveNext())
+            while (this.keyIterator.MoveNext())
             {
-                KeyValuePair<Bytes, Dictionary<long, byte[]>> nextKeyEntry = keyIterator.Current;
-                currentKey = nextKeyEntry.Key;
+                KeyValuePair<Bytes, Dictionary<long, byte[]>> nextKeyEntry = this.keyIterator.Current;
+                this.currentKey = nextKeyEntry.Key;
 
-                if (latestSessionStartTime == long.MaxValue)
+                if (this.latestSessionStartTime == long.MaxValue)
                 {
-                    recordIterator = nextKeyEntry.Value.GetEnumerator();
+                    this.recordIterator = nextKeyEntry.Value.GetEnumerator();
                 }
                 else
                 {
-                    recordIterator = null;// nextKeyEntry.Value.headMap(latestSessionStartTime, true).iterator();
+                    this.recordIterator = null;// nextKeyEntry.Value.headMap(latestSessionStartTime, true).iterator();
                 }
 
-                if (recordIterator.MoveNext())
+                if (this.recordIterator.MoveNext())
                 {
                     return true;
                 }
@@ -168,12 +168,12 @@ namespace Kafka.Streams.State.Internals
         // When there are no more records to return, recordIterator will be set to null
         private void GetNextIterators()
         {
-            if (SetInnerIterators())
+            if (this.SetInnerIterators())
             {
                 return;
             }
 
-            SetAllIterators();
+            this.SetAllIterators();
         }
 
         public void Reset()

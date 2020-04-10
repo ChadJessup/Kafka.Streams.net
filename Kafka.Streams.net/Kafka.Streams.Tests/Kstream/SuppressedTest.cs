@@ -32,7 +32,7 @@ namespace Kafka.Streams.Tests.Kstream
 //        public void intermediateEventsShouldAcceptAnyBufferAndSetBounds()
 //        {
 //            Assert.Equal(
-//                "name should be set",
+//                "Name should be set",
 //                untilTimeLimit(TimeSpan.FromMilliseconds(2), unbounded()).withName("myname"),
 //                (new SuppressedInternal<>("myname", FromMilliseconds(2), unbounded(), null, false))
 //            );
@@ -62,7 +62,7 @@ namespace Kafka.Streams.Tests.Kstream
 //            );
 
 //            Assert.Equal(
-//                "all constraints should be set",
+//                "All constraints should be set",
 //                untilTimeLimit(TimeSpan.FromMilliseconds(2L), maxRecords(3L).withMaxBytes(2L)),
 //                (new SuppressedInternal<>(null, FromMilliseconds(2), new EagerBufferConfigImpl(3L, 2L), null, false))
 //            );
@@ -90,19 +90,19 @@ namespace Kafka.Streams.Tests.Kstream
 //            );
 
 //            Assert.Equal(
-//                untilWindowCloses(unbounded()).withName("name"),
-//                (new FinalResultsSuppressionBuilder<>("name", unbounded()))
+//                untilWindowCloses(unbounded()).withName("Name"),
+//                (new FinalResultsSuppressionBuilder<>("Name", unbounded()))
 //            );
 
 //            Assert.Equal(
-//                untilWindowCloses(maxRecords(2L).shutDownWhenFull()).withName("name"),
-//                (new FinalResultsSuppressionBuilder<>("name", new StrictBufferConfigImpl(2L, MAX_VALUE, SHUT_DOWN))
+//                untilWindowCloses(maxRecords(2L).shutDownWhenFull()).withName("Name"),
+//                (new FinalResultsSuppressionBuilder<>("Name", new StrictBufferConfigImpl(2L, MAX_VALUE, SHUT_DOWN))
 //                )
 //            );
 
 //            Assert.Equal(
-//                untilWindowCloses(maxBytes(2L).shutDownWhenFull()).withName("name"),
-//                (new FinalResultsSuppressionBuilder<>("name", new StrictBufferConfigImpl(MAX_VALUE, 2L, SHUT_DOWN))
+//                untilWindowCloses(maxBytes(2L).shutDownWhenFull()).withName("Name"),
+//                (new FinalResultsSuppressionBuilder<>("Name", new StrictBufferConfigImpl(MAX_VALUE, 2L, SHUT_DOWN))
 //                )
 //            );
 //        }

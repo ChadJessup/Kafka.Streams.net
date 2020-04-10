@@ -14,7 +14,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public TopicPartition Partition()
         {
-            return queue.partition;
+            return this.queue.partition;
         }
     }
 }

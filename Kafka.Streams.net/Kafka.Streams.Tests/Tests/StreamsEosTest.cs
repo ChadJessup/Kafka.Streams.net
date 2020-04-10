@@ -34,7 +34,7 @@
 //            System.Console.Out.WriteLine("kafka=" + kafka);
 //            System.Console.Out.WriteLine("props=" + streamsProperties);
 //            System.Console.Out.WriteLine("command=" + command);
-//            System.Console.Out.flush();
+//            System.Console.Out.Flush();
 
 //            if (command == null || propFileName == null)
 //            {
@@ -60,7 +60,7 @@
 //                    break;
 //                default:
 //                    System.Console.Out.WriteLine("unknown command: " + command);
-//                    System.Console.Out.flush();
+//                    System.Console.Out.Flush();
 //                    System.exit(-1);
 //            }
 //        }

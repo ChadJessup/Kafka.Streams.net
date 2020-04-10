@@ -40,9 +40,9 @@ namespace Kafka.Streams.RocksDbState
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override bool HasNext()
         {
-            if (!open)
+            if (!this.open)
             {
-                throw new InvalidStateStoreException(string.Format("RocksDb iterator for store %s has closed", storeName));
+                throw new InvalidStateStoreException(string.Format("RocksDb iterator for store %s has closed", this.storeName));
             }
 
             return base.HasNext();
@@ -50,55 +50,55 @@ namespace Kafka.Streams.RocksDbState
 
         public override KeyValuePair<Bytes, byte[]> MakeNext()
         {
-            if (nextNoTimestamp == null && iterNoTimestamp.Valid())
+            if (this.nextNoTimestamp == null && this.iterNoTimestamp.Valid())
             {
-                nextNoTimestamp = iterNoTimestamp.Key();
+                this.nextNoTimestamp = this.iterNoTimestamp.Key();
             }
 
-            if (nextWithTimestamp == null && iterWithTimestamp.Valid())
+            if (this.nextWithTimestamp == null && this.iterWithTimestamp.Valid())
             {
-                nextWithTimestamp = iterWithTimestamp.Key();
+                this.nextWithTimestamp = this.iterWithTimestamp.Key();
             }
 
-            if (nextNoTimestamp == null && !iterNoTimestamp.Valid())
+            if (this.nextNoTimestamp == null && !this.iterNoTimestamp.Valid())
             {
-                if (nextWithTimestamp == null && !iterWithTimestamp.Valid())
+                if (this.nextWithTimestamp == null && !this.iterWithTimestamp.Valid())
                 {
-                    return allDone();
+                    return this.allDone();
                 }
                 else
                 {
-                    next = KeyValuePair.Create(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
-                    nextWithTimestamp = null;
-                    iterWithTimestamp.Next();
+                    this.next = KeyValuePair.Create(new Bytes(this.nextWithTimestamp), this.iterWithTimestamp.Value());
+                    this.nextWithTimestamp = null;
+                    this.iterWithTimestamp.Next();
                 }
             }
             else
             {
-                if (nextWithTimestamp == null)
+                if (this.nextWithTimestamp == null)
                 {
-                    next = KeyValuePair.Create(new Bytes(nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(iterNoTimestamp.Value()));
-                    nextNoTimestamp = null;
-                    iterNoTimestamp.Next();
+                    this.next = KeyValuePair.Create(new Bytes(this.nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(this.iterNoTimestamp.Value()));
+                    this.nextNoTimestamp = null;
+                    this.iterNoTimestamp.Next();
                 }
                 else
                 {
-                    if (comparator.Compare(nextNoTimestamp, nextWithTimestamp) <= 0)
+                    if (this.comparator.Compare(this.nextNoTimestamp, this.nextWithTimestamp) <= 0)
                     {
-                        next = KeyValuePair.Create(new Bytes(nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(iterNoTimestamp.Value()));
-                        nextNoTimestamp = null;
-                        iterNoTimestamp.Next();
+                        this.next = KeyValuePair.Create(new Bytes(this.nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(this.iterNoTimestamp.Value()));
+                        this.nextNoTimestamp = null;
+                        this.iterNoTimestamp.Next();
                     }
                     else
                     {
-                        next = KeyValuePair.Create(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
-                        nextWithTimestamp = null;
-                        iterWithTimestamp.Next();
+                        this.next = KeyValuePair.Create(new Bytes(this.nextWithTimestamp), this.iterWithTimestamp.Value());
+                        this.nextWithTimestamp = null;
+                        this.iterWithTimestamp.Next();
                     }
                 }
             }
 
-            return next;
+            return this.next;
         }
 
         public void Remove()
@@ -110,19 +110,19 @@ namespace Kafka.Streams.RocksDbState
         public void Close()
         {
             //openIterators.Remove(this);
-            //iterNoTimestamp.close();
-            //iterWithTimestamp.close();
-            open = false;
+            //iterNoTimestamp.Close();
+            //iterWithTimestamp.Close();
+            this.open = false;
         }
 
         public Bytes PeekNextKey()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return next.Key;
+            return this.next.Key;
         }
     }
 }

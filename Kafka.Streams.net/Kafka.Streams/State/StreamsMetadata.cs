@@ -37,9 +37,9 @@ namespace Kafka.Streams.State
             this.TopicPartitions = topicPartitions;
         }
 
-        public string Host => hostInfo.host;
+        public string Host => this.hostInfo.host;
 
-        public int Port => hostInfo.port;
+        public int Port => this.hostInfo.port;
 
         public override bool Equals(object o)
         {
@@ -47,37 +47,37 @@ namespace Kafka.Streams.State
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
             var that = (StreamsMetadata)o;
-            if (!hostInfo.Equals(that.hostInfo))
+            if (!this.hostInfo.Equals(that.hostInfo))
             {
                 return false;
             }
-            if (!StateStoreNames.Equals(that.StateStoreNames))
+            if (!this.StateStoreNames.Equals(that.StateStoreNames))
             {
                 return false;
             }
-            return TopicPartitions.Equals(that.TopicPartitions);
+            return this.TopicPartitions.Equals(that.TopicPartitions);
 
         }
 
         public override int GetHashCode()
         {
-            var result = hostInfo.GetHashCode();
-            result = 31 * result + StateStoreNames.GetHashCode();
-            result = 31 * result + TopicPartitions.GetHashCode();
+            var result = this.hostInfo.GetHashCode();
+            result = 31 * result + this.StateStoreNames.GetHashCode();
+            result = 31 * result + this.TopicPartitions.GetHashCode();
             return result;
         }
 
         public override string ToString()
         {
             return "StreamsMetadata{" +
-                    "hostInfo=" + hostInfo +
-                    ", stateStoreNames=" + StateStoreNames +
-                    ", topicPartitions=" + TopicPartitions +
+                    "hostInfo=" + this.hostInfo +
+                    ", stateStoreNames=" + this.StateStoreNames +
+                    ", topicPartitions=" + this.TopicPartitions +
                     '}';
         }
     }

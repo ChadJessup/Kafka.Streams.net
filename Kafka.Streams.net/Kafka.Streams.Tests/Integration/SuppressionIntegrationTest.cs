@@ -55,8 +55,8 @@
 //                .To(outputRaw);
 
 //            StreamsConfig streamsConfig = GetStreamsConfig(appId);
-//            streamsConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde);
-//            streamsConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde);
+//            streamsConfig.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde);
+//            streamsConfig.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde);
 
 //            KafkaStreams driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
 //            try
@@ -77,7 +77,7 @@
 //            }
 //            finally
 //            {
-//                driver.close();
+//                driver.Close();
 //                cleanStateAfterTest(CLUSTER, driver);
 //            }
 //        }
@@ -112,8 +112,8 @@
 //                .To(outputRaw);
 
 //            StreamsConfig streamsConfig = GetStreamsConfig(appId);
-//            streamsConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde);
-//            streamsConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde);
+//            streamsConfig.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde);
+//            streamsConfig.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde);
 
 //            KafkaStreams driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
 //            try
@@ -134,7 +134,7 @@
 //            }
 //            finally
 //            {
-//                driver.close();
+//                driver.Close();
 //                cleanStateAfterTest(CLUSTER, driver);
 //            }
 //        }
@@ -142,10 +142,10 @@
 //        private static bool WaitForAnyRecord(string topic)
 //        {
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
-//            properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
-//            properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+//            properties.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            properties.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
+//            properties.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
+//            properties.Put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
 //            try
 //            {
@@ -212,7 +212,7 @@
 //            }
 //            finally
 //            {
-//                driver.close();
+//                driver.Close();
 //                cleanStateAfterTest(CLUSTER, driver);
 //            }
 //        }
@@ -258,7 +258,7 @@
 //            }
 //            finally
 //            {
-//                driver.close();
+//                driver.Close();
 //                cleanStateAfterTest(CLUSTER, driver);
 //            }
 //        }

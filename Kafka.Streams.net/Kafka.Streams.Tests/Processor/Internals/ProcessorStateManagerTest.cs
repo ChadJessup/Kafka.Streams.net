@@ -113,9 +113,9 @@
 
 //            stateDirectory = new StateDirectory(new StreamsConfig(new StreamsConfig() {
 //            {
-//                put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId),
-//        put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-//            put(StreamsConfig.STATE_DIR_CONFIG, baseDir.getPath());
+//                Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId),
+//        Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+//            Put(StreamsConfig.STATE_DIR_CONFIG, baseDir.getPath());
 //        }
 //    }), new MockTime(), true);
 //        checkpointFile = new File(stateDirectory.directoryForTask(taskId), StateManagerUtil.CHECKPOINT_FILE_NAME);
@@ -152,7 +152,7 @@
 //        }
 //        finally
 //        {
-//            stateMgr.close(true);
+//            stateMgr.Close(true);
 //        }
 //    }
 
@@ -179,7 +179,7 @@
 //        }
 //        finally
 //        {
-//            stateMgr.close(true);
+//            stateMgr.Close(true);
 //        }
 //    }
 
@@ -206,7 +206,7 @@
 //        }
 //        finally
 //        {
-//            stateMgr.close(true);
+//            stateMgr.Close(true);
 //        }
 //    }
 
@@ -236,7 +236,7 @@
 //        }
 //        finally
 //        {
-//            stateMgr.close(true);
+//            stateMgr.Close(true);
 //        }
 //    }
 
@@ -244,7 +244,7 @@
 //    public void TestRegisterNonPersistentStore()
 //    { //throws IOException
 //        MockKeyValueStore nonPersistentStore =
-//            new MockKeyValueStore(nonPersistentStoreName, false); // non persistent store
+//            new MockKeyValueStore(nonPersistentStoreName, false); // non Persistent store
 //        ProcessorStateManager stateMgr = new ProcessorStateManager(
 //            new TaskId(0, 2),
 //            noPartitions,
@@ -265,7 +265,7 @@
 //        }
 //        finally
 //        {
-//            stateMgr.close(true);
+//            stateMgr.Close(true);
 //        }
 //    }
 
@@ -283,9 +283,9 @@
 //        string storeTopicName3 = ProcessorStateManager.storeChangelogTopic(applicationId, storeName3);
 
 //        Dictionary<string, string> storeToChangelogTopic = new HashMap<>();
-//        storeToChangelogTopic.put(storeName1, storeTopicName1);
-//        storeToChangelogTopic.put(storeName2, storeTopicName2);
-//        storeToChangelogTopic.put(storeName3, storeTopicName3);
+//        storeToChangelogTopic.Put(storeName1, storeTopicName1);
+//        storeToChangelogTopic.Put(storeName2, storeTopicName2);
+//        storeToChangelogTopic.Put(storeName3, storeTopicName3);
 
 //        OffsetCheckpoint checkpoint = new OffsetCheckpoint(
 //            new File(stateDirectory.directoryForTask(taskId), StateManagerUtil.CHECKPOINT_FILE_NAME)
@@ -332,7 +332,7 @@
 //        }
 //        finally
 //        {
-//            stateMgr.close(true);
+//            stateMgr.Close(true);
 //        }
 //    }
 
@@ -359,7 +359,7 @@
 //        }
 //        finally
 //        {
-//            stateMgr.close(true);
+//            stateMgr.Close(true);
 //        }
 //    }
 
@@ -370,9 +370,9 @@
 
 //        // set up ack'ed offsets
 //        HashDictionary<TopicPartition, long> ackedOffsets = new HashMap<>();
-//        ackedOffsets.put(new TopicPartition(persistentStoreTopicName, 1), 123L);
-//        ackedOffsets.put(new TopicPartition(nonPersistentStoreTopicName, 1), 456L);
-//        ackedOffsets.put(new TopicPartition(ProcessorStateManager.storeChangelogTopic(applicationId, "otherTopic"), 1), 789L);
+//        ackedOffsets.Put(new TopicPartition(persistentStoreTopicName, 1), 123L);
+//        ackedOffsets.Put(new TopicPartition(nonPersistentStoreTopicName, 1), 456L);
+//        ackedOffsets.Put(new TopicPartition(ProcessorStateManager.storeChangelogTopic(applicationId, "otherTopic"), 1), 789L);
 
 //        ProcessorStateManager stateMgr = new ProcessorStateManager(
 //            taskId,
@@ -394,22 +394,22 @@
 //        }
 //        finally
 //        {
-//            // close the state manager with the ack'ed offsets
-//            stateMgr.flush();
+//            // Close the state manager with the ack'ed offsets
+//            stateMgr.Flush();
 //            stateMgr.checkpoint(ackedOffsets);
-//            stateMgr.close(true);
+//            stateMgr.Close(true);
 //        }
-//        // make sure all stores are closed, and the checkpoint file is written.
+//        // make sure All stores are closed, and the checkpoint file is written.
 //        Assert.True(persistentStore.flushed);
 //        Assert.True(persistentStore.closed);
 //        Assert.True(nonPersistentStore.flushed);
 //        Assert.True(nonPersistentStore.closed);
 //        Assert.True(checkpointFile.Exists);
 
-//        // make sure that flush is called in the proper order
+//        // make sure that Flush is called in the proper order
 //        Assert.Equal(persistentStore.getLastFlushCount(), Matchers.lessThan(nonPersistentStore.getLastFlushCount()));
 
-//        // the checkpoint file should contain an offset from the persistent store only.
+//        // the checkpoint file should contain an offset from the Persistent store only.
 //        Dictionary<TopicPartition, long> checkpointedOffsets = checkpoint.read();
 //        Assert.Equal(checkpointedOffsets, is (singletonMap(new TopicPartition(persistentStoreTopicName, 1), 124L)));
 //    }
@@ -443,9 +443,9 @@
 //        stateMgr.register(nonPersistentStore, nonPersistentStore.stateRestoreCallback);
 //        stateMgr.register(persistentStore, persistentStore.stateRestoreCallback);
 
-//        stateMgr.flush();
+//        stateMgr.Flush();
 
-//        // make sure that flush is called in the proper order
+//        // make sure that Flush is called in the proper order
 //        Assert.True(persistentStore.flushed);
 //        Assert.True(nonPersistentStore.flushed);
 //        Assert.Equal(persistentStore.getLastFlushCount(), Matchers.lessThan(nonPersistentStore.getLastFlushCount()));
@@ -484,7 +484,7 @@
 //            false,
 //            logContext);
 //        stateMgr.register(persistentStore, persistentStore.stateRestoreCallback);
-//        stateMgr.close(true);
+//        stateMgr.Close(true);
 //        Dictionary<TopicPartition, long> read = checkpoint.read();
 //        Assert.Equal(read, (offsets));
 //    }
@@ -513,7 +513,7 @@
 //        changelogReader.setRestoredOffsets(singletonMap(persistentStorePartition, 110L));
 
 //        stateMgr.checkpoint(emptyMap());
-//        stateMgr.close(true);
+//        stateMgr.Close(true);
 //        Dictionary<TopicPartition, long> read = checkpoint.read();
 //        Assert.Equal(read, (singletonMap(persistentStorePartition, 110L)));
 //    }
@@ -539,7 +539,7 @@
 //        changelogReader.setRestoredOffsets(singletonMap(persistentStorePartition, 110L));
 
 //        stateMgr.checkpoint(emptyMap());
-//        stateMgr.close(true);
+//        stateMgr.Close(true);
 //        Dictionary<TopicPartition, long> read = checkpoint.read();
 //        Assert.Equal(read, (singletonMap(persistentStorePartition, 110L)));
 //    }
@@ -569,7 +569,7 @@
 //        ));
 
 //        stateMgr.checkpoint(emptyMap());
-//        stateMgr.close(true);
+//        stateMgr.Close(true);
 //        Dictionary<TopicPartition, long> read = checkpoint.read();
 //        Assert.Equal(read, (singletonMap(persistentStorePartition, 110L)));
 //    }
@@ -603,7 +603,7 @@
 //            mkEntry(persistentStorePartition, 220L),
 //            mkEntry(new TopicPartition("ignoreme", 42), 9000L)
 //        ));
-//        stateMgr.close(true);
+//        stateMgr.Close(true);
 //        Dictionary<TopicPartition, long> read = checkpoint.read();
 
 //        // the checkpoint gets incremented to be the log position _after_ the committed offset
@@ -618,7 +618,7 @@
 //            noPartitions,
 //            false,
 //            stateDirectory,
-//            singletonMap(persistentStore.name(), persistentStoreTopicName),
+//            singletonMap(persistentStore.Name(), persistentStoreTopicName),
 //            changelogReader,
 //            false,
 //            logContext);
@@ -637,7 +637,7 @@
 //            noPartitions,
 //            true, // standby
 //            stateDirectory,
-//            singletonMap(persistentStore.name(), persistentStoreTopicName),
+//            singletonMap(persistentStore.Name(), persistentStoreTopicName),
 //            changelogReader,
 //            false,
 //            logContext);
@@ -716,7 +716,7 @@
 //        try
 //        {
 //            stateManager.register(new MockKeyValueStore(StateManagerUtil.CHECKPOINT_FILE_NAME, true), null);
-//            Assert.True(false, "should have thrown illegal argument exception when store name same as checkpoint file");
+//            Assert.True(false, "should have thrown illegal argument exception when store Name same as checkpoint file");
 //        }
 //        catch (ArgumentException e)
 //        {
@@ -742,7 +742,7 @@
 //        try
 //        {
 //            stateManager.register(mockKeyValueStore, null);
-//            Assert.True(false, "should have thrown illegal argument exception when store with same name already registered");
+//            Assert.True(false, "should have thrown illegal argument exception when store with same Name already registered");
 //        }
 //        catch (ArgumentException e)
 //        {
@@ -769,7 +769,7 @@
 //        {
 
 
-//            public void flush()
+//            public void Flush()
 //        {
 //            throw new RuntimeException("KABOOM!");
 //        }
@@ -777,8 +777,8 @@
 //    stateManager.register(stateStore, stateStore.stateRestoreCallback);
 
 //        try {
-//            stateManager.flush();
-//            Assert.True(false, "Should throw ProcessorStateException if store flush throws exception");
+//            stateManager.Flush();
+//            Assert.True(false, "Should throw ProcessorStateException if store Flush throws exception");
 //        } catch (ProcessorStateException e) {
 //            // pass
 //        }
@@ -802,7 +802,7 @@
 //        {
 
 
-//            public void close()
+//            public void Close()
 //        {
 //            throw new RuntimeException("KABOOM!");
 //        }
@@ -810,8 +810,8 @@
 //    stateManager.register(stateStore, stateStore.stateRestoreCallback);
 
 //        try {
-//            stateManager.close(true);
-//            Assert.True(false, "Should throw ProcessorStateException if store close throws exception");
+//            stateManager.Close(true);
+//            Assert.True(false, "Should throw ProcessorStateException if store Close throws exception");
 //        } catch (ProcessorStateException e) {
 //            // pass
 //        }
@@ -832,7 +832,7 @@
 //                noPartitions,
 //                false,
 //                stateDirectory,
-//                singletonMap(persistentStore.name(), persistentStoreTopicName),
+//                singletonMap(persistentStore.Name(), persistentStoreTopicName),
 //                changelogReader,
 //                false,
 //                logContext);
@@ -873,7 +873,7 @@
 //        {
 
 
-//            public void flush()
+//            public void Flush()
 //        {
 //            throw new RuntimeException("KABOOM!");
 //        }
@@ -901,7 +901,7 @@
 //        stateManager.register(stateStore2, stateStore2.stateRestoreCallback);
 
 //        try {
-//            stateManager.flush();
+//            stateManager.Flush();
 //        } catch (ProcessorStateException expected) { /* ignode */ }
 //        Assert.True(flushedStore.Get());
 //    }
@@ -916,7 +916,7 @@
 //        {
 
 
-//            public void close()
+//            public void Close()
 //        {
 //            throw new RuntimeException("KABOOM!");
 //        }
@@ -944,7 +944,7 @@
 //        stateManager.register(stateStore2, stateStore2.stateRestoreCallback);
 
 //        try {
-//            stateManager.close(true);
+//            stateManager.Close(true);
 //        } catch (ProcessorStateException expected) { /* ignode */ }
 //        Assert.True(closedStore.Get());
 //    }
@@ -974,7 +974,7 @@
 //        {
 //            if (stateManager != null)
 //            {
-//                stateManager.close(true);
+//                stateManager.Close(true);
 //            }
 //        }
 //    }
@@ -1060,9 +1060,9 @@
 
 //    private class ConverterStore : MockKeyValueStore, ITimestampedBytesStore
 //    {
-//        ConverterStore(string name,
-//                       bool persistent)
-//            : base(name, persistent)
+//        ConverterStore(string Name,
+//                       bool Persistent)
+//            : base(Name, Persistent)
 //        {
 //        }
 //    }

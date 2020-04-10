@@ -16,16 +16,16 @@
 
 //        public void Before()
 //        {
-//            partitions.put(
+//            partitions.Put(
 //                new TopicPartition("first", 0),
 //                new PartitionInfo("first", 0, null, null, null));
-//            partitions.put(
+//            partitions.Put(
 //                new TopicPartition("first", 1),
 //                new PartitionInfo("first", 1, null, null, null));
-//            partitions.put(
+//            partitions.Put(
 //                new TopicPartition("second", 0),
 //                new PartitionInfo("second", 0, null, null, null));
-//            partitions.put(
+//            partitions.Put(
 //                new TopicPartition("second", 1),
 //                new PartitionInfo("second", 1, null, null, null));
 //        }
@@ -53,8 +53,8 @@
 //        {
 //            InternalTopicConfig config = CreateTopicConfig("repartitioned", 10);
 
-//            validator.validate(Utils.mkSet("first", "second", config.name()),
-//                               Collections.singletonMap(config.name(), config),
+//            validator.validate(Utils.mkSet("first", "second", config.Name()),
+//                               Collections.singletonMap(config.Name(), config),
 //                               cluster.withPartitions(partitions));
 
 //            Assert.Equal(config.numberOfPartitions(), (2));
@@ -69,13 +69,13 @@
 //            InternalTopicConfig three = CreateTopicConfig("three", 5);
 //            Dictionary<string, InternalTopicConfig> repartitionTopicConfig = new HashMap<>();
 
-//            repartitionTopicConfig.put(one.name(), one);
-//            repartitionTopicConfig.put(two.name(), two);
-//            repartitionTopicConfig.put(three.name(), three);
+//            repartitionTopicConfig.Put(one.Name(), one);
+//            repartitionTopicConfig.Put(two.Name(), two);
+//            repartitionTopicConfig.Put(three.Name(), three);
 
-//            validator.validate(Utils.mkSet(one.name(),
-//                                           two.name(),
-//                                           three.name()),
+//            validator.validate(Utils.mkSet(one.Name(),
+//                                           two.Name(),
+//                                           three.Name()),
 //                               repartitionTopicConfig,
 //                               cluster
 //            );

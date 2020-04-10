@@ -8,8 +8,8 @@ namespace Kafka.Streams.Topologies
     public interface INode
     {
         /**
-         * The name of the node. Will never be {@code null}.
-         * @return the name of the node
+         * The Name of the node. Will never be {@code null}.
+         * @return the Name of the node
          */
         string Name { get; }
 
@@ -17,14 +17,14 @@ namespace Kafka.Streams.Topologies
          * The predecessors of this node within a sub-topology.
          * Note, sources do not have any predecessors.
          * Will never be {@code null}.
-         * @return set of all predecessors
+         * @return set of All predecessors
          */
         HashSet<INode> Predecessors { get; }
         /**
          * The successor of this node within a sub-topology.
          * Note, sinks do not have any successors.
          * Will never be {@code null}.
-         * @return set of all successor
+         * @return set of All successor
          */
         HashSet<INode> Successors { get; }
     }

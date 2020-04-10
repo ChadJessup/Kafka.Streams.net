@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         /**
-         * Returns {@code true} if the given window is of the same type, because all unlimited windows overlap with each
+         * Returns {@code true} if the given window is of the same type, because All unlimited windows overlap with each
          * other due to their infinite size.
          *
          * @param other another window
@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public override bool Overlap(Window other)
         {
-            if (GetType() != other.GetType())
+            if (this.GetType() != other.GetType())
             {
                 throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
                     + other.GetType() + ".");

@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tests.Helpers
          * Uses current system time as start timestamp.
          * Auto-advance is disabled.
          *
-         * @param defaultTopicName the default topic name used for all generated {@link ConsumeResult consumer records}
+         * @param defaultTopicName the default topic Name used for All generated {@link ConsumeResult consumer records}
          * @param keySerializer the Key serializer
          * @param valueSerializer the value serializer
          */
@@ -88,7 +88,7 @@ namespace Kafka.Streams.Tests.Helpers
          * Create a new factory for the given topic.
          * Auto-advance is disabled.
          *
-         * @param defaultTopicName the topic name used for all generated {@link ConsumeResult consumer records}
+         * @param defaultTopicName the topic Name used for All generated {@link ConsumeResult consumer records}
          * @param keySerializer the Key serializer
          * @param valueSerializer the value serializer
          * @param startTimestampMs the initial timestamp for generated records
@@ -134,7 +134,7 @@ namespace Kafka.Streams.Tests.Helpers
         /**
          * Create a new factory for the given topic.
          *
-         * @param defaultTopicName the topic name used for all generated {@link ConsumeResult consumer records}
+         * @param defaultTopicName the topic Name used for All generated {@link ConsumeResult consumer records}
          * @param keySerializer the Key serializer
          * @param valueSerializer the value serializer
          * @param startTimestampMs the initial timestamp for generated records
@@ -151,8 +151,8 @@ namespace Kafka.Streams.Tests.Helpers
             this.topicName = defaultTopicName;
             this.keySerializer = keySerializer ?? throw new ArgumentNullException(nameof(keySerializer));
             this.valueSerializer = valueSerializer ?? throw new ArgumentNullException(nameof(valueSerializer));
-            timeMs = startTimestampMs;
-            advanceMs = autoAdvanceMs;
+            this.timeMs = startTimestampMs;
+            this.advanceMs = autoAdvanceMs;
         }
 
         /**
@@ -168,14 +168,14 @@ namespace Kafka.Streams.Tests.Helpers
                 throw new ArgumentException("advanceMs must be positive");
             }
 
-            timeMs += advanceMs;
+            this.timeMs += advanceMs;
         }
 
         /**
-         * Create a {@link ConsumeResult} with the given topic name, Key, value, headers, and timestamp.
+         * Create a {@link ConsumeResult} with the given topic Name, Key, value, headers, and timestamp.
          * Does not auto advance internally tracked time.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param Key the record Key
          * @param value the record value
          * @param headers the record headers
@@ -191,8 +191,8 @@ namespace Kafka.Streams.Tests.Helpers
         {
             Objects.requireNonNull(topicName, "topicName cannot be null.");
             Objects.requireNonNull(headers, "headers cannot be null.");
-            var serializedKey = keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topicName));
-            var serializedValue = valueSerializer.Serialize(value, new SerializationContext(MessageComponentType.Value, topicName));
+            var serializedKey = this.keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topicName));
+            var serializedValue = this.valueSerializer.Serialize(value, new SerializationContext(MessageComponentType.Value, topicName));
 
             return new ConsumeResult<byte[], byte[]>
             {
@@ -211,10 +211,10 @@ namespace Kafka.Streams.Tests.Helpers
         }
 
         /**
-         * Create a {@link ConsumeResult} with the given topic name and given topic, Key, value, and timestamp.
+         * Create a {@link ConsumeResult} with the given topic Name and given topic, Key, value, and timestamp.
          * Does not auto advance internally tracked time.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param Key the record Key
          * @param value the record value
          * @param timestampMs the record timestamp
@@ -226,11 +226,11 @@ namespace Kafka.Streams.Tests.Helpers
             V value,
             long timestampMs)
         {
-            return Create(topicName, Key, value, new Headers(), timestampMs);
+            return this.Create(topicName, Key, value, new Headers(), timestampMs);
         }
 
         /**
-         * Create a {@link ConsumeResult} with default topic name and given Key, value, and timestamp.
+         * Create a {@link ConsumeResult} with default topic Name and given Key, value, and timestamp.
          * Does not auto advance internally tracked time.
          *
          * @param Key the record Key
@@ -243,11 +243,11 @@ namespace Kafka.Streams.Tests.Helpers
             V value,
             long timestampMs)
         {
-            return Create(Key, value, new Headers(), timestampMs);
+            return this.Create(Key, value, new Headers(), timestampMs);
         }
 
         /**
-         * Create a {@link ConsumeResult} with default topic name and given Key, value, headers, and timestamp.
+         * Create a {@link ConsumeResult} with default topic Name and given Key, value, headers, and timestamp.
          * Does not auto advance internally tracked time.
          *
          * @param Key the record Key
@@ -263,20 +263,20 @@ namespace Kafka.Streams.Tests.Helpers
             Headers headers,
             long timestampMs)
         {
-            if (topicName == null)
+            if (this.topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #Create(string topicName, K Key, V value, long timestampMs) instead.");
             }
 
-            return Create(topicName, Key, value, headers, timestampMs);
+            return this.Create(this.topicName, Key, value, headers, timestampMs);
         }
 
         /**
-         * Create a {@link ConsumeResult} with the given topic name, Key, and value.
+         * Create a {@link ConsumeResult} with the given topic Name, Key, and value.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param Key the record Key
          * @param value the record value
          * @return the generated {@link ConsumeResult}
@@ -287,16 +287,16 @@ namespace Kafka.Streams.Tests.Helpers
             K Key,
             V value)
         {
-            var timestamp = timeMs;
-            timeMs += advanceMs;
-            return Create(topicName, Key, value, new Headers(), timestamp);
+            var timestamp = this.timeMs;
+            this.timeMs += this.advanceMs;
+            return this.Create(topicName, Key, value, new Headers(), timestamp);
         }
 
         /**
-         * Create a {@link ConsumeResult} with the given topic name, Key, value, and headers.
+         * Create a {@link ConsumeResult} with the given topic Name, Key, value, and headers.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param Key the record Key
          * @param value the record value
          * @param headers the record headers
@@ -309,14 +309,14 @@ namespace Kafka.Streams.Tests.Helpers
             V value,
             Headers headers)
         {
-            var timestamp = timeMs;
-            timeMs += advanceMs;
+            var timestamp = this.timeMs;
+            this.timeMs += this.advanceMs;
 
-            return Create(topicName, Key, value, headers, timestamp);
+            return this.Create(topicName, Key, value, headers, timestamp);
         }
 
         /**
-         * Create a {@link ConsumeResult} with default topic name and given Key and value.
+         * Create a {@link ConsumeResult} with default topic Name and given Key and value.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
          * @param Key the record Key
@@ -328,11 +328,11 @@ namespace Kafka.Streams.Tests.Helpers
             K Key,
             V value)
         {
-            return Create(Key, value, new Headers());
+            return this.Create(Key, value, new Headers());
         }
 
         /**
-         * Create a {@link ConsumeResult} with default topic name and given Key, value, and headers.
+         * Create a {@link ConsumeResult} with default topic Name and given Key, value, and headers.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
          * @param Key the record Key
@@ -345,20 +345,20 @@ namespace Kafka.Streams.Tests.Helpers
             V value,
             Headers headers)
         {
-            if (topicName == null)
+            if (this.topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #Create(string topicName, K Key, V value) instead.");
             }
 
-            return Create(topicName, Key, value, headers);
+            return this.Create(this.topicName, Key, value, headers);
         }
 
         /**
-         * Create a {@link ConsumeResult} with {@code null}-Key and the given topic name, value, and timestamp.
+         * Create a {@link ConsumeResult} with {@code null}-Key and the given topic Name, value, and timestamp.
          * Does not auto advance internally tracked time.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param value the record value
          * @param timestampMs the record timestamp
          * @return the generated {@link ConsumeResult}
@@ -368,7 +368,7 @@ namespace Kafka.Streams.Tests.Helpers
             V value,
             long timestampMs)
         {
-            return Create(
+            return this.Create(
                 topicName,
                 key: default,
                 value,
@@ -377,10 +377,10 @@ namespace Kafka.Streams.Tests.Helpers
         }
 
         /**
-         * Create a {@link ConsumeResult} with {@code null}-Key and the given topic name, value, headers, and timestamp.
+         * Create a {@link ConsumeResult} with {@code null}-Key and the given topic Name, value, headers, and timestamp.
          * Does not auto advance internally tracked time.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param value the record value
          * @param headers the record headers
          * @param timestampMs the record timestamp
@@ -393,11 +393,11 @@ namespace Kafka.Streams.Tests.Helpers
             Headers headers,
             long timestampMs)
         {
-            return Create(topicName, default, value, headers, timestampMs);
+            return this.Create(topicName, default, value, headers, timestampMs);
         }
 
         /**
-         * Create a {@link ConsumeResult} with default topic name and {@code null}-Key as well as given value and timestamp.
+         * Create a {@link ConsumeResult} with default topic Name and {@code null}-Key as well as given value and timestamp.
          * Does not auto advance internally tracked time.
          *
          * @param value the record value
@@ -407,11 +407,11 @@ namespace Kafka.Streams.Tests.Helpers
         public ConsumeResult<byte[], byte[]> Create(V value,
                                                      long timestampMs)
         {
-            return Create(value, new Headers(), timestampMs);
+            return this.Create(value, new Headers(), timestampMs);
         }
 
         /**
-         * Create a {@link ConsumeResult} with default topic name and {@code null}-Key as well as given value, headers, and timestamp.
+         * Create a {@link ConsumeResult} with default topic Name and {@code null}-Key as well as given value, headers, and timestamp.
          * Does not auto advance internally tracked time.
          *
          * @param value the record value
@@ -423,19 +423,19 @@ namespace Kafka.Streams.Tests.Helpers
                                                      Headers headers,
                                                      long timestampMs)
         {
-            if (topicName == null)
+            if (this.topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #Create(string topicName, V value, long timestampMs) instead.");
             }
-            return Create(topicName, value, headers, timestampMs);
+            return this.Create(this.topicName, value, headers, timestampMs);
         }
 
         /**
-         * Create a {@link ConsumeResult} with {@code null}-Key and the given topic name, value, and headers.
+         * Create a {@link ConsumeResult} with {@code null}-Key and the given topic Name, value, and headers.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param value the record value
          * @param headers the record headers
          * @return the generated {@link ConsumeResult}
@@ -444,24 +444,24 @@ namespace Kafka.Streams.Tests.Helpers
                                                      V value,
                                                      Headers headers)
         {
-            return Create(topicName, default, value, headers);
+            return this.Create(topicName, default, value, headers);
         }
 
         /**
-         * Create a {@link ConsumeResult} with {@code null}-Key and the given topic name and value.
+         * Create a {@link ConsumeResult} with {@code null}-Key and the given topic Name and value.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param value the record value
          * @return the generated {@link ConsumeResult}
          */
         public ConsumeResult<byte[], byte[]> Create(string topicName, V value)
         {
-            return Create(topicName, default, value, new Headers());
+            return this.Create(topicName, default, value, new Headers());
         }
 
         /**
-         * Create a {@link ConsumeResult} with default topic name and {@code null}-Key was well as given value.
+         * Create a {@link ConsumeResult} with default topic Name and {@code null}-Key was well as given value.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
          * @param value the record value
@@ -469,11 +469,11 @@ namespace Kafka.Streams.Tests.Helpers
          */
         public ConsumeResult<byte[], byte[]> Create(V value)
         {
-            return Create(value, new Headers());
+            return this.Create(value, new Headers());
         }
 
         /**
-         * Create a {@link ConsumeResult} with default topic name and {@code null}-Key was well as given value and headers.
+         * Create a {@link ConsumeResult} with default topic Name and {@code null}-Key was well as given value and headers.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
          * @param value the record value
@@ -483,19 +483,19 @@ namespace Kafka.Streams.Tests.Helpers
         public ConsumeResult<byte[], byte[]> Create(V value,
                                                      Headers headers)
         {
-            if (topicName == null)
+            if (this.topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #Create(string topicName, V value, long timestampMs) instead.");
             }
-            return Create(topicName, value, headers);
+            return this.Create(this.topicName, value, headers);
         }
 
         /**
-         * Creates {@link ConsumeResult consumer records} with the given topic name, keys, and values.
+         * Creates {@link ConsumeResult consumer records} with the given topic Name, keys, and values.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param keyValues the record keys and values
          * @return the generated {@link ConsumeResult consumer records}
          */
@@ -506,14 +506,14 @@ namespace Kafka.Streams.Tests.Helpers
 
             foreach (KeyValuePair<K, V> keyValue in keyValues)
             {
-                records.Add(Create(topicName, keyValue.Key, keyValue.Value));
+                records.Add(this.Create(topicName, keyValue.Key, keyValue.Value));
             }
 
             return records;
         }
 
         /**
-         * Creates {@link ConsumeResult consumer records} with default topic name as well as given keys and values.
+         * Creates {@link ConsumeResult consumer records} with default topic Name as well as given keys and values.
          * The timestamp will be generated based on the constructor provided start time and time will auto advance.
          *
          * @param keyValues the record keys and values
@@ -521,20 +521,20 @@ namespace Kafka.Streams.Tests.Helpers
          */
         public List<ConsumeResult<byte[], byte[]>> Create(List<KeyValuePair<K, V>> keyValues)
         {
-            if (topicName == null)
+            if (this.topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #Create(string topicName, List<KeyValuePair<K, V>> keyValues) instead.");
             }
 
-            return Create(topicName, keyValues);
+            return this.Create(this.topicName, keyValues);
         }
 
         /**
-         * Creates {@link ConsumeResult consumer records} with the given topic name, keys, and values.
+         * Creates {@link ConsumeResult consumer records} with the given topic Name, keys, and values.
          * Does not auto advance internally tracked time.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param keyValues the record keys and values
          * @param startTimestamp the timestamp for the first generated record
          * @param advanceMs the time difference between two consecutive generated records
@@ -555,7 +555,7 @@ namespace Kafka.Streams.Tests.Helpers
             var timestamp = startTimestamp;
             foreach (KeyValuePair<K, V> keyValue in keyValues)
             {
-                records.Add(Create(topicName, keyValue.Key, keyValue.Value, new Headers(), timestamp));
+                records.Add(this.Create(topicName, keyValue.Key, keyValue.Value, new Headers(), timestamp));
                 timestamp += advanceMs;
             }
 
@@ -563,7 +563,7 @@ namespace Kafka.Streams.Tests.Helpers
         }
 
         /**
-         * Creates {@link ConsumeResult consumer records} with default topic name as well as given keys and values.
+         * Creates {@link ConsumeResult consumer records} with default topic Name as well as given keys and values.
          * Does not auto advance internally tracked time.
          *
          * @param keyValues the record keys and values
@@ -575,21 +575,21 @@ namespace Kafka.Streams.Tests.Helpers
                                                            long startTimestamp,
                                                            long advanceMs)
         {
-            if (topicName == null)
+            if (this.topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #Create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp, long advanceMs) instead.");
             }
 
-            return Create(topicName, keyValues, startTimestamp, advanceMs);
+            return this.Create(this.topicName, keyValues, startTimestamp, advanceMs);
         }
 
         /**
-         * Creates {@link ConsumeResult consumer records} with the given topic name, keys and values.
+         * Creates {@link ConsumeResult consumer records} with the given topic Name, keys and values.
          * For each generated record, the time is advanced by 1.
          * Does not auto advance internally tracked time.
          *
-         * @param topicName the topic name
+         * @param topicName the topic Name
          * @param keyValues the record keys and values
          * @param startTimestamp the timestamp for the first generated record
          * @return the generated {@link ConsumeResult consumer records}
@@ -598,7 +598,7 @@ namespace Kafka.Streams.Tests.Helpers
                                                            List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp)
         {
-            return Create(topicName, keyValues, startTimestamp, 1);
+            return this.Create(topicName, keyValues, startTimestamp, 1);
         }
 
         /**
@@ -613,13 +613,13 @@ namespace Kafka.Streams.Tests.Helpers
         public List<ConsumeResult<byte[], byte[]>> Create(List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp)
         {
-            if (topicName == null)
+            if (this.topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #Create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp) instead.");
             }
 
-            return Create(topicName, keyValues, startTimestamp, 1);
+            return this.Create(this.topicName, keyValues, startTimestamp, 1);
         }
     }
 }

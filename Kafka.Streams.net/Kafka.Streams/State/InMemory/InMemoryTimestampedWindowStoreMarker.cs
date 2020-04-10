@@ -1,110 +1,118 @@
-﻿
-//using Kafka.Common.Utils;
-//using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Streams.State.Interfaces;
+﻿using System;
+using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.TimeStamped;
+using Kafka.Streams.State.Windowed;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class InMemoryTimestampedWindowStoreMarker
-//    : IWindowStore<Bytes, byte[]>, ITimestampedBytesStore
-//    {
+namespace Kafka.Streams.State.Internals
+{
+    public class InMemoryTimestampedWindowStoreMarker : IWindowStore<Bytes, byte[]>, ITimestampedBytesStore
+    {
+        private IWindowStore<Bytes, byte[]> wrapped;
 
-//        private IWindowStore<Bytes, byte[]> wrapped;
+        public InMemoryTimestampedWindowStoreMarker(IWindowStore<Bytes, byte[]> wrapped)
+        {
+            this.wrapped = wrapped ?? throw new ArgumentNullException(nameof(wrapped));
 
-//        public InMemoryTimestampedWindowStoreMarker(IWindowStore<Bytes, byte[]> wrapped)
-//        {
-//            if (wrapped.persistent())
-//            {
-//                throw new System.ArgumentException("Provided store must not be a persistent store, but it is.");
-//            }
-//            this.wrapped = wrapped;
-//        }
+            if (wrapped.Persistent())
+            {
+                throw new ArgumentException("Provided store must not be a Persistent store, but it is.");
+            }
+        }
 
+        public void Init(IProcessorContext context, IStateStore root)
+        {
+            this.wrapped.Init(context, root);
+        }
 
-//        public void init(IProcessorContext<K, V> context,
-//                         IStateStore root)
-//        {
-//            wrapped.Init(context, root);
-//        }
-
-
-//        public void put(Bytes key,
-//                        byte[] value)
-//        {
-//            wrapped.Add(key, value);
-//        }
-
-
-//        public void put(Bytes key,
-//                        byte[] value,
-//                        long windowStartTimestamp)
-//        {
-//            wrapped.Add(key, value, windowStartTimestamp);
-//        }
+        public void Put(Bytes key, byte[] value)
+        {
+            this.wrapped.Add(key, value);
+        }
 
 
-//        public byte[] fetch(Bytes key,
-//                            long time)
-//        {
-//            return wrapped.Fetch(key, time);
-//        }
+        public void Put(Bytes key, byte[] value, long windowStartTimestamp)
+        {
+            this.wrapped.Put(key, value, windowStartTimestamp);
+        }
 
+        public byte[] Fetch(Bytes key, long time)
+        {
+            return this.wrapped.Fetch(key, time);
+        }
 
+        public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
+        {
+            return this.wrapped.Fetch(key, timeFrom, timeTo);
+        }
 
-//        public IWindowStoreIterator<byte[]> fetch(Bytes key,
-//                                                 long timeFrom,
-//                                                 long timeTo)
-//        {
-//            return wrapped.Fetch(key, timeFrom, timeTo);
-//        }
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(
+            Bytes from,
+            Bytes to,
+            long timeFrom,
+            long timeTo)
+        {
+            return this.wrapped.Fetch(from, to, timeFrom, timeTo);
+        }
 
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
+        {
+            return this.wrapped.FetchAll(timeFrom, timeTo);
+        }
 
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
+        {
+            return this.wrapped.All();
+        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
-//                                                               Bytes to,
-//                                                               long timeFrom,
-//                                                               long timeTo)
-//        {
-//            return wrapped.Fetch(from, to, timeFrom, timeTo);
-//        }
+        public void Flush()
+        {
+            this.wrapped.Flush();
+        }
 
+        public void Close()
+        {
+            this.wrapped.Close();
+        }
 
+        public bool IsOpen()
+        {
+            return this.wrapped.IsOpen();
+        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
-//                                                                  long timeTo)
-//        {
-//            return wrapped.fetchAll(timeFrom, timeTo);
-//        }
+        public string Name => this.wrapped.Name;
 
+        public bool Persistent()
+        {
+            return false;
+        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> all()
-//        {
-//            return wrapped.all();
-//        }
+        public void Add(Bytes key, byte[] value)
+        {
+            this.wrapped.Add(key, value);
+        }
 
+        public bool IsPresent()
+        {
+            return this.wrapped.IsPresent();
+        }
 
-//        public void flush()
-//        {
-//            wrapped.flush();
-//        }
+        public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime from, DateTime to)
+        {
+            return this.wrapped.Fetch(key, from, to);
+        }
 
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime fromTime, DateTime toTime)
+        {
+            return this.wrapped.Fetch(from, to, fromTime, toTime);
+        }
 
-//        public void close()
-//        {
-//            wrapped.close();
-//        }
-
-//        public bool isOpen()
-//        {
-//            return wrapped.isOpen();
-//        }
-
-
-//        public string name => wrapped.name;
-
-//        public bool persistent()
-//        {
-//            return false;
-//        }
-//    }
-//}
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
+        {
+            return this.wrapped.FetchAll(from, to);
+        }
+    }
+}

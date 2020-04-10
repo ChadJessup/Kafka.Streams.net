@@ -23,8 +23,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             return "StreamSinkNode{" +
-                   "topicNameExtractor=" + topicNameExtractor +
-                   ", producedInternal=" + producedInternal +
+                   "topicNameExtractor=" + this.topicNameExtractor +
+                   ", producedInternal=" + this.producedInternal +
                    "} " + base.ToString();
         }
 
@@ -32,21 +32,21 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            var keySerializer = producedInternal.KeySerde?.Serializer;
+            var keySerializer = this.producedInternal.KeySerde?.Serializer;
 
-            var valSerializer = producedInternal.ValueSerde?.Serializer;
+            var valSerializer = this.producedInternal.ValueSerde?.Serializer;
 
-            IStreamPartitioner<K, V> partitioner = producedInternal.StreamPartitioner();
-            var parentNames = ParentNodeNames();
+            IStreamPartitioner<K, V> partitioner = this.producedInternal.StreamPartitioner();
+            var parentNames = this.ParentNodeNames();
 
             if (partitioner == null && keySerializer is IWindowedSerializer<K>)
             {
                 var windowedPartitioner = (IStreamPartitioner<K, V>)new WindowedStreamPartitioner<K, V>((IWindowedSerializer<K>)keySerializer);
-                topologyBuilder.AddSink(NodeName, topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
+                topologyBuilder.AddSink(this.NodeName, this.topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
             }
             else
             {
-                topologyBuilder.AddSink(NodeName, topicNameExtractor, keySerializer, valSerializer, partitioner, parentNames);
+                topologyBuilder.AddSink(this.NodeName, this.topicNameExtractor, keySerializer, valSerializer, partitioner, parentNames);
             }
         }
     }

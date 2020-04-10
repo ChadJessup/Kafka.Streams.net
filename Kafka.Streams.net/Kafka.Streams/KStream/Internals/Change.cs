@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         public override string ToString()
-            => $"({NewValue}<-{OldValue})";
+            => $"({this.NewValue}<-{this.OldValue})";
 
         public static implicit operator V(Change<V> change)
         {
@@ -34,15 +34,15 @@ namespace Kafka.Streams.KStream.Internals
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var change = (Change<object>)o;
 
-            return NewValue?.Equals(change.NewValue) ?? false
-                && OldValue.Equals(change.OldValue);
+            return this.NewValue?.Equals(change.NewValue) ?? false
+                && this.OldValue.Equals(change.OldValue);
         }
 
         public override int GetHashCode()

@@ -19,7 +19,7 @@
 //        private long windowSize;
 //        private ISegmentedBytesStore.KeySchema keySchema = new WindowKeySchema();
 
-//        private string name;
+//        private string Name;
 //        private ThreadCache cache;
 //        private bool sendOldValues;
 //        private IInternalProcessorContext<K, V> context;
@@ -41,7 +41,7 @@
 //            this.maxObservedTimestamp = RecordQueue.UNKNOWN;
 //        }
 
-//        public override void init(IProcessorContext<K, V> context, IStateStore root)
+//        public override void Init(IProcessorContext context, IStateStore root)
 //        {
 //            initInternal((IInternalProcessorContext)context);
 //            base.Init(context, root);
@@ -51,16 +51,16 @@
 //        private void initInternal(IInternalProcessorContext<K, V> context)
 //        {
 //            this.context = context;
-//            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name);
+//            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), Name);
 
 //            bytesSerdes = new StateSerdes<>(
 //                topic,
 //                Serdes.Bytes(),
 //                Serdes.ByteArray());
-//            name = context.taskId + "-" + name;
+//            Name = context.taskId + "-" + Name;
 //            cache = this.context.getCache();
 
-//            cache.AddDirtyEntryFlushListener(name, entries =>
+//            cache.AddDirtyEntryFlushListener(Name, entries =>
 //    {
 //        foreach (DirtyEntry entry in entries)
 //        {
@@ -73,7 +73,7 @@
 //                                        IInternalProcessorContext<K, V> context)
 //        {
 //            byte[] binaryWindowKey = cacheFunction.key(entry.key()).Get();
-//            Windowed<Bytes> windowedKeyBytes = WindowKeySchema.fromStoreBytesKey(binaryWindowKey, windowSize);
+//            IWindowed<Bytes> windowedKeyBytes = WindowKeySchema.fromStoreBytesKey(binaryWindowKey, windowSize);
 //            long windowStartTimestamp = windowedKeyBytes.window.start();
 //            Bytes binaryKey = windowedKeyBytes.key;
 //            if (flushListener != null)
@@ -86,7 +86,7 @@
 //                // we can skip flushing to downstream as well as writing to underlying store
 //                if (rawNewValue != null || rawOldValue != null)
 //                {
-//                    // we need to get the old values if needed, and then put to store, and then flush
+//                    // we need to get the old values if needed, and then Put to store, and then Flush
 //                    wrapped.Add(binaryKey, entry.newValue(), windowStartTimestamp);
 
 //                    ProcessorRecordContext current = context.recordContext();
@@ -121,14 +121,14 @@
 //        }
 
 //        [MethodImpl(MethodImplOptions.Synchronized)]
-//        public override void put(Bytes key,
+//        public override void Put(Bytes key,
 //                                     byte[] value)
 //        {
-//            put(key, value, context.timestamp());
+//            Put(key, value, context.timestamp());
 //        }
 
 //        [MethodImpl(MethodImplOptions.Synchronized)]
-//        public override void put(Bytes key,
+//        public override void Put(Bytes key,
 //                                     byte[] value,
 //                                     long windowStartTimestamp)
 //        {
@@ -146,12 +146,12 @@
 //                    context.timestamp(),
 //                    context.Partition,
 //                    context.Topic);
-//            cache.Add(name, cacheFunction.cacheKey(keyBytes), entry);
+//            cache.Add(Name, cacheFunction.cacheKey(keyBytes), entry);
 
 //            maxObservedTimestamp = Math.Max(keySchema.segmentTimestamp(keyBytes), maxObservedTimestamp);
 //        }
 
-//        public override byte[] fetch(Bytes key,
+//        public override byte[] Fetch(Bytes key,
 //                            long timestamp)
 //        {
 //            validateStoreOpen();
@@ -161,7 +161,7 @@
 //            {
 //                return wrapped.Fetch(key, timestamp);
 //            }
-//            LRUCacheEntry entry = cache[name, cacheKey];
+//            LRUCacheEntry entry = cache[Name, cacheKey];
 //            if (entry == null)
 //            {
 //                return wrapped.Fetch(key, timestamp);
@@ -173,7 +173,7 @@
 //        }
 
 //        [MethodImpl(MethodImplOptions.Synchronized)]
-//        public override IWindowStoreIterator<byte[]> fetch(Bytes key,
+//        public override IWindowStoreIterator<byte[]> Fetch(Bytes key,
 //                                                              long timeFrom,
 //                                                              long timeTo)
 //        {
@@ -187,9 +187,9 @@
 //                return underlyingIterator;
 //            }
 
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
+//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.Persistent() ?
 //                new CacheIteratorWrapper(key, timeFrom, timeTo) :
-//                cache.Range(name,
+//                cache.Range(Name,
 //                            cacheFunction.cacheKey(keySchema.lowerRangeFixedSize(key, timeFrom)),
 //                            cacheFunction.cacheKey(keySchema.upperRangeFixedSize(key, timeTo))
 //                );
@@ -203,14 +203,14 @@
 //        }
 
 
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from,
 //                                                               Bytes to,
 //                                                               long timeFrom,
 //                                                               long timeTo)
 //        {
 //            if (from.CompareTo(to) > 0)
 //            {
-//                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+//                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
 //                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
 //                    "Note that the built-in numerical serdes do not follow this for negative numbers");
 //                return KeyValueIterators.emptyIterator();
@@ -220,16 +220,16 @@
 //            // if store is open outside as well.
 //            validateStoreOpen();
 
-//            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator =
+//            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator =
 //                wrapped.Fetch(from, to, timeFrom, timeTo);
 //            if (cache == null)
 //            {
 //                return underlyingIterator;
 //            }
 
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
+//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.Persistent() ?
 //                new CacheIteratorWrapper(from, to, timeFrom, timeTo) :
-//                cache.Range(name,
+//                cache.Range(Name,
 //                            cacheFunction.cacheKey(keySchema.lowerRange(from, timeFrom)),
 //                            cacheFunction.cacheKey(keySchema.upperRange(to, timeTo))
 //                );
@@ -247,13 +247,13 @@
 //        }
 
 
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
+//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom,
 //                                                                  long timeTo)
 //        {
 //            validateStoreOpen();
 
-//            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped.fetchAll(timeFrom, timeTo);
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
+//            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator = wrapped.FetchAll(timeFrom, timeTo);
+//            MemoryLRUCacheBytesIterator cacheIterator = cache.All(Name);
 
 //            HasNextCondition hasNextCondition = keySchema.hasNextCondition(null, null, timeFrom, timeTo);
 //            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
@@ -267,12 +267,12 @@
 //            );
 //        }
 
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
+//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
 //        {
 //            validateStoreOpen();
 
-//            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped.all();
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
+//            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator = wrapped.All();
+//            MemoryLRUCacheBytesIterator cacheIterator = cache.All(Name);
 
 //            return new MergedSortedCacheWindowStoreKeyValueIterator(
 //                cacheIterator,
@@ -283,17 +283,17 @@
 //        }
 
 //        [MethodImpl(MethodImplOptions.Synchronized)]
-//        public override void flush()
+//        public override void Flush()
 //        {
-//            cache.flush(name);
-//            wrapped.flush();
+//            cache.Flush(Name);
+//            wrapped.Flush();
 //        }
 
-//        public override void close()
+//        public override void Close()
 //        {
-//            flush();
-//            cache.close(name);
-//            wrapped.close();
+//            Flush();
+//            cache.Close(Name);
+//            wrapped.Close();
 //        }
 //    }
 //}

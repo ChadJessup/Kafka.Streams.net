@@ -396,7 +396,7 @@
 //        [Fact]
 //        public void ShouldCloseActiveTasksOnShutdown()
 //        {
-//            active.close(true);
+//            active.Close(true);
 //            expectLastCall();
 //            Replay();
 
@@ -407,7 +407,7 @@
 //        [Fact]
 //        public void ShouldCloseStandbyTasksOnShutdown()
 //        {
-//            standby.close(false);
+//            standby.Close(false);
 //            expectLastCall();
 //            Replay();
 
@@ -696,11 +696,11 @@
 //            Assert.True(taskManager.assignedActiveTasks().isEmpty());
 
 //            // assign two active tasks with two partitions each
-//            activeTasks.put(task01, new HashSet<>(asList(t1p1, t2p1)));
-//            activeTasks.put(task02, new HashSet<>(asList(t1p2, t2p2)));
+//            activeTasks.Put(task01, new HashSet<>(asList(t1p1, t2p1)));
+//            activeTasks.Put(task02, new HashSet<>(asList(t1p2, t2p2)));
 
 //            // assign one standby task with two partitions
-//            standbyTasks.put(task03, new HashSet<>(asList(t1p3, t2p3)));
+//            standbyTasks.Put(task03, new HashSet<>(asList(t1p3, t2p3)));
 //            taskManager.setAssignmentMetadata(activeTasks, standbyTasks);
 
 //            Assert.Equal(taskManager.assignedActiveTasks(), (activeTasks));

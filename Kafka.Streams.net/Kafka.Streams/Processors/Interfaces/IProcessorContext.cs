@@ -68,16 +68,16 @@ namespace Kafka.Streams.Processors.Interfaces
         void Register(IStateStore store, IStateRestoreCallback stateRestoreCallback);
 
         /**
-         * Get the state store given the store name.
+         * Get the state store given the store Name.
          *
-         * @param name The store name
+         * @param Name The store Name
          * @return The state store instance
          */
-        IStateStore GetStateStore(KafkaStreamsContext context, string name);
+        IStateStore GetStateStore(string Name);
 
         /**
          * Schedules a periodic operation for processors. A processor may call this method during
-         * {@link IProcessor#init(IProcessorContext) initialization} or
+         * {@link IProcessor#Init(IProcessorContext) initialization} or
          * {@link IProcessor#process(object, object) processing} to
          * schedule a periodic callback &mdash; called a punctuation &mdash; to {@link Punctuator#punctuate(long)}.
          * The type parameter controls what notion of time is used for punctuation:
@@ -117,7 +117,7 @@ namespace Kafka.Streams.Processors.Interfaces
             Action<long> callback);
 
         /**
-         * Forwards a key/value pair to all downstream processors.
+         * Forwards a key/value pair to All downstream processors.
          * Used the input record's timestamp as timestamp for the output record.
          *
          * @param key key
@@ -136,10 +136,10 @@ namespace Kafka.Streams.Processors.Interfaces
         void Forward<K1, V1>(K1 key, V1 value, To to);
 
         /**
-         * Forwards a key/value pair to one of the downstream processors designated by the downstream processor name
+         * Forwards a key/value pair to one of the downstream processors designated by the downstream processor Name
          * @param key key
          * @param value value
-         * @param childName name of downstream processor
+         * @param childName Name of downstream processor
          * @deprecated please use {@link #forward(object, object, To)} instead
          */
         void Forward<K1, V1>(K1 key, V1 value, string childName);
@@ -150,10 +150,10 @@ namespace Kafka.Streams.Processors.Interfaces
         void Commit();
 
         /**
-         * Returns the topic name of the current input record; could be null if it is not
+         * Returns the topic Name of the current input record; could be null if it is not
          * available (for example, if this method is invoked from the punctuate call)
          *
-         * @return the topic name
+         * @return the topic Name
          */
         string Topic { get; }
 
@@ -187,14 +187,14 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * If it is triggered while processing a record generated not from the source processor (for example,
          * if this method is invoked from the punctuate call), timestamp is defined as the current
-         * task's stream time, which is defined as the smallest among all its input stream partition timestamps.
+         * task's stream time, which is defined as the smallest among All its input stream partition timestamps.
          *
          * @return the timestamp
          */
         long Timestamp { get; }
 
         /**
-         * Returns all the application config properties as key/value pairs.
+         * Returns All the application config properties as key/value pairs.
          *
          * The config properties are defined in the {@link org.apache.kafka.streams.StreamsConfig}
          * object and associated to the IProcessorContext.
@@ -204,12 +204,12 @@ namespace Kafka.Streams.Processors.Interfaces
          * will be of type {@link Class}, even if it was specified as a string to
          * {@link org.apache.kafka.streams.StreamsConfig#StreamsConfig(Map) StreamsConfig(Map)}).
          *
-         * @return all the key/values from the StreamsConfig properties
+         * @return All the key/values from the StreamsConfig properties
          */
         Dictionary<string, object> AppConfigs();
 
         /**
-         * Returns all the application config properties with the given key prefix, as key/value pairs
+         * Returns All the application config properties with the given key prefix, as key/value pairs
          * stripping the prefix.
          *
          * The config properties are defined in the {@link org.apache.kafka.streams.StreamsConfig}

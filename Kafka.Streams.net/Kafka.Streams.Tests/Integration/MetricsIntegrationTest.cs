@@ -81,40 +81,40 @@ namespace Kafka.Streams.Tests.Integration
 //    private static string STREAM_STORE_WINDOW_ROCKSDB_STATE_METRICS = "stream-rocksdb-window-state-metrics";
 //    private static string STREAM_STORE_SESSION_ROCKSDB_STATE_METRICS = "stream-rocksdb-session-state-metrics";
 
-//    // Metrics name
-//    private static string PUT_LATENCY_AVG = "put-latency-avg";
-//    private static string PUT_LATENCY_MAX = "put-latency-max";
-//    private static string PUT_IF_ABSENT_LATENCY_AVG = "put-if-absent-latency-avg";
-//    private static string PUT_IF_ABSENT_LATENCY_MAX = "put-if-absent-latency-max";
+//    // Metrics Name
+//    private static string PUT_LATENCY_AVG = "Put-latency-avg";
+//    private static string PUT_LATENCY_MAX = "Put-latency-max";
+//    private static string PUT_IF_ABSENT_LATENCY_AVG = "Put-if-absent-latency-avg";
+//    private static string PUT_IF_ABSENT_LATENCY_MAX = "Put-if-absent-latency-max";
 //    private static string GET_LATENCY_AVG = "get-latency-avg";
 //    private static string GET_LATENCY_MAX = "get-latency-max";
 //    private static string DELETE_LATENCY_AVG = "delete-latency-avg";
 //    private static string DELETE_LATENCY_MAX = "delete-latency-max";
-//    private static string PUT_ALL_LATENCY_AVG = "put-all-latency-avg";
-//    private static string PUT_ALL_LATENCY_MAX = "put-all-latency-max";
-//    private static string ALL_LATENCY_AVG = "all-latency-avg";
-//    private static string ALL_LATENCY_MAX = "all-latency-max";
+//    private static string PUT_ALL_LATENCY_AVG = "Put-All-latency-avg";
+//    private static string PUT_ALL_LATENCY_MAX = "Put-All-latency-max";
+//    private static string ALL_LATENCY_AVG = "All-latency-avg";
+//    private static string ALL_LATENCY_MAX = "All-latency-max";
 //    private static string RANGE_LATENCY_AVG = "range-latency-avg";
 //    private static string RANGE_LATENCY_MAX = "range-latency-max";
-//    private static string FLUSH_LATENCY_AVG = "flush-latency-avg";
-//    private static string FLUSH_LATENCY_MAX = "flush-latency-max";
+//    private static string FLUSH_LATENCY_AVG = "Flush-latency-avg";
+//    private static string FLUSH_LATENCY_MAX = "Flush-latency-max";
 //    private static string RESTORE_LATENCY_AVG = "restore-latency-avg";
 //    private static string RESTORE_LATENCY_MAX = "restore-latency-max";
-//    private static string PUT_RATE = "put-rate";
-//    private static string PUT_TOTAL = "put-total";
-//    private static string PUT_IF_ABSENT_RATE = "put-if-absent-rate";
-//    private static string PUT_IF_ABSENT_TOTAL = "put-if-absent-total";
+//    private static string PUT_RATE = "Put-rate";
+//    private static string PUT_TOTAL = "Put-total";
+//    private static string PUT_IF_ABSENT_RATE = "Put-if-absent-rate";
+//    private static string PUT_IF_ABSENT_TOTAL = "Put-if-absent-total";
 //    private static string GET_RATE = "get-rate";
 //    private static string DELETE_RATE = "delete-rate";
 //    private static string DELETE_TOTAL = "delete-total";
-//    private static string PUT_ALL_RATE = "put-all-rate";
-//    private static string PUT_ALL_TOTAL = "put-all-total";
-//    private static string ALL_RATE = "all-rate";
-//    private static string ALL_TOTAL = "all-total";
+//    private static string PUT_ALL_RATE = "Put-All-rate";
+//    private static string PUT_ALL_TOTAL = "Put-All-total";
+//    private static string ALL_RATE = "All-rate";
+//    private static string ALL_TOTAL = "All-total";
 //    private static string RANGE_RATE = "range-rate";
 //    private static string RANGE_TOTAL = "range-total";
-//    private static string FLUSH_RATE = "flush-rate";
-//    private static string FLUSH_TOTAL = "flush-total";
+//    private static string FLUSH_RATE = "Flush-rate";
+//    private static string FLUSH_TOTAL = "Flush-total";
 //    private static string RESTORE_RATE = "restore-rate";
 //    private static string RESTORE_TOTAL = "restore-total";
 //    private static string PROCESS_LATENCY_AVG = "process-latency-avg";
@@ -155,7 +155,7 @@ namespace Kafka.Streams.Tests.Integration
 //    private static string HIT_RATIO_MIN = "hitRatio-min";
 //    private static string HIT_RATIO_MAX = "hitRatio-max";
 
-//    // stores name
+//    // stores Name
 //    private static string TIME_WINDOWED_AGGREGATED_STREAM_STORE = "time-windowed-aggregated-stream-store";
 //    private static string SESSION_AGGREGATED_STREAM_STORE = "session-aggregated-stream-store";
 //    private static string MY_STORE_IN_MEMORY = "myStoreInMemory";
@@ -178,13 +178,13 @@ namespace Kafka.Streams.Tests.Integration
 //        builder = new StreamsBuilder();
 //        CLUSTER.createTopics(STREAM_INPUT, STREAM_OUTPUT_1, STREAM_OUTPUT_2, STREAM_OUTPUT_3, STREAM_OUTPUT_4);
 //        streamsConfiguration = new StreamsConfig();
-//        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "stream-metrics-test");
-//        streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//        streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//        streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//        streamsConfiguration.put(StreamsConfig.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.DEBUG.name);
-//        streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 10 * 1024 * 1024L);
-//        streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+//        streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, "stream-metrics-test");
+//        streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//        streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//        streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//        streamsConfiguration.Put(StreamsConfig.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.DEBUG.Name);
+//        streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 10 * 1024 * 1024L);
+//        streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
 //    }
 
 
@@ -203,7 +203,7 @@ namespace Kafka.Streams.Tests.Integration
 //    }
 
 //    private void closeApplication() {// throws Exception
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //        kafkaStreams.cleanUp();
 //        IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        long timeout = 60000;
@@ -485,7 +485,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void checkMetricByName(List<Metric> listMetric, string metricName, int numMetric) {
 //        List<Metric> metrics = listMetric.Stream()
-//            .filter(m => m.metricName().name().equals(metricName))
+//            .filter(m => m.metricName().Name().equals(metricName))
 //            .collect(Collectors.toList());
 //        Assert.Equal("Size of metrics of type:'" + metricName + "' must be equal to:" + numMetric + " but it's equal to " + metrics.Count, numMetric, metrics.Count);
 //        foreach (Metric m in metrics) {

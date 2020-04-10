@@ -4,7 +4,7 @@ using Kafka.Streams.State.TimeStamped;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamWindowAggregateValueGetter<K, V, Agg> : IKTableValueGetter<Windowed<K>, Agg>
+    public class KStreamWindowAggregateValueGetter<K, V, Agg> : IKTableValueGetter<IWindowed<K>, Agg>
     {
         private ITimestampedWindowStore<K, Agg> windowStore;
         private readonly KafkaStreamsContext context;
@@ -16,15 +16,15 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Init(IProcessorContext context, string storeName)
         {
-            windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(this.context, storeName);
+            this.windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(storeName);
         }
 
-        public ValueAndTimestamp<Agg> Get(Windowed<K> windowedKey)
+        public IValueAndTimestamp<Agg> Get(IWindowed<K> windowedKey)
         {
             K key = windowedKey.Key;
             var window = windowedKey.window;
 
-            return windowStore.Fetch(key, window.Start());
+            return this.windowStore.Fetch(key, window.Start());
         }
 
         public void Close() { }

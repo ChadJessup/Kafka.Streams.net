@@ -266,7 +266,7 @@
     //        tempConsumerDefaultOverrides.Add(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1000");
     //        tempConsumerDefaultOverrides.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-    //        tempConsumerDefaultOverrides.Add("internal.leave.group.on.close", false);
+    //        tempConsumerDefaultOverrides.Add("internal.leave.group.on.Close", false);
     //        CONSUMER_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
     //    }
 
@@ -275,7 +275,7 @@
     //{
 
     //         Dictionary<string, object> tempConsumerDefaultOverrides = new Dictionary<>(CONSUMER_DEFAULT_OVERRIDES);
-    //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ISOLATION_LEVEL_CONFIG, READ_COMMITTED.name.toLowerCase(Locale.ROOT));
+    //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ISOLATION_LEVEL_CONFIG, READ_COMMITTED.Name.toLowerCase(Locale.ROOT));
     //        CONSUMER_EOS_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
     //    }
 

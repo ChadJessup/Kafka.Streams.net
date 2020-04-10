@@ -69,10 +69,10 @@
 //                        new MockStreamsMetrics(new Metrics())));
 //            segmentOne.OpenDb(context);
 //            segmentTwo.OpenDb(context);
-//            segmentOne.put(Bytes.Wrap("a".getBytes()), "1".getBytes());
-//            segmentOne.put(Bytes.Wrap("b".getBytes()), "2".getBytes());
-//            segmentTwo.put(Bytes.Wrap("c".getBytes()), "3".getBytes());
-//            segmentTwo.put(Bytes.Wrap("d".getBytes()), "4".getBytes());
+//            segmentOne.Put(Bytes.Wrap("a".getBytes()), "1".getBytes());
+//            segmentOne.Put(Bytes.Wrap("b".getBytes()), "2".getBytes());
+//            segmentTwo.Put(Bytes.Wrap("c".getBytes()), "3".getBytes());
+//            segmentTwo.Put(Bytes.Wrap("d".getBytes()), "4".getBytes());
 //        }
 
 
@@ -80,11 +80,11 @@
 //        {
 //            if (iterator != null)
 //            {
-//                iterator.close();
+//                iterator.Close();
 //                iterator = null;
 //            }
-//            segmentOne.close();
-//            segmentTwo.close();
+//            segmentOne.Close();
+//            segmentTwo.Close();
 //        }
 
 //        [Fact]
@@ -124,8 +124,8 @@
 //                Bytes.Wrap("a".getBytes()),
 //                Bytes.Wrap("z".getBytes()));
 
-//            iterator.currentIterator = segmentOne.all();
-//            segmentOne.close();
+//            iterator.currentIterator = segmentOne.All();
+//            segmentOne.Close();
 //            Assert.False(iterator.HasNext());
 //        }
 

@@ -33,28 +33,28 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         protected ProcessorParameters<K, V1> ThisProcessorParameters()
         {
-            return joinThisProcessorParameters;
+            return this.joinThisProcessorParameters;
         }
 
         protected ProcessorParameters<K, V2> OtherProcessorParameters()
         {
-            return joinOtherProcessorParameters;
+            return this.joinOtherProcessorParameters;
         }
 
         protected ProcessorParameters<K, VR> MergeProcessorParameters()
         {
-            return joinMergeProcessorParameters;
+            return this.joinMergeProcessorParameters;
         }
 
         public override string ToString()
         {
             return "BaseJoinProcessorNode{" +
-                   "joinThisProcessorParameters=" + joinThisProcessorParameters +
-                   ", joinOtherProcessorParameters=" + joinOtherProcessorParameters +
-                   ", joinMergeProcessorParameters=" + joinMergeProcessorParameters +
-                   ", valueJoiner=" + valueJoiner +
-                   ", thisJoinSideNodeName='" + thisJoinSideNodeName + '\'' +
-                   ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
+                   "joinThisProcessorParameters=" + this.joinThisProcessorParameters +
+                   ", joinOtherProcessorParameters=" + this.joinOtherProcessorParameters +
+                   ", joinMergeProcessorParameters=" + this.joinMergeProcessorParameters +
+                   ", valueJoiner=" + this.valueJoiner +
+                   ", thisJoinSideNodeName='" + this.thisJoinSideNodeName + '\'' +
+                   ", otherJoinSideNodeName='" + this.otherJoinSideNodeName + '\'' +
                    "} " + base.ToString();
         }
     }

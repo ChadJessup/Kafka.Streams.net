@@ -21,7 +21,7 @@
 //        private InternalMockProcessorContext context;
 //        private RocksDBSegmentedBytesStore underlying;
 //        private CachingWindowStore cachingStore;
-//        private CachingKeyValueStoreTest.CacheFlushListenerStub<Windowed<string>, string> cacheListener;
+//        private CachingKeyValueStoreTest.CacheFlushListenerStub<IWindowed<string>, string> cacheListener;
 //        private ThreadCache cache;
 //        private string topic;
 //        private WindowKeySchema keySchema;
@@ -49,7 +49,7 @@
 
 //        public void CloseStore()
 //        {
-//            cachingStore.close();
+//            cachingStore.Close();
 //        }
 
 //        [Fact]
@@ -58,7 +58,7 @@
 //            StreamsBuilder builder = new StreamsBuilder();
 
 //            IStoreBuilder<IWindowStore<string, string>> storeBuilder = Stores.windowStoreBuilder(
-//                Stores.PersistentWindowStore("store-name", ofHours(1L), ofMinutes(1L), false),
+//                Stores.PersistentWindowStore("store-Name", ofHours(1L), ofMinutes(1L), false),
 //                Serdes.String(),
 //                Serdes.String())
 //                .withCachingEnabled();
@@ -76,14 +76,14 @@
 
 //        public void Init(ProcessorContext processorContext)
 //        {
-//            this.store = (IWindowStore<string, string>)processorContext.GetStateStore("store-name");
+//            this.store = (IWindowStore<string, string>)processorContext.GetStateStore("store-Name");
 //            int count = 0;
 
-//            IKeyValueIterator<Windowed<string>, string> all = store.all();
-//            while (all.HasNext())
+//            IKeyValueIterator<IWindowed<string>, string> All = store.All();
+//            while (All.HasNext())
 //            {
 //                count++;
-//                all.MoveNext();
+//                All.MoveNext();
 //            }
 
 //            Assert.Equal(count, (0));
@@ -94,15 +94,15 @@
 //        {
 //            int count = 0;
 
-//            IKeyValueIterator<Windowed<string>, string> all = store.all();
-//            while (all.HasNext())
+//            IKeyValueIterator<IWindowed<string>, string> All = store.All();
+//            while (All.HasNext())
 //            {
 //                count++;
-//                all.MoveNext();
+//                All.MoveNext();
 //            }
 //            Assert.Equal(count, (numRecordsProcessed));
 
-//            store.put(value, value);
+//            store.Put(value, value);
 
 //            numRecordsProcessed++;
 
@@ -111,17 +111,17 @@
 
 
 //        public void Close() { }
-//    }, "store-name");
+//    }, "store-Name");
 
 //        string bootstrapServers = "localhost:9092";
 //    StreamsConfig streamsConfiguration = new StreamsConfig();
-//    streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "test-app");
-//        streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-//        streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//        streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//        streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-//        streamsConfiguration.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 10 * 1000);
+//    streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//        streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, "test-app");
+//        streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+//        streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//        streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//        streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+//        streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 10 * 1000);
 
 //        long initialWallClockTime = 0L;
 //    TopologyTestDriver driver = new TopologyTestDriver(builder.Build(), streamsConfiguration, initialWallClockTime);
@@ -154,8 +154,8 @@
 //    [Fact]
 //public void ShouldPutFetchFromCache()
 //{
-//    cachingStore.put(bytesKey("a"), bytesValue("a"));
-//    cachingStore.put(bytesKey("b"), bytesValue("b"));
+//    cachingStore.Put(bytesKey("a"), bytesValue("a"));
+//    cachingStore.Put(bytesKey("b"), bytesValue("b"));
 
 //    Assert.Equal(cachingStore.Fetch(bytesKey("a"), 10), (bytesValue("a")));
 //    Assert.Equal(cachingStore.Fetch(bytesKey("b"), 10), (bytesValue("b")));
@@ -197,18 +197,18 @@
 //[Fact]
 //public void ShouldPutFetchRangeFromCache()
 //{
-//    cachingStore.put(bytesKey("a"), bytesValue("a"));
-//    cachingStore.put(bytesKey("b"), bytesValue("b"));
+//    cachingStore.Put(bytesKey("a"), bytesValue("a"));
+//    cachingStore.Put(bytesKey("b"), bytesValue("b"));
 
-//    IKeyValueIterator<Windowed<Bytes>, byte[]> iterator =
+//    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator =
 //        cachingStore.Fetch(bytesKey("a"), bytesKey("b"), ofEpochMilli(10), ofEpochMilli(10));
 //    verifyWindowedKeyValue(
 //        iterator.MoveNext(),
-//        new Windowed<>(bytesKey("a"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
+//        new IWindowed<>(bytesKey("a"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //        "a");
 //    verifyWindowedKeyValue(
 //        iterator.MoveNext(),
-//        new Windowed<>(bytesKey("b"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
+//        new IWindowed<>(bytesKey("b"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //        "b");
 //    Assert.False(iterator.HasNext());
 //    Assert.Equal(2, cache.Count);
@@ -217,22 +217,22 @@
 //[Fact]
 //public void ShouldGetAllFromCache()
 //{
-//    cachingStore.put(bytesKey("a"), bytesValue("a"));
-//    cachingStore.put(bytesKey("b"), bytesValue("b"));
-//    cachingStore.put(bytesKey("c"), bytesValue("c"));
-//    cachingStore.put(bytesKey("d"), bytesValue("d"));
-//    cachingStore.put(bytesKey("e"), bytesValue("e"));
-//    cachingStore.put(bytesKey("f"), bytesValue("f"));
-//    cachingStore.put(bytesKey("g"), bytesValue("g"));
-//    cachingStore.put(bytesKey("h"), bytesValue("h"));
+//    cachingStore.Put(bytesKey("a"), bytesValue("a"));
+//    cachingStore.Put(bytesKey("b"), bytesValue("b"));
+//    cachingStore.Put(bytesKey("c"), bytesValue("c"));
+//    cachingStore.Put(bytesKey("d"), bytesValue("d"));
+//    cachingStore.Put(bytesKey("e"), bytesValue("e"));
+//    cachingStore.Put(bytesKey("f"), bytesValue("f"));
+//    cachingStore.Put(bytesKey("g"), bytesValue("g"));
+//    cachingStore.Put(bytesKey("h"), bytesValue("h"));
 
-//    IKeyValueIterator<Windowed<Bytes>, byte[]> iterator = cachingStore.all();
+//    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator = cachingStore.All();
 //    string[] array = { "a", "b", "c", "d", "e", "f", "g", "h" };
 //    foreach (string s in array)
 //    {
 //        verifyWindowedKeyValue(
 //            iterator.MoveNext(),
-//            new Windowed<>(bytesKey(s), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
+//            new IWindowed<>(bytesKey(s), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //            s);
 //    }
 //    Assert.False(iterator.HasNext());
@@ -245,41 +245,41 @@
 //    for (int i = 0; i < array.Length; i++)
 //    {
 //        context.setTime(i);
-//        cachingStore.put(bytesKey(array[i]), bytesValue(array[i]));
+//        cachingStore.Put(bytesKey(array[i]), bytesValue(array[i]));
 //    }
 
-//    IKeyValueIterator<Windowed<Bytes>, byte[]> iterator =
-//        cachingStore.fetchAll(ofEpochMilli(0), ofEpochMilli(7));
+//    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator =
+//        cachingStore.FetchAll(ofEpochMilli(0), ofEpochMilli(7));
 //    for (int i = 0; i < array.Length; i++)
 //    {
 //        string str = array[i];
 //        verifyWindowedKeyValue(
 //            iterator.MoveNext(),
-//            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
+//            new IWindowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
 //    Assert.False(iterator.HasNext());
 
-//    IKeyValueIterator<Windowed<Bytes>, byte[]> iterator1 =
-//        cachingStore.fetchAll(ofEpochMilli(2), ofEpochMilli(4));
+//    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator1 =
+//        cachingStore.FetchAll(ofEpochMilli(2), ofEpochMilli(4));
 //    for (int i = 2; i <= 4; i++)
 //    {
 //        string str = array[i];
 //        verifyWindowedKeyValue(
 //            iterator1.MoveNext(),
-//            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
+//            new IWindowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
 //    Assert.False(iterator1.HasNext());
 
-//    IKeyValueIterator<Windowed<Bytes>, byte[]> iterator2 =
-//        cachingStore.fetchAll(ofEpochMilli(5), ofEpochMilli(7));
+//    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator2 =
+//        cachingStore.FetchAll(ofEpochMilli(5), ofEpochMilli(7));
 //    for (int i = 5; i <= 7; i++)
 //    {
 //        string str = array[i];
 //        verifyWindowedKeyValue(
 //            iterator2.MoveNext(),
-//            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
+//            new IWindowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
 //    Assert.False(iterator2.HasNext());
@@ -289,7 +289,7 @@
 //public void ShouldFlushEvictedItemsIntoUnderlyingStore()
 //{
 //    int added = addItemsToCache();
-//    // all dirty entries should have been flushed
+//    // All dirty entries should have been flushed
 //    IKeyValueIterator<Bytes, byte[]> iter = underlying.Fetch(
 //        Bytes.Wrap("0".getBytes(StandardCharsets.UTF_8)),
 //        DEFAULT_TIMESTAMP,
@@ -304,10 +304,10 @@
 //[Fact]
 //public void ShouldForwardDirtyItemsWhenFlushCalled()
 //{
-//    Windowed<string> windowedKey =
-//        new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
-//    cachingStore.put(bytesKey("1"), bytesValue("a"));
-//    cachingStore.flush();
+//    IWindowed<string> windowedKey =
+//        new IWindowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//    cachingStore.Put(bytesKey("1"), bytesValue("a"));
+//    cachingStore.Flush();
 //    Assert.Equal("a", cacheListener.forwarded.Get(windowedKey).newValue);
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey).oldValue);
 //}
@@ -323,27 +323,27 @@
 //public void ShouldForwardOldValuesWhenEnabled()
 //{
 //    cachingStore.setFlushListener(cacheListener, true);
-//    Windowed<string> windowedKey =
-//        new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
-//    cachingStore.put(bytesKey("1"), bytesValue("a"));
-//    cachingStore.put(bytesKey("1"), bytesValue("b"));
-//    cachingStore.flush();
+//    IWindowed<string> windowedKey =
+//        new IWindowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//    cachingStore.Put(bytesKey("1"), bytesValue("a"));
+//    cachingStore.Put(bytesKey("1"), bytesValue("b"));
+//    cachingStore.Flush();
 //    Assert.Equal("b", cacheListener.forwarded.Get(windowedKey).newValue);
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey).oldValue);
 //    cacheListener.forwarded.Clear();
-//    cachingStore.put(bytesKey("1"), bytesValue("c"));
-//    cachingStore.flush();
+//    cachingStore.Put(bytesKey("1"), bytesValue("c"));
+//    cachingStore.Flush();
 //    Assert.Equal("c", cacheListener.forwarded.Get(windowedKey).newValue);
 //    Assert.Equal("b", cacheListener.forwarded.Get(windowedKey).oldValue);
-//    cachingStore.put(bytesKey("1"), null);
-//    cachingStore.flush();
+//    cachingStore.Put(bytesKey("1"), null);
+//    cachingStore.Flush();
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey).newValue);
 //    Assert.Equal("c", cacheListener.forwarded.Get(windowedKey).oldValue);
 //    cacheListener.forwarded.Clear();
-//    cachingStore.put(bytesKey("1"), bytesValue("a"));
-//    cachingStore.put(bytesKey("1"), bytesValue("b"));
-//    cachingStore.put(bytesKey("1"), null);
-//    cachingStore.flush();
+//    cachingStore.Put(bytesKey("1"), bytesValue("a"));
+//    cachingStore.Put(bytesKey("1"), bytesValue("b"));
+//    cachingStore.Put(bytesKey("1"), null);
+//    cachingStore.Flush();
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey));
 //    cacheListener.forwarded.Clear();
 //}
@@ -351,26 +351,26 @@
 //[Fact]
 //public void ShouldForwardOldValuesWhenDisabled()
 //{
-//    Windowed<string> windowedKey =
-//        new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
-//    cachingStore.put(bytesKey("1"), bytesValue("a"));
-//    cachingStore.put(bytesKey("1"), bytesValue("b"));
-//    cachingStore.flush();
+//    IWindowed<string> windowedKey =
+//        new IWindowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//    cachingStore.Put(bytesKey("1"), bytesValue("a"));
+//    cachingStore.Put(bytesKey("1"), bytesValue("b"));
+//    cachingStore.Flush();
 //    Assert.Equal("b", cacheListener.forwarded.Get(windowedKey).newValue);
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey).oldValue);
-//    cachingStore.put(bytesKey("1"), bytesValue("c"));
-//    cachingStore.flush();
+//    cachingStore.Put(bytesKey("1"), bytesValue("c"));
+//    cachingStore.Flush();
 //    Assert.Equal("c", cacheListener.forwarded.Get(windowedKey).newValue);
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey).oldValue);
-//    cachingStore.put(bytesKey("1"), null);
-//    cachingStore.flush();
+//    cachingStore.Put(bytesKey("1"), null);
+//    cachingStore.Flush();
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey).newValue);
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey).oldValue);
 //    cacheListener.forwarded.Clear();
-//    cachingStore.put(bytesKey("1"), bytesValue("a"));
-//    cachingStore.put(bytesKey("1"), bytesValue("b"));
-//    cachingStore.put(bytesKey("1"), null);
-//    cachingStore.flush();
+//    cachingStore.Put(bytesKey("1"), bytesValue("a"));
+//    cachingStore.Put(bytesKey("1"), bytesValue("b"));
+//    cachingStore.Put(bytesKey("1"), null);
+//    cachingStore.Flush();
 //    Assert.Null(cacheListener.forwarded.Get(windowedKey));
 //    cacheListener.forwarded.Clear();
 //}
@@ -385,58 +385,58 @@
 //[Fact]
 //public void ShouldTakeValueFromCacheIfSameTimestampFlushedToRocks()
 //{
-//    cachingStore.put(bytesKey("1"), bytesValue("a"), DEFAULT_TIMESTAMP);
-//    cachingStore.flush();
-//    cachingStore.put(bytesKey("1"), bytesValue("b"), DEFAULT_TIMESTAMP);
+//    cachingStore.Put(bytesKey("1"), bytesValue("a"), DEFAULT_TIMESTAMP);
+//    cachingStore.Flush();
+//    cachingStore.Put(bytesKey("1"), bytesValue("b"), DEFAULT_TIMESTAMP);
 
-//    IWindowStoreIterator<byte[]> fetch =
+//    IWindowStoreIterator<byte[]> Fetch =
 //        cachingStore.Fetch(bytesKey("1"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP));
-//    verifyKeyValue(fetch.MoveNext(), DEFAULT_TIMESTAMP, "b");
-//    Assert.False(fetch.HasNext());
+//    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP, "b");
+//    Assert.False(Fetch.HasNext());
 //}
 
 //[Fact]
 //public void ShouldIterateAcrossWindows()
 //{
-//    cachingStore.put(bytesKey("1"), bytesValue("a"), DEFAULT_TIMESTAMP);
-//    cachingStore.put(bytesKey("1"), bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
+//    cachingStore.Put(bytesKey("1"), bytesValue("a"), DEFAULT_TIMESTAMP);
+//    cachingStore.Put(bytesKey("1"), bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
 
-//    IWindowStoreIterator<byte[]> fetch =
+//    IWindowStoreIterator<byte[]> Fetch =
 //        cachingStore.Fetch(bytesKey("1"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP + WINDOW_SIZE));
-//    verifyKeyValue(fetch.MoveNext(), DEFAULT_TIMESTAMP, "a");
-//    verifyKeyValue(fetch.MoveNext(), DEFAULT_TIMESTAMP + WINDOW_SIZE, "b");
-//    Assert.False(fetch.HasNext());
+//    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP, "a");
+//    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP + WINDOW_SIZE, "b");
+//    Assert.False(Fetch.HasNext());
 //}
 
 //[Fact]
 //public void ShouldIterateCacheAndStore()
 //{
 //    Bytes key = Bytes.Wrap("1".getBytes());
-//    underlying.put(WindowKeySchema.toStoreKeyBinary(key, DEFAULT_TIMESTAMP, 0), "a".getBytes());
-//    cachingStore.put(key, bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
-//    IWindowStoreIterator<byte[]> fetch =
+//    underlying.Put(WindowKeySchema.toStoreKeyBinary(key, DEFAULT_TIMESTAMP, 0), "a".getBytes());
+//    cachingStore.Put(key, bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
+//    IWindowStoreIterator<byte[]> Fetch =
 //        cachingStore.Fetch(bytesKey("1"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP + WINDOW_SIZE));
-//    verifyKeyValue(fetch.MoveNext(), DEFAULT_TIMESTAMP, "a");
-//    verifyKeyValue(fetch.MoveNext(), DEFAULT_TIMESTAMP + WINDOW_SIZE, "b");
-//    Assert.False(fetch.HasNext());
+//    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP, "a");
+//    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP + WINDOW_SIZE, "b");
+//    Assert.False(Fetch.HasNext());
 //}
 
 //[Fact]
 //public void ShouldIterateCacheAndStoreKeyRange()
 //{
 //    Bytes key = Bytes.Wrap("1".getBytes());
-//    underlying.put(WindowKeySchema.toStoreKeyBinary(key, DEFAULT_TIMESTAMP, 0), "a".getBytes());
-//    cachingStore.put(key, bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
+//    underlying.Put(WindowKeySchema.toStoreKeyBinary(key, DEFAULT_TIMESTAMP, 0), "a".getBytes());
+//    cachingStore.Put(key, bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
 
-//    IKeyValueIterator<Windowed<Bytes>, byte[]> fetchRange =
+//    IKeyValueIterator<IWindowed<Bytes>, byte[]> fetchRange =
 //        cachingStore.Fetch(key, bytesKey("2"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP + WINDOW_SIZE));
 //    verifyWindowedKeyValue(
 //        fetchRange.MoveNext(),
-//        new Windowed<>(key, new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
+//        new IWindowed<>(key, new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //        "a");
 //    verifyWindowedKeyValue(
 //        fetchRange.MoveNext(),
-//        new Windowed<>(key, new TimeWindow(DEFAULT_TIMESTAMP + WINDOW_SIZE, DEFAULT_TIMESTAMP + WINDOW_SIZE + WINDOW_SIZE)),
+//        new IWindowed<>(key, new TimeWindow(DEFAULT_TIMESTAMP + WINDOW_SIZE, DEFAULT_TIMESTAMP + WINDOW_SIZE + WINDOW_SIZE)),
 //        "b");
 //    Assert.False(fetchRange.HasNext());
 //}
@@ -444,41 +444,41 @@
 //[Fact]
 //public void ShouldClearNamespaceCacheOnClose()
 //{
-//    cachingStore.put(bytesKey("a"), bytesValue("a"));
+//    cachingStore.Put(bytesKey("a"), bytesValue("a"));
 //    Assert.Equal(1, cache.Count);
-//    cachingStore.close();
+//    cachingStore.Close();
 //    Assert.Equal(0, cache.Count);
 //}
 
 //[Fact]// (expected = InvalidStateStoreException)
 //public void ShouldThrowIfTryingToFetchFromClosedCachingStore()
 //{
-//    cachingStore.close();
+//    cachingStore.Close();
 //    cachingStore.Fetch(bytesKey("a"), ofEpochMilli(0), ofEpochMilli(10));
 //}
 
 //[Fact]// (expected = InvalidStateStoreException)
 //public void ShouldThrowIfTryingToFetchRangeFromClosedCachingStore()
 //{
-//    cachingStore.close();
+//    cachingStore.Close();
 //    cachingStore.Fetch(bytesKey("a"), bytesKey("b"), ofEpochMilli(0), ofEpochMilli(10));
 //}
 
 //[Fact]// (expected = InvalidStateStoreException)
 //public void ShouldThrowIfTryingToWriteToClosedCachingStore()
 //{
-//    cachingStore.close();
-//    cachingStore.put(bytesKey("a"), bytesValue("a"));
+//    cachingStore.Close();
+//    cachingStore.Put(bytesKey("a"), bytesValue("a"));
 //}
 
 //[Fact]
 //public void ShouldFetchAndIterateOverExactKeys()
 //{
-//    cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
-//    cachingStore.put(bytesKey("aa"), bytesValue("0002"), 0);
-//    cachingStore.put(bytesKey("a"), bytesValue("0003"), 1);
-//    cachingStore.put(bytesKey("aa"), bytesValue("0004"), 1);
-//    cachingStore.put(bytesKey("a"), bytesValue("0005"), SEGMENT_INTERVAL);
+//    cachingStore.Put(bytesKey("a"), bytesValue("0001"), 0);
+//    cachingStore.Put(bytesKey("aa"), bytesValue("0002"), 0);
+//    cachingStore.Put(bytesKey("a"), bytesValue("0003"), 1);
+//    cachingStore.Put(bytesKey("aa"), bytesValue("0004"), 1);
+//    cachingStore.Put(bytesKey("a"), bytesValue("0005"), SEGMENT_INTERVAL);
 
 //    List<KeyValuePair<long, byte[]>> expected = asList(
 //        KeyValuePair.Create(0L, bytesValue("0001")),
@@ -493,11 +493,11 @@
 //[Fact]
 //public void ShouldFetchAndIterateOverKeyRange()
 //{
-//    cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
-//    cachingStore.put(bytesKey("aa"), bytesValue("0002"), 0);
-//    cachingStore.put(bytesKey("a"), bytesValue("0003"), 1);
-//    cachingStore.put(bytesKey("aa"), bytesValue("0004"), 1);
-//    cachingStore.put(bytesKey("a"), bytesValue("0005"), SEGMENT_INTERVAL);
+//    cachingStore.Put(bytesKey("a"), bytesValue("0001"), 0);
+//    cachingStore.Put(bytesKey("aa"), bytesValue("0002"), 0);
+//    cachingStore.Put(bytesKey("a"), bytesValue("0003"), 1);
+//    cachingStore.Put(bytesKey("aa"), bytesValue("0004"), 1);
+//    cachingStore.Put(bytesKey("a"), bytesValue("0005"), SEGMENT_INTERVAL);
 
 //    verifyKeyValueList(
 //        asList(
@@ -530,13 +530,13 @@
 //[Fact]
 //public void ShouldReturnSameResultsForSingleKeyFetchAndEqualKeyRangeFetch()
 //{
-//    cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
-//    cachingStore.put(bytesKey("aa"), bytesValue("0002"), 1);
-//    cachingStore.put(bytesKey("aa"), bytesValue("0003"), 2);
-//    cachingStore.put(bytesKey("aaa"), bytesValue("0004"), 3);
+//    cachingStore.Put(bytesKey("a"), bytesValue("0001"), 0);
+//    cachingStore.Put(bytesKey("aa"), bytesValue("0002"), 1);
+//    cachingStore.Put(bytesKey("aa"), bytesValue("0003"), 2);
+//    cachingStore.Put(bytesKey("aaa"), bytesValue("0004"), 3);
 
 //    IWindowStoreIterator<byte[]> singleKeyIterator = cachingStore.Fetch(bytesKey("aa"), 0L, 5L);
-//    IKeyValueIterator<Windowed<Bytes>, byte[]> keyRangeIterator = cachingStore.Fetch(bytesKey("aa"), bytesKey("aa"), 0L, 5L);
+//    IKeyValueIterator<IWindowed<Bytes>, byte[]> keyRangeIterator = cachingStore.Fetch(bytesKey("aa"), bytesKey("aa"), 0L, 5L);
 
 //    Assert.Equal(stringFrom(singleKeyIterator.MoveNext().value), stringFrom(keyRangeIterator.MoveNext().value));
 //    Assert.Equal(stringFrom(singleKeyIterator.MoveNext().value), stringFrom(keyRangeIterator.MoveNext().value));
@@ -547,13 +547,13 @@
 //[Fact]// (expected = NullPointerException)
 //public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //{
-//    cachingStore.put(null, bytesValue("anyValue"));
+//    cachingStore.Put(null, bytesValue("anyValue"));
 //}
 
 //[Fact]
 //public void ShouldNotThrowNullPointerExceptionOnPutNullValue()
 //{
-//    cachingStore.put(bytesKey("a"), null);
+//    cachingStore.Put(bytesKey("a"), null);
 //}
 
 //[Fact]// (expected = NullPointerException)
@@ -583,19 +583,19 @@
 //    Bytes keyFrom = Bytes.Wrap(Serdes.Int().Serializer.Serialize("", -1));
 //    Bytes keyTo = Bytes.Wrap(Serdes.Int().Serializer.Serialize("", 1));
 
-//    IKeyValueIterator<Windowed<Bytes>, byte[]> iterator = cachingStore.Fetch(keyFrom, keyTo, 0L, 10L);
+//    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator = cachingStore.Fetch(keyFrom, keyTo, 0L, 10L);
 //    Assert.False(iterator.HasNext());
 
 //    List<string> messages = appender.getMessages();
-//    Assert.Equal(messages, hasItem("Returning empty iterator for fetch with invalid key range: from > to. "
+//    Assert.Equal(messages, hasItem("Returning empty iterator for Fetch with invalid key range: from > to. "
 //        + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. "
 //        + "Note that the built-in numerical serdes do not follow this for negative numbers"));
 //}
 
-//private static KeyValuePair<Windowed<Bytes>, byte[]> WindowedPair(string key, string value, long timestamp)
+//private static KeyValuePair<IWindowed<Bytes>, byte[]> WindowedPair(string key, string value, long timestamp)
 //{
 //    return KeyValuePair.Create(
-//        new Windowed<>(bytesKey(key), new TimeWindow(timestamp, timestamp + WINDOW_SIZE)),
+//        new IWindowed<>(bytesKey(key), new TimeWindow(timestamp, timestamp + WINDOW_SIZE)),
 //        bytesValue(value));
 //}
 
@@ -606,7 +606,7 @@
 //    while (cachedSize < MAX_CACHE_SIZE_BYTES)
 //    {
 //        string kv = string.valueOf(i++);
-//        cachingStore.put(bytesKey(kv), bytesValue(kv));
+//        cachingStore.Put(bytesKey(kv), bytesValue(kv));
 //        cachedSize += memoryCacheEntrySize(kv.getBytes(), kv.getBytes(), topic) +
 //            8 + // timestamp
 //            4; // sequenceNumber

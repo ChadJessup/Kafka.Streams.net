@@ -106,7 +106,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            {
 
 
-//            public void init(IProcessorContext context) { }
+//            public void Init(IProcessorContext context) { }
 
 
 //            public KeyValuePair<string, string> transform(string key, string value)
@@ -115,13 +115,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            }
 
 
-//            public void close() { }
+//            public void Close() { }
 //        };
 //        ValueTransformerSupplier<string, string> valueTransformerSupplier = () => new ValueTransformer<string, string>()
 //        {
 
 
-//            public void init(IProcessorContext context) { }
+//            public void Init(IProcessorContext context) { }
 
 
 //        public string transform(string value)
@@ -130,7 +130,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        }
 
 
-//        public void close() { }
+//        public void Close() { }
 //    };
 
 //    Assert.Equal(((AbstractStream) stream1.filter((key, value) => false)).keySerde(), consumedInternal.keySerde());
@@ -306,7 +306,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    foreach (SourceNode sourceNode in topology.sources())
 //    {
-//        if (sourceNode.name().equals(originalSourceNode.name()))
+//        if (sourceNode.Name().equals(originalSourceNode.Name()))
 //        {
 //            Assert.Null(sourceNode.getTimestampExtractor());
 //        }
@@ -340,7 +340,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    foreach (SourceNode sourceNode in topology.sources())
 //    {
-//        if (sourceNode.name().equals(originalSourceNode.name()))
+//        if (sourceNode.Name().equals(originalSourceNode.Name()))
 //        {
 //            Assert.Null(sourceNode.getTimestampExtractor());
 //        }

@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream
      * +-----------+-------------+------------+
      * </pre>
      * The previous 2 sessions would be merged into a single session with start time 10 and end time 20.
-     * The aggregate value for this session would be the result of aggregating all 4 values.
+     * The aggregate value for this session would be the result of aggregating All 4 values.
      * <p>
      * For time semantics, see {@link TimestampExtractor}.
      *
@@ -92,12 +92,12 @@ namespace Kafka.Streams.KStream
          */
         public SessionWindows Until(TimeSpan duration)
         {
-            if (duration < gap)
+            if (duration < this.gap)
             {
                 throw new ArgumentException("Window retention time (durationMs) cannot be smaller than window gap.");
             }
 
-            return new SessionWindows(gap, duration, graceWindow);
+            return new SessionWindows(this.gap, duration, this.graceWindow);
         }
 
         /**
@@ -105,7 +105,7 @@ namespace Kafka.Streams.KStream
          * after the end of its window.
          *
          * Note that new events may change the boundaries of session windows, so aggressive
-         * close times can lead to surprising results in which a too-late event is rejected and then
+         * Close times can lead to surprising results in which a too-late event is rejected and then
          * a subsequent event moves the window boundary forward.
          *
          * @param afterWindowEnd The grace period to admit late-arriving events to a window.
@@ -123,8 +123,8 @@ namespace Kafka.Streams.KStream
             }
 
             return new SessionWindows(
-                gap,
-                maintainDuration,
+                this.gap,
+                this.maintainDuration,
                 afterWindow);
         }
 
@@ -133,9 +133,9 @@ namespace Kafka.Streams.KStream
             // NOTE: in the future, when we remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,
             // or we can default to (24h - gapMs) if you want to be super accurate.
-            return graceWindow != TimeSpan.FromMilliseconds(-1)
-                ? graceWindow
-                : Maintain() - InactivityGap();
+            return this.graceWindow != TimeSpan.FromMilliseconds(-1)
+                ? this.graceWindow
+                : this.Maintain() - this.InactivityGap();
         }
 
         /**
@@ -158,12 +158,12 @@ namespace Kafka.Streams.KStream
          */
         public TimeSpan Maintain()
         {
-            if (maintainDuration > gap)
+            if (this.maintainDuration > this.gap)
             {
-                return maintainDuration;
+                return this.maintainDuration;
             }
 
-            return gap;
+            return this.gap;
         }
 
 
@@ -174,28 +174,28 @@ namespace Kafka.Streams.KStream
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             SessionWindows that = (SessionWindows)o;
-            return gap == that.gap &&
-                maintainDuration == that.maintainDuration &&
-                graceWindow == that.graceWindow;
+            return this.gap == that.gap &&
+                this.maintainDuration == that.maintainDuration &&
+                this.graceWindow == that.graceWindow;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(gap, maintainDuration, graceWindow);
+            return HashCode.Combine(this.gap, this.maintainDuration, this.graceWindow);
         }
 
         public override string ToString()
         {
             return "SessionWindows{" +
-                $"gapMs={gap}" +
-                $", maintainDurationMs={maintainDuration}" +
-                $", graceMs={graceWindow}" +
+                $"gapMs={this.gap}" +
+                $", maintainDurationMs={this.maintainDuration}" +
+                $", graceMs={this.graceWindow}" +
                 '}';
         }
     }

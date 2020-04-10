@@ -164,7 +164,7 @@
 //            Assert.Equal(3, (processorValueCollector.Count));
 //            Assert.Equal(processorValueCollector, (expectedCollectedProcessorValues));
 
-//            streams.close(ofSeconds(5));
+//            streams.Close(ofSeconds(5));
 //        }
 
 //        private int GetCountOfRepartitionTopicsFound(string topologyString)

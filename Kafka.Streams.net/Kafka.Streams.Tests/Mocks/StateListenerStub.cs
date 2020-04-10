@@ -19,14 +19,14 @@ namespace Kafka.Streams.Tests
             States oldState)
             where States : Enum
         {
-            var prevCount = mapStates.ContainsKey(newState)
-                ? mapStates[newState]
+            var prevCount = this.mapStates.ContainsKey(newState)
+                ? this.mapStates[newState]
                 : 0;
 
             this.NumChanges++;
             this.OldState = oldState;
             this.NewState = newState;
-            mapStates[newState] = prevCount + 1;
+            this.mapStates[newState] = prevCount + 1;
         }
 
         public void SetThreadStates(Dictionary<long, StreamThreadState> threadStates)

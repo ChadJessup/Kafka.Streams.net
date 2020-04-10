@@ -22,8 +22,8 @@ namespace Kafka.Streams.RocksDbState
         {
             iterWithTimestamp.Seek(from.Get());
             iterNoTimestamp.Seek(from.Get());
-            upperBoundKey = to.Get();
-            if (upperBoundKey == null)
+            this.upperBoundKey = to.Get();
+            if (this.upperBoundKey == null)
             {
                 throw new ArgumentNullException("RocksDbDualCFRangeIterator: upperBoundKey is null for key " + to);
             }
@@ -36,17 +36,17 @@ namespace Kafka.Streams.RocksDbState
 
             if (next == null)
             {
-                return allDone();
+                return this.allDone();
             }
             else
             {
-                if (comparator.Compare(next.Value.Key.Get(), upperBoundKey) <= 0)
+                if (this.comparator.Compare(next.Value.Key.Get(), this.upperBoundKey) <= 0)
                 {
                     return next.Value;
                 }
                 else
                 {
-                    return allDone();
+                    return this.allDone();
                 }
             }
         }

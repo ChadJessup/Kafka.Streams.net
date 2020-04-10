@@ -22,10 +22,10 @@ namespace Kafka.Streams.KStream.Internals
             : base(materialized)
         {
             // if storeName is not provided, the corresponding KTable would never be queryable;
-            // but we still need to provide an internal name for it in case we materialize.
-            queriable = this.StoreName != null;
+            // but we still need to provide an internal Name for it in case we materialize.
+            this.queriable = this.StoreName != null;
 
-            if (!queriable && nameProvider != null)
+            if (!this.queriable && nameProvider != null)
             {
                 this.StoreName = nameProvider.NewStoreName(generatedStorePrefix);
             }
@@ -33,7 +33,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public string? QueryableStoreName()
         {
-            return queriable
+            return this.queriable
                 ? this.StoreName
                 : null;
         }
@@ -41,13 +41,13 @@ namespace Kafka.Streams.KStream.Internals
         private string? _storeName;
         public override string? StoreName
         {
-            get => StoreSupplier?.Name ?? _storeName;
-            protected set => _storeName = value;
+            get => this.StoreSupplier?.Name ?? this._storeName;
+            protected set => this._storeName = value;
         }
 
         public Dictionary<string, string> LogConfig()
         {
-            return TopicConfig;
+            return this.TopicConfig;
         }
 
         public static MaterializedInternal<K, V, S> ToMaterializedInternal(MaterializedInternal<K, V, S> left, MaterializedInternal<K, V, S> right)

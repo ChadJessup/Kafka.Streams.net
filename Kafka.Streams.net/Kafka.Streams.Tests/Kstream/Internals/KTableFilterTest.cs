@@ -106,15 +106,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            KTableValueGetterSupplier<string, int> getterSupplier3 = table3.valueGetterSupplier();
 
 //            InternalTopologyBuilder topologyBuilder = TopologyWrapper.getInternalTopologyBuilder(topology);
-//            topologyBuilder.connectProcessorAndStateStores(table2.name, getterSupplier2.storeNames());
-//            topologyBuilder.connectProcessorAndStateStores(table3.name, getterSupplier3.storeNames());
+//            topologyBuilder.connectProcessorAndStateStores(table2.Name, getterSupplier2.storeNames());
+//            topologyBuilder.connectProcessorAndStateStores(table3.Name, getterSupplier3.storeNames());
 
 //            var driver = new TopologyTestDriverWrapper(topology, props);
 //            IKTableValueGetter<string, int> getter2 = getterSupplier2.Get();
 //            IKTableValueGetter<string, int> getter3 = getterSupplier3.Get();
 
-//            getter2.Init(driver.setCurrentNodeForProcessorContext(table2.name));
-//            getter3.Init(driver.setCurrentNodeForProcessorContext(table3.name));
+//            getter2.Init(driver.setCurrentNodeForProcessorContext(table2.Name));
+//            getter3.Init(driver.setCurrentNodeForProcessorContext(table3.Name));
 
 //            driver.PipeInput(recordFactory.Create(topic1, "A", 1, 5L));
 //            driver.PipeInput(recordFactory.Create(topic1, "B", 1, 10L));
@@ -187,8 +187,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
 
-//            builder.Build().AddProcessor("proc1", supplier, table1.name);
-//            builder.Build().AddProcessor("proc2", supplier, table2.name);
+//            builder.Build().AddProcessor("proc1", supplier, table1.Name);
+//            builder.Build().AddProcessor("proc2", supplier, table2.Name);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 
@@ -263,8 +263,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
 //            Topology topology = builder.Build();
 
-//            topology.AddProcessor("proc1", supplier, table1.name);
-//            topology.AddProcessor("proc2", supplier, table2.name);
+//            topology.AddProcessor("proc1", supplier, table1.Name);
+//            topology.AddProcessor("proc2", supplier, table2.Name);
 
 //            try
 //            {
@@ -338,8 +338,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            MockProcessorSupplier<string, string> supplier = new MockProcessorSupplier<>();
 //            Topology topology = builder.Build();
 
-//            topology.AddProcessor("proc1", supplier, table1.name);
-//            topology.AddProcessor("proc2", supplier, table2.name);
+//            topology.AddProcessor("proc1", supplier, table1.Name);
+//            topology.AddProcessor("proc2", supplier, table2.Name);
 
 //            ConsumerRecordFactory<string, string> stringRecordFactory =
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L);

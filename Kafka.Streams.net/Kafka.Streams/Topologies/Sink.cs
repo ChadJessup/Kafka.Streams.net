@@ -9,9 +9,9 @@ namespace Kafka.Streams.Topologies
         private readonly ITopicNameExtractor topicNameExtractor;
 
         public Sink(
-            string name,
+            string Name,
             ITopicNameExtractor topicNameExtractor)
-            : base(name)
+            : base(Name)
         {
             this.topicNameExtractor = topicNameExtractor;
         }

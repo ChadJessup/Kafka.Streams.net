@@ -40,12 +40,12 @@
 //            CreateTopics();
 //            streamsConfiguration = new StreamsConfig();
 //            string applicationId = "kgrouped-stream-test-" + testNo.incrementAndGet();
-//            streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//            streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//            streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-//            streamsConfiguration.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL_MS);
-//            streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 10 * 1024 * 1024L);
+//            streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//            streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+//            streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL_MS);
+//            streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 10 * 1024 * 1024L);
 
 //            KeyValueMapper<int, string, string> mapper = MockMapper.selectValueMapper();
 //            stream = builder.Stream(streamOneInput, Consumed.With(Serdes.Int(), Serdes.String()));
@@ -59,7 +59,7 @@
 //        { //throws IOException
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close();
+//                kafkaStreams.Close();
 //            }
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }

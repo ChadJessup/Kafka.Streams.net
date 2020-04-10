@@ -15,59 +15,59 @@ namespace Kafka.Streams.KStream
         {
         }
 
-        protected Named(string? name)
+        protected Named(string? Name)
         {
-            this.Name = name;
-            if (name != null)
+            this.Name = Name;
+            if (Name != null)
             {
-                Validate(name);
+                Validate(Name);
             }
         }
 
         /**
-         * Create a Named instance with provided name.
+         * Create a Named instance with provided Name.
          *
-         * @param name  the processor name to be used. If {@code null} a default processor name will be generated.
-         * @return      A new {@link Named} instance configured with name
+         * @param Name  the processor Name to be used. If {@code null} a default processor Name will be generated.
+         * @return      A new {@link Named} instance configured with Name
          *
-         * @throws TopologyException if an invalid name is specified; valid characters are ASCII alphanumerics, '.', '_' and '-'.
+         * @throws TopologyException if an invalid Name is specified; valid characters are ASCII alphanumerics, '.', '_' and '-'.
          */
-        public static Named As(string name)
+        public static Named As(string Name)
         {
-            if (name is null)
+            if (Name is null)
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentNullException(nameof(Name));
             }
 
-            return new Named(name);
+            return new Named(Name);
         }
 
-        public virtual Named WithName(string name)
+        public virtual Named WithName(string Name)
         {
-            return new Named(name);
+            return new Named(Name);
         }
 
-        public static void Validate(string name)
+        public static void Validate(string Name)
         {
-            if (name == null)
+            if (Name == null)
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentNullException(nameof(Name));
             }
 
-            if (name.Length == 0 || name.Equals(".") || name.Equals(".."))
+            if (Name.Length == 0 || Name.Equals(".") || Name.Equals(".."))
             {
                 throw new ArgumentException("Name cannot be \"\", \".\", or \"..\"");
             }
 
-            if (name.Length > MAX_NAME_LENGTH)
+            if (Name.Length > MAX_NAME_LENGTH)
             {
                 throw new ArgumentException("Name is illegal, it can't be longer than " + MAX_NAME_LENGTH +
-                        " characters, name: " + name);
+                        " characters, Name: " + Name);
             }
 
-            if (!ContainsValidPattern(name))
+            if (!ContainsValidPattern(Name))
             {
-                throw new ArgumentException("Name \"" + name + "\" is illegal, it contains a character other than " +
+                throw new ArgumentException("Name \"" + Name + "\" is illegal, it contains a character other than " +
                         "ASCII alphanumerics, '.', '_' and '-'");
             }
         }

@@ -16,19 +16,19 @@ namespace Kafka.Streams.Topologies
             string topicName,
             int id)
         {
-            source = new Source(sourceName, new HashSet<string>() { topicName }, null);
-            processor = new Processor(processorName, new HashSet<string>() { storeName });
-            source.Successors.Add(processor);
-            processor.Predecessors.Add(source);
+            this.source = new Source(sourceName, new HashSet<string>() { topicName }, null);
+            this.processor = new Processor(processorName, new HashSet<string>() { storeName });
+            this.source.Successors.Add(this.processor);
+            this.processor.Predecessors.Add(this.source);
 
             this.id = id;
         }
 
         public override string ToString()
         {
-            return $"Sub-topology: {id} for global store (will not generate tasks)\n"
-                    + $"    {source.ToString()}\n"
-                    + $"    {processor.ToString()}\n";
+            return $"Sub-topology: {this.id} for global store (will not generate tasks)\n"
+                    + $"    {this.source.ToString()}\n"
+                    + $"    {this.processor.ToString()}\n";
         }
 
         public override bool Equals(object o)
@@ -38,20 +38,20 @@ namespace Kafka.Streams.Topologies
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (GlobalStore)o;
 
-            return source.Equals(that.source)
-                && processor.Equals(that.processor);
+            return this.source.Equals(that.source)
+                && this.processor.Equals(that.processor);
         }
 
         public override int GetHashCode()
         {
-            return (source, processor).GetHashCode();
+            return (this.source, this.processor).GetHashCode();
         }
     }
 }

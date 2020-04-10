@@ -25,9 +25,9 @@
 //            directory = new StateDirectory(
 //                new StreamsConfig(new StreamsConfig() {
 //                {
-//                    put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//            put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-//            put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
+//                    Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//            Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+//            Put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
 //        }
 //    }),
 //            time, createStateDirectory);
@@ -257,9 +257,9 @@
 //        StateDirectory stateDirectory = new StateDirectory(
 //            new StreamsConfig(new StreamsConfig() {
 //                {
-//                    put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//        put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-//        put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
+//                    Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//        Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+//        Put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
 //    }
 //            }),
 //            time, true);

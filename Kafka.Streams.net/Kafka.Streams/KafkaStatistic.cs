@@ -214,7 +214,7 @@ namespace Kafka.Streams
     public class Localhost9092Bootstrap
     {
 
-        [JsonProperty("name")]
+        [JsonProperty("Name")]
         public string Name { get; set; }
 
         [JsonProperty("nodeid")]
@@ -322,7 +322,7 @@ namespace Kafka.Streams
     public class KafkaStatistics
     {
 
-        [JsonProperty("name")]
+        [JsonProperty("Name")]
         public string Name { get; set; }
 
         [JsonProperty("client_id")]

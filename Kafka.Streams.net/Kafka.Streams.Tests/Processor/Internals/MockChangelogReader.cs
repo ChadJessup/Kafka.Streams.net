@@ -17,13 +17,13 @@ namespace Kafka.Streams.Tests.Internal
 
         public void Register(StateRestorer restorer)
         {
-            registered.Add(restorer.partition);
+            this.registered.Add(restorer.partition);
         }
 
 
         public List<TopicPartition> Restore(IRestoringTasks active)
         {
-            return registered;
+            return this.registered;
         }
 
         void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
@@ -33,12 +33,12 @@ namespace Kafka.Streams.Tests.Internal
         
         public void Reset()
         {
-            registered.Clear();
+            this.registered.Clear();
         }
 
         public bool WasRegistered(TopicPartition partition)
         {
-            return registered.Contains(partition);
+            return this.registered.Contains(partition);
         }
     }
 }

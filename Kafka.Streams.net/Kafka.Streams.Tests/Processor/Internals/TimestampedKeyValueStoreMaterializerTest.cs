@@ -116,8 +116,8 @@
 //        public void ShouldCreateKeyValueStoreWithTheProvidedInnerStore()
 //        {
 //            IKeyValueBytesStoreSupplier supplier = EasyMock.createNiceMock(IKeyValueBytesStoreSupplier);
-//            InMemoryKeyValueStore store = new InMemoryKeyValueStore("name");
-//            EasyMock.expect(supplier.name()).andReturn("name").anyTimes();
+//            InMemoryKeyValueStore store = new InMemoryKeyValueStore("Name");
+//            EasyMock.expect(supplier.Name()).andReturn("Name").anyTimes();
 //            EasyMock.expect(supplier.Get()).andReturn(store);
 //            EasyMock.replay(supplier);
 
@@ -127,7 +127,7 @@
 //            IStoreBuilder<ITimestampedKeyValueStore<string, int>> builder = materializer.materialize();
 //            ITimestampedKeyValueStore<string, int> built = builder.Build();
 
-//            Assert.Equal(store.name(), CoreMatchers.equalTo(built.name()));
+//            Assert.Equal(store.Name(), CoreMatchers.equalTo(built.Name()));
 //        }
 
 //    }

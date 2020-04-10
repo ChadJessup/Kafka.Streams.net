@@ -116,7 +116,7 @@ namespace Kafka.Streams.Tests.Tests
 //            for (int i = 0; i < numKeys; i++)
 //            {
 //                data[i] = new ValueList(i, i + maxRecordsPerKey - 1);
-//                allData.put(data[i].key, new HashSet<>());
+//                allData.Put(data[i].key, new HashSet<>());
 //            }
 //            Random rand = new Random();
 
@@ -161,7 +161,7 @@ namespace Kafka.Streams.Tests.Tests
 //                        Utils.sleep(Math.max(recordPauseTime, 2));
 //                    }
 //                }
-//                producer.flush();
+//                producer.Flush();
 
 //                int remainingRetries = 5;
 //                while (!needRetry.isEmpty())
@@ -172,18 +172,18 @@ namespace Kafka.Streams.Tests.Tests
 //                        System.Console.Out.WriteLine("retry producing " + stringSerde.deserializer().deserialize("", record.Key));
 //                        producer.send(record, new TestCallback(record, needRetry2));
 //                    }
-//                    producer.flush();
+//                    producer.Flush();
 //                    needRetry = needRetry2;
 
 //                    if (--remainingRetries == 0 && !needRetry.isEmpty())
 //                    {
-//                        System.Console.Error.println("Failed to produce all records after multiple retries");
+//                        System.Console.Error.println("Failed to produce All records after multiple retries");
 //                        Exit.exit(1);
 //                    }
 //                }
 
-//                // now that we've sent everything, we'll send some records with a timestamp high enough to flush out
-//                // all suppressed records.
+//                // now that we've sent everything, we'll send some records with a timestamp high enough to Flush out
+//                // All suppressed records.
 //                List<PartitionInfo> partitions = producer.partitionsFor("data");
 //                foreach (PartitionInfo partition in partitions)
 //                {
@@ -191,7 +191,7 @@ namespace Kafka.Streams.Tests.Tests
 //                        partition.Topic,
 //                        partition.Partition,
 //                        System.currentTimeMillis() + TimeSpan.ofDays(2).TotalMilliseconds,
-//                        stringSerde.Serializer.Serialize("", "flush"),
+//                        stringSerde.Serializer.Serialize("", "Flush"),
 //                        intSerde.Serializer.Serialize("", 0)
 //                    ));
 //                }
@@ -202,11 +202,11 @@ namespace Kafka.Streams.Tests.Tests
 //        private static StreamsConfig generatorProperties(string kafka)
 //        {
 //            StreamsConfig producerProps = new StreamsConfig();
-//            producerProps.put(ProducerConfig.CLIENT_ID_CONFIG, "SmokeTest");
-//            producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//            producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
-//        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
-//        producerProps.put(ProducerConfig.ACKS_CONFIG, "all");
+//            producerProps.Put(ProducerConfig.CLIENT_ID_CONFIG, "SmokeTest");
+//            producerProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//            producerProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
+//        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
+//        producerProps.Put(ProducerConfig.ACKS_CONFIG, "All");
 //        return producerProps;
 //    }
 
@@ -293,11 +293,11 @@ namespace Kafka.Streams.Tests.Tests
 //                                            int maxRecordsPerKey)
 //{
 //    StreamsConfig props = new StreamsConfig();
-//    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
-//    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
-//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, NumberDeserializer);
-//        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
+//    props.Put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
+//    props.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//    props.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
+//        props.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, NumberDeserializer);
+//        props.Put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
 
 //        KafkaConsumer<string, Number> consumer = new KafkaConsumer<>(props);
 //List<TopicPartition> partitions = getAllPartitions(consumer, TOPICS);
@@ -350,7 +350,7 @@ namespace Kafka.Streams.Tests.Tests
 //                System.Console.Out.WriteLine(processed);
 //            }
 //        }
-//        consumer.close();
+//        consumer.Close();
 //        long finished = System.currentTimeMillis() - start;
 //System.Console.Out.WriteLine("Verification time=" + finished);
 //        System.Console.Out.WriteLine("-------------------");
@@ -571,7 +571,7 @@ namespace Kafka.Streams.Tests.Tests
 //            int max = getMax(key).intValue();
 //            string cnt = long.toString(max - min + 1L);
 
-//            expected.put(cnt, expected.getOrDefault(cnt, 0L) + 1);
+//            expected.Put(cnt, expected.getOrDefault(cnt, 0L) + 1);
 //        }
 
 //        // check the result

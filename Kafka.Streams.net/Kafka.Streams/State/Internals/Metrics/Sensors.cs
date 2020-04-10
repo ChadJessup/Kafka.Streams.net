@@ -47,7 +47,7 @@
 
 //            Sensor sensor = metrics.storeLevelSensor(
 //                context.taskId.ToString(),
-//                store.name,
+//                store.Name,
 //                sensorName,
 //                RecordingLevel.DEBUG
 //            );
@@ -56,7 +56,7 @@
 
 //            Dictionary<string, string> tags = metrics.tagMap(
 //                "task-id", context.taskId.ToString(),
-//                "buffer-id", store.name
+//                "buffer-id", store.Name
 //            );
 
 //            sensor.Add(

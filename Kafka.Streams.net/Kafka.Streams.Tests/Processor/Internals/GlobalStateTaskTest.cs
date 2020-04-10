@@ -182,8 +182,8 @@
 //        public void ShouldFlushStateManagerWithOffsets()
 //        { //throws IOException
 //            Dictionary<TopicPartition, long> expectedOffsets = new HashMap<>();
-//            expectedOffsets.put(t1, 52L);
-//            expectedOffsets.put(t2, 100L);
+//            expectedOffsets.Put(t1, 52L);
+//            expectedOffsets.Put(t2, 100L);
 //            globalStateTask.initialize();
 //            globalStateTask.update(new ConsumeResult<>(topic1, 1, 51, "foo".getBytes(), "foo".getBytes()));
 //            globalStateTask.flushState();

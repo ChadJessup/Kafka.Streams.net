@@ -115,9 +115,9 @@
 //        hostTwo = new HostInfo("host-two", 9090);
 //        hostThree = new HostInfo("host-three", 7070);
 //        hostToPartitions = new HashMap<>();
-//        hostToPartitions.put(hostOne, Utils.mkSet(topic1P0, topic2P1, topic4P0));
-//        hostToPartitions.put(hostTwo, Utils.mkSet(topic2P0, topic1P1));
-//        hostToPartitions.put(hostThree, Collections.singleton(topic3P0));
+//        hostToPartitions.Put(hostOne, Utils.mkSet(topic1P0, topic2P1, topic4P0));
+//        hostToPartitions.Put(hostTwo, Utils.mkSet(topic2P0, topic1P1));
+//        hostToPartitions.Put(hostThree, Collections.singleton(topic3P0));
 
 //        List<PartitionInfo> partitionInfos = Array.asList(
 //                new PartitionInfo("topic-one", 0, null, null, null),
@@ -177,7 +177,7 @@
 
 //    TopicPartition tp5 = new TopicPartition("topic-five", 1);
 //    HostInfo hostFour = new HostInfo("host-four", 8080);
-//    hostToPartitions.put(hostFour, Utils.mkSet(tp5));
+//    hostToPartitions.Put(hostFour, Utils.mkSet(tp5));
 
 //        metadataState.onChange(hostToPartitions, cluster.withPartitions(Collections.singletonMap(tp5, new PartitionInfo("topic-five", 1, null, null, null))));
 
@@ -217,7 +217,7 @@
 //    public void ShouldGetInstanceWithKey()
 //    {
 //        TopicPartition tp4 = new TopicPartition("topic-three", 1);
-//        hostToPartitions.put(hostTwo, Utils.mkSet(topic2P0, tp4));
+//        hostToPartitions.Put(hostTwo, Utils.mkSet(topic2P0, tp4));
 
 //        metadataState.onChange(hostToPartitions, cluster.withPartitions(Collections.singletonMap(tp4, new PartitionInfo("topic-three", 1, null, null, null))));
 
@@ -235,7 +235,7 @@
 //    public void ShouldGetInstanceWithKeyAndCustomPartitioner()
 //    {
 //        TopicPartition tp4 = new TopicPartition("topic-three", 1);
-//        hostToPartitions.put(hostTwo, Utils.mkSet(topic2P0, tp4));
+//        hostToPartitions.Put(hostTwo, Utils.mkSet(topic2P0, tp4));
 
 //        metadataState.onChange(hostToPartitions, cluster.withPartitions(Collections.singletonMap(tp4, new PartitionInfo("topic-three", 1, null, null, null))));
 
@@ -258,7 +258,7 @@
 //    public void ShouldGetInstanceWithKeyWithMergedStreams()
 //    {
 //        TopicPartition topic2P2 = new TopicPartition("topic-two", 2);
-//        hostToPartitions.put(hostTwo, Utils.mkSet(topic2P0, topic1P1, topic2P2));
+//        hostToPartitions.Put(hostTwo, Utils.mkSet(topic2P0, topic1P1, topic2P2));
 //        metadataState.onChange(hostToPartitions, cluster.withPartitions(Collections.singletonMap(topic2P2, new PartitionInfo("topic-two", 2, null, null, null))));
 
 //        StreamsMetadata expected = new StreamsMetadata(hostTwo, Utils.mkSet("global-table", "table-two", "table-one", "merged-table"),

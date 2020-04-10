@@ -20,7 +20,7 @@ namespace Kafka.Streams.Topologies
 
         /**
          * All nodes of this sub-topology.
-         * @return set of all nodes within the sub-topology
+         * @return set of All nodes within the sub-topology
          */
         HashSet<INode> nodes { get; }
     }

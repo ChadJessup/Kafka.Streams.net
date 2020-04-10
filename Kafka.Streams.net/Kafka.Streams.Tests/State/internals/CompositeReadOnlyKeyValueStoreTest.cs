@@ -73,21 +73,21 @@
 //        [Fact]
 //        public void ShouldReturnValueIfExists()
 //        {
-//            stubOneUnderlying.put("key", "value");
+//            stubOneUnderlying.Put("key", "value");
 //            Assert.Equal("value", theStore.Get("key"));
 //        }
 
 //        [Fact]
 //        public void ShouldNotGetValuesFromOtherStores()
 //        {
-//            otherUnderlyingStore.put("otherKey", "otherValue");
+//            otherUnderlyingStore.Put("otherKey", "otherValue");
 //            Assert.Null(theStore.Get("otherKey"));
 //        }
 
 //        [Fact]
 //        public void ShouldThrowNoSuchElementExceptionWhileNext()
 //        {
-//            stubOneUnderlying.put("a", "1");
+//            stubOneUnderlying.Put("a", "1");
 //            IKeyValueIterator<string, string> keyValueIterator = theStore.Range("a", "b");
 //            keyValueIterator.MoveNext();
 //            try
@@ -101,7 +101,7 @@
 //        [Fact]
 //        public void ShouldThrowNoSuchElementExceptionWhilePeekNext()
 //        {
-//            stubOneUnderlying.put("a", "1");
+//            stubOneUnderlying.Put("a", "1");
 //            IKeyValueIterator<string, string> keyValueIterator = theStore.Range("a", "b");
 //            keyValueIterator.MoveNext();
 //            try
@@ -115,7 +115,7 @@
 //        [Fact]
 //        public void ShouldThrowUnsupportedOperationExceptionWhileRemove()
 //        {
-//            IKeyValueIterator<string, string> keyValueIterator = theStore.all();
+//            IKeyValueIterator<string, string> keyValueIterator = theStore.All();
 //            try
 //            {
 //                keyValueIterator.remove();
@@ -127,8 +127,8 @@
 //        [Fact]
 //        public void ShouldThrowUnsupportedOperationExceptionWhileRange()
 //        {
-//            stubOneUnderlying.put("a", "1");
-//            stubOneUnderlying.put("b", "1");
+//            stubOneUnderlying.Put("a", "1");
+//            stubOneUnderlying.Put("b", "1");
 //            IKeyValueIterator<string, string> keyValueIterator = theStore.Range("a", "b");
 //            try
 //            {
@@ -144,8 +144,8 @@
 //            IKeyValueStore<string, string> cache = NewStoreInstance();
 //            stubProviderTwo.addStore(storeName, cache);
 
-//            cache.put("key-two", "key-two-value");
-//            stubOneUnderlying.put("key-one", "key-one-value");
+//            cache.Put("key-two", "key-two-value");
+//            stubOneUnderlying.Put("key-one", "key-one-value");
 
 //            Assert.Equal("key-two-value", theStore.Get("key-two"));
 //            Assert.Equal("key-one-value", theStore.Get("key-one"));
@@ -154,9 +154,9 @@
 //        [Fact]
 //        public void ShouldSupportRange()
 //        {
-//            stubOneUnderlying.put("a", "a");
-//            stubOneUnderlying.put("b", "b");
-//            stubOneUnderlying.put("c", "c");
+//            stubOneUnderlying.Put("a", "a");
+//            stubOneUnderlying.Put("b", "b");
+//            stubOneUnderlying.Put("c", "c");
 
 //            List<KeyValuePair<string, string>> results = toList(theStore.Range("a", "b"));
 //            Assert.Contains(new KeyValuePair<string, string>("a", "a"), results);
@@ -170,13 +170,13 @@
 //            IKeyValueStore<string, string> cache = NewStoreInstance();
 //            stubProviderTwo.addStore(storeName, cache);
 
-//            stubOneUnderlying.put("a", "a");
-//            stubOneUnderlying.put("b", "b");
-//            stubOneUnderlying.put("z", "z");
+//            stubOneUnderlying.Put("a", "a");
+//            stubOneUnderlying.Put("b", "b");
+//            stubOneUnderlying.Put("z", "z");
 
-//            cache.put("c", "c");
-//            cache.put("d", "d");
-//            cache.put("x", "x");
+//            cache.Put("c", "c");
+//            cache.Put("d", "d");
+//            cache.Put("x", "x");
 
 //            List<KeyValuePair<string, string>> results = toList(theStore.Range("a", "e"));
 //            Assert.Contains(new KeyValuePair<string, string>("a", "a"), results);
@@ -192,15 +192,15 @@
 //            IKeyValueStore<string, string> cache = NewStoreInstance();
 //            stubProviderTwo.addStore(storeName, cache);
 
-//            stubOneUnderlying.put("a", "a");
-//            stubOneUnderlying.put("b", "b");
-//            stubOneUnderlying.put("z", "z");
+//            stubOneUnderlying.Put("a", "a");
+//            stubOneUnderlying.Put("b", "b");
+//            stubOneUnderlying.Put("z", "z");
 
-//            cache.put("c", "c");
-//            cache.put("d", "d");
-//            cache.put("x", "x");
+//            cache.Put("c", "c");
+//            cache.Put("d", "d");
+//            cache.Put("x", "x");
 
-//            List<KeyValuePair<string, string>> results = toList(theStore.all());
+//            List<KeyValuePair<string, string>> results = toList(theStore.All());
 //            Assert.Contains(new KeyValuePair<string, string>("a", "a"), results);
 //            Assert.Contains(new KeyValuePair<string, string>("b", "b"), results);
 //            Assert.Contains(new KeyValuePair<string, string>("c", "c"), results);
@@ -231,7 +231,7 @@
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowInvalidStoreExceptionOnAllDuringRebalance()
 //        {
-//            rebalancing().all();
+//            rebalancing().All();
 //        }
 
 //        [Fact]
@@ -240,13 +240,13 @@
 //            IKeyValueStore<string, string> cache = NewStoreInstance();
 //            stubProviderTwo.addStore(storeName, cache);
 
-//            stubOneUnderlying.put("a", "a");
-//            stubOneUnderlying.put("b", "b");
-//            stubOneUnderlying.put("z", "z");
+//            stubOneUnderlying.Put("a", "a");
+//            stubOneUnderlying.Put("b", "b");
+//            stubOneUnderlying.Put("z", "z");
 
-//            cache.put("c", "c");
-//            cache.put("d", "d");
-//            cache.put("x", "x");
+//            cache.Put("c", "c");
+//            cache.Put("d", "d");
+//            cache.Put("x", "x");
 
 //            Assert.Equal(6, theStore.approximateNumEntries);
 //        }
@@ -264,7 +264,7 @@
 //            }
 //        });
 
-//        stubOneUnderlying.put("overflow", "me");
+//        stubOneUnderlying.Put("overflow", "me");
 //        Assert.Equal(long.MaxValue, theStore.approximateNumEntries);
 //    }
 

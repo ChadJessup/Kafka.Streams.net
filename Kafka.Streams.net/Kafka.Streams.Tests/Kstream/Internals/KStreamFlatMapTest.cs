@@ -43,10 +43,10 @@ namespace Kafka.Streams.KStream.Internals
 
             stream.FlatMap(mapper).Process(supplier);
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), this.props);
             foreach (var expectedKey in expectedKeys)
             {
-                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
+                driver.PipeInput(this.recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
             }
 
             Assert.Equal(6, supplier.TheCapturedProcessor().processed.Count);

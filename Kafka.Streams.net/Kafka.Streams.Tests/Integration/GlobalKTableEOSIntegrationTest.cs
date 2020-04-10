@@ -64,8 +64,8 @@
 //        private static StreamsConfig BROKER_CONFIG;
 //    //    static {
 //    //    BROKER_CONFIG = new StreamsConfig();
-//    //    BROKER_CONFIG.put("transaction.state.log.replication.factor", (short) 1);
-//    //    BROKER_CONFIG.put("transaction.state.log.min.isr", 1);
+//    //    BROKER_CONFIG.Put("transaction.state.log.replication.factor", (short) 1);
+//    //    BROKER_CONFIG.Put("transaction.state.log.min.isr", 1);
 //    //}
 
 
@@ -94,20 +94,20 @@
 //        createTopics();
 //        streamsConfiguration = new StreamsConfig();
 //        string applicationId = "globalTableTopic-table-eos-test-" + testNo.incrementAndGet();
-//        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//        streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//        streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-//        streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//        streamsConfiguration.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//        streamsConfiguration.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, "exactly_once");
+//        streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//        streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//        streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//        streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+//        streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//        streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//        streamsConfiguration.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, "exactly_once");
 //        globalTable = builder.globalTable(globalTableTopic, Consumed.With(Serdes.Long(), Serdes.String()),
 //                                          Materialized<long, string, IKeyValueStore<Bytes, byte[]>>.As(globalStore)
 //                                                  .WithKeySerde(Serdes.Long())
 //                                                  .withValueSerde(Serdes.String()));
 //        Consumed<string, long> stringLongConsumed = Consumed.With(Serdes.String(), Serdes.Long());
 //        stream = builder.Stream(streamTopic, stringLongConsumed);
-//        foreachAction = results::put;
+//        foreachAction = results::Put;
 //    }
 
 
@@ -115,7 +115,7 @@
 //    {// throws Exception
 //        if (kafkaStreams != null)
 //        {
-//            kafkaStreams.close();
+//            kafkaStreams.Close();
 //        }
 //        IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //    }
@@ -130,11 +130,11 @@
 //        produceTopicValues(streamTopic);
 
 //        Dictionary<string, string> expected = new HashMap<>();
-//        expected.put("a", "1+A");
-//        expected.put("b", "2+B");
-//        expected.put("c", "3+C");
-//        expected.put("d", "4+D");
-//        expected.put("e", "5+null");
+//        expected.Put("a", "1+A");
+//        expected.Put("b", "2+B");
+//        expected.Put("c", "3+C");
+//        expected.Put("d", "4+D");
+//        expected.Put("e", "5+null");
 
 //        TestUtils.WaitForCondition(
 //            () => results.equals(expected),
@@ -154,11 +154,11 @@
 
 //        produceTopicValues(streamTopic);
 
-//        expected.put("a", "1+F");
-//        expected.put("b", "2+G");
-//        expected.put("c", "3+H");
-//        expected.put("d", "4+I");
-//        expected.put("e", "5+J");
+//        expected.Put("a", "1+F");
+//        expected.Put("b", "2+G");
+//        expected.Put("c", "3+H");
+//        expected.Put("d", "4+I");
+//        expected.Put("e", "5+J");
 
 //        TestUtils.WaitForCondition(
 //            () => results.equals(expected),
@@ -176,10 +176,10 @@
 //        produceTopicValues(streamTopic);
 
 //        Dictionary<string, string> expected = new HashMap<>();
-//        expected.put("a", "1+A");
-//        expected.put("b", "2+B");
-//        expected.put("c", "3+C");
-//        expected.put("d", "4+D");
+//        expected.Put("a", "1+A");
+//        expected.Put("b", "2+B");
+//        expected.Put("c", "3+C");
+//        expected.Put("d", "4+D");
 
 //        TestUtils.WaitForCondition(
 //            () => results.equals(expected),
@@ -199,11 +199,11 @@
 
 //        produceTopicValues(streamTopic);
 
-//        expected.put("a", "1+F");
-//        expected.put("b", "2+G");
-//        expected.put("c", "3+H");
-//        expected.put("d", "4+I");
-//        expected.put("e", "5+J");
+//        expected.Put("a", "1+F");
+//        expected.Put("b", "2+G");
+//        expected.Put("c", "3+H");
+//        expected.Put("d", "4+I");
+//        expected.Put("e", "5+J");
 
 //        TestUtils.WaitForCondition(
 //            () => results.equals(expected),
@@ -219,10 +219,10 @@
 //        startStreams();
 
 //        Dictionary<long, string> expected = new HashMap<>();
-//        expected.put(1L, "A");
-//        expected.put(2L, "B");
-//        expected.put(3L, "C");
-//        expected.put(4L, "D");
+//        expected.Put(1L, "A");
+//        expected.Put(2L, "B");
+//        expected.Put(3L, "C");
+//        expected.Put(4L, "D");
 
 //        TestUtils.WaitForCondition(
 //            () =>
@@ -237,11 +237,11 @@
 //                    return false;
 //                }
 //                Dictionary<long, string> result = new HashMap<>();
-//                Iterator<KeyValuePair<long, string>> it = store.all();
+//                Iterator<KeyValuePair<long, string>> it = store.All();
 //                while (it.HasNext())
 //                {
 //                    KeyValuePair<long, string> kv = it.MoveNext();
-//                    result.put(kv.key, kv.value);
+//                    result.Put(kv.key, kv.value);
 //                }
 //                return result.equals(expected);
 //            },
@@ -259,10 +259,10 @@
 //        startStreams();
 
 //        Dictionary<long, string> expected = new HashMap<>();
-//        expected.put(1L, "A");
-//        expected.put(2L, "B");
-//        expected.put(3L, "C");
-//        expected.put(4L, "D");
+//        expected.Put(1L, "A");
+//        expected.Put(2L, "B");
+//        expected.Put(3L, "C");
+//        expected.Put(4L, "D");
 
 //        TestUtils.WaitForCondition(
 //            () =>
@@ -277,11 +277,11 @@
 //                    return false;
 //                }
 //                Dictionary<long, string> result = new HashMap<>();
-//                Iterator<KeyValuePair<long, string>> it = store.all();
+//                Iterator<KeyValuePair<long, string>> it = store.All();
 //                while (it.HasNext())
 //                {
 //                    KeyValuePair<long, string> kv = it.MoveNext();
-//                    result.put(kv.key, kv.value);
+//                    result.Put(kv.key, kv.value);
 //                }
 //                return result.equals(expected);
 //            },
@@ -324,8 +324,8 @@
 //    private void ProduceAbortedMessages()
 //    {// throws Exception
 //        StreamsConfig properties = new StreamsConfig();
-//        properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "someid");
-//        properties.put(ProducerConfig.RETRIES_CONFIG, 1);
+//        properties.Put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "someid");
+//        properties.Put(ProducerConfig.RETRIES_CONFIG, 1);
 //        IntegrationTestUtils.produceAbortedKeyValuesSynchronouslyWithTimestamp(
 //                globalTableTopic, Array.asList(
 //                        KeyValuePair.Create(1L, "A"),
@@ -351,8 +351,8 @@
 //        StreamsConfig properties = new StreamsConfig();
 //        if (enableTransactions)
 //        {
-//            properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "someid");
-//            properties.put(ProducerConfig.RETRIES_CONFIG, 1);
+//            properties.Put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "someid");
+//            properties.Put(ProducerConfig.RETRIES_CONFIG, 1);
 //        }
 //        IntegrationTestUtils.produceKeyValuesSynchronously(
 //                globalTableTopic,

@@ -24,7 +24,7 @@ namespace Kafka.Streams.NullModels
 
         public long SegmentIntervalMs() => 0;
         public int Segments() => 0;
-        public void SetName(string name) => this.Name = name;
+        public void SetName(string Name) => this.Name = Name;
 
         IWindowStore<Bytes, byte[]> IStoreSupplier<IWindowStore<Bytes, byte[]>>.Get()
             => new NullWindowStore();

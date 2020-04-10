@@ -2,11 +2,11 @@
 {
     public class LockAndOwner
     {
-        private readonly string name;
+        private readonly string Name;
 
-        public LockAndOwner(string name, FileLock @lock)
+        public LockAndOwner(string Name, FileLock @lock)
         {
-            this.name = name;
+            this.Name = Name;
             this.@lock = @lock;
         }
 

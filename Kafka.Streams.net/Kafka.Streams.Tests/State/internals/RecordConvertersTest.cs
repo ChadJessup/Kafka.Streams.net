@@ -53,7 +53,7 @@
 //            byte[] value = new byte[1];
 //            ConsumeResult<byte[], byte[]> inputRecord = new ConsumeResult<byte[], byte[]>(
 //                    "topic", 1, 0, timestamp, TimestampType.CreateTime, 0L, 0, 0, System.Array.Empty<byte>(), value);
-//            byte[] expectedValue = new ByteBuffer().Allocate(9).putLong(timestamp).put(value).array();
+//            byte[] expectedValue = new ByteBuffer().Allocate(9).putLong(timestamp).Put(value).array();
 //            byte[] actualValue = timestampedValueConverter.Convert(inputRecord).Value;
 //            Array.Equals(expectedValue, actualValue);
 //        }

@@ -15,6 +15,6 @@
 //            return new KStreamPrint<K, V>(new PrintForeachAction<K, V>(outputStream, mapper, label != null ? label : processorName));
 //        }
 
-//        public string name => processorName;
+//        public string Name => processorName;
 //    }
 //}

@@ -12,7 +12,7 @@ namespace Kafka.Streams.State
         IStoreBuilder<T> Builder { get; }
         IStateStore Build();
         HashSet<string> Users { get; }
-        string name { get; }
+        string Name { get; }
     }
 
     public class StateStoreFactory<T> : IStateStoreFactory<T>
@@ -32,6 +32,6 @@ namespace Kafka.Streams.State
             return this.Builder.Build();
         }
 
-        public string name => this.Builder.name;
+        public string Name => this.Builder.Name;
     }
 }

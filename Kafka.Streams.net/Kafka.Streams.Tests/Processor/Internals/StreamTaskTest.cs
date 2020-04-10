@@ -228,7 +228,7 @@
 //            {
 //                try
 //                {
-//                    task.close(true, false);
+//                    task.Close(true, false);
 //                }
 //                catch (Exception e)
 //                {
@@ -440,14 +440,14 @@
 //        Assert.NotNull(getMetric("%s-latency-max", "The max latency of %s operation.", task.id().ToString()));
 //        Assert.NotNull(getMetric("%s-rate", "The average number of occurrence of %s operation per second.", task.id().ToString()));
 
-//        Assert.NotNull(getMetric("%s-latency-avg", "The average latency of %s operation.", "all"));
-//        Assert.NotNull(getMetric("%s-latency-max", "The max latency of %s operation.", "all"));
-//        Assert.NotNull(getMetric("%s-rate", "The average number of occurrence of %s operation per second.", "all"));
+//        Assert.NotNull(getMetric("%s-latency-avg", "The average latency of %s operation.", "All"));
+//        Assert.NotNull(getMetric("%s-latency-max", "The max latency of %s operation.", "All"));
+//        Assert.NotNull(getMetric("%s-rate", "The average number of occurrence of %s operation per second.", "All"));
 
 //        JmxReporter reporter = new JmxReporter("kafka.streams");
 //        metrics.addReporter(reporter);
 //        Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-task-metrics,client-id=test,task-id=%s", task.id.ToString())));
-//        Assert.True(reporter.containsMbean("kafka.streams:type=stream-task-metrics,client-id=test,task-id=all"));
+//        Assert.True(reporter.containsMbean("kafka.streams:type=stream-task-metrics,client-id=test,task-id=All"));
 //    }
 
 //    private KafkaMetric GetMetric(string nameFormat, string descriptionFormat, string taskId)
@@ -866,7 +866,7 @@
 //        Assert.True(false, "Should've thrown StreamsException");
 //    } catch (StreamsException e) {
 //            string message = e.ToString();
-//    Assert.True("message=" + message + " should contain processor", message.Contains("processor '" + processorStreamTime.name() + "'"));
+//    Assert.True("message=" + message + " should contain processor", message.Contains("processor '" + processorStreamTime.Name() + "'"));
 //            Assert.Equal(task.processorContext.currentNode(), nullValue());
 //        }
 //    }
@@ -892,7 +892,7 @@
 //        Assert.True(false, "Should've thrown StreamsException");
 //    } catch (StreamsException e) {
 //            string message = e.ToString();
-//    Assert.True("message=" + message + " should contain processor", message.Contains("processor '" + processorSystemTime.name() + "'"));
+//    Assert.True("message=" + message + " should contain processor", message.Contains("processor '" + processorSystemTime.Name() + "'"));
 //            Assert.Equal(task.processorContext.currentNode(), nullValue());
 //        }
 //    }
@@ -918,7 +918,7 @@
 //            {
 
 
-//                public void flush()
+//                public void Flush()
 //        {
 //            flushed.set(true);
 //        }
@@ -1031,7 +1031,7 @@
 //    public void ShouldNotCloseProducerOnCleanCloseWithEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
-//        task.close(true, false);
+//        task.Close(true, false);
 //        task = null;
 
 //        Assert.False(producer.closed());
@@ -1041,7 +1041,7 @@
 //    public void ShouldNotCloseProducerOnUncleanCloseWithEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
-//        task.close(false, false);
+//        task.Close(false, false);
 //        task = null;
 
 //        Assert.False(producer.closed());
@@ -1054,7 +1054,7 @@
 
 //        try
 //        {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            Assert.True(false, "should have thrown runtime exception");
 //        }
 //        catch (RuntimeException expected)
@@ -1070,7 +1070,7 @@
 //    {
 //        task = createTaskThatThrowsException(false);
 
-//        task.close(false, false);
+//        task.Close(false, false);
 //        task = null;
 
 //        Assert.False(producer.closed());
@@ -1082,7 +1082,7 @@
 //        task = createStatelessTask(createConfig(true));
 //        task.initializeTopology();
 
-//        task.close(true, false);
+//        task.Close(true, false);
 //        task = null;
 
 //        Assert.True(producer.transactionCommitted());
@@ -1098,7 +1098,7 @@
 
 //        try
 //        {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            Assert.True(false, "should have thrown runtime exception");
 //        }
 //        catch (RuntimeException expected)
@@ -1119,7 +1119,7 @@
 
 //        try
 //        {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            Assert.True(false, "should have thrown TaskMigratedException");
 //        }
 //        catch (TaskMigratedException expected)
@@ -1144,7 +1144,7 @@
 
 //        try
 //        {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            Assert.True(false, "should have thrown TaskMigratedException");
 //        }
 //        catch (TaskMigratedException expected)
@@ -1164,7 +1164,7 @@
 //        task = createStatelessTask(createConfig(true));
 //        task.initializeTopology();
 
-//        task.close(false, false);
+//        task.Close(false, false);
 //        task = null;
 
 //        Assert.True(producer.transactionAborted());
@@ -1178,7 +1178,7 @@
 //        task = createTaskThatThrowsException(true);
 //        task.initializeTopology();
 
-//        task.close(false, false);
+//        task.Close(false, false);
 
 //        Assert.True(producer.transactionAborted());
 //        Assert.True(producer.closed());
@@ -1191,7 +1191,7 @@
 //        task.initializeTopology();
 //        producer.fenceProducer();
 
-//        task.close(false, false);
+//        task.Close(false, false);
 //        task = null;
 
 //        Assert.True(producer.transactionInFlight());
@@ -1207,7 +1207,7 @@
 //        task.initializeTopology();
 //        producer.fenceProducer();
 
-//        task.close(false, true);
+//        task.Close(false, true);
 //        task = null;
 
 //        Assert.False(producer.transactionAborted());
@@ -1221,7 +1221,7 @@
 //        task.initializeTopology();
 //        producer.fenceProducerOnClose();
 
-//        task.close(false, false);
+//        task.Close(false, false);
 //        task = null;
 
 //        Assert.True(producer.transactionAborted());
@@ -1236,7 +1236,7 @@
 //        task.initializeTopology();
 //        try
 //        {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            Assert.True(false, "should have thrown runtime exception");
 //        }
 //        catch (RuntimeException expected)
@@ -1281,7 +1281,7 @@
 //        task = createStatelessTask(createConfig(true));
 
 //        Assert.False(producer.transactionInFlight());
-//        task.close(false, false);
+//        task.Close(false, false);
 //    }
 
 //    [Fact]
@@ -1429,7 +1429,7 @@
 //    public void ShouldNotAbortTransactionOnZombieClosedIfEosEnabled()
 //    {
 //        task = createStatelessTask(createConfig(true));
-//        task.close(false, true);
+//        task.Close(false, true);
 //        task = null;
 
 //        Assert.False(producer.transactionAborted());
@@ -1439,7 +1439,7 @@
 //    public void ShouldNotAbortTransactionOnDirtyClosedIfEosDisabled()
 //    {
 //        task = createStatelessTask(createConfig(false));
-//        task.close(false, false);
+//        task.Close(false, false);
 //        task = null;
 
 //        Assert.False(producer.transactionAborted());
@@ -1450,7 +1450,7 @@
 //    {
 //        task = createStatelessTask(createConfig(true));
 //        task.initializeTopology();
-//        task.close(true, false);
+//        task.Close(true, false);
 //        task = null;
 
 //        Assert.True(producer.closed());
@@ -1461,7 +1461,7 @@
 //    {
 //        task = createStatelessTask(createConfig(true));
 //        task.initializeTopology();
-//        task.close(false, false);
+//        task.Close(false, false);
 //        task = null;
 
 //        Assert.True(producer.closed());
@@ -1472,7 +1472,7 @@
 //    {
 //        task = createStatelessTask(createConfig(true));
 //        task.initializeTopology();
-//        task.close(false, true);
+//        task.Close(false, true);
 //        task = null;
 
 //        Assert.True(producer.closed());
@@ -1492,7 +1492,7 @@
 //        }
 //        catch (Exception e)
 //        {
-//            // all good
+//            // All good
 //        }
 //    }
 
@@ -1510,7 +1510,7 @@
 //        }
 //        catch (Exception e)
 //        {
-//            // all good
+//            // All good
 //        }
 //    }
 
@@ -1523,16 +1523,16 @@
 
 //        try
 //        {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            Assert.True(false, "should have thrown an exception");
 //        }
 //        catch (Exception e)
 //        {
-//            // all good
+//            // All good
 //        }
 
 //        task = null;
-//        Assert.False(stateStore.isOpen());
+//        Assert.False(stateStore.IsOpen());
 //    }
 
 //    [Fact]
@@ -1541,7 +1541,7 @@
 //        StreamTask task = createTaskThatThrowsException(false);
 //        try
 //        {
-//            task.close(false, false);
+//            task.Close(false, false);
 //        }
 //        catch (Exception e)
 //        {
@@ -1611,7 +1611,7 @@
 //        task = createStatelessTask(createConfig(true));
 //        try
 //        {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            Assert.True(false, "should have throw IllegalStateException");
 //        }
 //        catch (IllegalStateException expected)

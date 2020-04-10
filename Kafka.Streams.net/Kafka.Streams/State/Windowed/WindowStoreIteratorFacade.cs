@@ -7,33 +7,33 @@ namespace Kafka.Streams.State.Windowed
 {
     public class WindowStoreIteratorFacade<V> : IWindowStoreIterator<V>
     {
-        readonly IKeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
+        private readonly IKeyValueIterator<long, IValueAndTimestamp<V>> innerIterator;
 
         public KeyValuePair<long, V> Current { get; }
         object IEnumerator.Current { get; }
 
-        public WindowStoreIteratorFacade(IKeyValueIterator<long, ValueAndTimestamp<V>> iterator)
+        public WindowStoreIteratorFacade(IKeyValueIterator<long, IValueAndTimestamp<V>> iterator)
         {
-            innerIterator = iterator;
+            this.innerIterator = iterator;
         }
 
         public void Close()
         {
-            innerIterator.Close();
+            this.innerIterator.Close();
         }
         public long PeekNextKey()
         {
-            return innerIterator.PeekNextKey();
+            return this.innerIterator.PeekNextKey();
         }
 
         public bool HasNext()
         {
-            return innerIterator.MoveNext();
+            return this.innerIterator.MoveNext();
         }
 
         public KeyValuePair<long, V> Next()
         {
-            KeyValuePair<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.Current;
+            KeyValuePair<long, IValueAndTimestamp<V>> innerKeyValue = this.innerIterator.Current;
 
             return KeyValuePair.Create(innerKeyValue.Key, ValueAndTimestamp.GetValueOrNull(innerKeyValue.Value));
         }

@@ -11,9 +11,9 @@ namespace Kafka.Streams.Tests.Tests
 
         public SystemTestUtilTest()
         {
-            expectedParsedMap.Add("foo", "foo1");
-            expectedParsedMap.Add("bar", "bar1");
-            expectedParsedMap.Add("baz", "baz1");
+            this.expectedParsedMap.Add("foo", "foo1");
+            this.expectedParsedMap.Add("bar", "bar1");
+            this.expectedParsedMap.Add("baz", "baz1");
         }
 
         [Fact]
@@ -22,7 +22,7 @@ namespace Kafka.Streams.Tests.Tests
             string formattedConfigs = "foo=foo1,bar=bar1,baz=baz1";
             Dictionary<string, string> parsedMap = SystemTestUtil.ParseConfigs(formattedConfigs);
             Dictionary<string, string> sortedParsedMap = new Dictionary<string, string>(parsedMap);
-            Assert.Equal(sortedParsedMap, expectedParsedMap);
+            Assert.Equal(sortedParsedMap, this.expectedParsedMap);
         }
 
         [Fact]

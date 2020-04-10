@@ -17,8 +17,8 @@ namespace Kafka.Streams.Tests
 
         public TimeWindowedSerializerTest()
         {
-            props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
-            props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
+            this.props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
+            this.props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
 
             var streamsBuilder = TestUtils.GetStreamsBuilder(new StreamsConfig(this.props));
             this.timeWindowedKeySerializer = new TimeWindowedSerializer<string>(streamsBuilder.Context.Services);
@@ -28,7 +28,7 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void TestWindowedKeySerializerNoArgConstructors()
         {
-            timeWindowedKeySerializer.Configure(props, isKey: true);
+            this.timeWindowedKeySerializer.Configure(this.props, isKey: true);
             var inner = this.timeWindowedKeySerializer.InnerSerializer();
 
             Assert.NotNull(inner);
@@ -38,7 +38,7 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void TestWindowedValueSerializerNoArgConstructors()
         {
-            this.timeWindowedValueSerializer.Configure(props, isKey: false);
+            this.timeWindowedValueSerializer.Configure(this.props, isKey: false);
             var inner = this.timeWindowedValueSerializer.InnerSerializer();
 
             Assert.NotNull(inner);

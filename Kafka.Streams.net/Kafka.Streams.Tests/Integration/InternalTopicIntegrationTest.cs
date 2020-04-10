@@ -30,13 +30,13 @@
 //        public void Before()
 //        {
 //            streamsProp = new StreamsConfig();
-//            streamsProp.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            streamsProp.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            streamsProp.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            streamsProp.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-//            streamsProp.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//            streamsProp.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//            streamsProp.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            streamsProp.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            streamsProp.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            streamsProp.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            streamsProp.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+//            streamsProp.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//            streamsProp.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            streamsProp.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 //        }
 
 
@@ -49,11 +49,11 @@
 //        private void ProduceData(List<string> inputValues)
 //        {// throws Exception
 //            StreamsConfig producerProp = new StreamsConfig();
-//            producerProp.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            producerProp.put(ProducerConfig.ACKS_CONFIG, "all");
-//            producerProp.put(ProducerConfig.RETRIES_CONFIG, 0);
-//            producerProp.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//            producerProp.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            producerProp.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            producerProp.Put(ProducerConfig.ACKS_CONFIG, "All");
+//            producerProp.Put(ProducerConfig.RETRIES_CONFIG, 0);
+//            producerProp.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            producerProp.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
 //            IntegrationTestUtils.produceValuesSynchronously(DEFAULT_INPUT_TOPIC, inputValues, producerProp, mockTime);
 //        }
@@ -72,7 +72,7 @@
 //            {
 //                if (configEntry.source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG)
 //                {
-//                    properties.put(configEntry.name(), configEntry.Value);
+//                    properties.Put(configEntry.Name(), configEntry.Value);
 //                }
 //            }
 //            return properties;
@@ -86,7 +86,7 @@
 //        private Admin createAdminClient()
 //        {
 //            StreamsConfig adminClientConfig = new StreamsConfig();
-//            adminClientConfig.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            adminClientConfig.Put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
 //            return Admin.Create(adminClientConfig);
 //        }
 
@@ -94,7 +94,7 @@
 //        public void ShouldCompactTopicsForKeyValueStoreChangelogs()
 //        {// throws Exception
 //            string appID = APP_ID + "-compact";
-//            streamsProp.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+//            streamsProp.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
 //            //
 //            // Step 1: Configure and start a simple word count topology
@@ -118,7 +118,7 @@
 //            // Step 3: Verify the state changelog topics are compact
 //            //
 //            waitForCompletion(streams, 2, 30000);
-//            streams.close();
+//            streams.Close();
 
 //            StreamsConfig changelogProps = getTopicProperties(ProcessorStateManager.storeChangelogTopic(appID, "Counts"));
 //            Assert.Equal(LogConfig.Compact(), changelogProps.getProperty(LogConfig.CleanupPolicyProp()));
@@ -132,7 +132,7 @@
 //        public void ShouldCompactAndDeleteTopicsForWindowStoreChangelogs()
 //        {// throws Exception
 //            string appID = APP_ID + "-compact-delete";
-//            streamsProp.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+//            streamsProp.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
 //            //
 //            // Step 1: Configure and start a simple word count topology
@@ -159,7 +159,7 @@
 //            // Step 3: Verify the state changelog topics are compact
 //            //
 //            waitForCompletion(streams, 2, 30000);
-//            streams.close();
+//            streams.Close();
 //            StreamsConfig properties = getTopicProperties(ProcessorStateManager.storeChangelogTopic(appID, "CountWindows"));
 //            List<string> policies = Array.asList(properties.getProperty(LogConfig.CleanupPolicyProp()).Split(","));
 //            Assert.Equal(2, policies.Count);

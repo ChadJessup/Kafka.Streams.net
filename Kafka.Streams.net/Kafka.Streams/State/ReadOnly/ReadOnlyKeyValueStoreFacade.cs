@@ -9,25 +9,25 @@ namespace Kafka.Streams.State.ReadOnly
 
         public ReadOnlyKeyValueStoreFacade(ITimestampedKeyValueStore<K, V> store)
         {
-            Inner = store;
+            this.Inner = store;
         }
 
         public V Get(K key)
         {
-            return ValueAndTimestamp.GetValueOrNull(Inner.Get(key));
+            return ValueAndTimestamp.GetValueOrNull(this.Inner.Get(key));
         }
 
         public IKeyValueIterator<K, V> Range(K from, K to)
         {
-            return new KeyValueIteratorFacade<K, V>((IKeyValueIterator<K, V>)Inner.Range(from, to));
+            return new KeyValueIteratorFacade<K, V>((IKeyValueIterator<K, V>)this.Inner.Range(from, to));
         }
 
         public IKeyValueIterator<K, V> All()
         {
-            return new KeyValueIteratorFacade<K, V>((IKeyValueIterator<K, V>)Inner.All());
+            return new KeyValueIteratorFacade<K, V>((IKeyValueIterator<K, V>)this.Inner.All());
         }
 
         public long approximateNumEntries
-            => Inner.approximateNumEntries;
+            => this.Inner.approximateNumEntries;
     }
 }

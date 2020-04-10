@@ -38,18 +38,18 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void ShouldAllowJoinUnmaterializedFilteredKTable()
         {
-            IKTable<Bytes, string> filteredKTable = builder
+            IKTable<Bytes, string> filteredKTable = this.builder
                 .Table<Bytes, string>(TABLE_TOPIC)
                 .Filter(MockPredicate.AllGoodPredicate<Bytes, string>());
 
-            builder
+            this.builder
                 .Stream<Bytes, string>(STREAM_TOPIC)
                 .Join(filteredKTable, MockValueJoiner.TOSTRING_JOINER<string, string>());
 
-            builder.Build();
+            this.builder.Build();
 
             ProcessorTopology topology =
-                builder.Context.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
+                this.builder.Context.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(this.props)).Build();
 
             Assert.Single(topology.StateStores);
 
@@ -105,7 +105,7 @@ namespace Kafka.Streams.Tests
                         1);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000005"),
-                        Collections.singleton(topology.StateStores.Get(0).name()));
+                        Collections.singleton(topology.StateStores.Get(0).Name()));
                     Assert.True(
                         topology.processorConnectedStateStores("KTABLE-MAPVALUES-0000000003").isEmpty());
                 }
@@ -153,7 +153,7 @@ namespace Kafka.Streams.Tests
                         2);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000010"),
-                        Utils.mkSet(topology.StateStores.Get(0).name(), topology.StateStores.Get(1).name()));
+                        Utils.mkSet(topology.StateStores.Get(0).Name(), topology.StateStores.Get(1).Name()));
                     Assert.True(
                         topology.processorConnectedStateStores("KTABLE-MERGE-0000000007").isEmpty());
                 }
@@ -199,10 +199,10 @@ namespace Kafka.Streams.Tests
                         1);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KTABLE-SOURCE-0000000002"),
-                        Collections.singleton(topology.StateStores.Get(0).name()));
+                        Collections.singleton(topology.StateStores.Get(0).Name()));
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000004"),
-                        Collections.singleton(topology.StateStores.Get(0).name()));
+                        Collections.singleton(topology.StateStores.Get(0).Name()));
                 }
 
                 [Fact]
@@ -747,7 +747,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     Assert.Equal("Invalid number of expected processors", expected.Length, processors.Count);
                     for (int i = 0; i < expected.Length; i++)
                     {
-                        Assert.Equal(expected[i], processors.Get(i).name());
+                        Assert.Equal(expected[i], processors.Get(i).Name());
                     }
                 }
 
@@ -756,7 +756,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     Assert.Equal("Invalid number of expected state stores", expected.Length, stores.Count);
                     for (int i = 0; i < expected.Length; i++)
                     {
-                        Assert.Equal(expected[i], stores.Get(i).name());
+                        Assert.Equal(expected[i], stores.Get(i).Name());
                     }
                 }
                 */

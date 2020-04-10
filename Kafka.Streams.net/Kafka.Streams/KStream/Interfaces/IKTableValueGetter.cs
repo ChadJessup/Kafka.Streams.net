@@ -7,7 +7,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         void Init(IProcessorContext context, string storeName);
 
-        ValueAndTimestamp<V>? Get(K key);
+        IValueAndTimestamp<V>? Get(K key);
 
         void Close();
     }

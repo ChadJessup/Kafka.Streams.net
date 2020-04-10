@@ -2,13 +2,14 @@
 using Confluent.Kafka;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.State.Sessions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream
 {
-    public class SessionWindowedDeserializer<T> : IDeserializer<Windowed<T>>
+    public class SessionWindowedDeserializer<T> : IDeserializer<IWindowed<T>>
     {
         private readonly IServiceProvider services;
         private IDeserializer<T>? inner;
@@ -31,7 +32,7 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentNullException(nameof(configs));
             }
 
-            if (inner == null)
+            if (this.inner == null)
             {
                 string propertyName = isKey
                     ? StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
@@ -57,7 +58,7 @@ namespace Kafka.Streams.KStream
             }
         }
 
-        public Windowed<T> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+        public IWindowed<T> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {
             var topic = context.Topic;
 
@@ -69,13 +70,13 @@ namespace Kafka.Streams.KStream
             }
 
             // for either key or value, their schema is the same hence we will just use session key schema
-            return null; // SessionKeySchema.from(data, inner, topic);
+            return SessionKeySchema.From(data, this.inner, topic);
         }
 
 
         public void Close()
         {
-            if (inner != null)
+            if (this.inner != null)
             {
                 //inner.Close();
             }
@@ -84,7 +85,7 @@ namespace Kafka.Streams.KStream
         // Only for testing
         public IDeserializer<T> InnerDeserializer()
         {
-            return inner;
+            return this.inner;
         }
     }
 }

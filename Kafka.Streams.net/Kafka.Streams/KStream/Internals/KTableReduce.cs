@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void EnableSendingOldValues()
         {
-            sendOldValues = true;
+            this.sendOldValues = true;
         }
 
         public IKeyValueProcessor<K, IChange<V>> Get()
@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             return new KTableMaterializedValueGetterSupplier<K, V>(
                 this.context,
-                storeName);
+                this.storeName);
         }
     }
 }

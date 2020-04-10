@@ -34,20 +34,20 @@ namespace Kafka.Streams.Tests.Tests
 //                System.exit(1);
 //            }
 
-//            streamsProperties.put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-system-test-broker-compatibility");
-//            streamsProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//            streamsProperties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            streamsProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            streamsProperties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//            streamsProperties.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            streamsProperties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-system-test-broker-compatibility");
+//            streamsProperties.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsProperties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//            streamsProperties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
 //            if (eosEnabled)
 //            {
-//                streamsProperties.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//                streamsProperties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
 //            }
 //            int timeout = 6000;
-//            streamsProperties.put(StreamsConfig.consumerPrefix(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG), timeout);
-//            streamsProperties.put(StreamsConfig.consumerPrefix(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG), timeout);
-//            streamsProperties.put(StreamsConfig.REQUEST_TIMEOUT_MS_CONFIG, timeout + 1);
+//            streamsProperties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG), timeout);
+//            streamsProperties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG), timeout);
+//            streamsProperties.Put(StreamsConfig.REQUEST_TIMEOUT_MS_CONFIG, timeout + 1);
 //            Serde<string> stringSerde = Serdes.String();
 
 
@@ -82,8 +82,8 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //            System.Console.Error.println("FATAL: An unexpected exception " + cause);
 //            e.printStackTrace(System.Console.Error);
-//            System.Console.Error.flush();
-//            streams.close(TimeSpan.ofSeconds(30));
+//            System.Console.Error.Flush();
+//            streams.Close(TimeSpan.ofSeconds(30));
 //        }
 //    });
 //        System.Console.Out.WriteLine("start Kafka Streams");
@@ -92,9 +92,9 @@ namespace Kafka.Streams.Tests.Tests
 
 //        System.Console.Out.WriteLine("send data");
 //        StreamsConfig producerProperties = new StreamsConfig();
-//    producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//    producerProperties.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//        producerProperties.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//        producerProperties.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
 //        try {
 //            try { 
@@ -103,26 +103,26 @@ namespace Kafka.Streams.Tests.Tests
 
 //                System.Console.Out.WriteLine("wait for result");
 //                loopUntilRecordReceived(kafka, eosEnabled);
-//    System.Console.Out.WriteLine("close Kafka Streams");
-//                streams.close();
+//    System.Console.Out.WriteLine("Close Kafka Streams");
+//                streams.Close();
 //            }
 //        } catch (RuntimeException e) {
 //            System.Console.Error.println("Non-Streams exception occurred: ");
 //            e.printStackTrace(System.Console.Error);
-//            System.Console.Error.flush();
+//            System.Console.Error.Flush();
 //        }
 //    }
 
 //    private static void loopUntilRecordReceived(string kafka, bool eosEnabled)
 //{
 //    StreamsConfig consumerProperties = new StreamsConfig();
-//    consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//    consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "broker-compatibility-consumer");
-//    consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//    consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
-//        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
+//    consumerProperties.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//    consumerProperties.Put(ConsumerConfig.GROUP_ID_CONFIG, "broker-compatibility-consumer");
+//    consumerProperties.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//    consumerProperties.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
+//        consumerProperties.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
 //        if (eosEnabled) {
-//            consumerProperties.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.name().toLowerCase(Locale.ROOT));
+//            consumerProperties.Put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.Name().toLowerCase(Locale.ROOT));
 //        }
 
 //        try { 

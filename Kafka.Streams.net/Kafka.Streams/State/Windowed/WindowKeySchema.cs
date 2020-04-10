@@ -12,21 +12,21 @@ namespace Kafka.Streams.State.Windowed
         private const int SUFFIX_SIZE = TIMESTAMP_SIZE + SEQNUM_SIZE;
         private readonly static byte[] MIN_SUFFIX = new byte[SUFFIX_SIZE];
 
-        static TimeWindow TimeWindowForSize(long startMs, long windowSize)
+        private static TimeWindow TimeWindowForSize(DateTime start, TimeSpan windowSize)
         {
-            long endMs = startMs + windowSize;
+            var end = start + windowSize;
 
-            if (endMs < 0)
+            if (end.Ticks < 0)
             {
                 //LOG.LogWarning("Warning: window end time was truncated to long.MAX");
-                endMs = long.MaxValue;
+                end = DateTime.MaxValue;
             }
-            return new TimeWindow(startMs, endMs);
+            return new TimeWindow(start, end);
         }
 
         // for pipe serdes
         public static byte[] ToBinary<K>(
-            Windowed<K> timeKey,
+            IWindowed<K> timeKey,
             ISerializer<K> serializer,
             string topic)
         {
@@ -38,9 +38,9 @@ namespace Kafka.Streams.State.Windowed
             return buf.Array();
         }
 
-        public static Windowed<K> From<K>(
+        public static IWindowed<K> From<K>(
             byte[] binaryKey,
-            long windowSize,
+            TimeSpan windowSize,
             IDeserializer<K> deserializer,
             string topic)
         {
@@ -49,15 +49,15 @@ namespace Kafka.Streams.State.Windowed
             K key = deserializer.Deserialize(topic, bytes, isKey: true);
             Window window = ExtractWindow(binaryKey, windowSize);
 
-            return new Windowed<K>(key, window);
+            return new Windowed2<K>(key, window);
         }
 
         private static Window ExtractWindow(
             byte[] binaryKey,
-            long windowSize)
+            TimeSpan windowSize)
         {
             ByteBuffer buffer = new ByteBuffer().Wrap(binaryKey);
-            long start = buffer.GetLong(binaryKey.Length - TIMESTAMP_SIZE);
+            DateTime start = Timestamp.UnixTimestampMsToDateTime(buffer.GetLong(binaryKey.Length - TIMESTAMP_SIZE));
 
             return TimeWindowForSize(start, windowSize);
         }
@@ -83,7 +83,7 @@ namespace Kafka.Streams.State.Windowed
         }
 
         public static Bytes ToStoreKeyBinary(
-            Windowed<Bytes> timeKey,
+            IWindowed<Bytes> timeKey,
             int seqnum)
         {
             byte[] bytes = timeKey.Key.Get();
@@ -91,7 +91,7 @@ namespace Kafka.Streams.State.Windowed
         }
 
         public static Bytes ToStoreKeyBinary<K>(
-            Windowed<K> timeKey,
+            IWindowed<K> timeKey,
             int seqnum,
             IStateSerdes<K, object> serdes)
         {
@@ -101,7 +101,7 @@ namespace Kafka.Streams.State.Windowed
         }
 
         // package private for testing
-        static Bytes ToStoreKeyBinary(
+        private static Bytes ToStoreKeyBinary(
             byte[] serializedKey,
             long timestamp,
             int seqnum)
@@ -114,14 +114,14 @@ namespace Kafka.Streams.State.Windowed
             return Bytes.Wrap(buf.Array());
         }
 
-        static byte[] ExtractStoreKeyBytes(byte[] binaryKey)
+        private static byte[] ExtractStoreKeyBytes(byte[] binaryKey)
         {
             byte[] bytes = new byte[binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE];
             Array.Copy(binaryKey, 0, bytes, 0, bytes.Length);
             return bytes;
         }
 
-        static K ExtractStoreKey<K>(
+        private static K ExtractStoreKey<K>(
             byte[] binaryKey,
             IStateSerdes<K, object> serdes)
         {
@@ -135,47 +135,46 @@ namespace Kafka.Streams.State.Windowed
             return new ByteBuffer().Wrap(binaryKey).GetLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE);
         }
 
-        static int ExtractStoreSequence(byte[] binaryKey)
+        private static int ExtractStoreSequence(byte[] binaryKey)
         {
             return new ByteBuffer().Wrap(binaryKey).GetInt(binaryKey.Length - SEQNUM_SIZE);
         }
 
-        public static Windowed<K> FromStoreKey<K>(
+        public static IWindowed<K> FromStoreKey<K>(
             byte[] binaryKey,
-            long windowSize,
+            TimeSpan windowSize,
             IDeserializer<K> deserializer,
             string topic)
         {
             K key = deserializer.Deserialize(topic, ExtractStoreKeyBytes(binaryKey), isKey: true);
             var window = ExtractStoreWindow(binaryKey, windowSize);
 
-            return new Windowed<K>(key, window);
+            return new Windowed2<K>(key, window);
         }
 
-        public static Windowed<K> FromStoreKey<K>(
-            Windowed<Bytes> windowedKey,
+        public static IWindowed<K> FromStoreKey<K>(
+            IWindowed<Bytes> windowedKey,
             IDeserializer<K> deserializer,
             string topic)
         {
             var key = deserializer.Deserialize(topic, windowedKey.Key.Get(), isKey: true);
-            return new Windowed<K>(key, windowedKey.window);
+            return new Windowed2<K>(key, windowedKey.window);
         }
 
-        public static Windowed<Bytes> FromStoreBytesKey(
+        public static IWindowed<Bytes> FromStoreBytesKey(
             byte[] binaryKey,
-            long windowSize)
+            TimeSpan windowSize)
         {
             Bytes key = Bytes.Wrap(ExtractStoreKeyBytes(binaryKey));
             var window = ExtractStoreWindow(binaryKey, windowSize);
-            return new Windowed<Bytes>(key, window);
+            return new Windowed2<Bytes>(key, window);
         }
 
-        static Window ExtractStoreWindow(
-            byte[] binaryKey,
-            long windowSize)
+        private static Window ExtractStoreWindow(byte[] binaryKey, TimeSpan windowSize)
         {
             ByteBuffer buffer = new ByteBuffer().Wrap(binaryKey);
-            long start = buffer.GetLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE);
+            DateTime start = Timestamp.UnixTimestampMsToDateTime(buffer.GetLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE));
+
             return TimeWindowForSize(start, windowSize);
         }
     }

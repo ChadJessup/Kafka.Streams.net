@@ -69,7 +69,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldUseProvidedStoreNameWhenSet()
 //        {
-//            var storeName = "store-name";
+//            var storeName = "store-Name";
 //            MaterializedInternal<object, object, IStateStore> materialized =
 //                new MaterializedInternal<>(Materialized.As(storeName), nameProvider, prefix);
 //            Assert.Equal(materialized.StoreName, (storeName));
@@ -78,8 +78,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldUseStoreNameOfSupplierWhenProvided()
 //        {
-//            var storeName = "other-store-name";
-//            EasyMock.expect(supplier.name()).andReturn(storeName).anyTimes();
+//            var storeName = "other-store-Name";
+//            EasyMock.expect(supplier.Name()).andReturn(storeName).anyTimes();
 //            EasyMock.replay(supplier);
 //            MaterializedInternal<object, object, IKeyValueStore<Bytes, byte[]>> materialized =
 //                new MaterializedInternal<>(Materialized.As(supplier), nameProvider, prefix);

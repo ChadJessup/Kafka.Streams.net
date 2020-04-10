@@ -73,7 +73,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
             }
 
-            Send(
+            this.Send(
                 topic,
                 key,
                 value,
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Processors.Internals
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer)
         {
-            CheckForException();
+            this.CheckForException();
             var keyBytes = keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
             var valBytes = valueSerializer.Serialize(value, new SerializationContext(MessageComponentType.Value, topic));
 
@@ -134,7 +134,7 @@ namespace Kafka.Streams.Processors.Internals
                 //            {
                 //                log.LogWarning(LOG_MESSAGE, topic, exception.getMessage(), exception);
 
-                //                // KAFKA-7510 put message key and value in TRACE level log so we don't leak data by default
+                //                // KAFKA-7510 Put message key and value in TRACE level log so we don't leak data by default
                 //                log.LogTrace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition);
 
                 //                sendException = new ProducerFencedException(
@@ -165,7 +165,7 @@ namespace Kafka.Streams.Processors.Internals
                 //                            "Enable TRACE logging to view failed messages key and value.",
                 //                        topic, partition, exception);
 
-                //                    // KAFKA-7510 put message key and value in TRACE level log so we don't leak data by default
+                //                    // KAFKA-7510 Put message key and value in TRACE level log so we don't leak data by default
                 //                    log.LogTrace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition);
 
                 //                    skippedRecordsSensor.record();
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Processors.Internals
             }
             catch (TimeoutException e)
             {
-                log.LogError(
+                this.log.LogError(
                         "Timeout exception caught when sending record to topic {}. " +
                         "This might happen if the producer cannot send data to the Kafka cluster and thus, " +
                         "its internal buffer fills up. " +
@@ -189,7 +189,7 @@ namespace Kafka.Streams.Processors.Internals
                 );
 
                 throw new StreamsException(
-                    string.Format("%sFailed to send record to topic %s due to timeout.", logPrefix, topic),
+                    string.Format("%sFailed to send record to topic %s due to timeout.", this.logPrefix, topic),
                     e
                 );
             }
@@ -208,7 +208,7 @@ namespace Kafka.Streams.Processors.Internals
                     throw new StreamsException(
                         string.Format(
                             EXCEPTION_MESSAGE,
-                            logPrefix,
+                            this.logPrefix,
                             "an error caught",
                             timestamp,
                             topic,
@@ -221,31 +221,31 @@ namespace Kafka.Streams.Processors.Internals
 
         private void CheckForException()
         {
-            if (sendException != null)
+            if (this.sendException != null)
             {
-                throw sendException;
+                throw this.sendException;
             }
         }
 
         public void Flush()
         {
-            log.LogDebug("Flushing producer");
-            producer.Flush();
+            this.log.LogDebug("Flushing producer");
+            this.producer.Flush();
 
-            CheckForException();
+            this.CheckForException();
         }
 
 
         public void Close()
         {
-            log.LogDebug("Closing producer");
-            if (producer != null)
+            this.log.LogDebug("Closing producer");
+            if (this.producer != null)
             {
-                producer.Dispose();
-                producer = null;
+                this.producer.Dispose();
+                this.producer = null;
             }
 
-            CheckForException();
+            this.CheckForException();
         }
 
         #region IDisposable Support
@@ -253,7 +253,7 @@ namespace Kafka.Streams.Processors.Internals
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!this.disposedValue)
             {
                 if (disposing)
                 {
@@ -263,7 +263,7 @@ namespace Kafka.Streams.Processors.Internals
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                this.disposedValue = true;
             }
         }
 
@@ -278,7 +278,7 @@ namespace Kafka.Streams.Processors.Internals
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
+            this.Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }

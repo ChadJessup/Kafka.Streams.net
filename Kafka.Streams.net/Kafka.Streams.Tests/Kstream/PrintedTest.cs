@@ -38,7 +38,7 @@ namespace Kafka.Streams.Tests.Kstream
 //                    .Build("processor");
 //            Processor<string, int> processor = processorSupplier.Get();
 //            processor.process("hi", 1);
-//            processor.close();
+//            processor.Close();
 //            try
 //            {
 //                InputStream stream = Files.newInputStream(file.toPath());
@@ -59,8 +59,8 @@ namespace Kafka.Streams.Tests.Kstream
 //            Processor<string, int> processor = supplier.Get();
 
 //            processor.process("good", 2);
-//            processor.close();
-//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), ("[processor]: good, 2\n"));
+//            processor.Close();
+//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.Name()), ("[processor]: good, 2\n"));
 //        }
 
 //        [Fact]
@@ -72,8 +72,8 @@ namespace Kafka.Streams.Tests.Kstream
 //                        .Get();
 
 //            processor.process("hello", 3);
-//            processor.close();
-//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), ("[label]: hello, 3\n"));
+//            processor.Close();
+//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.Name()), ("[label]: hello, 3\n"));
 //        }
 
 //        [Fact]
@@ -92,8 +92,8 @@ namespace Kafka.Streams.Tests.Kstream
 //            //})).Build("processor")
 //            //.Get();
 //            processor.process("hello", 1);
-//            processor.close();
-//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), ("[processor]: hello => 1\n"));
+//            processor.Close();
+//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.Name()), ("[processor]: hello => 1\n"));
 //        }
 
 //        [Fact]

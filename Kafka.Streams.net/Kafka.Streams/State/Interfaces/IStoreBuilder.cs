@@ -25,12 +25,12 @@ namespace Kafka.Streams.State
         bool loggingEnabled { get; }
 
         /**
-         * Return the name of this state store builder.
-         * This must be a valid Kafka topic name; valid characters are ASCII alphanumerics, '.', '_' and '-'.
+         * Return the Name of this state store builder.
+         * This must be a valid Kafka topic Name; valid characters are ASCII alphanumerics, '.', '_' and '-'.
          *
-         * @return the name of this state store builder
+         * @return the Name of this state store builder
          */
-        string name { get; }
+        string Name { get; }
 
         /**
          * Enable caching on the store.

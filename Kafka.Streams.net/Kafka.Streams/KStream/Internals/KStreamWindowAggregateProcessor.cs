@@ -19,7 +19,7 @@ namespace Kafka.Streams.KStream.Internals
         private readonly IAggregator<K, V, Agg> aggregator;
         private readonly Windows<W> windows;
         private ITimestampedWindowStore<K, Agg> windowStore;
-        private TimestampedTupleForwarder<Windowed<K>, Agg> tupleForwarder;
+        private TimestampedTupleForwarder<IWindowed<K>, Agg> tupleForwarder;
         private IInternalProcessorContext internalProcessorContext;
         private long observedStreamTime = Timestamp.Default.UnixTimestampMs;
 
@@ -44,15 +44,15 @@ namespace Kafka.Streams.KStream.Internals
             context = context ?? throw new ArgumentNullException(nameof(context));
 
             base.Init(context);
-            internalProcessorContext = (IInternalProcessorContext)context;
+            this.internalProcessorContext = (IInternalProcessorContext)context;
 
-            windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(this.context, storeName);
+            this.windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(this.storeName);
 
-            tupleForwarder = new TimestampedTupleForwarder<Windowed<K>, Agg>(
-                windowStore,
+            this.tupleForwarder = new TimestampedTupleForwarder<IWindowed<K>, Agg>(
+                this.windowStore,
                 context,
-                new TimestampedCacheFlushListener<Windowed<K>, Agg>(context),
-                sendOldValues);
+                new TimestampedCacheFlushListener<IWindowed<K>, Agg>(context),
+                this.sendOldValues);
         }
 
         public override void Process(K key, V value)
@@ -66,11 +66,11 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             // first get the matching windows
-            var timestamp = Context.Timestamp;
-            observedStreamTime = Math.Max(observedStreamTime, timestamp);
-            var closeTime = observedStreamTime - (long)windows.GracePeriod().TotalMilliseconds;
+            var timestamp = this.Context.Timestamp;
+            this.observedStreamTime = Math.Max(this.observedStreamTime, timestamp);
+            var closeTime = this.observedStreamTime - (long)this.windows.GracePeriod().TotalMilliseconds;
 
-            Dictionary<long, W> matchedWindows = windows.WindowsFor(TimeSpan.FromMilliseconds(timestamp));
+            Dictionary<long, W> matchedWindows = this.windows.WindowsFor(TimeSpan.FromMilliseconds(timestamp));
 
             // try update the window, and create the new window for the rest of unmatched window that do not exist yet
             foreach (var entry in matchedWindows)
@@ -79,7 +79,7 @@ namespace Kafka.Streams.KStream.Internals
                 var windowEnd = entry.Value.End();
                 if (windowEnd > closeTime)
                 {
-                    ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.Fetch(key, windowStart);
+                    IValueAndTimestamp<Agg> oldAggAndTimestamp = this.windowStore.Fetch(key, windowStart);
                     Agg oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);
 
                     Agg newAgg;
@@ -87,23 +87,23 @@ namespace Kafka.Streams.KStream.Internals
 
                     if (oldAgg == null)
                     {
-                        oldAgg = initializer.Apply();
-                        newTimestamp = Context.Timestamp;
+                        oldAgg = this.initializer.Apply();
+                        newTimestamp = this.Context.Timestamp;
                     }
                     else
                     {
-                        newTimestamp = Math.Max(Context.Timestamp, oldAggAndTimestamp.Timestamp);
+                        newTimestamp = Math.Max(this.Context.Timestamp, oldAggAndTimestamp.Timestamp);
                     }
 
-                    newAgg = aggregator.Apply(key, value, oldAgg);
+                    newAgg = this.aggregator.Apply(key, value, oldAgg);
 
                     // update the store with the new value
-                    windowStore.Put(key, ValueAndTimestamp.Make(newAgg, newTimestamp), windowStart);
+                    this.windowStore.Put(key, ValueAndTimestamp.Make(newAgg, newTimestamp), windowStart);
 
-                    tupleForwarder.MaybeForward(
-                        new Windowed<K>(key, entry.Value),
+                    this.tupleForwarder.MaybeForward(
+                        new Windowed2<K>(key, entry.Value),
                         newAgg,
-                        sendOldValues ? oldAgg : default,
+                        this.sendOldValues ? oldAgg : default,
                         newTimestamp);
                 }
                 else

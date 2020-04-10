@@ -39,27 +39,27 @@ namespace Kafka.Streams.State.Internals
 
             this.isDirty = isDirty;
             this.sizeBytes = 1 + // isDirty
-                record.ResidentMemorySizeEstimate();
+                this.record.ResidentMemorySizeEstimate();
         }
 
         public void MarkClean()
         {
-            isDirty = false;
+            this.isDirty = false;
         }
 
         public long Size()
         {
-            return sizeBytes;
+            return this.sizeBytes;
         }
 
         public byte[] Value()
         {
-            return record.value;
+            return this.record.value;
         }
 
         public ProcessorRecordContext context
         {
-            get => record.recordContext;
+            get => this.record.recordContext;
         }
 
         public override bool Equals(object o)
@@ -68,21 +68,21 @@ namespace Kafka.Streams.State.Internals
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (LRUCacheEntry)o;
 
-            return sizeBytes == that.sizeBytes
-                && isDirty == that.isDirty
-                && record.Equals(that.record);
+            return this.sizeBytes == that.sizeBytes
+                && this.isDirty == that.isDirty
+                && this.record.Equals(that.record);
         }
 
         public override int GetHashCode()
         {
-            return (record, sizeBytes, isDirty).GetHashCode();
+            return (this.record, this.sizeBytes, this.isDirty).GetHashCode();
         }
     }
 }

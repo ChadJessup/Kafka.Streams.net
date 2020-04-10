@@ -87,7 +87,7 @@
 //                {
 //                    int repartitionTopicCount = getCountOfRepartitionTopicsFound(topology.describe().ToString(), repartitionTopicPattern);
 //                    System.Console.Out.WriteLine(string.format("REBALANCING => RUNNING with REPARTITION TOPIC COUNT=%d", repartitionTopicCount));
-//                    System.Console.Out.flush();
+//                    System.Console.Out.Flush();
 //                }
 //            });
 
@@ -100,10 +100,10 @@
 //            public void run()
 //            {
 //                System.Console.Out.WriteLine("closing Kafka Streams instance");
-//                System.Console.Out.flush();
-//                streams.close(TimeSpan.FromMilliseconds(5000));
+//                System.Console.Out.Flush();
+//                streams.Close(TimeSpan.FromMilliseconds(5000));
 //                System.Console.Out.WriteLine("OPTIMIZE_TEST Streams Stopped");
-//                System.Console.Out.flush();
+//                System.Console.Out.Flush();
 //            }
 //        });
 

@@ -24,31 +24,31 @@ namespace Kafka.Streams.Processors.Internals
         }
 
         public string ApplicationId
-            => del.ApplicationId;
+            => this.del.ApplicationId;
 
         public TaskId TaskId
-            => del.TaskId;
+            => this.del.TaskId;
 
         public ISerde KeySerde
-            => del.KeySerde;
+            => this.del.KeySerde;
 
         public ISerde ValueSerde
-            => del.ValueSerde;
+            => this.del.ValueSerde;
 
         public DirectoryInfo StateDir
-            => del.StateDir;
+            => this.del.StateDir;
 
         //public IStreamsMetrics metrics
         //    => del.metrics;
 
         public void Register(IStateStore store, IStateRestoreCallback stateRestoreCallback)
         {
-            del.Register(store, stateRestoreCallback);
+            this.del.Register(store, stateRestoreCallback);
         }
 
-        public IStateStore GetStateStore(KafkaStreamsContext context, string name)
+        public IStateStore GetStateStore(string Name)
         {
-            return del.GetStateStore(context, name);
+            return this.del.GetStateStore(Name);
         }
 
         [Obsolete]
@@ -57,7 +57,7 @@ namespace Kafka.Streams.Processors.Internals
             PunctuationType type,
             IPunctuator callback)
         {
-            return del.Schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
+            return this.del.Schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
         }
 
         public ICancellable Schedule(
@@ -65,7 +65,7 @@ namespace Kafka.Streams.Processors.Internals
             PunctuationType type,
             IPunctuator callback)
         {
-            return del.Schedule(interval, type, callback);
+            return this.del.Schedule(interval, type, callback);
         }
         public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
         {
@@ -96,28 +96,28 @@ namespace Kafka.Streams.Processors.Internals
 
         public void Commit()
         {
-            del.Commit();
+            this.del.Commit();
         }
 
         public string Topic
-            => del.Topic;
+            => this.del.Topic;
 
         public int Partition
-            => del.Partition;
+            => this.del.Partition;
 
         public long Offset
-            => del.Offset;
+            => this.del.Offset;
 
         public Headers Headers
-            => del.Headers;
+            => this.del.Headers;
 
         public long Timestamp
-            => del.Timestamp;
+            => this.del.Timestamp;
 
         public Dictionary<string, object> AppConfigs()
-            => del.AppConfigs();
+            => this.del.AppConfigs();
 
         public Dictionary<string, object> AppConfigsWithPrefix(string prefix)
-            => del.AppConfigsWithPrefix(prefix);
+            => this.del.AppConfigsWithPrefix(prefix);
     }
 }

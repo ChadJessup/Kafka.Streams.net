@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        private void setFlushListener(bool sendOldValues)
 //        {
-//            WrappedStateStore<IStateStore, Windowed<object>, object> store = mock(WrappedStateStore));
+//            WrappedStateStore<IStateStore, IWindowed<object>, object> store = mock(WrappedStateStore));
 //            SessionCacheFlushListener<object, object> flushListener = mock(SessionCacheFlushListener));
 
 //            expect(store.setFlushListener(flushListener, sendOldValues)).andReturn(false);
@@ -47,14 +47,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            if (sendOldValued)
 //            {
 //                context.Forward(
-//                    new Windowed<>("key", new SessionWindow(21L, 42L)),
+//                    new IWindowed<>("key", new SessionWindow(21L, 42L)),
 //                    new Change<>("value", "oldValue"),
 //                    To.All().WithTimestamp(42L));
 //            }
 //            else
 //            {
 //                context.Forward(
-//                    new Windowed<>("key", new SessionWindow(21L, 42L)),
+//                    new IWindowed<>("key", new SessionWindow(21L, 42L)),
 //                    new Change<>("value", null),
 //                    To.All().WithTimestamp(42L));
 //            }
@@ -62,7 +62,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            replay(store, context);
 
 //            new SessionTupleForwarder<>(store, context, null, sendOldValued)
-//                .maybeForward(new Windowed<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
+//                .maybeForward(new IWindowed<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
 
 //            verify(store, context);
 //        }
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            replay(store, context);
 
 //            new SessionTupleForwarder<>(store, context, null, false)
-//                .maybeForward(new Windowed<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
+//                .maybeForward(new IWindowed<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
 
 //            verify(store, context);
 //        }

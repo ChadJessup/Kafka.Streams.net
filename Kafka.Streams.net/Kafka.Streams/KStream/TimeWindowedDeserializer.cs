@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream
 {
-    public class TimeWindowedDeserializer<T> : IDeserializer<Windowed<T>>
+    public class TimeWindowedDeserializer<T> : IDeserializer<IWindowed<T>>
     {
         private long windowSize;
         private bool isChangelogTopic;
@@ -52,7 +52,7 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentNullException(nameof(configs));
             }
 
-            if (inner == null)
+            if (this.inner == null)
             {
                 string propertyName = isKey
                     ? StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
@@ -78,7 +78,7 @@ namespace Kafka.Streams.KStream
             }
         }
 
-        public Windowed<T> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+        public IWindowed<T> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {
             //WindowedSerdes.verifyInnerDeserializerNotNull<T>(inner, this);
 
@@ -99,7 +99,7 @@ namespace Kafka.Streams.KStream
 
         public void Close()
         {
-            if (inner != null)
+            if (this.inner != null)
             {
                 // inner.Close();
             }

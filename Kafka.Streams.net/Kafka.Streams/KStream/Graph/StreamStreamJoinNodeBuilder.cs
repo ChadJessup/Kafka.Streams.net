@@ -81,16 +81,16 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
 
             return new StreamStreamJoinNode<K, V1, V2, VR>(
-                nodeName,
-                valueJoiner,
-                joinThisProcessorParameters,
-                joinOtherProcessorParameters,
-                joinMergeProcessorParameters,
-                thisWindowedStreamProcessorParameters,
-                otherWindowedStreamProcessorParameters,
-                thisWindowStoreBuilder,
-                otherWindowStoreBuilder,
-                joined);
+                this.nodeName,
+                this.valueJoiner,
+                this.joinThisProcessorParameters,
+                this.joinOtherProcessorParameters,
+                this.joinMergeProcessorParameters,
+                this.thisWindowedStreamProcessorParameters,
+                this.otherWindowedStreamProcessorParameters,
+                this.thisWindowStoreBuilder,
+                this.otherWindowStoreBuilder,
+                this.joined);
         }
     }
 }

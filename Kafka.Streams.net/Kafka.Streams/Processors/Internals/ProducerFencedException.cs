@@ -12,14 +12,14 @@ namespace Kafka.Streams.Processors.Internals
         }
 
         public ProducerFencedException(string message)
-            : base(new Error(ErrorCode.InvalidProducerEpoch, message))
+            : base(new Confluent.Kafka.Error(ErrorCode.InvalidProducerEpoch, message))
         {
         }
 
         public ProducerFencedException(
             string message,
             Exception innerException)
-            : base(new Error(ErrorCode.InvalidProducerEpoch, message), innerException)
+            : base(new Confluent.Kafka.Error(ErrorCode.InvalidProducerEpoch, message), innerException)
         {
         }
     }

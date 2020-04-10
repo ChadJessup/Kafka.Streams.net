@@ -7,7 +7,7 @@ namespace Kafka.Common.Utils
     {
         public int Compare(byte[] buffer1, byte[] buffer2)
         {
-            return Compare(buffer1, 0, buffer1.Length, buffer2, 0, buffer2.Length);
+            return this.Compare(buffer1, 0, buffer1.Length, buffer2, 0, buffer2.Length);
         }
 
         public int Compare(byte[] buffer1, int offset1, int Length1,

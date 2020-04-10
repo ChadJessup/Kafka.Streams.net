@@ -25,9 +25,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<int, string> table1 = builder.Table(topic1, Consumed.With(Serdes.Int(), Serdes.String()));
 
 //            Dictionary<int, string> keyMap = new HashMap<>();
-//            keyMap.put(1, "ONE");
-//            keyMap.put(2, "TWO");
-//            keyMap.put(3, "THREE");
+//            keyMap.Put(1, "ONE");
+//            keyMap.Put(2, "TWO");
+//            keyMap.Put(3, "THREE");
 
 //            IKStream<string, string> convertedStream = table1.toStream((key, value) => keyMap.Get(key));
 

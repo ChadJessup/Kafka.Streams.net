@@ -6,7 +6,7 @@ namespace Kafka.Streams.State.KeyValues
     /**
      * IEnumerator interface of {@link KeyValuePair}.
      *
-     * Users must call its {@code close} method explicitly upon completeness to release resources,
+     * Users must call its {@code Close} method explicitly upon completeness to release resources,
      * or use try-with-resources statement (available since JDK7) for this {@link IDisposable}.
      *
      * @param Type of keys

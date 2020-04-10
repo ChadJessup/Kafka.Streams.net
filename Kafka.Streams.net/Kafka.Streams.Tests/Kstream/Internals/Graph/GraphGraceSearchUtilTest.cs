@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            }
 //            catch (TopologyException e)
 //            {
-//                Assert.Equal("Invalid topology: Window close time is only defined for windowed computations. Got [].", e.Message);
+//                Assert.Equal("Invalid topology: Window Close time is only defined for windowed computations. Got [].", e.Message);
 //            }
 //        }
 
@@ -37,13 +37,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 
 
-//            //            public void init(IProcessorContext context) { }
+//            //            public void Init(IProcessorContext context) { }
 
 
 //            //    public void process(string key, long value) { }
 
 
-//            //    public void close() { }
+//            //    public void Close() { }
 //            //},
 //            //        "dummy"
 //            //    )//,
@@ -60,7 +60,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            }
 //            catch (TopologyException e)
 //            {
-//                Assert.Equal("Invalid topology: Window close time is only defined for windowed computations. Got [stateful=>stateless].", e.Message);
+//                Assert.Equal("Invalid topology: Window Close time is only defined for windowed computations. Got [stateful=>stateless].", e.Message);
 //            }
 //        }
 
@@ -136,13 +136,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
 
 
-//            //            public void init(IProcessorContext context) { }
+//            //            public void Init(IProcessorContext context) { }
 
 
 //            //    public void process(string key, long value) { }
 
 
-//            //    public void close() { }
+//            //    public void Close() { }
 //            //},
 //            //        "dummy"
 //            //    ),

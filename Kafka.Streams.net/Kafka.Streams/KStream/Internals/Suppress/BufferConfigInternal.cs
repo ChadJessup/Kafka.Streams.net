@@ -22,12 +22,12 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public IStrictBufferConfig ShutDownWhenFull()
         {
-            return new StrictBufferConfigImpl(MaxRecords, MaxBytes, BufferFullStrategy.SHUT_DOWN);
+            return new StrictBufferConfigImpl(this.MaxRecords, this.MaxBytes, BufferFullStrategy.SHUT_DOWN);
         }
 
         public IEagerBufferConfig EmitEarlyWhenFull()
         {
-            return new EagerBufferConfigImpl(MaxRecords, MaxBytes);
+            return new EagerBufferConfigImpl(this.MaxRecords, this.MaxBytes);
         }
 
         public abstract IBufferConfig<BC> WithMaxRecords(long recordLimit);

@@ -96,7 +96,7 @@
 //            string sensorName = "sensor1";
 //            string scope = "scope";
 //            string entity = "entity";
-//            string operation = "put";
+//            string operation = "Put";
 //            StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), "");
 
 //            Sensor sensor1 = streamsMetrics.addSensor(sensorName, Sensor.RecordingLevel.DEBUG);
@@ -176,7 +176,7 @@
 
 //            string scope = "scope";
 //            string entity = "entity";
-//            string operation = "put";
+//            string operation = "Put";
 
 //            Sensor sensor1 = streamsMetrics.addLatencyAndThroughputSensor(scope, entity, operation, Sensor.RecordingLevel.DEBUG);
 
@@ -197,7 +197,7 @@
 
 //            string scope = "scope";
 //            string entity = "entity";
-//            string operation = "put";
+//            string operation = "Put";
 
 //            Sensor sensor1 = streamsMetrics.addThroughputSensor(scope, entity, operation, Sensor.RecordingLevel.DEBUG);
 

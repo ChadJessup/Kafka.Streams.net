@@ -64,12 +64,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public OptimizableRepartitionNode<K, V> Build()
             => new OptimizableRepartitionNode<K, V>(
-                nodeName,
-                sourceName,
-                processorParameters,
-                keySerde,
-                valueSerde,
-                sinkName,
-                repartitionTopic);
+                this.nodeName,
+                this.sourceName,
+                this.processorParameters,
+                this.keySerde,
+                this.valueSerde,
+                this.sinkName,
+                this.repartitionTopic);
     }
 }

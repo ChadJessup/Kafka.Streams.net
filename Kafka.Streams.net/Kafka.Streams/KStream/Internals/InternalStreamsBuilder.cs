@@ -67,17 +67,17 @@ namespace Kafka.Streams.KStream.Internals
             IEnumerable<string> topics,
             ConsumedInternal<K, V> consumed)
         {
-            var name = new NamedInternal(consumed.name).OrElseGenerateWithPrefix(this, KStream.SourceName);
-            var streamSourceNode = new StreamSourceNode<K, V>(name, topics, consumed);
+            var Name = new NamedInternal(consumed.Name).OrElseGenerateWithPrefix(this, KStream.SourceName);
+            var streamSourceNode = new StreamSourceNode<K, V>(Name, topics, consumed);
 
-            this.AddGraphNode<K, V>(new HashSet<StreamsGraphNode> { root }, streamSourceNode);
+            this.AddGraphNode<K, V>(new HashSet<StreamsGraphNode> { this.root }, streamSourceNode);
 
             return new KStream<K, V>(
                 this.context,
-                name,
+                Name,
                 consumed.keySerde,
                 consumed.valueSerde,
-                new HashSet<string> { name },
+                new HashSet<string> { Name },
                 false,
                 streamSourceNode,
                 this);
@@ -87,17 +87,17 @@ namespace Kafka.Streams.KStream.Internals
             Regex topicPattern,
             ConsumedInternal<K, V> consumed)
         {
-            var name = NewProcessorName(KStream.SourceName);
-            var streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
+            var Name = this.NewProcessorName(KStream.SourceName);
+            var streamPatternSourceNode = new StreamSourceNode<K, V>(Name, topicPattern, consumed);
 
-            AddGraphNode<K, V>(root, streamPatternSourceNode);
+            this.AddGraphNode<K, V>(this.root, streamPatternSourceNode);
 
             return new KStream<K, V>(
                 this.context,
-                name,
+                Name,
                 consumed.keySerde,
                 consumed.valueSerde,
-                new HashSet<string> { name },
+                new HashSet<string> { Name },
                 repartitionRequired: false,
                 streamPatternSourceNode,
                 this);
@@ -108,10 +108,10 @@ namespace Kafka.Streams.KStream.Internals
             ConsumedInternal<K, V> consumed,
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            var sourceName = new NamedInternal(consumed.name)
+            var sourceName = new NamedInternal(consumed.Name)
                    .OrElseGenerateWithPrefix(this, KStream.SourceName);
 
-            var tableSourceName = new NamedInternal(consumed.name)
+            var tableSourceName = new NamedInternal(consumed.Name)
                    .SuffixWithOrElseGet("-table-source", this, KTable.SourceName);
 
             var tableSource = new KTableSource<K, V>(
@@ -131,7 +131,7 @@ namespace Kafka.Streams.KStream.Internals
                  .WithProcessorParameters(processorParameters)
                  .Build();
 
-            AddGraphNode<K, V>(root, tableSourceNode);
+            this.AddGraphNode<K, V>(this.root, tableSourceNode);
 
             return new KTable<K, IKeyValueStore<Bytes, byte[]>, V>(
                 this.context,
@@ -154,9 +154,9 @@ namespace Kafka.Streams.KStream.Internals
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
             // explicitly disable logging for global stores
             materialized.WithLoggingDisabled();
-            var sourceName = NewProcessorName(KTable.SourceName);
-            var processorName = NewProcessorName(KTable.SourceName);
-            // enforce store name as queryable name to always materialize global table stores
+            var sourceName = this.NewProcessorName(KTable.SourceName);
+            var processorName = this.NewProcessorName(KTable.SourceName);
+            // enforce store Name as queryable Name to always materialize global table stores
             var storeName = materialized.StoreName;
             var tableSource = ActivatorUtilities.CreateInstance<KTableSource<K, V>>(this.services, storeName, storeName);
             var processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
@@ -170,22 +170,22 @@ namespace Kafka.Streams.KStream.Internals
                   .WithProcessorParameters(processorParameters)
                   .Build();
 
-            this.AddGraphNode<K, V>(root, tableSourceNode);
+            this.AddGraphNode<K, V>(this.root, tableSourceNode);
 
-            return new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(context, storeName), materialized.QueryableStoreName());
+            return new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(this.context, storeName), materialized.QueryableStoreName());
         }
 
         public string NewProcessorName(string prefix)
-            => $"{prefix}{index++,3:D10}";
+            => $"{prefix}{this.index++,3:D10}";
 
         public string NewStoreName(string prefix)
-            => $"{prefix}{KTable.StateStoreName}{index++,3:D10}";
+            => $"{prefix}{KTable.StateStoreName}{this.index++,3:D10}";
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void AddStateStore<K, V, T>(IStoreBuilder<T> builder)
             where T : IStateStore
         {
-            AddGraphNode<K, V>(root, new StateStoreNode<T>(builder));
+            this.AddGraphNode<K, V>(this.root, new StateStoreNode<T>(builder));
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -206,7 +206,7 @@ namespace Kafka.Streams.KStream.Internals
                 processorName,
                 stateUpdateSupplier);
 
-            this.AddGraphNode<K, V>(root, globalStoreNode);
+            this.AddGraphNode<K, V>(this.root, globalStoreNode);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -239,8 +239,8 @@ namespace Kafka.Streams.KStream.Internals
 
             // explicitly disable logging for global stores
             storeBuilder.WithLoggingDisabled();
-            var sourceName = NewProcessorName(KStream.SourceName);
-            var processorName = NewProcessorName(KTable.SourceName);
+            var sourceName = this.NewProcessorName(KStream.SourceName);
+            var processorName = this.NewProcessorName(KTable.SourceName);
 
             this.AddGlobalStore<K, V, T>(
                 storeBuilder,
@@ -257,7 +257,7 @@ namespace Kafka.Streams.KStream.Internals
             child = child ?? throw new ArgumentNullException(nameof(child));
 
             parent.AddChild(child);
-            MaybeAddNodeForOptimizationMetadata<K, V>(child);
+            this.MaybeAddNodeForOptimizationMetadata<K, V>(child);
         }
 
         public void AddGraphNode<K, V>(
@@ -274,13 +274,13 @@ namespace Kafka.Streams.KStream.Internals
 
             foreach (StreamsGraphNode parent in parents)
             {
-                AddGraphNode<K, V>(parent, child);
+                this.AddGraphNode<K, V>(parent, child);
             }
         }
 
         private void MaybeAddNodeForOptimizationMetadata<K, V>(StreamsGraphNode node)
         {
-            node.SetBuildPriority(buildPriorityIndex++);
+            node.SetBuildPriority(this.buildPriorityIndex++);
 
             if (!node.ParentNodes.Any() && !node.NodeName.Equals(Constants.TopologyRoot))
             {
@@ -292,39 +292,39 @@ namespace Kafka.Streams.KStream.Internals
 
             if (node.IsKeyChangingOperation)
             {
-                keyChangingOperationsToOptimizableRepartitionNodes.Add(node, new HashSet<IOptimizableRepartitionNode>());
+                this.keyChangingOperationsToOptimizableRepartitionNodes.Add(node, new HashSet<IOptimizableRepartitionNode>());
             }
             else if (node is IOptimizableRepartitionNode repartitionNode)
             {
-                IStreamsGraphNode? parentNode = GetKeyChangingParentNode(repartitionNode);
+                IStreamsGraphNode? parentNode = this.GetKeyChangingParentNode(repartitionNode);
                 if (parentNode != null)
                 {
-                    keyChangingOperationsToOptimizableRepartitionNodes[parentNode].Add(repartitionNode);
+                    this.keyChangingOperationsToOptimizableRepartitionNodes[parentNode].Add(repartitionNode);
                 }
             }
             else if (node.IsMergeNode)
             {
-                mergeNodes.Add(node);
+                this.mergeNodes.Add(node);
             }
             else if (node is ITableSourceNode tableSourceNode)
             {
-                tableSourceNodes.Add(tableSourceNode);
+                this.tableSourceNodes.Add(tableSourceNode);
             }
         }
 
         // use this method for testing only
         public void BuildAndOptimizeTopology()
         {
-            BuildAndOptimizeTopology(config: null);
+            this.BuildAndOptimizeTopology(config: null);
         }
 
         public void BuildAndOptimizeTopology(StreamsConfig? config)
         {
-            MaybePerformOptimizations(config);
+            this.MaybePerformOptimizations(config);
 
             var graphNodePriorityQueue = new SimplePriorityQueue<IStreamsGraphNode>(new StreamsGraphNodeComparer());
 
-            graphNodePriorityQueue.Enqueue(root, root.BuildPriority);
+            graphNodePriorityQueue.Enqueue(this.root, this.root.BuildPriority);
 
             while (graphNodePriorityQueue.Any())
             {
@@ -352,15 +352,15 @@ namespace Kafka.Streams.KStream.Internals
             {
                 this.logger.LogDebug("Optimizing the Kafka Streams graph for repartition nodes");
 
-                OptimizeKTableSourceTopics();
-                MaybeOptimizeRepartitionOperations();
+                this.OptimizeKTableSourceTopics();
+                this.MaybeOptimizeRepartitionOperations();
             }
         }
 
         private void OptimizeKTableSourceTopics()
         {
             this.logger.LogDebug("Marking KTable source nodes to optimize using source topic for changelogs ");
-            foreach (var node in tableSourceNodes)
+            foreach (var node in this.tableSourceNodes)
             {
                 node.ShouldReuseSourceTopicForChangelog = true;
             }
@@ -368,9 +368,9 @@ namespace Kafka.Streams.KStream.Internals
 
         private void MaybeOptimizeRepartitionOperations()
         {
-            MaybeUpdateKeyChangingRepartitionNodeMap();
+            this.MaybeUpdateKeyChangingRepartitionNodeMap();
 
-            foreach (var entry in keyChangingOperationsToOptimizableRepartitionNodes)
+            foreach (var entry in this.keyChangingOperationsToOptimizableRepartitionNodes)
             {
                 IStreamsGraphNode keyChangingNode = entry.Key;
 
@@ -383,7 +383,7 @@ namespace Kafka.Streams.KStream.Internals
 
                 //string repartitionTopicName = GetFirstRepartitionTopicName(entry.Value.ToList());
 
-                //// passing in the name of the first repartition topic, re-used to create the optimized repartition topic
+                //// passing in the Name of the first repartition topic, re-used to create the optimized repartition topic
                 //var optimizedSingleRepartition = CreateRepartitionNode(
                 //    repartitionTopicName,
                 //    groupedInternal.keySerde,
@@ -444,14 +444,14 @@ namespace Kafka.Streams.KStream.Internals
         private void MaybeUpdateKeyChangingRepartitionNodeMap()
         {
             var mergeNodesToKeyChangers = new Dictionary<IStreamsGraphNode, HashSet<IStreamsGraphNode>>();
-            foreach (var mergeNode in mergeNodes)
+            foreach (var mergeNode in this.mergeNodes)
             {
                 mergeNodesToKeyChangers.Add(mergeNode, new HashSet<IStreamsGraphNode>());
-                var keys = new List<IStreamsGraphNode>(keyChangingOperationsToOptimizableRepartitionNodes.Keys);
+                var keys = new List<IStreamsGraphNode>(this.keyChangingOperationsToOptimizableRepartitionNodes.Keys);
 
                 foreach (var key in keys)
                 {
-                    IStreamsGraphNode? maybeParentKey = FindParentNodeMatching(mergeNode, node => node.ParentNodes.Contains(key));
+                    IStreamsGraphNode? maybeParentKey = this.FindParentNodeMatching(mergeNode, node => node.ParentNodes.Contains(key));
                     if (maybeParentKey != null)
                     {
                         mergeNodesToKeyChangers[mergeNode].Add(key);
@@ -467,19 +467,19 @@ namespace Kafka.Streams.KStream.Internals
 
                 foreach (var keyChangingParent in keyChangingParents)
                 {
-                    repartitionNodes.UnionWith(keyChangingOperationsToOptimizableRepartitionNodes[keyChangingParent]);
-                    keyChangingOperationsToOptimizableRepartitionNodes.Remove(keyChangingParent);
+                    repartitionNodes.UnionWith(this.keyChangingOperationsToOptimizableRepartitionNodes[keyChangingParent]);
+                    this.keyChangingOperationsToOptimizableRepartitionNodes.Remove(keyChangingParent);
                 }
 
-                keyChangingOperationsToOptimizableRepartitionNodes.Add(mergeKey, repartitionNodes);
+                this.keyChangingOperationsToOptimizableRepartitionNodes.Add(mergeKey, repartitionNodes);
             }
         }
 
         private IStreamsGraphNode? GetKeyChangingParentNode(IStreamsGraphNode repartitionNode)
         {
-            var shouldBeKeyChangingNode = FindParentNodeMatching(repartitionNode, n => n.IsKeyChangingOperation || n.IsValueChangingOperation);
+            var shouldBeKeyChangingNode = this.FindParentNodeMatching(repartitionNode, n => n.IsKeyChangingOperation || n.IsValueChangingOperation);
 
-            var keyChangingNode = FindParentNodeMatching(repartitionNode, n => n.IsKeyChangingOperation);
+            var keyChangingNode = this.FindParentNodeMatching(repartitionNode, n => n.IsKeyChangingOperation);
 
             if (shouldBeKeyChangingNode != null && shouldBeKeyChangingNode.Equals(keyChangingNode))
             {
@@ -507,7 +507,7 @@ namespace Kafka.Streams.KStream.Internals
                     return parentNode;
                 }
 
-                foundParentNode = FindParentNodeMatching(parentNode, parentNodePredicate);
+                foundParentNode = this.FindParentNodeMatching(parentNode, parentNodePredicate);
             }
 
             return foundParentNode;

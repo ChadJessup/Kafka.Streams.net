@@ -7,7 +7,7 @@ using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class TimestampedCacheFlushListener<K, V> : ICacheFlushListener<K, ValueAndTimestamp<V>>
+    public class TimestampedCacheFlushListener<K, V> : ICacheFlushListener<K, IValueAndTimestamp<V>>
     {
         private readonly IInternalProcessorContext context;
         private readonly IProcessorNode<K, V> myNode;
@@ -20,28 +20,28 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             this.context = (IInternalProcessorContext)context;
-            myNode = (IProcessorNode<K, V>)this.context.GetCurrentNode();
+            this.myNode = (IProcessorNode<K, V>)this.context.GetCurrentNode();
         }
 
         public void Apply(
             K key,
-            ValueAndTimestamp<V> newValue,
-            ValueAndTimestamp<V> oldValue,
+            IValueAndTimestamp<V> newValue,
+            IValueAndTimestamp<V> oldValue,
             long timestamp)
         {
-            var prev = context.GetCurrentNode();
-            context.SetCurrentNode(myNode);
+            var prev = this.context.GetCurrentNode();
+            this.context.SetCurrentNode(this.myNode);
 
             try
             {
-                context.Forward(
+                this.context.Forward(
                     key,
-                    new Change<ValueAndTimestamp<V>>(newValue, oldValue),
+                    new Change<IValueAndTimestamp<V>>(newValue, oldValue),
                     To.All().WithTimestamp(newValue != null ? newValue.Timestamp : timestamp));
             }
             finally
             {
-                context.SetCurrentNode(prev);
+                this.context.SetCurrentNode(prev);
             }
         }
     }

@@ -15,7 +15,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             //if (action is PrintForeachAction)
             //{
-            //    ((PrintForeachAction)action).close();
+            //    ((PrintForeachAction)action).Close();
             //}
         }
     }

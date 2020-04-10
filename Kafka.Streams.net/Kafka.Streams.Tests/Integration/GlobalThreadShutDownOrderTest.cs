@@ -23,8 +23,8 @@
 
 //        //static {
 //        //    BROKER_CONFIG = new StreamsConfig();
-//        //BROKER_CONFIG.put("transaction.state.log.replication.factor", (short) 1);
-//        //    BROKER_CONFIG.put("transaction.state.log.min.isr", 1);
+//        //BROKER_CONFIG.Put("transaction.state.log.replication.factor", (short) 1);
+//        //    BROKER_CONFIG.Put("transaction.state.log.min.isr", 1);
 //        //}
 
 
@@ -78,7 +78,7 @@
 //        {// throws Exception
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close();
+//                kafkaStreams.Close();
 //            }
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
@@ -97,7 +97,7 @@
 //                30000,
 //                "Has not processed record within 30 seconds");
 
-//            kafkaStreams.close(TimeSpan.ofSeconds(30));
+//            kafkaStreams.Close(TimeSpan.ofSeconds(30));
 
 //            List<long> expectedRetrievedValues = new List<long> { 1L, 2L, 3L, 4L };
 //            Assert.Equal(expectedRetrievedValues, retrievedValuesList);

@@ -15,9 +15,9 @@
         }
 
         /**
-         * Delete all the records before the given {@code offset}
+         * Delete All the records before the given {@code offset}
          *
-         * @param offset    the offset before which all records will be deleted
+         * @param offset    the offset before which All records will be deleted
          */
         public static RecordsToDelete BeforeOffset(long offset)
         {
@@ -25,11 +25,11 @@
         }
 
         /**
-         * The offset before which all records will be deleted
+         * The offset before which All records will be deleted
          */
         public long BeforeOffset()
         {
-            return offset;
+            return this.offset;
         }
 
         public override bool Equals(object o)
@@ -44,12 +44,12 @@
 
         public override int GetHashCode()
         {
-            return (int)offset;
+            return (int)this.offset;
         }
 
         public override string ToString()
         {
-            return "(beforeOffset = " + offset + ")";
+            return "(beforeOffset = " + this.offset + ")";
         }
     }
 }

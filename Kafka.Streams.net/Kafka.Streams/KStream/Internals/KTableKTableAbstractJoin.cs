@@ -30,8 +30,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public void EnableSendingOldValues()
         {
-            table1.EnableSendingOldValues();
-            table2.EnableSendingOldValues();
+            this.table1.EnableSendingOldValues();
+            this.table2.EnableSendingOldValues();
             this.sendOldValues = true;
         }
 

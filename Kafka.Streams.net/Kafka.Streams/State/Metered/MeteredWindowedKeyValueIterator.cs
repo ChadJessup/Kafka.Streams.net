@@ -1,22 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream;
 using Kafka.Streams.State.KeyValues;
 
 namespace Kafka.Streams.State.Metered
 {
-    public class MeteredWindowedKeyValueIterator<K, V> : IKeyValueIterator<Windowed<K>, V>
+    public class MeteredWindowedKeyValueIterator<K, V> : IKeyValueIterator<IWindowed<K>, V>
     {
-        private IKeyValueIterator<Windowed<Bytes>, byte[]> iter;
+        private IKeyValueIterator<IWindowed<Bytes>, byte[]> iter;
         private IStateSerdes<K, V> serdes;
         private long startNs;
         private KafkaStreamsContext context;
 
         public MeteredWindowedKeyValueIterator(
             KafkaStreamsContext context,
-            IKeyValueIterator<Windowed<Bytes>, byte[]> iter,
+            IKeyValueIterator<IWindowed<Bytes>, byte[]> iter,
             IStateSerdes<K, V> serdes)
         {
             this.iter = iter ?? throw new ArgumentNullException(nameof(iter));
@@ -26,19 +25,19 @@ namespace Kafka.Streams.State.Metered
             this.startNs = context.Clock.NowAsEpochNanoseconds;
         }
 
-        private Windowed<K> WindowedKey(Windowed<Bytes> bytesKey)
+        private IWindowed<K> WindowedKey(IWindowed<Bytes> bytesKey)
         {
-            K key = serdes.KeyFrom(bytesKey.Key.Get());
+            K key = this.serdes.KeyFrom(bytesKey.Key.Get());
 
-            return new Windowed<K>(key, bytesKey.window);
+            return new Windowed2<K>(key, bytesKey.window);
         }
 
-        public KeyValuePair<Windowed<K>, V> Current
+        public KeyValuePair<IWindowed<K>, V> Current
         {
             get
             {
-                KeyValuePair<Windowed<Bytes>, byte[]> next = iter.Current;
-                return KeyValuePair.Create(WindowedKey(next.Key), serdes.ValueFrom(next.Value));
+                KeyValuePair<IWindowed<Bytes>, byte[]> next = this.iter.Current;
+                return KeyValuePair.Create(this.WindowedKey(next.Key), this.serdes.ValueFrom(next.Value));
             }
         }
 
@@ -48,15 +47,15 @@ namespace Kafka.Streams.State.Metered
         {
             try
             {
-                iter.Close();
+                this.iter.Close();
             }
             finally
             {
-                //metrics.recordLatency(sensor, startNs, time.nanoseconds());
+                //metrics.recordLatency(sensor, startNs, this.Context.Clock.NowAsEpochNanoseconds;);
             }
         }
 
-        public Windowed<K> PeekNextKey() => WindowedKey(this.iter.PeekNextKey());
+        public IWindowed<K> PeekNextKey() => this.WindowedKey(this.iter.PeekNextKey());
         public bool MoveNext() => this.iter.MoveNext();
         public void Reset() => this.iter.Reset();
         public void Dispose() => this.iter.Dispose();

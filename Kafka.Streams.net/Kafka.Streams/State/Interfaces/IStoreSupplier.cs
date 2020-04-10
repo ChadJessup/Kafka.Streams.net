@@ -9,10 +9,10 @@ namespace Kafka.Streams.State.Interfaces
         where T : IStateStore
     {
         /**
-         * Return the name of this state store supplier.
-         * This must be a valid Kafka topic name; valid characters are ASCII alphanumerics, '.', '_' and '-'.
+         * Return the Name of this state store supplier.
+         * This must be a valid Kafka topic Name; valid characters are ASCII alphanumerics, '.', '_' and '-'.
          *
-         * @return the name of this state store supplier
+         * @return the Name of this state store supplier
          */
         string Name { get; }
 
@@ -29,6 +29,6 @@ namespace Kafka.Streams.State.Interfaces
          */
         //string MetricsScope();
 
-        void SetName(string name);
+        void SetName(string Name);
     }
 }

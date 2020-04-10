@@ -8,7 +8,7 @@ namespace Kafka.Streams.State.Windowed
      *
      * For any stores implementing the {@link WindowStore WindowStore&lt;Byte, byte[]&gt;} interface, null value bytes are considered as "not exist". This means:
      *
-     * 1. Null value bytes in put operations should be treated as delete.
+     * 1. Null value bytes in Put operations should be treated as delete.
      * 2. Null value bytes should never be returned in range query results.
      */
     public interface IWindowBytesStoreSupplier : IStoreSupplier<IWindowStore<Bytes, byte[]>>

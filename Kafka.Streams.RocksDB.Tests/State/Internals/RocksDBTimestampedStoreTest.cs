@@ -77,27 +77,27 @@
 //            // should migrate key1 from old to new CF
 //            // must return timestamp plus value, ie, it's not 1 byte but 9 bytes
 //            Assert.Equal(rocksDBStore.Get(new Bytes("key1".getBytes())).Length, (8 + 1));
-//            // one delete on old CF, one put on new CF
+//            // one delete on old CF, one Put on new CF
 //            // approx: 6 entries on old CF, 1 in new CF
 //            Assert.Equal(rocksDBStore.approximateNumEntries, (7L));
 
-//            // put()
+//            // Put()
 
 //            // should migrate key2 from old to new CF with new value
-//            rocksDBStore.put(new Bytes("key2".getBytes()), "timestamp+22".getBytes());
-//            // one delete on old CF, one put on new CF
+//            rocksDBStore.Put(new Bytes("key2".getBytes()), "timestamp+22".getBytes());
+//            // one delete on old CF, one Put on new CF
 //            // approx: 5 entries on old CF, 2 in new CF
 //            Assert.Equal(rocksDBStore.approximateNumEntries, (7L));
 
 //            // should delete key3 from old and new CF
-//            rocksDBStore.put(new Bytes("key3".getBytes()), null);
+//            rocksDBStore.Put(new Bytes("key3".getBytes()), null);
 //            // count is off by one, due to two delete operations (even if one does not delete anything)
 //            // approx: 4 entries on old CF, 1 in new CF
 //            Assert.Equal(rocksDBStore.approximateNumEntries, (5L));
 
 //            // should add new key8 to new CF
-//            rocksDBStore.put(new Bytes("key8".getBytes()), "timestamp+88888888".getBytes());
-//            // one delete on old CF, one put on new CF
+//            rocksDBStore.Put(new Bytes("key8".getBytes()), "timestamp+88888888".getBytes());
+//            // one delete on old CF, one Put on new CF
 //            // approx: 3 entries on old CF, 2 in new CF
 //            Assert.Equal(rocksDBStore.approximateNumEntries, (5L));
 
@@ -105,19 +105,19 @@
 
 //            // should migrate key4 from old to new CF with old value
 //            Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key4".getBytes()), "timestamp+4444".getBytes()).Length, (8 + 4));
-//            // one delete on old CF, one put on new CF
+//            // one delete on old CF, one Put on new CF
 //            // approx: 2 entries on old CF, 3 in new CF
 //            Assert.Equal(rocksDBStore.approximateNumEntries, (5L));
 
 //            // should add new key11 to new CF
 //            Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key11".getBytes()), "timestamp+11111111111".getBytes()), new IsNull<>());
-//            // one delete on old CF, one put on new CF
+//            // one delete on old CF, one Put on new CF
 //            // approx: 1 entries on old CF, 4 in new CF
 //            Assert.Equal(rocksDBStore.approximateNumEntries, (5L));
 
 //            // should not delete key5 but migrate to new CF
 //            Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key5".getBytes()), null).Length, (8 + 5));
-//            // one delete on old CF, one put on new CF
+//            // one delete on old CF, one Put on new CF
 //            // approx: 0 entries on old CF, 5 in new CF
 //            Assert.Equal(rocksDBStore.approximateNumEntries, (5L));
 
@@ -139,15 +139,15 @@
 //            IteratorsShouldNotMigrateData();
 //            Assert.Equal(rocksDBStore.approximateNumEntries, (3L));
 
-//            rocksDBStore.close();
+//            rocksDBStore.Close();
 
 //            VerifyOldAndNewColumnFamily();
 //        }
 
 //        private void IteratorsShouldNotMigrateData()
 //        {
-//            // iterating should not migrate any data, but return all key over both CF (plus surrogate timestamps for old CF)
-//            IKeyValueIterator<Bytes, byte[]> itAll = rocksDBStore.all();
+//            // iterating should not migrate any data, but return All key over both CF (plus surrogate timestamps for old CF)
+//            IKeyValueIterator<Bytes, byte[]> itAll = rocksDBStore.All();
 //            {
 //                KeyValuePair<Bytes, byte[]> keyValue = itAll.MoveNext();
 //                assertArrayEquals("key1".getBytes(), keyValue.key.Get());
@@ -188,7 +188,7 @@
 //                assertArrayEquals(new byte[] { 't', 'i', 'm', 'e', 's', 't', 'a', 'm', 'p', '+', '8', '8', '8', '8', '8', '8', '8', '8' }, keyValue.value);
 //            }
 //            Assert.False(itAll.HasNext());
-//            itAll.close();
+//            itAll.Close();
 
 //            IKeyValueIterator<Bytes, byte[]> it =
 //                rocksDBStore.Range(new Bytes("key2".getBytes()), new Bytes("key5".getBytes()));
@@ -210,7 +210,7 @@
 //                assertArrayEquals(new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, '5', '5', '5', '5', '5' }, keyValue.value);
 //            }
 //            Assert.False(it.HasNext());
-//            it.close();
+//            it.Close();
 //        }
 
 //        private void VerifyOldAndNewColumnFamily()
@@ -256,14 +256,14 @@
 //            Assert.Equal(db.Get(withTimestampColumnFamily, "key11".getBytes()).Length, (21));
 //            Assert.Equal(db.Get(withTimestampColumnFamily, "key12".getBytes()), new IsNull<>());
 
-//            db.close();
+//            db.Close();
 
 //            // check that still in upgrade mode
 //            LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 //            rocksDBStore.Init(context, rocksDBStore);
 //            Assert.Equal(appender.getMessages(), hasItem("Opening store " + DB_NAME + " in upgrade mode"));
 //            LogCaptureAppender.Unregister(appender);
-//            rocksDBStore.close();
+//            rocksDBStore.Close();
 
 //            // clear old CF
 //            columnFamilies.Clear();
@@ -275,7 +275,7 @@
 
 //            noTimestampColumnFamily = columnFamilies.Get(0);
 //            db.delete(noTimestampColumnFamily, "key7".getBytes());
-//            db.close();
+//            db.Close();
 
 //            // check that still in regular mode
 //            appender = LogCaptureAppender.CreateAndRegister();
@@ -289,15 +289,15 @@
 //            RocksDbStore KeyValueStore = new RocksDbStore(DB_NAME);
 //            KeyValueStore.Init(context, KeyValueStore);
 
-//            KeyValueStore.put(new Bytes("key1".getBytes()), "1".getBytes());
-//            KeyValueStore.put(new Bytes("key2".getBytes()), "22".getBytes());
-//            KeyValueStore.put(new Bytes("key3".getBytes()), "333".getBytes());
-//            KeyValueStore.put(new Bytes("key4".getBytes()), "4444".getBytes());
-//            KeyValueStore.put(new Bytes("key5".getBytes()), "55555".getBytes());
-//            KeyValueStore.put(new Bytes("key6".getBytes()), "666666".getBytes());
-//            KeyValueStore.put(new Bytes("key7".getBytes()), "7777777".getBytes());
+//            KeyValueStore.Put(new Bytes("key1".getBytes()), "1".getBytes());
+//            KeyValueStore.Put(new Bytes("key2".getBytes()), "22".getBytes());
+//            KeyValueStore.Put(new Bytes("key3".getBytes()), "333".getBytes());
+//            KeyValueStore.Put(new Bytes("key4".getBytes()), "4444".getBytes());
+//            KeyValueStore.Put(new Bytes("key5".getBytes()), "55555".getBytes());
+//            KeyValueStore.Put(new Bytes("key6".getBytes()), "666666".getBytes());
+//            KeyValueStore.Put(new Bytes("key7".getBytes()), "7777777".getBytes());
 
-//            KeyValueStore.close();
+//            KeyValueStore.Close();
 //        }
 
 //    }

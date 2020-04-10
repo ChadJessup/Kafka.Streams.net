@@ -288,7 +288,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //            if (enableTransactions) {
 //                producer.commitTransaction();
 //            }
-//            producer.flush();
+//            producer.Flush();
 //        }
 //    }
 
@@ -314,7 +314,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //            if (eos) {
 //                producer.commitTransaction();
 //            } else {
-//                producer.flush();
+//                producer.Flush();
 //            }
 
 //            foreach (Future<RecordMetadata> future in futures) {
@@ -411,7 +411,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //            int lagMetrics = 0;
 //            double totalLag = 0.0;
 //            foreach (Metric metric in streams.metrics().values()) {
-//                if (metric.metricName().name().equals("records-lag")) {
+//                if (metric.metricName().Name().equals("records-lag")) {
 //                    lagMetrics++;
 //                    totalLag += ((Number) metric.metricValue()).doubleValue();
 //                }
@@ -470,7 +470,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                accumData.addAll(readData);
 //                return accumData.Count >= expectedNumRecords;
 //            };
-//            string conditionDetails = "Did not receive all " + expectedNumRecords + " records from topic " + topic;
+//            string conditionDetails = "Did not receive All " + expectedNumRecords + " records from topic " + topic;
 //            TestUtils.WaitForCondition(valuesRead, waitTime, conditionDetails);
 //        }
 //        return accumData;
@@ -517,7 +517,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                accumData.addAll(readData);
 //                return accumData.Count >= expectedNumRecords;
 //            };
-//            string conditionDetails = "Did not receive all " + expectedNumRecords + " records from topic " + topic;
+//            string conditionDetails = "Did not receive All " + expectedNumRecords + " records from topic " + topic;
 //            TestUtils.WaitForCondition(valuesRead, waitTime, conditionDetails);
 //        }
 //        return accumData;
@@ -547,7 +547,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                accumData.addAll(readData);
 //                return accumData.Count >= expectedNumRecords;
 //            };
-//            string conditionDetails = "Did not receive all " + expectedNumRecords + " records from topic " + topic;
+//            string conditionDetails = "Did not receive All " + expectedNumRecords + " records from topic " + topic;
 //            TestUtils.WaitForCondition(valuesRead, waitTime, conditionDetails);
 //        }
 //        return accumData;
@@ -629,7 +629,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                }
 //                accumData.addAll(readData);
 
-//                // filter out all intermediate records we don't want
+//                // filter out All intermediate records we don't want
 //                List<T> accumulatedActual = accumData.Stream().filter(expectedRecords::contains).collect(Collectors.toList());
 
 //                // still need to check that for each key, the ordering is expected
@@ -651,7 +651,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                return finalAccumData.equals(finalExpected);
 
 //            };
-//            string conditionDetails = "Did not receive all " + expectedRecords + " records from topic " + topic;
+//            string conditionDetails = "Did not receive All " + expectedRecords + " records from topic " + topic;
 //            TestUtils.WaitForCondition(valuesRead, waitTime, conditionDetails);
 //        }
 //        return accumData;
@@ -696,7 +696,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                accumData.addAll(readData);
 //                return accumData.Count >= expectedNumRecords;
 //            };
-//            string conditionDetails = "Did not receive all " + expectedNumRecords + " records from topic " + topic;
+//            string conditionDetails = "Did not receive All " + expectedNumRecords + " records from topic " + topic;
 //            TestUtils.WaitForCondition(valuesRead, waitTime, conditionDetails);
 //        }
 //        return accumData;
@@ -734,7 +734,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                }
 //            }
 //            return true;
-//        }, timeout, "metadata for topic=" + topic + " partition=" + partition + " not propagated to all brokers");
+//        }, timeout, "metadata for topic=" + topic + " partition=" + partition + " not propagated to All brokers");
 
 //    }
 

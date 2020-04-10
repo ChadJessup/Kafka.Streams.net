@@ -54,7 +54,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        {
 //            if (driver != null)
 //            {
-//                driver.close();
+//                driver.Close();
 //                driver = null;
 //            }
 //        }
@@ -234,12 +234,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KTableTransformValues<>(parent, mockSupplier, null);
 
 //            expect(mockSupplier.Get()).andReturn(transformer);
-//            transformer.close();
+//            transformer.Close();
 //            expect.AstCall();
 //            replay(mockSupplier, transformer);
 
 //            Processor<string, Change<string>> processor = transformValues.Get();
-//            processor.close();
+//            processor.Close();
 
 //            verify(transformer);
 //        }
@@ -254,13 +254,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            expect(parentGetterSupplier.Get()).andReturn(parentGetter);
 //            expect(parent.valueGetterSupplier()).andReturn(parentGetterSupplier);
 
-//            transformer.close();
+//            transformer.Close();
 //            expect.AstCall();
 
 //            replay(mockSupplier, transformer, parent, parentGetterSupplier);
 
 //            KTableValueGetter<string, string> getter = transformValues.view().Get();
-//            getter.close();
+//            getter.Close();
 
 //            verify(transformer);
 //        }
@@ -275,13 +275,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            expect(mockSupplier.Get()).andReturn(transformer);
 //            expect(parentGetterSupplier.Get()).andReturn(parentGetter);
 
-//            parentGetter.close();
+//            parentGetter.Close();
 //            expect.AstCall();
 
 //            replay(mockSupplier, parent, parentGetterSupplier, parentGetter);
 
 //            KTableValueGetter<string, string> getter = transformValues.view().Get();
-//            getter.close();
+//            getter.Close();
 
 //            verify(parentGetter);
 //        }
@@ -485,7 +485,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            }
 
 
-//            public void init(IProcessorContext context)
+//            public void Init(IProcessorContext context)
 //            {
 //                throwIfStoresNotAvailable(context, expectedStoredNames);
 //            }
@@ -497,7 +497,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            }
 
 
-//            public void close() { }
+//            public void Close() { }
 //        }
 
 //        private class NullSupplier : ValueTransformerWithKeySupplier<string, string, string>
@@ -523,7 +523,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            private int counter;
 
 
-//            public void init(IProcessorContext context) { }
+//            public void Init(IProcessorContext context) { }
 
 
 //            public int transform(string readOnlyKey, string value)
@@ -532,7 +532,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            }
 
 
-//            public void close() { }
+//            public void Close() { }
 //        }
 
 //        private class StatelessTransformerSupplier : ValueTransformerWithKeySupplier<string, string, int>
@@ -547,7 +547,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        private class StatelessTransformer : ValueTransformerWithKey<string, string, int>
 //        {
 
-//            public void init(IProcessorContext context) { }
+//            public void Init(IProcessorContext context) { }
 
 
 //            public int transform(string readOnlyKey, string value)
@@ -556,7 +556,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            }
 
 
-//            public void close() { }
+//            public void Close() { }
 //        }
 //    }
 //}

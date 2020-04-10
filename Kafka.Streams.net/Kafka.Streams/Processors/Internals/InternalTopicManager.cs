@@ -54,15 +54,15 @@ namespace Kafka.Streams.Processors.Internals
          */
         public void MakeReady(Dictionary<string, InternalTopicConfig> topics)
         {
-            // we will do the validation / topic-creation in a loop, until we have confirmed all topics
+            // we will do the validation / topic-creation in a loop, until we have confirmed All topics
             // have existed with the expected number of partitions, or some create topic returns fatal errors.
 
-            var remainingRetries = retries;
+            var remainingRetries = this.retries;
             var topicsNotReady = new HashSet<string>(topics.Keys);
 
             while (topicsNotReady.Any() && remainingRetries >= 0)
             {
-                topicsNotReady = ValidateTopics(topicsNotReady, topics);
+                topicsNotReady = this.ValidateTopics(topicsNotReady, topics);
 
                 //if (topicsNotReady.Count > 0)
                 //{
@@ -74,13 +74,13 @@ namespace Kafka.Streams.Processors.Internals
                 //        Dictionary<string, string> topicConfig = internalTopicConfig.getProperties(defaultTopicConfigs, windowChangeLogAdditionalRetention);
 
                 //        log.LogDebug("Going to create topic {} with {} partitions and config {}.",
-                //            internalTopicConfig.name,
+                //            internalTopicConfig.Name,
                 //            internalTopicConfig.numberOfPartitions(),
                 //            topicConfig);
 
                 //        newTopics.Add(
                 //            new NewTopic(
-                //                internalTopicConfig.name,
+                //                internalTopicConfig.Name,
                 //                internalTopicConfig.numberOfPartitions(),
                 //                replicationFactor)
                 //                .configs(topicConfig));
@@ -128,7 +128,7 @@ namespace Kafka.Streams.Processors.Internals
 
                 if (topicsNotReady.Any())
                 {
-                    log.LogInformation("Topics {} can not be made ready with {} retries left", topicsNotReady, retries);
+                    this.log.LogInformation("Topics {} can not be made ready with {} retries left", topicsNotReady, this.retries);
 
                     //Utils.sleep(retryBackOffMs);
 
@@ -140,8 +140,8 @@ namespace Kafka.Streams.Processors.Internals
             {
                 var timeoutAndRetryError = string.Format("Could not create topics after %d retries. " +
                     "This can happen if the Kafka cluster is temporary not available. " +
-                    "You can increase admin client config `retries` to be resilient against this error.", retries);
-                log.LogError(timeoutAndRetryError);
+                    "You can increase admin client config `retries` to be resilient against this error.", this.retries);
+                this.log.LogError(timeoutAndRetryError);
                 throw new StreamsException(timeoutAndRetryError);
             }
         }
@@ -154,7 +154,7 @@ namespace Kafka.Streams.Processors.Internals
         // visible for testing
         protected Dictionary<string, int> GetNumPartitions(HashSet<string> topics)
         {
-            log.LogDebug("Trying to check if topics {} have been created with expected number of partitions.", topics);
+            this.log.LogDebug("Trying to check if topics {} have been created with expected number of partitions.", topics);
 
             //DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(topics);
             //Dictionary<string, KafkaFuture<TopicDescription>> futures = describeTopicsResult.Values;
@@ -208,7 +208,7 @@ namespace Kafka.Streams.Processors.Internals
             Dictionary<string, InternalTopicConfig> topicsMap)
         {
 
-            Dictionary<string, int> existedTopicPartition = GetNumPartitions(topicsToValidate);
+            Dictionary<string, int> existedTopicPartition = this.GetNumPartitions(topicsToValidate);
 
             var topicsToCreate = new HashSet<string>();
             foreach (KeyValuePair<string, InternalTopicConfig> entry in topicsMap)

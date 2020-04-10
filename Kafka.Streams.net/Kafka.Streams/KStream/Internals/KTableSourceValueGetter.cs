@@ -18,17 +18,17 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Init(IProcessorContext context, string storeName)
         {
-            store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.context, storeName);
+            this.store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(storeName);
         }
 
-        public ValueAndTimestamp<V> Get(K key)
+        public IValueAndTimestamp<V> Get(K key)
         {
-            return store.Get(key);
+            return this.store.Get(key);
         }
 
         public void Close() { }
 
-        ValueAndTimestamp<V> IKTableValueGetter<K, V>.Get(K key)
+        IValueAndTimestamp<V> IKTableValueGetter<K, V>.Get(K key)
         {
             throw new NotImplementedException();
         }

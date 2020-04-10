@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.Queryable
          * @param value type of the store
          * @return {@link QueryableStoreTypes.TimestampedKeyValueStoreType}
          */
-        public static IQueryableStoreType<IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>> TimestampedKeyValueStore<K, V>()
+        public static IQueryableStoreType<IReadOnlyKeyValueStore<K, IValueAndTimestamp<V>>> TimestampedKeyValueStore<K, V>()
         {
             return new TimestampedKeyValueStoreType<K, V>();
         }
@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Queryable
          * @param value type of the store
          * @return {@link QueryableStoreTypes.TimestampedWindowStoreType}
          */
-        public static IQueryableStoreType<IReadOnlyWindowStore<K, ValueAndTimestamp<V>>> TimestampedWindowStore<K, V>()
+        public static IQueryableStoreType<IReadOnlyWindowStore<K, IValueAndTimestamp<V>>> TimestampedWindowStore<K, V>()
         {
             return new TimestampedWindowStoreType<K, V>();
         }

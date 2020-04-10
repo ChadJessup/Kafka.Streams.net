@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.ReadOnly
         /**
          * Get the value of key from a window.
          *
-         * @param key       the key to fetch
+         * @param key       the key to Fetch
          * @param time      start timestamp (inclusive) of the window
          * @return The value or {@code null} if no value is found in the window
          * @throws InvalidStateStoreException if the store is not initialized
@@ -26,7 +26,7 @@ namespace Kafka.Streams.State.ReadOnly
         V Fetch(K key, long time);
 
         /**
-         * Get all the key-value pairs with the given key and the time range from all the existing windows.
+         * Get All the key-value pairs with the given key and the time range from All the existing windows.
          * <p>
          * This iterator must be closed after use.
          * <p>
@@ -46,24 +46,24 @@ namespace Kafka.Streams.State.ReadOnly
          * +--------------------------------
          * </pre>
          * And we call {@code store.Fetch("A", 10, 20)} then the results will contain the first
-         * three windows from the table above, i.e., all those where 10 &lt;= start time &lt;= 20.
+         * three windows from the table above, i.e., All those where 10 &lt;= start time &lt;= 20.
          * <p>
          * For each key, the iterator guarantees ordering of windows, starting from the oldest/earliest
          * available window to the newest/latest window.
          *
-         * @param key       the key to fetch
+         * @param key       the key to Fetch
          * @param timeFrom  time range start (inclusive)
          * @param timeTo    time range end (inclusive)
          * @return an iterator over key-value pairs {@code <timestamp, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException If {@code null} is used for key.
-         * @deprecated Use {@link #fetch(object, Instant, Instant)} instead
+         * @deprecated Use {@link #Fetch(object, Instant, Instant)} instead
          */
         [Obsolete]
         IWindowStoreIterator<V> Fetch(K key, long timeFrom, long timeTo);
 
         /**
-         * Get all the key-value pairs with the given key and the time range from all the existing windows.
+         * Get All the key-value pairs with the given key and the time range from All the existing windows.
          * <p>
          * This iterator must be closed after use.
          * <p>
@@ -83,12 +83,12 @@ namespace Kafka.Streams.State.ReadOnly
          * +--------------------------------
          * </pre>
          * And we call {@code store.Fetch("A", Instant.ofEpochMilli(10), Instant.ofEpochMilli(20))} then the results will contain the first
-         * three windows from the table above, i.e., all those where 10 &lt;= start time &lt;= 20.
+         * three windows from the table above, i.e., All those where 10 &lt;= start time &lt;= 20.
          * <p>
          * For each key, the iterator guarantees ordering of windows, starting from the oldest/earliest
          * available window to the newest/latest window.
          *
-         * @param key       the key to fetch
+         * @param key       the key to Fetch
          * @param from      time range start (inclusive)
          * @param to        time range end (inclusive)
          * @return an iterator over key-value pairs {@code <timestamp, value>}
@@ -99,7 +99,7 @@ namespace Kafka.Streams.State.ReadOnly
         IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to);
 
         /**
-         * Get all the key-value pairs in the given key range and time range from all the existing windows.
+         * Get All the key-value pairs in the given key range and time range from All the existing windows.
          * <p>
          * This iterator must be closed after use.
          *
@@ -107,16 +107,16 @@ namespace Kafka.Streams.State.ReadOnly
          * @param to        the last key in the range
          * @param timeFrom  time range start (inclusive)
          * @param timeTo    time range end (inclusive)
-         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+         * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException If {@code null} is used for any key.
-         * @deprecated Use {@link #fetch(object, object, Instant, Instant)} instead
+         * @deprecated Use {@link #Fetch(object, object, Instant, Instant)} instead
          */
         [Obsolete]
-        IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
+        IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
 
         /**
-         * Get all the key-value pairs in the given key range and time range from all the existing windows.
+         * Get All the key-value pairs in the given key range and time range from All the existing windows.
          * <p>
          * This iterator must be closed after use.
          *
@@ -124,45 +124,45 @@ namespace Kafka.Streams.State.ReadOnly
          * @param to        the last key in the range
          * @param fromTime  time range start (inclusive)
          * @param toTime    time range end (inclusive)
-         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+         * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException If {@code null} is used for any key.
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
-        IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, DateTime fromTime, DateTime toTime);
+        IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, DateTime fromTime, DateTime toTime);
 
         /**
-        * Gets all the key-value pairs in the existing windows.
+        * Gets All the key-value pairs in the existing windows.
         *
-        * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+        * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
         * @throws InvalidStateStoreException if the store is not initialized
         */
-        IKeyValueIterator<Windowed<K>, V> All();
+        IKeyValueIterator<IWindowed<K>, V> All();
 
         /**
-         * Gets all the key-value pairs that belong to the windows within in the given time range.
+         * Gets All the key-value pairs that belong to the windows within in the given time range.
          *
          * @param timeFrom the beginning of the time slot from which to search (inclusive)
          * @param timeTo   the end of the time slot from which to search (inclusive)
-         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+         * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException if {@code null} is used for any key
-         * @deprecated Use {@link #fetchAll(Instant, Instant)} instead
+         * @deprecated Use {@link #FetchAll(Instant, Instant)} instead
          */
         [Obsolete]
-        IKeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo);
+        IKeyValueIterator<IWindowed<K>, V> FetchAll(long timeFrom, long timeTo);
 
         /**
-         * Gets all the key-value pairs that belong to the windows within in the given time range.
+         * Gets All the key-value pairs that belong to the windows within in the given time range.
          *
          * @param from the beginning of the time slot from which to search (inclusive)
          * @param to   the end of the time slot from which to search (inclusive)
-         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+         * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException if {@code null} is used for any key
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
-        IKeyValueIterator<Windowed<K>, V> FetchAll(DateTime from, DateTime to);
+        IKeyValueIterator<IWindowed<K>, V> FetchAll(DateTime from, DateTime to);
     }
 
     public interface IReadOnlyWindowStore

@@ -15,24 +15,24 @@ namespace Kafka.Streams.KStream.Internals
 
             public string NewProcessorName(string prefix)
             {
-                return prefix + "PROCESSOR-" + index++;
+                return prefix + "PROCESSOR-" + this.index++;
             }
 
             public string NewStoreName(string prefix)
             {
-                return prefix + "STORE-" + index++;
+                return prefix + "STORE-" + this.index++;
             }
         }
 
         [Fact]
         public void ShouldSuffixNameOrReturnProviderValue()
         {
-            var name = "foo";
+            var Name = "foo";
             var provider = new TestNameProvider();
 
             Assert.Equal(
-                 name + TEST_SUFFIX,
-                 NamedInternal.With(name).SuffixWithOrElseGet(TEST_SUFFIX, provider, TEST_PREFIX)
+                 Name + TEST_SUFFIX,
+                 NamedInternal.With(Name).SuffixWithOrElseGet(TEST_SUFFIX, provider, TEST_PREFIX)
              );
 
             // 1, not 0, indicates that the named call still burned an index number.

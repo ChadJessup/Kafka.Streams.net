@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialized.As(INVALID_STORE_NAME));
 //        }
 
-//        private void doAggregateSessionWindows(MockProcessorSupplier<Windowed<string>, int> supplier)
+//        private void doAggregateSessionWindows(MockProcessorSupplier<IWindowed<string>, int> supplier)
 //        {
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 10));
@@ -128,24 +128,24 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 100));
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 90));
 
-//            Dictionary<Windowed<string>, ValueAndTimestamp<int>> result
+//            Dictionary<IWindowed<string>, ValueAndTimestamp<int>> result
 //                = supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make(2, 30L),
-//                 result.Get(new Windowed<>("1", new SessionWindow(10L, 30L))));
+//                 result.Get(new IWindowed<>("1", new SessionWindow(10L, 30L))));
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make(1, 15L),
-//                 result.Get(new Windowed<>("2", new SessionWindow(15L, 15L))));
+//                 result.Get(new IWindowed<>("2", new SessionWindow(15L, 15L))));
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make(3, 100L),
-//                 result.Get(new Windowed<>("1", new SessionWindow(70L, 100L))));
+//                 result.Get(new IWindowed<>("1", new SessionWindow(70L, 100L))));
 //        }
 
 //        [Fact]
 //        public void shouldAggregateSessionWindows()
 //        {
-//            MockProcessorSupplier<Windowed<string>, int> supplier = new MockProcessorSupplier<>();
-//            IKTable<Windowed<string>, int> table = groupedStream
+//            MockProcessorSupplier<IWindowed<string>, int> supplier = new MockProcessorSupplier<>();
+//            IKTable<IWindowed<string>, int> table = groupedStream
 //                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .aggregate(
 //                    () => 0,
@@ -162,8 +162,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldAggregateSessionWindowsWithInternalStoreName()
 //        {
-//            MockProcessorSupplier<Windowed<string>, int> supplier = new MockProcessorSupplier<>();
-//            IKTable<Windowed<string>, int> table = groupedStream
+//            MockProcessorSupplier<IWindowed<string>, int> supplier = new MockProcessorSupplier<>();
+//            IKTable<IWindowed<string>, int> table = groupedStream
 //                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .aggregate(
 //                    () => 0,
@@ -175,7 +175,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            doAggregateSessionWindows(supplier);
 //        }
 
-//        private void doCountSessionWindows(MockProcessorSupplier<Windowed<string>, long> supplier)
+//        private void doCountSessionWindows(MockProcessorSupplier<IWindowed<string>, long> supplier)
 //        {
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 10));
@@ -185,24 +185,24 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 100));
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 90));
 
-//            Dictionary<Windowed<string>, ValueAndTimestamp<long>> result =
+//            Dictionary<IWindowed<string>, ValueAndTimestamp<long>> result =
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make(2L, 30L),
-//                 result.Get(new Windowed<>("1", new SessionWindow(10L, 30L))));
+//                 result.Get(new IWindowed<>("1", new SessionWindow(10L, 30L))));
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make(1L, 15L),
-//                 result.Get(new Windowed<>("2", new SessionWindow(15L, 15L))));
+//                 result.Get(new IWindowed<>("2", new SessionWindow(15L, 15L))));
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make(3L, 100L),
-//                 result.Get(new Windowed<>("1", new SessionWindow(70L, 100L))));
+//                 result.Get(new IWindowed<>("1", new SessionWindow(70L, 100L))));
 //        }
 
 //        [Fact]
 //        public void shouldCountSessionWindows()
 //        {
-//            MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
-//            IKTable<Windowed<string>, long> table = groupedStream
+//            MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<>();
+//            IKTable<IWindowed<string>, long> table = groupedStream
 //                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .count(Materialized.As("session-store"));
 //            table.toStream().process(supplier);
@@ -213,8 +213,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldCountSessionWindowsWithInternalStoreName()
 //        {
-//            MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
-//            IKTable<Windowed<string>, long> table = groupedStream
+//            MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<>();
+//            IKTable<IWindowed<string>, long> table = groupedStream
 //                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .count();
 //            table.toStream().process(supplier);
@@ -222,7 +222,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Assert.Null(table.queryableStoreName);
 //        }
 
-//        private void doReduceSessionWindows(MockProcessorSupplier<Windowed<string>, string> supplier)
+//        private void doReduceSessionWindows(MockProcessorSupplier<IWindowed<string>, string> supplier)
 //        {
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 10));
@@ -232,24 +232,24 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "B", 100));
 //            driver.PipeInput(recordFactory.Create(TOPIC, "1", "C", 90));
 
-//            Dictionary<Windowed<string>, ValueAndTimestamp<string>> result =
+//            Dictionary<IWindowed<string>, ValueAndTimestamp<string>> result =
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make("A:B", 30L),
-//                 result.Get(new Windowed<>("1", new SessionWindow(10L, 30L))));
+//                 result.Get(new IWindowed<>("1", new SessionWindow(10L, 30L))));
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make("Z", 15L),
-//                 result.Get(new Windowed<>("2", new SessionWindow(15L, 15L))));
+//                 result.Get(new IWindowed<>("2", new SessionWindow(15L, 15L))));
 //            Assert.Equal(
 //                 ValueAndTimestamp.Make("A:B:C", 100L),
-//                 result.Get(new Windowed<>("1", new SessionWindow(70L, 100L))));
+//                 result.Get(new IWindowed<>("1", new SessionWindow(70L, 100L))));
 //        }
 
 //        [Fact]
 //        public void shouldReduceSessionWindows()
 //        {
-//            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
-//            IKTable<Windowed<string>, string> table = groupedStream
+//            MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<>();
+//            IKTable<IWindowed<string>, string> table = groupedStream
 //                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .reduce((value1, value2) => value1 + ":" + value2, Materialized.As("session-store"));
 //            table.toStream().process(supplier);
@@ -260,8 +260,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldReduceSessionWindowsWithInternalStoreName()
 //        {
-//            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
-//            IKTable<Windowed<string>, string> table = groupedStream
+//            MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<>();
+//            IKTable<IWindowed<string>, string> table = groupedStream
 //                .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(30)))
 //                .reduce((value1, value2) => value1 + ":" + value2);
 //            table.toStream().process(supplier);
@@ -538,7 +538,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        driver.PipeInput(recordFactory.Create(TOPIC, "3", (string)null));
 //    }
 
-//    private void doCountWindowed(MockProcessorSupplier<Windowed<string>, long> supplier)
+//    private void doCountWindowed(MockProcessorSupplier<IWindowed<string>, long> supplier)
 //    {
 //        try
 //        {
@@ -557,25 +557,25 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(TOPIC, "3", "B", 100L));
 //        }
 //        Assert.Equal(supplier.theCapturedProcessor().processed, (Array.AsReadOnly(
-//            new KeyValueTimestamp<>(new Windowed<>("1", new TimeWindow(0L, 500L)), 1L, 0L),
-//            new KeyValueTimestamp<>(new Windowed<>("1", new TimeWindow(0L, 500L)), 2L, 499L),
-//            new KeyValueTimestamp<>(new Windowed<>("1", new TimeWindow(0L, 500L)), 3L, 499L),
-//            new KeyValueTimestamp<>(new Windowed<>("2", new TimeWindow(0L, 500L)), 1L, 0L),
-//            new KeyValueTimestamp<>(new Windowed<>("2", new TimeWindow(0L, 500L)), 2L, 100L),
-//            new KeyValueTimestamp<>(new Windowed<>("2", new TimeWindow(0L, 500L)), 3L, 200L),
-//            new KeyValueTimestamp<>(new Windowed<>("3", new TimeWindow(0L, 500L)), 1L, 1L),
-//            new KeyValueTimestamp<>(new Windowed<>("1", new TimeWindow(500L, 1000L)), 1L, 500L),
-//            new KeyValueTimestamp<>(new Windowed<>("1", new TimeWindow(500L, 1000L)), 2L, 500L),
-//            new KeyValueTimestamp<>(new Windowed<>("2", new TimeWindow(500L, 1000L)), 1L, 500L),
-//            new KeyValueTimestamp<>(new Windowed<>("2", new TimeWindow(500L, 1000L)), 2L, 500L),
-//            new KeyValueTimestamp<>(new Windowed<>("3", new TimeWindow(0L, 500L)), 2L, 100L)
+//            new KeyValueTimestamp<>(new IWindowed<>("1", new TimeWindow(0L, 500L)), 1L, 0L),
+//            new KeyValueTimestamp<>(new IWindowed<>("1", new TimeWindow(0L, 500L)), 2L, 499L),
+//            new KeyValueTimestamp<>(new IWindowed<>("1", new TimeWindow(0L, 500L)), 3L, 499L),
+//            new KeyValueTimestamp<>(new IWindowed<>("2", new TimeWindow(0L, 500L)), 1L, 0L),
+//            new KeyValueTimestamp<>(new IWindowed<>("2", new TimeWindow(0L, 500L)), 2L, 100L),
+//            new KeyValueTimestamp<>(new IWindowed<>("2", new TimeWindow(0L, 500L)), 3L, 200L),
+//            new KeyValueTimestamp<>(new IWindowed<>("3", new TimeWindow(0L, 500L)), 1L, 1L),
+//            new KeyValueTimestamp<>(new IWindowed<>("1", new TimeWindow(500L, 1000L)), 1L, 500L),
+//            new KeyValueTimestamp<>(new IWindowed<>("1", new TimeWindow(500L, 1000L)), 2L, 500L),
+//            new KeyValueTimestamp<>(new IWindowed<>("2", new TimeWindow(500L, 1000L)), 1L, 500L),
+//            new KeyValueTimestamp<>(new IWindowed<>("2", new TimeWindow(500L, 1000L)), 2L, 500L),
+//            new KeyValueTimestamp<>(new IWindowed<>("3", new TimeWindow(0L, 500L)), 2L, 100L)
 //        )));
 //    }
 
 //    [Fact]
 //    public void shouldCountWindowed()
 //    {
-//        MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
+//        MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<>();
 //        groupedStream
 //            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(500L)))
 //            .count(Materialized.As("aggregate-by-key-windowed"))
@@ -588,8 +588,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    [Fact]
 //    public void shouldCountWindowedWithInternalStoreName()
 //    {
-//        MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
-//        List<KeyValuePair<Windowed<string>, KeyValuePair<long, long>>> results = new List<>();
+//        MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<>();
+//        List<KeyValuePair<IWindowed<string>, KeyValuePair<long, long>>> results = new List<>();
 //        groupedStream
 //            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(500L)))
 //            .count()

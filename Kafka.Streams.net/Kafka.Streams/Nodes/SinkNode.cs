@@ -20,12 +20,12 @@ namespace Kafka.Streams.Nodes
 
         public SinkNode(
             IClock clock,
-            string name,
+            string Name,
             ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valSerializer,
             IStreamPartitioner<K, V> partitioner)
-            : base(clock, name)
+            : base(clock, Name)
         {
             this.topicExtractor = topicExtractor;
             this.keySerializer = keySerializer;
@@ -51,8 +51,8 @@ namespace Kafka.Streams.Nodes
             // this.valSerializer ??= context.valueSerde.Serializer;
 
             // if value serializers are for {@code Change} values, set the inner serializer when necessary
-            if (valSerializer is ChangedSerializer<V>
-                && ((ChangedSerializer<V>)valSerializer).inner == null)
+            if (this.valSerializer is ChangedSerializer<V>
+                && ((ChangedSerializer<V>)this.valSerializer).inner == null)
             {
                 // ((ChangedSerializer<V>)valSerializer).setInner(context.valueSerde.Serializer);
             }
@@ -60,19 +60,19 @@ namespace Kafka.Streams.Nodes
 
         public override void Process(K key, V value)
         {
-            IRecordCollector collector = ((ISupplier)context).RecordCollector();
+            IRecordCollector collector = ((ISupplier)this.context).RecordCollector();
 
-            var timestamp = context.Timestamp;
+            var timestamp = this.context.Timestamp;
             if (timestamp < 0)
             {
                 throw new StreamsException("Invalid (negative) timestamp of " + timestamp + " for output record <" + key + ":" + value + ">.");
             }
 
-            var topic = topicExtractor.Extract(key, value, this.context.RecordContext);
+            var topic = this.topicExtractor.Extract(key, value, this.context.RecordContext);
 
             try
             {
-                collector.Send(topic, key, value, context.Headers, timestamp, keySerializer, valSerializer, partitioner);
+                collector.Send(topic, key, value, this.context.Headers, timestamp, this.keySerializer, this.valSerializer, this.partitioner);
             }
             catch (Exception e)
             {
@@ -83,8 +83,8 @@ namespace Kafka.Streams.Nodes
                         string.Format("A serializer (key: %s / value: %s) is not compatible to the actual key or value type " +
                                         "(key type: %s / value type: %s). Change the default Serdes in StreamConfig or " +
                                         "provide correct Serdes via method parameters.",
-                                        keySerializer.GetType().FullName,
-                                        valSerializer.GetType().FullName,
+                                        this.keySerializer.GetType().FullName,
+                                        this.valSerializer.GetType().FullName,
                                         keyClass,
                                         valueClass),
                         e);
@@ -96,7 +96,7 @@ namespace Kafka.Streams.Nodes
          */
         public override string ToString()
         {
-            return ToString("");
+            return this.ToString("");
         }
 
         /**
@@ -107,7 +107,7 @@ namespace Kafka.Streams.Nodes
             var sb = new StringBuilder(base.ToString(indent));
 
             sb.Append(indent).Append("\ttopic:\t\t");
-            sb.Append(topicExtractor);
+            sb.Append(this.topicExtractor);
             sb.Append("\n");
 
             return sb.ToString();

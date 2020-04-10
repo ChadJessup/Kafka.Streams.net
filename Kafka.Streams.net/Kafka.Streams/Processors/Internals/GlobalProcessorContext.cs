@@ -9,9 +9,7 @@ using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tasks;
-
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Kafka.Streams.Processors.Internals
@@ -19,19 +17,31 @@ namespace Kafka.Streams.Processors.Internals
     public class GlobalProcessorContext : AbstractProcessorContext
     {
         public GlobalProcessorContext(
+            KafkaStreamsContext context,
             StreamsConfig config,
             IStateManager stateManager,
             ThreadCache cache)
-            : base(new TaskId(-1, -1), config, stateManager, cache)
+            : base(
+                  context,
+                  new TaskId(-1, -1),
+                  config,
+                  stateManager,
+                  cache)
         {
         }
 
         public GlobalProcessorContext(
+            KafkaStreamsContext context,
             TaskId taskId,
             StreamsConfig config,
             IStateManager stateManager,
             ThreadCache cache)
-            : base(taskId, config, stateManager, cache)
+            : base(
+                  context,
+                  taskId,
+                  config,
+                  stateManager,
+                  cache)
         {
         }
     }
@@ -42,38 +52,48 @@ namespace Kafka.Streams.Processors.Internals
         private readonly GlobalProcessorContext globalProcessContext;
 
         public GlobalProcessorContext(
+            KafkaStreamsContext context,
             StreamsConfig config,
             IStateManager stateMgr,
             ThreadCache cache)
-            : base(new TaskId(-1, -1), config, stateMgr, cache)
+            : base(
+                  context,
+                  new TaskId(-1, -1),
+                  config,
+                  stateMgr,
+                  cache)
         {
             this.globalProcessContext = new GlobalProcessorContext(
-                new TaskId(-1, -1), config, stateMgr, cache);
+                context,
+                new TaskId(-1, -1),
+                config,
+                stateMgr,
+                cache);
         }
 
-        public override IStateStore GetStateStore(KafkaStreamsContext context, string name)
+        public override IStateStore GetStateStore(string Name)
         {
-            var store = StateManager.GetGlobalStore(name);
+            var store = this.StateManager.GetGlobalStore(Name);
 
             if (store is ITimestampedKeyValueStore<K, V>)
             {
-                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>(context, (ITimestampedKeyValueStore<K, V>)store);
+                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>(this.Context, (ITimestampedKeyValueStore<K, V>)store);
             }
             else if (store is IKeyValueStore<K, V>)
             {
-                return new KeyValueStoreReadWriteDecorator<K, V>(context, (IKeyValueStore<K, V>)store);
+                return new KeyValueStoreReadWriteDecorator<K, V>(this.Context, (IKeyValueStore<K, V>)store);
             }
             else if (store is ITimestampedWindowStore<K, V>)
             {
-                return new TimestampedWindowStoreReadWriteDecorator<K, V>(context, (ITimestampedWindowStore<K, V>)store);
+                return new TimestampedWindowStoreReadWriteDecorator<K, V>(this.Context, (ITimestampedWindowStore<K, V>)store);
             }
             else if (store is IWindowStore<K, V>)
             {
-                return new WindowStoreReadWriteDecorator<K, V>(context, (IWindowStore<K, V>)store);
+                return new WindowStoreReadWriteDecorator<K, V>(this.Context, (IWindowStore<K, V>)store);
             }
             else if (store is ISessionStore<K, V>)
             {
-                return new SessionStoreReadWriteDecorator<K, V>(context, (ISessionStore<K, V>)store);
+                return new SessionStoreReadWriteDecorator<K, V>(this.Context, (ISessionStore<K, V>)store);
             }
 
             return store;
@@ -81,30 +101,30 @@ namespace Kafka.Streams.Processors.Internals
 
         public override void Forward<K, V>(K key, V value)
         {
-            var previousNode = CurrentNode;
+            var previousNode = this.CurrentNode;
             try
             {
-                foreach (var child in CurrentNode.Children)
+                foreach (var child in this.CurrentNode.Children)
                 {
-                    SetCurrentNode(child);
+                    this.SetCurrentNode(child);
                     child.Process(key, value);
                 }
             }
             finally
             {
-                SetCurrentNode(previousNode);
+                this.SetCurrentNode(previousNode);
             }
         }
 
         /**
-         * No-op. This should only be called on GlobalStateStore#flush and there should be no child nodes
+         * No-op. This should only be called on GlobalStateStore#Flush and there should be no child nodes
          */
 
         public override void Forward<K, V>(K key, V value, To to)
         {
-            if (CurrentNode.Children.Any())
+            if (this.CurrentNode.Children.Any())
             {
-                throw new Exception("This method should only be called on 'GlobalStateStore.flush' that should not have any children.");
+                throw new Exception("This method should only be called on 'GlobalStateStore.Flush' that should not have any children.");
             }
         }
 

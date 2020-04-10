@@ -13,11 +13,11 @@ namespace Kafka.Streams.Factories
 
         protected NodeFactory(
             IClock clock,
-            string name,
+            string Name,
             string[] predecessors)
         {
             this.Clock = clock;
-            this.Name = name;
+            this.Name = Name;
             this.Predecessors = predecessors;
         }
 

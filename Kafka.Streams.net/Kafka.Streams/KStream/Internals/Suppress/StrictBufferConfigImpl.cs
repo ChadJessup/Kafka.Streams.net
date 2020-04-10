@@ -27,12 +27,12 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public override IBufferConfig<IStrictBufferConfig> WithMaxRecords(long recordLimit)
         {
-            return new StrictBufferConfigImpl(recordLimit, MaxBytes, BufferFullStrategy);
+            return new StrictBufferConfigImpl(recordLimit, this.MaxBytes, this.BufferFullStrategy);
         }
 
         public override IBufferConfig<IStrictBufferConfig> WithMaxBytes(long byteLimit)
         {
-            return new StrictBufferConfigImpl(MaxRecords, byteLimit, BufferFullStrategy);
+            return new StrictBufferConfigImpl(this.MaxRecords, byteLimit, this.BufferFullStrategy);
         }
 
         public override bool Equals(object o)
@@ -42,15 +42,15 @@ namespace Kafka.Streams.KStream.Internals.Suppress
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             StrictBufferConfigImpl that = (StrictBufferConfigImpl)o;
-            return MaxRecords == that.MaxRecords &&
-                MaxBytes == that.MaxBytes &&
-                BufferFullStrategy == that.BufferFullStrategy;
+            return this.MaxRecords == that.MaxRecords &&
+                this.MaxBytes == that.MaxBytes &&
+                this.BufferFullStrategy == that.BufferFullStrategy;
         }
 
         public override int GetHashCode()
@@ -61,9 +61,9 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public override string ToString()
         {
-            return "StrictBufferConfigImpl{maxKeys=" + MaxRecords +
-                ", MaxBytes=" + MaxBytes +
-                ", BufferFullStrategy=" + BufferFullStrategy + '}';
+            return "StrictBufferConfigImpl{maxKeys=" + this.MaxRecords +
+                ", MaxBytes=" + this.MaxBytes +
+                ", BufferFullStrategy=" + this.BufferFullStrategy + '}';
         }
     }
 }

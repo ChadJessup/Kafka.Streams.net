@@ -8,7 +8,7 @@ using System;
 namespace Kafka.Streams.State.TimeStamped
 {
     public class TimestampedKeyValueStoreBuilder<K, V>
-        : AbstractStoreBuilder<K, ValueAndTimestamp<V>, ITimestampedKeyValueStore<K, V>>
+        : AbstractStoreBuilder<K, IValueAndTimestamp<V>, ITimestampedKeyValueStore<K, V>>
     {
         private readonly IKeyValueBytesStoreSupplier storeSupplier;
 
@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.TimeStamped
 
         public override ITimestampedKeyValueStore<K, V> Build()
         {
-            IKeyValueStore<Bytes, byte[]> store = storeSupplier.Get();
+            IKeyValueStore<Bytes, byte[]> store = this.storeSupplier.Get();
 
             if (!(store is ITimestampedBytesStore))
             {
@@ -47,8 +47,8 @@ namespace Kafka.Streams.State.TimeStamped
             return new MeteredTimestampedKeyValueStore<K, V>(
                 this.context,
                 store,
-                keySerde,
-                valueSerde);
+                this.keySerde,
+                this.valueSerde);
         }
     }
 }

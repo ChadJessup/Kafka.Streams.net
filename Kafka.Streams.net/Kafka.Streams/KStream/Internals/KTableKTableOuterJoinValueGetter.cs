@@ -15,7 +15,7 @@
 //        }
 
 
-//        public void init(IProcessorContext context)
+//        public void Init(IProcessorContext context)
 //        {
 //            valueGetter1.Init(context);
 //            valueGetter2.Init(context);
@@ -65,10 +65,10 @@
 //        }
 
 
-//        public void close()
+//        public void Close()
 //        {
-//            valueGetter1.close();
-//            valueGetter2.close();
+//            valueGetter1.Close();
+//            valueGetter2.Close();
 //        }
 //    }
 //}

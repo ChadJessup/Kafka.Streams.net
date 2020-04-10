@@ -28,7 +28,7 @@
 //        {
 //            if (adminClient != null)
 //            {
-//                adminClient.close(TimeSpan.ofSeconds(10));
+//                adminClient.Close(TimeSpan.ofSeconds(10));
 //                adminClient = null;
 //            }
 //        }
@@ -75,39 +75,39 @@
 //        private void PrepareConfigs()
 //        {
 //            commonClientConfig = new StreamsConfig();
-//            commonClientConfig.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, cluster.bootstrapServers());
+//            commonClientConfig.Put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, cluster.bootstrapServers());
 
 //            Dictionary<string, object> sslConfig = GetClientSslConfig();
 //            if (sslConfig != null)
 //            {
-//                commonClientConfig.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, sslConfig.Get(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
-//                commonClientConfig.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, ((Password)sslConfig.Get(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG)).Value);
-//                commonClientConfig.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
+//                commonClientConfig.Put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, sslConfig.Get(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
+//                commonClientConfig.Put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, ((Password)sslConfig.Get(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG)).Value);
+//                commonClientConfig.Put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
 //            }
 
 //            producerConfig = new StreamsConfig();
-//            producerConfig.put(ProducerConfig.ACKS_CONFIG, "all");
-//            producerConfig.put(ProducerConfig.RETRIES_CONFIG, 0);
-//            producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.Long().Serializer);
-//            producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            producerConfig.Put(ProducerConfig.ACKS_CONFIG, "All");
+//            producerConfig.Put(ProducerConfig.RETRIES_CONFIG, 0);
+//            producerConfig.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.Long().Serializer);
+//            producerConfig.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //            producerConfig.putAll(commonClientConfig);
 
 //            resultConsumerConfig = new StreamsConfig();
-//            resultConsumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, testId + "-result-consumer");
-//            resultConsumerConfig.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//            resultConsumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer);
-//            resultConsumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LongDeserializer);
+//            resultConsumerConfig.Put(ConsumerConfig.GROUP_ID_CONFIG, testId + "-result-consumer");
+//            resultConsumerConfig.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            resultConsumerConfig.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer);
+//            resultConsumerConfig.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LongDeserializer);
 //            resultConsumerConfig.putAll(commonClientConfig);
 
 //            streamsConfig = new StreamsConfig();
-//            streamsConfig.put(StreamsConfig.STATE_DIR_CONFIG, testFolder.getRoot().getPath());
-//            streamsConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Long().getClass());
-//            streamsConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            streamsConfig.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//            streamsConfig.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//            streamsConfig.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
-//            streamsConfig.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//            streamsConfig.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + STREAMS_CONSUMER_TIMEOUT);
+//            streamsConfig.Put(StreamsConfig.STATE_DIR_CONFIG, testFolder.getRoot().getPath());
+//            streamsConfig.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Long().getClass());
+//            streamsConfig.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsConfig.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            streamsConfig.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//            streamsConfig.Put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
+//            streamsConfig.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            streamsConfig.Put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + STREAMS_CONSUMER_TIMEOUT);
 //            streamsConfig.putAll(commonClientConfig);
 //        }
 
@@ -158,7 +158,7 @@
 //            {// throws Exception
 //                if (streams != null)
 //                {
-//                    streams.close(TimeSpan.ofSeconds(30));
+//                    streams.Close(TimeSpan.ofSeconds(30));
 //                }
 //                IntegrationTestUtils.purgeLocalStreamsState(streamsConfig);
 //            }
@@ -193,10 +193,10 @@
 //            "--execute"
 //        };
 //                StreamsConfig cleanUpConfig = new StreamsConfig();
-//                cleanUpConfig.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
-//                cleanUpConfig.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
+//                cleanUpConfig.Put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
+//                cleanUpConfig.Put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
 
-//                streamsConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+//                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
 //                // RUN
 //                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
@@ -205,7 +205,7 @@
 //                int exitCode = new StreamsResetter().run(parameters, cleanUpConfig);
 //                Assert.Equal(1, exitCode);
 
-//                streams.close();
+//                streams.Close();
 //            }
 
 //            public void ShouldNotAllowToResetWhenInputTopicAbsent()
@@ -218,8 +218,8 @@
 //            "--execute"
 //        };
 //                StreamsConfig cleanUpConfig = new StreamsConfig();
-//                cleanUpConfig.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
-//                cleanUpConfig.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
+//                cleanUpConfig.Put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
+//                cleanUpConfig.Put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
 
 //                int exitCode = new StreamsResetter().run(parameters, cleanUpConfig);
 //                Assert.Equal(1, exitCode);
@@ -235,8 +235,8 @@
 //            "--execute"
 //        };
 //                StreamsConfig cleanUpConfig = new StreamsConfig();
-//                cleanUpConfig.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
-//                cleanUpConfig.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
+//                cleanUpConfig.Put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
+//                cleanUpConfig.Put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
 
 //                int exitCode = new StreamsResetter().run(parameters, cleanUpConfig);
 //                Assert.Equal(1, exitCode);
@@ -245,14 +245,14 @@
 //            void TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic()
 //            {// throws Exception
 //                appID = testId + "-from-scratch";
-//                streamsConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+//                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
 //                // RUN
 //                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
 //                streams.start();
 //                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 
-//                streams.close();
+//                streams.Close();
 //                TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
 //                    "Streams Application consumer group " + appID + " did not time out after " + (TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT) + " ms.");
 
@@ -268,7 +268,7 @@
 //                // RE-RUN
 //                streams.start();
 //                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
-//                streams.close();
+//                streams.Close();
 
 //                Assert.Equal(resultRerun, (result));
 
@@ -282,7 +282,7 @@
 //                cluster.createTopic(INTERMEDIATE_USER_TOPIC);
 
 //                appID = testId + "-from-scratch-with-intermediate-topic";
-//                streamsConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+//                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
 //                // RUN
 //                streams = new KafkaStreams(SetupTopologyWithIntermediateUserTopic(OUTPUT_TOPIC_2), streamsConfig);
@@ -292,7 +292,7 @@
 //                // => required to test "seekToEnd" for intermediate topics
 //                List<KeyValuePair<long, long>> result2 = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC_2, 40);
 
-//                streams.close();
+//                streams.Close();
 //                TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
 //                    "Streams Application consumer group " + appID + " did not time out after " + (TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT) + " ms.");
 
@@ -318,7 +318,7 @@
 //                streams.start();
 //                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 //                List<KeyValuePair<long, long>> resultRerun2 = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC_2_RERUN, 40);
-//                streams.close();
+//                streams.Close();
 
 //                Assert.Equal(resultRerun, (result));
 //                Assert.Equal(resultRerun2, (result2));
@@ -342,14 +342,14 @@
 //            void TestReprocessingFromFileAfterResetWithoutIntermediateUserTopic()
 //            {// throws Exception
 //                appID = testId + "-from-file";
-//                streamsConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+//                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
 //                // RUN
 //                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
 //                streams.start();
 //                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 
-//                streams.close();
+//                streams.Close();
 //                TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
 //                    "Streams Application consumer group " + appID + " did not time out after " + (TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT) + " ms.");
 
@@ -372,7 +372,7 @@
 //                // RE-RUN
 //                streams.start();
 //                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 5);
-//                streams.close();
+//                streams.Close();
 
 //                result.remove(0);
 //                Assert.Equal(resultRerun, (result));
@@ -385,14 +385,14 @@
 //            void TestReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic()
 //            {// throws Exception
 //                appID = testId + "-from-datetime";
-//                streamsConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+//                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
 //                // RUN
 //                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
 //                streams.start();
 //                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 
-//                streams.close();
+//                streams.Close();
 //                TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
 //                    "Streams Application consumer group " + appID + " did not time out after " + (TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT) + " ms.");
 
@@ -420,7 +420,7 @@
 //                // RE-RUN
 //                streams.start();
 //                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
-//                streams.close();
+//                streams.Close();
 
 //                Assert.Equal(resultRerun, (result));
 
@@ -432,14 +432,14 @@
 //            void TestReprocessingByDurationAfterResetWithoutIntermediateUserTopic()
 //            {// throws Exception
 //                appID = testId + "-from-duration";
-//                streamsConfig.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+//                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
 //                // RUN
 //                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
 //                streams.start();
 //                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 
-//                streams.close();
+//                streams.Close();
 //                TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
 //                    "Streams Application consumer group " + appID + "  did not time out after " + (TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT) + " ms.");
 
@@ -462,7 +462,7 @@
 //                // RE-RUN
 //                streams.start();
 //                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
-//                streams.close();
+//                streams.Close();
 
 //                Assert.Equal(resultRerun, (result));
 
@@ -532,7 +532,7 @@
 //                    writer.write(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG + "=SSL\n");
 //                    writer.write(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG + "=" + sslConfig.Get(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG) + "\n");
 //                    writer.write(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG + "=" + ((Password)sslConfig.Get(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG)).Value + "\n");
-//                    writer.close();
+//                    writer.Close();
 
 //                    parameterList.Add("--config-file");
 //                    parameterList.Add(configFile.FullName);
@@ -549,8 +549,8 @@
 //                string[] parameters = parameterList.toArray(System.Array.Empty<string>());
 
 //                StreamsConfig cleanUpConfig = new StreamsConfig();
-//                cleanUpConfig.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
-//                cleanUpConfig.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
+//                cleanUpConfig.Put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
+//                cleanUpConfig.Put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
 
 //                int exitCode = new StreamsResetter().run(parameters, cleanUpConfig);
 //                Assert.Equal(0, exitCode);

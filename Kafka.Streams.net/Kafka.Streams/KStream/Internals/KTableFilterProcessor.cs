@@ -40,12 +40,12 @@ namespace Kafka.Streams.KStream.Internals
             base.Init(context);
             if (this.queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.context, queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<K, V>(
-                    store,
+                this.store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.queryableName);
+                this.tupleForwarder = new TimestampedTupleForwarder<K, V>(
+                    this.store,
                     context,
                     new TimestampedCacheFlushListener<K, V>(context),
-                    sendOldValues);
+                    this.sendOldValues);
             }
         }
 
@@ -56,24 +56,24 @@ namespace Kafka.Streams.KStream.Internals
                 throw new ArgumentNullException(nameof(change));
             }
 
-            V newValue = ComputeValue(key, change.NewValue);
-            V oldValue = sendOldValues
-                ? ComputeValue(key, change.OldValue)
+            V newValue = this.ComputeValue(key, change.NewValue);
+            V oldValue = this.sendOldValues
+                ? this.ComputeValue(key, change.OldValue)
                 : default;
 
-            if (sendOldValues && oldValue == null && newValue == null)
+            if (this.sendOldValues && oldValue == null && newValue == null)
             {
                 return; // unnecessary to forward here.
             }
 
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp.Make(newValue, Context.Timestamp));
-                tupleForwarder.MaybeForward(key, newValue, oldValue);
+                this.store.Add(key, ValueAndTimestamp.Make(newValue, this.Context.Timestamp));
+                this.tupleForwarder.MaybeForward(key, newValue, oldValue);
             }
             else
             {
-                Context.Forward(key, new Change<V>(newValue, oldValue));
+                this.Context.Forward(key, new Change<V>(newValue, oldValue));
             }
         }
 
@@ -81,7 +81,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             V newValue = default;
 
-            if (value != null && (filterNot ^ predicate(key, value)))
+            if (value != null && (this.filterNot ^ this.predicate(key, value)))
             {
                 newValue = value;
             }
@@ -89,16 +89,16 @@ namespace Kafka.Streams.KStream.Internals
             return newValue;
         }
 
-        private ValueAndTimestamp<V>? ComputeValue(
+        private IValueAndTimestamp<V>? ComputeValue(
             K key,
-            ValueAndTimestamp<V> valueAndTimestamp)
+            IValueAndTimestamp<V> valueAndTimestamp)
         {
-            ValueAndTimestamp<V>? newValueAndTimestamp = null;
+            IValueAndTimestamp<V>? newValueAndTimestamp = null;
 
             if (valueAndTimestamp != null)
             {
                 V value = valueAndTimestamp.Value;
-                if (filterNot ^ predicate(key, value))
+                if (this.filterNot ^ this.predicate(key, value))
                 {
                     newValueAndTimestamp = valueAndTimestamp;
                 }

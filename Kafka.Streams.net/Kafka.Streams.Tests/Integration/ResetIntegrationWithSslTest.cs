@@ -19,12 +19,12 @@
 //        // we double the value passed to `time.sleep` in each iteration in one of the map functions, so we disable
 //        // expiration of connections by the brokers to avoid errors when `AdminClient` sends requests after potentially
 //        // very long sleep times
-//        //brokerProps.put(KafkaConfig$.MODULE$.ConnectionsMaxIdleMsProp(), -1L);
+//        //brokerProps.Put(KafkaConfig$.MODULE$.ConnectionsMaxIdleMsProp(), -1L);
 
 //        //sslConfig = TestSslUtils.createSslConfig(false, true, Mode.SERVER, TestUtils.tempFile(), "testCert");
 
-//        //brokerProps.put(KafkaConfig$.MODULE$.ListenersProp(), "SSL://localhost:0");
-//        //brokerProps.put(KafkaConfig$.MODULE$.InterBrokerListenerNameProp(), "SSL");
+//        //brokerProps.Put(KafkaConfig$.MODULE$.ListenersProp(), "SSL://localhost:0");
+//        //brokerProps.Put(KafkaConfig$.MODULE$.InterBrokerListenerNameProp(), "SSL");
 //        //brokerProps.putAll(sslConfig);
 //        //} catch (Exception e) {
 //        //    throw new RuntimeException(e);

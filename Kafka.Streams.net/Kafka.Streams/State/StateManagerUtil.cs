@@ -87,7 +87,7 @@ namespace Kafka.Streams.Processors.Internals
 
                 // TODO Remove this eventually
                 // => (only after we are sure, we don't need it for backward compatibility reasons anymore; maybe 2.0 release?)
-                // this is an ugly "hack" that is required because RocksDbStore does not follow the pattern to put the
+                // this is an ugly "hack" that is required because RocksDbStore does not follow the pattern to Put the
                 // store directory as <taskDir>/<storeName> but nests it with an intermediate <taskDir>/rocksdb/<storeName>
                 try
                 {

@@ -39,8 +39,8 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             }
 
             EagerBufferConfigImpl that = (EagerBufferConfigImpl)o;
-            return MaxRecords == that.MaxRecords &&
-                MaxBytes == that.MaxBytes;
+            return this.MaxRecords == that.MaxRecords &&
+                this.MaxBytes == that.MaxBytes;
         }
 
         public override int GetHashCode()
@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public override string ToString()
         {
-            return "EagerBufferConfigImpl{MaxRecords=" + MaxRecords + ", MaxBytes=" + MaxBytes + '}';
+            return "EagerBufferConfigImpl{MaxRecords=" + this.MaxRecords + ", MaxBytes=" + this.MaxBytes + '}';
         }
     }
 }

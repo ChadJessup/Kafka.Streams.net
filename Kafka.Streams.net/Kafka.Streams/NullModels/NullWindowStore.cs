@@ -15,8 +15,8 @@ namespace Kafka.Streams.NullModels
         {
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> All()
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
         public void Close()
         {
@@ -25,22 +25,22 @@ namespace Kafka.Streams.NullModels
         public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
             => new NullKeyValueIterator<byte[]>();
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, long timeFrom, long timeTo)
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, long timeFrom, long timeTo)
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
         public byte[] Fetch(Bytes key, long time) => Array.Empty<byte>();
 
         public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime from, DateTime to)
             => new NullKeyValueIterator<byte[]>();
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime fromTime, DateTime toTime)
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime fromTime, DateTime toTime)
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
         public void Flush()
         {

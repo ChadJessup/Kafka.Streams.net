@@ -26,10 +26,10 @@ namespace Kafka.Streams.State.Internals
 
         public void Close()
         {
-            if (current != null)
+            if (this.current != null)
             {
-                current.Close();
-                current = null;
+                this.current.Close();
+                this.current = null;
             }
         }
 
@@ -40,25 +40,25 @@ namespace Kafka.Streams.State.Internals
 
         public bool HasNext()
         {
-            while ((current == null || !current.MoveNext())
-                    && storeIterator.MoveNext())
+            while ((this.current == null || !this.current.MoveNext())
+                    && this.storeIterator.MoveNext())
             {
-                Close();
-                current = nextIteratorFunction.Apply(storeIterator.Current);
+                this.Close();
+                this.current = this.nextIteratorFunction.Apply(this.storeIterator.Current);
             }
 
-            return current != null && current.MoveNext();
+            return this.current != null && this.current.MoveNext();
         }
 
 
         public KeyValuePair<K, V> Next()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return current.Current;
+            return this.current.Current;
         }
 
         public void Remove()
@@ -81,7 +81,7 @@ namespace Kafka.Streams.State.Internals
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!this.disposedValue)
             {
                 if (disposing)
                 {
@@ -91,7 +91,7 @@ namespace Kafka.Streams.State.Internals
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                this.disposedValue = true;
             }
         }
 
@@ -106,7 +106,7 @@ namespace Kafka.Streams.State.Internals
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
+            this.Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }

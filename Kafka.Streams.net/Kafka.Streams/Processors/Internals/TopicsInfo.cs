@@ -37,17 +37,17 @@ namespace Kafka.Streams.Processors.Internals
 
         public override int GetHashCode()
         {
-            var n = ((long)sourceTopics.GetHashCode() << 32) | (long)stateChangelogTopics.GetHashCode();
+            var n = ((long)this.sourceTopics.GetHashCode() << 32) | (long)this.stateChangelogTopics.GetHashCode();
             return (int)(n % 0xFFFFFFFFL);
         }
 
         public override string ToString()
         {
             return "TopicsInfo{" +
-                "sinkTopics=" + sinkTopics +
-                ", sourceTopics=" + sourceTopics +
-                ", repartitionSourceTopics=" + repartitionSourceTopics +
-                ", stateChangelogTopics=" + stateChangelogTopics +
+                "sinkTopics=" + this.sinkTopics +
+                ", sourceTopics=" + this.sourceTopics +
+                ", repartitionSourceTopics=" + this.repartitionSourceTopics +
+                ", stateChangelogTopics=" + this.stateChangelogTopics +
                 '}';
         }
     }

@@ -11,7 +11,7 @@ namespace Kafka.Streams.Processors.Internals
         public const int NO_CHECKPOINT = -1;
 
         public long offsetLimit { get; }
-        private readonly bool persistent;
+        private readonly bool Persistent;
         public string storeName { get; }
         public TopicPartition partition { get; }
         private readonly CompositeRestoreListener compositeRestoreListener;
@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processors.Internals
                       CompositeRestoreListener compositeRestoreListener,
                       long checkpoint,
                       long offsetLimit,
-                      bool persistent,
+                      bool Persistent,
                       string storeName,
                       IRecordConverter recordConverter)
         {
@@ -34,14 +34,14 @@ namespace Kafka.Streams.Processors.Internals
             this.compositeRestoreListener = compositeRestoreListener;
             this.checkpointOffset = checkpoint == null ? NO_CHECKPOINT : checkpoint;
             this.offsetLimit = offsetLimit;
-            this.persistent = persistent;
+            this.Persistent = Persistent;
             this.storeName = storeName;
             this.recordConverter = recordConverter;
         }
 
         public long Checkpoint()
         {
-            return checkpointOffset;
+            return this.checkpointOffset;
         }
 
         public void SetCheckpointOffset(long checkpointOffset)
@@ -51,17 +51,17 @@ namespace Kafka.Streams.Processors.Internals
 
         public void RestoreStarted()
         {
-            compositeRestoreListener.OnRestoreStart(partition, storeName, startingOffset, endingOffset);
+            this.compositeRestoreListener.OnRestoreStart(this.partition, this.storeName, this.startingOffset, this.endingOffset);
         }
 
         public void RestoreDone()
         {
-            compositeRestoreListener.OnRestoreEnd(partition, storeName, RestoredNumRecords());
+            this.compositeRestoreListener.OnRestoreEnd(this.partition, this.storeName, this.RestoredNumRecords());
         }
 
         public void RestoreBatchCompleted(long currentRestoredOffset, int numRestored)
         {
-            compositeRestoreListener.OnBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
+            this.compositeRestoreListener.OnBatchRestored(this.partition, this.storeName, currentRestoredOffset, numRestored);
         }
 
         public void Restore(List<ConsumeResult<byte[], byte[]>> records)
@@ -69,14 +69,14 @@ namespace Kafka.Streams.Processors.Internals
             var convertedRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
             foreach (ConsumeResult<byte[], byte[]> record in records)
             {
-                convertedRecords.Add(recordConverter.Convert(record));
+                convertedRecords.Add(this.recordConverter.Convert(record));
             }
-            compositeRestoreListener.RestoreBatch(convertedRecords);
+            this.compositeRestoreListener.RestoreBatch(convertedRecords);
         }
 
         public bool IsPersistent()
         {
-            return persistent;
+            return this.Persistent;
         }
 
         public void SetUserRestoreListener(IStateRestoreListener userRestoreListener)
@@ -86,32 +86,32 @@ namespace Kafka.Streams.Processors.Internals
 
         public void SetRestoredOffset(long restoredOffset)
         {
-            this.restoredOffset = Math.Min(offsetLimit, restoredOffset);
+            this.restoredOffset = Math.Min(this.offsetLimit, restoredOffset);
         }
 
         public void SetStartingOffset(long startingOffset)
         {
-            this.startingOffset = Math.Min(offsetLimit, startingOffset);
+            this.startingOffset = Math.Min(this.offsetLimit, startingOffset);
         }
 
         public void SetEndingOffset(long endingOffset)
         {
-            this.endingOffset = Math.Min(offsetLimit, endingOffset);
+            this.endingOffset = Math.Min(this.offsetLimit, endingOffset);
         }
 
         public bool HasCompleted(long recordOffset, long endOffset)
         {
-            return endOffset == 0 || recordOffset >= ReadTo(endOffset);
+            return endOffset == 0 || recordOffset >= this.ReadTo(endOffset);
         }
 
-        long RestoredNumRecords()
+        private long RestoredNumRecords()
         {
-            return restoredOffset - startingOffset;
+            return this.restoredOffset - this.startingOffset;
         }
 
         private long ReadTo(long endOffset)
         {
-            return endOffset < offsetLimit ? endOffset : offsetLimit;
+            return endOffset < this.offsetLimit ? endOffset : this.offsetLimit;
         }
     }
 }

@@ -31,7 +31,7 @@
 //                                    ISerializer<K> keySerializer,
 //                                    ISerializer<V> valueSerializer)
 //            {
-//                sent.put(key, value);
+//                sent.Put(key, value);
 //            }
 //        };
 //        InternalMockProcessorContext context = new InternalMockProcessorContext(
@@ -47,20 +47,20 @@
 
 //    public void After()
 //    {
-//        store.close();
+//        store.Close();
 //    }
 
 //    [Fact]
 //    public void ShouldWriteKeyValueBytesToInnerStoreOnPut()
 //    {
-//        store.put(hi, there);
+//        store.Put(hi, there);
 //        Assert.Equal(inner.Get(hi), (there));
 //    }
 
 //    [Fact]
 //    public void ShouldLogChangeOnPut()
 //    {
-//        store.put(hi, there);
+//        store.Put(hi, there);
 //        Assert.Equal(sent.Get(hi), (there));
 //    }
 
@@ -85,7 +85,7 @@
 //    [Fact]
 //    public void ShouldPropagateDelete()
 //    {
-//        store.put(hi, there);
+//        store.Put(hi, there);
 //        store.delete(hi);
 //        Assert.Equal(inner.approximateNumEntries, (0L));
 //        Assert.Equal(inner.Get(hi), nullValue());
@@ -94,14 +94,14 @@
 //    [Fact]
 //    public void ShouldReturnOldValueOnDelete()
 //    {
-//        store.put(hi, there);
+//        store.Put(hi, there);
 //        Assert.Equal(store.delete(hi), (there));
 //    }
 
 //    [Fact]
 //    public void ShouldLogKeyNullOnDelete()
 //    {
-//        store.put(hi, there);
+//        store.Put(hi, there);
 //        store.delete(hi);
 //        Assert.Equal(sent.containsKey(hi), (true));
 //        Assert.Equal(sent.Get(hi), nullValue());
@@ -117,7 +117,7 @@
 //    [Fact]
 //    public void ShouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists()
 //    {
-//        store.put(hi, there);
+//        store.Put(hi, there);
 //        store.putIfAbsent(hi, world);
 //        Assert.Equal(inner.Get(hi), (there));
 //    }
@@ -132,7 +132,7 @@
 //    [Fact]
 //    public void ShouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists()
 //    {
-//        store.put(hi, there);
+//        store.Put(hi, there);
 //        store.putIfAbsent(hi, world);
 //        Assert.Equal(sent.Get(hi), (there));
 //    }
@@ -140,7 +140,7 @@
 //    [Fact]
 //    public void ShouldReturnCurrentValueOnPutIfAbsent()
 //    {
-//        store.put(hi, there);
+//        store.Put(hi, there);
 //        Assert.Equal(store.putIfAbsent(hi, world), (there));
 //    }
 
@@ -153,7 +153,7 @@
 //    [Fact]
 //    public void ShouldReturnValueOnGetWhenExists()
 //    {
-//        store.put(hello, world);
+//        store.Put(hello, world);
 //        Assert.Equal(store.Get(hello), (world));
 //    }
 

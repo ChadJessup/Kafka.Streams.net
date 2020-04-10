@@ -18,7 +18,7 @@ namespace Kafka.Streams.RocksDbState
         /**
          * Set the rocks db options for the provided storeName.
          *
-         * @param storeName     the name of the store being configured
+         * @param storeName     the Name of the store being configured
          * @param options       the RocksDb options
          * @param configs       the configuration supplied to {@link org.apache.kafka.streams.StreamsConfig}
          */
@@ -28,18 +28,18 @@ namespace Kafka.Streams.RocksDbState
          * Close any user-constructed objects that inherit from {@code org.rocksdb.RocksObject}.
          * <p>
          * Any object created with {@code new} in {@link RocksDbConfigSetter#setConfig setConfig()} and that inherits
-         * from {@code org.rocksdb.RocksObject} should have {@code org.rocksdb.RocksObject#close()}
+         * from {@code org.rocksdb.RocksObject} should have {@code org.rocksdb.RocksObject#Close()}
          * called on it here to avoid leaking off-heap memory. Objects to be closed can be saved by the user or retrieved
          * back from {@code options} using its getter methods.
          * <p>
          * Example objects needing to be closed include {@code org.rocksdb.Filter} and {@code org.rocksdb.Cache}.
          *
-         * @param storeName     the name of the store being configured
+         * @param storeName     the Name of the store being configured
          * @param options       the RocksDb options
          */
         void Close(string storeName, DbOptions options);
         //{
-        //    LOG.LogWarning("The default close will be removed in 3.0.0 -- you should overwrite it if you have implemented RocksDbConfigSetter");
+        //    LOG.LogWarning("The default Close will be removed in 3.0.0 -- you should overwrite it if you have implemented RocksDbConfigSetter");
         //}
     }
 }

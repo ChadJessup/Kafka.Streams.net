@@ -8,9 +8,9 @@ namespace Kafka.Streams.Processors.Internals
         public HashSet<string> stores { get; }
 
         public Processor(
-            string name,
+            string Name,
             HashSet<string> stores)
-            : base(name)
+            : base(Name)
         {
             this.stores = stores;
         }
@@ -18,7 +18,7 @@ namespace Kafka.Streams.Processors.Internals
         public override string ToString()
         {
             return "";
-            //"IProcessor: " + name + " (stores: " + stores + ")\n      -=> "
+            //"IProcessor: " + Name + " (stores: " + stores + ")\n      -=> "
             //    + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
         }
 
@@ -36,16 +36,16 @@ namespace Kafka.Streams.Processors.Internals
 
             var processor = (IProcessor)o;
             // omit successor to avoid infinite loops
-            return Name.Equals(processor.Name)
-                && stores.Equals(processor.stores)
-                && Predecessors.Equals(processor.Predecessors);
+            return this.Name.Equals(processor.Name)
+                && this.stores.Equals(processor.stores)
+                && this.Predecessors.Equals(processor.Predecessors);
         }
 
 
         public override int GetHashCode()
         {
             // omit successor as it might change and alter the hash code
-            return (Name, stores).GetHashCode();
+            return (this.Name, this.stores).GetHashCode();
         }
     }
 }

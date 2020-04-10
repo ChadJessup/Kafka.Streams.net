@@ -60,7 +60,7 @@
 //            Bytes keyBytes = WindowKeySchema.toStoreKeyBinary("a", t + 10, 0, stateSerdes);
 //            byte[] valBytes = string.valueOf(t + 10).getBytes();
 //            expectedKvPairs.Add(KeyValuePair.Create(t + 10, valBytes));
-//            cache.put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(keyBytes), new LRUCacheEntry(valBytes));
+//            cache.Put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(keyBytes), new LRUCacheEntry(valBytes));
 //        }
 
 //        Bytes fromBytes = WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes);
@@ -81,13 +81,13 @@
 //            assertArrayEquals(expected.value, next.value);
 //            Assert.Equal(expected.key, next.key);
 //        }
-//        iterator.close();
+//        iterator.Close();
 //    }
 
 //    [Fact]
 //    public void ShouldPeekNextStoreKey() {
 //        windowStoreKvPairs.Add(KeyValuePair.Create(10L, "a".getBytes()));
-//        cache.put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes)), new LRUCacheEntry("b".getBytes()));
+//        cache.Put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes)), new LRUCacheEntry("b".getBytes()));
 //        Bytes fromBytes = WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes);
 //        Bytes toBytes = WindowKeySchema.toStoreKeyBinary("a", 100, 0, stateSerdes);
 //        IKeyValueIterator<long, byte[]> storeIterator = new DelegatingPeekingKeyValueIterator<>("store", new KeyValueIteratorStub<>(windowStoreKvPairs.iterator()));
@@ -100,13 +100,13 @@
 //        Assert.Equal(iterator.PeekNextKey(), (0L));
 //        iterator.MoveNext();
 //        Assert.Equal(iterator.PeekNextKey(), (10L));
-//        iterator.close();
+//        iterator.Close();
 //    }
 
 //    [Fact]
 //    public void ShouldPeekNextCacheKey() {
 //        windowStoreKvPairs.Add(KeyValuePair.Create(0L, "a".getBytes()));
-//        cache.put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary("a", 10L, 0, stateSerdes)), new LRUCacheEntry("b".getBytes()));
+//        cache.Put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary("a", 10L, 0, stateSerdes)), new LRUCacheEntry("b".getBytes()));
 //        Bytes fromBytes = WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes);
 //        Bytes toBytes = WindowKeySchema.toStoreKeyBinary("a", 100, 0, stateSerdes);
 //        IKeyValueIterator<long, byte[]> storeIterator = new DelegatingPeekingKeyValueIterator<>("store", new KeyValueIteratorStub<>(windowStoreKvPairs.iterator()));
@@ -115,6 +115,6 @@
 //        Assert.Equal(iterator.PeekNextKey(), (0L));
 //        iterator.MoveNext();
 //        Assert.Equal(iterator.PeekNextKey(), (10L));
-//        iterator.close();
+//        iterator.Close();
 //    }
 //}

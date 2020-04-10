@@ -58,8 +58,8 @@
 //        private ISerde<string> serde = Serdes.String();
 
 //        private Window window = new SessionWindow(startTime, endTime);
-//        private Windowed<string> windowedKey = new Windowed<string>(key, window);
-//        private Serde<Windowed<string>> keySerde = new WindowedSerdes.SessionWindowedSerde<string>(serde);
+//        private IWindowed<string> windowedKey = new IWindowed<string>(key, window);
+//        private Serde<IWindowed<string>> keySerde = new WindowedSerdes.SessionWindowedSerde<string>(serde);
 
 //        private SessionKeySchema sessionKeySchema = new SessionKeySchema();
 //        private DelegatingPeekingKeyValueIterator<Bytes, int> iterator;
@@ -68,12 +68,12 @@
 //        public void Before()
 //        {
 //            List<KeyValuePair<Bytes, int>> keys = Array.asList(
-//                KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0, 0 }), new SessionWindow(0, 0))), 1),
-//                KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0 }), new SessionWindow(0, 0))), 2),
-//                KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new SessionWindow(0, 0))), 3),
-//                KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0 }), new SessionWindow(10, 20))), 4),
-//                KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0, 0 }), new SessionWindow(10, 20))), 5),
-//                KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new SessionWindow(10, 20))), 6));
+//                KeyValuePair.Create(SessionKeySchema.toBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0 }), new SessionWindow(0, 0))), 1),
+//                KeyValuePair.Create(SessionKeySchema.toBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0 }), new SessionWindow(0, 0))), 2),
+//                KeyValuePair.Create(SessionKeySchema.toBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new SessionWindow(0, 0))), 3),
+//                KeyValuePair.Create(SessionKeySchema.toBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0 }), new SessionWindow(10, 20))), 4),
+//                KeyValuePair.Create(SessionKeySchema.toBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0 }), new SessionWindow(10, 20))), 5),
+//                KeyValuePair.Create(SessionKeySchema.toBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new SessionWindow(10, 20))), 6));
             
 //            iterator = new DelegatingPeekingKeyValueIterator<>("foo", new KeyValueIteratorStub<>(keys.iterator()));
 //        }
@@ -111,7 +111,7 @@
 //            Assert.Equal(
 //                "shorter key with max timestamp should be in range",
 //                upper.compareTo(SessionKeySchema.toBinary(
-//                    new Windowed<>(
+//                    new IWindowed<>(
 //                        Bytes.Wrap(new byte[] { 0xA }),
 //                        new SessionWindow(long.MaxValue, long.MaxValue))
 //                )) >= 0
@@ -120,7 +120,7 @@
 //            Assert.Equal(
 //                "shorter key with max timestamp should be in range",
 //                upper.compareTo(SessionKeySchema.toBinary(
-//                    new Windowed<>(
+//                    new IWindowed<>(
 //                        Bytes.Wrap(new byte[] { 0xA, 0xB }),
 //                        new SessionWindow(long.MaxValue, long.MaxValue))
 
@@ -128,7 +128,7 @@
 //            );
 
 //            Assert.Equal(upper, SessionKeySchema.toBinary(
-//                new Windowed<>(Bytes.Wrap(new byte[] { 0xA }), new SessionWindow(long.MaxValue, long.MaxValue)))
+//                new IWindowed<>(Bytes.Wrap(new byte[] { 0xA }), new SessionWindow(long.MaxValue, long.MaxValue)))
 //            );
 //        }
 
@@ -140,7 +140,7 @@
 //            Assert.Equal(
 //                "shorter key with max timestamp should be in range",
 //                upper.compareTo(SessionKeySchema.toBinary(
-//                    new Windowed<>(
+//                    new IWindowed<>(
 //                        Bytes.Wrap(new byte[] { 0xA, (byte)0x8F }),
 //                        new SessionWindow(long.MaxValue, long.MaxValue))
 //                    )
@@ -148,7 +148,7 @@
 //            );
 
 //            Assert.Equal(upper, SessionKeySchema.toBinary(
-//                new Windowed<>(Bytes.Wrap(new byte[] { 0xA, (byte)0x8F, (byte)0x9F }), new SessionWindow(long.MaxValue, long.MaxValue)))
+//                new IWindowed<>(Bytes.Wrap(new byte[] { 0xA, (byte)0x8F, (byte)0x9F }), new SessionWindow(long.MaxValue, long.MaxValue)))
 //            );
 //        }
 
@@ -158,7 +158,7 @@
 //            Bytes upper = sessionKeySchema.upperRange(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), 0);
 
 //            Assert.Equal(upper, SessionKeySchema.toBinary(
-//                new Windowed<>(Bytes.Wrap(new byte[] { 0xA }), new SessionWindow(0, long.MaxValue)))
+//                new IWindowed<>(Bytes.Wrap(new byte[] { 0xA }), new SessionWindow(0, long.MaxValue)))
 //            );
 //        }
 
@@ -166,7 +166,7 @@
 //        public void TestLowerBoundWithZeroTimestamp()
 //        {
 //            Bytes lower = sessionKeySchema.lowerRange(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), 0);
-//            Assert.Equal(lower, SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), new SessionWindow(0, 0))));
+//            Assert.Equal(lower, SessionKeySchema.toBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), new SessionWindow(0, 0))));
 //        }
 
 //        [Fact]
@@ -177,20 +177,20 @@
 //            Assert.Equal(
 //                "appending zeros to key should still be in range",
 //                lower.compareTo(SessionKeySchema.toBinary(
-//                    new Windowed<>(
+//                    new IWindowed<>(
 //                        Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }),
 //                        new SessionWindow(long.MaxValue, long.MaxValue))
 //                )) < 0
 //            );
 
-//            Assert.Equal(lower, SessionKeySchema.toBinary(new Windowed<>(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), new SessionWindow(0, 0))));
+//            Assert.Equal(lower, SessionKeySchema.toBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0xA, 0xB, 0xC }), new SessionWindow(0, 0))));
 //        }
 
 //        [Fact]
 //        public void ShouldSerializeDeserialize()
 //        {
 //            byte[] bytes = keySerde.Serializer.Serialize(topic, windowedKey);
-//            Windowed<string> result = keySerde.deserializer().deserialize(topic, bytes);
+//            IWindowed<string> result = keySerde.deserializer().deserialize(topic, bytes);
 //            Assert.Equal(windowedKey, result);
 //        }
 
@@ -216,7 +216,7 @@
 //        public void ShouldConvertToBinaryAndBack()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
-//            Windowed<string> result = SessionKeySchema.from(serialized, Serdes.String().deserializer(), "dummy");
+//            IWindowed<string> result = SessionKeySchema.from(serialized, Serdes.String().deserializer(), "dummy");
 //            Assert.Equal(windowedKey, result);
 //        }
 
@@ -259,7 +259,7 @@
 //        public void ShouldExtractBytesKeyFromBinary()
 //        {
 //            Bytes bytesKey = Bytes.Wrap(key.getBytes());
-//            Windowed<Bytes> windowedBytesKey = new Windowed<>(bytesKey, window);
+//            IWindowed<Bytes> windowedBytesKey = new IWindowed<>(bytesKey, window);
 //            Bytes serialized = SessionKeySchema.toBinary(windowedBytesKey);
 //            Assert.Equal(windowedBytesKey, SessionKeySchema.from(serialized));
 //        }

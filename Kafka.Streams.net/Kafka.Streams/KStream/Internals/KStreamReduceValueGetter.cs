@@ -9,7 +9,7 @@
 
 
 
-//        public void init(IProcessorContext context)
+//        public void Init(IProcessorContext context)
 //        {
 //            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
 //        }
@@ -21,6 +21,6 @@
 //        }
 
 
-//        public void close() { }
+//        public void Close() { }
 //    }
 //}

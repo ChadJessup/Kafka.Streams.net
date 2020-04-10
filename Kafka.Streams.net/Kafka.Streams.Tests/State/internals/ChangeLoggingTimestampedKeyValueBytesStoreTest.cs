@@ -74,7 +74,7 @@
 //                                    Serializer<K> keySerializer,
 //                                    Serializer<V> valueSerializer)
 //            {
-//                sent.put(key, ValueAndTimestamp.Make((byte[])value, timestamp));
+//                sent.Put(key, ValueAndTimestamp.Make((byte[])value, timestamp));
 //            }
 //        };
 //        InternalMockProcessorContext context = new InternalMockProcessorContext(
@@ -90,20 +90,20 @@
 
 //    public void After()
 //    {
-//        store.close();
+//        store.Close();
 //    }
 
 //    [Fact]
 //    public void ShouldWriteKeyValueBytesToInnerStoreOnPut()
 //    {
-//        store.put(hi, rawThere);
+//        store.Put(hi, rawThere);
 //        Assert.Equal(root.Get(hi), (rawThere));
 //    }
 
 //    [Fact]
 //    public void ShouldLogChangeOnPut()
 //    {
-//        store.put(hi, rawThere);
+//        store.Put(hi, rawThere);
 //        ValueAndTimestamp<byte[]> logged = sent.Get(hi);
 //        Assert.Equal(logged.Value, (there.Value));
 //        Assert.Equal(logged.Timestamp, (there.Timestamp));
@@ -134,7 +134,7 @@
 //    [Fact]
 //    public void ShouldPropagateDelete()
 //    {
-//        store.put(hi, rawThere);
+//        store.Put(hi, rawThere);
 //        store.delete(hi);
 //        Assert.Equal(root.approximateNumEntries, (0L));
 //        Assert.Equal(root.Get(hi), nullValue());
@@ -143,14 +143,14 @@
 //    [Fact]
 //    public void ShouldReturnOldValueOnDelete()
 //    {
-//        store.put(hi, rawThere);
+//        store.Put(hi, rawThere);
 //        Assert.Equal(store.delete(hi), (rawThere));
 //    }
 
 //    [Fact]
 //    public void ShouldLogKeyNullOnDelete()
 //    {
-//        store.put(hi, rawThere);
+//        store.Put(hi, rawThere);
 //        store.delete(hi);
 //        Assert.Equal(sent.containsKey(hi), (true));
 //        Assert.Equal(sent.Get(hi), nullValue());
@@ -166,7 +166,7 @@
 //    [Fact]
 //    public void ShouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists()
 //    {
-//        store.put(hi, rawThere);
+//        store.Put(hi, rawThere);
 //        store.putIfAbsent(hi, rawWorld);
 //        Assert.Equal(root.Get(hi), (rawThere));
 //    }
@@ -183,7 +183,7 @@
 //    [Fact]
 //    public void ShouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists()
 //    {
-//        store.put(hi, rawThere);
+//        store.Put(hi, rawThere);
 //        store.putIfAbsent(hi, rawWorld);
 //        ValueAndTimestamp<byte[]> logged = sent.Get(hi);
 //        Assert.Equal(logged.Value, (there.Value));
@@ -193,7 +193,7 @@
 //    [Fact]
 //    public void ShouldReturnCurrentValueOnPutIfAbsent()
 //    {
-//        store.put(hi, rawThere);
+//        store.Put(hi, rawThere);
 //        Assert.Equal(store.putIfAbsent(hi, rawWorld), (rawThere));
 //    }
 
@@ -206,7 +206,7 @@
 //    [Fact]
 //    public void ShouldReturnValueOnGetWhenExists()
 //    {
-//        store.put(hello, rawWorld);
+//        store.Put(hello, rawWorld);
 //        Assert.Equal(store.Get(hello), (rawWorld));
 //    }
 

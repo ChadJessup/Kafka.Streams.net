@@ -15,7 +15,7 @@ namespace Kafka.Streams.Topologies
      * A {@link SourceNode source} is a node in the graph that consumes one or more Kafka topics and forwards them to its
      * successor nodes.
      * A {@link IProcessor processor} is a node in the graph that receives input records from upstream nodes, processes the
-     * records, and optionally forwarding new records to one or all of its downstream nodes.
+     * records, and optionally forwarding new records to one or All of its downstream nodes.
      * Finally, a {@link SinkNode sink} is a node in the graph that receives records from upstream nodes and writes them to
      * a Kafka topic.
      * A {@code Topology} allows you to construct an acyclic graph of these nodes, and then passed into a new
@@ -43,18 +43,18 @@ namespace Kafka.Streams.Topologies
          * {@link StreamsConfig stream configuration}.
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
-         * @param name the unique name of the source used to reference this node when
+         * @param Name the unique Name of the source used to reference this node when
          * {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
-         * @param topics the name of one or more Kafka topics that this source is to consume
+         * @param topics the Name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
-            string name,
+            string Name,
             string[] topics)
         {
-            internalTopologyBuilder.AddSource<K, V>(null, name, null, null, null, topics);
+            this.internalTopologyBuilder.AddSource<K, V>(null, Name, null, null, null, topics);
             return this;
         }
 
@@ -66,7 +66,7 @@ namespace Kafka.Streams.Topologies
          * {@link StreamsConfig stream configuration}.
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
-         * @param name the unique name of the source used to reference this node when
+         * @param Name the unique Name of the source used to reference this node when
          * {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topicPattern regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
@@ -74,10 +74,10 @@ namespace Kafka.Streams.Topologies
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
-            string name,
+            string Name,
             Regex topicPattern)
         {
-//            internalTopologyBuilder.AddSource<K, V>(null, name, null, null, null, topicPattern);
+//            internalTopologyBuilder.AddSource<K, V>(null, Name, null, null, null, topicPattern);
             return this;
         }
 
@@ -89,19 +89,19 @@ namespace Kafka.Streams.Topologies
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
          * @param offsetReset the auto offset reset policy to use for this source if no committed offsets found; acceptable values earliest or latest
-         * @param name the unique name of the source used to reference this node when
+         * @param Name the unique Name of the source used to reference this node when
          * {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
-         * @param topics the name of one or more Kafka topics that this source is to consume
+         * @param topics the Name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
-            string name,
+            string Name,
             string[] topics)
         {
-            internalTopologyBuilder.AddSource<K, V>(offsetReset, name, null, null, null, topics);
+            this.internalTopologyBuilder.AddSource<K, V>(offsetReset, Name, null, null, null, topics);
             return this;
         }
 
@@ -114,7 +114,7 @@ namespace Kafka.Streams.Topologies
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
          * @param offsetReset the auto offset reset policy value for this source if no committed offsets found; acceptable values earliest or latest.
-         * @param name the unique name of the source used to reference this node when
+         * @param Name the unique Name of the source used to reference this node when
          * {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topicPattern regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
@@ -123,10 +123,10 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
-            string name,
+            string Name,
             Regex topicPattern)
         {
-            internalTopologyBuilder.AddSource<K, V>(offsetReset, name, null, null, null, topicPattern);
+            this.internalTopologyBuilder.AddSource<K, V>(offsetReset, Name, null, null, null, topicPattern);
             return this;
         }
 
@@ -138,19 +138,19 @@ namespace Kafka.Streams.Topologies
          *
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
-         * @param topics             the name of one or more Kafka topics that this source is to consume
+         * @param topics             the Name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             ITimestampExtractor timestampExtractor,
-            string name,
+            string Name,
             string[] topics)
         {
-            internalTopologyBuilder.AddSource<K, V>(null, name, timestampExtractor, null, null, topics);
+            this.internalTopologyBuilder.AddSource<K, V>(null, Name, timestampExtractor, null, null, topics);
             return this;
         }
 
@@ -163,7 +163,7 @@ namespace Kafka.Streams.Topologies
          *
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topicPattern       regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
@@ -172,10 +172,10 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             ITimestampExtractor timestampExtractor,
-            string name,
+            string Name,
             Regex topicPattern)
         {
-            //internalTopologyBuilder.AddSource<K, V>(null, name, timestampExtractor, null, null, topicPattern);
+            //internalTopologyBuilder.AddSource<K, V>(null, Name, timestampExtractor, null, null, topicPattern);
             return this;
         }
 
@@ -189,9 +189,9 @@ namespace Kafka.Streams.Topologies
          *                           acceptable values earliest or latest
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
-         * @param topics             the name of one or more Kafka topics that this source is to consume
+         * @param topics             the Name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
          */
@@ -199,10 +199,10 @@ namespace Kafka.Streams.Topologies
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
             ITimestampExtractor timestampExtractor,
-            string name,
+            string Name,
             string[] topics)
         {
-            internalTopologyBuilder.AddSource<K, V>(offsetReset, name, timestampExtractor, null, null, topics);
+            this.internalTopologyBuilder.AddSource<K, V>(offsetReset, Name, timestampExtractor, null, null, topics);
             return this;
         }
 
@@ -217,7 +217,7 @@ namespace Kafka.Streams.Topologies
          *                           acceptable values earliest or latest.
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topicPattern       regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
@@ -227,10 +227,10 @@ namespace Kafka.Streams.Topologies
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
             ITimestampExtractor timestampExtractor,
-            string name,
+            string Name,
             Regex topicPattern)
         {
-            internalTopologyBuilder.AddSource<K, V>(offsetReset, name, timestampExtractor, null, null, topicPattern);
+            this.internalTopologyBuilder.AddSource<K, V>(offsetReset, Name, timestampExtractor, null, null, topicPattern);
             return this;
         }
 
@@ -239,24 +239,24 @@ namespace Kafka.Streams.Topologies
          * The source will use the specified key and value deserializers.
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
          *                           key deserializer defined in the configs will be used
          * @param valueDeserializer  value deserializer used to read this source,
          *                           if not specified the default value deserializer defined in the configs will be used
-         * @param topics             the name of one or more Kafka topics that this source is to consume
+         * @param topics             the Name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
-            string name,
+            string Name,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
             string[] topics)
         {
-            internalTopologyBuilder.AddSource(null, name, null, keyDeserializer, valueDeserializer, topics);
+            this.internalTopologyBuilder.AddSource(null, Name, null, keyDeserializer, valueDeserializer, topics);
             return this;
         }
 
@@ -264,11 +264,11 @@ namespace Kafka.Streams.Topologies
          * Add a new source that consumes from topics matching the given pattern and forwards the records to child processor
          * and/or sink nodes.
          * The source will use the specified key and value deserializers.
-         * The provided de-/serializers will be used for all matched topics, so care should be taken to specify patterns for
+         * The provided de-/serializers will be used for All matched topics, so care should be taken to specify patterns for
          * topics that share the same key-value data string.Format.
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
          *                           key deserializer defined in the configs will be used
@@ -276,18 +276,18 @@ namespace Kafka.Streams.Topologies
          *                           if not specified the default value deserializer defined in the configs will be used
          * @param topicPattern       regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
-         * @throws TopologyException if processor is already added or if topics have already been registered by name
+         * @throws TopologyException if processor is already added or if topics have already been registered by Name
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
-            string name,
+            string Name,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
             Regex topicPattern)
         {
             //internalTopologyBuilder.AddSource(
             //    null,
-            //    name,
+            //    Name,
             //    null,
             //    keyDeserializer,
             //    valueDeserializer,
@@ -300,30 +300,30 @@ namespace Kafka.Streams.Topologies
          * Add a new source that consumes from topics matching the given pattern and forwards the records to child processor
          * and/or sink nodes.
          * The source will use the specified key and value deserializers.
-         * The provided de-/serializers will be used for all the specified topics, so care should be taken when specifying
+         * The provided de-/serializers will be used for All the specified topics, so care should be taken when specifying
          * topics that share the same key-value data string.Format.
          *
          * @param offsetReset        the auto offset reset policy to use for this stream if no committed offsets found;
          *                           acceptable values are earliest or latest
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
          *                           key deserializer defined in the configs will be used
          * @param valueDeserializer  value deserializer used to read this source,
          *                           if not specified the default value deserializer defined in the configs will be used
-         * @param topics             the name of one or more Kafka topics that this source is to consume
+         * @param topics             the Name of one or more Kafka topics that this source is to consume
          * @return itself
-         * @throws TopologyException if processor is already added or if topics have already been registered by name
+         * @throws TopologyException if processor is already added or if topics have already been registered by Name
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
-            string name,
+            string Name,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
             string[] topics)
         {
-            internalTopologyBuilder.AddSource(offsetReset, name, null, keyDeserializer, valueDeserializer, topics);
+            this.internalTopologyBuilder.AddSource(offsetReset, Name, null, keyDeserializer, valueDeserializer, topics);
             return this;
         }
 
@@ -331,12 +331,12 @@ namespace Kafka.Streams.Topologies
          * Add a new source that consumes from topics matching the given pattern and forwards the records to child processor
          * and/or sink nodes.
          * The source will use the specified key and value deserializers.
-         * The provided de-/serializers will be used for all matched topics, so care should be taken to specify patterns for
+         * The provided de-/serializers will be used for All matched topics, so care should be taken to specify patterns for
          * topics that share the same key-value data string.Format.
          *
          * @param offsetReset        the auto offset reset policy to use for this stream if no committed offsets found;
          *                           acceptable values are earliest or latest
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
          *                           key deserializer defined in the configs will be used
@@ -344,17 +344,17 @@ namespace Kafka.Streams.Topologies
          *                           if not specified the default value deserializer defined in the configs will be used
          * @param topicPattern       regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
-         * @throws TopologyException if processor is already added or if topics have already been registered by name
+         * @throws TopologyException if processor is already added or if topics have already been registered by Name
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
-            string name,
+            string Name,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
             Regex topicPattern)
         {
-            internalTopologyBuilder.AddSource(offsetReset, name, null, keyDeserializer, valueDeserializer, topicPattern);
+            this.internalTopologyBuilder.AddSource(offsetReset, Name, null, keyDeserializer, valueDeserializer, topicPattern);
             return this;
         }
 
@@ -364,7 +364,7 @@ namespace Kafka.Streams.Topologies
          *
          * @param offsetReset        the auto offset reset policy to use for this stream if no committed offsets found;
          *                           acceptable values are earliest or latest.
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
@@ -372,20 +372,20 @@ namespace Kafka.Streams.Topologies
          *                           key deserializer defined in the configs will be used
          * @param valueDeserializer  value deserializer used to read this source,
          *                           if not specified the default value deserializer defined in the configs will be used
-         * @param topics             the name of one or more Kafka topics that this source is to consume
+         * @param topics             the Name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
-            string name,
+            string Name,
             ITimestampExtractor timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
             string[] topics)
         {
-            internalTopologyBuilder.AddSource(offsetReset, name, timestampExtractor, keyDeserializer, valueDeserializer, topics);
+            this.internalTopologyBuilder.AddSource(offsetReset, Name, timestampExtractor, keyDeserializer, valueDeserializer, topics);
             return this;
         }
 
@@ -393,12 +393,12 @@ namespace Kafka.Streams.Topologies
          * Add a new source that consumes from topics matching the given pattern and forwards the records to child processor
          * and/or sink nodes.
          * The source will use the specified key and value deserializers.
-         * The provided de-/serializers will be used for all matched topics, so care should be taken to specify patterns for
+         * The provided de-/serializers will be used for All matched topics, so care should be taken to specify patterns for
          * topics that share the same key-value data string.Format.
          *
          * @param offsetReset        the auto offset reset policy to use for this stream if no committed offsets found;
          *                           acceptable values are earliest or latest
-         * @param name               the unique name of the source used to reference this node when
+         * @param Name               the unique Name of the source used to reference this node when
          *                           {@link #AddProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
@@ -408,18 +408,18 @@ namespace Kafka.Streams.Topologies
          *                           if not specified the default value deserializer defined in the configs will be used
          * @param topicPattern       regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
-         * @throws TopologyException if processor is already added or if topics have already been registered by name
+         * @throws TopologyException if processor is already added or if topics have already been registered by Name
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
-            string name,
+            string Name,
             ITimestampExtractor timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
             Regex topicPattern)
         {
-            internalTopologyBuilder.AddSource(offsetReset, name, timestampExtractor, keyDeserializer, valueDeserializer, topicPattern);
+            this.internalTopologyBuilder.AddSource(offsetReset, Name, timestampExtractor, keyDeserializer, valueDeserializer, topicPattern);
             return this;
         }
 
@@ -429,23 +429,23 @@ namespace Kafka.Streams.Topologies
          * {@link StreamsConfig#DEFAULT_VALUE_SERDE_CLASS_CONFIG default value serializer} specified in the
          * {@link StreamsConfig stream configuration}.
          *
-         * @param name the unique name of the sink
-         * @param topic the name of the Kafka topic to which this sink should write its records
-         * @param parentNames the name of one or more source or processor nodes whose output records this sink should consume
+         * @param Name the unique Name of the sink
+         * @param topic the Name of the Kafka topic to which this sink should write its records
+         * @param parentNames the Name of one or more source or processor nodes whose output records this sink should consume
          * and write to its topic
          * @return itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          * @see #AddSink(string, string, StreamPartitioner, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, StreamPartitioner, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
-            string name,
+            string Name,
             string topic,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddSink<K, V>(name, topic, null, null, null, parentNames);
+            this.internalTopologyBuilder.AddSink<K, V>(Name, topic, null, null, null, parentNames);
             return this;
         }
 
@@ -463,25 +463,25 @@ namespace Kafka.Streams.Topologies
          * In most other cases, however, a partitioner needs not be specified and Kafka will automatically distribute
          * records among partitions using Kafka's default partitioning logic.
          *
-         * @param name the unique name of the sink
-         * @param topic the name of the Kafka topic to which this sink should write its records
+         * @param Name the unique Name of the sink
+         * @param topic the Name of the Kafka topic to which this sink should write its records
          * @param partitioner the function that should be used to determine the partition for each record processed by the sink
-         * @param parentNames the name of one or more source or processor nodes whose output records this sink should consume
+         * @param parentNames the Name of one or more source or processor nodes whose output records this sink should consume
          * and write to its topic
          * @return itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          * @see #AddSink(string, string, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, StreamPartitioner, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
-            string name,
+            string Name,
             string topic,
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddSink<K, V>(name, topic, null, null, partitioner, parentNames);
+            this.internalTopologyBuilder.AddSink<K, V>(Name, topic, null, null, partitioner, parentNames);
             return this;
         }
 
@@ -489,31 +489,31 @@ namespace Kafka.Streams.Topologies
          * Add a new sink that forwards records from upstream parent processor and/or source nodes to the named Kafka topic.
          * The sink will use the specified key and value serializers.
          *
-         * @param name the unique name of the sink
-         * @param topic the name of the Kafka topic to which this sink should write its records
+         * @param Name the unique Name of the sink
+         * @param topic the Name of the Kafka topic to which this sink should write its records
          * @param keySerializer the {@link ISerializer key serializer} used when consuming records; may be null if the sink
          * should use the {@link StreamsConfig#DEFAULT_KEY_SERDE_CLASS_CONFIG default key serializer} specified in the
          * {@link StreamsConfig stream configuration}
          * @param valueSerializer the {@link ISerializer value serializer} used when consuming records; may be null if the sink
          * should use the {@link StreamsConfig#DEFAULT_VALUE_SERDE_CLASS_CONFIG default value serializer} specified in the
          * {@link StreamsConfig stream configuration}
-         * @param parentNames the name of one or more source or processor nodes whose output records this sink should consume
+         * @param parentNames the Name of one or more source or processor nodes whose output records this sink should consume
          * and write to its topic
          * @return itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          * @see #AddSink(string, string, string[])
          * @see #AddSink(string, string, StreamPartitioner, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, StreamPartitioner, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
-            string name,
+            string Name,
             string topic,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddSink(name, topic, keySerializer, valueSerializer, null, parentNames);
+            this.internalTopologyBuilder.AddSink(Name, topic, keySerializer, valueSerializer, null, parentNames);
             return this;
         }
 
@@ -521,8 +521,8 @@ namespace Kafka.Streams.Topologies
          * Add a new sink that forwards records from upstream parent processor and/or source nodes to the named Kafka topic.
          * The sink will use the specified key and value serializers, and the supplied partitioner.
          *
-         * @param name the unique name of the sink
-         * @param topic the name of the Kafka topic to which this sink should write its records
+         * @param Name the unique Name of the sink
+         * @param topic the Name of the Kafka topic to which this sink should write its records
          * @param keySerializer the {@link ISerializer key serializer} used when consuming records; may be null if the sink
          * should use the {@link StreamsConfig#DEFAULT_KEY_SERDE_CLASS_CONFIG default key serializer} specified in the
          * {@link StreamsConfig stream configuration}
@@ -530,24 +530,24 @@ namespace Kafka.Streams.Topologies
          * should use the {@link StreamsConfig#DEFAULT_VALUE_SERDE_CLASS_CONFIG default value serializer} specified in the
          * {@link StreamsConfig stream configuration}
          * @param partitioner the function that should be used to determine the partition for each record processed by the sink
-         * @param parentNames the name of one or more source or processor nodes whose output records this sink should consume
+         * @param parentNames the Name of one or more source or processor nodes whose output records this sink should consume
          * and write to its topic
          * @return itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          * @see #AddSink(string, string, string[])
          * @see #AddSink(string, string, StreamPartitioner, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
-            string name,
+            string Name,
             string topic,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddSink<K, V>(name, topic, keySerializer, valueSerializer, partitioner, parentNames);
+            this.internalTopologyBuilder.AddSink<K, V>(Name, topic, keySerializer, valueSerializer, partitioner, parentNames);
             return this;
         }
 
@@ -558,23 +558,23 @@ namespace Kafka.Streams.Topologies
          * {@link StreamsConfig#DEFAULT_VALUE_SERDE_CLASS_CONFIG default value serializer} specified in the
          * {@link StreamsConfig stream configuration}.
          *
-         * @param name              the unique name of the sink
-         * @param topicExtractor    the extractor to determine the name of the Kafka topic to which this sink should write for each record
-         * @param parentNames       the name of one or more source or processor nodes whose output records this sink should consume
+         * @param Name              the unique Name of the sink
+         * @param topicExtractor    the extractor to determine the Name of the Kafka topic to which this sink should write for each record
+         * @param parentNames       the Name of one or more source or processor nodes whose output records this sink should consume
          *                          and dynamically write to topics
          * @return                  itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          * @see #AddSink(string, string, StreamPartitioner, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, StreamPartitioner, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
-            string name,
+            string Name,
             ITopicNameExtractor topicExtractor,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddSink<K, V>(name, topicExtractor, null, null, null, parentNames);
+            this.internalTopologyBuilder.AddSink<K, V>(Name, topicExtractor, null, null, null, parentNames);
             return this;
         }
 
@@ -593,25 +593,25 @@ namespace Kafka.Streams.Topologies
          * In most other cases, however, a partitioner needs not be specified and Kafka will automatically distribute
          * records among partitions using Kafka's default partitioning logic.
          *
-         * @param name              the unique name of the sink
-         * @param topicExtractor    the extractor to determine the name of the Kafka topic to which this sink should write for each record
+         * @param Name              the unique Name of the sink
+         * @param topicExtractor    the extractor to determine the Name of the Kafka topic to which this sink should write for each record
          * @param partitioner       the function that should be used to determine the partition for each record processed by the sink
-         * @param parentNames       the name of one or more source or processor nodes whose output records this sink should consume
+         * @param parentNames       the Name of one or more source or processor nodes whose output records this sink should consume
          *                          and dynamically write to topics
          * @return                  itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          * @see #AddSink(string, string, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, StreamPartitioner, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
-            string name,
+            string Name,
             ITopicNameExtractor topicExtractor,
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddSink<K, V>(name, topicExtractor, null, null, partitioner, parentNames);
+            this.internalTopologyBuilder.AddSink<K, V>(Name, topicExtractor, null, null, partitioner, parentNames);
             return this;
         }
 
@@ -620,31 +620,31 @@ namespace Kafka.Streams.Topologies
          * The topics that it may ever send to should be pre-created.
          * The sink will use the specified key and value serializers.
          *
-         * @param name              the unique name of the sink
-         * @param topicExtractor    the extractor to determine the name of the Kafka topic to which this sink should write for each record
+         * @param Name              the unique Name of the sink
+         * @param topicExtractor    the extractor to determine the Name of the Kafka topic to which this sink should write for each record
          * @param keySerializer     the {@link ISerializer key serializer} used when consuming records; may be null if the sink
          *                          should use the {@link StreamsConfig#DEFAULT_KEY_SERDE_CLASS_CONFIG default key serializer} specified in the
          *                          {@link StreamsConfig stream configuration}
          * @param valueSerializer   the {@link ISerializer value serializer} used when consuming records; may be null if the sink
          *                          should use the {@link StreamsConfig#DEFAULT_VALUE_SERDE_CLASS_CONFIG default value serializer} specified in the
          *                          {@link StreamsConfig stream configuration}
-         * @param parentNames       the name of one or more source or processor nodes whose output records this sink should consume
+         * @param parentNames       the Name of one or more source or processor nodes whose output records this sink should consume
          *                          and dynamically write to topics
          * @return                  itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          * @see #AddSink(string, string, string[])
          * @see #AddSink(string, string, StreamPartitioner, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, StreamPartitioner, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
-            string name,
+            string Name,
             ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddSink(name, topicExtractor, keySerializer, valueSerializer, null, parentNames);
+            this.internalTopologyBuilder.AddSink(Name, topicExtractor, keySerializer, valueSerializer, null, parentNames);
             return this;
         }
 
@@ -653,8 +653,8 @@ namespace Kafka.Streams.Topologies
          * The topics that it may ever send to should be pre-created.
          * The sink will use the specified key and value serializers, and the supplied partitioner.
          *
-         * @param name              the unique name of the sink
-         * @param topicExtractor    the extractor to determine the name of the Kafka topic to which this sink should write for each record
+         * @param Name              the unique Name of the sink
+         * @param topicExtractor    the extractor to determine the Name of the Kafka topic to which this sink should write for each record
          * @param keySerializer     the {@link ISerializer key serializer} used when consuming records; may be null if the sink
          *                          should use the {@link StreamsConfig#DEFAULT_KEY_SERDE_CLASS_CONFIG default key serializer} specified in the
          *                          {@link StreamsConfig stream configuration}
@@ -662,24 +662,24 @@ namespace Kafka.Streams.Topologies
          *                          should use the {@link StreamsConfig#DEFAULT_VALUE_SERDE_CLASS_CONFIG default value serializer} specified in the
          *                          {@link StreamsConfig stream configuration}
          * @param partitioner       the function that should be used to determine the partition for each record processed by the sink
-         * @param parentNames       the name of one or more source or processor nodes whose output records this sink should consume
+         * @param parentNames       the Name of one or more source or processor nodes whose output records this sink should consume
          *                          and dynamically write to topics
          * @return                  itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          * @see #AddSink(string, string, string[])
          * @see #AddSink(string, string, StreamPartitioner, string[])
          * @see #AddSink(string, string, ISerializer, ISerializer, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
-            string name,
+            string Name,
             ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddSink(name, topicExtractor, keySerializer, valueSerializer, partitioner, parentNames);
+            this.internalTopologyBuilder.AddSink(Name, topicExtractor, keySerializer, valueSerializer, partitioner, parentNames);
             return this;
         }
 
@@ -688,20 +688,20 @@ namespace Kafka.Streams.Topologies
          * node.
          * Any new record output by this processor will be forwarded to its child processor or sink nodes.
          *
-         * @param name the unique name of the processor node
+         * @param Name the unique Name of the processor node
          * @param supplier the supplier used to obtain this node's {@link IProcessor} instance
-         * @param parentNames the name of one or more source or processor nodes whose output records this processor should receive
+         * @param parentNames the Name of one or more source or processor nodes whose output records this processor should receive
          * and process
          * @return itself
-         * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
+         * @throws TopologyException if parent processor is not added yet, or if this processor's Name is equal to the parent's Name
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddProcessor<K, V>(
-            string name,
+            string Name,
             IProcessorSupplier<K, V> supplier,
             string[] parentNames)
         {
-            internalTopologyBuilder.AddProcessor<K, V>(name, supplier, parentNames);
+            this.internalTopologyBuilder.AddProcessor<K, V>(Name, supplier, parentNames);
 
             return this;
         }
@@ -730,23 +730,23 @@ namespace Kafka.Streams.Topologies
 
         /**
          * Adds a global {@link StateStore} to the topology.
-         * The {@link StateStore} sources its data from all partitions of the provided input topic.
+         * The {@link StateStore} sources its data from All partitions of the provided input topic.
          * There will be exactly one instance of this {@link StateStore} per Kafka Streams instance.
          * <p>
          * A {@link SourceNode} with the provided sourceName will be added to consume the data arriving from the partitions
          * of the input topic.
          * <p>
-         * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
+         * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive All
          * records forwarded from the {@link SourceNode}.
          * This {@link ProcessorNode} should be used to keep the {@link StateStore} up-to-date.
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
          * @param storeBuilder          user defined state store builder
-         * @param sourceName            name of the {@link SourceNode} that will be automatically added
+         * @param sourceName            Name of the {@link SourceNode} that will be automatically added
          * @param keyDeserializer       the {@link IDeserializer} to deserialize keys with
          * @param valueDeserializer     the {@link IDeserializer} to deserialize values with
          * @param topic                 the topic to source the data from
-         * @param processorName         the name of the {@link IProcessorSupplier}
+         * @param processorName         the Name of the {@link IProcessorSupplier}
          * @param stateUpdateSupplier   the instance of {@link IProcessorSupplier}
          * @return itself
          * @throws TopologyException if the processor of state is already registered
@@ -762,7 +762,7 @@ namespace Kafka.Streams.Topologies
             IProcessorSupplier<K, V> stateUpdateSupplier)
             where T : IStateStore
         {
-            internalTopologyBuilder.AddGlobalStore(storeBuilder, sourceName, null, keyDeserializer,
+            this.internalTopologyBuilder.AddGlobalStore(storeBuilder, sourceName, null, keyDeserializer,
                 valueDeserializer, topic, processorName, stateUpdateSupplier);
 
             return this;
@@ -770,24 +770,24 @@ namespace Kafka.Streams.Topologies
 
         /**
          * Adds a global {@link StateStore} to the topology.
-         * The {@link StateStore} sources its data from all partitions of the provided input topic.
+         * The {@link StateStore} sources its data from All partitions of the provided input topic.
          * There will be exactly one instance of this {@link StateStore} per Kafka Streams instance.
          * <p>
          * A {@link SourceNode} with the provided sourceName will be added to consume the data arriving from the partitions
          * of the input topic.
          * <p>
-         * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
+         * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive All
          * records forwarded from the {@link SourceNode}.
          * This {@link ProcessorNode} should be used to keep the {@link StateStore} up-to-date.
          *
          * @param storeBuilder          user defined key value store builder
-         * @param sourceName            name of the {@link SourceNode} that will be automatically added
+         * @param sourceName            Name of the {@link SourceNode} that will be automatically added
          * @param timestampExtractor    the stateless timestamp extractor used for this source,
          *                              if not specified the default extractor defined in the configs will be used
          * @param keyDeserializer       the {@link IDeserializer} to deserialize keys with
          * @param valueDeserializer     the {@link IDeserializer} to deserialize values with
          * @param topic                 the topic to source the data from
-         * @param processorName         the name of the {@link IProcessorSupplier}
+         * @param processorName         the Name of the {@link IProcessorSupplier}
          * @param stateUpdateSupplier   the instance of {@link IProcessorSupplier}
          * @return itself
          * @throws TopologyException if the processor of state is already registered
@@ -804,7 +804,7 @@ namespace Kafka.Streams.Topologies
             IProcessorSupplier<K, V> stateUpdateSupplier)
             where T : IStateStore
         {
-            internalTopologyBuilder.AddGlobalStore(storeBuilder, sourceName, timestampExtractor, keyDeserializer,
+            this.internalTopologyBuilder.AddGlobalStore(storeBuilder, sourceName, timestampExtractor, keyDeserializer,
                 valueDeserializer, topic, processorName, stateUpdateSupplier);
 
             return this;
@@ -813,7 +813,7 @@ namespace Kafka.Streams.Topologies
         /**
          * Connects the processor and the state stores.
          *
-         * @param processorName the name of the processor
+         * @param processorName the Name of the processor
          * @param stateStoreNames the names of state stores that the processor uses
          * @return itself
          * @throws TopologyException if the processor or a state store is unknown
@@ -823,7 +823,7 @@ namespace Kafka.Streams.Topologies
             string processorName,
             string[] stateStoreNames)
         {
-            internalTopologyBuilder.ConnectProcessorAndStateStores(processorName, stateStoreNames);
+            this.internalTopologyBuilder.ConnectProcessorAndStateStores(processorName, stateStoreNames);
             return this;
         }
 
@@ -835,7 +835,7 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public TopologyDescription Describe()
         {
-            return internalTopologyBuilder.Describe();
+            return this.internalTopologyBuilder.Describe();
         }
     }
 }

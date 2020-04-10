@@ -14,6 +14,7 @@ namespace Kafka.Streams.Tasks
 {
     public abstract class AbstractTask : ITask
     {
+        protected KafkaStreamsContext Context { get; }
         public TaskId id { get; }
         public string applicationId { get; }
         public ProcessorTopology topology { get; }
@@ -23,19 +24,17 @@ namespace Kafka.Streams.Tasks
         protected string logPrefix { get; }
         protected bool eosEnabled { get; }
         protected ILogger<AbstractTask> logger { get; }
-
         protected StateDirectory stateDirectory { get; }
-
         protected bool TaskInitialized { get; set; }
         protected bool TaskClosed { get; set; }
         public bool commitNeeded { get; set; }
-
         protected IInternalProcessorContext processorContext { get; set; }
 
         /**
          * @throws ProcessorStateException if the state manager cannot be created
          */
         public AbstractTask(
+            KafkaStreamsContext context,
             TaskId id,
             List<TopicPartition> partitions,
             ProcessorTopology topology,
@@ -45,6 +44,7 @@ namespace Kafka.Streams.Tasks
             StateDirectory stateDirectory,
             StreamsConfig config)
         {
+            this.Context = context;
             this.id = id;
             this.applicationId = config.ApplicationId;
             this.partitions = new HashSet<TopicPartition>(partitions);
@@ -58,27 +58,27 @@ namespace Kafka.Streams.Tasks
             // create the processor state manager
             try
             {
-                StateMgr = new ProcessorStateManager(
-                    new Logger<ProcessorStateManager>(new LoggerFactory()),
+                this.StateMgr = new ProcessorStateManager(
+                    this.Context.LoggerFactory.CreateLogger<ProcessorStateManager>(),
                     id,
                     partitions,
                     isStandby,
                     stateDirectory,
                     topology.StoreToChangelogTopic,
                     changelogReader,
-                    eosEnabled);
+                    this.eosEnabled);
             }
             catch (IOException e)
             {
-                throw new ProcessorStateException($"{logPrefix}Error while creating the state manager", e);
+                throw new ProcessorStateException($"{this.logPrefix}Error while creating the state manager", e);
             }
         }
 
-        public IProcessorContext context => processorContext;
+        public IProcessorContext context => this.processorContext;
 
-        public virtual IStateStore GetStore(string name)
+        public virtual IStateStore GetStore(string Name)
         {
-            return StateMgr.GetStore(name);
+            return this.StateMgr.GetStore(Name);
         }
 
         /**
@@ -89,12 +89,12 @@ namespace Kafka.Streams.Tasks
          */
         public override string ToString()
         {
-            return ToString("");
+            return this.ToString("");
         }
 
         public bool IsEosEnabled()
         {
-            return eosEnabled;
+            return this.eosEnabled;
         }
 
         /**
@@ -109,20 +109,20 @@ namespace Kafka.Streams.Tasks
 
             sb.Append(indent);
             sb.Append("TaskId: ");
-            sb.Append(id);
+            sb.Append(this.id);
             sb.Append("\n");
 
             // print topology
-            if (topology != null)
+            if (this.topology != null)
             {
-                sb.Append(indent).Append(topology.ToString(indent + "\t"));
+                sb.Append(indent).Append(this.topology.ToString(indent + "\t"));
             }
 
             // print assigned partitions
-            if (partitions != null && partitions.Any())
+            if (this.partitions != null && this.partitions.Any())
             {
                 sb.Append(indent).Append("Partitions [");
-                foreach (TopicPartition topicPartition in partitions)
+                foreach (TopicPartition topicPartition in this.partitions)
                 {
                     sb.Append(topicPartition.ToString()).Append(", ");
                 }
@@ -141,7 +141,7 @@ namespace Kafka.Streams.Tasks
 
         protected virtual void UpdateOffsetLimits()
         {
-            foreach (TopicPartition partition in partitions)
+            foreach (TopicPartition partition in this.partitions)
             {
                 try
                 {
@@ -168,11 +168,11 @@ namespace Kafka.Streams.Tasks
         }
 
         /**
-         * Flush all state stores owned by this task
+         * Flush All state stores owned by this task
          */
         protected virtual void FlushState()
         {
-            StateMgr.Flush();
+            this.StateMgr.Flush();
         }
 
         /**
@@ -182,7 +182,7 @@ namespace Kafka.Streams.Tasks
          */
         protected virtual void RegisterStateStores()
         {
-            if (!topology.StateStores.Any())
+            if (!this.topology.StateStores.Any())
             {
                 return;
             }
@@ -198,25 +198,25 @@ namespace Kafka.Streams.Tasks
             catch (IOException e)
             {
                 throw new StreamsException(
-                    $"{logPrefix}Fatal error while trying to lock the state directory for task {id}");
+                    $"{this.logPrefix}Fatal error while trying to lock the state directory for task {this.id}");
             }
 
-            logger.LogTrace("Initializing state stores");
+            this.logger.LogTrace("Initializing state stores");
 
             // set initial offset limits
-            UpdateOffsetLimits();
+            this.UpdateOffsetLimits();
 
-            foreach (IStateStore store in topology.StateStores)
+            foreach (IStateStore store in this.topology.StateStores)
             {
-                logger.LogTrace("Initializing store {}", store.Name);
-                processorContext.Uninitialize();
-                store.Init(processorContext, store);
+                this.logger.LogTrace("Initializing store {}", store.Name);
+                this.processorContext.Uninitialize();
+                store.Init(this.processorContext, store);
             }
         }
 
         public virtual void ReinitializeStateStoresForPartitions(List<TopicPartition> partitions)
         {
-            StateMgr.ReinitializeStateStoresForPartitions(partitions, processorContext);
+            this.StateMgr.ReinitializeStateStoresForPartitions(partitions, this.processorContext);
         }
 
         /**
@@ -225,10 +225,10 @@ namespace Kafka.Streams.Tasks
         public virtual void CloseStateManager(bool clean)
         {
             ProcessorStateException? exception = null;
-            logger.LogTrace("Closing state manager");
+            this.logger.LogTrace("Closing state manager");
             try
             {
-                StateMgr.Close(clean);
+                this.StateMgr.Close(clean);
             }
             catch (ProcessorStateException e)
             {
@@ -238,13 +238,13 @@ namespace Kafka.Streams.Tasks
             {
                 try
                 {
-                    stateDirectory.Unlock(id);
+                    this.stateDirectory.Unlock(this.id);
                 }
                 catch (IOException e)
                 {
                     if (exception == null)
                     {
-                        exception = new ProcessorStateException($"{logPrefix}Failed to release state dir lock", e);
+                        exception = new ProcessorStateException($"{this.logPrefix}Failed to release state dir lock", e);
                     }
                 }
             }
@@ -257,12 +257,12 @@ namespace Kafka.Streams.Tasks
 
         public virtual bool IsClosed()
         {
-            return TaskClosed;
+            return this.TaskClosed;
         }
 
         public virtual bool HasStateStores()
         {
-            return topology.StateStores.Any();
+            return this.topology.StateStores.Any();
         }
 
         public abstract bool InitializeStateStores();

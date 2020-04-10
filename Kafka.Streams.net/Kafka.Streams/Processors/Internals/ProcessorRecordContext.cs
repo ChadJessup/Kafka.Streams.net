@@ -32,14 +32,14 @@ namespace Kafka.Streams.Processors.Internals
             long size = 0;
             size += sizeof(long); // value.context.timestamp
             size += sizeof(long); // value.context.offset
-            if (Topic != null)
+            if (this.Topic != null)
             {
-                size += Topic.ToCharArray().Length;
+                size += this.Topic.ToCharArray().Length;
             }
             size += sizeof(int); // partition
-            if (headers != null)
+            if (this.headers != null)
             {
-                foreach (Header header in headers)
+                foreach (Header header in this.headers)
                 {
                     size += header.Key.ToCharArray().Length;
                     var value = header.GetValueBytes();
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public byte[] Serialize()
         {
-            var topicBytes = Encoding.UTF8.GetBytes(Topic);
+            var topicBytes = Encoding.UTF8.GetBytes(this.Topic);
             byte[][] headerKeysBytes;
             byte[][] headerValuesBytes;
 
@@ -67,7 +67,7 @@ namespace Kafka.Streams.Processors.Internals
             size += sizeof(int); // partition
             size += sizeof(int); // number of headers
 
-            if (headers == null)
+            if (this.headers == null)
             {
                 headerKeysBytes = headerValuesBytes = null;
             }
@@ -95,15 +95,15 @@ namespace Kafka.Streams.Processors.Internals
             }
 
             ByteBuffer buffer = new ByteBuffer().Allocate(size);
-            buffer.PutLong(timestamp);
-            buffer.PutLong(offset);
+            buffer.PutLong(this.timestamp);
+            buffer.PutLong(this.offset);
 
             // not handling the null condition because we believe topic will never be null in cases where we serialize
             buffer.PutInt(topicBytes.Length);
             buffer.Add(topicBytes);
 
-            buffer.PutInt(partition);
-            if (headers == null)
+            buffer.PutInt(this.partition);
+            if (this.headers == null)
             {
                 buffer.PutInt(-1);
             }
@@ -194,28 +194,28 @@ namespace Kafka.Streams.Processors.Internals
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (ProcessorRecordContext)o;
 
-            return timestamp == that.timestamp &&
-                offset == that.offset &&
-                partition == that.partition &&
-                Topic.Equals(that.Topic) &&
-                headers.Equals(that.headers);
+            return this.timestamp == that.timestamp &&
+                this.offset == that.offset &&
+                this.partition == that.partition &&
+                this.Topic.Equals(that.Topic) &&
+                this.headers.Equals(that.headers);
         }
 
         public override string ToString()
         {
             return "ProcessorRecordContext{" +
-                "topic='" + Topic + '\'' +
-                ", partition=" + partition +
-                ", offset=" + offset +
-                ", timestamp=" + timestamp +
-                ", headers=" + headers +
+                "topic='" + this.Topic + '\'' +
+                ", partition=" + this.partition +
+                ", offset=" + this.offset +
+                ", timestamp=" + this.timestamp +
+                ", headers=" + this.headers +
                 '}';
         }
 

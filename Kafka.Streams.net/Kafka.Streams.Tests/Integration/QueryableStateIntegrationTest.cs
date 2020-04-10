@@ -68,7 +68,7 @@
 //        /**
 //         * Try to read inputValues from {@code resources/QueryableStateIntegrationTest/inputValues.txt}, which might be useful
 //         * for larger scale testing. In case of exception, for instance if no such file can be read, return a small list
-//         * which satisfies all the prerequisites of the tests.
+//         * which satisfies All the prerequisites of the tests.
 //         */
 //        private List<string> GetInputValues()
 //        {
@@ -85,7 +85,7 @@
 //            log.warn("Unable to read '{}{}{}'. Using default inputValues list", "resources", Path.DirectorySeparatorChar, fileName);
 //            input = Array.asList(
 //                        "hello world",
-//                        "all streams lead to kafka",
+//                        "All streams lead to kafka",
 //                        "streams",
 //                        "kafka streams",
 //                        "the cat in the hat",
@@ -133,7 +133,7 @@
 //        {// throws Exception
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close(ofSeconds(30));
+//                kafkaStreams.Close(ofSeconds(30));
 //            }
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
@@ -156,7 +156,7 @@
 //                .FlatMapValues((ValueMapper<string, Iterable<string>>)value => Array.asList(value.Split("\\W+")))
 //                .GroupBy(MockMapper.selectValueMapper());
 
-//            // Create a State Store for the all time word count
+//            // Create a State Store for the All time word count
 //            groupedByWords
 //                .Count(Materialized.As(storeName + "-" + inputTopic))
 //                .ToStream()
@@ -186,7 +186,7 @@
 //                           int queryPort)
 //            {
 //                StreamsConfig props = (StreamsConfig)streamsConfiguration.clone();
-//                props.put(StreamsConfig.APPLICATION_SERVER_CONFIG, "localhost:" + queryPort);
+//                props.Put(StreamsConfig.APPLICATION_SERVER_CONFIG, "localhost:" + queryPort);
 //                myStream = CreateCountStream(inputTopic, outputTopic, outputTopicWindowed, storeName, windowStoreName, props);
 //                myStream.setStateListener(stateListener);
 //            }
@@ -201,7 +201,7 @@
 //            {
 //                if (!closed)
 //                {
-//                    myStream.close();
+//                    myStream.Close();
 //                    closed = true;
 //                }
 //            }
@@ -458,8 +458,8 @@
 //        [Fact]
 //        public void ShouldBeAbleToQueryFilterState()
 //        {// throws Exception
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Long().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Long().getClass());
 //            StreamsBuilder builder = new StreamsBuilder();
 //            string[] keys = { "hello", "goodbye", "welcome", "go", "kafka" };
 //            HashSet<KeyValuePair<string, long>> batch1 = new HashSet<>(
@@ -530,8 +530,8 @@
 //        [Fact]
 //        public void ShouldBeAbleToQueryMapValuesState()
 //        {// throws Exception
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 //            StreamsBuilder builder = new StreamsBuilder();
 //            string[] keys = { "hello", "goodbye", "welcome", "go", "kafka" };
 //            HashSet<KeyValuePair<string, string>> batch1 = new HashSet<>(
@@ -577,8 +577,8 @@
 //        [Fact]
 //        public void ShouldBeAbleToQueryMapValuesAfterFilterState()
 //        {// throws Exception
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 //            StreamsBuilder builder = new StreamsBuilder();
 //            string[] keys = { "hello", "goodbye", "welcome", "go", "kafka" };
 //            HashSet<KeyValuePair<string, string>> batch1 = new HashSet<>(
@@ -636,7 +636,7 @@
 
 //        private void VerifyCanQueryState(int cacheSizeBytes)
 //        {// throws Exception
-//            streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, cacheSizeBytes);
+//            streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, cacheSizeBytes);
 //            StreamsBuilder builder = new StreamsBuilder();
 //            string[] keys = { "hello", "goodbye", "welcome", "go", "kafka" };
 
@@ -733,8 +733,8 @@
 //                maxWaitMs,
 //                "wait for count to be 8");
 
-//            // close stream
-//            kafkaStreams.close();
+//            // Close stream
+//            kafkaStreams.Close();
 
 //            // start again
 //            kafkaStreams = new KafkaStreams(builder.Build(), streamsConfiguration);
@@ -810,7 +810,7 @@
 //                .toStream()
 //                .To(outputTopic);
 
-//            streamsConfiguration.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 2);
+//            streamsConfiguration.Put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 2);
 //            kafkaStreams = new KafkaStreams(builder.Build(), streamsConfiguration);
 //            kafkaStreams.setUncaughtExceptionHandler((t, e) => failed.set(true));
 //            kafkaStreams.start();
@@ -910,10 +910,10 @@
 
 //        try
 //            {
-//                (IKeyValueIterator<string, long> all = myCount.all());
-//                while (all.HasNext())
+//                (IKeyValueIterator<string, long> All = myCount.All());
+//                while (All.HasNext())
 //                {
-//                    countAllResults.Add(all.MoveNext());
+//                    countAllResults.Add(All.MoveNext());
 //                }
 //            }
 
@@ -984,7 +984,7 @@
 //                long value = KeyValueStore.Get(key);
 //                if (value != null)
 //                {
-//                    countState.put(key, value);
+//                    countState.Put(key, value);
 //                }
 //                else if (failIfKeyNotFound)
 //                {
@@ -1000,7 +1000,7 @@
 //                    Assert.True(actualWindowStateEntry.getValue() >= expectedValue);
 //                }
 //                // return this for next round of comparisons
-//                expectedWindowedCount.put(actualWindowStateEntry.getKey(), actualWindowStateEntry.getValue());
+//                expectedWindowedCount.Put(actualWindowStateEntry.getKey(), actualWindowStateEntry.getValue());
 //            }
 
 //            foreach (Map.Entry<string, long> actualCountStateEntry in countState.entrySet())
@@ -1011,7 +1011,7 @@
 //                    Assert.True(actualCountStateEntry.getValue() >= expectedValue);
 //                }
 //                // return this for next round of comparisons
-//                expectedCount.put(actualCountStateEntry.getKey(), actualCountStateEntry.getValue());
+//                expectedCount.Put(actualCountStateEntry.getKey(), actualCountStateEntry.getValue());
 //            }
 
 //        }
@@ -1035,11 +1035,11 @@
 //        private HashSet<KeyValuePair<string, long>> Fetch(IReadOnlyWindowStore<string, long> store,
 //                                                  string key)
 //        {
-//            IWindowStoreIterator<long> fetch =
+//            IWindowStoreIterator<long> Fetch =
 //                store.Fetch(key, ofEpochMilli(0), ofEpochMilli(System.currentTimeMillis()));
-//            if (fetch.MoveNext())
+//            if (Fetch.MoveNext())
 //            {
-//                KeyValuePair<long, long> next = fetch.Current;
+//                KeyValuePair<long, long> next = Fetch.Current;
 //                return Collections.singleton(KeyValuePair.Create(key, next.Value));
 //            }
 
@@ -1049,11 +1049,11 @@
 //        private Dictionary<string, long> FetchMap(IReadOnlyWindowStore<string, long> store,
 //                                           string key)
 //        {
-//            IWindowStoreIterator<long> fetch =
+//            IWindowStoreIterator<long> Fetch =
 //                store.Fetch(key, ofEpochMilli(0), ofEpochMilli(System.currentTimeMillis()));
-//            if (fetch.HasNext())
+//            if (Fetch.HasNext())
 //            {
-//                KeyValuePair<long, long> next = fetch.MoveNext();
+//                KeyValuePair<long, long> next = Fetch.MoveNext();
 //                return Collections.singletonMap(key, next.Value);
 //            }
 //            return Collections.emptyMap();
@@ -1102,7 +1102,7 @@
 //            {
 //                StreamsConfig producerConfig = new StreamsConfig();
 //                producerConfig.Set(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//                producerConfig.Set(ProducerConfig.ACKS_CONFIG, "all");
+//                producerConfig.Set(ProducerConfig.ACKS_CONFIG, "All");
 //                producerConfig.Set(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //                producerConfig.Set(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 

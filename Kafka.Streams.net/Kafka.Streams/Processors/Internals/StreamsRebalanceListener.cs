@@ -32,50 +32,50 @@ namespace Kafka.Streams.Processors.Internals
 
         public void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions)
         {
-            log.LogDebug(
-                $"at state {streamThread.State}: partitions {assignedPartitions.ToJoinedString()} assigned at the end of consumer rebalance.\n" +
-                $"\tcurrent suspended active tasks: {taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
-                $"\tcurrent suspended standby tasks: {taskManager.SuspendedStandbyTaskIds().ToJoinedString()}\n");
+            this.log.LogDebug(
+                $"at state {this.streamThread.State}: partitions {assignedPartitions.ToJoinedString()} assigned at the end of consumer rebalance.\n" +
+                $"\tcurrent suspended active tasks: {this.taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
+                $"\tcurrent suspended standby tasks: {this.taskManager.SuspendedStandbyTaskIds().ToJoinedString()}\n");
 
-            if (streamThread.AssignmentErrorCode == (int)StreamsPartitionAssignor.Error.INCOMPLETE_SOURCE_TOPIC_METADATA)
+            if (this.streamThread.AssignmentErrorCode == (int)StreamsPartitionAssignor.Error.INCOMPLETE_SOURCE_TOPIC_METADATA)
             {
-                log.LogError($"Received error code {streamThread.AssignmentErrorCode} - shutdown");
-                streamThread.Shutdown();
+                this.log.LogError($"Received error code {this.streamThread.AssignmentErrorCode} - shutdown");
+                this.streamThread.Shutdown();
 
                 return;
             }
 
-            var start = clock.NowAsEpochMilliseconds;
+            var start = this.clock.NowAsEpochMilliseconds;
             try
             {
-                if (!streamThread.State.SetState(StreamThreadStates.PARTITIONS_ASSIGNED))
+                if (!this.streamThread.State.SetState(StreamThreadStates.PARTITIONS_ASSIGNED))
                 {
-                    log.LogDebug($"Skipping task creation in rebalance because we are already in {streamThread.State} state.");
+                    this.log.LogDebug($"Skipping task creation in rebalance because we are already in {this.streamThread.State} state.");
                 }
-                else if (streamThread.AssignmentErrorCode != (int)StreamsPartitionAssignor.Error.NONE)
+                else if (this.streamThread.AssignmentErrorCode != (int)StreamsPartitionAssignor.Error.NONE)
                 {
-                    log.LogDebug($"Encountered assignment error during partition assignment: {streamThread.AssignmentErrorCode}. Skipping task initialization");
+                    this.log.LogDebug($"Encountered assignment error during partition assignment: {this.streamThread.AssignmentErrorCode}. Skipping task initialization");
                 }
                 else
                 {
-                    log.LogDebug("Creating tasks based on assignment.");
-                    taskManager.CreateTasks(assignedPartitions);
+                    this.log.LogDebug("Creating tasks based on assignment.");
+                    this.taskManager.CreateTasks(assignedPartitions);
                 }
             }
             catch (Exception t)
             {
-                log.LogError(
+                this.log.LogError(
                     "Error caught during partition assignment, " +
                         "will abort the current process and re-throw at the end of rebalance", t);
-                streamThread.SetRebalanceException(t);
+                this.streamThread.SetRebalanceException(t);
             }
             finally
             {
-                log.LogInformation(
-                    $"partition assignment took {clock.NowAsEpochMilliseconds - start} ms.\n" +
-                    $"\tcurrent active tasks: {taskManager.ActiveTaskIds().ToJoinedString()}\n" +
-                    $"\tcurrent standby tasks: {taskManager.StandbyTaskIds().ToJoinedString()}\n" +
-                    $"\tprevious active tasks: {taskManager.PrevActiveTaskIds().ToJoinedString()}\n");
+                this.log.LogInformation(
+                    $"partition assignment took {this.clock.NowAsEpochMilliseconds - start} ms.\n" +
+                    $"\tcurrent active tasks: {this.taskManager.ActiveTaskIds().ToJoinedString()}\n" +
+                    $"\tcurrent standby tasks: {this.taskManager.StandbyTaskIds().ToJoinedString()}\n" +
+                    $"\tprevious active tasks: {this.taskManager.PrevActiveTaskIds().ToJoinedString()}\n");
             }
         }
 
@@ -83,42 +83,42 @@ namespace Kafka.Streams.Processors.Internals
         {
             var assignment = consumer?.Assignment ?? new List<TopicPartition>();
 
-            log.LogDebug(
-                $"at state {streamThread.State}: partitions {assignment.ToJoinedString()} revoked at the beginning of consumer rebalance.\n" +
-                $"\tcurrent assigned active tasks:  {taskManager.ActiveTaskIds().ToJoinedString()}\n" +
-                $"\tcurrent assigned standby tasks: {taskManager.StandbyTaskIds().ToJoinedString()}\n");
+            this.log.LogDebug(
+                $"at state {this.streamThread.State}: partitions {assignment.ToJoinedString()} revoked at the beginning of consumer rebalance.\n" +
+                $"\tcurrent assigned active tasks:  {this.taskManager.ActiveTaskIds().ToJoinedString()}\n" +
+                $"\tcurrent assigned standby tasks: {this.taskManager.StandbyTaskIds().ToJoinedString()}\n");
 
-            if (streamThread.State.SetState(StreamThreadStates.PARTITIONS_REVOKED))
+            if (this.streamThread.State.SetState(StreamThreadStates.PARTITIONS_REVOKED))
             {
-                var start = clock.NowAsEpochMilliseconds;
+                var start = this.clock.NowAsEpochMilliseconds;
                 try
                 {
                     // suspend active tasks
-                    if (streamThread.AssignmentErrorCode == (int)StreamsPartitionAssignor.Error.VERSION_PROBING)
+                    if (this.streamThread.AssignmentErrorCode == (int)StreamsPartitionAssignor.Error.VERSION_PROBING)
                     {
-                        streamThread.AssignmentErrorCode = (int)StreamsPartitionAssignor.Error.NONE;
+                        this.streamThread.AssignmentErrorCode = (int)StreamsPartitionAssignor.Error.NONE;
                     }
                     else
                     {
-                        taskManager.SuspendTasksAndState();
+                        this.taskManager.SuspendTasksAndState();
                     }
                 }
                 catch (Exception t)
                 {
-                    log.LogError(
+                    this.log.LogError(
                         "Error caught during partition revocation, " +
                         $"will abort the current process and re-throw at the end of rebalance: {t}");
 
-                    streamThread.SetRebalanceException(t);
+                    this.streamThread.SetRebalanceException(t);
                 }
                 finally
                 {
-                    streamThread.ClearStandbyRecords();
+                    this.streamThread.ClearStandbyRecords();
 
-                    log.LogInformation(
-                        $"partition revocation took {clock.NowAsEpochMilliseconds - start} ms.\n" +
-                        $"\tsuspended active tasks: {taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
-                        $"\tsuspended standby tasks: {taskManager.SuspendedStandbyTaskIds().ToJoinedString()}");
+                    this.log.LogInformation(
+                        $"partition revocation took {this.clock.NowAsEpochMilliseconds - start} ms.\n" +
+                        $"\tsuspended active tasks: {this.taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
+                        $"\tsuspended standby tasks: {this.taskManager.SuspendedStandbyTaskIds().ToJoinedString()}");
                 }
             }
         }

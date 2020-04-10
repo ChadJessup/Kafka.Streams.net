@@ -37,21 +37,21 @@ namespace Kafka.Streams.Tests.State
         //public void ShouldThrowIfPersistentTimestampedKeyValueStoreStoreNameIsNull()
         //{
         //    Exception e = Assert.Throws<NullReferenceException>(() => this.storesFactory.PersistentTimestampedKeyValueStore(null));
-        //    Assert.Equal("name cannot be null", e.ToString());
+        //    Assert.Equal("Name cannot be null", e.ToString());
         //}
 
         //[Fact]
         //public void ShouldThrowIfIMemoryKeyValueStoreStoreNameIsNull()
         //{
         //    Exception e = Assert.Throws<NullReferenceException>(() => this.storesFactory.InMemoryKeyValueStore(null));
-        //    Assert.Equal("name cannot be null", e.ToString());
+        //    Assert.Equal("Name cannot be null", e.ToString());
         //}
 
         //[Fact]
         //public void ShouldThrowIfILruMapStoreNameIsNull()
         //{
         //    Exception e = Assert.Throws<NullReferenceException>(() => this.storesFactory.lruMap(null, 0));
-        //    Assert.Equal("name cannot be null", e.ToString());
+        //    Assert.Equal("Name cannot be null", e.ToString());
         //}
 
         //[Fact]
@@ -202,7 +202,7 @@ namespace Kafka.Streams.Tests.State
         {
             IKeyValueStore<string, string> store = this.storesFactory.KeyValueStoreBuilder(
                 this.streamsBuilder.Context,
-                this.storesFactory.PersistentKeyValueStore("name"),
+                this.storesFactory.PersistentKeyValueStore("Name"),
                 Serdes.String(),
                 Serdes.String()
             ).Build();
@@ -215,7 +215,7 @@ namespace Kafka.Streams.Tests.State
         //{
         //    ITimestampedKeyValueStore<string, string> store = this.storesFactory.TimestampedKeyValueStoreBuilder(
         //        null,
-        //        this.storesFactory.PersistentTimestampedKeyValueStore("name"),
+        //        this.storesFactory.PersistentTimestampedKeyValueStore("Name"),
         //        Serdes.String(),
         //        Serdes.String()
         //    ).Build();
@@ -228,7 +228,7 @@ namespace Kafka.Streams.Tests.State
         {
             ITimestampedKeyValueStore<string, string> store = this.storesFactory.TimestampedKeyValueStoreBuilder(
                 this.streamsBuilder.Context,
-                this.storesFactory.PersistentKeyValueStore("name"),
+                this.storesFactory.PersistentKeyValueStore("Name"),
                 Serdes.String(),
                 Serdes.String()
             ).Build();
@@ -240,7 +240,7 @@ namespace Kafka.Streams.Tests.State
         // {
         //     ITimestampedKeyValueStore<string, string> store = this.storesFactory.TimestampedKeyValueStoreBuilder(
         //         null,
-        //         this.storesFactory.InMemoryKeyValueStore("name"),
+        //         this.storesFactory.InMemoryKeyValueStore("Name"),
         //         Serdes.String(),
         //         Serdes.String()
         //     ).withLoggingDisabled().withCachingDisabled().Build();
@@ -305,7 +305,7 @@ namespace Kafka.Streams.Tests.State
         //public void ShouldBuildSessionStore()
         //{
         //    ISessionStore<string, string> store = this.storesFactory.SessionStoreBuilder(
-        //        this.storesFactory.PersistentSessionStore("name", TimeSpan.FromMilliseconds(10)),
+        //        this.storesFactory.PersistentSessionStore("Name", TimeSpan.FromMilliseconds(10)),
         //        Serdes.String(),
         //        Serdes.String()
         //    ).Build();

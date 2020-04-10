@@ -23,8 +23,8 @@ namespace Kafka.Streams.State.Queryable
          * Create an instance of {@code T} (usually a facade) that developers can use
          * to query the underlying {@link IStateStore}s.
          *
-         * @param storeProvider     provides access to all the underlying IStateStore instances
-         * @param storeName         The name of the Store
+         * @param storeProvider     provides access to All the underlying IStateStore instances
+         * @param storeName         The Name of the Store
          * @return a read-only interface over a {@code IStateStore}
          *        (cf. {@link org.apache.kafka.streams.state.QueryableStoreTypes.KeyValueStoreType})
          */

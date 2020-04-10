@@ -97,10 +97,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldCloseFlatTransformValuesProcessor()
 //        {
-//            valueTransformer.close();
+//            valueTransformer.Close();
 //            replayAll();
 
-//            processor.close();
+//            processor.Close();
 
 //            //verifyAll();
 //        }

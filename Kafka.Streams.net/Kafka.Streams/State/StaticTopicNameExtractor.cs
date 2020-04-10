@@ -3,7 +3,7 @@ using Kafka.Streams.Processors.Interfaces;
 namespace Kafka.Streams.Processors.Internals
 {
     /**
-     * Static topic name extractor
+     * Static topic Name extractor
      */
     public class StaticTopicNameExtractor : ITopicNameExtractor
     {
@@ -16,12 +16,12 @@ namespace Kafka.Streams.Processors.Internals
 
         public string Extract<K, V>(K key, V value, IRecordContext recordContext)
         {
-            return topicName;
+            return this.topicName;
         }
 
         public override string ToString()
         {
-            return $"StaticTopicNameExtractor({topicName})";
+            return $"StaticTopicNameExtractor({this.topicName})";
         }
     }
 }

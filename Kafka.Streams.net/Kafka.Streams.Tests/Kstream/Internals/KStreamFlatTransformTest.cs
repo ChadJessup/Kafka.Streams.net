@@ -126,10 +126,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldCloseFlatTransformProcessor()
 //        {
-//            transformer.close();
+//            transformer.Close();
 //            replayAll();
 
-//            processor.close();
+//            processor.Close();
 
 //            //verifyAll();
 //        }

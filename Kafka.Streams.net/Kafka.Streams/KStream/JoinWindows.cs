@@ -128,7 +128,7 @@ namespace Kafka.Streams.KStream
         [Obsolete]
         public JoinWindows Before(TimeSpan timeDifferenceMs)
         {
-            return new JoinWindows(timeDifferenceMs, afterMs, graceMs, maintainDurationMs, segments);
+            return new JoinWindows(timeDifferenceMs, this.afterMs, this.graceMs, this.maintainDurationMs, this.segments);
         }
 
         /**
@@ -146,11 +146,11 @@ namespace Kafka.Streams.KStream
         public JoinWindows After(TimeSpan timeDifferenceMs)
         {
             return new JoinWindows(
-                beforeMs,
+                this.beforeMs,
                 timeDifferenceMs,
-                graceMs,
-                maintainDurationMs,
-                segments);
+                this.graceMs,
+                this.maintainDurationMs,
+                this.segments);
         }
 
         /**
@@ -166,7 +166,7 @@ namespace Kafka.Streams.KStream
 
         public override TimeSpan Size()
         {
-            return beforeMs + afterMs;
+            return this.beforeMs + this.afterMs;
         }
 
         /**
@@ -190,11 +190,11 @@ namespace Kafka.Streams.KStream
             }
 
             return new JoinWindows(
-                beforeMs,
-                afterMs,
+                this.beforeMs,
+                this.afterMs,
                 afterWindowEndMs,
-                maintainDurationMs,
-                segments);
+                this.maintainDurationMs,
+                this.segments);
         }
 
 
@@ -203,9 +203,9 @@ namespace Kafka.Streams.KStream
             // NOTE: in the future, when we Remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,
             // or we can default to (24h - size) if you want to be base.accurate.
-            return graceMs != TimeSpan.FromMilliseconds(-1)
-                ? graceMs
-                : MaintainDuration() - Size();
+            return this.graceMs != TimeSpan.FromMilliseconds(-1)
+                ? this.graceMs
+                : this.MaintainDuration() - this.Size();
         }
 
         /**
@@ -217,17 +217,17 @@ namespace Kafka.Streams.KStream
         [Obsolete]
         public new JoinWindows Until(TimeSpan durationMs)
         {
-            if (durationMs < Size())
+            if (durationMs < this.Size())
             {
                 throw new ArgumentException("Window retention time (durationMs) cannot be smaller than the window size.");
             }
 
             return new JoinWindows(
-                beforeMs,
-                afterMs,
-                graceMs,
+                this.beforeMs,
+                this.afterMs,
+                this.graceMs,
                 durationMs,
-                segments);
+                this.segments);
         }
 
         /**
@@ -243,7 +243,7 @@ namespace Kafka.Streams.KStream
         [Obsolete]
         public override TimeSpan MaintainDuration()
         {
-            return TimeSpan.FromMilliseconds(Math.Max(maintainDurationMs.TotalMilliseconds, Size().TotalMilliseconds));
+            return TimeSpan.FromMilliseconds(Math.Max(this.maintainDurationMs.TotalMilliseconds, this.Size().TotalMilliseconds));
         }
 
         public override bool Equals(object o)
@@ -252,33 +252,33 @@ namespace Kafka.Streams.KStream
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (JoinWindows)o;
 
-            return beforeMs == that.beforeMs &&
-                afterMs == that.afterMs &&
-                maintainDurationMs == that.maintainDurationMs &&
-                segments == that.segments &&
-                graceMs == that.graceMs;
+            return this.beforeMs == that.beforeMs &&
+                this.afterMs == that.afterMs &&
+                this.maintainDurationMs == that.maintainDurationMs &&
+                this.segments == that.segments &&
+                this.graceMs == that.graceMs;
         }
 
         public override int GetHashCode()
         {
-            return (beforeMs, afterMs, graceMs, maintainDurationMs, segments).GetHashCode();
+            return (this.beforeMs, this.afterMs, this.graceMs, this.maintainDurationMs, this.segments).GetHashCode();
         }
 
         public override string ToString()
         {
             return "JoinWindows{" +
-                   $"beforeMs={beforeMs}" +
-                   $", afterMs={afterMs}" +
-                   $", graceMs={graceMs}" +
-                   $", maintainDurationMs={maintainDurationMs}" +
-                   $", segments={segments}" +
+                   $"beforeMs={this.beforeMs}" +
+                   $", afterMs={this.afterMs}" +
+                   $", graceMs={this.graceMs}" +
+                   $", maintainDurationMs={this.maintainDurationMs}" +
+                   $", segments={this.segments}" +
                    "}";
         }
     }

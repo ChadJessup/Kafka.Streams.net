@@ -22,14 +22,14 @@ namespace Kafka.Streams.KStream.Internals
             this.parentGetter.Init(context, storeName);
         }
 
-        public ValueAndTimestamp<V>? Get(K key)
+        public IValueAndTimestamp<V>? Get(K key)
         {
-            var valueAndTimestamp = parentGetter.Get(key);
+            var valueAndTimestamp = this.parentGetter.Get(key);
 
-            var mapped = mapper.Apply(key, valueAndTimestamp.Value);
+            var mapped = this.mapper.Apply(key, valueAndTimestamp.Value);
 
             var timeStamp = valueAndTimestamp == null
-                ? context.Timestamp
+                ? this.context.Timestamp
                 : valueAndTimestamp.Timestamp;
 
             return ValueAndTimestamp.Make(
@@ -39,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Close()
         {
-            parentGetter.Close();
+            this.parentGetter.Close();
         }
     }
 }

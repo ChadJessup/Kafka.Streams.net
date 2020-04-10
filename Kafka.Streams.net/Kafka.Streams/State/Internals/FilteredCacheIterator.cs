@@ -32,9 +32,9 @@ namespace Kafka.Streams.State.Internals
             //    }
 
 
-            //    public void close()
+            //    public void Close()
             //    {
-            //        cacheIterator.close();
+            //        cacheIterator.Close();
             //    }
 
 
@@ -75,27 +75,27 @@ namespace Kafka.Streams.State.Internals
 
         public Bytes PeekNextKey()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return cacheIterator.PeekNextKey();
+            return this.cacheIterator.PeekNextKey();
         }
 
         public bool HasNext()
         {
-            return hasNextCondition; //.HasNext(wrappedIterator);
+            return this.hasNextCondition; //.HasNext(wrappedIterator);
         }
 
         public KeyValuePair<Bytes, LRUCacheEntry>? MoveNext()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return cacheIterator.PeekNext();
+            return this.cacheIterator.PeekNext();
         }
 
         public void Remove()
@@ -105,12 +105,12 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<Bytes, LRUCacheEntry>? PeekNext()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return cacheIterator.PeekNext();
+            return this.cacheIterator.PeekNext();
         }
 
         bool IEnumerator.MoveNext()

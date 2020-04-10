@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tasks
          * @param stateDirectory the {@link StateDirectory} created by the thread
          */
         public StandbyTask(
-            ILoggerFactory loggerFactory,
+            KafkaStreamsContext context,
             ILogger<StandbyTask> logger,
             TaskId id,
             List<TopicPartition> partitions,
@@ -37,24 +37,35 @@ namespace Kafka.Streams.Tasks
             StreamsConfig config,
             //StreamsMetricsImpl metrics,
             StateDirectory stateDirectory)
-            : base(id, partitions, topology, consumer, changelogReader, true, stateDirectory, config)
+            : base(
+                  context,
+                  id,
+                  partitions,
+                  topology,
+                  consumer,
+                  changelogReader,
+                  true,
+                  stateDirectory,
+                  config)
         {
-
             // closeTaskSensor = metrics.threadLevelSensor("task-closed", RecordingLevel.INFO);
-            processorContext = new StandbyContextImpl<byte[], byte[]>(loggerFactory, loggerFactory.CreateLogger<StandbyContextImpl<byte[], byte[]>>(), id, config, StateMgr);//, metrics);
+            this.processorContext = new StandbyContextImpl<byte[], byte[]>(
+                context,
+                context.CreateLogger<StandbyContextImpl<byte[], byte[]>>(),
+                id,
+                config, this.StateMgr);
         }
 
 
         public override bool InitializeStateStores()
         {
-            logger.LogTrace("Initializing state stores");
-            RegisterStateStores();
-            checkpointedOffsets = StateMgr.Checkpointed();
-            processorContext.Initialize();
-            TaskInitialized = true;
+            this.logger.LogTrace("Initializing state stores");
+            this.RegisterStateStores();
+            this.checkpointedOffsets = this.StateMgr.Checkpointed();
+            this.processorContext.Initialize();
+            this.TaskInitialized = true;
             return true;
         }
-
 
         public override void InitializeTopology()
         {
@@ -68,13 +79,13 @@ namespace Kafka.Streams.Tasks
          */
         public override void Resume()
         {
-            logger.LogDebug("Resuming");
-            UpdateOffsetLimits();
+            this.logger.LogDebug("Resuming");
+            this.UpdateOffsetLimits();
         }
 
         /**
          * <pre>
-         * - flush store
+         * - Flush store
          * - checkpoint store
          * - update offset limits
          * </pre>
@@ -82,70 +93,70 @@ namespace Kafka.Streams.Tasks
 
         public override void Commit()
         {
-            logger.LogTrace("Committing");
-            FlushAndCheckpointState();
+            this.logger.LogTrace("Committing");
+            this.FlushAndCheckpointState();
             // reinitialize offset limits
-            UpdateOffsetLimits();
+            this.UpdateOffsetLimits();
 
-            commitNeeded = false;
+            this.commitNeeded = false;
         }
 
         /**
          * <pre>
-         * - flush store
+         * - Flush store
          * - checkpoint store
          * </pre>
          */
         public override void Suspend()
         {
-            logger.LogDebug("Suspending");
-            FlushAndCheckpointState();
+            this.logger.LogDebug("Suspending");
+            this.FlushAndCheckpointState();
         }
 
         private void FlushAndCheckpointState()
         {
-            StateMgr.Flush();
-            StateMgr.Checkpoint(new Dictionary<TopicPartition, long>());
+            this.StateMgr.Flush();
+            this.StateMgr.Checkpoint(new Dictionary<TopicPartition, long>());
         }
 
         /**
          * <pre>
          * - {@link #commit()}
-         * - close state
+         * - Close state
          * <pre>
          * @param isZombie ignored by {@code StandbyTask} as it can never be a zombie
          */
 
         public override void Close(bool clean, bool isZombie)
         {
-            if (!TaskInitialized)
+            if (!this.TaskInitialized)
             {
                 return;
             }
 
-            logger.LogDebug("Closing");
+            this.logger.LogDebug("Closing");
 
             try
             {
 
                 if (clean)
                 {
-                    Commit();
+                    this.Commit();
                 }
             }
             finally
             {
 
-                CloseStateManager(true);
+                this.CloseStateManager(true);
             }
 
-            TaskClosed = true;
+            this.TaskClosed = true;
         }
 
 
         public override void CloseSuspended(bool clean, bool isZombie, RuntimeException e)
         {
-            Close(clean, isZombie);
+            this.Close(clean, isZombie);
         }
 
         /**
@@ -153,11 +164,12 @@ namespace Kafka.Streams.Tasks
          *
          * @return a list of records not consumed
          */
-        public List<ConsumeResult<byte[], byte[]>> Update(TopicPartition partition,
-                                                           List<ConsumeResult<byte[], byte[]>> records)
+        public List<ConsumeResult<byte[], byte[]>> Update(
+            TopicPartition partition,
+            List<ConsumeResult<byte[], byte[]>> records)
         {
-            logger.LogTrace("Updating standby replicas of its state store for partition [{}]", partition);
-            var limit = StateMgr.OffsetLimit(partition);
+            this.logger.LogTrace("Updating standby replicas of its state store for partition [{}]", partition);
+            var limit = this.StateMgr.OffsetLimit(partition);
 
             var lastOffset = -1L;
             var restoreRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
@@ -177,11 +189,11 @@ namespace Kafka.Streams.Tasks
                 }
             }
 
-            StateMgr.UpdateStandbyStates(partition, restoreRecords, lastOffset);
+            this.StateMgr.UpdateStandbyStates(partition, restoreRecords, lastOffset);
 
             if (restoreRecords.Any())
             {
-                commitNeeded = true;
+                this.commitNeeded = true;
             }
 
             return remainingRecords;

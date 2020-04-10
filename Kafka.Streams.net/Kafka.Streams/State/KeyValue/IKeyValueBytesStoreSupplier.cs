@@ -7,7 +7,7 @@ namespace Kafka.Streams.State.KeyValues
      *
      * For any stores implementing the {@link KeyValueStore KeyValueStore&lt;Byte, byte[]&gt;} interface, null value bytes are considered as "not exist". This means:
      *
-     * 1. Null value bytes in put operations should be treated as delete.
+     * 1. Null value bytes in Put operations should be treated as delete.
      * 2. If the key does not exist, get operations should return null value bytes.
      */
     public interface IKeyValueBytesStoreSupplier : IStoreSupplier<IKeyValueStore<Bytes, byte[]>>

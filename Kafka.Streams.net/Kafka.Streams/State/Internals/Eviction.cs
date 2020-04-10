@@ -19,20 +19,20 @@ namespace Kafka.Streams.State.Internals
 
         public override string ToString()
         {
-            return "Eviction{key=" + key + ", value=" + value + ", recordContext=" + recordContext + '}';
+            return "Eviction{key=" + this.key + ", value=" + this.value + ", recordContext=" + this.recordContext + '}';
         }
 
 
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (o == null || this.GetType() != o.GetType()) return false;
 
             var eviction = (Eviction<object, object>)o;
 
-            return key.Equals(eviction.key) &&
-                value.Equals(eviction.value) &&
-                recordContext.Equals(eviction.recordContext);
+            return this.key.Equals(eviction.key) &&
+                this.value.Equals(eviction.value) &&
+                this.recordContext.Equals(eviction.recordContext);
         }
 
         public override int GetHashCode()

@@ -20,9 +20,12 @@ namespace Kafka.Streams.Factories
         }
 
         public IDeserializer<K> GetDeserializer<K>()
-        {
-            var result = this.services.GetRequiredService(typeof(IDeserializer<K>));
-            return (IDeserializer<K>)result;
-        }
+            => default(K) switch
+            {
+                int _ => (IDeserializer<K>)Deserializers.Int32,
+                byte[] _ => (IDeserializer<K>)Deserializers.ByteArray,
+                string _ => (IDeserializer<K>)Deserializers.Utf8,
+                _ => (IDeserializer<K>)this.services.GetRequiredService(typeof(IDeserializer<K>)),
+            };
     }
 }

@@ -27,12 +27,12 @@
 //        {
 //        }
 
-//        public override void init(IProcessorContext<Bytes, byte[]> context,
+//        public override void Init(IProcessorContext<Bytes, byte[]> context,
 //                         IStateStore root)
 //        {
 //            initInternal(context);
 //            base.Init(context, root);
-//            // save the stream thread as we only ever want to trigger a flush
+//            // save the stream thread as we only ever want to trigger a Flush
 //            // when the stream thread is the current thread.
 //            streamThread = Thread.CurrentThread;
 //        }
@@ -43,7 +43,7 @@
 //            this.context = (IInternalProcessorContext<Bytes, byte[]>)context;
 
 //            this.cache = this.context.getCache();
-//            this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId.ToString(), name);
+//            this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId.ToString(), Name);
 //            //        cache.AddDirtyEntryFlushListener(cacheName, entries =>
 //            //{
 //            //    foreach (DirtyEntry entry in entries)
@@ -66,7 +66,7 @@
 //                // we can skip flushing to downstream as well as writing to underlying store
 //                if (rawNewValue != null || rawOldValue != null)
 //                {
-//                    // we need to get the old values if needed, and then put to store, and then flush
+//                    // we need to get the old values if needed, and then Put to store, and then Flush
 //                    wrapped.Add(entry.key(), entry.newValue());
 
 //                    ProcessorRecordContext current = context.recordContext();
@@ -100,7 +100,7 @@
 //            return true;
 //        }
 
-//        public override void put(Bytes key,
+//        public override void Put(Bytes key,
 //                        byte[] value)
 //        {
 //            key = key ?? throw new ArgumentNullException(nameof(key));
@@ -109,7 +109,7 @@
 //            {
 //                try
 //                {
-//                    // for null bytes, we still put it into cache indicating tombstones
+//                    // for null bytes, we still Put it into cache indicating tombstones
 //                    putInternal(key, value);
 //                }
 //                finally
@@ -165,7 +165,7 @@
 //                foreach (KeyValuePair<Bytes, byte[]> entry in entries)
 //                {
 //                    entry.key = entry.key ?? throw new ArgumentNullException(nameof(entry.key));
-//                    put(entry.key, entry.value);
+//                    Put(entry.key, entry.value);
 //                }
 //            }
 //            finally
@@ -237,7 +237,7 @@
 //                    return null;
 //                }
 //                // only update the cache if this call is on the streamThread
-//                // as we don't want other threads to trigger an eviction/flush
+//                // as we don't want other threads to trigger an eviction/Flush
 //                if (Thread.CurrentThread.Equals(streamThread))
 //                {
 //                    cache.Add(cacheName, key, new LRUCacheEntry(RawValue));
@@ -255,7 +255,7 @@
 //        {
 //            if (from.CompareTo(to) > 0)
 //            {
-//                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+//                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
 //                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
 //                    "Note that the built-in numerical serdes do not follow this for negative numbers");
 //                return KeyValueIterators.emptyIterator();
@@ -267,12 +267,12 @@
 //            return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
 //        }
 
-//        public override IKeyValueIterator<Bytes, byte[]> all()
+//        public override IKeyValueIterator<Bytes, byte[]> All()
 //        {
 //            validateStoreOpen();
 //            IKeyValueIterator<Bytes, byte[]> storeIterator =
-//                new DelegatingPeekingKeyValueIterator<>(this.name, wrapped.all());
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.all(cacheName);
+//                new DelegatingPeekingKeyValueIterator<>(this.Name, wrapped.All());
+//            MemoryLRUCacheBytesIterator cacheIterator = cache.All(cacheName);
 //            return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
 //        }
 
@@ -292,13 +292,13 @@
 //            }
 //        }
 
-//        public override void flush()
+//        public override void Flush()
 //        {
 //            @lock.writeLock().@lock();
 //            try
 //            {
-//                cache.flush(cacheName);
-//                base.flush();
+//                cache.Flush(cacheName);
+//                base.Flush();
 //            }
 //            finally
 //            {
@@ -306,21 +306,21 @@
 //            }
 //        }
 
-//        public override void close()
+//        public override void Close()
 //        {
 //            try
 //            {
-//                flush();
+//                Flush();
 //            }
 //            finally
 //            {
 //                try
 //                {
-//                    base.close();
+//                    base.Close();
 //                }
 //                finally
 //                {
-//                    cache.close(cacheName);
+//                    cache.Close(cacheName);
 //                }
 //            }
 //        }

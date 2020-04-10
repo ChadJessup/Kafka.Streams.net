@@ -15,7 +15,7 @@
 //        }
 
 
-//        public void init(IProcessorContext context)
+//        public void Init(IProcessorContext context)
 //        {
 //            parentGetter.Init(context);
 //        }
@@ -27,9 +27,9 @@
 //        }
 
 
-//        public void close()
+//        public void Close()
 //        {
-//            parentGetter.close();
+//            parentGetter.Close();
 //        }
 //    }
 //}

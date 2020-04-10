@@ -8,7 +8,7 @@
 //namespace Kafka.Streams.Tests.Integration
 //{
 //    /**
-//     * Tests all available joins of Kafka Streams DSL.
+//     * Tests All available joins of Kafka Streams DSL.
 //     */
 //    public class StreamTableJoinIntegrationTest : AbstractJoinIntegrationTest
 //    {
@@ -35,7 +35,7 @@
 //        [Fact]
 //        public void TestShouldAutoShutdownOnIncompleteMetadata()
 //        {// throws InterruptedException
-//            STREAMS_CONFIG.put(StreamsConfigPropertyNames.ApplicationId, appID + "-incomplete");
+//            STREAMS_CONFIG.Put(StreamsConfigPropertyNames.ApplicationId, appID + "-incomplete");
 
 //            IKStream<long, string> notExistStream = builder.Stream(INPUT_TOPIC_LEFT + "-not-existed");
 
@@ -53,7 +53,7 @@
 
 //            TestUtils.WaitForCondition(listener.revokedToPendingShutdownSeen, "Did not seen thread state transited to PENDING_SHUTDOWN");
 
-//            streams.close();
+//            streams.Close();
 //            Assert.True(listener.createdToRevokedSeen());
 //            Assert.True(listener.revokedToPendingShutdownSeen());
 //        }
@@ -61,7 +61,7 @@
 //        [Fact]
 //        public void TestInner()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfigPropertyNames.ApplicationId, appID + "-inner");
+//            STREAMS_CONFIG.Put(StreamsConfigPropertyNames.ApplicationId, appID + "-inner");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,
@@ -89,7 +89,7 @@
 //        [Fact]
 //        public void TestLeft()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfigPropertyNames.ApplicationId, appID + "-left");
+//            STREAMS_CONFIG.Put(StreamsConfigPropertyNames.ApplicationId, appID + "-left");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,

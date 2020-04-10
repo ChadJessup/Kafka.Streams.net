@@ -22,15 +22,15 @@ namespace Kafka.Streams.Processors.Interfaces
      * Another use is flushing out any kind of cache of intermediate results the consumer may be keeping. For example,
      * consider a case where the consumer is subscribed to a topic containing user page views, and the goal is to count the
      * number of page views per user for each five minute window. Let's say the topic is partitioned by the user id so that
-     * all events for a particular user go to a single consumer instance. The consumer can keep in memory a running
-     * tally of actions per user and only flush these out to a remote data store when its cache gets too big. However if a
-     * partition is reassigned it may want to automatically trigger a flush of this cache, before the new owner takes over
+     * All events for a particular user go to a single consumer instance. The consumer can keep in memory a running
+     * tally of actions per user and only Flush these out to a remote data store when its cache gets too big. However if a
+     * partition is reassigned it may want to automatically trigger a Flush of this cache, before the new owner takes over
      * consumption.
      * <p>
      * This callback will only execute in the user thread as part of the {@link Consumer#poll(java.time.TimeSpan) poll(long)} call
      * whenever partition assignment changes.
      * <p>
-     * It is guaranteed that all consumer processes will invoke {@link #onPartitionsRevoked(Collection) onPartitionsRevoked} prior to
+     * It is guaranteed that All consumer processes will invoke {@link #onPartitionsRevoked(Collection) onPartitionsRevoked} prior to
      * any process invoking {@link #onPartitionsAssigned(Collection) onPartitionsAssigned}. So if offsets or other state is saved in the
      * {@link #onPartitionsRevoked(Collection) onPartitionsRevoked} call it is guaranteed to be saved by the time the process taking over that
      * partition has their {@link #onPartitionsAssigned(Collection) onPartitionsAssigned} callback called to load the state.
@@ -70,7 +70,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * <p>
          * For examples on usage of this API, see Usage Examples section of {@link KafkaConsumer KafkaConsumer}
          * <p>
-         * <b>NOTE:</b> This method is only called before rebalances. It is not called prior to {@link KafkaConsumer#close()}.
+         * <b>NOTE:</b> This method is only called before rebalances. It is not called prior to {@link KafkaConsumer#Close()}.
          * <p>
          * It is common for the revocation callback to use the consumer instance in order to commit offsets. It is possible
          * for a {@link org.apache.kafka.common.errors.WakeupException} or {@link org.apache.kafka.common.errors.InterruptException}

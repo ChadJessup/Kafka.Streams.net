@@ -22,11 +22,11 @@
 //            this.to = to;
 //        }
 
-//        public void close()
+//        public void Close()
 //        {
 //            if (currentIterator != null)
 //            {
-//                currentIterator.close();
+//                currentIterator.Close();
 //                currentIterator = null;
 //            }
 //        }
@@ -43,16 +43,16 @@
 //        public override bool HasNext()
 //        {
 //            bool hasNext = false;
-//            while ((currentIterator == null || !(hasNext = hasNextConditionHasNext()) || !currentSegment.isOpen())
+//            while ((currentIterator == null || !(hasNext = hasNextConditionHasNext()) || !currentSegment.IsOpen())
 //                    && segments.HasNext())
 //            {
-//                close();
+//                Close();
 //                currentSegment = segments.MoveNext();
 //                try
 //                {
 //                    if (from == null || to == null)
 //                    {
-//                        currentIterator = currentSegment.all();
+//                        currentIterator = currentSegment.All();
 //                    }
 //                    else
 //                    {

@@ -2,7 +2,7 @@
 namespace Kafka.Streams.State.Internals
 {
     /**
-     * Listen to cache flush events
+     * Listen to cache Flush events
      * @param key type
      * @param value type
      */

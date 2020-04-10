@@ -7,20 +7,20 @@ namespace Kafka.Streams.RocksDbState
 {
     public class SingleColumnFamilyAccessor : IRocksDbAccessor
     {
-        private readonly string name;
+        private readonly string Name;
         private readonly RocksDb db;
         private readonly WriteOptions wOptions;
         private readonly HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators;
         private readonly ColumnFamilyHandle columnFamily;
 
         public SingleColumnFamilyAccessor(
-            string name,
+            string Name,
             RocksDb db,
             WriteOptions writeOptions,
             HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators,
             ColumnFamilyHandle columnFamily)
         {
-            this.name = name;
+            this.Name = Name;
             this.db = db;
             this.wOptions = writeOptions;
             this.openIterators = openIterators;
@@ -34,24 +34,24 @@ namespace Kafka.Streams.RocksDbState
             {
                 try
                 {
-                    db.Remove(key, columnFamily, wOptions);
+                    this.db.Remove(key, this.columnFamily, this.wOptions);
                 }
                 catch (RocksDbException e)
                 {
                     // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                    throw new ProcessorStateException("Error while removing key from store " + name, e);
+                    throw new ProcessorStateException("Error while removing key from store " + this.Name, e);
                 }
             }
             else
             {
                 try
                 {
-                    db.Put(key, value, columnFamily, wOptions);
+                    this.db.Put(key, value, this.columnFamily, this.wOptions);
                 }
                 catch (RocksDbException e)
                 {
                     // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                    throw new ProcessorStateException("Error while putting key/value into store " + name, e);
+                    throw new ProcessorStateException("Error while putting key/value into store " + this.Name, e);
                 }
             }
         }
@@ -62,18 +62,18 @@ namespace Kafka.Streams.RocksDbState
         {
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
-                AddToBatch(entry.Key.Get(), entry.Value, batch);
+                this.AddToBatch(entry.Key.Get(), entry.Value, batch);
             }
         }
 
         public byte[] Get(byte[] key)
         {
-            return db.Get(key, columnFamily);
+            return this.db.Get(key, this.columnFamily);
         }
 
         public byte[] GetOnly(byte[] key)
         {
-            return db.Get(key, columnFamily);
+            return this.db.Get(key, this.columnFamily);
         }
 
         public IKeyValueIterator<Bytes, byte[]> Range(
@@ -81,9 +81,9 @@ namespace Kafka.Streams.RocksDbState
             Bytes to)
         {
             return new RocksDbRangeIterator(
-                name,
-                db.NewIterator(columnFamily),
-                openIterators,
+                this.Name,
+                this.db.NewIterator(this.columnFamily),
+                this.openIterators,
                 from,
                 to);
         }
@@ -91,24 +91,24 @@ namespace Kafka.Streams.RocksDbState
 
         public IKeyValueIterator<Bytes, byte[]> All()
         {
-            Iterator innerIterWithTimestamp = db.NewIterator(columnFamily);
+            Iterator innerIterWithTimestamp = this.db.NewIterator(this.columnFamily);
             innerIterWithTimestamp.SeekToFirst();
             return new RocksDbIterator(
-                name,
+                this.Name,
                 innerIterWithTimestamp,
-                openIterators);
+                this.openIterators);
         }
 
 
         public long ApproximateNumEntries()
         {
-            return long.Parse(db.GetProperty("rocksdb.estimate-num-keys", columnFamily));
+            return long.Parse(this.db.GetProperty("rocksdb.estimate-num-keys", this.columnFamily));
         }
 
 
         public void Flush()
         {
-            //db.flush(fOptions, columnFamily);
+            //db.Flush(fOptions, columnFamily);
         }
 
 
@@ -117,7 +117,7 @@ namespace Kafka.Streams.RocksDbState
         {
             foreach (KeyValuePair<byte[], byte[]> record in records)
             {
-                AddToBatch(record.Key, record.Value, batch);
+                this.AddToBatch(record.Key, record.Value, batch);
             }
         }
 
@@ -128,11 +128,11 @@ namespace Kafka.Streams.RocksDbState
         {
             if (value == null)
             {
-                batch.Delete(key, columnFamily);
+                batch.Delete(key, this.columnFamily);
             }
             else
             {
-                batch.Put(key, value, columnFamily);
+                batch.Put(key, value, this.columnFamily);
             }
         }
 
@@ -150,7 +150,7 @@ namespace Kafka.Streams.RocksDbState
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
+                throw new ProcessorStateException("Error while range compacting during restoring  store " + this.Name, e);
             }
         }
     }

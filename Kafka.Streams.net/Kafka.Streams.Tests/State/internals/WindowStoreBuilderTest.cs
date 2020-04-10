@@ -54,7 +54,7 @@
 //        public void SetUp()
 //        {
 //            expect(supplier.Get()).andReturn(inner);
-//            expect(supplier.name()).andReturn("name");
+//            expect(supplier.Name()).andReturn("Name");
 //            replay(supplier);
 
 //            builder = new WindowStoreBuilder<>(

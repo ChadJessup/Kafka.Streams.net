@@ -1,4 +1,3 @@
-
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream;
 using System;
@@ -6,7 +5,15 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class ValueAndTimestampSerde<V> : Serde<ValueAndTimestamp<V>>
+    public interface IValueAndTimestampSerde
+    {
+    }
+
+    public interface IValueAndTimestampSerde<V> : IValueAndTimestampSerde
+    {
+    }
+
+    public class ValueAndTimestampSerde<V> : Serde<IValueAndTimestamp<V>>, IValueAndTimestampSerde<V>
     {
         private readonly ValueAndTimestampSerializer<V> valueAndTimestampSerializer;
         private readonly ValueAndTimestampDeserializer<V> valueAndTimestampDeserializer;
@@ -24,14 +31,14 @@ namespace Kafka.Streams.State.Internals
             bool isKey)
         {
             //this.Serializer.Configure(configs, isKey);
-            valueAndTimestampSerializer.Configure(configs, isKey);
-            valueAndTimestampDeserializer.Configure(configs, isKey);
+            this.valueAndTimestampSerializer.Configure(configs, isKey);
+            this.valueAndTimestampDeserializer.Configure(configs, isKey);
         }
 
         public override void Close()
         {
-            valueAndTimestampSerializer.Close();
-            valueAndTimestampDeserializer.Close();
+            this.valueAndTimestampSerializer.Close();
+            this.valueAndTimestampDeserializer.Close();
         }
     }
 }

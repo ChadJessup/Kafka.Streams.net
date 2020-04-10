@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream
          * will be used
          * @param otherValueSerde the otherValue serde to use. If {@code null} the default value serde
          * from config will be used
-         * @param name the name used as the base for naming components of the join including any
+         * @param Name the Name used as the base for naming components of the join including any
          * repartition topics
          * @param key type
          * @param value type
@@ -52,7 +52,7 @@ namespace Kafka.Streams.KStream
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             ISerde<VO> otherValueSerde,
-            string name)
+            string Name)
         {
             if (keySerde is null)
             {
@@ -69,16 +69,16 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentNullException(nameof(otherValueSerde));
             }
 
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(Name))
             {
-                throw new ArgumentException("message", nameof(name));
+                throw new ArgumentException("message", nameof(Name));
             }
 
             return new Joined<K, V, VO>(
                 keySerde,
                 valueSerde,
                 otherValueSerde,
-                name);
+                Name);
         }
 
         /**
@@ -142,25 +142,25 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Create an instance of {@code Joined} with base name for all components of the join, this may
+         * Create an instance of {@code Joined} with base Name for All components of the join, this may
          * include any repartition topics created to complete the join.
          *
-         * @param name the name used as the base for naming components of the join including any
+         * @param Name the Name used as the base for naming components of the join including any
          * repartition topics
          * @param key type
          * @param value type
          * @param other value type
-         * @return new {@code Joined} instance configured with the name
+         * @return new {@code Joined} instance configured with the Name
          *
          */
-        public static Joined<K, V, VO> As<K, V, VO>(string name)
+        public static Joined<K, V, VO> As<K, V, VO>(string Name)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(Name))
             {
-                throw new ArgumentException("message", nameof(name));
+                throw new ArgumentException("message", nameof(Name));
             }
 
-            return new Joined<K, V, VO>(null, null, null, name);
+            return new Joined<K, V, VO>(null, null, null, Name);
         }
     }
 
@@ -179,12 +179,12 @@ namespace Kafka.Streams.KStream
             ISerde<K>? keySerde,
             ISerde<V>? valueSerde,
             ISerde<VO>? otherValueSerde,
-            string? name)
+            string? Name)
         {
             this.KeySerde = keySerde;
             this.ValueSerde = valueSerde;
             this.OtherValueSerde = otherValueSerde;
-            this.Name = name;
+            this.Name = Name;
         }
 
         protected Joined(Joined<K, V, VO> joined)
@@ -197,7 +197,7 @@ namespace Kafka.Streams.KStream
          * key serde as defined in config
          *
          * @param keySerde the key serde to use. If null the default key serde from config will be used
-         * @return new {@code Joined} instance configured with the {@code name}
+         * @return new {@code Joined} instance configured with the {@code Name}
          */
         public Joined<K, V, VO> WithKeySerde(ISerde<K> keySerde)
         {
@@ -206,7 +206,7 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentNullException(nameof(keySerde));
             }
 
-            return new Joined<K, V, VO>(keySerde, ValueSerde, OtherValueSerde, Name);
+            return new Joined<K, V, VO>(keySerde, this.ValueSerde, this.OtherValueSerde, this.Name);
         }
 
         /**
@@ -223,7 +223,7 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentNullException(nameof(valueSerde));
             }
 
-            return new Joined<K, V, VO>(KeySerde, valueSerde, OtherValueSerde, Name);
+            return new Joined<K, V, VO>(this.KeySerde, valueSerde, this.OtherValueSerde, this.Name);
         }
 
         /**
@@ -240,25 +240,25 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentNullException(nameof(otherValueSerde));
             }
 
-            return new Joined<K, V, VO>(KeySerde, ValueSerde, otherValueSerde, Name);
+            return new Joined<K, V, VO>(this.KeySerde, this.ValueSerde, otherValueSerde, this.Name);
         }
 
         /**
-         * Set the base name used for all components of the join, this may include any repartition topics
+         * Set the base Name used for All components of the join, this may include any repartition topics
          * created to complete the join.
          *
-         * @param name the name used as the base for naming components of the join including any
+         * @param Name the Name used as the base for naming components of the join including any
          * repartition topics
-         * @return new {@code Joined} instance configured with the {@code name}
+         * @return new {@code Joined} instance configured with the {@code Name}
          */
-        public Joined<K, V, VO> WithName(string name)
+        public Joined<K, V, VO> WithName(string Name)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(Name))
             {
-                throw new ArgumentException("message", nameof(name));
+                throw new ArgumentException("message", nameof(Name));
             }
 
-            return new Joined<K, V, VO>(KeySerde, ValueSerde, OtherValueSerde, name);
+            return new Joined<K, V, VO>(this.KeySerde, this.ValueSerde, this.OtherValueSerde, Name);
         }
     }
 }

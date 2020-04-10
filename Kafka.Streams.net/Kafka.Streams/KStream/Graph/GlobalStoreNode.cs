@@ -34,22 +34,22 @@ namespace Kafka.Streams.KStream.Internals.Graph
             // storeBuilder.withLoggingDisabled();
 
             topologyBuilder.AddGlobalStore<K, V, T>(
-                storeBuilder,
-                sourceName,
-                consumed.timestampExtractor,
-                consumed.KeyDeserializer(),
-                consumed.ValueDeserializer(),
-                topic,
-                processorName,
-                stateUpdateSupplier);
+                this.storeBuilder,
+                this.sourceName,
+                this.consumed.timestampExtractor,
+                this.consumed.KeyDeserializer(),
+                this.consumed.ValueDeserializer(),
+                this.topic,
+                this.processorName,
+                this.stateUpdateSupplier);
         }
 
         public override string ToString()
         {
             return "GlobalStoreNode{" +
-                   "sourceName='" + sourceName + '\'' +
-                   ", topic='" + topic + '\'' +
-                   ", processorName='" + processorName + '\'' +
+                   "sourceName='" + this.sourceName + '\'' +
+                   ", topic='" + this.topic + '\'' +
+                   ", processorName='" + this.processorName + '\'' +
                    "} ";
         }
     }

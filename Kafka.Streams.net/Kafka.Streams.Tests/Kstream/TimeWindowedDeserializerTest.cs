@@ -16,19 +16,19 @@ namespace Kafka.Streams.Tests
 
         public TimeWindowedDeserializerTest()
         {
-            props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
-            props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
+            this.props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
+            this.props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
 
             var streamsBuilder = TestUtils.GetStreamsBuilder(new StreamsConfig(this.props));
-            timeWindowedKeyDeserializer = new TimeWindowedDeserializer<string>(streamsBuilder.Context.Services, null, windowSize);
-            timeWindowedValueDeserializer = new TimeWindowedDeserializer<byte[]>(streamsBuilder.Context.Services, null, windowSize);
+            this.timeWindowedKeyDeserializer = new TimeWindowedDeserializer<string>(streamsBuilder.Context.Services, null, this.windowSize);
+            this.timeWindowedValueDeserializer = new TimeWindowedDeserializer<byte[]>(streamsBuilder.Context.Services, null, this.windowSize);
         }
 
         [Fact]
         public void TestWindowedKeyDeserializerNoArgConstructors()
         {
-            timeWindowedKeyDeserializer.Configure(props, isKey: true);
-            var inner = timeWindowedKeyDeserializer.InnerDeserializer();
+            this.timeWindowedKeyDeserializer.Configure(this.props, isKey: true);
+            var inner = this.timeWindowedKeyDeserializer.InnerDeserializer();
             Assert.NotNull(inner);
             Assert.IsAssignableFrom<IDeserializer<string>>(inner);
         }
@@ -36,8 +36,8 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void TestWindowedValueDeserializerNoArgConstructors()
         {
-            timeWindowedValueDeserializer.Configure(props, isKey: false);
-            var inner = timeWindowedValueDeserializer.InnerDeserializer();
+            this.timeWindowedValueDeserializer.Configure(this.props, isKey: false);
+            var inner = this.timeWindowedValueDeserializer.InnerDeserializer();
             Assert.NotNull(inner);
             Assert.IsAssignableFrom<IDeserializer<byte[]>>(inner);
         }

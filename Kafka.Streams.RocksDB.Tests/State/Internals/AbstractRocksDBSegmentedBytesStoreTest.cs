@@ -18,7 +18,7 @@
 
 //        public SegmentedBytesStore.KeySchema schema;
 
-//        // @Parameters(name = "{0}")
+//        // @Parameters(Name = "{0}")
 //        public static object[] GetKeySchemas()
 //        {
 //            return new object[] { new SessionKeySchema(), new WindowKeySchema() };
@@ -68,7 +68,7 @@
 
 //        public void Close()
 //        {
-//            bytesStore.close();
+//            bytesStore.Close();
 //        }
 
 //        abstract AbstractRocksDBSegmentedBytesStore<S> GetBytesStore();
@@ -81,15 +81,15 @@
 //        public void ShouldPutAndFetch()
 //        {
 //            string key = "a";
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(10));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(50));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), SerializeValue(100));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(10));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[1])), SerializeValue(50));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[2])), SerializeValue(100));
 
 //            IKeyValueIterator<Bytes, byte[]> values = bytesStore.Fetch(Bytes.Wrap(key.getBytes()), 0, 500);
 
-//            List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
-//                KeyValuePair.Create(new Windowed<>(key, windows[0]), 10L),
-//                KeyValuePair.Create(new Windowed<>(key, windows[1]), 50L)
+//            List<KeyValuePair<IWindowed<string>, long>> expected = Array.asList(
+//                KeyValuePair.Create(new IWindowed<>(key, windows[0]), 10L),
+//                KeyValuePair.Create(new IWindowed<>(key, windows[1]), 50L)
 //            );
 
 //            Assert.Equal(expected, ToList(values));
@@ -99,13 +99,13 @@
 //        public void ShouldFindValuesWithinRange()
 //        {
 //            string key = "a";
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(10));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(50));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), SerializeValue(100));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(10));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[1])), SerializeValue(50));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[2])), SerializeValue(100));
 //            IKeyValueIterator<Bytes, byte[]> results = bytesStore.Fetch(Bytes.Wrap(key.getBytes()), 1, 999);
-//            List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
-//                KeyValuePair.Create(new Windowed<>(key, windows[0]), 10L),
-//                KeyValuePair.Create(new Windowed<>(key, windows[1]), 50L)
+//            List<KeyValuePair<IWindowed<string>, long>> expected = Array.asList(
+//                KeyValuePair.Create(new IWindowed<>(key, windows[0]), 10L),
+//                KeyValuePair.Create(new IWindowed<>(key, windows[1]), 50L)
 //            );
 
 //            Assert.Equal(expected, ToList(results));
@@ -114,10 +114,10 @@
 //        [Fact]
 //        public void ShouldRemove()
 //        {
-//            bytesStore.put(serializeKey(new Windowed<>("a", windows[0])), SerializeValue(30));
-//            bytesStore.put(serializeKey(new Windowed<>("a", windows[1])), SerializeValue(50));
+//            bytesStore.Put(serializeKey(new IWindowed<>("a", windows[0])), SerializeValue(30));
+//            bytesStore.Put(serializeKey(new IWindowed<>("a", windows[1])), SerializeValue(50));
 
-//            bytesStore.remove(serializeKey(new Windowed<>("a", windows[0])));
+//            bytesStore.remove(serializeKey(new IWindowed<>("a", windows[0])));
 //            IKeyValueIterator<Bytes, byte[]> value = bytesStore.Fetch(Bytes.Wrap("a".getBytes()), 0, 100);
 //            Assert.False(value.HasNext());
 //        }
@@ -129,21 +129,21 @@
 //            AbstractSegments<S> segments = NewSegments();
 //            string key = "a";
 
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(100));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), SerializeValue(500));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(50));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[1])), SerializeValue(100));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[2])), SerializeValue(500));
 //            Assert.Equal(Collections.singleton(segments.segmentName(0)), SegmentDirs());
 
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(1000));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[3])), SerializeValue(1000));
 //            Assert.Equal(Utils.mkSet(segments.segmentName(0), segments.segmentName(1)), SegmentDirs());
 
-//            List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.Fetch(Bytes.Wrap(key.getBytes()), 0, 1500));
+//            List<KeyValuePair<IWindowed<string>, long>> results = toList(bytesStore.Fetch(Bytes.Wrap(key.getBytes()), 0, 1500));
 
 //            Assert.Equal(
 //                Array.asList(
-//                    KeyValuePair.Create(new Windowed<>(key, windows[0]), 50L),
-//                    KeyValuePair.Create(new Windowed<>(key, windows[1]), 100L),
-//                    KeyValuePair.Create(new Windowed<>(key, windows[2]), 500L)
+//                    KeyValuePair.Create(new IWindowed<>(key, windows[0]), 50L),
+//                    KeyValuePair.Create(new IWindowed<>(key, windows[1]), 100L),
+//                    KeyValuePair.Create(new IWindowed<>(key, windows[2]), 500L)
 //                ),
 //                results
 //            );
@@ -156,10 +156,10 @@
 //            AbstractSegments<S> segments = NewSegments();
 //            string key = "a";
 
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(50L));
 //            Assert.Equal(Collections.singleton(segments.segmentName(0)), SegmentDirs());
 
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[3])), SerializeValue(100L));
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(0),
@@ -168,11 +168,11 @@
 //                SegmentDirs()
 //            );
 
-//            List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.all());
+//            List<KeyValuePair<IWindowed<string>, long>> results = toList(bytesStore.All());
 //            Assert.Equal(
 //                Array.asList(
-//                    KeyValuePair.Create(new Windowed<>(key, windows[0]), 50L),
-//                    KeyValuePair.Create(new Windowed<>(key, windows[3]), 100L)
+//                    KeyValuePair.Create(new IWindowed<>(key, windows[0]), 50L),
+//                    KeyValuePair.Create(new IWindowed<>(key, windows[3]), 100L)
 //                ),
 //                results
 //            );
@@ -185,10 +185,10 @@
 //            AbstractSegments<S> segments = NewSegments();
 //            string key = "a";
 
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(50L));
 //            Assert.Equal(Collections.singleton(segments.segmentName(0)), SegmentDirs());
 
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[3])), SerializeValue(100L));
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(0),
@@ -197,11 +197,11 @@
 //                SegmentDirs()
 //            );
 
-//            List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.fetchAll(0L, 60_000L));
+//            List<KeyValuePair<IWindowed<string>, long>> results = toList(bytesStore.FetchAll(0L, 60_000L));
 //            Assert.Equal(
 //                Array.asList(
-//                    KeyValuePair.Create(new Windowed<>(key, windows[0]), 50L),
-//                    KeyValuePair.Create(new Windowed<>(key, windows[3]), 100L)
+//                    KeyValuePair.Create(new IWindowed<>(key, windows[0]), 50L),
+//                    KeyValuePair.Create(new IWindowed<>(key, windows[3]), 100L)
 //                ),
 //                results
 //            );
@@ -213,9 +213,9 @@
 //            AbstractSegments<S> segments = NewSegments();
 //            string key = "a";
 
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
-//            bytesStore.close();
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(50L));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[3])), SerializeValue(100L));
+//            bytesStore.Close();
 
 //            string firstSegmentName = segments.segmentName(0);
 //            string[] nameParts = firstSegmentName.Split("\\.");
@@ -230,13 +230,13 @@
 //            bytesStore = GetBytesStore();
 
 //            bytesStore.Init(context, bytesStore);
-//            List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.Fetch(Bytes.Wrap(key.getBytes()), 0L, 60_000L));
+//            List<KeyValuePair<IWindowed<string>, long>> results = toList(bytesStore.Fetch(Bytes.Wrap(key.getBytes()), 0L, 60_000L));
 //            Assert.Equal(
 //                results,
 //                equalTo(
 //                    Array.asList(
-//                        KeyValuePair.Create(new Windowed<>(key, windows[0]), 50L),
-//                        KeyValuePair.Create(new Windowed<>(key, windows[3]), 100L)
+//                        KeyValuePair.Create(new IWindowed<>(key, windows[0]), 50L),
+//                        KeyValuePair.Create(new IWindowed<>(key, windows[3]), 100L)
 //                    )
 //                )
 //            );
@@ -248,9 +248,9 @@
 //            AbstractSegments<S> segments = NewSegments();
 //            string key = "a";
 
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
-//            bytesStore.close();
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(50L));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[3])), SerializeValue(100L));
+//            bytesStore.Close();
 
 //            string firstSegmentName = segments.segmentName(0);
 //            string[] nameParts = firstSegmentName.Split("\\.");
@@ -261,13 +261,13 @@
 //            bytesStore = GetBytesStore();
 
 //            bytesStore.Init(context, bytesStore);
-//            List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.Fetch(Bytes.Wrap(key.getBytes()), 0L, 60_000L));
+//            List<KeyValuePair<IWindowed<string>, long>> results = toList(bytesStore.Fetch(Bytes.Wrap(key.getBytes()), 0L, 60_000L));
 //            Assert.Equal(
 //                results,
 //                equalTo(
 //                    Array.asList(
-//                        KeyValuePair.Create(new Windowed<>(key, windows[0]), 50L),
-//                        KeyValuePair.Create(new Windowed<>(key, windows[3]), 100L)
+//                        KeyValuePair.Create(new IWindowed<>(key, windows[0]), 50L),
+//                        KeyValuePair.Create(new IWindowed<>(key, windows[3]), 100L)
 //                    )
 //                )
 //            );
@@ -278,10 +278,10 @@
 //        {
 //            string key = "a";
 //            // need to Create a segment so we can attempt to write to it again.
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50));
-//            bytesStore.close();
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(50));
+//            bytesStore.Close();
 //            bytesStore.Init(context, bytesStore);
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(100));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[1])), SerializeValue(100));
 //        }
 
 //        [Fact]
@@ -289,8 +289,8 @@
 //        {
 //            string key = "a";
 //            Collection<KeyValuePair<byte[], byte[]>> records = new ArrayList<>();
-//            records.Add(KeyValuePair.Create(serializeKey(new Windowed<>(key, windows[0])).Get(), SerializeValue(50L)));
-//            records.Add(KeyValuePair.Create(serializeKey(new Windowed<>(key, windows[3])).Get(), SerializeValue(100L)));
+//            records.Add(KeyValuePair.Create(serializeKey(new IWindowed<>(key, windows[0])).Get(), SerializeValue(50L)));
+//            records.Add(KeyValuePair.Create(serializeKey(new IWindowed<>(key, windows[3])).Get(), SerializeValue(100L)));
 //            Dictionary<S, WriteBatch> writeBatchMap = bytesStore.getWriteBatches(records);
 //            Assert.Equal(2, writeBatchMap.Count);
 //            foreach (WriteBatch batch in writeBatchMap.values())
@@ -306,8 +306,8 @@
 //            Assert.Equal(0, bytesStore.getSegments().Count);
 //            string key = "a";
 //            Collection<KeyValuePair<byte[], byte[]>> records = new ArrayList<>();
-//            records.Add(KeyValuePair.Create(serializeKey(new Windowed<>(key, windows[0])).Get(), SerializeValue(50L)));
-//            records.Add(KeyValuePair.Create(serializeKey(new Windowed<>(key, windows[3])).Get(), SerializeValue(100L)));
+//            records.Add(KeyValuePair.Create(serializeKey(new IWindowed<>(key, windows[0])).Get(), SerializeValue(50L)));
+//            records.Add(KeyValuePair.Create(serializeKey(new IWindowed<>(key, windows[3])).Get(), SerializeValue(100L)));
 //            bytesStore.restoreAllInternal(records);
 
 //            // 2 segments are created during restoration.
@@ -319,11 +319,11 @@
 //                Assert.Equal(GetOptions(segment).level0FileNumCompactionTrigger(), (1 << 30));
 //            }
 
-//            List<KeyValuePair<Windowed<string>, long>> expected = new ArrayList<>();
-//            expected.Add(KeyValuePair.Create(new Windowed<>(key, windows[0]), 50L));
-//            expected.Add(KeyValuePair.Create(new Windowed<>(key, windows[3]), 100L));
+//            List<KeyValuePair<IWindowed<string>, long>> expected = new ArrayList<>();
+//            expected.Add(KeyValuePair.Create(new IWindowed<>(key, windows[0]), 50L));
+//            expected.Add(KeyValuePair.Create(new IWindowed<>(key, windows[3]), 100L));
 
-//            List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.all());
+//            List<KeyValuePair<IWindowed<string>, long>> results = toList(bytesStore.All());
 //            Assert.Equal(expected, results);
 //        }
 
@@ -332,20 +332,20 @@
 //        {
 //            bytesStore.Init(context, bytesStore);
 //            string key = "a";
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
-//            bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[0])), SerializeValue(50L));
+//            bytesStore.Put(serializeKey(new IWindowed<>(key, windows[3])), SerializeValue(100L));
 //            Assert.Equal(2, bytesStore.getSegments().Count);
 
-//            StateRestoreListener restoreListener = context.getRestoreListener(bytesStore.name());
+//            StateRestoreListener restoreListener = context.getRestoreListener(bytesStore.Name());
 
-//            restoreListener.onRestoreStart(null, bytesStore.name(), 0L, 0L);
+//            restoreListener.onRestoreStart(null, bytesStore.Name(), 0L, 0L);
 
 //            foreach (S segment in bytesStore.getSegments())
 //            {
 //                Assert.Equal(GetOptions(segment).level0FileNumCompactionTrigger(), (1 << 30));
 //            }
 
-//            restoreListener.onRestoreEnd(null, bytesStore.name(), 0L);
+//            restoreListener.onRestoreEnd(null, bytesStore.Name(), 0L);
 //            foreach (S segment in bytesStore.getSegments())
 //            {
 //                Assert.Equal(GetOptions(segment).level0FileNumCompactionTrigger(), (4));
@@ -360,11 +360,11 @@
 
 //            // write a record to advance stream time, with a high enough timestamp
 //            // that the subsequent record in windows[0] will already be expired.
-//            bytesStore.put(serializeKey(new Windowed<>("dummy", nextSegmentWindow)), SerializeValue(0));
+//            bytesStore.Put(serializeKey(new IWindowed<>("dummy", nextSegmentWindow)), SerializeValue(0));
 
-//            Bytes key = serializeKey(new Windowed<>("a", windows[0]));
+//            Bytes key = serializeKey(new IWindowed<>("a", windows[0]));
 //            byte[] value = SerializeValue(5);
-//            bytesStore.put(key, value);
+//            bytesStore.Put(key, value);
 
 //            LogCaptureAppender.Unregister(appender);
 
@@ -405,7 +405,7 @@
 //            return Utils.mkSet(Objects.requireNonNull(windowDir.list()));
 //        }
 
-//        private Bytes SerializeKey(Windowed<string> key)
+//        private Bytes SerializeKey(IWindowed<string> key)
 //        {
 //            StateSerdes<string, long> stateSerdes = StateSerdes.WithBuiltinTypes("dummy", string, long);
 //            if (schema is SessionKeySchema)
@@ -423,16 +423,16 @@
 //            return Serdes.Long().Serializer.Serialize("", value);
 //        }
 
-//        private List<KeyValuePair<Windowed<string>, long>> ToList(IKeyValueIterator<Bytes, byte[]> iterator)
+//        private List<KeyValuePair<IWindowed<string>, long>> ToList(IKeyValueIterator<Bytes, byte[]> iterator)
 //        {
-//            List<KeyValuePair<Windowed<string>, long>> results = new ArrayList<>();
+//            List<KeyValuePair<IWindowed<string>, long>> results = new ArrayList<>();
 //            StateSerdes<string, long> stateSerdes = StateSerdes.WithBuiltinTypes("dummy", string, long);
 //            while (iterator.HasNext())
 //            {
 //                KeyValuePair<Bytes, byte[]> next = iterator.MoveNext();
 //                if (schema is WindowKeySchema)
 //                {
-//                    KeyValuePair<Windowed<string>, long> deserialized = KeyValuePair.Create(
+//                    KeyValuePair<IWindowed<string>, long> deserialized = KeyValuePair.Create(
 //                        WindowKeySchema.fromStoreKey(next.key.Get(), windowSizeForTimeWindow, stateSerdes.keyDeserializer(), stateSerdes.Topic),
 //                        stateSerdes.valueDeserializer().deserialize("dummy", next.value)
 //                    );
@@ -440,7 +440,7 @@
 //                }
 //                else
 //                {
-//                    KeyValuePair<Windowed<string>, long> deserialized = KeyValuePair.Create(
+//                    KeyValuePair<IWindowed<string>, long> deserialized = KeyValuePair.Create(
 //                        SessionKeySchema.from(next.key.Get(), stateSerdes.keyDeserializer(), "dummy"),
 //                        stateSerdes.valueDeserializer().deserialize("dummy", next.value)
 //                    );

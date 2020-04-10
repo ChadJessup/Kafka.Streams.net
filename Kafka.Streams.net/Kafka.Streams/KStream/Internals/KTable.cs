@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public KTable(
             KafkaStreamsContext context,
-            string name,
+            string Name,
             ISerde<K>? keySerde,
             ISerde<V>? valSerde,
             HashSet<string> sourceNodes,
@@ -53,7 +53,7 @@ namespace Kafka.Streams.KStream.Internals
             IProcessorSupplier processorSupplier,
             StreamsGraphNode streamsGraphNode,
             InternalStreamsBuilder builder)
-            : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
+            : base(Name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
         {
             this.context = context;
             this.processorSupplier = processorSupplier;
@@ -73,11 +73,11 @@ namespace Kafka.Streams.KStream.Internals
 
             if (materializedInternal != null)
             {
-                // we actually do not need to generate store names at all since if it is not specified, we will not
+                // we actually do not need to generate store names at All since if it is not specified, we will not
                 // materialize the store; but we still need to burn one index BEFORE generating the processor to keep compatibility.
                 if (materializedInternal.StoreName == null)
                 {
-                    builder.NewStoreName(KTable.FILTER_NAME);
+                    this.builder.NewStoreName(KTable.FILTER_NAME);
                 }
 
                 // we can inherit parent key and value serde if user do not provide specific overrides, more specifically:
@@ -89,7 +89,7 @@ namespace Kafka.Streams.KStream.Internals
 
                 queryableStoreName = materializedInternal?.QueryableStoreName();
 
-                // only materialize if materialized is specified and it has queryable name
+                // only materialize if materialized is specified and it has queryable Name
                 storeBuilder = queryableStoreName != null
                     ? new TimestampedKeyValueStoreMaterializer<K, V>(this.context, materializedInternal).Materialize()
                     : null;
@@ -102,7 +102,7 @@ namespace Kafka.Streams.KStream.Internals
                 storeBuilder = null;
             }
 
-            var name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KTable.FILTER_NAME);
+            var Name = new NamedInternal(named).OrElseGenerateWithPrefix(this.builder, KTable.FILTER_NAME);
 
             IKTableProcessorSupplier<K, V, V> processorSupplier = new KTableFilter<K, V>(
                 this.context,
@@ -111,39 +111,39 @@ namespace Kafka.Streams.KStream.Internals
                 filterNot,
                 queryableStoreName);
 
-            var processorParameters = new ProcessorParameters<K, IChange<V>>(processorSupplier, name);
+            var processorParameters = new ProcessorParameters<K, IChange<V>>(processorSupplier, Name);
 
             var tableNode = new TableProcessorNode<K, V, ITimestampedKeyValueStore<K, V>>(
-               name,
+               Name,
                processorParameters,
                storeBuilder);
 
-            builder.AddGraphNode<K, V>(this.streamsGraphNode, tableNode);
+            this.builder.AddGraphNode<K, V>(this.streamsGraphNode, tableNode);
 
             return new KTable<K, S, V>(
                 this.context,
-                name,
+                Name,
                 keySerde,
                 valueSerde,
-                sourceNodes,
+                this.sourceNodes,
                 queryableStoreName,
                 processorSupplier,
                 tableNode,
-                builder);
+                this.builder);
         }
 
         public IKTable<K, V> Filter(Func<K, V, bool> predicate)
         {
             predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
-            return DoFilter(predicate, NamedInternal.Empty(), null, false);
+            return this.DoFilter(predicate, NamedInternal.Empty(), null, false);
         }
 
         public IKTable<K, V> Filter(Func<K, V, bool> predicate, Named named)
         {
             predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
-            return DoFilter(predicate, named, null, false);
+            return this.DoFilter(predicate, named, null, false);
         }
 
         public IKTable<K, V> Filter(
@@ -155,7 +155,7 @@ namespace Kafka.Streams.KStream.Internals
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
             var materializedInternal = new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized);
 
-            return DoFilter(predicate, named, materializedInternal, false);
+            return this.DoFilter(predicate, named, materializedInternal, false);
         }
 
 
@@ -163,14 +163,14 @@ namespace Kafka.Streams.KStream.Internals
             Func<K, V, bool> predicate,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            return Filter(predicate, NamedInternal.Empty(), materialized);
+            return this.Filter(predicate, NamedInternal.Empty(), materialized);
         }
 
         public IKTable<K, V> FilterNot(Func<K, V, bool> predicate)
         {
             predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
-            return DoFilter(predicate, NamedInternal.Empty(), null, true);
+            return this.DoFilter(predicate, NamedInternal.Empty(), null, true);
         }
 
         public IKTable<K, V> FilterNot(
@@ -179,7 +179,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
-            return DoFilter(predicate, named, null, true);
+            return this.DoFilter(predicate, named, null, true);
         }
 
 
@@ -187,7 +187,7 @@ namespace Kafka.Streams.KStream.Internals
             Func<K, V, bool> predicate,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            return FilterNot(predicate, NamedInternal.Empty(), materialized);
+            return this.FilterNot(predicate, NamedInternal.Empty(), materialized);
         }
 
         public IKTable<K, V> FilterNot(
@@ -201,7 +201,7 @@ namespace Kafka.Streams.KStream.Internals
             var materializedInternal = new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized);
             var renamed = new NamedInternal(named);
 
-            return DoFilter(predicate, renamed, materializedInternal, true);
+            return this.DoFilter(predicate, renamed, materializedInternal, true);
         }
 
         private IKTable<K, VR> DoMapValues<VR>(
@@ -216,11 +216,11 @@ namespace Kafka.Streams.KStream.Internals
 
             if (materializedInternal != null)
             {
-                // we actually do not need to generate store names at all since if it is not specified, we will not
+                // we actually do not need to generate store names at All since if it is not specified, we will not
                 // materialize the store; but we still need to burn one index BEFORE generating the processor to keep compatibility.
                 if (materializedInternal.StoreName == null)
                 {
-                    builder.NewStoreName(KTable.MAPVALUES_NAME);
+                    this.builder.NewStoreName(KTable.MAPVALUES_NAME);
                 }
 
                 keySerde = materializedInternal.KeySerde ?? this.keySerde;
@@ -228,7 +228,7 @@ namespace Kafka.Streams.KStream.Internals
                 valueSerde = materializedInternal.ValueSerde;
                 queryableStoreName = materializedInternal.QueryableStoreName();
 
-                // only materialize if materialized is specified and it has queryable name
+                // only materialize if materialized is specified and it has queryable Name
                 // storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<K, VR>(materializedInternal)).materialize() : null;
             }
             else
@@ -239,17 +239,17 @@ namespace Kafka.Streams.KStream.Internals
                 storeBuilder = null;
             }
 
-            var name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KTable.MAPVALUES_NAME);
+            var Name = new NamedInternal(named).OrElseGenerateWithPrefix(this.builder, KTable.MAPVALUES_NAME);
 
             //IKTableProcessorSupplier<K, V, VR> IProcessorSupplier = new KTableMapValues<K, V, VR>(this, mapper, queryableStoreName);
 
             // leaving in calls to ITB until building topology with graph
 
             //ProcessorParameters<K, VR> processorParameters = unsafeCastProcessorParametersToCompletelyDifferentType(
-            //   new ProcessorParameters<K, VR>(IProcessorSupplier, name));
+            //   new ProcessorParameters<K, VR>(IProcessorSupplier, Name));
 
             //StreamsGraphNode tableNode = new TableProcessorNode<K, VR>(
-            //   name,
+            //   Name,
             //   processorParameters,
             //   storeBuilder);
 
@@ -261,7 +261,7 @@ namespace Kafka.Streams.KStream.Internals
 
             return null;
             //return new KTable<K, VR>(
-            //    name,
+            //    Name,
             //    keySerde,
             //    valueSerde,
             //    sourceNodes,
@@ -275,21 +275,21 @@ namespace Kafka.Streams.KStream.Internals
         {
             mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
-            return DoMapValues(WithKey(mapper), NamedInternal.Empty(), null);
+            return this.DoMapValues(WithKey(mapper), NamedInternal.Empty(), null);
         }
 
         public IKTable<K, VR> MapValues<VR>(IValueMapper<V, VR> mapper, Named named)
         {
             mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
-            return DoMapValues(WithKey(mapper), named, null);
+            return this.DoMapValues(WithKey(mapper), named, null);
         }
 
         public IKTable<K, VR> MapValues<VR>(IValueMapperWithKey<K, V, VR> mapper)
         {
             mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
-            return DoMapValues(mapper, NamedInternal.Empty(), null);
+            return this.DoMapValues(mapper, NamedInternal.Empty(), null);
         }
 
         public IKTable<K, VR> MapValues<VR>(
@@ -298,14 +298,14 @@ namespace Kafka.Streams.KStream.Internals
         {
             mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
-            return DoMapValues(mapper, named, null);
+            return this.DoMapValues(mapper, named, null);
         }
 
         public IKTable<K, VR> MapValues<VR>(
             IValueMapper<V, VR> mapper,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            return MapValues(mapper, NamedInternal.Empty(), materialized);
+            return this.MapValues(mapper, NamedInternal.Empty(), materialized);
         }
 
         public IKTable<K, VR> MapValues<VR>(
@@ -318,14 +318,14 @@ namespace Kafka.Streams.KStream.Internals
 
             var materializedInternal = new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized);
 
-            return DoMapValues(WithKey(mapper), named, materializedInternal);
+            return this.DoMapValues(WithKey(mapper), named, materializedInternal);
         }
 
         public IKTable<K, VR> MapValues<VR>(
             IValueMapperWithKey<K, V, VR> mapper,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            return MapValues(mapper, NamedInternal.Empty(), materialized);
+            return this.MapValues(mapper, NamedInternal.Empty(), materialized);
         }
 
         public IKTable<K, VR> MapValues<VR>(
@@ -338,14 +338,14 @@ namespace Kafka.Streams.KStream.Internals
 
             var materializedInternal = new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized);
 
-            return DoMapValues(mapper, named, materializedInternal);
+            return this.DoMapValues(mapper, named, materializedInternal);
         }
 
         public IKTable<K, VR> TransformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
             string[] stateStoreNames)
         {
-            return DoTransformValues(transformerSupplier, null, NamedInternal.Empty(), stateStoreNames);
+            return this.DoTransformValues(transformerSupplier, null, NamedInternal.Empty(), stateStoreNames);
         }
 
         public IKTable<K, VR> TransformValues<VR>(
@@ -355,7 +355,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             named = named ?? throw new ArgumentNullException(nameof(named));
 
-            return DoTransformValues(transformerSupplier, null, new NamedInternal(named), stateStoreNames);
+            return this.DoTransformValues(transformerSupplier, null, new NamedInternal(named), stateStoreNames);
         }
 
         public IKTable<K, VR> TransformValues<VR>(
@@ -363,7 +363,7 @@ namespace Kafka.Streams.KStream.Internals
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
             string[] stateStoreNames)
         {
-            return TransformValues(transformerSupplier, materialized, NamedInternal.Empty(), stateStoreNames);
+            return this.TransformValues(transformerSupplier, materialized, NamedInternal.Empty(), stateStoreNames);
         }
 
         public IKTable<K, VR> TransformValues<VR>(
@@ -377,7 +377,7 @@ namespace Kafka.Streams.KStream.Internals
 
             var materializedInternal = new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized);
 
-            return DoTransformValues(transformerSupplier, materializedInternal, new NamedInternal(named), stateStoreNames);
+            return this.DoTransformValues(transformerSupplier, materializedInternal, new NamedInternal(named), stateStoreNames);
         }
 
         private IKTable<K, VR> DoTransformValues<VR>(
@@ -401,7 +401,7 @@ namespace Kafka.Streams.KStream.Internals
             //    // we preserve the value following the order of 1) materialized, 2) null
             //    valueSerde = materializedInternal.valueSerde;
             //    queryableStoreName = materializedInternal.queryableStoreName();
-            //    // only materialize if materialized is specified and it has queryable name
+            //    // only materialize if materialized is specified and it has queryable Name
             //    storeBuilder = queryableStoreName != null
             //        ? (new TimestampedKeyValueStoreMaterializer<K, V>(materializedInternal)).materialize()
             //        : null;
@@ -414,7 +414,7 @@ namespace Kafka.Streams.KStream.Internals
             //    storeBuilder = null;
             //}
 
-            //string name = namedInternal.OrElseGenerateWithPrefix(builder, KTable.TRANSFORMVALUES_NAME);
+            //string Name = namedInternal.OrElseGenerateWithPrefix(builder, KTable.TRANSFORMVALUES_NAME);
 
             // IKTableProcessorSupplier<K, V, VR> IProcessorSupplier = new KTableTransformValues<K, V, VR>(
             //    this,
@@ -422,10 +422,10 @@ namespace Kafka.Streams.KStream.Internals
             //    queryableStoreName);
 
             // ProcessorParameters<K, VR> processorParameters = unsafeCastProcessorParametersToCompletelyDifferentType(
-            //    new ProcessorParameters<K, VR>(IProcessorSupplier, name));
+            //    new ProcessorParameters<K, VR>(IProcessorSupplier, Name));
 
             // StreamsGraphNode tableNode = new TableProcessorNode<K, VR>(
-            //    name,
+            //    Name,
             //    processorParameters,
             //    storeBuilder,
             //    stateStoreNames
@@ -434,7 +434,7 @@ namespace Kafka.Streams.KStream.Internals
             // builder.AddGraphNode(this.streamsGraphNode, tableNode);
 
             // return new KTable<K, V, VR>(
-            //     name,
+            //     Name,
             //     keySerde,
             //     valueSerde,
             //     sourceNodes,
@@ -447,45 +447,45 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKStream<K, V> ToStream()
         {
-            return ToStream(NamedInternal.Empty());
+            return this.ToStream(NamedInternal.Empty());
         }
 
         public IKStream<K, V> ToStream(Named named)
         {
             named = named ?? throw new ArgumentNullException(nameof(named));
 
-            var name = new NamedInternal(named)
-                .OrElseGenerateWithPrefix(builder, KTable.TOSTREAM_NAME);
+            var Name = new NamedInternal(named)
+                .OrElseGenerateWithPrefix(this.builder, KTable.TOSTREAM_NAME);
 
             IProcessorSupplier<K, IChange<V>> kStreamMapValues =
                 new KStreamMapValues<K, IChange<V>, V>(
                     (key, change) => change.NewValue);
 
             //ProcessorParameters<K, V> processorParameters = UnsafeCastProcessorParametersToCompletelyDifferentType<V>(
-            //new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
+            //new ProcessorParameters<K, Change<V>>(kStreamMapValues, Name));
 
             var toStreamNode = new ProcessorGraphNode<K, IChange<V>>(
-               name,
-               new ProcessorParameters<K, IChange<V>>(kStreamMapValues, name));
+               Name,
+               new ProcessorParameters<K, IChange<V>>(kStreamMapValues, Name));
 
-            builder.AddGraphNode<K, V>(this.streamsGraphNode, toStreamNode);
+            this.builder.AddGraphNode<K, V>(this.streamsGraphNode, toStreamNode);
 
             // we can inherit parent key and value serde
             return new KStream<K, V>(
                 this.context,
-                name,
-                keySerde,
-                valSerde,
-                sourceNodes,
+                Name,
+                this.keySerde,
+                this.valSerde,
+                this.sourceNodes,
                 repartitionRequired: false,
                 toStreamNode,
-                builder);
+                this.builder);
         }
 
 
         public IKStream<K1, V> ToStream<K1>(IKeyValueMapper<K, V, K1> mapper)
         {
-            return ToStream().SelectKey(mapper);
+            return this.ToStream().SelectKey(mapper);
         }
 
 
@@ -493,27 +493,27 @@ namespace Kafka.Streams.KStream.Internals
             IKeyValueMapper<K, V, K1> mapper,
             Named named)
         {
-            return ToStream(named).SelectKey(mapper);
+            return this.ToStream(named).SelectKey(mapper);
         }
 
         public IKTable<K, V> Suppress(ISuppressed<K> suppressed)
         {
-            string name;
+            string Name;
             if (suppressed is INamedSuppressed<K>)
             {
-                var givenName = ((INamedSuppressed<object>)suppressed).name;
-                name = givenName ?? builder.NewProcessorName(KTable.SUPPRESS_NAME);
+                var givenName = ((INamedSuppressed<object>)suppressed).Name;
+                Name = givenName ?? this.builder.NewProcessorName(KTable.SUPPRESS_NAME);
             }
             else
             {
                 throw new System.ArgumentException("Custom sues of Suppressed are not supported.");
             }
 
-            //SuppressedInternal<K, V> suppressedInternal = buildSuppress(suppressed, name);
+            //SuppressedInternal<K, V> suppressedInternal = buildSuppress(suppressed, Name);
 
             // string storeName =
-            //    suppressedInternal.name != null
-            //    ? suppressedInternal.name + "-store"
+            //    suppressedInternal.Name != null
+            //    ? suppressedInternal.Name + "-store"
             //    : builder.NewStoreName(KTable.SUPPRESS_NAME);
 
             // IProcessorSupplier<K, Change<V>> suppressionSupplier = new KTableSuppressProcessorSupplier<K, V>(
@@ -522,18 +522,18 @@ namespace Kafka.Streams.KStream.Internals
             //    this);
 
             // ProcessorGraphNode<K, Change<V>> node = new StatefulProcessorNode<>(
-            //    name,
-            //    new ProcessorParameters<>(suppressionSupplier, name),
+            //    Name,
+            //    new ProcessorParameters<>(suppressionSupplier, Name),
             //    new InMemoryTimeOrderedKeyValueBuffer.Builder<>(storeName, keySerde, valSerde)
             //);
 
             // builder.AddGraphNode(streamsGraphNode, node);
 
             // return new KTable<K, S, V>(
-            //     name,
+            //     Name,
             //     keySerde,
             //     valSerde,
-            //     new HashSet<string> { this.name },
+            //     new HashSet<string> { this.Name },
             //     null,
             //     suppressionSupplier,
             //     node,
@@ -544,13 +544,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        //private SuppressedInternal<K> buildSuppress(ISuppressed<K> suppress, string name)
+        //private SuppressedInternal<K> buildSuppress(ISuppressed<K> suppress, string Name)
         //{
         //    if (suppress is FinalResultsSuppressionBuilder<K>)
         //    {
         //        long grace = findAndVerifyWindowGrace(streamsGraphNode);
         //        LOG.LogInformation("Using grace period of [{}] as the suppress duration for node [{}].",
-        //                 DateTime.FromMilliseconds(grace), name);
+        //                 DateTime.FromMilliseconds(grace), Name);
 
         //        FinalResultsSuppressionBuilder<object> builder = (FinalResultsSuppressionBuilder<object>)suppress;
 
@@ -604,9 +604,9 @@ namespace Kafka.Streams.KStream.Internals
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
             var materializedInternal =
-               new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, KTable.MERGE_NAME);
+               new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, this.builder, KTable.MERGE_NAME);
 
-            return DoJoin(other, joiner, named, materializedInternal, false, false);
+            return this.DoJoin(other, joiner, named, materializedInternal, false, false);
         }
 
 
@@ -614,7 +614,7 @@ namespace Kafka.Streams.KStream.Internals
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner)
         {
-            return OuterJoin(other, joiner, NamedInternal.Empty());
+            return this.OuterJoin(other, joiner, NamedInternal.Empty());
         }
 
         public IKTable<K, VR> OuterJoin<VO, VR>(
@@ -622,7 +622,7 @@ namespace Kafka.Streams.KStream.Internals
             IValueJoiner<V, VO, VR> joiner,
             Named named)
         {
-            return DoJoin(other, joiner, named, null, true, true);
+            return this.DoJoin(other, joiner, named, null, true, true);
         }
 
         public IKTable<K, VR> OuterJoin<VO, VR>(
@@ -630,7 +630,7 @@ namespace Kafka.Streams.KStream.Internals
             IValueJoiner<V, VO, VR> joiner,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            return OuterJoin(other, joiner, NamedInternal.Empty(), materialized);
+            return this.OuterJoin(other, joiner, NamedInternal.Empty(), materialized);
         }
 
 
@@ -643,16 +643,16 @@ namespace Kafka.Streams.KStream.Internals
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
             var materializedInternal =
-               new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, KTable.MERGE_NAME);
+               new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, this.builder, KTable.MERGE_NAME);
 
-            return DoJoin(other, joiner, named, materializedInternal, true, true);
+            return this.DoJoin(other, joiner, named, materializedInternal, true, true);
         }
 
         public IKTable<K, VR> LeftJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner)
         {
-            return LeftJoin(other, joiner, NamedInternal.Empty());
+            return this.LeftJoin(other, joiner, NamedInternal.Empty());
         }
 
         public IKTable<K, VR> LeftJoin<VO, VR>(
@@ -660,7 +660,7 @@ namespace Kafka.Streams.KStream.Internals
             IValueJoiner<V, VO, VR> joiner,
             Named named)
         {
-            return DoJoin(other, joiner, named, null, true, false);
+            return this.DoJoin(other, joiner, named, null, true, false);
         }
 
         public IKTable<K, VR> LeftJoin<VO, VR>(
@@ -668,7 +668,7 @@ namespace Kafka.Streams.KStream.Internals
             IValueJoiner<V, VO, VR> joiner,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            return LeftJoin(other, joiner, NamedInternal.Empty(), materialized);
+            return this.LeftJoin(other, joiner, NamedInternal.Empty(), materialized);
         }
 
 
@@ -681,9 +681,9 @@ namespace Kafka.Streams.KStream.Internals
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
             var materializedInternal =
-               new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, KTable.MERGE_NAME);
+               new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, this.builder, KTable.MERGE_NAME);
 
-            return DoJoin(other, joiner, named, materializedInternal, true, false);
+            return this.DoJoin(other, joiner, named, materializedInternal, true, false);
         }
 
         private IKTable<K, VR> DoJoin<VO, VR>(
@@ -699,12 +699,12 @@ namespace Kafka.Streams.KStream.Internals
             joinName = joinName ?? throw new ArgumentNullException(nameof(joinName));
 
             var renamed = new NamedInternal(joinName);
-            var joinMergeName = renamed.OrElseGenerateWithPrefix(builder, KTable.MERGE_NAME);
-            HashSet<string> allSourceNodes = EnsureJoinableWith((AbstractStream<K, VO>)other);
+            var joinMergeName = renamed.OrElseGenerateWithPrefix(this.builder, KTable.MERGE_NAME);
+            HashSet<string> allSourceNodes = this.EnsureJoinableWith((AbstractStream<K, VO>)other);
 
             if (leftOuter)
             {
-                EnableSendingOldValues();
+                this.EnableSendingOldValues();
             }
 
             if (rightOuter)
@@ -731,8 +731,8 @@ namespace Kafka.Streams.KStream.Internals
                 //joinOther = new KTableKTableOuterJoin<>((KTable<K, object, VO>)other, this, reverseJoiner(joiner));
             }
 
-            var joinThisName = renamed.SuffixWithOrElseGet("-join-this", builder, KTable.JOINTHIS_NAME);
-            var joinOtherName = renamed.SuffixWithOrElseGet("-join-other", builder, KTable.JOINOTHER_NAME);
+            var joinThisName = renamed.SuffixWithOrElseGet("-join-this", this.builder, KTable.JOINTHIS_NAME);
+            var joinOtherName = renamed.SuffixWithOrElseGet("-join-other", this.builder, KTable.JOINOTHER_NAME);
 
             var joinThisProcessorParameters = new ProcessorParameters<K, IChange<V>>(joinThis, joinThisName);
             var joinOtherProcessorParameters = new ProcessorParameters<K, IChange<VO>>(joinOther, joinOtherName);
@@ -766,8 +766,8 @@ namespace Kafka.Streams.KStream.Internals
             //        .withNodeName(joinMergeName)
             //        .withJoinThisProcessorParameters(joinThisProcessorParameters)
             //        .withJoinOtherProcessorParameters(joinOtherProcessorParameters)
-            //        .withThisJoinSideNodeName(name)
-            //        .withOtherJoinSideNodeName(((KTable)other).name)
+            //        .withThisJoinSideNodeName(Name)
+            //        .withOtherJoinSideNodeName(((KTable)other).Name)
             //        .withJoinThisStoreNames(valueGetterSupplier().storeNames())
             //        .withJoinOtherStoreNames(((KTable)other).valueGetterSupplier.storeNames())
             //        .withKeySerde(keySerde)
@@ -795,7 +795,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKGroupedTable<KR, VR> GroupBy<KR, VR>(
             IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector)
         {
-            return GroupBy(selector, Grouped.With<KR, VR>(null, null));
+            return this.GroupBy(selector, Grouped.With<KR, VR>(null, null));
         }
 
         [Obsolete]
@@ -807,7 +807,7 @@ namespace Kafka.Streams.KStream.Internals
             serialized = serialized ?? throw new ArgumentNullException(nameof(serialized));
 
             var serializedInternal = new SerializedInternal<K1, V1>(serialized);
-            return GroupBy(selector, Grouped.With(serializedInternal.keySerde, serializedInternal.valueSerde));
+            return this.GroupBy(selector, Grouped.With(serializedInternal.keySerde, serializedInternal.valueSerde));
         }
 
         public IKGroupedTable<K1, V1> GroupBy<K1, V1>(
@@ -819,7 +819,7 @@ namespace Kafka.Streams.KStream.Internals
 
             var groupedInternal = new GroupedInternal<K1, V1>(grouped);
             var selectName = new NamedInternal(groupedInternal.Name)
-                .OrElseGenerateWithPrefix(builder, KTable.SELECT_NAME);
+                .OrElseGenerateWithPrefix(this.builder, KTable.SELECT_NAME);
 
             //IKTableProcessorSupplier<K, V, KeyValuePair<K1, V1>> selectSupplier = new KTableRepartitionMap<K, V, K1, V1>(this, selector);
             //ProcessorParameters<K, Change<V>> processorParameters = new ProcessorParameters<K, Change<V>>(selectSupplier, selectName);
@@ -842,42 +842,42 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTableValueGetterSupplier<K, V> ValueGetterSupplier<VR>()
         {
-            if (processorSupplier is KTableSource<K, V> source)
+            if (this.processorSupplier is KTableSource<K, V> source)
             {
                 // whenever a source ktable is required for getter, it should be materialized
                 source.Materialize();
 
                 return new KTableSourceValueGetterSupplier<K, V>(this.context, source.queryableName);
             }
-            else if (processorSupplier is IKStreamAggProcessorSupplier)
+            else if (this.processorSupplier is IKStreamAggProcessorSupplier)
             {
-                return ((IKStreamAggProcessorSupplier<object, K, S, V>)processorSupplier).View();
+                return ((IKStreamAggProcessorSupplier<object, K, S, V>)this.processorSupplier).View();
             }
             else
             {
-                return ((IKTableProcessorSupplier<K, VR, V>)processorSupplier).View();
+                return ((IKTableProcessorSupplier<K, VR, V>)this.processorSupplier).View();
             }
         }
 
         public void EnableSendingOldValues()
         {
-            if (!sendOldValues)
+            if (!this.sendOldValues)
             {
-                if (processorSupplier is KTableSource<K, V>)
+                if (this.processorSupplier is KTableSource<K, V>)
                 {
-                    var source = (KTableSource<K, object>)processorSupplier;
+                    var source = (KTableSource<K, object>)this.processorSupplier;
                     source.EnableSendingOldValues();
                 }
-                else if (processorSupplier is IKStreamAggProcessorSupplier)
+                else if (this.processorSupplier is IKStreamAggProcessorSupplier)
                 {
-                    ((IKStreamAggProcessorSupplier<object, K, S, V>)processorSupplier).EnableSendingOldValues();
+                    ((IKStreamAggProcessorSupplier<object, K, S, V>)this.processorSupplier).EnableSendingOldValues();
                 }
                 else
                 {
-                    ((IKTableProcessorSupplier<K, S, V>)processorSupplier).EnableSendingOldValues();
+                    ((IKTableProcessorSupplier<K, S, V>)this.processorSupplier).EnableSendingOldValues();
                 }
 
-                sendOldValues = true;
+                this.sendOldValues = true;
             }
         }
     }

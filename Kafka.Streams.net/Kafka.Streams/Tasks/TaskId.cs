@@ -24,7 +24,7 @@ namespace Kafka.Streams.Tasks
 
         public override string ToString()
         {
-            return topicGroupId + "_" + partition;
+            return this.topicGroupId + "_" + this.partition;
         }
 
         /**
@@ -59,8 +59,8 @@ namespace Kafka.Streams.Tasks
         {
             var bw = new BinaryWriter(outputStream, Encoding.UTF8, leaveOpen: true);
 
-            bw.Write(topicGroupId);
-            bw.Write(partition);
+            bw.Write(this.topicGroupId);
+            bw.Write(this.partition);
         }
 
         /**
@@ -75,8 +75,8 @@ namespace Kafka.Streams.Tasks
 
         public void WriteTo(ByteBuffer buf)
         {
-            buf.PutInt(topicGroupId);
-            buf.PutInt(partition);
+            buf.PutInt(this.topicGroupId);
+            buf.PutInt(this.partition);
         }
 
         public static TaskId ReadFrom(ByteBuffer buf)
@@ -104,7 +104,7 @@ namespace Kafka.Streams.Tasks
 
         public override int GetHashCode()
         {
-            var n = ((long)topicGroupId << 32) | (long)partition;
+            var n = ((long)this.topicGroupId << 32) | (long)this.partition;
             return (int)(n % 0xFFFFFFFFL);
         }
 

@@ -6,15 +6,15 @@ namespace Kafka.Streams.Tests.Mocks
 {
     public class MockKeyValueStoreBuilder : AbstractStoreBuilder<int, byte[], IKeyValueStore<int, byte[]>>
     {
-        private readonly bool persistent;
+        private readonly bool Persistent;
 
-        public MockKeyValueStoreBuilder(KafkaStreamsContext context, string storeName, bool persistent)
+        public MockKeyValueStoreBuilder(KafkaStreamsContext context, string storeName, bool Persistent)
             : base(context, storeName, Serdes.Int(), Serdes.ByteArray())
         {
-            this.persistent = persistent;
+            this.Persistent = Persistent;
         }
 
         public override IKeyValueStore<int, byte[]> Build()
-            => new MockKeyValueStore(name, persistent);
+            => new MockKeyValueStore(this.Name, this.Persistent);
     }
 }

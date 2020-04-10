@@ -17,17 +17,17 @@ namespace Kafka.Streams.State.KeyValues
 
         public bool HasNext()
         {
-            return iterator.MoveNext();
+            return this.iterator.MoveNext();
         }
 
         public K PeekNextKey()
         {
-            return iterator.PeekNextKey();
+            return this.iterator.PeekNextKey();
         }
 
         public KeyValuePair<K, V> Next()
         {
-            var innerKeyValue = iterator.Current;
+            var innerKeyValue = this.iterator.Current;
 
             var vat = (ValueAndTimestamp<V>)(object)innerKeyValue.Value;
             return KeyValuePair.Create(innerKeyValue.Key, ValueAndTimestamp.GetValueOrNull(vat));
@@ -35,7 +35,7 @@ namespace Kafka.Streams.State.KeyValues
 
         public void Close()
         {
-            iterator.Close();
+            this.iterator.Close();
         }
 
         public bool MoveNext()
@@ -53,7 +53,7 @@ namespace Kafka.Streams.State.KeyValues
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!this.disposedValue)
             {
                 if (disposing)
                 {
@@ -63,7 +63,7 @@ namespace Kafka.Streams.State.KeyValues
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                this.disposedValue = true;
             }
         }
 
@@ -78,7 +78,7 @@ namespace Kafka.Streams.State.KeyValues
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
+            this.Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }

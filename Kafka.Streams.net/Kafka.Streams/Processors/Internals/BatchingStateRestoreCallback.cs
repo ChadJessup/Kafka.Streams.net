@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Internals
                 keyValues.Add(new KeyValuePair<byte[], byte[]>(record.Key, record.Value));
             }
 
-            ((IBatchingStateRestoreCallback)restoreCallback).RestoreAll(keyValues);
+            ((IBatchingStateRestoreCallback)this.restoreCallback).RestoreAll(keyValues);
         }
 
         public void RestoreBatch(List<ConsumeResult<byte[], byte[]>> records)

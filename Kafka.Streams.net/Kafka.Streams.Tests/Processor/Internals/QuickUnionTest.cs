@@ -21,25 +21,25 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 qu.Add(id);
             }
 
-            Assert.Equal(5, Roots(qu, ids).Count);
+            Assert.Equal(5, this.Roots(qu, ids).Count);
 
             qu.Unite(1L, 2L);
-            Assert.Equal(4, Roots(qu, ids).Count);
+            Assert.Equal(4, this.Roots(qu, ids).Count);
             Assert.Equal(qu.Root(1L), qu.Root(2L));
 
             qu.Unite(3L, 4L);
-            Assert.Equal(3, Roots(qu, ids).Count);
+            Assert.Equal(3, this.Roots(qu, ids).Count);
             Assert.Equal(qu.Root(1L), qu.Root(2L));
             Assert.Equal(qu.Root(3L), qu.Root(4L));
 
             qu.Unite(1L, 5L);
-            Assert.Equal(2, Roots(qu, ids).Count);
+            Assert.Equal(2, this.Roots(qu, ids).Count);
             Assert.Equal(qu.Root(1L), qu.Root(2L));
             Assert.Equal(qu.Root(2L), qu.Root(5L));
             Assert.Equal(qu.Root(3L), qu.Root(4L));
 
             qu.Unite(3L, 5L);
-            Assert.Single(Roots(qu, ids));
+            Assert.Single(this.Roots(qu, ids));
             Assert.Equal(qu.Root(1L), qu.Root(2L));
             Assert.Equal(qu.Root(2L), qu.Root(3L));
             Assert.Equal(qu.Root(3L), qu.Root(4L));
@@ -60,10 +60,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 qu.Add(id);
             }
 
-            Assert.Equal(5, Roots(qu, ids).Count);
+            Assert.Equal(5, this.Roots(qu, ids).Count);
 
             qu.Unite(1L, 2L, 3L, 4L);
-            Assert.Equal(2, Roots(qu, ids).Count);
+            Assert.Equal(2, this.Roots(qu, ids).Count);
             Assert.Equal(qu.Root(1L), qu.Root(2L));
             Assert.Equal(qu.Root(2L), qu.Root(3L));
             Assert.Equal(qu.Root(3L), qu.Root(4L));

@@ -34,12 +34,12 @@ namespace Kafka.Streams.Threads.Stream
         }
 
         /**
-         * If all threads are dead set to ERROR
+         * If All threads are dead set to ERROR
          */
         private void MaybeSetError()
         {
             // check if we have at least one thread running
-            foreach (var state in threadStates.Values)
+            foreach (var state in this.threadStates.Values)
             {
                 if (state.CurrentState != StreamThreadStates.DEAD)
                 {
@@ -49,17 +49,17 @@ namespace Kafka.Streams.Threads.Stream
 
             if (this.kafkaStreams.State.SetState(KafkaStreamsThreadStates.ERROR))
             {
-                logger.LogError("All stream threads have died. The instance will be in error state and should be closed.");
+                this.logger.LogError("All stream threads have died. The instance will be in error state and should be closed.");
             }
         }
 
         /**
-         * If all threads are up, including the global thread, set to RUNNING
+         * If All threads are up, including the global thread, set to RUNNING
          */
         private void MaybeSetRunning()
         {
-            // state can be transferred to RUNNING if all threads are either RUNNING or DEAD
-            foreach (var state in threadStates.Values)
+            // state can be transferred to RUNNING if All threads are either RUNNING or DEAD
+            foreach (var state in this.threadStates.Values)
             {
                 if (state.CurrentState != StreamThreadStates.RUNNING
                     && state.CurrentState != StreamThreadStates.DEAD)
@@ -69,7 +69,7 @@ namespace Kafka.Streams.Threads.Stream
             }
 
             // the global state thread is relevant only if it is started. There are cases
-            // when we don't have a global state thread at all, e.g., when we don't have global KTables
+            // when we don't have a global state thread at All, e.g., when we don't have global KTables
             if (this.globalThread != null
                 && this.globalThread.State.CurrentState != GlobalStreamThreadStates.RUNNING)
             {
@@ -86,15 +86,15 @@ namespace Kafka.Streams.Threads.Stream
             States abstractOldState)
                 where States : Enum
         {
-            lock (threadStatesLock)
+            lock (this.threadStatesLock)
             {
                 // StreamThreads first
                 if (thread is StreamThread kafkaStreamThread && kafkaStreamThread.State is StreamThreadState state)
                 {
                     var newState = (StreamThreadStates)(object)abstractNewState;
-                    if (threadStates.TryAdd(kafkaStreamThread.ManagedThreadId, state))
+                    if (this.threadStates.TryAdd(kafkaStreamThread.ManagedThreadId, state))
                     {
-                        threadStates[kafkaStreamThread.ManagedThreadId] = state;
+                        this.threadStates[kafkaStreamThread.ManagedThreadId] = state;
                     }
 
                     if (newState == StreamThreadStates.PARTITIONS_REVOKED)
@@ -103,11 +103,11 @@ namespace Kafka.Streams.Threads.Stream
                     }
                     else if (newState == StreamThreadStates.RUNNING)
                     {
-                        MaybeSetRunning();
+                        this.MaybeSetRunning();
                     }
                     else if (newState == StreamThreadStates.DEAD)
                     {
-                        MaybeSetError();
+                        this.MaybeSetError();
                     }
                 }
                 else if (thread is GlobalStreamThread)

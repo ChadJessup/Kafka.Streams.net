@@ -18,40 +18,40 @@ namespace Kafka.Streams.Processors.Internals
 
         public V Get(K key)
         {
-            return Wrapped.Get(key);
+            return this.Wrapped.Get(key);
         }
 
         public IKeyValueIterator<K, V> Range(K from, K to)
         {
-            return Wrapped.Range(from, to);
+            return this.Wrapped.Range(from, to);
         }
 
         public IKeyValueIterator<K, V> All()
         {
-            return Wrapped.All();
+            return this.Wrapped.All();
         }
 
         public long approximateNumEntries
-            => Wrapped.approximateNumEntries;
+            => this.Wrapped.approximateNumEntries;
 
         public void Put(K key, V value)
         {
-            Wrapped.Add(key, value);
+            this.Wrapped.Add(key, value);
         }
 
         public V PutIfAbsent(K key, V value)
         {
-            return Wrapped.PutIfAbsent(key, value);
+            return this.Wrapped.PutIfAbsent(key, value);
         }
 
         public void PutAll(List<KeyValuePair<K, V>> entries)
         {
-            Wrapped.PutAll(entries);
+            this.Wrapped.PutAll(entries);
         }
 
         public V Delete(K key)
         {
-            return Wrapped.Delete(key);
+            return this.Wrapped.Delete(key);
         }
 
         public void Add(K key, V value)

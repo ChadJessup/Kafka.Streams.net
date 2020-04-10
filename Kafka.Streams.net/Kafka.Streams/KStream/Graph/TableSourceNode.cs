@@ -49,10 +49,10 @@ namespace Kafka.Streams.Nodes
         public override string ToString()
         {
             return "TableSourceNode{" +
-                   $"materializedInternal={materializedInternal}" +
-                   $", processorParameters={processorParameters}" +
-                   $", sourceName='{sourceName}'" +
-                   $", isGlobalKTable={isGlobalKTable}" +
+                   $"materializedInternal={this.materializedInternal}" +
+                   $", processorParameters={this.processorParameters}" +
+                   $", sourceName='{this.sourceName}'" +
+                   $", isGlobalKTable={this.isGlobalKTable}" +
                    "} " + base.ToString();
         }
 
@@ -64,7 +64,7 @@ namespace Kafka.Streams.Nodes
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            var topicEnumerator = GetTopicNames().GetEnumerator();
+            var topicEnumerator = this.GetTopicNames().GetEnumerator();
             var topicName = string.Empty;
 
             if (topicEnumerator.MoveNext())
@@ -73,7 +73,7 @@ namespace Kafka.Streams.Nodes
             }
             else
             {
-                // TODO: chad - see if no topic name should be allowed in the end.
+                // TODO: chad - see if no topic Name should be allowed in the end.
                 throw new InvalidOperationException("TableSourceNode: Unable to WriteToTopology, no Topic names set.");
             }
 
@@ -82,45 +82,45 @@ namespace Kafka.Streams.Nodes
             IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder =
                new TimestampedKeyValueStoreMaterializer<K, V>(
                    this.context,
-                   materializedInternal).Materialize();
+                   this.materializedInternal).Materialize();
 
-            if (isGlobalKTable)
+            if (this.isGlobalKTable)
             {
                 topologyBuilder.AddGlobalStore(
                     storeBuilder,
-                    sourceName,
-                    consumedInternal.timestampExtractor,
-                    consumedInternal.KeyDeserializer(),
-                    consumedInternal.ValueDeserializer(),
+                    this.sourceName,
+                    this.consumedInternal.timestampExtractor,
+                    this.consumedInternal.KeyDeserializer(),
+                    this.consumedInternal.ValueDeserializer(),
                     topicName,
-                    processorParameters.ProcessorName,
-                    processorParameters.ProcessorSupplier);
+                    this.processorParameters.ProcessorName,
+                    this.processorParameters.ProcessorSupplier);
             }
             else
             {
                 topologyBuilder.AddSource(
-                    consumedInternal.OffsetResetPolicy(),
-                    sourceName,
-                    consumedInternal.timestampExtractor,
-                    consumedInternal.KeyDeserializer(),
-                    consumedInternal.ValueDeserializer(),
+                    this.consumedInternal.OffsetResetPolicy(),
+                    this.sourceName,
+                    this.consumedInternal.timestampExtractor,
+                    this.consumedInternal.KeyDeserializer(),
+                    this.consumedInternal.ValueDeserializer(),
                     new[] { topicName });
 
                 topologyBuilder.AddProcessor<K, V>(
-                    processorParameters.ProcessorName,
-                    processorParameters.ProcessorSupplier,
-                    sourceName);
+                    this.processorParameters.ProcessorName,
+                    this.processorParameters.ProcessorSupplier,
+                    this.sourceName);
 
                 // only add state store if the source KTable should be materialized
-                var ktableSource = (KTableSource<K, V>)processorParameters.ProcessorSupplier;
+                var ktableSource = (KTableSource<K, V>)this.processorParameters.ProcessorSupplier;
                 if (ktableSource.queryableName != null)
                 {
                     topologyBuilder.AddStateStore<K, V, ITimestampedKeyValueStore<K, V>>(storeBuilder, new[] { this.NodeName });
 
-                    if (ShouldReuseSourceTopicForChangelog)
+                    if (this.ShouldReuseSourceTopicForChangelog)
                     {
                         storeBuilder.WithLoggingDisabled();
-                        topologyBuilder.ConnectSourceStoreAndTopic(storeBuilder.name, topicName);
+                        topologyBuilder.ConnectSourceStoreAndTopic(storeBuilder.Name, topicName);
                     }
                 }
             }

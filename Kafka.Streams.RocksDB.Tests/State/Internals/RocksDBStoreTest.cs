@@ -76,7 +76,7 @@
 //    public class RocksDBStoreTest
 //    {
 //        private static bool enableBloomFilters = false;
-//        const string DB_NAME = "db-name";
+//        const string DB_NAME = "db-Name";
 
 //        private DirectoryInfo dir;
 //        private ISerializer<string> stringSerializer = Serdes.String().Serializer;
@@ -89,7 +89,7 @@
 //        public void SetUp()
 //        {
 //            StreamsConfig props = StreamsTestUtils.getStreamsConfig();
-//            props.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, MockRocksDbConfigSetter);
+//            props.Put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, MockRocksDbConfigSetter);
 //            rocksDBStore = GetRocksDBStore();
 //            dir = TestUtils.GetTempDirectory();
 //            context = new InternalMockProcessorContext(dir,
@@ -106,7 +106,7 @@
 
 //        public void TearDown()
 //        {
-//            rocksDBStore.close();
+//            rocksDBStore.Close();
 //        }
 
 //        [Fact]
@@ -114,15 +114,15 @@
 //        {
 //            rocksDBStore.Init(context, rocksDBStore);
 
-//            IStateRestoreListener restoreListener = context.getRestoreListener(rocksDBStore.name());
+//            IStateRestoreListener restoreListener = context.getRestoreListener(rocksDBStore.Name());
 
-//            restoreListener.onRestoreStart(null, rocksDBStore.name(), 0L, 0L);
+//            restoreListener.onRestoreStart(null, rocksDBStore.Name(), 0L, 0L);
 
 //            Assert.Equal(rocksDBStore.getOptions().level0FileNumCompactionTrigger(), (1 << 30));
 //            Assert.Equal(rocksDBStore.getOptions().level0SlowdownWritesTrigger(), (1 << 30));
 //            Assert.Equal(rocksDBStore.getOptions().level0StopWritesTrigger(), (1 << 30));
 
-//            restoreListener.onRestoreEnd(null, rocksDBStore.name(), 0L);
+//            restoreListener.onRestoreEnd(null, rocksDBStore.Name(), 0L);
 
 //            Assert.Equal(rocksDBStore.getOptions().level0FileNumCompactionTrigger(), (10));
 //            Assert.Equal(rocksDBStore.getOptions().level0SlowdownWritesTrigger(), (20));
@@ -138,7 +138,7 @@
 //            int intKey = 1;
 //            for (int i = 0; i < 2000000; i++)
 //            {
-//                rocksDBStore.put(new Bytes(stringSerializer.Serialize(null, "theKeyIs" + intKey++)),
+//                rocksDBStore.Put(new Bytes(stringSerializer.Serialize(null, "theKeyIs" + intKey++)),
 //                                 stringSerializer.Serialize(null, message));
 //            }
 
@@ -202,7 +202,7 @@
 
 //            rocksDBStore.Init(context, rocksDBStore);
 //            rocksDBStore.putAll(entries);
-//            rocksDBStore.flush();
+//            rocksDBStore.Flush();
 
 //            Assert.Equal(
 //                "a",
@@ -241,7 +241,7 @@
 //            List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
 
 //            rocksDBStore.Init(context, rocksDBStore);
-//            context.restore(rocksDBStore.name(), entries);
+//            context.restore(rocksDBStore.Name(), entries);
 
 //            RocksDbStore.RocksDBBatchingRestoreCallback restoreListener =
 //                (RocksDbStore.RocksDBBatchingRestoreCallback)rocksDBStore.batchingStateRestoreCallback;
@@ -259,7 +259,7 @@
 //            List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
 
 //            rocksDBStore.Init(context, rocksDBStore);
-//            context.restore(rocksDBStore.name(), entries);
+//            context.restore(rocksDBStore.Name(), entries);
 
 //            Assert.Equal(
 //                "a",
@@ -300,9 +300,9 @@
 //            entries.Add(KeyValuePair.Create("1".getBytes(UTF_8), null));
 
 //            rocksDBStore.Init(context, rocksDBStore);
-//            context.restore(rocksDBStore.name(), entries);
+//            context.restore(rocksDBStore.Name(), entries);
 
-//            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.all();
+//            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.All();
 //            HashSet<string> keys = new HashSet<>();
 
 //            while (iterator.HasNext())
@@ -326,9 +326,9 @@
 //            entries.Add(KeyValuePair.Create("1".getBytes(UTF_8), "restored".getBytes(UTF_8)));
 
 //            rocksDBStore.Init(context, rocksDBStore);
-//            context.restore(rocksDBStore.name(), entries);
+//            context.restore(rocksDBStore.Name(), entries);
 
-//            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.all();
+//            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.All();
 //            HashSet<string> keys = new HashSet<>();
 
 //            while (iterator.HasNext())
@@ -362,7 +362,7 @@
 
 //            rocksDBStore.Init(context, rocksDBStore);
 
-//            context.restore(rocksDBStore.name(), entries);
+//            context.restore(rocksDBStore.Name(), entries);
 
 //            Assert.Equal(
 //                "a",
@@ -386,9 +386,9 @@
 //            entries.Add(KeyValuePair.Create("3".getBytes(UTF_8), "c".getBytes(UTF_8)));
 //            entries.Add(KeyValuePair.Create("1".getBytes(UTF_8), null));
 
-//            context.restore(rocksDBStore.name(), entries);
+//            context.restore(rocksDBStore.Name(), entries);
 
-//            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.all();
+//            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.All();
 //            HashSet<string> keys = new HashSet<>();
 
 //            while (iterator.HasNext())
@@ -405,8 +405,8 @@
 //            rocksDBStore.Init(context, rocksDBStore);
 //            try
 //            {
-//                rocksDBStore.put(null, stringSerializer.Serialize(null, "someVal"));
-//                Assert.True(false, "Should have thrown NullPointerException on null put()");
+//                rocksDBStore.Put(null, stringSerializer.Serialize(null, "someVal"));
+//                Assert.True(false, "Should have thrown NullPointerException on null Put()");
 //            }
 //            catch (NullPointerException e)
 //            {
@@ -420,8 +420,8 @@
 //            rocksDBStore.Init(context, rocksDBStore);
 //            try
 //            {
-//                rocksDBStore.put(null, stringSerializer.Serialize(null, "someVal"));
-//                Assert.True(false, "Should have thrown NullPointerException on null put()");
+//                rocksDBStore.Put(null, stringSerializer.Serialize(null, "someVal"));
+//                Assert.True(false, "Should have thrown NullPointerException on null Put()");
 //            }
 //            catch (NullPointerException e)
 //            {
@@ -479,10 +479,10 @@
 //        { //throws IOException
 //            rocksDBStore.Init(context, rocksDBStore);
 //            Utils.delete(dir);
-//            rocksDBStore.put(
+//            rocksDBStore.Put(
 //                new Bytes(stringSerializer.Serialize(null, "anyKey")),
 //                stringSerializer.Serialize(null, "anyValue"));
-//            rocksDBStore.flush();
+//            rocksDBStore.Flush();
 //        }
 
 //        [Fact]
@@ -490,7 +490,7 @@
 //        {
 
 //            StreamsConfig props = StreamsTestUtils.getStreamsConfig();
-//            props.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, TestingBloomFilterRocksDBConfigSetter);
+//            props.Put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, TestingBloomFilterRocksDBConfigSetter);
 //            rocksDBStore = GetRocksDBStore();
 //            dir = TestUtils.GetTempDirectory();
 //            context = new InternalMockProcessorContext(dir,
@@ -509,7 +509,7 @@
 //            List<KeyValuePair<byte[], byte[]>> keyValues = GetKeyValueEntries();
 //            foreach (KeyValuePair<byte[], byte[]> keyValue in keyValues)
 //            {
-//                rocksDBStore.put(new Bytes(keyValue.key), keyValue.value);
+//                rocksDBStore.Put(new Bytes(keyValue.key), keyValue.value);
 //            }
 
 //            int expectedIndex = 0;
@@ -520,7 +520,7 @@
 //            }
 //            Assert.False(TestingBloomFilterRocksDBConfigSetter.bloomFiltersSet);
 
-//            rocksDBStore.close();
+//            rocksDBStore.Close();
 //            expectedIndex = 0;
 
 //            // reopen with Bloom Filters enabled
@@ -585,9 +585,9 @@
 //            {
 //                if (filter != null)
 //                {
-//                    filter.close();
+//                    filter.Close();
 //                }
-//                cache.close();
+//                cache.Close();
 //            }
 //        }
 

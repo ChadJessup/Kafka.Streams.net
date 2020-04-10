@@ -9,14 +9,14 @@ namespace Kafka.Streams.KStream
         /**
          * Configure the suppression to emit only the " results" from the window.
          *
-         * By default all Streams operators emit results whenever new results are available.
+         * By default All Streams operators emit results whenever new results are available.
          * This includes windowed operations.
          *
          * This configuration will instead emit just one result per key for each window, guaranteeing
          * to deliver only the  result. This option is suitable for use cases in which the business logic
          * requires a hard guarantee that only the  result is propagated. For example, sending alerts.
          *
-         * To accomplish this, the operator will buffer events from the window until the window close (that is,
+         * To accomplish this, the operator will buffer events from the window until the window Close (that is,
          * until the end-time passes, and.Additionally until the grace period expires). Since windowed operators
          * are required to reject late events for a window whose grace period is expired, there is an.Additional
          * guarantee that the  results emitted from this suppression will match any queriable state upstream.
@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream
          *                     property to emit early and then issue an update later.
          * @return a " results" mode suppression configuration
          */
-        //static ISuppressed<Windowed<K>> untilWindowCloses(IStrictBufferConfig bufferConfig)
+        //static ISuppressed<IWindowed<K>> untilWindowCloses(IStrictBufferConfig bufferConfig)
         //{
         //    return new FinalResultsSuppressionBuilder<K>(null, bufferConfig);
         //}
@@ -47,7 +47,7 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Use the specified name for the suppression node in the topology.
+         * Use the specified Name for the suppression node in the topology.
          * <p>
          * This can be used to insert a suppression without changing the rest of the topology names
          * (and therefore not requiring an application reset).
@@ -57,9 +57,9 @@ namespace Kafka.Streams.KStream
          * <p>
          * A suppression can be "disabled" with the configuration {@code untilTimeLimit(TimeSpan.ZERO, ...}.
          *
-         * @param name The name to be used for the suppression node and changelog topic
-         * @return The same configuration with the addition of the given {@code name}.
+         * @param Name The Name to be used for the suppression node and changelog topic
+         * @return The same configuration with the addition of the given {@code Name}.
          */
-        new ISuppressed<K> WithName(string name);
+        new ISuppressed<K> WithName(string Name);
     }
 }

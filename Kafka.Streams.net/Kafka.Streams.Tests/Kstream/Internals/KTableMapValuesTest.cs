@@ -81,15 +81,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            KTableValueGetterSupplier<string, int> getterSupplier3 = table3.valueGetterSupplier();
 
 //            InternalTopologyBuilder topologyBuilder = TopologyWrapper.getInternalTopologyBuilder(topology);
-//            topologyBuilder.ConnectProcessorAndStateStores(table2.name, getterSupplier2.storeNames());
-//            topologyBuilder.ConnectProcessorAndStateStores(table3.name, getterSupplier3.storeNames());
+//            topologyBuilder.ConnectProcessorAndStateStores(table2.Name, getterSupplier2.storeNames());
+//            topologyBuilder.ConnectProcessorAndStateStores(table3.Name, getterSupplier3.storeNames());
 
 //            var driver = new TopologyTestDriverWrapper(builder.Build(), props);
 //            IKTableValueGetter<string, int> getter2 = getterSupplier2.Get();
 //            IKTableValueGetter<string, int> getter3 = getterSupplier3.Get();
 
-//            getter2.Init(driver.setCurrentNodeForProcessorContext(table2.name));
-//            getter3.Init(driver.setCurrentNodeForProcessorContext(table3.name));
+//            getter2.Init(driver.setCurrentNodeForProcessorContext(table2.Name));
+//            getter3.Init(driver.setCurrentNodeForProcessorContext(table3.Name));
 
 //            driver.PipeInput(recordFactory.Create(topic1, "A", "01", 50L));
 //            driver.PipeInput(recordFactory.Create(topic1, "B", "01", 10L));
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var table2 = (IKTable<string, string>)table1.mapValues();
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            Topology topology = builder.Build().AddProcessor("proc", supplier, table2.name);
+//            Topology topology = builder.Build().AddProcessor("proc", supplier, table2.Name);
 
 //            var driver = new TopologyTestDriver(topology, props);
 //            MockProcessor<string, int> proc = supplier.theCapturedProcessor();
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table2.enableSendingOldValues();
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            builder.Build().AddProcessor("proc", supplier, table2.name);
+//            builder.Build().AddProcessor("proc", supplier, table2.Name);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            MockProcessor<string, int> proc = supplier.theCapturedProcessor();

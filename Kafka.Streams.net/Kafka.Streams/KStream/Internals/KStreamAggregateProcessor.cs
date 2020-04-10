@@ -39,9 +39,9 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             base.Init(context);
-            store = (ITimestampedKeyValueStore<K, T>)context.GetStateStore(this.context, storeName);
-            tupleForwarder = new TimestampedTupleForwarder<K, T>(
-                store,
+            this.store = (ITimestampedKeyValueStore<K, T>)context.GetStateStore(this.storeName);
+            this.tupleForwarder = new TimestampedTupleForwarder<K, T>(
+                this.store,
                 context,
                 new TimestampedCacheFlushListener<K, T>(context),
                 this.sendOldValues);
@@ -59,7 +59,7 @@ namespace Kafka.Streams.KStream.Internals
                 return;
             }
 
-            ValueAndTimestamp<T> oldAggAndTimestamp = store.Get(key);
+            ValueAndTimestamp<T> oldAggAndTimestamp = this.store.Get(key);
             T oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);
 
             T newAgg;
@@ -67,19 +67,19 @@ namespace Kafka.Streams.KStream.Internals
 
             if (oldAgg == null)
             {
-                oldAgg = initializer.Apply();
-                newTimestamp = Context.Timestamp;
+                oldAgg = this.initializer.Apply();
+                newTimestamp = this.Context.Timestamp;
             }
             else
             {
                 oldAgg = oldAggAndTimestamp.Value;
-                newTimestamp = Math.Max(Context.Timestamp, oldAggAndTimestamp.Timestamp);
+                newTimestamp = Math.Max(this.Context.Timestamp, oldAggAndTimestamp.Timestamp);
             }
 
-            newAgg = aggregator.Apply(key, value, oldAgg);
+            newAgg = this.aggregator.Apply(key, value, oldAgg);
 
-            store.Add(key, ValueAndTimestamp.Make(newAgg, newTimestamp));
-            tupleForwarder.MaybeForward(key, newAgg, sendOldValues
+            this.store.Add(key, ValueAndTimestamp.Make(newAgg, newTimestamp));
+            this.tupleForwarder.MaybeForward(key, newAgg, this.sendOldValues
                 ? oldAgg
                 : default,
                 newTimestamp);

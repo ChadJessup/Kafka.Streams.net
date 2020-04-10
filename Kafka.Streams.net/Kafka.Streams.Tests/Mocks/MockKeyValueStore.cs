@@ -8,13 +8,13 @@ namespace Kafka.Streams.Tests.Mocks
 {
     internal class MockKeyValueStore : IKeyValueStore<int, byte[]>
     {
-        private readonly string name;
-        private readonly bool persistent;
+        private readonly string Name;
+        private readonly bool Persistent;
 
-        public MockKeyValueStore(string name, bool persistent)
+        public MockKeyValueStore(string Name, bool Persistent)
         {
-            this.name = name;
-            this.persistent = persistent;
+            this.Name = Name;
+            this.Persistent = Persistent;
         }
 
         public long approximateNumEntries { get; }

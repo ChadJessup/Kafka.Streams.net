@@ -5,7 +5,6 @@ using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
-
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Tasks
@@ -13,17 +12,18 @@ namespace Kafka.Streams.Tasks
     public abstract class AbstractTaskCreator<T>
         where T : ITask
     {
-        protected IClock clock { get; }
+        public KafkaStreamsContext Context { get; }
         protected ILogger<AbstractTaskCreator<T>> logger { get; }
 
         public AbstractTaskCreator(
+            KafkaStreamsContext context,
             ILogger<AbstractTaskCreator<T>> logger,
             InternalTopologyBuilder builder,
             StreamsConfig config,
             StateDirectory stateDirectory,
-            IChangelogReader storeChangelogReader,
-            IClock clock)
+            IChangelogReader storeChangelogReader)
         {
+            this.Context = context;
             this.logger = logger;
 
             this.applicationId = config.ApplicationId;
@@ -31,7 +31,6 @@ namespace Kafka.Streams.Tasks
             this.config = config;
             this.stateDirectory = stateDirectory;
             this.storeChangelogReader = storeChangelogReader;
-            this.clock = clock;
         }
 
         public string applicationId { get; }
@@ -41,31 +40,29 @@ namespace Kafka.Streams.Tasks
         public IChangelogReader storeChangelogReader { get; }
 
         public List<T> CreateTasks(
-            ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             string threadTaskId,
             Dictionary<TaskId, HashSet<TopicPartition>> tasksToBeCreated)
         {
             var createdTasks = new List<T>();
-            foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> newTaskAndPartitions in tasksToBeCreated)
+            foreach (var newTaskAndPartitions in tasksToBeCreated)
             {
                 TaskId taskId = newTaskAndPartitions.Key;
                 HashSet<TopicPartition> partitions = newTaskAndPartitions.Value;
-                T task = CreateTask(loggerFactory, consumer, taskId, threadTaskId, partitions);
+                T task = this.CreateTask(consumer, taskId, threadTaskId, partitions);
+
                 if (task != null)
                 {
-                    logger.LogTrace($"Created task {{{taskId}}} with assigned partitions {{{partitions}}}");
+                    this.logger.LogTrace($"Created task {{{taskId}}} with assigned partitions {{{partitions}}}");
 
                     createdTasks.Add(task);
                 }
-
             }
 
             return createdTasks;
         }
 
         public abstract T CreateTask(
-            ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             TaskId id,
             string threadClientId,

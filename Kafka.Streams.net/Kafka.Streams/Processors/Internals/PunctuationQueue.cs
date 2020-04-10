@@ -10,9 +10,9 @@ namespace Kafka.Streams.Processors.Internals
 
         public ICancellable Schedule(PunctuationSchedule sched)
         {
-            lock (pq)
+            lock (this.pq)
             {
-                pq.Enqueue(sched, sched.timestamp);
+                this.pq.Enqueue(sched, sched.timestamp);
             }
 
             return sched.cancellable;
@@ -20,9 +20,9 @@ namespace Kafka.Streams.Processors.Internals
 
         public void Close()
         {
-            lock (pq)
+            lock (this.pq)
             {
-                pq.Clear();
+                this.pq.Clear();
             }
         }
 
@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processors.Internals
          */
         public bool MayPunctuate<K, V>(long timestamp, PunctuationType type, IProcessorNodePunctuator<K, V> processorNodePunctuator)
         {
-            lock (pq)
+            lock (this.pq)
             {
                 var punctuated = false;
                 PunctuationSchedule top = null;//pq.Peek();
@@ -46,7 +46,7 @@ namespace Kafka.Streams.Processors.Internals
                         // sched can be cancelled from within the punctuator
                         if (!sched.isCancelled)
                         {
-                            pq.Enqueue(sched.Next(timestamp), sched.timestamp);
+                            this.pq.Enqueue(sched.Next(timestamp), sched.timestamp);
                         }
 
                         punctuated = true;

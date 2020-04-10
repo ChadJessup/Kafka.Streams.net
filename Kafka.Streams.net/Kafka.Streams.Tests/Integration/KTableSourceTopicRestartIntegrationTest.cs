@@ -78,19 +78,19 @@
 //        {// throws Exception
 //            CLUSTER.createTopic(SOURCE_TOPIC);
 
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, "ktable-restore-from-source");
-//            STREAMS_CONFIG.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            STREAMS_CONFIG.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            STREAMS_CONFIG.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            STREAMS_CONFIG.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-//            STREAMS_CONFIG.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//            STREAMS_CONFIG.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 5);
-//            STREAMS_CONFIG.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, WallclockTimestampExtractor);
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, "ktable-restore-from-source");
+//            STREAMS_CONFIG.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            STREAMS_CONFIG.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            STREAMS_CONFIG.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            STREAMS_CONFIG.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+//            STREAMS_CONFIG.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            STREAMS_CONFIG.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 5);
+//            STREAMS_CONFIG.Put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, WallclockTimestampExtractor);
 
-//            PRODUCER_CONFIG.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            PRODUCER_CONFIG.put(ProducerConfig.ACKS_CONFIG, "all");
-//            PRODUCER_CONFIG.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//            PRODUCER_CONFIG.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            PRODUCER_CONFIG.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            PRODUCER_CONFIG.Put(ProducerConfig.ACKS_CONFIG, "All");
+//            PRODUCER_CONFIG.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//            PRODUCER_CONFIG.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
 //        }
 
@@ -120,9 +120,9 @@
 
 //                produceKeyValues("a", "b", "c");
 
-//                AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
+//                AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read All values");
 
-//                streamsOne.close();
+//                streamsOne.Close();
 //                streamsOne = new KafkaStreams(streamsBuilder.Build(), STREAMS_CONFIG);
 //                // the state restore listener will append one record to the log
 //                streamsOne.setGlobalStateRestoreListener(new UpdatingSourceTopicOnRestoreStartStateRestoreListener());
@@ -133,11 +133,11 @@
 //                AssertNumberValuesRead(
 //                    readKeyValues,
 //                    expectedResultsWithDataWrittenDuringRestoreMap,
-//                    "Table did not get all values after restart");
+//                    "Table did not get All values after restart");
 //            }
 //            finally
 //            {
-//                streamsOne.close(TimeSpan.ofSeconds(5));
+//                streamsOne.Close(TimeSpan.ofSeconds(5));
 //            }
 //        }
 
@@ -146,15 +146,15 @@
 //        {// throws Exception
 //            try
 //            {
-//                STREAMS_CONFIG.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//                STREAMS_CONFIG.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
 //                streamsOne = new KafkaStreams(streamsBuilder.Build(), STREAMS_CONFIG);
 //                streamsOne.start();
 
 //                produceKeyValues("a", "b", "c");
 
-//                AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
+//                AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read All values");
 
-//                streamsOne.close();
+//                streamsOne.Close();
 //                streamsOne = new KafkaStreams(streamsBuilder.Build(), STREAMS_CONFIG);
 //                // the state restore listener will append one record to the log
 //                streamsOne.setGlobalStateRestoreListener(new UpdatingSourceTopicOnRestoreStartStateRestoreListener());
@@ -165,11 +165,11 @@
 //                AssertNumberValuesRead(
 //                    readKeyValues,
 //                    expectedResultsWithDataWrittenDuringRestoreMap,
-//                    "Table did not get all values after restart");
+//                    "Table did not get All values after restart");
 //            }
 //            finally
 //            {
-//                streamsOne.close(TimeSpan.ofSeconds(5));
+//                streamsOne.Close(TimeSpan.ofSeconds(5));
 //            }
 //        }
 
@@ -183,9 +183,9 @@
 
 //                produceKeyValues("a", "b", "c");
 
-//                AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
+//                AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read All values");
 
-//                streamsOne.close();
+//                streamsOne.Close();
 //                streamsOne = new KafkaStreams(streamsBuilder.Build(), STREAMS_CONFIG);
 //                streamsOne.start();
 
@@ -193,11 +193,11 @@
 
 //                Dictionary<string, string> expectedValues = createExpectedResultsMap("a", "b", "c", "f", "g", "h");
 
-//                AssertNumberValuesRead(readKeyValues, expectedValues, "Table did not get all values after restart");
+//                AssertNumberValuesRead(readKeyValues, expectedValues, "Table did not get All values after restart");
 //            }
 //            finally
 //            {
-//                streamsOne.close(TimeSpan.ofSeconds(5));
+//                streamsOne.Close(TimeSpan.ofSeconds(5));
 //            }
 //        }
 
@@ -231,7 +231,7 @@
 //            Dictionary<string, string> expectedMap = new HashMap<>();
 //            foreach (string key in keys)
 //            {
-//                expectedMap.put(key, key + "1");
+//                expectedMap.Put(key, key + "1");
 //            }
 //            return expectedMap;
 //        }

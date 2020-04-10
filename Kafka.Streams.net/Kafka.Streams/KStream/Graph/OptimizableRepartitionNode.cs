@@ -35,10 +35,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
         public override ISerializer<V>? GetValueSerializer()
-            => ValueSerde?.Serializer;
+            => this.ValueSerde?.Serializer;
 
         public override IDeserializer<V>? GetValueDeserializer()
-            => ValueSerde?.Deserializer;
+            => this.ValueSerde?.Deserializer;
 
         public override string ToString()
             => $"OptimizableRepartitionNode{{{base.ToString()}}}";
@@ -50,31 +50,31 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 throw new System.ArgumentNullException(nameof(topologyBuilder));
             }
 
-            ISerializer<K>? keySerializer = KeySerde?.Serializer;
-            IDeserializer<K>? keyDeserializer = KeySerde?.Deserializer;
+            ISerializer<K>? keySerializer = this.KeySerde?.Serializer;
+            IDeserializer<K>? keyDeserializer = this.KeySerde?.Deserializer;
 
-            topologyBuilder.AddInternalTopic(RepartitionTopic);
+            topologyBuilder.AddInternalTopic(this.RepartitionTopic);
 
             topologyBuilder.AddProcessor<K, V>(
-                ProcessorParameters.ProcessorName,
-                ProcessorParameters.ProcessorSupplier,
-                ParentNodeNames());
+                this.ProcessorParameters.ProcessorName,
+                this.ProcessorParameters.ProcessorSupplier,
+                this.ParentNodeNames());
 
             topologyBuilder.AddSink(
-                SinkName,
-                RepartitionTopic,
+                this.SinkName,
+                this.RepartitionTopic,
                 keySerializer,
-                GetValueSerializer(),
+                this.GetValueSerializer(),
                 null,
-                new[] { ProcessorParameters.ProcessorName });
+                new[] { this.ProcessorParameters.ProcessorName });
 
             topologyBuilder.AddSource(
                 null,
-                SourceName,
+                this.SourceName,
                 new FailOnInvalidTimestamp(logger: null),
                 keyDeserializer,
-                GetValueDeserializer(),
-                new[] { RepartitionTopic });
+                this.GetValueDeserializer(),
+                new[] { this.RepartitionTopic });
         }
     }
 }

@@ -28,11 +28,11 @@
 //        public void TestResetToSpecificOffsetWhenBetweenBeginningAndEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 4L);
+//            endOffsets.Put(topicPartition, 4L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 0L);
+//            beginningOffsets.Put(topicPartition, 0L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 2L);
@@ -45,11 +45,11 @@
 //        public void TestResetToSpecificOffsetWhenBeforeBeginningOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 4L);
+//            endOffsets.Put(topicPartition, 4L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 3L);
+//            beginningOffsets.Put(topicPartition, 3L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 2L);
@@ -62,11 +62,11 @@
 //        public void TestResetToSpecificOffsetWhenAfterEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 3L);
+//            endOffsets.Put(topicPartition, 3L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 0L);
+//            beginningOffsets.Put(topicPartition, 0L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 4L);
@@ -79,11 +79,11 @@
 //        public void TestShiftOffsetByWhenBetweenBeginningAndEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 4L);
+//            endOffsets.Put(topicPartition, 4L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 0L);
+//            beginningOffsets.Put(topicPartition, 0L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, 3L);
@@ -96,11 +96,11 @@
 //        public void TestShiftOffsetByWhenBeforeBeginningOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 4L);
+//            endOffsets.Put(topicPartition, 4L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 0L);
+//            beginningOffsets.Put(topicPartition, 0L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, -3L);
@@ -113,11 +113,11 @@
 //        public void TestShiftOffsetByWhenAfterEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 3L);
+//            endOffsets.Put(topicPartition, 3L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 0L);
+//            beginningOffsets.Put(topicPartition, 0L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, 5L);
@@ -130,15 +130,15 @@
 //        public void TestResetUsingPlanWhenBetweenBeginningAndEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 4L);
+//            endOffsets.Put(topicPartition, 4L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 0L);
+//            beginningOffsets.Put(topicPartition, 0L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            Dictionary<TopicPartition, long> topicPartitionsAndOffset = new HashMap<>();
-//            topicPartitionsAndOffset.put(topicPartition, 3L);
+//            topicPartitionsAndOffset.Put(topicPartition, 3L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
@@ -149,15 +149,15 @@
 //        public void TestResetUsingPlanWhenBeforeBeginningOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 4L);
+//            endOffsets.Put(topicPartition, 4L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 3L);
+//            beginningOffsets.Put(topicPartition, 3L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            Dictionary<TopicPartition, long> topicPartitionsAndOffset = new HashMap<>();
-//            topicPartitionsAndOffset.put(topicPartition, 1L);
+//            topicPartitionsAndOffset.Put(topicPartition, 1L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
@@ -168,15 +168,15 @@
 //        public void TestResetUsingPlanWhenAfterEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 3L);
+//            endOffsets.Put(topicPartition, 3L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 0L);
+//            beginningOffsets.Put(topicPartition, 0L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            Dictionary<TopicPartition, long> topicPartitionsAndOffset = new HashMap<>();
-//            topicPartitionsAndOffset.put(topicPartition, 5L);
+//            topicPartitionsAndOffset.Put(topicPartition, 5L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
@@ -187,11 +187,11 @@
 //        public void ShouldSeekToEndOffset()
 //        {
 //            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-//            endOffsets.put(topicPartition, 3L);
+//            endOffsets.Put(topicPartition, 3L);
 //            consumer.updateEndOffsets(endOffsets);
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
-//            beginningOffsets.put(topicPartition, 0L);
+//            beginningOffsets.Put(topicPartition, 0L);
 //            consumer.updateBeginningOffsets(beginningOffsets);
 
 //            HashSet<TopicPartition> intermediateTopicPartitions = new HashSet<>();
@@ -218,7 +218,7 @@
 //            HashDictionary<int, Node> nodes = new HashMap<>();
 //            for (int i = 0; i < numNodes; ++i)
 //            {
-//                nodes.put(i, new Node(i, "localhost", 8121 + i));
+//                nodes.Put(i, new Node(i, "localhost", 8121 + i));
 //            }
 //            return new Cluster("mockClusterId", nodes.values(),
 //                Collections.< PartitionInfo > emptySet(), Collections.< string > emptySet(),

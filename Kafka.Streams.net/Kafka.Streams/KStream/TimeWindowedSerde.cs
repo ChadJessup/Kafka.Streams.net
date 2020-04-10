@@ -4,7 +4,7 @@
 
 //namespace Kafka.Streams.KStream
 //{
-//    public class TimeWindowedSerde<T> : WrapperSerde<Windowed<T>>
+//    public class TimeWindowedSerde<T> : WrapperSerde<IWindowed<T>>
 //    {
 //        // Default constructor needed for reflection object creation
 

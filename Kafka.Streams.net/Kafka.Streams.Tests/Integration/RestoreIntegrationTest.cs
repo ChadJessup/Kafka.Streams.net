@@ -101,14 +101,14 @@
 //        private StreamsConfig Props(string applicationId)
 //        {
 //            StreamsConfig streamsConfiguration = new StreamsConfig();
-//            streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//            streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//            streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory(applicationId).getPath());
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//            streamsConfiguration.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
-//            streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//            streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory(applicationId).getPath());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//            streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
+//            streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 //            return streamsConfiguration;
 //        }
 
@@ -117,7 +117,7 @@
 //        {
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close(TimeSpan.ofSeconds(30));
+//                kafkaStreams.Close(TimeSpan.ofSeconds(30));
 //            }
 //        }
 
@@ -128,7 +128,7 @@
 //            StreamsBuilder builder = new StreamsBuilder();
 
 //            StreamsConfig props = props(APPID);
-//            props.put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
+//            props.Put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
 
 //            // restoring from 1000 to 4000 (committed), and then process from 4000 to 5000 on each of the two partitions
 //            int offsetLimitDelta = 1000;
@@ -370,7 +370,7 @@
 //        {
 //            if (key != null)
 //            {
-//                store.put(key, value);
+//                store.Put(key, value);
 //                processorLatch.countDown();
 //            }
 //        }
@@ -382,7 +382,7 @@
 //    private void CreateStateForRestoration(string changelogTopic)
 //    {
 //        StreamsConfig producerConfig = new StreamsConfig();
-//        producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//        producerConfig.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
 
 //        try (KafkaProducer<int, int> producer =
 //                     new KafkaProducer<>(producerConfig, new IntegerSerializer(), new IntegerSerializer())) {
@@ -397,11 +397,11 @@
 //    private void setCommittedOffset(string topic, int limitDelta)
 //        {
 //            StreamsConfig consumerConfig = new StreamsConfig();
-//            consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, APPID);
-//            consumerConfig.put(ConsumerConfig.CLIENT_ID_CONFIG, "commit-consumer");
-//            consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
-//            consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
+//            consumerConfig.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            consumerConfig.Put(ConsumerConfig.GROUP_ID_CONFIG, APPID);
+//            consumerConfig.Put(ConsumerConfig.CLIENT_ID_CONFIG, "commit-consumer");
+//            consumerConfig.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
+//            consumerConfig.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
 
 //            Consumer<int, int> consumer = new KafkaConsumer<>(consumerConfig);
 //            List<TopicPartition> partitions = Array.asList(
@@ -418,7 +418,7 @@
 //            }
 
 //            consumer.commitSync();
-//            consumer.close();
+//            consumer.Close();
 //        }
 
 //    }

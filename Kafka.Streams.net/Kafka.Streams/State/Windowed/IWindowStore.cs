@@ -16,9 +16,9 @@ namespace Kafka.Streams.State.Windowed
     {
         /**
          * Use the current record timestamp as the {@code windowStartTimestamp} and
-         * delegate to {@link WindowStore#put(object, object, long)}.
+         * delegate to {@link WindowStore#Put(object, object, long)}.
          *
-         * It's highly recommended to use {@link WindowStore#put(object, object, long)} instead, as the record timestamp
+         * It's highly recommended to use {@link WindowStore#Put(object, object, long)} instead, as the record timestamp
          * is unlikely to be the correct windowStartTimestamp in general.
          *
          * @param key The key to associate the value to
@@ -32,13 +32,13 @@ namespace Kafka.Streams.State.Windowed
          * Put a key-value pair into the window with given window start timestamp
          * @param key The key to associate the value to
          * @param value The value; can be null
-         * @param windowStartTimestamp The timestamp of the beginning of the window to put the key/value into
+         * @param windowStartTimestamp The timestamp of the beginning of the window to Put the key/value into
          * @throws ArgumentNullException if the given key is {@code null}
          */
         void Put(K key, V value, long windowStartTimestamp);
 
         /**
-         * Get all the key-value pairs with the given key and the time range from all the existing windows.
+         * Get All the key-value pairs with the given key and the time range from All the existing windows.
          * <p>
          * This iterator must be closed after use.
          * <p>
@@ -58,12 +58,12 @@ namespace Kafka.Streams.State.Windowed
          * +--------------------------------
          * </pre>
          * And we call {@code store.Fetch("A", 10, 20)} then the results will contain the first
-         * three windows from the table above, i.e., all those where 10 &lt;= start time &lt;= 20.
+         * three windows from the table above, i.e., All those where 10 &lt;= start time &lt;= 20.
          * <p>
          * For each key, the iterator guarantees ordering of windows, starting from the oldest/earliest
          * available window to the newest/latest window.
          *
-         * @param key       the key to fetch
+         * @param key       the key to Fetch
          * @param timeFrom  time range start (inclusive)
          * @param timeTo    time range end (inclusive)
          * @return an iterator over key-value pairs {@code <timestamp, value>}
@@ -75,16 +75,16 @@ namespace Kafka.Streams.State.Windowed
             long timeFrom,
             long timeTo);
 
-        //public IWindowStoreIterator<V> fetch(K key, DateTime from, DateTime to)
+        //public IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to)
         //{
-        //    return fetch(
+        //    return Fetch(
         //        key,
         //        ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
         //        ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
         //}
 
         /**
-         * Get all the key-value pairs in the given key range and time range from all the existing windows.
+         * Get All the key-value pairs in the given key range and time range from All the existing windows.
          * <p>
          * This iterator must be closed after use.
          *
@@ -92,19 +92,19 @@ namespace Kafka.Streams.State.Windowed
          * @param to        the last key in the range
          * @param timeFrom  time range start (inclusive)
          * @param timeTo    time range end (inclusive)
-         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+         * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException if one of the given keys is {@code null}
          */
-        new IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
+        new IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
 
-        //public IKeyValueIterator<Windowed<K>, V> fetch(
+        //public IKeyValueIterator<IWindowed<K>, V> Fetch(
         //    K from,
         //    K to,
         //    DateTime fromTime,
         //    DateTime toTime)
         //{
-        //    return fetch(
+        //    return Fetch(
         //        from,
         //        to,
         //        ApiUtils.validateMillisecondInstant(fromTime, ApiUtils.prepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
@@ -112,22 +112,22 @@ namespace Kafka.Streams.State.Windowed
         //}
 
         /**
-         * Gets all the key-value pairs that belong to the windows within in the given time range.
+         * Gets All the key-value pairs that belong to the windows within in the given time range.
          *
          * @param timeFrom the beginning of the time slot from which to search (inclusive)
          * @param timeTo   the end of the time slot from which to search (inclusive)
-         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+         * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          */
-        new IKeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo);
+        new IKeyValueIterator<IWindowed<K>, V> FetchAll(long timeFrom, long timeTo);
 
         void Add(K key, V value);
 
-        //public IKeyValueIterator<Windowed<K>, V> fetchAll(
+        //public IKeyValueIterator<IWindowed<K>, V> FetchAll(
         //    DateTime from,
         //    DateTime to)
         //{
-        //    return fetchAll(
+        //    return FetchAll(
         //        ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
         //        ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
         //}

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamWindowAggregate<K, V, Agg, W> : IKStreamAggProcessorSupplier<K, Windowed<K>, V, Agg>
+    public class KStreamWindowAggregate<K, V, Agg, W> : IKStreamAggProcessorSupplier<K, IWindowed<K>, V, Agg>
         where Agg: V
         where W : Window
     {
@@ -48,16 +48,16 @@ namespace Kafka.Streams.KStream.Internals
 
         public void EnableSendingOldValues()
         {
-            sendOldValues = true;
+            this.sendOldValues = true;
         }
 
-        public IKTableValueGetterSupplier<Windowed<K>, Agg> View()
+        public IKTableValueGetterSupplier<IWindowed<K>, Agg> View()
         {
             return null;
-            //return new KTableValueGetterSupplier<Windowed<K>, Agg>()
+            //return new KTableValueGetterSupplier<IWindowed<K>, Agg>()
             //{
 
-            //    public KTableValueGetter<Windowed<K>, Agg> get()
+            //    public KTableValueGetter<IWindowed<K>, Agg> get()
             //{
             //                return new KStreamWindowAggregateValueGetter();
             //            }

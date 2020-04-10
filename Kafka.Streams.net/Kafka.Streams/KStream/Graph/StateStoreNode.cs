@@ -9,7 +9,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         protected IStoreBuilder<T> storeBuilder;
 
         public StateStoreNode(IStoreBuilder<T> storeBuilder)
-            : base(storeBuilder.name)
+            : base(storeBuilder.Name)
         {
             this.storeBuilder = storeBuilder;
         }
@@ -22,9 +22,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             return "StateStoreNode{" +
-                   $" name='{storeBuilder.name}'" +
-                   $", logConfig={storeBuilder.logConfig}" +
-                   $", loggingEnabled='{storeBuilder.loggingEnabled}'" +
+                   $" Name='{this.storeBuilder.Name}'" +
+                   $", logConfig={this.storeBuilder.logConfig}" +
+                   $", loggingEnabled='{this.storeBuilder.loggingEnabled}'" +
                    "} ";
         }
     }

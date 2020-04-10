@@ -21,7 +21,7 @@
 //        }
 
 
-//        public void init(IProcessorContext<K, Change<V1>> context)
+//        public void Init(IProcessorContext<K, Change<V1>> context)
 //        {
 //            base.Init(context);
 //            metrics = (StreamsMetricsImpl)context.metrics;
@@ -69,9 +69,9 @@
 //        }
 
 
-//        public override void close()
+//        public override void Close()
 //        {
-//            valueGetter.close();
+//            valueGetter.Close();
 //        }
 //    }
 //}

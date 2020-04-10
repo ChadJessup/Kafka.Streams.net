@@ -61,12 +61,12 @@ namespace Kafka.Streams.Internals
         /**
             * Generates the prefix message for validateMillisecondXXXXXX() utility
             * @param value Object to be converted to milliseconds
-            * @param name Object name
+            * @param Name Object Name
             * @return Error message prefix to use in exception
             */
-        public static string PrepareMillisCheckFailMsgPrefix(object value, string name)
+        public static string PrepareMillisCheckFailMsgPrefix(object value, string Name)
         {
-            return string.Format(MILLISECOND_VALIDATION_FAIL_MSG_FRMT, name, value);
+            return string.Format(MILLISECOND_VALIDATION_FAIL_MSG_FRMT, Name, value);
         }
 
         public static byte[] ConvertToTimestampedFormat(byte[] plainValue)

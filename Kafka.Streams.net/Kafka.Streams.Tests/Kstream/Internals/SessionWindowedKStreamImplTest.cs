@@ -46,7 +46,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        private void shouldCountSessionWindowed()
 //        {
-//            MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
+//            MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<>();
 //            stream.count()
 //                .toStream()
 //                .process(supplier);
@@ -54,27 +54,27 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 
-//            Dictionary<Windowed<string>, ValueAndTimestamp<long>> result =
+//            Dictionary<IWindowed<string>, ValueAndTimestamp<long>> result =
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new Windowed<>("1", new SessionWindow(10L, 15L))),
+//                result.Get(new IWindowed<>("1", new SessionWindow(10L, 15L))),
 //                equalTo(ValueAndTimestamp.Make(2L, 15L)));
 
 //            Assert.Equal(
-//                result.Get(new Windowed<>("2", new SessionWindow(599L, 600L))),
+//                result.Get(new IWindowed<>("2", new SessionWindow(599L, 600L))),
 //                equalTo(ValueAndTimestamp.Make(2L, 600L)));
 
 //            Assert.Equal(
-//                result.Get(new Windowed<>("1", new SessionWindow(600L, 600L))),
+//                result.Get(new IWindowed<>("1", new SessionWindow(600L, 600L))),
 //                equalTo(ValueAndTimestamp.Make(1L, 600L)));
 //        }
 
 //        [Fact]
 //        public void shouldReduceWindowed()
 //        {
-//            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
+//            MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<>();
 //            stream.reduce(MockReducer.STRING_ADDER)
 //                .toStream()
 //                .process(supplier);
@@ -82,25 +82,25 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 
-//            Dictionary<Windowed<string>, ValueAndTimestamp<string>> result =
+//            Dictionary<IWindowed<string>, ValueAndTimestamp<string>> result =
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new Windowed<>("1", new SessionWindow(10, 15))),
+//                result.Get(new IWindowed<>("1", new SessionWindow(10, 15))),
 //                equalTo(ValueAndTimestamp.Make("1+2", 15L)));
 //            Assert.Equal(
-//                result.Get(new Windowed<>("2", new SessionWindow(599L, 600))),
+//                result.Get(new IWindowed<>("2", new SessionWindow(599L, 600))),
 //                equalTo(ValueAndTimestamp.Make("1+2", 600L)));
 //            Assert.Equal(
-//                result.Get(new Windowed<>("1", new SessionWindow(600, 600))),
+//                result.Get(new IWindowed<>("1", new SessionWindow(600, 600))),
 //                equalTo(ValueAndTimestamp.Make("3", 600L)));
 //        }
 
 //        [Fact]
 //        public void shouldAggregateSessionWindowed()
 //        {
-//            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
+//            MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<>();
 //            stream.aggregate(MockInitializer.STRING_INIT,
 //                             MockAggregator.TOSTRING_ADDER,
 //                             sessionMerger,
@@ -110,18 +110,18 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 
-//            Dictionary<Windowed<string>, ValueAndTimestamp<string>> result =
+//            Dictionary<IWindowed<string>, ValueAndTimestamp<string>> result =
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new Windowed<>("1", new SessionWindow(10, 15))),
+//                result.Get(new IWindowed<>("1", new SessionWindow(10, 15))),
 //                equalTo(ValueAndTimestamp.Make("0+0+1+2", 15L)));
 //            Assert.Equal(
-//                result.Get(new Windowed<>("2", new SessionWindow(599, 600))),
+//                result.Get(new IWindowed<>("2", new SessionWindow(599, 600))),
 //                equalTo(ValueAndTimestamp.Make("0+0+1+2", 600L)));
 //            Assert.Equal(
-//                result.Get(new Windowed<>("1", new SessionWindow(600, 600))),
+//                result.Get(new IWindowed<>("1", new SessionWindow(600, 600))),
 //                equalTo(ValueAndTimestamp.Make("0+3", 600L)));
 //        }
 
@@ -135,13 +135,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                var driver = new TopologyTestDriver(builder.Build(), props);
 //                processData(driver);
 //                ISessionStore<string, long> store = driver.getSessionStore("count-store");
-//                List<KeyValuePair<Windowed<string>, long>> data = StreamsTestUtils.toList(store.Fetch("1", "2"));
+//                List<KeyValuePair<IWindowed<string>, long>> data = StreamsTestUtils.toList(store.Fetch("1", "2"));
 //                Assert.Equal(
 //                    data,
 //                    equalTo(Array.AsReadOnly(
-//                        KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), 2L),
-//                        KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), 1L),
-//                        KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), 2L))));
+//                        KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(10, 15)), 2L),
+//                        KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(600, 600)), 1L),
+//                        KeyValuePair.Create(new IWindowed<>("2", new SessionWindow(599, 600)), 2L))));
 //            }
 //    }
 
@@ -153,14 +153,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 //            ISessionStore<string, string> sessionStore = driver.getSessionStore("reduced");
-//            List<KeyValuePair<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.Fetch("1", "2"));
+//            List<KeyValuePair<IWindowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.Fetch("1", "2"));
 
 //            Assert.Equal(
 //                data,
 //                equalTo(Array.AsReadOnly(
-//                    KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), "1+2"),
-//                    KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), "3"),
-//                    KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), "1+2"))));
+//                    KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(10, 15)), "1+2"),
+//                    KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(600, 600)), "3"),
+//                    KeyValuePair.Create(new IWindowed<>("2", new SessionWindow(599, 600)), "1+2"))));
 //        }
 //    }
 
@@ -176,13 +176,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        var driver = new TopologyTestDriver(builder.Build(), props);
 //        processData(driver);
 //        ISessionStore<string, string> sessionStore = driver.getSessionStore("aggregated");
-//        List<KeyValuePair<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.Fetch("1", "2"));
+//        List<KeyValuePair<IWindowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.Fetch("1", "2"));
 //        Assert.Equal(
 //            data,
 //            Array.AsReadOnly(
-//                KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), "0+0+1+2"),
-//                KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), "0+3"),
-//                KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), "0+0+1+2")));
+//                KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(10, 15)), "0+0+1+2"),
+//                KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(600, 600)), "0+3"),
+//                KeyValuePair.Create(new IWindowed<>("2", new SessionWindow(599, 600)), "0+0+1+2")));
 //    }
 //}
 

@@ -66,14 +66,14 @@
 //        [Fact]
 //        public void ShouldRemoveExpired()
 //        {
-//            sessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
-//            sessionStore.put(new Windowed<>("aa", new SessionWindow(0, SEGMENT_INTERVAL)), 2L);
-//            sessionStore.put(new Windowed<>("a", new SessionWindow(10, SEGMENT_INTERVAL)), 3L);
+//            sessionStore.Put(new IWindowed<>("a", new SessionWindow(0, 0)), 1L);
+//            sessionStore.Put(new IWindowed<>("aa", new SessionWindow(0, SEGMENT_INTERVAL)), 2L);
+//            sessionStore.Put(new IWindowed<>("a", new SessionWindow(10, SEGMENT_INTERVAL)), 3L);
 
 //            // Advance stream time to expire the first record
-//            sessionStore.put(new Windowed<>("aa", new SessionWindow(10, 2 * SEGMENT_INTERVAL)), 4L);
+//            sessionStore.Put(new IWindowed<>("aa", new SessionWindow(10, 2 * SEGMENT_INTERVAL)), 4L);
 
-//            try (IKeyValueIterator<Windowed<string>, long> iterator =
+//            try (IKeyValueIterator<IWindowed<string>, long> iterator =
 //                sessionStore.findSessions("a", "b", 0L, long.MaxValue)
 //            ) {
 //                Assert.Equal(valuesToSet(iterator), new HashSet<>(Array.asList(2L, 3L, 4L)));

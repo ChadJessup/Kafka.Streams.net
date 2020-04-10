@@ -2,10 +2,10 @@
 //    public class TimestampedSegments : AbstractSegments<TimestampedSegment>
 //    {
 
-//        TimestampedSegments(string name,
+//        TimestampedSegments(string Name,
 //                            long retentionPeriod,
 //                            long segmentInterval)
-//            : base(name, retentionPeriod, segmentInterval)
+//            : base(Name, retentionPeriod, segmentInterval)
 //        {
 //        }
 
@@ -18,7 +18,7 @@
 //            }
 //            else
 //            {
-//                TimestampedSegment newSegment = new TimestampedSegment(segmentName(segmentId), name, segmentId);
+//                TimestampedSegment newSegment = new TimestampedSegment(segmentName(segmentId), Name, segmentId);
 
 //                if (segments.Add(segmentId, newSegment) != null)
 //                {

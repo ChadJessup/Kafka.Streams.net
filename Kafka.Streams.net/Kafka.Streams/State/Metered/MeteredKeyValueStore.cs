@@ -51,21 +51,21 @@ namespace Kafka.Streams.State.Metered
                 throw new ArgumentNullException(nameof(root));
             }
 
-            taskName = context.TaskId.ToString();
+            this.taskName = context.TaskId.ToString();
 
-            InitStoreSerde(context);
+            this.InitStoreSerde(context);
 
             base.Init(context, root);
 
-            //putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //putIfAbsentTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-if-absent", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //putAllTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-all", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //getTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "get", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //allTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "all", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //rangeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "range", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //deleteTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "delete", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Put", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //putIfAbsentTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Put-if-absent", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //putAllTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Put-All", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //getTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "get", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //allTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "All", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //rangeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "range", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Flush", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //deleteTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "delete", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
 
             // register and possibly restore the state from the logs
             //if (restoreTime.shouldRecord())
@@ -86,8 +86,8 @@ namespace Kafka.Streams.State.Metered
 
         protected virtual void InitStoreSerde(IProcessorContext context)
         {
-            var ks = KeySerde ?? (ISerde<K>)context.KeySerde;
-            var vs = ValueSerde ?? (ISerde<V>)context.ValueSerde;
+            var ks = this.KeySerde ?? (ISerde<K>)context.KeySerde;
+            var vs = this.ValueSerde ?? (ISerde<V>)context.ValueSerde;
 
             this.Serdes = new StateSerdes<K, V>(
                 ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, this.Name),
@@ -221,7 +221,7 @@ namespace Kafka.Streams.State.Metered
 
         public IKeyValueIterator<K, V> All()
         {
-            return null;// new MeteredKeyValueIterator(wrapped.All(), allTime);
+            return new MeteredKeyValueIterator<K, V>(this.Context, Wrapped.All());//, allTime);
         }
 
         public override void Flush()
@@ -231,7 +231,7 @@ namespace Kafka.Streams.State.Metered
             //    //            measureLatency(
             //    //                () =>
             //    //{
-            //    //    base.flush();
+            //    //    base.Flush();
             //    //    return null;
             //    //},
             //    //            flushTime);
@@ -242,12 +242,12 @@ namespace Kafka.Streams.State.Metered
             //}
         }
 
-        public long approximateNumEntries => Wrapped.approximateNumEntries;
+        public long approximateNumEntries => this.Wrapped.approximateNumEntries;
 
         public override void Close()
         {
             base.Close();
-            //metrics.removeAllStoreLevelSensors(taskName, name);
+            //metrics.removeAllStoreLevelSensors(taskName, Name);
         }
 
         //private interface Action<V>
@@ -275,7 +275,7 @@ namespace Kafka.Streams.State.Metered
 
         private Bytes KeyBytes(K key)
         {
-            return Bytes.Wrap(Serdes.RawKey(key));
+            return Bytes.Wrap(this.Serdes.RawKey(key));
         }
 
         private List<KeyValuePair<Bytes, byte[]>> InnerEntries(List<KeyValuePair<K, V>> from)
@@ -283,9 +283,9 @@ namespace Kafka.Streams.State.Metered
             List<KeyValuePair<Bytes, byte[]>> byteEntries = new List<KeyValuePair<Bytes, byte[]>>();
             foreach (KeyValuePair<K, V> entry in from)
             {
-                //byteEntries.Add(KeyValuePair.Create<K, V>(
-                //    Bytes.Wrap(serdes.RawKey(entry.Key)),
-                //        serdes.RawValue(entry.Value)));
+                byteEntries.Add(KeyValuePair.Create<Bytes, byte[]>(
+                    Bytes.Wrap(this.Serdes.RawKey(entry.Key)),
+                        this.Serdes.RawValue(entry.Value)));
             }
 
             return byteEntries;
@@ -293,7 +293,6 @@ namespace Kafka.Streams.State.Metered
 
         public void Add(K key, V value)
         {
-            throw new System.NotImplementedException();
         }
     }
 }

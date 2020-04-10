@@ -77,7 +77,7 @@
 //                    nextIteratorFunction));
 //        }
 
-//        public IKeyValueIterator<K, V> all()
+//        public IKeyValueIterator<K, V> All()
 //        {
 //            NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = new NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
 //            {
@@ -86,7 +86,7 @@
 //            {
 //                try
 //                {
-//                    return store.all();
+//                    return store.All();
 //                }
 //                catch (InvalidStateStoreException e)
 //                {

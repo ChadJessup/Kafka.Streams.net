@@ -18,7 +18,7 @@ namespace Kafka.Streams.Processors.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Cancel()
         {
-            schedule.MarkCancelled();
+            this.schedule.MarkCancelled();
         }
     }
 }

@@ -28,10 +28,10 @@
 //                            bool isZombie,
 //                            RuntimeException e);
 
-//        void close(bool clean,
+//        void Close(bool clean,
 //                   bool isZombie);
 
-//        IStateStore getStore(string name);
+//        IStateStore getStore(string Name);
 
 //        string applicationId { get; }
 

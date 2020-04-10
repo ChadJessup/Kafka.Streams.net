@@ -1,6 +1,7 @@
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.Metered;
 using Kafka.Streams.State.Windowed;
 
 using System;
@@ -8,7 +9,7 @@ using System;
 namespace Kafka.Streams.State.TimeStamped
 {
     public class TimestampedWindowStoreBuilder<K, V>
-        : AbstractStoreBuilder<K, ValueAndTimestamp<V>, ITimestampedWindowStore<K, V>>
+        : AbstractStoreBuilder<K, IValueAndTimestamp<V>, ITimestampedWindowStore<K, V>>
     {
         private readonly IWindowBytesStoreSupplier storeSupplier;
 
@@ -30,32 +31,30 @@ namespace Kafka.Streams.State.TimeStamped
 
         public override ITimestampedWindowStore<K, V> Build()
         {
-            IWindowStore<Bytes, byte[]> store = storeSupplier.Get();
+            IWindowStore<Bytes, byte[]> store = this.storeSupplier.Get();
             if (!(store is ITimestampedBytesStore))
             {
                 if (store.Persistent())
                 {
-                    store = null;// new WindowToTimestampedWindowByteStoreAdapter(store);
+                    store = new WindowToTimestampedWindowByteStoreAdapter(store);
                 }
                 else
                 {
-                    store = null; // new InMemoryTimestampedWindowStoreMarker(store);
+                    store = new InMemoryTimestampedWindowStoreMarker(store);
                 }
             }
 
-            return null;
-            //new MeteredTimestampedWindowStore<>(
-            //    maybeWrapCaching(maybeWrapLogging(store)),
-            //    storeSupplier.windowSize(),
-            //    storeSupplier.metricsScope(),
-            //    time,
-            //    keySerde,
-            //    valueSerde);
+            return new MeteredTimestampedWindowStore<K, V>(
+                context,
+                store, //MaybeWrapCaching(MaybeWrapLogging(store)),
+                storeSupplier.WindowSize,
+                keySerde,
+                valueSerde);
         }
 
         public long RetentionPeriod()
         {
-            return (long)storeSupplier.RetentionPeriod.TotalMilliseconds;
+            return (long)this.storeSupplier.RetentionPeriod.TotalMilliseconds;
         }
     }
 }

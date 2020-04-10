@@ -11,7 +11,7 @@
 //    using Kafka.Streams.State.StateSerdes;
 
 //    class MergedSortedCacheWindowStoreKeyValueIterator
-//        : AbstractMergedSortedCacheStoreIterator<Windowed<Bytes>, Windowed<Bytes>, byte[], byte[]>
+//        : AbstractMergedSortedCacheStoreIterator<IWindowed<Bytes>, IWindowed<Bytes>, byte[], byte[]>
 //    {
 
 //        private StateSerdes<Bytes, byte[]> serdes;
@@ -20,7 +20,7 @@
 
 //        MergedSortedCacheWindowStoreKeyValueIterator(
 //            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator,
-//            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator,
+//            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator,
 //            StateSerdes<Bytes, byte[]> serdes,
 //            long windowSize,
 //            SegmentedCacheFunction cacheFunction
@@ -33,19 +33,19 @@
 //        }
 
 
-//        Windowed<Bytes> deserializeStoreKey(Windowed<Bytes> key)
+//        IWindowed<Bytes> deserializeStoreKey(IWindowed<Bytes> key)
 //        {
 //            return key;
 //        }
 
 
-//        KeyValuePair<Windowed<Bytes>, byte[]> deserializeStorePair(KeyValuePair<Windowed<Bytes>, byte[]> pair)
+//        KeyValuePair<IWindowed<Bytes>, byte[]> deserializeStorePair(KeyValuePair<IWindowed<Bytes>, byte[]> pair)
 //        {
 //            return pair;
 //        }
 
 
-//        Windowed<Bytes> deserializeCacheKey(Bytes cacheKey)
+//        IWindowed<Bytes> deserializeCacheKey(Bytes cacheKey)
 //        {
 //            byte[] binaryKey = cacheFunction.key(cacheKey)[];
 //            return WindowKeySchema.fromStoreKey(binaryKey, windowSize, serdes.keyDeserializer(), serdes.Topic);
@@ -58,7 +58,7 @@
 //        }
 
 
-//        int compare(Bytes cacheKey, Windowed<Bytes> storeKey)
+//        int compare(Bytes cacheKey, IWindowed<Bytes> storeKey)
 //        {
 //            Bytes storeKeyBytes = WindowKeySchema.toStoreKeyBinary(storeKey.key(), storeKey.window().start(), 0);
 //            return cacheFunction.compareSegmentedKeys(cacheKey, storeKeyBytes);

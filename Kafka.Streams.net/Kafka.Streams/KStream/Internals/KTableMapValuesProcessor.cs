@@ -31,15 +31,15 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             base.Init(context);
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V1>)context.GetStateStore(this.context, queryableName);
+                this.store = (ITimestampedKeyValueStore<K, V1>)context.GetStateStore(this.queryableName);
 
-                tupleForwarder = new TimestampedTupleForwarder<K, V1>(
-                    store,
+                this.tupleForwarder = new TimestampedTupleForwarder<K, V1>(
+                    this.store,
                     context,
                     new TimestampedCacheFlushListener<K, V1>(context),
-                    sendOldValues);
+                    this.sendOldValues);
             }
         }
 
@@ -50,19 +50,19 @@ namespace Kafka.Streams.KStream.Internals
                 throw new System.ArgumentNullException(nameof(change));
             }
 
-            V1 newValue = ComputeValue(key, change.NewValue);
-            V1 oldValue = sendOldValues
-                ? ComputeValue(key, change.OldValue)
+            V1 newValue = this.ComputeValue(key, change.NewValue);
+            V1 oldValue = this.sendOldValues
+                ? this.ComputeValue(key, change.OldValue)
                 : default;
 
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp.Make(newValue, Context.Timestamp));
-                tupleForwarder.MaybeForward(key, newValue, oldValue);
+                this.store.Add(key, ValueAndTimestamp.Make(newValue, this.Context.Timestamp));
+                this.tupleForwarder.MaybeForward(key, newValue, oldValue);
             }
             else
             {
-                Context.Forward(key, new Change<V1>(newValue, oldValue));
+                this.Context.Forward(key, new Change<V1>(newValue, oldValue));
             }
         }
 
@@ -72,7 +72,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (value != null)
             {
-                newValue = mapper.Apply(key, value);
+                newValue = this.mapper.Apply(key, value);
             }
 
             return newValue;

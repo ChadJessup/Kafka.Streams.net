@@ -28,11 +28,11 @@ namespace Kafka.Streams.Nodes
     {
         public ProcessorNode(
             IClock clock,
-            string name,
+            string Name,
             HashSet<string>? stateStores,
             IKeyValueProcessor? processor)
         {
-            this.Name = name;
+            this.Name = Name;
             this.StateStores = stateStores ?? new HashSet<string>();
             this.Clock = clock;
             this.Children = new List<IProcessorNode>();
@@ -42,21 +42,21 @@ namespace Kafka.Streams.Nodes
 
         public virtual void Process<K, V>(K key, V value)
         {
-            processor?.Process(key, value);
+            this.processor?.Process(key, value);
         }
 
         public virtual void Init(IInternalProcessorContext context)
         {
             try
             {
-                if (processor != null)
+                if (this.processor != null)
                 {
-                    processor.Init(context);
+                    this.processor.Init(context);
                 }
             }
             catch (Exception e)
             {
-                throw new StreamsException($"failed to initialize processor {Name}", e);
+                throw new StreamsException($"failed to initialize processor {this.Name}", e);
             }
         }
 
@@ -82,7 +82,7 @@ namespace Kafka.Streams.Nodes
          */
         public override string ToString()
         {
-            return ToString("");
+            return this.ToString("");
         }
 
         /**
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Nodes
          */
         public virtual string ToString(string indent)
         {
-            var sb = new StringBuilder($"{indent}{Name}:\n");
+            var sb = new StringBuilder($"{indent}{this.Name}:\n");
 
             if (this.StateStores.Any())
             {
@@ -105,8 +105,8 @@ namespace Kafka.Streams.Nodes
 
         public void AddChild(IProcessorNode child)
         {
-            Children.Add(child);
-            ChildByName.Add(child.Name, child);
+            this.Children.Add(child);
+            this.ChildByName.Add(child.Name, child);
         }
 
         public virtual IProcessorNode GetChild(string childName)
@@ -119,29 +119,29 @@ namespace Kafka.Streams.Nodes
     {
         private readonly IKeyValueProcessor? processor;
 
-        public ProcessorNode(IClock clock, string name)
-            : this(clock, name, null, null)
+        public ProcessorNode(IClock clock, string Name)
+            : this(clock, Name, null, null)
         {
         }
 
         public ProcessorNode(
             IClock clock,
-            string name,
+            string Name,
             IKeyValueProcessor? processor,
             HashSet<string>? stateStores)
-            : base(clock, name, stateStores, processor)
+            : base(clock, Name, stateStores, processor)
         {
             this.processor = processor;
         }
 
         public override IProcessorNode GetChild(string childName)
         {
-            return ChildByName[childName];
+            return this.ChildByName[childName];
         }
 
         IProcessorNode<K, V> IProcessorNode<K, V>.GetChild(string childName)
         {
-            return (IProcessorNode<K, V>)ChildByName[childName];
+            return (IProcessorNode<K, V>)this.ChildByName[childName];
         }
 
         public void AddChild(IProcessorNode<K, V> child)
@@ -153,17 +153,17 @@ namespace Kafka.Streams.Nodes
         {
             try
             {
-                processor?.Close();
+                this.processor?.Close();
             }
             catch (Exception e)
             {
-                throw new StreamsException($"failed to close processor {Name}", e);
+                throw new StreamsException($"failed to Close processor {this.Name}", e);
             }
         }
 
         public virtual void Process(K key, V value)
         {
-            processor?.Process(key, value);
+            this.processor?.Process(key, value);
         }
     }
 

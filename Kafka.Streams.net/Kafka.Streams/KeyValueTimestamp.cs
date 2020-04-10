@@ -29,7 +29,7 @@ namespace Kafka.Streams
 
             var that = (KeyValueTimestamp<K, V>)o;
 
-            return Timestamp == that.Timestamp
+            return this.Timestamp == that.Timestamp
                 && this.Key.Equals(that.Key)
                 && this.Value.Equals(that.Value);
         }

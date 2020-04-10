@@ -11,23 +11,23 @@ public class SubscriptionUpdates
 
     public void UpdateTopics(List<string> topicNames)
     {
-        updatedTopicSubscriptions.Clear();
-        updatedTopicSubscriptions.UnionWith(topicNames);
+        this.updatedTopicSubscriptions.Clear();
+        this.updatedTopicSubscriptions.UnionWith(topicNames);
     }
 
     public List<string> GetUpdates()
     {
-        return updatedTopicSubscriptions.ToList();
+        return this.updatedTopicSubscriptions.ToList();
     }
 
     public bool HasUpdates()
     {
-        return updatedTopicSubscriptions.Any();
+        return this.updatedTopicSubscriptions.Any();
     }
 
 
     public override string ToString()
     {
-        return string.Format("SubscriptionUpdates{updatedTopicSubscriptions=%s}", updatedTopicSubscriptions);
+        return string.Format("SubscriptionUpdates{updatedTopicSubscriptions=%s}", this.updatedTopicSubscriptions);
     }
 }

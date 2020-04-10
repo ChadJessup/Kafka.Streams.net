@@ -70,20 +70,20 @@
 
 //        public void After()
 //        {
-//            client1.close();
-//            client2.close();
+//            client1.Close();
+//            client2.Close();
 //        }
 
 //        private StreamsConfig StreamsConfiguration()
 //        {
 //            string applicationId = "testApp";
 //            StreamsConfig streamsConfiguration = new StreamsConfig();
-//            streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//            streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory(applicationId).getPath());
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//            streamsConfiguration.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
+//            streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//            streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory(applicationId).getPath());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//            streamsConfiguration.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
 //            return streamsConfiguration;
 //        }
 
@@ -103,7 +103,7 @@
     
 
 
-//                public void init(ProcessorContext context) { }
+//                public void Init(ProcessorContext context) { }
 
 
 //            public KeyValuePair<int, int> transform(int key, int value)
@@ -112,7 +112,7 @@
 //            }
 
 
-//            public void close() { }
+//            public void Close() { }
 //        }, stateStoreName);
 
 //        Topology topology = builder.Build();
@@ -131,9 +131,9 @@
 //    public void ShouldCreateStandByTasksForMaterializedAndOptimizedSourceTables()
 //    {// throws Exception
 //        StreamsConfig streamsConfiguration1 = streamsConfiguration();
-//        streamsConfiguration1.put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
+//        streamsConfiguration1.Put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
 //        StreamsConfig streamsConfiguration2 = streamsConfiguration();
-//        streamsConfiguration2.put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
+//        streamsConfiguration2.Put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
 
 //        StreamsBuilder builder = new StreamsBuilder();
 //        builder.table(INPUT_TOPIC, Consumed.With(Serdes.Int(), Serdes.Int()), Materialized.As("source-table"));

@@ -11,8 +11,8 @@
 
 //        private static ILogger LOG = new LoggerFactory().CreateLogger<MemoryNavigableLRUCache>();
 
-//        public MemoryNavigableLRUCache(string name, int maxCacheSize)
-//            : base(name, maxCacheSize)
+//        public MemoryNavigableLRUCache(string Name, int maxCacheSize)
+//            : base(Name, maxCacheSize)
 //        {
 //        }
 
@@ -21,19 +21,19 @@
 
 //            if (from.CompareTo(to) > 0)
 //            {
-//                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+//                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
 //                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
 //                    "Note that the built-in numerical serdes do not follow this for negative numbers");
 //                return KeyValueIterators.emptyIterator();
 //            }
 
 //            TreeMap<Bytes, byte[]> treeMap = toTreeMap();
-//            return new DelegatingPeekingKeyValueIterator<>(name,
+//            return new DelegatingPeekingKeyValueIterator<>(Name,
 //                new MemoryNavigableLRUCache.CacheIterator(treeMap.navigableKeySet()
 //                    .subSet(from, true, to, true).iterator(), treeMap));
 //        }
 
-//        public override IKeyValueIterator<Bytes, byte[]> all()
+//        public override IKeyValueIterator<Bytes, byte[]> All()
 //        {
 //            TreeMap<Bytes, byte[]> treeMap = toTreeMap();
 //            return new MemoryNavigableLRUCache.CacheIterator(treeMap.navigableKeySet().iterator(), treeMap);

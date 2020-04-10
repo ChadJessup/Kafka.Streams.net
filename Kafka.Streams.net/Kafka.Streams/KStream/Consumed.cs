@@ -70,9 +70,9 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Create an instance of {@link Consumed} with provided processor name.
+         * Create an instance of {@link Consumed} with provided processor Name.
          *
-         * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
+         * @param processorName the processor Name to be used. If {@code null} a default processor Name will be generated
          * @param         key type
          * @param         value type
          * @return a new instance of {@link Consumed}
@@ -104,7 +104,7 @@ namespace Kafka.Streams.KStream
      * KTable<int, int> table = builder.table(
      *   "topicName",
      *   Consumed.With(AutoOffsetReset.LATEST),
-     *   Materialized.As("queryable-store-name"));
+     *   Materialized.As("queryable-store-Name"));
      * }</pre>
      *
      * @param type of record key
@@ -198,9 +198,9 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Configure the instance of {@link Consumed} with a processor name.
+         * Configure the instance of {@link Consumed} with a processor Name.
          *
-         * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
+         * @param processorName the processor Name to be used. If {@code null} a default processor Name will be generated
          * @return this
          */
         public Consumed<K, V> WithName(string processorName)
@@ -223,15 +223,15 @@ namespace Kafka.Streams.KStream
 
             var consumed = (Consumed<K, V>)o;
 
-            return object.Equals(keySerde, consumed.keySerde)
-                && object.Equals(valueSerde, consumed.valueSerde)
-                && object.Equals(timestampExtractor, consumed.timestampExtractor)
-                && resetPolicy == consumed.resetPolicy;
+            return object.Equals(this.keySerde, consumed.keySerde)
+                && object.Equals(this.valueSerde, consumed.valueSerde)
+                && object.Equals(this.timestampExtractor, consumed.timestampExtractor)
+                && this.resetPolicy == consumed.resetPolicy;
         }
 
         public override int GetHashCode()
         {
-            return (keySerde, valueSerde, timestampExtractor, resetPolicy).GetHashCode();
+            return (this.keySerde, this.valueSerde, this.timestampExtractor, this.resetPolicy).GetHashCode();
         }
     }
 }

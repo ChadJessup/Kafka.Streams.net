@@ -41,8 +41,8 @@
 //        [Fact]
 //        public void ShouldFetchValuesFromWindowStore()
 //        {
-//            underlyingWindowStore.put("my-key", "my-value", 0L);
-//            underlyingWindowStore.put("my-key", "my-later-value", 10L);
+//            underlyingWindowStore.Put("my-key", "my-value", 0L);
+//            underlyingWindowStore.Put("my-key", "my-later-value", 10L);
 
 //            IWindowStoreIterator<string> iterator = windowStore.Fetch("my-key", ofEpochMilli(0L), ofEpochMilli(25L));
 //            List<KeyValuePair<long, string>> results = StreamsTestUtils.toList(iterator);
@@ -66,8 +66,8 @@
 //                ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
 //            stubProviderTwo.addStore(storeName, secondUnderlying);
 
-//            underlyingWindowStore.put("key-one", "value-one", 0L);
-//            secondUnderlying.put("key-two", "value-two", 10L);
+//            underlyingWindowStore.Put("key-one", "value-one", 0L);
+//            secondUnderlying.Put("key-two", "value-two", 10L);
 
 //            List<KeyValuePair<long, string>> keyOneResults = StreamsTestUtils.toList(windowStore.Fetch("key-one", ofEpochMilli(0L),
 //                                                                                                         ofEpochMilli(1L)));
@@ -81,8 +81,8 @@
 //        [Fact]
 //        public void ShouldNotGetValuesFromOtherStores()
 //        {
-//            otherUnderlyingStore.put("some-key", "some-value", 0L);
-//            underlyingWindowStore.put("some-key", "my-value", 1L);
+//            otherUnderlyingStore.Put("some-key", "some-value", 0L);
+//            underlyingWindowStore.Put("some-key", "my-value", 1L);
 
 //            List<KeyValuePair<long, string>> results = StreamsTestUtils.toList(windowStore.Fetch("some-key", ofEpochMilli(0L), ofEpochMilli(2L)));
 //            Assert.Equal(Collections.singletonList(KeyValuePair.Create(1L, "my-value")), results);
@@ -146,12 +146,12 @@
 //        {
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlying = new ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
 //            stubProviderTwo.addStore(storeName, secondUnderlying);
-//            underlyingWindowStore.put("a", "a", 0L);
-//            secondUnderlying.put("b", "b", 10L);
-//            List<KeyValuePair<Windowed<string>, string>> results = StreamsTestUtils.toList(windowStore.Fetch("a", "b", ofEpochMilli(0), ofEpochMilli(10)));
+//            underlyingWindowStore.Put("a", "a", 0L);
+//            secondUnderlying.Put("b", "b", 10L);
+//            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.Fetch("a", "b", ofEpochMilli(0), ofEpochMilli(10)));
 //            Assert.Equal(results, (Array.asList(
-//                    KeyValuePair.Create(new Windowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new Windowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//                    KeyValuePair.Create(new IWindowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new IWindowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]
@@ -159,8 +159,8 @@
 //        {
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlyingWindowStore = new ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
 //            stubProviderTwo.addStore(storeName, secondUnderlyingWindowStore);
-//            underlyingWindowStore.put("a", "a", 0L);
-//            secondUnderlyingWindowStore.put("b", "b", 10L);
+//            underlyingWindowStore.Put("a", "a", 0L);
+//            secondUnderlyingWindowStore.Put("b", "b", 10L);
 //            Assert.Equal(windowStore.Fetch("a", 0L), ("a"));
 //            Assert.Equal(windowStore.Fetch("b", 10L), ("b"));
 //            Assert.Equal(windowStore.Fetch("c", 10L), (null));
@@ -174,12 +174,12 @@
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlying = new
 //                    ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
 //            stubProviderTwo.addStore(storeName, secondUnderlying);
-//            underlyingWindowStore.put("a", "a", 0L);
-//            secondUnderlying.put("b", "b", 10L);
-//            List<KeyValuePair<Windowed<string>, string>> results = StreamsTestUtils.toList(windowStore.all());
+//            underlyingWindowStore.Put("a", "a", 0L);
+//            secondUnderlying.Put("b", "b", 10L);
+//            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.All());
 //            Assert.Equal(results, (Array.asList(
-//                    KeyValuePair.Create(new Windowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new Windowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//                    KeyValuePair.Create(new IWindowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new IWindowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]
@@ -188,12 +188,12 @@
 //            ReadOnlyWindowStoreStub<string, string> secondUnderlying = new
 //                    ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
 //            stubProviderTwo.addStore(storeName, secondUnderlying);
-//            underlyingWindowStore.put("a", "a", 0L);
-//            secondUnderlying.put("b", "b", 10L);
-//            List<KeyValuePair<Windowed<string>, string>> results = StreamsTestUtils.toList(windowStore.fetchAll(ofEpochMilli(0), ofEpochMilli(10)));
+//            underlyingWindowStore.Put("a", "a", 0L);
+//            secondUnderlying.Put("b", "b", 10L);
+//            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.FetchAll(ofEpochMilli(0), ofEpochMilli(10)));
 //            Assert.Equal(results, (Array.asList(
-//                    KeyValuePair.Create(new Windowed<string>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new Windowed<string>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//                    KeyValuePair.Create(new IWindowed<string>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new IWindowed<string>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]// (expected = NullPointerException)

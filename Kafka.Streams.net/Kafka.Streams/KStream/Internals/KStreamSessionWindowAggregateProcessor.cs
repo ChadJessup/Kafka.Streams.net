@@ -22,7 +22,7 @@
 
 
 
-//        public void init(IProcessorContext context)
+//        public void Init(IProcessorContext context)
 //        {
 //            base.Init(context);
 //            internalProcessorContext = (IInternalProcessorContext)context;
@@ -53,13 +53,13 @@
 //            observedStreamTime = Math.Max(observedStreamTime, timestamp);
 //            long closeTime = observedStreamTime - windows.gracePeriodMs();
 
-//            List<KeyValuePair<Windowed<K>, Agg>> merged = new List<>();
+//            List<KeyValuePair<IWindowed<K>, Agg>> merged = new List<>();
 //            SessionWindow newSessionWindow = new SessionWindow(timestamp, timestamp);
 //            SessionWindow mergedWindow = newSessionWindow;
 //            Agg agg = initializer.apply();
 
 //            using (
-//                 IKeyValueIterator<Windowed<K>, Agg> iterator = store.findSessions(
+//                 IKeyValueIterator<IWindowed<K>, Agg> iterator = store.findSessions(
 //                    key,
 //                    timestamp - windows.inactivityGap(),
 //                    timestamp + windows.inactivityGap()
@@ -68,7 +68,7 @@
 //            {
 //                while (iterator.HasNext())
 //                {
-//                    KeyValuePair<Windowed<K>, Agg> next = iterator.MoveNext();
+//                    KeyValuePair<IWindowed<K>, Agg> next = iterator.MoveNext();
 //                    merged.Add(next);
 //                    agg = sessionMerger.apply(key, agg, next.value);
 //                    mergedWindow = mergeSessionWindow(mergedWindow, next.key.window);
@@ -104,7 +104,7 @@
 
 //                if (!mergedWindow.Equals(newSessionWindow))
 //                {
-//                    foreach (KeyValuePair<Windowed<K>, Agg> session in merged)
+//                    foreach (KeyValuePair<IWindowed<K>, Agg> session in merged)
 //                    {
 //                        store.Remove(session.key);
 //                        tupleForwarder.maybeForward(session.key, null, sendOldValues ? session.value : null);
@@ -112,7 +112,7 @@
 //                }
 
 //                agg = aggregator.apply(key, value, agg);
-//                Windowed<K> sessionKey = new Windowed<K>(key, mergedWindow);
+//                IWindowed<K> sessionKey = new IWindowed<K>(key, mergedWindow);
 //                store.Add(sessionKey, agg);
 //                tupleForwarder.maybeForward(sessionKey, agg, null);
 //            }

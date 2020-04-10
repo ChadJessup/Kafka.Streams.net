@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Interfaces
     public interface IKStream<K, V>
     {
         /**
-         * Create a new {@code KStream} that consists of all records of this stream which satisfy the given predicate.
+         * Create a new {@code KStream} that consists of All records of this stream which satisfy the given predicate.
          * All records that do not satisfy the predicate are dropped.
          * This is a stateless record-by-record operation.
          *
@@ -46,19 +46,19 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K, V> Filter(Func<K, V, bool> predicate);
 
         /**
-         * Create a new {@code KStream} that consists of all records of this stream which satisfy the given predicate.
+         * Create a new {@code KStream} that consists of All records of this stream which satisfy the given predicate.
          * All records that do not satisfy the predicate are dropped.
          * This is a stateless record-by-record operation.
          *
          * @param predicate a filter {@link Predicate} that is applied to each record
-         * @param named     a {@link Named} config used to name the processor in the topology
+         * @param named     a {@link Named} config used to Name the processor in the topology
          * @return a {@code KStream} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
         IKStream<K, V> Filter(Func<K, V, bool> predicate, Named named);
 
         /**
-         * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
+         * Create a new {@code KStream} that consists All records of this stream which do <em>not</em> satisfy the given
          * predicate.
          * All records that <em>do</em> satisfy the predicate are dropped.
          * This is a stateless record-by-record operation.
@@ -70,13 +70,13 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K, V> FilterNot(Func<K, V, bool> predicate);
 
         /**
-         * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
+         * Create a new {@code KStream} that consists All records of this stream which do <em>not</em> satisfy the given
          * predicate.
          * All records that <em>do</em> satisfy the predicate are dropped.
          * This is a stateless record-by-record operation.
          *
          * @param predicate a filter {@link Predicate} that is applied to each record
-         * @param named     a {@link Named} config used to name the processor in the topology
+         * @param named     a {@link Named} config used to Name the processor in the topology
          * @return a {@code KStream} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
@@ -137,7 +137,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * join) is applied to the result {@code KStream}.
          *
          * @param mapper a {@link KeyValueMapper} that computes a new key for each record
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the new key type of the result stream
          * @return a {@code KStream} that contains records with new key (possibly of different type) and unmodified value
          * @see #map(KeyValueMapper)
@@ -191,7 +191,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<KR, VR> Map<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
 
         IKStream<KR, VR> Map<KR, VR>(Func<K, V, KeyValuePair<KR, VR>> mapper)
-            => Map(new KeyValueMapper<K, V, KeyValuePair<KR, VR>>(mapper));
+            => this.Map(new KeyValueMapper<K, V, KeyValuePair<KR, VR>>(mapper));
 
         /**
          * Transform each record of the input stream into a new record in the output stream (both key and value type can be
@@ -217,7 +217,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * join) is applied to the result {@code KStream}. (cf. {@link #mapValues(ValueMapper)})
          *
          * @param mapper a {@link KeyValueMapper} that computes a new output record
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the key type of the result stream
          * @param   the value type of the result stream
          * @return a {@code KStream} that contains records with new key and value (possibly both of different type)
@@ -294,7 +294,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * is applied to the result {@code KStream}. (cf. {@link #map(KeyValueMapper)})
          *
          * @param mapper a {@link ValueMapper} that computes a new output value
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the value type of the result stream
          * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
          * @see #selectKey(KeyValueMapper)
@@ -369,7 +369,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * is applied to the result {@code KStream}. (cf. {@link #map(KeyValueMapper)})
          *
          * @param mapper a {@link ValueMapperWithKey} that computes a new output value
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the value type of the result stream
          * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
          * @see #selectKey(KeyValueMapper)
@@ -473,7 +473,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * or join) is applied to the result {@code KStream}. (cf. {@link #flatMapValues(ValueMapper)})
          *
          * @param mapper a {@link KeyValueMapper} that computes the new output records
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the key type of the result stream
          * @param   the value type of the result stream
          * @return a {@code KStream} that contains more or less records with new key and value (possibly of different type)
@@ -570,7 +570,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * is applied to the result {@code KStream}. (cf. {@link #flatMap(KeyValueMapper)})
          *
          * @param mapper a {@link ValueMapper} the computes the new output values
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param      the value type of the result stream
          * @return a {@code KStream} that contains more or less records with unmodified keys and new values of different type
          * @see #selectKey(KeyValueMapper)
@@ -678,7 +678,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * is applied to the result {@code KStream}. (cf. {@link #flatMap(KeyValueMapper)})
          *
          * @param mapper a {@link ValueMapperWithKey} the computes the new output values
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param      the value type of the result stream
          * @return a {@code KStream} that contains more or less records with unmodified keys and new values of different type
          * @see #selectKey(KeyValueMapper)
@@ -698,7 +698,7 @@ namespace Kafka.Streams.KStream.Interfaces
 
         /**
          * Print the records of this KStream using the options provided by {@link Printed}
-         * Note that this is mainly for debugging/testing purposes, and it will try to flush on each record print.
+         * Note that this is mainly for debugging/testing purposes, and it will try to Flush on each record print.
          * It <em>SHOULD NOT</em> be used for production usage if performance requirements are concerned.
          *
          * @param printed options for printing
@@ -721,7 +721,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Note that this is a terminal operation that returns void.
          *
          * @param action an action to perform on each record
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @see #process(IProcessorSupplier, string...)
          */
         void ForEach(Action<K, V> action, Named named);
@@ -751,7 +751,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Note that since this operation is stateless, it may execute multiple times for a single record in failure cases.
          *
          * @param action an action to perform on each record
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @see #process(IProcessorSupplier, string...)
          * @return itself
          */
@@ -782,7 +782,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * A record will be dropped if none of the predicates evaluate to true.
          * This is a stateless record-by-record operation.
          *
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param predicates the ordered list of {@link Predicate} instances
          * @return multiple distinct substreams of this {@code KStream}
          */
@@ -804,7 +804,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * stream are processed in order).
          *
          * @param stream a stream which is to be merged into this stream
-         * @return a merged stream containing all records from this and the provided {@code KStream}
+         * @return a merged stream containing All records from this and the provided {@code KStream}
          */
         IKStream<K, V> Merge(IKStream<K, V> stream);
 
@@ -817,8 +817,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * stream are processed in order).
          *
          * @param stream a stream which is to be merged into this stream
-         * @param named  a {@link Named} config used to name the processor in the topology
-         * @return a merged stream containing all records from this and the provided {@code KStream}
+         * @param named  a {@link Named} config used to Name the processor in the topology
+         * @return a merged stream containing All records from this and the provided {@code KStream}
          */
         IKStream<K, V> Merge(IKStream<K, V> stream, Named named);
 
@@ -833,7 +833,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Note that {@code through()} uses a hard coded {@link org.apache.kafka.streams.processor.FailOnInvalidTimestamp
          * timestamp extractor} and does not allow to customize it, to ensure correct timestamp propagation.
          *
-         * @param topic the topic name
+         * @param topic the topic Name
          * @return a {@code KStream} that contains the exact same (and potentially repartitioned) records as this {@code KStream}
          */
         IKStream<K, V> Through(string topic);
@@ -850,7 +850,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Note that {@code through()} uses a hard coded {@link org.apache.kafka.streams.processor.FailOnInvalidTimestamp
          * timestamp extractor} and does not allow to customize it, to ensure correct timestamp propagation.
          *
-         * @param topic     the topic name
+         * @param topic     the topic Name
          * @param produced  the options to use when producing to the topic
          * @return a {@code KStream} that contains the exact same (and potentially repartitioned) records as this {@code KStream}
          */
@@ -864,7 +864,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
          * started).
          *
-         * @param topic the topic name
+         * @param topic the topic Name
          */
         void To(string topic);
 
@@ -873,7 +873,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
          * started).
          *
-         * @param topic       the topic name
+         * @param topic       the topic Name
          * @param produced    the options to use when producing to the topic
          */
         void To(string topic, Produced<K, V> produced);
@@ -883,7 +883,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link DefaultPartitioner}.
          * The topic names for each record to send to is dynamically determined based on the {@link ITopicNameExtractor}.
          *
-         * @param topicExtractor    the extractor to determine the name of the Kafka topic to write to for each record
+         * @param topicExtractor    the extractor to determine the Name of the Kafka topic to write to for each record
          */
         void To(ITopicNameExtractor topicExtractor);
 
@@ -891,7 +891,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Dynamically materialize this stream to topics using the provided {@link Produced} instance.
          * The topic names for each record to send to is dynamically determined based on the {@link ITopicNameExtractor}.
          *
-         * @param topicExtractor    the extractor to determine the name of the Kafka topic to write to for each record
+         * @param topicExtractor    the extractor to determine the Name of the Kafka topic to write to for each record
          * @param produced          the options to use when producing to the topic
          */
         void To(ITopicNameExtractor topicExtractor, Produced<K, V> produced);
@@ -936,7 +936,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *             private IProcessorContext context;
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
@@ -950,7 +950,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new KeyValuePair(key, value); // can emit a single value via return -- can also be null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1034,7 +1034,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *             private IProcessorContext context;
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
@@ -1048,7 +1048,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new KeyValuePair(key, value); // can emit a single value via return -- can also be null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1078,7 +1078,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * flatTransform()}.
          *
          * @param transformerSupplier an instance of {@link TransformerSupplier} that generates a {@link Transformer}
-         * @param named               a {@link Named} config used to name the processor in the topology
+         * @param named               a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames     the names of the state stores used by the processor
          * @param                the key type of the new stream
          * @param                the value type of the new stream
@@ -1135,7 +1135,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *             private IProcessorContext context;
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
@@ -1154,7 +1154,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return result; // emits a list of key-value pairs via return
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1235,7 +1235,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *             private IProcessorContext context;
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
@@ -1254,7 +1254,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return result; // emits a list of key-value pairs via return
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1280,7 +1280,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
          *
          * @param transformerSupplier an instance of {@link TransformerSupplier} that generates a {@link Transformer}
-         * @param named               a {@link Named} config used to name the processor in the topology
+         * @param named               a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames     the names of the state stores used by the processor
          * @param                the key type of the new stream
          * @param                the value type of the new stream
@@ -1337,7 +1337,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1350,7 +1350,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new NewValueType(); // or null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1419,7 +1419,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1432,7 +1432,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new NewValueType(); // or null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1450,7 +1450,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param valueTransformerSupplier a instance of {@link ValueTransformerSupplier} that generates a
          *                                 {@link ValueTransformer}
-         * @param named                    a {@link Named} config used to name the processor in the topology
+         * @param named                    a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames          the names of the state stores used by the processor
          * @param                     the value type of the result stream
          * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
@@ -1506,7 +1506,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1519,7 +1519,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new NewValueType(readOnlyKey); // or null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1592,7 +1592,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1605,7 +1605,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new NewValueType(readOnlyKey); // or null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1624,7 +1624,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param valueTransformerSupplier a instance of {@link ValueTransformerWithKeySupplier} that generates a
          *                                 {@link ValueTransformerWithKey}
-         * @param named                    a {@link Named} config used to name the processor in the topology
+         * @param named                    a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames          the names of the state stores used by the processor
          * @param                     the value type of the result stream
          * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
@@ -1681,7 +1681,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1699,7 +1699,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return result; // values
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1774,7 +1774,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1792,7 +1792,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return result; // values
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1811,7 +1811,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param valueTransformerSupplier an instance of {@link ValueTransformerSupplier} that generates a
          *                                 {@link ValueTransformer}
-         * @param named                    a {@link Named} config used to name the processor in the topology
+         * @param named                    a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames          the names of the state stores used by the processor
          * @param                     the value type of the result stream
          * @return a {@code KStream} that contains more or less records with unmodified key and new values (possibly of
@@ -1869,7 +1869,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1887,7 +1887,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return result; // values
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1964,7 +1964,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1982,7 +1982,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return result; // values
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -2002,7 +2002,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param valueTransformerSupplier a instance of {@link ValueTransformerWithKeySupplier} that generates a
          *                                 {@link ValueTransformerWithKey}
-         * @param named                    a {@link Named} config used to name the processor in the topology
+         * @param named                    a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames          the names of the state stores used by the processor
          * @param                     the value type of the result stream
          * @return a {@code KStream} that contains more or less records with unmodified key and new values (possibly of
@@ -2018,7 +2018,7 @@ namespace Kafka.Streams.KStream.Interfaces
             string[] stateStoreNames);
 
         /**
-         * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
+         * Process All records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
          * {@link IProcessorSupplier}).
          * This is a stateful record-by-record operation (cf. {@link #foreach(Action)}).
          * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress
@@ -2051,7 +2051,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myProcessorState");
          *                 // punctuate each second, can access this.state
@@ -2063,7 +2063,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 // can access this.state
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -2082,7 +2082,7 @@ namespace Kafka.Streams.KStream.Interfaces
         void Process(IProcessorSupplier<K, V> IProcessorSupplier, params string[] stateStoreNames);
         void Process(Func<IKeyValueProcessor<K, V>> processor);
         /**
-         * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
+         * Process All records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
          * {@link IProcessorSupplier}).
          * This is a stateful record-by-record operation (cf. {@link #foreach(Action)}).
          * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress
@@ -2115,7 +2115,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = context.getStateStore("myProcessorState");
          *                 // punctuate each second, can access this.state
@@ -2127,7 +2127,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 // can access this.state
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -2139,7 +2139,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If repartitioning is required, a call to {@link #through(string)} should be performed before {@code transform()}.
          *
          * @param IProcessorSupplier a instance of {@link IProcessorSupplier} that generates a {@link IProcessor}
-         * @param named             a {@link Named} config used to name the processor in the topology
+         * @param named             a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames   the names of the state store used by the processor
          * @see #foreach(Action)
          * @see #transform(TransformerSupplier, string...)
@@ -2161,14 +2161,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link #transform(TransformerSupplier, string...)}), and no data redistribution happened afterwards (e.g., via
          * {@link #through(string)}) an internal repartitioning topic may need to be created in Kafka if a later
          * operator depends on the newly selected key.
-         * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
+         * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
          * {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "&lt;name&gt;" is an internally generated name, and "-repartition" is a fixed suffix.
+         * "&lt;Name&gt;" is an internally generated Name, and "-repartition" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
-         * For this case, all data of this stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the resulting {@link KGroupedStream} is partitioned
+         * For this case, All data of this stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the resulting {@link KGroupedStream} is partitioned
          * correctly on its key.
          * If the last key changing operator changed the key type, it is recommended to use
          * {@link #groupByKey(org.apache.kafka.streams.kstream.Grouped)} instead.
@@ -2190,14 +2190,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link #transform(TransformerSupplier, string...)}), and no data redistribution happened afterwards (e.g., via
          * {@link #through(string)}) an internal repartitioning topic may need to be created in Kafka
          * if a later operator depends on the newly selected key.
-         * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
+         * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
          * {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "&lt;name&gt;" is an internally generated name, and "-repartition" is a fixed suffix.
+         * "&lt;Name&gt;" is an internally generated Name, and "-repartition" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
-         * For this case, all data of this stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the resulting {@link KGroupedStream} is partitioned
+         * For this case, All data of this stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the resulting {@link KGroupedStream} is partitioned
          * correctly on its key.
          *
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
@@ -2220,19 +2220,19 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link #transform(TransformerSupplier, string...)}), and no data redistribution happened afterwards (e.g., via
          * {@link #through(string)}) an internal repartitioning topic may need to be created in Kafka if a later operator
          * depends on the newly selected key.
-         * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
+         * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
          * {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * &lt;name&gt; is either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an internally
-         * generated name, and "-repartition" is a fixed suffix.
+         * &lt;Name&gt; is either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an internally
+         * generated Name, and "-repartition" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
-         * For this case, all data of this stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the resulting {@link KGroupedStream} is partitioned
+         * For this case, All data of this stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the resulting {@link KGroupedStream} is partitioned
          * correctly on its key.
          *
          * @param  grouped  the {@link Grouped} instance used to specify {@link org.apache.kafka.common.serialization.Serdes}
-         *                  and part of the name for a repartition topic if repartitioning is required.
+         *                  and part of the Name for a repartition topic if repartitioning is required.
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          * @see #groupBy(KeyValueMapper)
          */
@@ -2249,14 +2249,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * <p>
          * Because a new key is selected, an internal repartitioning topic may need to be created in Kafka if a
          * later operator depends on the newly selected key.
-         * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
+         * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
          * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "&lt;name&gt;" is an internally generated name, and "-repartition" is a fixed suffix.
+         * "&lt;Name&gt;" is an internally generated Name, and "-repartition" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
-         * All data of this stream will be redistributed through the repartitioning topic by writing all records to it,
-         * and rereading all records from it, such that the resulting {@link KGroupedStream} is partitioned on the new key.
+         * All data of this stream will be redistributed through the repartitioning topic by writing All records to it,
+         * and rereading All records from it, such that the resulting {@link KGroupedStream} is partitioned on the new key.
          * <p>
          * This operation is equivalent to calling {@link #selectKey(KeyValueMapper)} followed by {@link #groupByKey()}.
          * If the key type is changed, it is recommended to use {@link #groupBy(KeyValueMapper, Grouped)} instead.
@@ -2280,21 +2280,21 @@ namespace Kafka.Streams.KStream.Interfaces
          * <p>
          * Because a new key is selected, an internal repartitioning topic may need to be created in Kafka if a later
          * operator depends on the newly selected key.
-         * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
+         * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
          * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "&lt;name&gt;" is either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an
-         * internally generated name.
+         * "&lt;Name&gt;" is either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an
+         * internally generated Name.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
-         * All data of this stream will be redistributed through the repartitioning topic by writing all records to it,
-         * and rereading all records from it, such that the resulting {@link KGroupedStream} is partitioned on the new key.
+         * All data of this stream will be redistributed through the repartitioning topic by writing All records to it,
+         * and rereading All records from it, such that the resulting {@link KGroupedStream} is partitioned on the new key.
          * <p>
          * This operation is equivalent to calling {@link #selectKey(KeyValueMapper)} followed by {@link #groupByKey()}.
          *
          * @param selector a {@link KeyValueMapper} that computes a new key for grouping
          * @param grouped  the {@link Grouped} instance used to specify {@link org.apache.kafka.common.serialization.Serdes}
-         *                 and part of the name for a repartition topic if repartitioning is required.
+         *                 and part of the Name for a repartition topic if repartitioning is required.
          * @param     the key type of the result {@link KGroupedStream}
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
@@ -2306,7 +2306,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Join records of this stream with another {@code KStream}'s records using windowed inner equi join with default
          * serializers and deserializers.
          * The join is computed on the records' key with join attribute {@code thisKStream.key == otherKStream.key}.
-         * Furthermore, two records are only joined if their timestamps are close to each other as defined by the given
+         * Furthermore, two records are only joined if their timestamps are Close to each other as defined by the given
          * {@link JoinWindows}, i.e., the window defines an.Additional join predicate on the record timestamps.
          * <p>
          * For each pair of records meeting both join predicates the provided {@link ValueJoiner} will be called to compute
@@ -2315,7 +2315,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If an input record key or value is {@code null} the record will not be included in the join operation and thus no
          * output record will be.Added to the resulting {@code KStream}.
          * <p>
-         * Example (assuming all input records belong to the correct windows):
+         * Example (assuming All input records belong to the correct windows):
          * <table border='1'>
          * <tr>
          * <th>this</th>
@@ -2345,14 +2345,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * Furthermore, both input streams need to be co-partitioned on the join key (i.e., use the same partitioner).
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link  StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          * <p>
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
@@ -2360,9 +2360,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
          * in {@link StreamsConfig} via parameter
          * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is an
-         * internally generated name, and "-changelog" is a fixed suffix.
+         * internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * @param otherStream the {@code KStream} to be joined with this stream
          * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
@@ -2384,7 +2384,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link Joined} instance for configuration of the {@link Serde key serde}, {@link Serde this stream's value serde},
          * and {@link Serde the other stream's value serde}.
          * The join is computed on the records' key with join attribute {@code thisKStream.key == otherKStream.key}.
-         * Furthermore, two records are only joined if their timestamps are close to each other as defined by the given
+         * Furthermore, two records are only joined if their timestamps are Close to each other as defined by the given
          * {@link JoinWindows}, i.e., the window defines an.Additional join predicate on the record timestamps.
          * <p>
          * For each pair of records meeting both join predicates the provided {@link ValueJoiner} will be called to compute
@@ -2393,7 +2393,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If an input record key or value is {@code null} the record will not be included in the join operation and thus no
          * output record will be.Added to the resulting {@code KStream}.
          * <p>
-         * Example (assuming all input records belong to the correct windows):
+         * Example (assuming All input records belong to the correct windows):
          * <table border='1'>
          * <tr>
          * <th>this</th>
@@ -2423,14 +2423,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * Furthermore, both input streams need to be co-partitioned on the join key (i.e., use the same partitioner).
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link  StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          * <p>
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
@@ -2438,9 +2438,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
          * in {@link StreamsConfig} via parameter
          * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is an
-         * internally generated name, and "-changelog" is a fixed suffix.
+         * internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * @param otherStream the {@code KStream} to be joined with this stream
          * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
@@ -2463,10 +2463,10 @@ namespace Kafka.Streams.KStream.Interfaces
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed left equi join with default
          * serializers and deserializers.
-         * In contrast to {@link #join(KStream, ValueJoiner, JoinWindows) inner-join}, all records from this stream will
+         * In contrast to {@link #join(KStream, ValueJoiner, JoinWindows) inner-join}, All records from this stream will
          * produce at least one output record (cf. below).
          * The join is computed on the records' key with join attribute {@code thisKStream.key == otherKStream.key}.
-         * Furthermore, two records are only joined if their timestamps are close to each other as defined by the given
+         * Furthermore, two records are only joined if their timestamps are Close to each other as defined by the given
          * {@link JoinWindows}, i.e., the window defines an.Additional join predicate on the record timestamps.
          * <p>
          * For each pair of records meeting both join predicates the provided {@link ValueJoiner} will be called to compute
@@ -2477,7 +2477,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If an input record key or value is {@code null} the record will not be included in the join operation and thus no
          * output record will be.Added to the resulting {@code KStream}.
          * <p>
-         * Example (assuming all input records belong to the correct windows):
+         * Example (assuming All input records belong to the correct windows):
          * <table border='1'>
          * <tr>
          * <th>this</th>
@@ -2507,23 +2507,23 @@ namespace Kafka.Streams.KStream.Interfaces
          * Furthermore, both input streams need to be co-partitioned on the join key (i.e., use the same partitioner).
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          * <p>
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
          * in {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "storeName" is an internally generated name, and "-changelog" is a fixed suffix.
+         * "storeName" is an internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * @param otherStream the {@code KStream} to be joined with this stream
          * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
@@ -2545,10 +2545,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * Join records of this stream with another {@code KStream}'s records using windowed left equi join using the
          * {@link Joined} instance for configuration of the {@link Serde key serde}, {@link Serde this stream's value serde},
          * and {@link Serde the other stream's value serde}.
-         * In contrast to {@link #join(KStream, ValueJoiner, JoinWindows) inner-join}, all records from this stream will
+         * In contrast to {@link #join(KStream, ValueJoiner, JoinWindows) inner-join}, All records from this stream will
          * produce at least one output record (cf. below).
          * The join is computed on the records' key with join attribute {@code thisKStream.key == otherKStream.key}.
-         * Furthermore, two records are only joined if their timestamps are close to each other as defined by the given
+         * Furthermore, two records are only joined if their timestamps are Close to each other as defined by the given
          * {@link JoinWindows}, i.e., the window defines an.Additional join predicate on the record timestamps.
          * <p>
          * For each pair of records meeting both join predicates the provided {@link ValueJoiner} will be called to compute
@@ -2559,7 +2559,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If an input record key or value is {@code null} the record will not be included in the join operation and thus no
          * output record will be.Added to the resulting {@code KStream}.
          * <p>
-         * Example (assuming all input records belong to the correct windows):
+         * Example (assuming All input records belong to the correct windows):
          * <table border='1'>
          * <tr>
          * <th>this</th>
@@ -2589,23 +2589,23 @@ namespace Kafka.Streams.KStream.Interfaces
          * Furthermore, both input streams need to be co-partitioned on the join key (i.e., use the same partitioner).
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          * <p>
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
          * in {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "storeName" is an internally generated name, and "-changelog" is a fixed suffix.
+         * "storeName" is an internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * @param otherStream the {@code KStream} to be joined with this stream
          * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
@@ -2630,10 +2630,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * Join records of this stream with another {@code KStream}'s records using windowed outer equi join with default
          * serializers and deserializers.
          * In contrast to {@link #join(KStream, ValueJoiner, JoinWindows) inner-join} or
-         * {@link #leftJoin(KStream, ValueJoiner, JoinWindows) left-join}, all records from both streams will produce at
+         * {@link #leftJoin(KStream, ValueJoiner, JoinWindows) left-join}, All records from both streams will produce at
          * least one output record (cf. below).
          * The join is computed on the records' key with join attribute {@code thisKStream.key == otherKStream.key}.
-         * Furthermore, two records are only joined if their timestamps are close to each other as defined by the given
+         * Furthermore, two records are only joined if their timestamps are Close to each other as defined by the given
          * {@link JoinWindows}, i.e., the window defines an.Additional join predicate on the record timestamps.
          * <p>
          * For each pair of records meeting both join predicates the provided {@link ValueJoiner} will be called to compute
@@ -2644,7 +2644,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If an input record key or value is {@code null} the record will not be included in the join operation and thus no
          * output record will be.Added to the resulting {@code KStream}.
          * <p>
-         * Example (assuming all input records belong to the correct windows):
+         * Example (assuming All input records belong to the correct windows):
          * <table border='1'>
          * <tr>
          * <th>this</th>
@@ -2674,23 +2674,23 @@ namespace Kafka.Streams.KStream.Interfaces
          * Furthermore, both input streams need to be co-partitioned on the join key (i.e., use the same partitioner).
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          * <p>
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
          * in {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "storeName" is an internally generated name, and "-changelog" is a fixed suffix.
+         * "storeName" is an internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * @param otherStream the {@code KStream} to be joined with this stream
          * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
@@ -2712,10 +2712,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link Joined} instance for configuration of the {@link Serde key serde}, {@link Serde this stream's value serde},
          * and {@link Serde the other stream's value serde}.
          * In contrast to {@link #join(KStream, ValueJoiner, JoinWindows) inner-join} or
-         * {@link #leftJoin(KStream, ValueJoiner, JoinWindows) left-join}, all records from both streams will produce at
+         * {@link #leftJoin(KStream, ValueJoiner, JoinWindows) left-join}, All records from both streams will produce at
          * least one output record (cf. below).
          * The join is computed on the records' key with join attribute {@code thisKStream.key == otherKStream.key}.
-         * Furthermore, two records are only joined if their timestamps are close to each other as defined by the given
+         * Furthermore, two records are only joined if their timestamps are Close to each other as defined by the given
          * {@link JoinWindows}, i.e., the window defines an.Additional join predicate on the record timestamps.
          * <p>
          * For each pair of records meeting both join predicates the provided {@link ValueJoiner} will be called to compute
@@ -2726,7 +2726,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * If an input record key or value is {@code null} the record will not be included in the join operation and thus no
          * output record will be.Added to the resulting {@code KStream}.
          * <p>
-         * Example (assuming all input records belong to the correct windows):
+         * Example (assuming All input records belong to the correct windows):
          * <table border='1'>
          * <tr>
          * <th>this</th>
@@ -2756,23 +2756,23 @@ namespace Kafka.Streams.KStream.Interfaces
          * Furthermore, both input streams need to be co-partitioned on the join key (i.e., use the same partitioner).
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          * <p>
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
          * in {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "storeName" is an internally generated name, and "-changelog" is a fixed suffix.
+         * "storeName" is an internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * @param otherStream the {@code KStream} to be joined with this stream
          * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
@@ -2844,16 +2844,16 @@ namespace Kafka.Streams.KStream.Interfaces
          * cf. {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner)}.
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
          * Repartitioning can happen only for this {@code KStream} but not for the provided {@link KTable}.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          *
          * @param table  the {@link KTable} to be joined with this stream
@@ -2920,16 +2920,16 @@ namespace Kafka.Streams.KStream.Interfaces
          * cf. {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner)}.
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
          * Repartitioning can happen only for this {@code KStream} but not for the provided {@link KTable}.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          *
          * @param table  the {@link KTable} to be joined with this stream
@@ -2951,7 +2951,7 @@ namespace Kafka.Streams.KStream.Interfaces
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed left equi join with default
          * serializers and deserializers.
-         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, all records from this stream will produce an
+         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, All records from this stream will produce an
          * output record (cf. below).
          * The join is a primary key table lookup join with join attribute {@code stream.key == table.key}.
          * "Table lookup join" means, that results are only computed if {@code KStream} records are processed.
@@ -3002,16 +3002,16 @@ namespace Kafka.Streams.KStream.Interfaces
          * cf. {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner)}.
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
          * Repartitioning can happen only for this {@code KStream} but not for the provided {@link KTable}.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          *
          * @param table  the {@link KTable} to be joined with this stream
@@ -3030,7 +3030,7 @@ namespace Kafka.Streams.KStream.Interfaces
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed left equi join with default
          * serializers and deserializers.
-         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, all records from this stream will produce an
+         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, All records from this stream will produce an
          * output record (cf. below).
          * The join is a primary key table lookup join with join attribute {@code stream.key == table.key}.
          * "Table lookup join" means, that results are only computed if {@code KStream} records are processed.
@@ -3081,16 +3081,16 @@ namespace Kafka.Streams.KStream.Interfaces
          * cf. {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner)}.
          * If this requirement is not met, Kafka Streams will automatically repartition the data, i.e., it will create an
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
-         * The repartitioning topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is
+         * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is an internally generated
-         * name, and "-repartition" is a fixed suffix.
+         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * Name, and "-repartition" is a fixed suffix.
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          * <p>
          * Repartitioning can happen only for this {@code KStream} but not for the provided {@link KTable}.
-         * For this case, all data of the stream will be redistributed through the repartitioning topic by writing all
-         * records to it, and rereading all records from it, such that the join input {@code KStream} is partitioned
+         * For this case, All data of the stream will be redistributed through the repartitioning topic by writing All
+         * records to it, and rereading All records from it, such that the join input {@code KStream} is partitioned
          * correctly on its key.
          *
          * @param table   the {@link KTable} to be joined with this stream
@@ -3165,7 +3165,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param keyValueMapper instance of {@link KeyValueMapper} used to map from the (key, value) of this stream
          *                       to the key of the {@link GlobalKTable}
          * @param joiner         a {@link ValueJoiner} that computes the join result for a pair of matching records
-         * @param named          a {@link Named} config used to name the processor in the topology
+         * @param named          a {@link Named} config used to Name the processor in the topology
          * @param           the key type of {@link GlobalKTable}
          * @param           the value type of the {@link GlobalKTable}
          * @param           the value type of the resulting {@code KStream}
@@ -3181,7 +3181,7 @@ namespace Kafka.Streams.KStream.Interfaces
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed left equi join.
-         * In contrast to {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner) inner-join}, all records from this stream
+         * In contrast to {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner) inner-join}, All records from this stream
          * will produce an output record (cf. below).
          * The join is a primary key table lookup join with join attribute
          * {@code keyValueMapper.map(stream.keyValue) == table.key}.
@@ -3219,7 +3219,7 @@ namespace Kafka.Streams.KStream.Interfaces
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed left equi join.
-         * In contrast to {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner) inner-join}, all records from this stream
+         * In contrast to {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner) inner-join}, All records from this stream
          * will produce an output record (cf. below).
          * The join is a primary key table lookup join with join attribute
          * {@code keyValueMapper.map(stream.keyValue) == table.key}.
@@ -3243,7 +3243,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param keyValueMapper instance of {@link KeyValueMapper} used to map from the (key, value) of this stream
          *                       to the key of the {@link GlobalKTable}
          * @param valueJoiner    a {@link ValueJoiner} that computes the join result for a pair of matching records
-         * @param named          a {@link Named} config used to name the processor in the topology
+         * @param named          a {@link Named} config used to Name the processor in the topology
          * @param           the key type of {@link GlobalKTable}
          * @param           the value type of the {@link GlobalKTable}
          * @param           the value type of the resulting {@code KStream}

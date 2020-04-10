@@ -58,7 +58,7 @@
 //        {// throws Exception
 
 //            expect(supplier.Get()).andReturn(inner);
-//            expect(supplier.name()).andReturn("name");
+//            expect(supplier.Name()).andReturn("Name");
 //            replay(supplier);
 
 //            builder = new SessionStoreBuilder<>(
@@ -138,21 +138,21 @@
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new SessionStoreBuilder<>(supplier, null, Serdes.String(), new MockTime()));
-//            Assert.Equal(e.ToString(), ("name cannot be null"));
+//            Assert.Equal(e.ToString(), ("Name cannot be null"));
 //        }
 
 //        [Fact]
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new SessionStoreBuilder<>(supplier, Serdes.String(), null, new MockTime()));
-//            Assert.Equal(e.ToString(), ("name cannot be null"));
+//            Assert.Equal(e.ToString(), ("Name cannot be null"));
 //        }
 
 //        [Fact]
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            reset(supplier);
-//            expect(supplier.name()).andReturn("name");
+//            expect(supplier.Name()).andReturn("Name");
 //            replay(supplier);
 //            Exception e = Assert.Throws<NullReferenceException>(() => new SessionStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null));
 //            Assert.Equal(e.ToString(), ("time cannot be null"));
@@ -162,7 +162,7 @@
 //        public void ShouldThrowNullPointerIfMetricsScopeIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new SessionStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime()));
-//            Assert.Equal(e.ToString(), ("name cannot be null"));
+//            Assert.Equal(e.ToString(), ("Name cannot be null"));
 //        }
 
 //    }

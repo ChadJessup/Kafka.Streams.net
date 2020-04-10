@@ -50,14 +50,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                {
 //                    var window = new TimeWindow(10 * w, 20 * w);
 
-//                    Windowed<int> windowedKey = new Windowed<>(key, window);
+//                    IWindowed<int> windowedKey = new IWindowed<>(key, window);
 //                    int actual = streamPartitioner.partition(topicName, windowedKey, value, infos.Count);
 
 //                    Assert.Equal(expected, actual);
 //                }
 //            }
 
-//            defaultPartitioner.close();
+//            defaultPartitioner.Close();
 //        }
 //    }
 //}

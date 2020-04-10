@@ -29,9 +29,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             return "StreamTableJoinNode{" +
-                   $"storeNames=[{string.Join(',', storeNames)}]" +
-                   $", processorParameters={processorParameters}" +
-                   $", otherJoinSideNodeName='{otherJoinSideNodeName}'" +
+                   $"storeNames=[{string.Join(',', this.storeNames)}]" +
+                   $", processorParameters={this.processorParameters}" +
+                   $", otherJoinSideNodeName='{this.otherJoinSideNodeName}'" +
                    "} " + base.ToString();
         }
 
@@ -39,16 +39,16 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            var processorName = processorParameters.ProcessorName;
-            IProcessorSupplier<K, V> IProcessorSupplier = processorParameters.ProcessorSupplier;
+            var processorName = this.processorParameters.ProcessorName;
+            IProcessorSupplier<K, V> IProcessorSupplier = this.processorParameters.ProcessorSupplier;
 
             // Stream - Table join (Global or KTable)
-            topologyBuilder.AddProcessor<K, V>(processorName, IProcessorSupplier, ParentNodeNames());
+            topologyBuilder.AddProcessor<K, V>(processorName, IProcessorSupplier, this.ParentNodeNames());
 
             // Steam - KTable join only
-            if (otherJoinSideNodeName != null)
+            if (this.otherJoinSideNodeName != null)
             {
-                topologyBuilder.ConnectProcessorAndStateStores(processorName, storeNames);
+                topologyBuilder.ConnectProcessorAndStateStores(processorName, this.storeNames);
             }
 
         }

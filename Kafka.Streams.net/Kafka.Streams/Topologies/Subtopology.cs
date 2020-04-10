@@ -17,13 +17,13 @@ namespace Kafka.Streams.Topologies
 
         public override string ToString()
         {
-            return "Sub-topology: " + id + "\n" + NodesAsString() + "\n";
+            return "Sub-topology: " + this.id + "\n" + this.NodesAsString() + "\n";
         }
 
         private string NodesAsString()
         {
             var sb = new StringBuilder();
-            foreach (INode node in nodes)
+            foreach (INode node in this.nodes)
             {
                 sb.Append("    ");
                 sb.Append(node);
@@ -40,19 +40,19 @@ namespace Kafka.Streams.Topologies
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (Subtopology)o;
-            return id == that.id
-                && nodes.Equals(that.nodes);
+            return this.id == that.id
+                && this.nodes.Equals(that.nodes);
         }
 
         public override int GetHashCode()
         {
-            return (id, nodes).GetHashCode();
+            return (this.id, this.nodes).GetHashCode();
         }
     }
 }

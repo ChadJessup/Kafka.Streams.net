@@ -19,27 +19,27 @@
         /// <summary>
         /// Prefix used to override {@link KafkaConsumer consumer} configs for the main consumer client from
         /// the general consumer client configs. The override precedence is the following (from highest to lowest precedence):
-        /// 1. main.consumer.[config-name)
-        /// 2. consumer.[config-name)
-        /// 3. [config-name)
+        /// 1. main.consumer.[config-Name)
+        /// 2. consumer.[config-Name)
+        /// 3. [config-Name)
         /// </summary>
         public static readonly string MainConsumerPrefix = "main.consumer.";
 
         /// <summary>
         /// Prefix used to override {@link KafkaConsumer consumer} configs for the restore consumer client from
         /// the general consumer client configs. The override precedence is the following (from highest to lowest precedence):
-        /// 1. restore.consumer.[config-name)
-        /// 2. consumer.[config-name)
-        /// 3. [config-name)
+        /// 1. restore.consumer.[config-Name)
+        /// 2. consumer.[config-Name)
+        /// 3. [config-Name)
         /// </summary>
         public static readonly string RestoreConsumerPrefix = "restore.consumer.";
 
         /// <summary>
         /// Prefix used to override {@link KafkaConsumer consumer} configs for the global consumer client from
         /// the general consumer client configs. The override precedence is the following (from highest to lowest precedence):
-        /// 1. global.consumer.[config-name)
-        /// 2. consumer.[config-name)
-        /// 3. [config-name)
+        /// 1. global.consumer.[config-Name)
+        /// 2. consumer.[config-Name)
+        /// 3. [config-Name)
         /// </summary>
         public static readonly string GlobalConsumerPrefix = "global.consumer.";
 
@@ -65,13 +65,13 @@
         /// <summary>
         /// Config value for parameter (@link #TOPOLOGY_OPTIMIZATION "topology.optimization" for enabling topology optimization
         /// </summary>
-        public static readonly string OPTIMIZE = "all";
+        public static readonly string OPTIMIZE = "All";
 
         /// <summary>
         /// When set to 'true', the producer will ensure that exactly one copy of each message is written in the stream. If 'false', producer
         /// retries due to broker failures, etc., may write duplicates of the retried message in the stream.
         /// Note that enabling idempotence requires <code>" + MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION + "</code> to be less than or equal to 5,
-        /// <code>" + RETRIES_CONFIG + "</code> to be greater than 0 and <code>" + ACKS_CONFIG + "</code> must be 'all'. If these values
+        /// <code>" + RETRIES_CONFIG + "</code> to be greater than 0 and <code>" + ACKS_CONFIG + "</code> must be 'All'. If these values
         /// are not explicitly set by the user, suitable values will be chosen. If incompatible values are set,
         /// a <code>ConfigException</code> will be thrown.
         /// </summary>
@@ -79,7 +79,7 @@
 
         /// <summary>
         /// <p>Controls how to read messages written transactionally. If set to <code>read_committed</code>, consumer.poll() will only return" +
-        /// transactional messages which have been committed. If set to <code>read_uncommitted</code>' (the default), consumer.poll() will return all messages, even transactional messages" +
+        /// transactional messages which have been committed. If set to <code>read_uncommitted</code>' (the default), consumer.poll() will return All messages, even transactional messages" +
         /// which have been aborted. Non-transactional messages will be returned unconditionally in either mode.</p> <p>Messages will always be returned in offset order. Hence, in " +
         /// <code>read_committed</code> mode, consumer.poll() will only return messages up to the last stable offset (LSO), which is the one less than the offset of the first open transaction." +
         /// In particular any messages appearing after messages belonging to ongoing transactions will be withheld until the relevant transaction has been completed. As a result, <code>read_committed</code>" +
@@ -163,7 +163,7 @@
         /// {@code cache.max.bytes.buffering}
         /// </summary>
         public static readonly string CacheMaxBytesBuffering = "cache.max.bytes.buffering";
-        // private static string CACHE_MAX_BYTES_BUFFERING_DOC = "Maximum number of memory bytes to be used for buffering across all threads";
+        // private static string CACHE_MAX_BYTES_BUFFERING_DOC = "Maximum number of memory bytes to be used for buffering across All threads";
 
         /// <summary>
         /// {@code commit.interval.ms}
@@ -177,7 +177,7 @@
         /// {@code max.task.idle.ms}
         /// </summary>
         public static readonly string MAX_TASK_IDLE_MS_CONFIG = "max.task.idle.ms";
-        //private static string MAX_TASK_IDLE_MS_DOC = "Maximum amount of time a stream task will stay idle when not all of its partition buffers contain records," +
+        //private static string MAX_TASK_IDLE_MS_DOC = "Maximum amount of time a stream task will stay idle when not All of its partition buffers contain records," +
         //    " to avoid potential out-of-order record processing across multiple input streams.";
 
         /// <summary>
@@ -315,7 +315,7 @@
         /// {@code rocksdb.config.setter}
         /// </summary>
         public static readonly string ROCKSDB_CONFIG_SETTER_CLASS_CONFIG = "rocksdb.config.setter";
-        // private static string ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter or name that : the <code>org.apache.kafka.streams.state.RocksDbConfigSetter</code> interface";
+        // private static string ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter or Name that : the <code>org.apache.kafka.streams.state.RocksDbConfigSetter</code> interface";
 
         /// <summary>
         /// {@code security.protocol}
@@ -359,7 +359,7 @@
         public static readonly string WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG = "windowstore.changelog.Additional.retention.ms";
 
         /// <summary>
-        /// A list of host/port pairs to use for establishing the initial connection to the Kafka cluster. The client will make use of all servers irrespective of which servers are specified here for bootstrapping&mdash;this list only impacts the initial hosts used to discover the full set of servers. This list should be in the form
+        /// A list of host/port pairs to use for establishing the initial connection to the Kafka cluster. The client will make use of All servers irrespective of which servers are specified here for bootstrapping&mdash;this list only impacts the initial hosts used to discover the full set of servers. This list should be in the form
         /// <code>host1:port1,host2:port2,...</code>. Since these servers are just used for the initial connection to
         /// discover the full cluster membership (which may change dynamically), this list need not contain the full set of
         /// servers (you may want more than one, though, in case a server is down).

@@ -6,7 +6,7 @@ using Priority_Queue;
 namespace Kafka.Streams.Processors.Internals
 {
     /**
-     * PartitionGroup is used to buffer all co-partitioned records for processing.
+     * PartitionGroup is used to buffer All co-partitioned records for processing.
      *
      * In other words, it represents the "same" partition over multiple co-partitioned topics, and it is used
      * to buffer records from that partition in each of the contained topic-partitions.
@@ -52,7 +52,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             StampedRecord record = null;
 
-            if (nonEmptyQueuesByTime.TryDequeue(out var queue))
+            if (this.nonEmptyQueuesByTime.TryDequeue(out var queue))
             {
             }
 
@@ -65,23 +65,23 @@ namespace Kafka.Streams.Processors.Internals
 
                 if (record != null)
                 {
-                    --totalBuffered;
+                    --this.totalBuffered;
 
                     if (queue.IsEmpty())
                     {
                         // if a certain queue has been drained, reset the flag
-                        allBuffered = false;
+                        this.allBuffered = false;
                     }
                     else
                     {
 
-                        nonEmptyQueuesByTime.Enqueue(queue, queue.headRecordTimestamp);
+                        this.nonEmptyQueuesByTime.Enqueue(queue, queue.headRecordTimestamp);
                     }
 
                     // always update the stream-time to the record's timestamp yet to be processed if it is larger
-                    if (record.timestamp > streamTime)
+                    if (record.timestamp > this.streamTime)
                     {
-                        streamTime = record.timestamp;
+                        this.streamTime = record.timestamp;
                     }
                     else
                     {
@@ -101,7 +101,7 @@ namespace Kafka.Streams.Processors.Internals
          */
         public int AddRawRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
         {
-            RecordQueue recordQueue = partitionQueues[partition];
+            RecordQueue recordQueue = this.partitionQueues[partition];
 
             var oldSize = recordQueue.Size();
             var newSize = recordQueue.AddRawRecords(rawRecords);
@@ -109,29 +109,29 @@ namespace Kafka.Streams.Processors.Internals
             // add this record queue to be considered for processing in the future if it was empty before
             if (oldSize == 0 && newSize > 0)
             {
-                nonEmptyQueuesByTime.Enqueue(recordQueue, recordQueue.headRecordTimestamp);
+                this.nonEmptyQueuesByTime.Enqueue(recordQueue, recordQueue.headRecordTimestamp);
 
-                // if all partitions now are non-empty, set the flag
+                // if All partitions now are non-empty, set the flag
                 // we do not need to update the stream-time here since this task will definitely be
                 // processed next, and hence the stream-time will be updated when we retrieved records by then
-                if (nonEmptyQueuesByTime.Count == this.partitionQueues.Count)
+                if (this.nonEmptyQueuesByTime.Count == this.partitionQueues.Count)
                 {
-                    allBuffered = true;
+                    this.allBuffered = true;
                 }
             }
 
-            totalBuffered += newSize - oldSize;
+            this.totalBuffered += newSize - oldSize;
 
             return newSize;
         }
 
         public HashSet<TopicPartition> Partitions()
         {
-            return new HashSet<TopicPartition>(partitionQueues.Keys);
+            return new HashSet<TopicPartition>(this.partitionQueues.Keys);
         }
 
         /**
-         * Return the stream-time of this partition group defined as the largest timestamp seen across all partitions
+         * Return the stream-time of this partition group defined as the largest timestamp seen across All partitions
          */
 
         /**
@@ -139,7 +139,7 @@ namespace Kafka.Streams.Processors.Internals
          */
         public int NumBuffered(TopicPartition partition)
         {
-            RecordQueue recordQueue = partitionQueues[partition];
+            RecordQueue recordQueue = this.partitionQueues[partition];
 
             if (recordQueue == null)
             {
@@ -151,22 +151,22 @@ namespace Kafka.Streams.Processors.Internals
 
         public int NumBuffered()
         {
-            return totalBuffered;
+            return this.totalBuffered;
         }
 
-        public bool AllPartitionsBuffered() => allBuffered;
+        public bool AllPartitionsBuffered() => this.allBuffered;
 
         public void Close()
         {
-            Clear();
-            partitionQueues.Clear();
+            this.Clear();
+            this.partitionQueues.Clear();
         }
 
         public void Clear()
         {
-            nonEmptyQueuesByTime.Clear();
-            streamTime = RecordQueue.UNKNOWN;
-            foreach (RecordQueue queue in partitionQueues.Values)
+            this.nonEmptyQueuesByTime.Clear();
+            this.streamTime = RecordQueue.UNKNOWN;
+            foreach (RecordQueue queue in this.partitionQueues.Values)
             {
                 queue.Clear();
             }

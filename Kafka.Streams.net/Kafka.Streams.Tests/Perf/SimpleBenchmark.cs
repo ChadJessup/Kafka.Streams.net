@@ -73,12 +73,12 @@
 //     * tests/kafkatest/benchmarks/streams/streams_simple_benchmark_test.py.
 //     * If ran manually through the main() function below, you must do the following:
 //     * 1. Have ZK and a Kafka broker set up
-//     * 2. Run the loading step first: SimpleBenchmark localhost:9092 /tmp/statedir numRecords true "all"
-//     * 3. Run the stream processing step second: SimpleBenchmark localhost:9092 /tmp/statedir numRecords false "all"
+//     * 2. Run the loading step first: SimpleBenchmark localhost:9092 /tmp/statedir numRecords true "All"
+//     * 3. Run the stream processing step second: SimpleBenchmark localhost:9092 /tmp/statedir numRecords false "All"
 //     * Note that what changed is the 4th parameter, from "true" indicating that is a load phase, to "false" indicating
 //     * that this is a real run.
 //     *
-//     * Note that "all" is a convenience option when running this test locally and will not work when running the test
+//     * Note that "All" is a convenience option when running this test locally and will not work when running the test
 //     * at scale (through tests/kafkatest/benchmarks/streams/streams_simple_benchmark_test.py). That is due to exact syncronization
 //     * needs for each test (e.g., you wouldn't want one instance to run "count" while another
 //     * is still running "consume"
@@ -224,7 +224,7 @@
 //                yahooBenchmark(YAHOO_CAMPAIGNS_TOPIC, YAHOO_EVENTS_TOPIC);
 //                break;
 //            default:
-//                throw new RuntimeException("Unknown test name " + testName);
+//                throw new RuntimeException("Unknown test Name " + testName);
 
 //        }
 //    }
@@ -268,42 +268,42 @@
 
 //    public void SetStreamProperties(string applicationId)
 //    {
-//        props.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//        props.put(StreamsConfig.CLIENT_ID_CONFIG, "simple-benchmark");
-//        props.put(StreamsConfig.POLL_MS_CONFIG, POLL_MS);
-//        props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL_MS);
-//        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().getClass());
+//        props.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//        props.Put(StreamsConfig.CLIENT_ID_CONFIG, "simple-benchmark");
+//        props.Put(StreamsConfig.POLL_MS_CONFIG, POLL_MS);
+//        props.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL_MS);
+//        props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//        props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().getClass());
 //        // the socket buffer needs to be large, especially when running in AWS with
 //        // high latency. if running locally the default is fine.
-//        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        props.put(ConsumerConfig.RECEIVE_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
-//        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
+//        props.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//        props.Put(ConsumerConfig.RECEIVE_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
+//        props.Put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
 
 //        // improve producer throughput
-//        props.put(ProducerConfig.LINGER_MS_CONFIG, 5000);
-//        props.put(ProducerConfig.BATCH_SIZE_CONFIG, 128 * 1024);
+//        props.Put(ProducerConfig.LINGER_MS_CONFIG, 5000);
+//        props.Put(ProducerConfig.BATCH_SIZE_CONFIG, 128 * 1024);
 //    }
 
 //    private StreamsConfig SetProduceConsumeProperties(string clientId)
 //    {
 //        StreamsConfig clientProps = new StreamsConfig();
-//        clientProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, props.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
-//        clientProps.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
+//        clientProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, props.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
+//        clientProps.Put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
 //        // the socket buffer needs to be large, especially when running in AWS with
 //        // high latency. if running locally the default is fine.
-//        clientProps.put(ProducerConfig.LINGER_MS_CONFIG, 5000);
-//        clientProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 128 * 1024);
-//        clientProps.put(ProducerConfig.SEND_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
-//        clientProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer);
-//        clientProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
-//        clientProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
-//        clientProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
-//        clientProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+//        clientProps.Put(ProducerConfig.LINGER_MS_CONFIG, 5000);
+//        clientProps.Put(ProducerConfig.BATCH_SIZE_CONFIG, 128 * 1024);
+//        clientProps.Put(ProducerConfig.SEND_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
+//        clientProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer);
+//        clientProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
+//        clientProps.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
+//        clientProps.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
+//        clientProps.Put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
 //        // the socket buffer needs to be large, especially when running in AWS with
 //        // high latency. if running locally the default is fine.
-//        clientProps.put(ConsumerConfig.RECEIVE_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
-//        clientProps.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
+//        clientProps.Put(ConsumerConfig.RECEIVE_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
+//        clientProps.Put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
 //        return clientProps;
 //    }
 
@@ -334,8 +334,8 @@
 //        {
 //            (KafkaProducer<int, byte[]> producer = new KafkaProducer<>(props));
 //            byte[] value = new byte[valueSize];
-//            // put some random values to increase entropy. Some devices
-//            // like SSDs do compression and if the array is all zeros
+//            // Put some random values to increase entropy. Some devices
+//            // like SSDs do compression and if the array is All zeros
 //            // the performance will be too good.
 //            new Random(System.currentTimeMillis()).nextBytes(value);
 
@@ -495,7 +495,7 @@
 
 
 
-//            public void init(ProcessorContext context)
+//            public void Init(ProcessorContext context)
 //            {
 //                base.Init(context);
 //                store = (IKeyValueStore<int, byte[]>)context.getStateStore("store");
@@ -505,7 +505,7 @@
 //            public void process(int key, byte[] value)
 //            {
 //                store.Get(key);
-//                store.put(key, value);
+//                store.Put(key, value);
 //            }
 //        };
 //    }
@@ -548,7 +548,7 @@
 
 
 
-//            public void init(ProcessorContext context)
+//            public void Init(ProcessorContext context)
 //            {
 //                base.Init(context);
 //                store = (IWindowStore<int, byte[]>)context.getStateStore("store");
@@ -558,14 +558,14 @@
 //            public void process(int key, byte[] value)
 //            {
 //                long timestamp = context.Timestamp;
-//                IKeyValueIterator<Windowed<int>, byte[]> iter = store.Fetch(key - 10, key + 10, ofEpochMilli(timestamp - 1000L), ofEpochMilli(timestamp));
+//                IKeyValueIterator<IWindowed<int>, byte[]> iter = store.Fetch(key - 10, key + 10, ofEpochMilli(timestamp - 1000L), ofEpochMilli(timestamp));
 //                while (iter.HasNext())
 //                {
 //                    iter.MoveNext();
 //                }
-//                iter.close();
+//                iter.Close();
 
-//                store.put(key, value);
+//                store.Put(key, value);
 //            }
 //        };
 //    }
@@ -719,7 +719,7 @@
 
 //            endTime = System.currentTimeMillis();
 //        }
-//        streams.close();
+//        streams.Close();
 
 //        printResults(nameOfBenchmark, endTime - startTime);
 //    }
@@ -757,7 +757,7 @@
 //        {
 //            System.Console.Out.WriteLine("FATAL: An unexpected exception is encountered on thread " + t + ": " + e);
 
-//            streamsClient.close(ofSeconds(30));
+//            streamsClient.Close(ofSeconds(30));
 //        }
 //    });
 
@@ -916,12 +916,12 @@
 // * tests/kafkatest/benchmarks/streams/streams_simple_benchmark_test.py.
 // * If ran manually through the main() function below, you must do the following:
 // * 1. Have ZK and a Kafka broker set up
-// * 2. Run the loading step first: SimpleBenchmark localhost:9092 /tmp/statedir numRecords true "all"
-// * 3. Run the stream processing step second: SimpleBenchmark localhost:9092 /tmp/statedir numRecords false "all"
+// * 2. Run the loading step first: SimpleBenchmark localhost:9092 /tmp/statedir numRecords true "All"
+// * 3. Run the stream processing step second: SimpleBenchmark localhost:9092 /tmp/statedir numRecords false "All"
 // * Note that what changed is the 4th parameter, from "true" indicating that is a load phase, to "false" indicating
 // * that this is a real run.
 // *
-// * Note that "all" is a convenience option when running this test locally and will not work when running the test
+// * Note that "All" is a convenience option when running this test locally and will not work when running the test
 // * at scale (through tests/kafkatest/benchmarks/streams/streams_simple_benchmark_test.py). That is due to exact syncronization
 // * needs for each test (e.g., you wouldn't want one instance to run "count" while another
 // * is still running "consume"

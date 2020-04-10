@@ -41,33 +41,33 @@ namespace Kafka.Streams.Clients.Consumers
          */
         public void Initialize()
         {
-            var partitionOffsets = stateMaintainer.Initialize();
-            globalConsumer.Assign(partitionOffsets.Keys);
+            var partitionOffsets = this.stateMaintainer.Initialize();
+            this.globalConsumer.Assign(partitionOffsets.Keys);
 
             foreach (var entry in partitionOffsets)
             {
-                globalConsumer.Seek(new TopicPartitionOffset(entry.Key, entry.Value ?? 0));
+                this.globalConsumer.Seek(new TopicPartitionOffset(entry.Key, entry.Value ?? 0));
             }
 
-            lastFlush = clock.NowAsEpochMilliseconds;
+            this.lastFlush = this.clock.NowAsEpochMilliseconds;
         }
 
         public void PollAndUpdate()
         {
             try
             {
-                ConsumerRecords<byte[], byte[]> received = globalConsumer.Poll(pollTime);
+                ConsumerRecords<byte[], byte[]> received = this.globalConsumer.Poll(this.pollTime);
 
                 foreach (ConsumeResult<byte[], byte[]> record in received)
                 {
-                    stateMaintainer.Update(record);
+                    this.stateMaintainer.Update(record);
                 }
 
-                var now = clock.NowAsEpochMilliseconds;
-                if (now >= lastFlush + flushInterval)
+                var now = this.clock.NowAsEpochMilliseconds;
+                if (now >= this.lastFlush + this.flushInterval)
                 {
-                    stateMaintainer.FlushState();
-                    lastFlush = now;
+                    this.stateMaintainer.FlushState();
+                    this.lastFlush = now;
                 }
             }
             catch (TopicPartitionOffsetException recoverableException)
@@ -83,16 +83,16 @@ namespace Kafka.Streams.Clients.Consumers
         {
             try
             {
-                globalConsumer.Close();
+                this.globalConsumer.Close();
             }
             catch (RuntimeException e)
             {
                 // just log an error if the consumerclose
-                // so we can always attempt to close the state stores.
-                this.logger.LogError("Failed to close global consumer due to the following error:", e);
+                // so we can always attempt to Close the state stores.
+                this.logger.LogError("Failed to Close global consumer due to the following error:", e);
             }
 
-            stateMaintainer.Close();
+            this.stateMaintainer.Close();
         }
     }
 }

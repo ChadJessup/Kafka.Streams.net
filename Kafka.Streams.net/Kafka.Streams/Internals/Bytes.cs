@@ -42,7 +42,7 @@ namespace Kafka.Streams
             this.bytes = bytes;
 
             // initialize hash code to 0
-            hashCode = 0;
+            this.hashCode = 0;
         }
 
         /**
@@ -63,13 +63,13 @@ namespace Kafka.Streams
             {
                 unchecked
                 {
-                    if (bytes == null)
+                    if (this.bytes == null)
                     {
                         return 0;
                     }
 
                     var hash = 17;
-                    foreach (var @byte in bytes)
+                    foreach (var @byte in this.bytes)
                     {
                         hash = hash * 31 + @byte.GetHashCode();
                     }
@@ -116,7 +116,7 @@ namespace Kafka.Streams
 
         public override string ToString()
         {
-            return Bytes.ToString(bytes, 0, bytes.Length);
+            return Bytes.ToString(this.bytes, 0, this.bytes.Length);
         }
 
         /**

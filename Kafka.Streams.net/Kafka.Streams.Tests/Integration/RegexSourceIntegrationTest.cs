@@ -56,10 +56,10 @@
 //        {// throws InterruptedException
 //            outputTopic = createTopic(topicSuffixGenerator.incrementAndGet());
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//            properties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//            properties.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "1000");
-//            properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            properties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//            properties.Put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "1000");
+//            properties.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
 //            streamsConfiguration = StreamsTestUtils.getStreamsConfig("regex-source-integration-test",
 //                                                                     CLUSTER.bootstrapServers(),
@@ -73,7 +73,7 @@
 //        { //throws IOException
 //            if (streams != null)
 //            {
-//                streams.close();
+//                streams.Close();
 //            }
 //            // Remove any state from previous test runs
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
@@ -206,7 +206,7 @@
 //        }
 //        finally
 //        {
-//            streams.close();
+//            streams.Close();
 //        }
 //    }
 
@@ -326,10 +326,10 @@
 //            TestUtils.WaitForCondition(() => followerAssignment.equals(expectedAssignment) && leaderAssignment.equals(expectedAssignment), "topic assignment not completed");
 //        } finally {
 //            if (partitionedStreamsLeader != null) {
-//                partitionedStreamsLeader.close();
+//                partitionedStreamsLeader.Close();
 //            }
 //            if (partitionedStreamsFollower != null) {
-//                partitionedStreamsFollower.close();
+//                partitionedStreamsFollower.Close();
 //            }
 //        }
 

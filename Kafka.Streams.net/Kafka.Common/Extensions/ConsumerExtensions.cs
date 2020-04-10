@@ -42,8 +42,8 @@ namespace Confluent.Kafka
 
         /**
          * Seek to the last offset for each of the given partitions. This function evaluates lazily, seeking to the
-         * final offset in all partitions only when {@link #poll(TimeSpan)} or {@link #position(TopicPartition)} are called.
-         * If no partitions are provided, seek to the final offset for all of the currently assigned partitions.
+         * final offset in All partitions only when {@link #poll(TimeSpan)} or {@link #position(TopicPartition)} are called.
+         * If no partitions are provided, seek to the final offset for All of the currently assigned partitions.
          * <p>
          * If {@code isolation.level=read_committed}, the end offset will be the Last Stable Offset, i.e., the offset
          * of the first message with an open transaction.

@@ -18,7 +18,7 @@
 //        where S : ISegment
 //    {
 //        private static ILogger LOG = new LoggerFactory().CreateLogger<AbstractRocksDbSegmentedBytesStore<S>>();
-//        public string name { get; }
+//        public string Name { get; }
 //        private AbstractSegments<S> segments;
 //        private string metricScope;
 //        private IKeySchema keySchema;
@@ -29,12 +29,12 @@
 //        private long observedStreamTime = (long)TimestampType.NotAvailable;
 
 //        public AbstractRocksDbSegmentedBytesStore(
-//            string name,
+//            string Name,
 //            string metricScope,
 //            IKeySchema keySchema,
 //            AbstractSegments<S> segments)
 //        {
-//            this.name = name;
+//            this.Name = Name;
 //            this.metricScope = metricScope;
 //            this.keySchema = keySchema;
 //            this.segments = segments;
@@ -65,7 +65,7 @@
 //        {
 //            if (keyFrom.CompareTo(keyTo) > 0)
 //            {
-//                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+//                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
 //                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
 //                    "Note that the built-in numerical serdes do not follow this for negative numbers");
 
@@ -149,7 +149,7 @@
 
 //        public string Name()
 //        {
-//            return name;
+//            return Name;
 //        }
 
 //        public void Init(IProcessorContext context, IStateStore root)
@@ -161,7 +161,7 @@
 
 //            //expiredRecordSensor = metrics.storeLevelSensor(
 //            //    taskName,
-//            //    name,
+//            //    Name,
 //            //    EXPIRED_WINDOW_RECORD_DROP,
 //            //    RecordingLevel.INFO
 //            //);
@@ -169,7 +169,7 @@
 //            //addInvocationRateAndCount(
 //            //     expiredRecordSensor,
 //            //     "stream-" + metricScope + "-metrics",
-//            //     metrics.tagMap("task-id", taskName, metricScope + "-id", name),
+//            //     metrics.tagMap("task-id", taskName, metricScope + "-id", Name),
 //            //     EXPIRED_WINDOW_RECORD_DROP
 //            // );
 
@@ -226,7 +226,7 @@
 //            }
 //            catch (RocksDbException e)
 //            {
-//                throw new ProcessorStateException("Error restoring batch to store " + this.name, e);
+//                throw new ProcessorStateException("Error restoring batch to store " + this.Name, e);
 //            }
 //        }
 
@@ -250,7 +250,7 @@
 //                {
 //                    // This handles the case that state store is moved to a new client and does not
 //                    // have the local RocksDb instance for the segment. In this case, toggleDBForBulkLoading
-//                    // will only close the database and open it again with bulk loading enabled.
+//                    // will only Close the database and open it again with bulk loading enabled.
 //                    if (!bulkLoadSegments.Contains(segment))
 //                    {
 //                        segment.ToggleDbForBulkLoading(true);
@@ -267,7 +267,7 @@
 //                    }
 //                    catch (RocksDbException e)
 //                    {
-//                        throw new ProcessorStateException("Error restoring batch to store " + this.name, e);
+//                        throw new ProcessorStateException("Error restoring batch to store " + this.Name, e);
 //                    }
 //                }
 //            }

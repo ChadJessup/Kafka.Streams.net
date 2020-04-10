@@ -6,7 +6,7 @@ using System.Linq;
 namespace Kafka.Streams.Threads.GlobalStream
 {
     /**
-     * This is the thread responsible for keeping all Global State Stores updated.
+     * This is the thread responsible for keeping All Global State Stores updated.
      * It delegates most of the responsibility to the internal StateConsumer
      */
     public class GlobalStreamThreadState : IStateMachine<GlobalStreamThreadStates>
@@ -53,7 +53,7 @@ namespace Kafka.Streams.Threads.GlobalStream
         {
             GlobalStreamThreadStates oldState = this.CurrentState;
 
-            lock (stateLock)
+            lock (this.stateLock)
             {
                 if (this.CurrentState == GlobalStreamThreadStates.PENDING_SHUTDOWN
                     && newState == GlobalStreamThreadStates.PENDING_SHUTDOWN)
@@ -64,21 +64,21 @@ namespace Kafka.Streams.Threads.GlobalStream
                 }
                 else if (this.CurrentState == GlobalStreamThreadStates.DEAD)
                 {
-                    // when the state is already in NOT_RUNNING, all its transitions
+                    // when the state is already in NOT_RUNNING, All its transitions
                     // will be refused but we do not throw exception here
                     return false;
                 }
                 else if (!this.IsValidTransition(newState))
                 {
                     this.logger.LogError("Unexpected state transition from {} to {}", oldState, newState);
-                    throw new StreamsException(logPrefix + "Unexpected state transition from " + oldState + " to " + newState);
+                    throw new StreamsException(this.logPrefix + "Unexpected state transition from " + oldState + " to " + newState);
                 }
                 else
                 {
                     this.logger.LogInformation("State transition from {} to {}", oldState, newState);
                 }
 
-                CurrentState = newState;
+                this.CurrentState = newState;
             }
 
             if (this.StateListener != null)

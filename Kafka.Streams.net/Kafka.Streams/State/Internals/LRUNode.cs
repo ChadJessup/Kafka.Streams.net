@@ -18,11 +18,11 @@
 
         public long Size()
         {
-            return key.Get().Length +
+            return this.key.Get().Length +
                 8 + // entry
                 8 + // previous
                 8 + // next
-                entry.Size();
+                this.entry.Size();
         }
 
         public void Update(LRUCacheEntry entry)

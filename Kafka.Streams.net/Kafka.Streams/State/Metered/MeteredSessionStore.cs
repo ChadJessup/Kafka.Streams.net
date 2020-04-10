@@ -39,20 +39,20 @@ namespace Kafka.Streams.State.Metered
         {
             //noinspection unchecked
             this.serdes = new StateSerdes<K, V>(
-                ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, Name),
-                keySerde ?? (ISerde<K>)context.KeySerde,
-                valueSerde ?? (ISerde<V>)context.ValueSerde);
+                ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, this.Name),
+                this.keySerde ?? (ISerde<K>)context.KeySerde,
+                this.valueSerde ?? (ISerde<V>)context.ValueSerde);
 
-            taskName = context.TaskId.ToString();
+            this.taskName = context.TaskId.ToString();
             //string metricsGroup = "stream-" + metricScope + "-metrics";
-            //Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
-            //Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name);
+            //Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "All");
+            //Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", Name);
 
-            //putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //fetchTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "fetch", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //removeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Remove", metrics, metricsGroup, taskName, name, taskTags, storeTags);
-            //Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            //putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Put", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //fetchTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Fetch", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Flush", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //removeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Remove", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
+            //Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, Name, taskTags, storeTags);
 
             // register and possibly restore the state from the logs
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
@@ -65,7 +65,7 @@ namespace Kafka.Streams.State.Metered
                 //metrics.recordLatency(
                 //    restoreTime,
                 //    startNs,
-                //    time.nanoseconds()
+                //    this.Context.Clock.NowAsEpochNanoseconds;
                 //);
             }
         }
@@ -80,13 +80,13 @@ namespace Kafka.Streams.State.Metered
                 return ((ICachedStateStore<byte[], byte[]>)wrapped)
                    .SetFlushListener((key, newValue, oldValue, timestamp) =>
                    {
-                       var nv = serdes.ValueFrom(newValue);
-                       var ov = serdes.ValueFrom(oldValue);
+                       var nv = this.serdes.ValueFrom(newValue);
+                       var ov = this.serdes.ValueFrom(oldValue);
 
                        var windowed = SessionKeySchema.From(
                            key,
-                           serdes.KeyDeserializer(),
-                           serdes.Topic);
+                           this.serdes.KeyDeserializer(),
+                           this.serdes.Topic);
 
                        listener?.Invoke(
                            default, //windowed,
@@ -100,14 +100,14 @@ namespace Kafka.Streams.State.Metered
             return false;
         }
 
-        public void Put(Windowed<K> sessionKey, V aggregate)
+        public void Put(IWindowed<K> sessionKey, V aggregate)
         {
             sessionKey = sessionKey ?? throw new ArgumentNullException(nameof(sessionKey));
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
             try
             {
-                Bytes key = KeyBytes(sessionKey.Key);
-                Wrapped.Put(new Windowed<Bytes>(key, sessionKey.window), serdes.RawValue(aggregate));
+                Bytes key = this.KeyBytes(sessionKey.Key);
+                this.Wrapped.Put(new Windowed2<Bytes>(key, sessionKey.window), this.serdes.RawValue(aggregate));
             }
             catch (ProcessorStateException e)
             {
@@ -116,18 +116,18 @@ namespace Kafka.Streams.State.Metered
             }
             finally
             {
-                //metrics.recordLatency(putTime, startNs, time.nanoseconds());
+                //metrics.recordLatency(putTime, startNs, this.Context.Clock.NowAsEpochNanoseconds;);
             }
         }
 
-        public void Remove(Windowed<K> sessionKey)
+        public void Remove(IWindowed<K> sessionKey)
         {
             sessionKey = sessionKey ?? throw new ArgumentNullException(nameof(sessionKey));
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
             try
             {
-                Bytes key = KeyBytes(sessionKey.Key);
-                Wrapped.Remove(new Windowed<Bytes>(key, sessionKey.window));
+                Bytes key = this.KeyBytes(sessionKey.Key);
+                this.Wrapped.Remove(new Windowed2<Bytes>(key, sessionKey.window));
             }
             catch (ProcessorStateException e)
             {
@@ -136,67 +136,67 @@ namespace Kafka.Streams.State.Metered
             }
             finally
             {
-                //metrics.recordLatency(removeTime, startNs, time.nanoseconds());
+                //metrics.recordLatency(removeTime, startNs, this.Context.Clock.NowAsEpochNanoseconds;);
             }
         }
 
         public V FetchSession(K key, long startTime, long endTime)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
-            Bytes bytesKey = KeyBytes(key);
+            Bytes bytesKey = this.KeyBytes(key);
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
             try
             {
-                byte[] result = Wrapped.FetchSession(bytesKey, startTime, endTime);
+                byte[] result = this.Wrapped.FetchSession(bytesKey, startTime, endTime);
                 if (result == null)
                 {
                     return default;
                 }
-                return serdes.ValueFrom(result);
+                return this.serdes.ValueFrom(result);
             }
             finally
             {
-                //metrics.recordLatency(flushTime, startNs, time.nanoseconds());
+                //metrics.recordLatency(flushTime, startNs, this.Context.Clock.NowAsEpochNanoseconds;);
             }
         }
 
-        public IKeyValueIterator<Windowed<K>, V> Fetch(K key)
+        public IKeyValueIterator<IWindowed<K>, V> Fetch(K key)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
-                Wrapped.Fetch(KeyBytes(key)),
-                serdes);
+                this.Wrapped.Fetch(this.KeyBytes(key)),
+                this.serdes);
         }
 
-        public IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to)
+        public IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to)
         {
             from = from ?? throw new ArgumentNullException(nameof(from));
             to = to ?? throw new ArgumentNullException(nameof(to));
 
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
-                Wrapped.Fetch(KeyBytes(from), KeyBytes(to)),
-                serdes);
+                this.Wrapped.Fetch(this.KeyBytes(from), this.KeyBytes(to)),
+                this.serdes);
         }
 
-        public IKeyValueIterator<Windowed<K>, V> FindSessions(
+        public IKeyValueIterator<IWindowed<K>, V> FindSessions(
             K key,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
-            Bytes bytesKey = KeyBytes(key);
+            Bytes bytesKey = this.KeyBytes(key);
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
-                Wrapped.FindSessions(
+                this.Wrapped.FindSessions(
                     bytesKey,
                     earliestSessionEndTime,
                     latestSessionStartTime),
-                serdes);
+                this.serdes);
         }
 
-        public IKeyValueIterator<Windowed<K>, V> FindSessions(
+        public IKeyValueIterator<IWindowed<K>, V> FindSessions(
             K keyFrom,
             K keyTo,
             long earliestSessionEndTime,
@@ -204,16 +204,16 @@ namespace Kafka.Streams.State.Metered
         {
             keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
             keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
-            Bytes bytesKeyFrom = KeyBytes(keyFrom);
-            Bytes bytesKeyTo = KeyBytes(keyTo);
+            Bytes bytesKeyFrom = this.KeyBytes(keyFrom);
+            Bytes bytesKeyTo = this.KeyBytes(keyTo);
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
-                Wrapped.FindSessions(
+                this.Wrapped.FindSessions(
                     bytesKeyFrom,
                     bytesKeyTo,
                     earliestSessionEndTime,
                     latestSessionStartTime),
-                serdes);
+                this.serdes);
         }
 
         public override void Flush()
@@ -225,19 +225,19 @@ namespace Kafka.Streams.State.Metered
             }
             finally
             {
-                // metrics.recordLatency(flushTime, startNs, time.nanoseconds());
+                // metrics.recordLatency(flushTime, startNs, this.Context.Clock.NowAsEpochNanoseconds;);
             }
         }
 
         public override void Close()
         {
             base.Close();
-            //metrics.removeAllStoreLevelSensors(taskName, name);
+            //metrics.removeAllStoreLevelSensors(taskName, Name);
         }
 
         private Bytes KeyBytes(K key)
         {
-            return Bytes.Wrap(serdes.RawKey(key));
+            return Bytes.Wrap(this.serdes.RawKey(key));
         }
     }
 }

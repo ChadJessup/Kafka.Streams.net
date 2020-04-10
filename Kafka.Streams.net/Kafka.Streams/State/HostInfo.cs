@@ -34,27 +34,27 @@ namespace Kafka.Streams.State
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var hostInfo = (HostInfo)o;
-            return port == hostInfo.port && host.Equals(hostInfo.host);
+            return this.port == hostInfo.port && this.host.Equals(hostInfo.host);
         }
 
         public override int GetHashCode()
         {
-            var result = host.GetHashCode();
-            result = 31 * result + port;
+            var result = this.host.GetHashCode();
+            result = 31 * result + this.port;
             return result;
         }
 
         public override string ToString()
         {
             return "HostInfo{" +
-                    "host=\'" + host + '\'' +
-                    ", port=" + port +
+                    "host=\'" + this.host + '\'' +
+                    ", port=" + this.port +
                     '}';
         }
     }

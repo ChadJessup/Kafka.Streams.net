@@ -1,4 +1,3 @@
-
 using System;
 
 namespace Kafka.Streams.KStream.Internals
@@ -6,7 +5,7 @@ namespace Kafka.Streams.KStream.Internals
     /**
      * A {@link TimeWindow} covers a half-open time interval with its start timestamp as an inclusive boundary and its end
      * timestamp as exclusive boundary.
-     * It is a fixed size window, i.e., all instances (of a single {@link org.apache.kafka.streams.kstream.TimeWindows
+     * It is a fixed size window, i.e., All instances (of a single {@link org.apache.kafka.streams.kstream.TimeWindows
      * window specification}) will have the same size.
      * <p>
      * For time semantics, see {@link org.apache.kafka.streams.processor.ITimestampExtractor ITimestampExtractor}.
@@ -26,8 +25,8 @@ namespace Kafka.Streams.KStream.Internals
          * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than or equal to
          * {@code startMs}
          */
-        public TimeWindow(long startMs, long endMs)
-           : base(startMs, endMs)
+        public TimeWindow(DateTime start, DateTime end)
+           : base(start, end)
         {
         }
 
@@ -46,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public override bool Overlap(Window other)
         {
-            if (GetType() != other.GetType())
+            if (this.GetType() != other.GetType())
             {
                 throw new ArgumentException("Cannot compare windows of different type. Other window has type "
                     + other.GetType() + ".");

@@ -21,7 +21,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public override string ToString()
         {
-            return value.ToString() + ", timestamp = " + timestamp;
+            return this.value.ToString() + ", timestamp = " + this.timestamp;
         }
     }
 }

@@ -42,18 +42,18 @@ namespace Kafka.Streams.KStream.Internals
             => this.Get();
 
         // when source ktable requires sending old values, we just
-        // need to set the queryable name as the store name to enforce materialization
+        // need to set the queryable Name as the store Name to enforce materialization
         public void EnableSendingOldValues()
         {
             this.sendOldValues = true;
-            this.queryableName = storeName;
+            this.queryableName = this.storeName;
         }
 
         // when the source ktable requires materialization from downstream, we just
-        // need to set the queryable name as the store name to enforce materialization
+        // need to set the queryable Name as the store Name to enforce materialization
         public void Materialize()
         {
-            this.queryableName = storeName;
+            this.queryableName = this.storeName;
         }
     }
 }

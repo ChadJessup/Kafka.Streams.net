@@ -48,27 +48,27 @@ namespace Kafka.Streams.State.Internals
 
             // this.currentSegmentId = cacheFunction.segmentId(earliestSessionEndTime);
 
-            SetCacheKeyRange(earliestSessionEndTime, CurrentSegmentLastTime());
+            this.SetCacheKeyRange(earliestSessionEndTime, this.CurrentSegmentLastTime());
 
             // this.current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
         }
 
         public bool HasNext()
         {
-            if (current == null)
+            if (this.current == null)
             {
                 return false;
             }
 
-            if (current.HasNext())
+            if (this.current.HasNext())
             {
                 return true;
             }
 
-            while (!current.HasNext())
+            while (!this.current.HasNext())
             {
-                GetNextSegmentIterator();
-                if (current == null)
+                this.GetNextSegmentIterator();
+                if (this.current == null)
                 {
                     return false;
                 }
@@ -78,66 +78,66 @@ namespace Kafka.Streams.State.Internals
 
         public Bytes PeekNextKey()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new KeyNotFoundException();
             }
 
-            return current.PeekNextKey();
+            return this.current.PeekNextKey();
         }
 
 
         public KeyValuePair<Bytes, LRUCacheEntry> PeekNext()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new KeyNotFoundException();
             }
 
-            return current.Current;
+            return this.current.Current;
         }
 
 
         public KeyValuePair<Bytes, LRUCacheEntry> Next()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new KeyNotFoundException();
             }
 
-            return current.Current;
+            return this.current.Current;
         }
 
 
         public void Close()
         {
-            current.Close();
+            this.current.Close();
         }
 
         private long CurrentSegmentBeginTime()
         {
-            return currentSegmentId * segmentInterval;
+            return this.currentSegmentId * this.segmentInterval;
         }
 
         private long CurrentSegmentLastTime()
         {
-            return CurrentSegmentBeginTime() + segmentInterval - 1;
+            return this.CurrentSegmentBeginTime() + this.segmentInterval - 1;
         }
 
         private void GetNextSegmentIterator()
         {
-            ++currentSegmentId;
+            ++this.currentSegmentId;
             //lastSegmentId = cacheFunction.segmentId(maxObservedTimestamp);
 
-            if (currentSegmentId > lastSegmentId)
+            if (this.currentSegmentId > this.lastSegmentId)
             {
-                current = null;
+                this.current = null;
                 return;
             }
 
-            SetCacheKeyRange(CurrentSegmentBeginTime(), CurrentSegmentLastTime());
+            this.SetCacheKeyRange(this.CurrentSegmentBeginTime(), this.CurrentSegmentLastTime());
 
-            current.Close();
+            this.current.Close();
             // current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
         }
 
@@ -148,7 +148,7 @@ namespace Kafka.Streams.State.Internals
             //     throw new InvalidOperationException("Error iterating over segments: segment interval has changed");
             // }
 
-            if (keyFrom == keyTo)
+            if (this.keyFrom == this.keyTo)
             {
                 // cacheKeyFrom = cacheFunction.cacheKey(SegmentLowerRangeFixedSize(keyFrom, lowerRangeEndTime));
                 // cacheKeyTo = cacheFunction.cacheKey(SegmentUpperRangeFixedSize(keyTo, upperRangeEndTime));
@@ -162,7 +162,7 @@ namespace Kafka.Streams.State.Internals
 
         private Bytes SegmentLowerRangeFixedSize(Bytes key, long segmentBeginTime)
         {
-            Windowed<Bytes> sessionKey = new Windowed<Bytes>(
+            IWindowed<Bytes> sessionKey = new IWindowed<Bytes>(
                 key,
                 new SessionWindow(0, Math.Max(0, segmentBeginTime)));
 
@@ -171,7 +171,7 @@ namespace Kafka.Streams.State.Internals
 
         private Bytes SegmentUpperRangeFixedSize(Bytes key, long segmentEndTime)
         {
-            Windowed<Bytes> sessionKey = new Windowed<Bytes>(key, new SessionWindow(Math.Min(latestSessionStartTime, segmentEndTime), segmentEndTime));
+            IWindowed<Bytes> sessionKey = new IWindowed<Bytes>(key, new SessionWindow(Math.Min(this.latestSessionStartTime, segmentEndTime), segmentEndTime));
             return SessionKeySchema.ToBinary(sessionKey);
         }
 

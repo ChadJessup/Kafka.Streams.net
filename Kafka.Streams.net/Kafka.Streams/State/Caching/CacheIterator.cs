@@ -36,7 +36,7 @@
 //        }
 
 
-//        public void close()
+//        public void Close()
 //        {
 //            // do nothing
 //        }

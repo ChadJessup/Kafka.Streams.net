@@ -26,13 +26,13 @@ namespace Kafka.Streams.State.Internals
             : base(context, bytesStore)
         {
             this.keySchema = new SessionKeySchema();
-            this.cacheFunction = new SegmentedCacheFunction(keySchema, segmentInterval);
+            this.cacheFunction = new SegmentedCacheFunction(this.keySchema, segmentInterval);
             this.maxObservedTimestamp = RecordQueue.UNKNOWN;
         }
 
         public override void Init(IProcessorContext context, IStateStore root)
         {
-            InitInternal((IInternalProcessorContext)context);
+            this.InitInternal((IInternalProcessorContext)context);
             base.Init(context, root);
         }
 
@@ -41,8 +41,8 @@ namespace Kafka.Streams.State.Internals
         {
             this.context = context;
 
-            cacheName = context.TaskId + "-" + Name;
-            cache = context.GetCache();
+            this.cacheName = context.TaskId + "-" + this.Name;
+            this.cache = context.GetCache();
 
             //cache.AddDirtyEntryFlushListener(cacheName, Entries);
             //=>
@@ -56,29 +56,29 @@ namespace Kafka.Streams.State.Internals
 
         private void PutAndMaybeForward(DirtyEntry entry, IInternalProcessorContext context)
         {
-            Bytes binaryKey = cacheFunction.Key(entry.Key);
-            Windowed<Bytes> bytesKey = SessionKeySchema.From(binaryKey);
-            if (flushListener != null)
+            Bytes binaryKey = this.cacheFunction.Key(entry.Key);
+            IWindowed<Bytes> bytesKey = SessionKeySchema.From(binaryKey);
+            if (this.flushListener != null)
             {
                 byte[] newValueBytes = entry.NewValue;
-                byte[] oldValueBytes = newValueBytes == null || sendOldValues ?
-                    Wrapped.FetchSession(bytesKey.Key, bytesKey.window.Start(), bytesKey.window.End()) : null;
+                byte[] oldValueBytes = newValueBytes == null || this.sendOldValues ?
+                    this.Wrapped.FetchSession(bytesKey.Key, bytesKey.window.Start(), bytesKey.window.End()) : null;
 
                 // this is an optimization: if this key did not exist in underlying store and also not in the cache,
                 // we can skip flushing to downstream as well as writing to underlying store
                 if (newValueBytes != null || oldValueBytes != null)
                 {
-                    // we need to get the old values if needed, and then put to store, and then flush
-                    Wrapped.Put(bytesKey, entry.NewValue);
+                    // we need to get the old values if needed, and then Put to store, and then Flush
+                    this.Wrapped.Put(bytesKey, entry.NewValue);
 
                     ProcessorRecordContext current = context.RecordContext;
                     context.SetRecordContext(entry.Entry().context);
                     try
                     {
-                        flushListener?.Invoke(
+                        this.flushListener?.Invoke(
                             binaryKey.Get(),
                             newValueBytes,
-                            sendOldValues ? oldValueBytes : null,
+                            this.sendOldValues ? oldValueBytes : null,
                             entry.Entry().context.timestamp);
                     }
                     finally
@@ -89,7 +89,7 @@ namespace Kafka.Streams.State.Internals
             }
             else
             {
-                Wrapped.Put(bytesKey, entry.NewValue);
+                this.Wrapped.Put(bytesKey, entry.NewValue);
             }
         }
 
@@ -101,67 +101,67 @@ namespace Kafka.Streams.State.Internals
             return true;
         }
 
-        public void Put(Windowed<Bytes> key, byte[] value)
+        public void Put(IWindowed<Bytes> key, byte[] value)
         {
-            ValidateStoreOpen();
+            this.ValidateStoreOpen();
             Bytes binaryKey = SessionKeySchema.ToBinary(key);
             LRUCacheEntry entry =
                 new LRUCacheEntry(
                     value,
-                    context.Headers,
+                    this.context.Headers,
                     true,
-                    context.Offset,
-                    context.Timestamp,
-                    context.Partition,
-                    context.Topic);
+                    this.context.Offset,
+                    this.context.Timestamp,
+                    this.context.Partition,
+                    this.context.Topic);
 
-            cache.Put(cacheName, cacheFunction.CacheKey(binaryKey), entry);
+            this.cache.Put(this.cacheName, this.cacheFunction.CacheKey(binaryKey), entry);
 
-            maxObservedTimestamp = Math.Max(keySchema.SegmentTimestamp(binaryKey), maxObservedTimestamp);
+            this.maxObservedTimestamp = Math.Max(this.keySchema.SegmentTimestamp(binaryKey), this.maxObservedTimestamp);
         }
 
-        public void Remove(Windowed<Bytes> sessionKey)
+        public void Remove(IWindowed<Bytes> sessionKey)
         {
-            ValidateStoreOpen();
-            Put(sessionKey, null);
+            this.ValidateStoreOpen();
+            this.Put(sessionKey, null);
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes key,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            ValidateStoreOpen();
+            this.ValidateStoreOpen();
 
-            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = Wrapped.Persistent()
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = this.Wrapped.Persistent()
                 ? (IPeekingKeyValueIterator<Bytes, LRUCacheEntry>)new CacheIteratorWrapper(key, earliestSessionEndTime, latestSessionStartTime)
-                : cache.Range(
-                    cacheName,
-                    cacheFunction.CacheKey(keySchema.LowerRangeFixedSize(key, earliestSessionEndTime)),
-                    cacheFunction.CacheKey(keySchema.UpperRangeFixedSize(key, latestSessionStartTime)));
+                : this.cache.Range(
+                    this.cacheName,
+                    this.cacheFunction.CacheKey(this.keySchema.LowerRangeFixedSize(key, earliestSessionEndTime)),
+                    this.cacheFunction.CacheKey(this.keySchema.UpperRangeFixedSize(key, latestSessionStartTime)));
 
-            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = Wrapped.FindSessions(
+            IKeyValueIterator<IWindowed<Bytes>, byte[]> storeIterator = this.Wrapped.FindSessions(
                 key,
                 earliestSessionEndTime,
                 latestSessionStartTime);
 
-            var hasNextCondition = keySchema.HasNextCondition(
+            var hasNextCondition = this.keySchema.HasNextCondition(
                 key,
                 key,
                 earliestSessionEndTime,
                 latestSessionStartTime);
 
             IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
-                new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
+                new FilteredCacheIterator(cacheIterator, hasNextCondition, this.cacheFunction);
 
             return new MergedSortedCacheSessionStoreIterator(
                 this.Context,
                 filteredCacheIterator,
                 storeIterator,
-                cacheFunction);
+                this.cacheFunction);
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes keyFrom,
             Bytes keyTo,
             long earliestSessionEndTime,
@@ -169,54 +169,54 @@ namespace Kafka.Streams.State.Internals
         {
             if (keyFrom.CompareTo(keyTo) > 0)
             {
-                //LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+                //LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
                 //    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
                 //    "Note that the built-in numerical serdes do not follow this for negative numbers");
 
                 return null;// KeyValueIterators.EMPTY_ITERATOR;
             }
 
-            ValidateStoreOpen();
+            this.ValidateStoreOpen();
 
-            Bytes cacheKeyFrom = cacheFunction.CacheKey(keySchema.LowerRange(keyFrom, earliestSessionEndTime));
-            Bytes cacheKeyTo = cacheFunction.CacheKey(keySchema.UpperRange(keyTo, latestSessionStartTime));
-            MemoryLRUCacheBytesIterator cacheIterator = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
+            Bytes cacheKeyFrom = this.cacheFunction.CacheKey(this.keySchema.LowerRange(keyFrom, earliestSessionEndTime));
+            Bytes cacheKeyTo = this.cacheFunction.CacheKey(this.keySchema.UpperRange(keyTo, latestSessionStartTime));
+            MemoryLRUCacheBytesIterator cacheIterator = this.cache.Range(this.cacheName, cacheKeyFrom, cacheKeyTo);
 
-            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = Wrapped.FindSessions(
+            IKeyValueIterator<IWindowed<Bytes>, byte[]> storeIterator = this.Wrapped.FindSessions(
                 keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
 
-            var hasNextCondition = keySchema.HasNextCondition(
+            var hasNextCondition = this.keySchema.HasNextCondition(
                 keyFrom,
                 keyTo,
                 earliestSessionEndTime,
                 latestSessionStartTime);
 
             IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
-                new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
+                new FilteredCacheIterator(cacheIterator, hasNextCondition, this.cacheFunction);
             return new MergedSortedCacheSessionStoreIterator(
                 this.Context,
                 filteredCacheIterator,
                 storeIterator,
-                cacheFunction);
+                this.cacheFunction);
         }
 
         public byte[] FetchSession(Bytes key, long startTime, long endTime)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
-            ValidateStoreOpen();
-            if (cache == null)
+            this.ValidateStoreOpen();
+            if (this.cache == null)
             {
-                return Wrapped.FetchSession(key, startTime, endTime);
+                return this.Wrapped.FetchSession(key, startTime, endTime);
             }
             else
             {
                 Bytes bytesKey = SessionKeySchema.ToBinary(key, startTime, endTime);
-                Bytes cacheKey = cacheFunction.CacheKey(bytesKey);
-                LRUCacheEntry entry = cache.Get(cacheName, cacheKey);
+                Bytes cacheKey = this.cacheFunction.CacheKey(bytesKey);
+                LRUCacheEntry entry = this.cache.Get(this.cacheName, cacheKey);
 
                 if (entry == null)
                 {
-                    return Wrapped.FetchSession(key, startTime, endTime);
+                    return this.Wrapped.FetchSession(key, startTime, endTime);
                 }
                 else
                 {
@@ -225,30 +225,30 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes key)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes key)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
-            return FindSessions(key, 0, long.MaxValue);
+            return this.FindSessions(key, 0, long.MaxValue);
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
         {
             from = from ?? throw new ArgumentNullException(nameof(from));
             to = to ?? throw new ArgumentNullException(nameof(to));
 
-            return FindSessions(from, to, 0, long.MaxValue);
+            return this.FindSessions(from, to, 0, long.MaxValue);
         }
 
         public override void Flush()
         {
-            cache.Flush(cacheName);
+            this.cache.Flush(this.cacheName);
             base.Flush();
         }
 
         public override void Close()
         {
-            Flush();
-            cache.Close(cacheName);
+            this.Flush();
+            this.cache.Close(this.cacheName);
             base.Close();
         }
 

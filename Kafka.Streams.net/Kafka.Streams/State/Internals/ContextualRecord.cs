@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals
 
         public long ResidentMemorySizeEstimate()
         {
-            return (value == null ? 0 : value.Length) + recordContext.ResidentMemorySizeEstimate();
+            return (this.value == null ? 0 : this.value.Length) + this.recordContext.ResidentMemorySizeEstimate();
         }
 
         public override bool Equals(object o)
@@ -28,27 +28,27 @@ namespace Kafka.Streams.State.Internals
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (ContextualRecord)o;
 
-            return value.Equals(that.value)
-                && recordContext.Equals(that.recordContext);
+            return this.value.Equals(that.value)
+                && this.recordContext.Equals(that.recordContext);
         }
 
         public override int GetHashCode()
         {
-            return (value, recordContext).GetHashCode();
+            return (this.value, this.recordContext).GetHashCode();
         }
 
         public override string ToString()
         {
             return "ContextualRecord{" +
-                "recordContext=" + recordContext +
-                ", value=" + value +
+                "recordContext=" + this.recordContext +
+                ", value=" + this.value +
                 '}';
         }
     }

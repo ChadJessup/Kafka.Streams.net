@@ -27,26 +27,26 @@ namespace Kafka.Common.Utils
 
         public virtual bool HasNext()
         {
-            return state switch
+            return this.state switch
             {
                 State.FAILED => throw new InvalidOperationException("Iterator is in failed state"),
                 State.DONE => false,
                 State.READY => true,
-                _ => maybeComputeNext(),
+                _ => this.maybeComputeNext(),
             };
         }
 
         public virtual T next()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            state = State.NOT_READY;
-            if (_next == null)
+            this.state = State.NOT_READY;
+            if (this._next == null)
                 throw new InvalidOperationException("Expected item but none found.");
-            return _next;
+            return this._next;
         }
 
         public virtual void remove()
@@ -56,17 +56,17 @@ namespace Kafka.Common.Utils
 
         public virtual T Peek()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return _next;
+            return this._next;
         }
 
         protected virtual T allDone()
         {
-            state = State.DONE;
+            this.state = State.DONE;
             return default;
         }
 
@@ -74,15 +74,15 @@ namespace Kafka.Common.Utils
 
         private bool maybeComputeNext()
         {
-            state = State.FAILED;
-            _next = MakeNext();
-            if (state == State.DONE)
+            this.state = State.FAILED;
+            this._next = this.MakeNext();
+            if (this.state == State.DONE)
             {
                 return false;
             }
             else
             {
-                state = State.READY;
+                this.state = State.READY;
                 return true;
             }
         }
@@ -101,7 +101,7 @@ namespace Kafka.Common.Utils
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!this.disposedValue)
             {
                 if (disposing)
                 {
@@ -111,7 +111,7 @@ namespace Kafka.Common.Utils
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                this.disposedValue = true;
             }
         }
 
@@ -126,7 +126,7 @@ namespace Kafka.Common.Utils
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
+            this.Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }

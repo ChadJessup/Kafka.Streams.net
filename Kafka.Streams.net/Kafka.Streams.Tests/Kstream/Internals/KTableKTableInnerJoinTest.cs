@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table1 = builder.Table(topic1, consumed);
 //            table2 = builder.Table(topic2, consumed);
 //            joined = table1.join(table2, MockValueJoiner.TOSTRING_JOINER, materialized);
-//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object, object>)joined).name);
+//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object, object>)joined).Name);
 
 //            doTestNotSendingOldValues(builder, expectedKeys, table1, table2, supplier, joined);
 //        }
@@ -95,7 +95,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            table1 = builder.Table(topic1, consumed);
 //            table2 = builder.Table(topic2, consumed);
 //            joined = table1.join(table2, MockValueJoiner.TOSTRING_JOINER);
-//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object, object>)joined).name);
+//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object, object>)joined).Name);
 
 //            doTestNotSendingOldValues(builder, expectedKeys, table1, table2, supplier, joined);
 //        }
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            ((IKTable<object, object>)joined).enableSendingOldValues();
 
-//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object>)joined).name);
+//            builder.Build().AddProcessor("proc", supplier, ((IKTable<object, object>)joined).Name);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            MockProcessor<int, string> proc = supplier.theCapturedProcessor();
@@ -149,7 +149,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
 //            proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("X0+Y0", null), 5),
 //                new KeyValueTimestamp<>(1, new Change<>("X1+Y1", null), 10));
-//            // push all four items to the primary stream. this should produce two items.
+//            // push All four items to the primary stream. this should produce two items.
 //            foreach (var expectedKey in expectedKeys)
 //            {
 //                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XX" + expectedKey, 7L));
@@ -158,7 +158,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
 //            proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("XX0+Y0", "X0+Y0"), 7),
 //                new KeyValueTimestamp<>(1, new Change<>("XX1+Y1", "X1+Y1"), 10));
-//            // push all items to the other stream. this should produce four items.
+//            // push All items to the other stream. this should produce four items.
 //            foreach (var expectedKey in expectedKeys)
 //            {
 //                driver.PipeInput(recordFactory.Create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                new KeyValueTimestamp<>(2, new Change<>("XX2+YY2", null), 10),
 //                new KeyValueTimestamp<>(3, new Change<>("XX3+YY3", null), 15));
 
-//            // push all four items to the primary stream. this should produce four items.
+//            // push All four items to the primary stream. this should produce four items.
 //            foreach (var expectedKey in expectedKeys)
 //            {
 //                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXX" + expectedKey, 6L));
@@ -191,7 +191,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //            proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>(null, "XXX0+YY0"), 6),
 //                new KeyValueTimestamp<>(1, new Change<>(null, "XXX1+YY1"), 7));
-//            // push all four items to the primary stream. this should produce two items.
+//            // push All four items to the primary stream. this should produce two items.
 //            foreach (var expectedKey in expectedKeys)
 //            {
 //                driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXXX" + expectedKey, 13L));
@@ -273,7 +273,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
 //                proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("X0+Y0", null), 5),
 //                    new KeyValueTimestamp<>(1, new Change<>("X1+Y1", null), 10));
-//                // push all four items to the primary stream. this should produce two items.
+//                // push All four items to the primary stream. this should produce two items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
 //                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XX" + expectedKey, 7L));
@@ -282,7 +282,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
 //                proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("XX0+Y0", null), 7),
 //                    new KeyValueTimestamp<>(1, new Change<>("XX1+Y1", null), 10));
-//                // push all items to the other stream. this should produce four items.
+//                // push All items to the other stream. this should produce four items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
 //                    driver.PipeInput(recordFactory.Create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
@@ -295,7 +295,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    new KeyValueTimestamp<>(2, new Change<>("XX2+YY2", null), 10),
 //                    new KeyValueTimestamp<>(3, new Change<>("XX3+YY3", null), 15));
 
-//                // push all four items to the primary stream. this should produce four items.
+//                // push All four items to the primary stream. this should produce four items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
 //                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXX" + expectedKey, 6L));
@@ -315,7 +315,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
 //                proc.checkAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>(null, null), 6),
 //                    new KeyValueTimestamp<>(1, new Change<>(null, null), 7));
-//                // push all four items to the primary stream. this should produce two items.
+//                // push All four items to the primary stream. this should produce two items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
 //                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXXX" + expectedKey, 13L));
@@ -371,7 +371,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                assertOutputKeyValueTimestamp(driver, 1, "X1+Y1", 10L);
 //                Assert.Null(driver.readOutput(output));
 
-//                // push all four items to the primary stream. this should produce two items.
+//                // push All four items to the primary stream. this should produce two items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
 //                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XX" + expectedKey, 7L));
@@ -382,7 +382,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                assertOutputKeyValueTimestamp(driver, 1, "XX1+Y1", 10L);
 //                Assert.Null(driver.readOutput(output));
 
-//                // push all items to the other stream. this should produce four items.
+//                // push All items to the other stream. this should produce four items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
 //                    driver.PipeInput(recordFactory.Create(topic2, expectedKey, "YY" + expectedKey, expectedKey * 5L));
@@ -395,7 +395,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                assertOutputKeyValueTimestamp(driver, 3, "XX3+YY3", 15L);
 //                Assert.Null(driver.readOutput(output));
 
-//                // push all four items to the primary stream. this should produce four items.
+//                // push All four items to the primary stream. this should produce four items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
 //                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXX" + expectedKey, 6L));
@@ -417,7 +417,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                assertOutputKeyValueTimestamp(driver, 1, null, 7L);
 //                Assert.Null(driver.readOutput(output));
 
-//                // push all four items to the primary stream. this should produce two items.
+//                // push All four items to the primary stream. this should produce two items.
 //                foreach (var expectedKey in expectedKeys)
 //                {
 //                    driver.PipeInput(recordFactory.Create(topic1, expectedKey, "XXXX" + expectedKey, 13L));

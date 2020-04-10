@@ -26,13 +26,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         }
 
-        public IStateStore GetGlobalStore(string name)
+        public IStateStore GetGlobalStore(string Name)
         {
             return null;
         }
 
 
-        public IStateStore GetStore(string name)
+        public IStateStore GetStore(string Name)
         {
             return null;
         }

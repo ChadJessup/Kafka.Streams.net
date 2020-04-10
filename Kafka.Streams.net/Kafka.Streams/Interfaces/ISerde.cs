@@ -15,7 +15,7 @@ namespace Kafka.Streams.Interfaces
         void Configure(IDictionary<string, string?> configs, bool isKey);
 
         /**
-         * Close this serde, which will close the underlying serializer and deserializer.
+         * Close this serde, which will Close the underlying serializer and deserializer.
          * <p>
          * This method has to be idempotent because it might be called multiple times.
          */

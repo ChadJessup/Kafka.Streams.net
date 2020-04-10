@@ -16,24 +16,24 @@ namespace Kafka.Streams.State.KeyValues
 
         public void Close()
         {
-            innerIterator.Close();
+            this.innerIterator.Close();
         }
 
         public K PeekNextKey()
         {
-            return innerIterator.PeekNextKey();
+            return this.innerIterator.PeekNextKey();
         }
 
         public bool MoveNext()
         {
-            return innerIterator.MoveNext();
+            return this.innerIterator.MoveNext();
         }
 
         public KeyValuePair<K, byte[]> Current
         {
             get
             {
-                KeyValuePair<K, byte[]> plainKeyValue = innerIterator.Current;
+                KeyValuePair<K, byte[]> plainKeyValue = this.innerIterator.Current;
                 return KeyValuePair.Create(plainKeyValue.Key, ConvertToTimestampedFormat(plainKeyValue.Value));
             }
         }

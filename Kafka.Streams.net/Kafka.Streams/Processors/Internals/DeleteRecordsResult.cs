@@ -26,15 +26,15 @@ namespace Kafka.Streams.Processors.Internals
          */
         public Dictionary<TopicPartition, Task<DeletedRecords>> LowWatermarks()
         {
-            return tasks;
+            return this.tasks;
         }
 
         /**
-         * Return a future which succeeds only if all the records deletions succeed.
+         * Return a future which succeeds only if All the records deletions succeed.
          */
         public Task All()
         {
-            return Task.WhenAll(tasks.Values.ToArray());
+            return Task.WhenAll(this.tasks.Values.ToArray());
         }
     }
 }

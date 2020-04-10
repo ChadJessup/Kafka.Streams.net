@@ -43,13 +43,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldCallCloseOfAdapteeTransformer()
 //        {
 //            EasyMock.expect(transformerSupplier.Get()).andReturn(transformer);
-//            transformer.close();
+//            transformer.Close();
 //            replayAll();
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
 //            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.Get();
-//            adaptedTransformer.close();
+//            adaptedTransformer.Close();
 
 //            //verifyAll();
 //        }

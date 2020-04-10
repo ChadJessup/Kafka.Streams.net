@@ -17,11 +17,11 @@ namespace Kafka.Streams.Processors.Internals
         {
             var otherTimestamp = ((Stamped<object>)other).timestamp;
 
-            if (timestamp < otherTimestamp)
+            if (this.timestamp < otherTimestamp)
             {
                 return -1;
             }
-            else if (timestamp > otherTimestamp)
+            else if (this.timestamp > otherTimestamp)
             {
                 return 1;
             }
@@ -38,12 +38,12 @@ namespace Kafka.Streams.Processors.Internals
 
             var otherTimestamp = ((Stamped<object>)other).timestamp;
 
-            return timestamp == otherTimestamp;
+            return this.timestamp == otherTimestamp;
         }
 
         public override int GetHashCode()
         {
-            return (timestamp).GetHashCode();
+            return (this.timestamp).GetHashCode();
         }
     }
 }

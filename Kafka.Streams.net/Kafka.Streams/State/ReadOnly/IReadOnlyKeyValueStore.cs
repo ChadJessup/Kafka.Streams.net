@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.ReadOnly
         /**
          * Get the value corresponding to this key.
          *
-         * @param key The key to fetch
+         * @param key The key to Fetch
          * @return The value or null if no value is found.
          * @throws ArgumentNullException If null is used for key.
          * @throws InvalidStateStoreException if the store is not initialized
@@ -40,10 +40,10 @@ namespace Kafka.Streams.State.ReadOnly
         IKeyValueIterator<K, V> Range(K from, K to);
 
         /**
-         * Return an iterator over all keys in this store. This iterator must be closed after use.
+         * Return an iterator over All keys in this store. This iterator must be closed after use.
          * The returned iterator must be safe from {@link java.util.ConcurrentModificationException}s
          * and must not return null values. No ordering guarantees are provided.
-         * @return An iterator of all key/value pairs in the store.
+         * @return An iterator of All key/value pairs in the store.
          * @throws InvalidStateStoreException if the store is not initialized
          */
         IKeyValueIterator<K, V> All();

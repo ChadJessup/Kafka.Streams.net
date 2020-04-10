@@ -22,8 +22,8 @@
 
 //        public void SetUp()
 //        {
-//            partitionOffsets.put(topicOne, 20L);
-//            partitionOffsets.put(topicTwo, 30L);
+//            partitionOffsets.Put(topicOne, 20L);
+//            partitionOffsets.Put(topicTwo, 30L);
 //            stateMaintainer = new StateMaintainerStub(partitionOffsets);
 //            stateConsumer = new GlobalStreamThread.StateConsumer(logContext, consumer, stateMaintainer, time, TimeSpan.FromMilliseconds(10L), FLUSH_INTERVAL);
 //        }
@@ -89,14 +89,14 @@
 //        [Fact]
 //        public void ShouldCloseConsumer()
 //        { //throws IOException
-//            stateConsumer.close();
+//            stateConsumer.Close();
 //            Assert.True(consumer.closed());
 //        }
 
 //        [Fact]
 //        public void ShouldCloseStateMaintainer()
 //        { //throws IOException
-//            stateConsumer.close();
+//            stateConsumer.Close();
 //            Assert.True(stateMaintainer.closed);
 //        }
 
@@ -136,9 +136,9 @@
 //                TopicPartition tp = new TopicPartition(record.Topic, record.Partition);
 //                if (!updatedPartitions.containsKey(tp))
 //                {
-//                    updatedPartitions.put(tp, 0);
+//                    updatedPartitions.Put(tp, 0);
 //                }
-//                updatedPartitions.put(tp, updatedPartitions.Get(tp) + 1);
+//                updatedPartitions.Put(tp, updatedPartitions.Get(tp) + 1);
 //            }
 
 //        }

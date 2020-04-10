@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Kafka.Streams.State.KeyValues
 {
     /**
-     * A key-value store that supports put/get/delete and range queries.
+     * A key-value store that supports Put/get/delete and range queries.
      *
      * @param The key type
      * @param The value type
@@ -33,9 +33,9 @@ namespace Kafka.Streams.State.KeyValues
         V PutIfAbsent(K key, V value);
 
         /**
-         * Update all the given key/value pairs.
+         * Update All the given key/value pairs.
          *
-         * @param entries A list of entries to put into the store;
+         * @param entries A list of entries to Put into the store;
          *                if the serialized bytes are also {@code null} it is interpreted as deletes
          * @throws ArgumentNullException If {@code null} is used for key.
          */

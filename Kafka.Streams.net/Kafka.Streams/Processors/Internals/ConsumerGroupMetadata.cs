@@ -5,7 +5,7 @@
         private readonly string groupId;
         private readonly int generationId;
         private readonly string memberId;
-        readonly string? groupInstanceId;
+        private readonly string? groupInstanceId;
 
         public ConsumerGroupMetadata(
             string groupId,

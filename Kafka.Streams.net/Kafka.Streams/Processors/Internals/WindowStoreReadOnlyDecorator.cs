@@ -28,7 +28,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public V Fetch(K key, long time)
         {
-            return Wrapped.Fetch(key, time);
+            return this.Wrapped.Fetch(key, time);
         }
 
         [Obsolete]
@@ -37,20 +37,20 @@ namespace Kafka.Streams.Processors.Internals
             long timeFrom,
             long timeTo)
         {
-            return Wrapped.Fetch(key, timeFrom, timeTo);
+            return this.Wrapped.Fetch(key, timeFrom, timeTo);
         }
 
-        public IKeyValueIterator<Windowed<K>, V> All()
+        public IKeyValueIterator<IWindowed<K>, V> All()
         {
-            return Wrapped.All();
+            return this.Wrapped.All();
         }
 
-        public IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo)
+        public IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo)
         {
             throw new NotImplementedException();
         }
 
-        public IKeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo)
+        public IKeyValueIterator<IWindowed<K>, V> FetchAll(long timeFrom, long timeTo)
         {
             throw new NotImplementedException();
         }
@@ -60,12 +60,12 @@ namespace Kafka.Streams.Processors.Internals
             throw new NotImplementedException();
         }
 
-        public IKeyValueIterator<Windowed<K>, V> Fetch(K from, K to, DateTime fromTime, DateTime toTime)
+        public IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, DateTime fromTime, DateTime toTime)
         {
             throw new NotImplementedException();
         }
 
-        public IKeyValueIterator<Windowed<K>, V> FetchAll(DateTime from, DateTime to)
+        public IKeyValueIterator<IWindowed<K>, V> FetchAll(DateTime from, DateTime to)
         {
             throw new NotImplementedException();
         }

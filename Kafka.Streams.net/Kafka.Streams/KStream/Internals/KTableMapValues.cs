@@ -35,11 +35,11 @@ namespace Kafka.Streams.KStream.Internals
         {
             // if the KTable is materialized, use the materialized store to return getter value;
             // otherwise rely on the parent getter and apply map-values on-the-fly
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
                 return new KTableMaterializedValueGetterSupplier<K, V1>(
                     this.context,
-                    queryableName);
+                    this.queryableName);
             }
             else
             {
@@ -64,8 +64,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public void EnableSendingOldValues()
         {
-            parent.EnableSendingOldValues();
-            sendOldValues = true;
+            this.parent.EnableSendingOldValues();
+            this.sendOldValues = true;
         }
     }
 }

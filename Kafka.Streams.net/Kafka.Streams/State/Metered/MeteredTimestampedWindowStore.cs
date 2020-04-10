@@ -1,27 +1,39 @@
+using System;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.TimeStamped;
+using Kafka.Streams.State.Windowed;
 
-//    public class MeteredTimestampedWindowStore<K, V>
-//        : MeteredWindowStore<K, ValueAndTimestamp<V>>
-//    , ITimestampedWindowStore<K, V>
-//    {
+namespace Kafka.Streams.State.Metered
+{
+    public class MeteredTimestampedWindowStore<K, V>
+        : MeteredWindowStore<K, IValueAndTimestamp<V>>,
+        ITimestampedWindowStore<K, V>
+    {
+        public MeteredTimestampedWindowStore(
+            KafkaStreamsContext context,
+            IWindowStore<Bytes, byte[]> inner,
+            TimeSpan windowSize,
+            ISerde<IWindowed<K>> keySerde,
+            ISerde<IValueAndTimestamp<V>> valueSerde)
+            : base(
+                  context,
+                  inner,
+                  windowSize,
+                  keySerde,
+                  valueSerde)
+        {
+        }
 
-//        MeteredTimestampedWindowStore(IWindowStore<Bytes, byte[]> inner,
-//                                      long windowSizeMs,
-//                                      string metricScope,
-//                                      ITime time,
-//                                      ISerde<K> keySerde,
-//                                      ISerde<ValueAndTimestamp<V>> valueSerde)
-//            : base(inner, windowSizeMs, metricScope, time, keySerde, valueSerde)
-//        {
-//        }
-
-
-
-//        void initStoreSerde(IProcessorContext<K, V> context)
-//        {
-//            serdes = new StateSerdes<>(
-//                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name),
-//                keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
-//                valueSerde == null ? new ValueAndTimestampSerde<>((ISerde<V>)context.valueSerde) : valueSerde);
-//        }
-//    }
-//}
+        private void InitStoreSerde(IProcessorContext context)
+        {
+            serdes = new StateSerdes<K, V>(
+                ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, Name),
+                KeySerde ?? (ISerde<IWindowed<K>>)context.KeySerde,
+                ValueSerde ?? new ValueAndTimestampSerde<V>((ISerde<V>)context.ValueSerde));
+        }
+    }
+}

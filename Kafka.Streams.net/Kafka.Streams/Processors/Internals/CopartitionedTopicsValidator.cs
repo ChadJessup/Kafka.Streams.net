@@ -52,7 +52,7 @@
 //                    }
 //                }
 
-//                // if all topics for this co-partition group is repartition topics,
+//                // if All topics for this co-partition group is repartition topics,
 //                // then set the number of partitions to be the maximum of the number of partitions.
 //                if (numPartitions == UNKNOWN)
 //                {

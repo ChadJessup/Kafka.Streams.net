@@ -14,30 +14,30 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         internal readonly bool safeToDropTombstones;
 
         public SuppressedInternal(
-            string name,
+            string Name,
             TimeSpan? suppressionTime,
             IBufferConfig bufferConfig,
             ITimeDefinition<K>? timeDefinition,
             bool safeToDropTombstones)
         {
-            this.Name = name;
+            this.Name = Name;
 
             this.timeToWaitForMoreEvents = suppressionTime ?? TimeSpan.FromMilliseconds(long.MaxValue); ;
             this.timeDefinition = timeDefinition ?? RecordTimeDefintion<K>.Instance();
-            this.bufferConfig = bufferConfig ?? DEFAULT_BUFFER_CONFIG;
+            this.bufferConfig = bufferConfig ?? this.DEFAULT_BUFFER_CONFIG;
             this.safeToDropTombstones = safeToDropTombstones;
         }
 
         public string Name { get; }
 
-        public ISuppressed<K> WithName(string name)
+        public ISuppressed<K> WithName(string Name)
         {
             return new SuppressedInternal<K>(
-                name,
-                timeToWaitForMoreEvents,
-                bufferConfig,
-                timeDefinition,
-                safeToDropTombstones);
+                Name,
+                this.timeToWaitForMoreEvents,
+                this.bufferConfig,
+                this.timeDefinition,
+                this.safeToDropTombstones);
         }
 
         public TimeSpan TimeToWaitForMoreEvents()
@@ -52,37 +52,37 @@ namespace Kafka.Streams.KStream.Internals.Suppress
                 return true;
             }
  
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             SuppressedInternal<K> that = (SuppressedInternal<K>)o;
-            return safeToDropTombstones == that.safeToDropTombstones &&
-                Name.Equals(that.Name) &&
-                bufferConfig.Equals(that.bufferConfig) &&
-                timeToWaitForMoreEvents.Equals(that.timeToWaitForMoreEvents) &&
-                timeDefinition.Equals(that.timeDefinition);
+            return this.safeToDropTombstones == that.safeToDropTombstones &&
+                this.Name.Equals(that.Name) &&
+                this.bufferConfig.Equals(that.bufferConfig) &&
+                this.timeToWaitForMoreEvents.Equals(that.timeToWaitForMoreEvents) &&
+                this.timeDefinition.Equals(that.timeDefinition);
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(
-                Name,
-                bufferConfig,
-                timeToWaitForMoreEvents,
-                timeDefinition,
-                safeToDropTombstones);
+                this.Name,
+                this.bufferConfig,
+                this.timeToWaitForMoreEvents,
+                this.timeDefinition,
+                this.safeToDropTombstones);
         }
 
         public override string ToString()
         {
             return "SuppressedInternal{" +
-                    "name='" + Name + '\'' +
-                    ", bufferConfig=" + bufferConfig +
-                    ", timeToWaitForMoreEvents=" + timeToWaitForMoreEvents +
-                    ", timeDefinition=" + timeDefinition +
-                    ", safeToDropTombstones=" + safeToDropTombstones +
+                    "Name='" + this.Name + '\'' +
+                    ", bufferConfig=" + this.bufferConfig +
+                    ", timeToWaitForMoreEvents=" + this.timeToWaitForMoreEvents +
+                    ", timeDefinition=" + this.timeDefinition +
+                    ", safeToDropTombstones=" + this.safeToDropTombstones +
                     '}';
         }
     }

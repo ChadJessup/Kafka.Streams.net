@@ -9,16 +9,16 @@ namespace Kafka.Streams.State.Internals
         public TimeSpan RetentionPeriod { get; }
 
         public InMemorySessionBytesStoreSupplier(
-            string name,
+            string Name,
             TimeSpan retentionPeriod)
         {
-            this.Name = name;
+            this.Name = Name;
             this.RetentionPeriod = retentionPeriod;
         }
 
         public ISessionStore<Bytes, byte[]> Get()
         {
-            return new InMemorySessionStore(Name, RetentionPeriod);
+            return new InMemorySessionStore(this.Name, this.RetentionPeriod);
         }
 
         //public string metricsScope()
@@ -32,7 +32,7 @@ namespace Kafka.Streams.State.Internals
             return 1;
         }
 
-        public void SetName(string name)
+        public void SetName(string Name)
         {
             throw new NotImplementedException();
         }

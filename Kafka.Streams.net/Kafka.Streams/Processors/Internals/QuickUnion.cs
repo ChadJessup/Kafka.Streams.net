@@ -9,12 +9,12 @@ namespace Kafka.Streams.Processors.Internals
 
         public void Add(T id)
         {
-            ids.Add(id, id);
+            this.ids.Add(id, id);
         }
 
         public bool Exists(T id)
         {
-            return ids.ContainsKey(id);
+            return this.ids.ContainsKey(id);
         }
 
         public T Root(T id)
@@ -23,7 +23,7 @@ namespace Kafka.Streams.Processors.Internals
 
             T current = id;
 
-            if (!ids.TryGetValue(current, out var parent))
+            if (!this.ids.TryGetValue(current, out var parent))
             {
                 throw new KeyNotFoundException("id: " + id.ToString());
             }
@@ -31,14 +31,14 @@ namespace Kafka.Streams.Processors.Internals
             while (!parent?.Equals(current) ?? false)
             {
                 // do the path splitting
-                T grandparent = ids[parent];
-                if (ids.ContainsKey(current))
+                T grandparent = this.ids[parent];
+                if (this.ids.ContainsKey(current))
                 {
-                    ids[current] = grandparent;
+                    this.ids[current] = grandparent;
                 }
                 else
                 {
-                    ids.Add(current, grandparent);
+                    this.ids.Add(current, grandparent);
                 }
 
                 current = parent;
@@ -55,24 +55,24 @@ namespace Kafka.Streams.Processors.Internals
         {
             foreach (T id2 in idList ?? Array.Empty<T>())
             {
-                UnitePair(id1, id2);
+                this.UnitePair(id1, id2);
             }
         }
 
         private void UnitePair(T id1, T id2)
         {
-            T root1 = Root(id1);
-            T root2 = Root(id2);
+            T root1 = this.Root(id1);
+            T root2 = this.Root(id2);
 
             if (!root1?.Equals(root2) ?? false)
             {
-                if (ids.ContainsKey(root1))
+                if (this.ids.ContainsKey(root1))
                 {
-                    ids[root1] = root2;
+                    this.ids[root1] = root2;
                 }
                 else
                 {
-                    ids.Add(root1, root2);
+                    this.ids.Add(root1, root2);
                 }
             }
         }

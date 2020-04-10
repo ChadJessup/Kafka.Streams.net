@@ -12,7 +12,7 @@
 //        {
 //        }
 
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
+//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> findSessions(Bytes key,
 //                                                                      long earliestSessionEndTime,
 //                                                                      long latestSessionStartTime)
 //        {
@@ -24,7 +24,7 @@
 //            return new WrappedSessionStoreIterator(bytesIterator);
 //        }
 
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
+//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
 //                                                                      Bytes keyTo,
 //                                                                      long earliestSessionEndTime,
 //                                                                      long latestSessionStartTime)
@@ -43,22 +43,22 @@
 //            return wrapped[SessionKeySchema.toBinary(key, startTime, endTime)];
 //        }
 
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
+//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes key)
 //        {
 //            return findSessions(key, 0, long.MaxValue);
 //        }
 
-//        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
+//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
 //        {
 //            return findSessions(from, to, 0, long.MaxValue);
 //        }
 
-//        public override void Remove(Windowed<Bytes> key)
+//        public override void Remove(IWindowed<Bytes> key)
 //        {
 //            wrapped.Remove(SessionKeySchema.toBinary(key));
 //        }
 
-//        public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
+//        public override void Put(IWindowed<Bytes> sessionKey, byte[] aggregate)
 //        {
 //            wrapped.Add(SessionKeySchema.toBinary(sessionKey), aggregate);
 //        }

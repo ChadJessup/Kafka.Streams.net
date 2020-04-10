@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals
         public override void Init(IProcessorContext context)
         {
             base.Init(context);
-            otherWindow = (IWindowStore<K, V2>)context.GetStateStore(this.context, otherWindow.Name);
+            this.otherWindow = (IWindowStore<K, V2>)context.GetStateStore(this.otherWindow.Name);
         }
 
         public override void Process(K key, V1 value)
@@ -52,27 +52,27 @@ namespace Kafka.Streams.KStream.Internals
                 return;
             }
 
-            var needOuterJoin = outer;
+            var needOuterJoin = this.outer;
 
-            var inputRecordTimestamp = Context.Timestamp;
-            var timeFrom = Math.Max(0L, inputRecordTimestamp - (long)joinBeforeMs.TotalMilliseconds);
-            var timeTo = Math.Max(0L, inputRecordTimestamp + (long)joinAfterMs.TotalMilliseconds);
+            var inputRecordTimestamp = this.Context.Timestamp;
+            var timeFrom = Math.Max(0L, inputRecordTimestamp - (long)this.joinBeforeMs.TotalMilliseconds);
+            var timeTo = Math.Max(0L, inputRecordTimestamp + (long)this.joinAfterMs.TotalMilliseconds);
 
-            using IWindowStoreIterator<V2> iter = otherWindow.Fetch(key, timeFrom, timeTo);
+            using IWindowStoreIterator<V2> iter = this.otherWindow.Fetch(key, timeFrom, timeTo);
             {
                 while (iter.MoveNext())
                 {
                     needOuterJoin = false;
                     KeyValuePair<long, V2> otherRecord = iter.Current;
-                    Context.Forward(
+                    this.Context.Forward(
                         key,
-                        joiner.Apply(value, otherRecord.Value),
+                        this.joiner.Apply(value, otherRecord.Value),
                         To.All().WithTimestamp(Math.Max(inputRecordTimestamp, otherRecord.Key)));
                 }
 
                 if (needOuterJoin)
                 {
-                    Context.Forward(key, joiner.Apply(value, default));
+                    this.Context.Forward(key, this.joiner.Apply(value, default));
                 }
             }
         }

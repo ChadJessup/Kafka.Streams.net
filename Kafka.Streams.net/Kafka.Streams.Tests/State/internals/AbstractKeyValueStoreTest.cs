@@ -71,7 +71,7 @@
 
 //        public void After()
 //        {
-//            store.close();
+//            store.Close();
 //            driver.Clear();
 //        }
 
@@ -81,7 +81,7 @@
 //            while (iter.HasNext())
 //            {
 //                KeyValuePair<int, string> entry = iter.MoveNext();
-//                result.put(entry.key, entry.value);
+//                result.Put(entry.key, entry.value);
 //            }
 //            return result;
 //        }
@@ -89,7 +89,7 @@
 //        [Fact]
 //        public void ShouldNotIncludeDeletedFromRangeResult()
 //        {
-//            store.close();
+//            store.Close();
 
 //            Serializer<string> serializer = new Serdes.String().Serializer()
 //            {
@@ -110,21 +110,21 @@
 //    context.setValueSerde(Serdes.SerdeFrom(serializer, new Serdes.String().Deserializer()));
 //        store = createKeyValueStore(driver.context);
 
-//    store.put(0, "zero");
-//        store.put(1, "one");
-//        store.put(2, "two");
+//    store.Put(0, "zero");
+//        store.Put(1, "one");
+//        store.Put(2, "two");
 //        store.delete(0);
 //        store.delete(1);
 
 //        // should not include deleted records in iterator
 //        Dictionary<int, string> expectedContents = Collections.singletonMap(2, "two");
-//    Assert.Equal(expectedContents, getContents(store.all()));
+//    Assert.Equal(expectedContents, getContents(store.All()));
 //    }
 
 //    [Fact]
 //    public void ShouldDeleteIfSerializedValueIsNull()
 //    {
-//        store.close();
+//        store.Close();
 
 //        Serializer<string> serializer = new Serdes.String().Serializer()
 //        {
@@ -144,26 +144,26 @@
 //    context.setValueSerde(Serdes.SerdeFrom(serializer, new Serdes.String().Deserializer()));
 //        store = createKeyValueStore(driver.context);
 
-//    store.put(0, "zero");
-//        store.put(1, "one");
-//        store.put(2, "two");
-//        store.put(0, "null");
-//        store.put(1, "null");
+//    store.Put(0, "zero");
+//        store.Put(1, "one");
+//        store.Put(2, "two");
+//        store.Put(0, "null");
+//        store.Put(1, "null");
 
 //        // should not include deleted records in iterator
 //        Dictionary<int, string> expectedContents = Collections.singletonMap(2, "two");
-//    Assert.Equal(expectedContents, getContents(store.all()));
+//    Assert.Equal(expectedContents, getContents(store.All()));
 //    }
 
 //    [Fact]
 //    public void TestPutGetRange()
 //    {
 //        // Verify that the store reads and writes correctly ...
-//        store.put(0, "zero");
-//        store.put(1, "one");
-//        store.put(2, "two");
-//        store.put(4, "four");
-//        store.put(5, "five");
+//        store.Put(0, "zero");
+//        store.Put(1, "one");
+//        store.Put(2, "two");
+//        store.Put(4, "four");
+//        store.Put(5, "five");
 //        Assert.Equal(5, driver.sizeOf(store));
 //        Assert.Equal("zero", store.Get(0));
 //        Assert.Equal("one", store.Get(1));
@@ -171,13 +171,13 @@
 //        Assert.Null(store.Get(3));
 //        Assert.Equal("four", store.Get(4));
 //        Assert.Equal("five", store.Get(5));
-//        // Flush now so that for caching store, we will not skip the deletion following an put
-//        store.flush();
+//        // Flush now so that for caching store, we will not skip the deletion following an Put
+//        store.Flush();
 //        store.delete(5);
 //        Assert.Equal(4, driver.sizeOf(store));
 
-//        // Flush the store and verify all current entries were properly flushed ...
-//        store.flush();
+//        // Flush the store and verify All current entries were properly flushed ...
+//        store.Flush();
 //        Assert.Equal("zero", driver.flushedEntryStored(0));
 //        Assert.Equal("one", driver.flushedEntryStored(1));
 //        Assert.Equal("two", driver.flushedEntryStored(2));
@@ -191,28 +191,28 @@
 //        Assert.True(driver.flushedEntryRemoved(5));
 
 //        HashDictionary<int, string> expectedContents = new HashMap<>();
-//        expectedContents.put(2, "two");
-//        expectedContents.put(4, "four");
+//        expectedContents.Put(2, "two");
+//        expectedContents.Put(4, "four");
 
 //        // Check range iteration ...
 //        Assert.Equal(expectedContents, getContents(store.Range(2, 4)));
 //        Assert.Equal(expectedContents, getContents(store.Range(2, 6)));
 
-//        // Check all iteration ...
-//        expectedContents.put(0, "zero");
-//        expectedContents.put(1, "one");
-//        Assert.Equal(expectedContents, getContents(store.all()));
+//        // Check All iteration ...
+//        expectedContents.Put(0, "zero");
+//        expectedContents.Put(1, "one");
+//        Assert.Equal(expectedContents, getContents(store.All()));
 //    }
 
 //    [Fact]
 //    public void TestPutGetRangeWithDefaultSerdes()
 //    {
 //        // Verify that the store reads and writes correctly ...
-//        store.put(0, "zero");
-//        store.put(1, "one");
-//        store.put(2, "two");
-//        store.put(4, "four");
-//        store.put(5, "five");
+//        store.Put(0, "zero");
+//        store.Put(1, "one");
+//        store.Put(2, "two");
+//        store.Put(4, "four");
+//        store.Put(5, "five");
 //        Assert.Equal(5, driver.sizeOf(store));
 //        Assert.Equal("zero", store.Get(0));
 //        Assert.Equal("one", store.Get(1));
@@ -220,11 +220,11 @@
 //        Assert.Null(store.Get(3));
 //        Assert.Equal("four", store.Get(4));
 //        Assert.Equal("five", store.Get(5));
-//        store.flush();
+//        store.Flush();
 //        store.delete(5);
 
-//        // Flush the store and verify all current entries were properly flushed ...
-//        store.flush();
+//        // Flush the store and verify All current entries were properly flushed ...
+//        store.Flush();
 //        Assert.Equal("zero", driver.flushedEntryStored(0));
 //        Assert.Equal("one", driver.flushedEntryStored(1));
 //        Assert.Equal("two", driver.flushedEntryStored(2));
@@ -241,7 +241,7 @@
 //    [Fact]
 //    public void TestRestore()
 //    {
-//        store.close();
+//        store.Close();
 //        // Add any entries that will be restored to any store
 //        // that uses the driver's context ...
 //        driver.addEntryToRestoreLog(0, "zero");
@@ -252,7 +252,7 @@
 //        // Create the store, which should register with the context and automatically
 //        // receive the restore entries ...
 //        store = createKeyValueStore(driver.context);
-//        context.restore(store.name(), driver.restoredEntries());
+//        context.restore(store.Name(), driver.restoredEntries());
 
 //        // Verify that the store's contents were properly restored ...
 //        Assert.Equal(0, driver.checkForRestoredEntries(store));
@@ -264,7 +264,7 @@
 //    [Fact]
 //    public void TestRestoreWithDefaultSerdes()
 //    {
-//        store.close();
+//        store.Close();
 //        // Add any entries that will be restored to any store
 //        // that uses the driver's context ...
 //        driver.addEntryToRestoreLog(0, "zero");
@@ -275,7 +275,7 @@
 //        // Create the store, which should register with the context and automatically
 //        // receive the restore entries ...
 //        store = createKeyValueStore(driver.context);
-//        context.restore(store.name(), driver.restoredEntries());
+//        context.restore(store.Name(), driver.restoredEntries());
 //        // Verify that the store's contents were properly restored ...
 //        Assert.Equal(0, driver.checkForRestoredEntries(store));
 
@@ -299,8 +299,8 @@
 //        Assert.Null(store.Get(3));
 //        Assert.Equal("four", store.Get(4));
 
-//        // Flush the store and verify all current entries were properly flushed ...
-//        store.flush();
+//        // Flush the store and verify All current entries were properly flushed ...
+//        store.Flush();
 //        Assert.Equal("zero", driver.flushedEntryStored(0));
 //        Assert.Equal("one", driver.flushedEntryStored(1));
 //        Assert.Equal("two", driver.flushedEntryStored(2));
@@ -315,13 +315,13 @@
 //    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //    {
-//        store.put(null, "anyValue");
+//        store.Put(null, "anyValue");
 //    }
 
 //    [Fact]
 //    public void ShouldNotThrowNullPointerExceptionOnPutNullValue()
 //    {
-//        store.put(1, null);
+//        store.Put(1, null);
 //    }
 
 //    [Fact]// (expected = NullPointerException)
@@ -377,12 +377,12 @@
 //    {
 //        Assert.Equal("A newly created store should have no entries", 0, store.approximateNumEntries);
 
-//        store.put(0, "zero");
-//        store.put(1, "one");
-//        store.put(2, "two");
-//        store.put(4, "four");
-//        store.put(5, "five");
-//        store.flush();
+//        store.Put(0, "zero");
+//        store.Put(1, "one");
+//        store.Put(2, "two");
+//        store.Put(4, "four");
+//        store.Put(5, "five");
+//        store.Flush();
 //        Assert.Equal(5, store.approximateNumEntries);
 //    }
 
@@ -397,7 +397,7 @@
 
 //        List<KeyValuePair<int, string>> allReturned = new ArrayList<>();
 //        List<KeyValuePair<int, string>> expectedReturned = Array.asList(KeyValuePair.Create(1, "one"), KeyValuePair.Create(2, "two"));
-//        Iterator<KeyValuePair<int, string>> iterator = store.all();
+//        Iterator<KeyValuePair<int, string>> iterator = store.All();
 
 //        while (iterator.HasNext())
 //        {
@@ -410,8 +410,8 @@
 //    [Fact]
 //    public void ShouldDeleteFromStore()
 //    {
-//        store.put(1, "one");
-//        store.put(2, "two");
+//        store.Put(1, "one");
+//        store.Put(2, "two");
 //        store.delete(2);
 //        Assert.Null(store.Get(2));
 //    }
@@ -435,11 +435,11 @@
 //    [Fact]
 //    public void ShouldNotThrowConcurrentModificationException()
 //    {
-//        store.put(0, "zero");
+//        store.Put(0, "zero");
 
 //        IKeyValueIterator<int, string> results = store.Range(0, 2);
 
-//        store.put(1, "one");
+//        store.Put(1, "one");
 
 //        Assert.Equal(KeyValuePair.Create(0, "zero"), results.MoveNext());
 //    }
@@ -454,7 +454,7 @@
 //        Assert.False(iterator.HasNext());
 
 //        List<string> messages = appender.getMessages();
-//        Assert.Equal(messages, hasItem("Returning empty iterator for fetch with invalid key range: from > to. "
+//        Assert.Equal(messages, hasItem("Returning empty iterator for Fetch with invalid key range: from > to. "
 //            + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. "
 //            + "Note that the built-in numerical serdes do not follow this for negative numbers"));
 //    }

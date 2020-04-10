@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             return "ProcessorNode{" +
-                   "processorParameters=" + processorParameters +
+                   "processorParameters=" + this.processorParameters +
                    "} " + base.ToString();
         }
 
@@ -32,9 +32,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
             topologyBuilder.AddProcessor<K, V>(
-                processorParameters.ProcessorName,
-                processorParameters.ProcessorSupplier,
-                ParentNodeNames());
+                this.processorParameters.ProcessorName,
+                this.processorParameters.ProcessorSupplier,
+                this.ParentNodeNames());
         }
     }
 }

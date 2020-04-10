@@ -10,8 +10,8 @@ namespace Kafka.Streams.Processors.Internals
         private readonly HashSet<string>? topics;
         public Regex? topicPattern { get; }
 
-        public Source(string name, HashSet<string>? topics, Regex? pattern)
-            : base(name)
+        public Source(string Name, HashSet<string>? topics, Regex? pattern)
+            : base(Name)
         {
             if (topics == null && pattern == null)
             {
@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public HashSet<string>? TopicSet()
         {
-            return topics;
+            return this.topics;
         }
 
 
@@ -40,9 +40,9 @@ namespace Kafka.Streams.Processors.Internals
 
         public override string ToString()
         {
-            var topicsString = topics == null
-                ? topicPattern?.ToString()
-                : topics.ToString();
+            var topicsString = this.topics == null
+                ? this.topicPattern?.ToString()
+                : this.topics.ToString();
 
             return $"Source: {this.Name} (topics: {topicsString })\n      -=> " +
                 $"{InternalTopologyBuilder.GetNodeNames(this.Successors)}";
@@ -56,7 +56,7 @@ namespace Kafka.Streams.Processors.Internals
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
@@ -64,16 +64,16 @@ namespace Kafka.Streams.Processors.Internals
             var source = (Source)o;
             // omit successor to avoid infinite loops
             return this.Name.Equals(source.Name)
-                && (topics?.Equals(source.topics) ?? false)
-                && (topicPattern == null
+                && (this.topics?.Equals(source.topics) ?? false)
+                && (this.topicPattern == null
                     ? source.topicPattern == null
-                    : topicPattern.ToString().Equals(source.topicPattern?.ToString()));
+                    : this.topicPattern.ToString().Equals(source.topicPattern?.ToString()));
         }
 
         public override int GetHashCode()
         {
             // omit successor as it might change and alter the hash code
-            return (Name, topics, topicPattern).GetHashCode();
+            return (this.Name, this.topics, this.topicPattern).GetHashCode();
         }
     }
 }

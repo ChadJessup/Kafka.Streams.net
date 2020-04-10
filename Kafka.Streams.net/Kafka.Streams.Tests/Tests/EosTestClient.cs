@@ -35,7 +35,7 @@ namespace Kafka.Streams.Tests.Tests
 //            public void run()
 //            {
 //                isRunning = false;
-//                streams.close(TimeSpan.ofSeconds(300));
+//                streams.Close(TimeSpan.ofSeconds(300));
 
 //                // need to wait for callback to avoid race condition
 //                // => make sure the callback printout to stdout is there as it is expected test output
@@ -46,7 +46,7 @@ namespace Kafka.Streams.Tests.Tests
 //                {
 //                    System.Console.Out.WriteLine(System.currentTimeMillis());
 //                    System.Console.Out.WriteLine("EOS-TEST-CLIENT-CLOSED");
-//                    System.Console.Out.flush();
+//                    System.Console.Out.Flush();
 //                }
 
 //            }
@@ -64,7 +64,7 @@ namespace Kafka.Streams.Tests.Tests
 //            System.Console.Out.WriteLine(System.currentTimeMillis());
 //            System.Console.Out.WriteLine("EOS-TEST-CLIENT-EXCEPTION");
 //            e.printStackTrace();
-//            System.Console.Out.flush();
+//            System.Console.Out.Flush();
 //            uncaughtException = true;
 //        }
 //    });
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Tests
 //        // don't remove this -- it's required test output
 //        System.Console.Out.WriteLine(System.currentTimeMillis());
 //        System.Console.Out.WriteLine("StateChange: " + oldState + " => " + newState);
-//        System.Console.Out.flush();
+//        System.Console.Out.Flush();
 //        if (newState == KafkaStreams.State.NOT_RUNNING)
 //        {
 //            notRunningCallbackReceived.set(true);
@@ -85,7 +85,7 @@ namespace Kafka.Streams.Tests.Tests
 //                streams.start();
 //            }
 //            if (uncaughtException) {
-//                streams.close(TimeSpan.ofSeconds(60_000L));
+//                streams.Close(TimeSpan.ofSeconds(60_000L));
 //                streams = null;
 //            }
 //            sleep(1000);
@@ -94,14 +94,14 @@ namespace Kafka.Streams.Tests.Tests
 
 //    private KafkaStreams createKafkaStreams(StreamsConfig props)
 //{
-//    props.put(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
-//    props.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 1);
-//    props.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 2);
-//    props.put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 3);
-//    props.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
-//    props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//    props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//    props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//    props.Put(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
+//    props.Put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 1);
+//    props.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 2);
+//    props.Put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 3);
+//    props.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//    props.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//    props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//    props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
 
 //    StreamsBuilder builder = new StreamsBuilder();
 //    KStream<string, int> data = builder.Stream("data");
@@ -209,7 +209,7 @@ namespace Kafka.Streams.Tests.Tests
 //    if (!notRunningCallbackReceived.Get())
 //    {
 //        System.Console.Error.println("State transition callback to NOT_RUNNING never received. Timed out after 5 minutes.");
-//        System.Console.Error.flush();
+//        System.Console.Error.Flush();
 //    }
 //}
 //}

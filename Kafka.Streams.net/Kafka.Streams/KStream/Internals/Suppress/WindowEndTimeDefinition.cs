@@ -5,7 +5,7 @@
 //namespace Kafka.Streams.KStream.Internals.Suppress
 //{
 //    public class WindowEndTimeDefinition<K> : ITimeDefinition<K>
-//        where K : Windowed<K>
+//        where K : IWindowed<K>
 //    {
 //        private static WindowEndTimeDefinition<K> INSTANCE = new WindowEndTimeDefinition<K>();
 
@@ -18,7 +18,7 @@
 //        }
 
 
-//        public long time(IProcessorContext<K, V> context, K key)
+//        public long time(IProcessorContext context, K key)
 //        {
 //            return key.window.end();
 //        }

@@ -105,7 +105,7 @@
 //        { //throws IOException
 //            Consumer consumer = EasyMock.createNiceMock(Consumer);
 //            IStateStore store = EasyMock.createNiceMock(IStateStore);
-//            expect(store.name()).andReturn("dummy-store-name").anyTimes();
+//            expect(store.Name()).andReturn("dummy-store-Name").anyTimes();
 //            EasyMock.replay(store);
 //            expect(stateDirectory.Lock(id)).andReturn(false);
 //            EasyMock.replay(stateDirectory);
@@ -143,9 +143,9 @@
 //        { //throws IOException
 //            StreamsConfig streamsConfig = new StreamsConfig(new StreamsConfig() {
 //            {
-//                put(StreamsConfig.APPLICATION_ID_CONFIG, "app-id");
-//            put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-//            put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
+//                Put(StreamsConfig.APPLICATION_ID_CONFIG, "app-id");
+//            Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+//            Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
 //        }
 //    });
 //        Consumer consumer = EasyMock.createNiceMock(Consumer);
@@ -159,13 +159,13 @@
 //    string storeName3 = "storeName3";
 //    string storeName4 = "storeName4";
 
-//    expect(store1.name()).andReturn(storeName1).anyTimes();
+//    expect(store1.Name()).andReturn(storeName1).anyTimes();
 //    EasyMock.replay(store1);
-//        expect(store2.name()).andReturn(storeName2).anyTimes();
+//        expect(store2.Name()).andReturn(storeName2).anyTimes();
 //    EasyMock.replay(store2);
-//        expect(store3.name()).andReturn(storeName3).anyTimes();
+//        expect(store3.Name()).andReturn(storeName3).anyTimes();
 //    EasyMock.replay(store3);
-//        expect(store4.name()).andReturn(storeName4).anyTimes();
+//        expect(store4.Name()).andReturn(storeName4).anyTimes();
 //    EasyMock.replay(store4);
 
 //        StateDirectory stateDirectory = new StateDirectory(streamsConfig, new MockTime(), true);
@@ -173,10 +173,10 @@
 //        consumer,
 //        new HashDictionary<IStateStore, string>() {
 //                {
-//                    put(store1, storeTopicPartition1.Topic);
-//    put(store2, storeTopicPartition2.Topic);
-//    put(store3, storeTopicPartition3.Topic);
-//    put(store4, storeTopicPartition4.Topic);
+//                    Put(store1, storeTopicPartition1.Topic);
+//    Put(store2, storeTopicPartition2.Topic);
+//    Put(store3, storeTopicPartition3.Topic);
+//    Put(store4, storeTopicPartition4.Topic);
 //                }
 //            },
 //            stateDirectory);
@@ -239,14 +239,14 @@
 //                                    StateDirectory stateDirectory)
 //    {
 //        StreamsConfig properties = new StreamsConfig();
-//        properties.put(StreamsConfig.APPLICATION_ID_CONFIG, "app");
-//        properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummyhost:9092");
+//        properties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "app");
+//        properties.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummyhost:9092");
 //        StreamsConfig config = new StreamsConfig(properties);
 
 //        Dictionary<string, string> storeNamesToChangelogTopics = new HashMap<>(stateStoresToChangelogTopics.Count);
 //        foreach (Map.Entry<IStateStore, string> e in stateStoresToChangelogTopics.entrySet())
 //        {
-//            storeNamesToChangelogTopics.put(e.getKey().name(), e.getValue());
+//            storeNamesToChangelogTopics.Put(e.getKey().Name(), e.getValue());
 //        }
 
 //        return new AbstractTask(id,
@@ -274,7 +274,7 @@
 //        public void suspend() { }
 
 
-//        public void close(bool clean, bool isZombie) { }
+//        public void Close(bool clean, bool isZombie) { }
 
 
 //        public void closeSuspended(bool clean, bool isZombie, RuntimeException e) { }

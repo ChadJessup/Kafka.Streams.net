@@ -9,7 +9,7 @@ namespace Kafka.Streams.Processors.Internals
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer}. Members of the consumer group subscribe
      * to the topics they are interested in and forward their subscriptions to a Kafka broker serving
      * as the group coordinator. The coordinator selects one member to perform the group assignment and
-     * propagates the subscriptions of all members to it. Then {@link #assign(Cluster, GroupSubscription)} is called
+     * propagates the subscriptions of All members to it. Then {@link #assign(Cluster, GroupSubscription)} is called
      * to perform the assignment and the results are forwarded back to each respective members
      *
      * In some cases, it is useful to forward additional metadata to the assignor in order to make
@@ -36,7 +36,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * Perform the group assignment given the member subscriptions and current cluster metadata.
          * @param metadata Current topic/broker metadata known by consumer
-         * @param groupSubscription Subscriptions from all members including metadata provided through {@link #subscriptionUserData(Set)}
+         * @param groupSubscription Subscriptions from All members including metadata provided through {@link #subscriptionUserData(Set)}
          * @return A map from the members to their respective assignments. This should have one entry
          *         for each member in the input subscription map.
          */
@@ -70,9 +70,9 @@ namespace Kafka.Streams.Processors.Internals
         }
 
         /**
-         * Unique name for this assignor (e.g. "range" or "roundrobin" or "sticky"). Note, this is not required
-         * to be the same as the class name specified in {@link ConsumerConfig#PARTITION_ASSIGNMENT_STRATEGY_CONFIG}
-         * @return non-null unique name
+         * Unique Name for this assignor (e.g. "range" or "roundrobin" or "sticky"). Note, this is not required
+         * to be the same as the class Name specified in {@link ConsumerConfig#PARTITION_ASSIGNMENT_STRATEGY_CONFIG}
+         * @return non-null unique Name
          */
         string Name();
     }

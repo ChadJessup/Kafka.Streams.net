@@ -27,14 +27,14 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             base.Init(context);
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
-                store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.context, queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<K, V>(
-                    store,
+                this.store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(this.queryableName);
+                this.tupleForwarder = new TimestampedTupleForwarder<K, V>(
+                    this.store,
                     context,
                     new TimestampedCacheFlushListener<K, V>(context),
-                    sendOldValues);
+                    this.sendOldValues);
             }
         }
 
@@ -45,23 +45,23 @@ namespace Kafka.Streams.KStream.Internals
                 throw new System.ArgumentNullException(nameof(value));
             }
 
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp.Make(value.NewValue, Context.Timestamp));
+                this.store.Add(key, ValueAndTimestamp.Make(value.NewValue, this.Context.Timestamp));
 
-                tupleForwarder.MaybeForward(key, value.NewValue, sendOldValues
+                this.tupleForwarder.MaybeForward(key, value.NewValue, this.sendOldValues
                     ? value.OldValue
                     : default);
             }
             else
             {
-                if (sendOldValues)
+                if (this.sendOldValues)
                 {
-                    Context.Forward(key, value);
+                    this.Context.Forward(key, value);
                 }
                 else
                 {
-                    Context.Forward(key, new Change<V>(value.NewValue));
+                    this.Context.Forward(key, new Change<V>(value.NewValue));
                 }
             }
         }

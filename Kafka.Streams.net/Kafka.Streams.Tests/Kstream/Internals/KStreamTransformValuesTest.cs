@@ -32,7 +32,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //                private int total = 0;
 
 
-//            //    public void init(IProcessorContext context) { }
+//            //    public void Init(IProcessorContext context) { }
 
 
 //            //    public int transform(int value)
@@ -42,7 +42,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //    }
 
 
-//            //    public void close() { }
+//            //    public void Close() { }
 //            //};
 
 //            int[] expectedKeys = { 1, 10, 100, 1000 };
@@ -80,7 +80,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //                    private int total = 0;
 
 
-//            //    public void init(IProcessorContext context) { }
+//            //    public void Init(IProcessorContext context) { }
 
 
 //            //    public int transform(int readOnlyKey, int value)
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            //    }
 
 
-//            //    public void close() { }
+//            //    public void Close() { }
 //            //};
 
 //            int[] expectedKeys = { 1, 10, 100, 1000 };

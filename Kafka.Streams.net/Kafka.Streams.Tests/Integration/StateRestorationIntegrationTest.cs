@@ -70,7 +70,7 @@
 //                    consumerConfig, OUTPUT_TOPIC, initialKeyValues);
 
 //            // wipe out state store to trigger restore process on restart
-//            streams.close();
+//            streams.Close();
 //            streams.cleanUp();
 
 //            // Restart the stream instance. There should not be exception handling the null value within changelog topic.
@@ -82,7 +82,7 @@
 //            streams.start();
 //            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(
 //                    consumerConfig, OUTPUT_TOPIC, newKeyValues);
-//            streams.close();
+//            streams.Close();
 //        }
 //    }
 //}

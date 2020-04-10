@@ -37,7 +37,7 @@ namespace Kafka.Streams.KStream.Internals
                         + " : " + data.NewValue + ") in ChangeSerializer, which is not allowed.");
                 }
 
-                serializedKey = inner.Serialize(data.NewValue, context);
+                serializedKey = this.inner.Serialize(data.NewValue, context);
             }
             else
             {
@@ -47,7 +47,7 @@ namespace Kafka.Streams.KStream.Internals
                     throw new StreamsException("Both old and new values are null in ChangeSerializer, which is not allowed.");
                 }
 
-                serializedKey = inner.Serialize(data.OldValue, context);
+                serializedKey = this.inner.Serialize(data.OldValue, context);
             }
 
             ByteBuffer buf = new ByteBuffer().Allocate(serializedKey.Length + NEWFLAG_SIZE);

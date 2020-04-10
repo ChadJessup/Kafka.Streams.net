@@ -26,10 +26,10 @@ namespace Kafka.Streams.State.ChangeLogging
             base.Init(context, root);
             string topic = ProcessorStateManager.StoreChangelogTopic(
                     context.ApplicationId,
-                    Name);
+                    this.Name);
 
-            changeLogger = new StoreChangeLogger<Bytes, byte[]>(
-                    Name,
+            this.changeLogger = new StoreChangeLogger<Bytes, byte[]>(
+                    this.Name,
                     context,
                     new StateSerdes<Bytes, byte[]>(
                         topic, 
@@ -38,56 +38,56 @@ namespace Kafka.Streams.State.ChangeLogging
         }
 
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes key,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            return Wrapped.FindSessions(
+            return this.Wrapped.FindSessions(
                 key,
                 earliestSessionEndTime,
                 latestSessionStartTime);
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes keyFrom,
             Bytes keyTo,
             long earliestSessionEndTime,
             long latestSessionStartTime)
         {
-            return Wrapped.FindSessions(
+            return this.Wrapped.FindSessions(
                 keyFrom,
                 keyTo,
                 earliestSessionEndTime,
                 latestSessionStartTime);
         }
 
-        public void Remove(Windowed<Bytes> sessionKey)
+        public void Remove(IWindowed<Bytes> sessionKey)
         {
-            Wrapped.Remove(sessionKey);
-            changeLogger.LogChange(SessionKeySchema.ToBinary(sessionKey), null);
+            this.Wrapped.Remove(sessionKey);
+            this.changeLogger.LogChange(SessionKeySchema.ToBinary(sessionKey), null);
         }
 
-        public void Put(Windowed<Bytes> sessionKey, byte[] aggregate)
+        public void Put(IWindowed<Bytes> sessionKey, byte[] aggregate)
         {
-            Wrapped.Put(sessionKey, aggregate);
-            changeLogger.LogChange(SessionKeySchema.ToBinary(sessionKey), aggregate);
+            this.Wrapped.Put(sessionKey, aggregate);
+            this.changeLogger.LogChange(SessionKeySchema.ToBinary(sessionKey), aggregate);
 
         }
 
         public byte[] FetchSession(Bytes key, long startTime, long endTime)
         {
-            return Wrapped.FetchSession(key, startTime, endTime);
+            return this.Wrapped.FetchSession(key, startTime, endTime);
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes key)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes key)
         {
-            return Wrapped.Fetch(key);
+            return this.Wrapped.Fetch(key);
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
         {
-            return Wrapped.Fetch(from, to);
+            return this.Wrapped.Fetch(from, to);
         }
     }
 }

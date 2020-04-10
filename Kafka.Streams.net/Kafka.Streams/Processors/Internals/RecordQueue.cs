@@ -38,7 +38,7 @@ namespace Kafka.Streams.Processors.Internals
          * @return timestamp
          */
         public long headRecordTimestamp
-            => headRecord == null ? UNKNOWN : headRecord.timestamp;
+            => this.headRecord == null ? UNKNOWN : this.headRecord.timestamp;
 
         /**
          * Add a batch of {@link ConsumerRecord} into the queue
@@ -50,12 +50,12 @@ namespace Kafka.Streams.Processors.Internals
         {
             foreach (var rawRecord in rawRecords)
             {
-                fifoQueue.Enqueue(rawRecord);
+                this.fifoQueue.Enqueue(rawRecord);
             }
 
-            UpdateHead();
+            this.UpdateHead();
 
-            return Size();
+            return this.Size();
         }
 
         /**
@@ -65,10 +65,10 @@ namespace Kafka.Streams.Processors.Internals
          */
         public StampedRecord Poll()
         {
-            StampedRecord recordToReturn = headRecord;
-            headRecord = null;
+            StampedRecord recordToReturn = this.headRecord;
+            this.headRecord = null;
 
-            UpdateHead();
+            this.UpdateHead();
 
             return recordToReturn;
         }
@@ -81,7 +81,7 @@ namespace Kafka.Streams.Processors.Internals
         public int Size()
         {
             // plus one deserialized head record for timestamp tracking
-            return fifoQueue.Count + (headRecord == null ? 0 : 1);
+            return this.fifoQueue.Count + (this.headRecord == null ? 0 : 1);
         }
 
         /**
@@ -91,7 +91,7 @@ namespace Kafka.Streams.Processors.Internals
          */
         public bool IsEmpty()
         {
-            return !fifoQueue.Any() && headRecord == null;
+            return !this.fifoQueue.Any() && this.headRecord == null;
         }
 
 
@@ -100,17 +100,17 @@ namespace Kafka.Streams.Processors.Internals
          */
         public void Clear()
         {
-            fifoQueue.Clear();
-            headRecord = null;
-            partitionTime = RecordQueue.UNKNOWN;
+            this.fifoQueue.Clear();
+            this.headRecord = null;
+            this.partitionTime = RecordQueue.UNKNOWN;
         }
 
         // protected abstract RecordDeserializer<K, V> GetRecordDeserializer<K, V>();
         private void UpdateHead()
         {
-            while (headRecord == null && fifoQueue.Any())
+            while (this.headRecord == null && this.fifoQueue.Any())
             {
-                ConsumeResult<byte[], byte[]> raw = fifoQueue.Peek();
+                ConsumeResult<byte[], byte[]> raw = this.fifoQueue.Peek();
                 //var recordDeserializer = GetRecordDeserializer<K, V>();
 
                 //ConsumeResult<K, V> deserialized = recordDeserializer.deserialize(processorContext, raw);
@@ -137,7 +137,7 @@ namespace Kafka.Streams.Processors.Internals
                     //        fatalUserException);
                 }
 
-                // log.LogTrace($"Source node {source.name} extracted timestamp {timestamp} for record {deserialized}");
+                // log.LogTrace($"Source node {source.Name} extracted timestamp {timestamp} for record {deserialized}");
 
                 // drop message if TS is invalid, i.e., negative
                 if (timestamp < 0)
@@ -151,18 +151,18 @@ namespace Kafka.Streams.Processors.Internals
 
                 //headRecord = new StampedRecord(deserialized, timestamp);
 
-                partitionTime = Math.Max(partitionTime, timestamp);
+                this.partitionTime = Math.Max(this.partitionTime, timestamp);
             }
         }
     }
 
     public class RecordQueue<K, V> : RecordQueue
     {
-        private readonly ISourceNode<K, V> source;
+        private readonly ISourceNode source;
         private readonly RecordDeserializer<K, V> recordDeserializer;
         public RecordQueue(
             TopicPartition partition,
-            ISourceNode<K, V> source,
+            ISourceNode source,
             ITimestampExtractor timestampExtractor,
             IDeserializationExceptionHandler deserializationExceptionHandler,
             IInternalProcessorContext processorContext)
@@ -173,7 +173,7 @@ namespace Kafka.Streams.Processors.Internals
             this.timestampExtractor = timestampExtractor;
             this.processorContext = processorContext;
 
-            recordDeserializer = new RecordDeserializer<K, V>(
+            this.recordDeserializer = new RecordDeserializer<K, V>(
                 null,
                 source,
                 deserializationExceptionHandler);

@@ -19,15 +19,15 @@ namespace Kafka.Streams.Tests
             this.sessionWindowedKeyDeserializer = new SessionWindowedDeserializer<string>(streamsBuilder.Context.Services);
             this.sessionWindowedValueDeserializer = new SessionWindowedDeserializer<byte[]>(streamsBuilder.Context.Services);
 
-            props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
-            props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
+            this.props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
+            this.props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
         }
 
         [Fact]
         public void TestWindowedKeyDeserializerNoArgConstructors()
         {
-            sessionWindowedKeyDeserializer.Configure(props, true);
-            var inner = sessionWindowedKeyDeserializer.InnerDeserializer();
+            this.sessionWindowedKeyDeserializer.Configure(this.props, true);
+            var inner = this.sessionWindowedKeyDeserializer.InnerDeserializer();
 
             Assert.NotNull(inner);
             Assert.IsAssignableFrom<IDeserializer<string>>(inner);
@@ -36,8 +36,8 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void TestWindowedValueDeserializerNoArgConstructors()
         {
-            sessionWindowedValueDeserializer.Configure(props, false);
-            var inner = sessionWindowedValueDeserializer.InnerDeserializer();
+            this.sessionWindowedValueDeserializer.Configure(this.props, false);
+            var inner = this.sessionWindowedValueDeserializer.InnerDeserializer();
 
             Assert.NotNull(inner);
             Assert.IsAssignableFrom<IDeserializer<byte[]>>(inner);

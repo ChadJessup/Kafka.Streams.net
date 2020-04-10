@@ -9,15 +9,15 @@ namespace Kafka.Streams.KStream.Internals
             return new NamedInternal((string?)null);
         }
 
-        public static NamedInternal With(string name)
+        public static NamedInternal With(string Name)
         {
-            return new NamedInternal(name);
+            return new NamedInternal(Name);
         }
 
         /**
          * Creates a new {@link NamedInternal} instance.
          *
-         * @param internal  the internal name.
+         * @param internal  the internal Name.
          */
         public NamedInternal(Named internalName)
             : base(internalName)
@@ -27,23 +27,23 @@ namespace Kafka.Streams.KStream.Internals
         /**
          * Creates a new {@link NamedInternal} instance.
          *
-         * @param internal the internal name.
+         * @param internal the internal Name.
          */
         public NamedInternal(string? internalName)
             : base(internalName)
         {
         }
 
-        public override Named WithName(string name)
+        public override Named WithName(string Name)
         {
-            return new NamedInternal(name);
+            return new NamedInternal(Name);
         }
 
         public string SuffixWithOrElseGet(string suffix, string other)
         {
-            if (Name != null)
+            if (this.Name != null)
             {
-                return Name + suffix;
+                return this.Name + suffix;
             }
             else
             {
@@ -53,14 +53,14 @@ namespace Kafka.Streams.KStream.Internals
 
         public string SuffixWithOrElseGet(string suffix, IInternalNameProvider provider, string prefix)
         {
-            // We actually do not need to generate processor names for operation if a name is specified.
+            // We actually do not need to generate processor names for operation if a Name is specified.
             // But before returning, we still need to burn index for the operation to keep topology backward compatibility.
-            if (Name != null)
+            if (this.Name != null)
             {
                 provider.NewProcessorName(prefix);
 
-                var suffixed = Name + suffix;
-                // Re-validate generated name as suffixed string could be too large.
+                var suffixed = this.Name + suffix;
+                // Re-validate generated Name as suffixed string could be too large.
                 Named.Validate(suffixed);
 
                 return suffixed;
@@ -74,12 +74,12 @@ namespace Kafka.Streams.KStream.Internals
 
         public string OrElseGenerateWithPrefix(IInternalNameProvider provider, string prefix)
         {
-            // We actually do not need to generate processor names for operation if a name is specified.
+            // We actually do not need to generate processor names for operation if a Name is specified.
             // But before returning, we still need to burn index for the operation to keep topology backward compatibility.
-            if (Name != null)
+            if (this.Name != null)
             {
                 provider.NewProcessorName(prefix);
-                return Name;
+                return this.Name;
             }
             else
             {

@@ -22,21 +22,21 @@
 //                return false;
 //            }
 //            UnwindowedChangelogTopicConfig that = (UnwindowedChangelogTopicConfig)o;
-//            return name.Equals(that.name) &&
+//            return Name.Equals(that.Name) &&
 //                   topicConfigs.Equals(that.topicConfigs);
 //        }
 
 
 //        public int GetHashCode()
 //        {
-//            return Objects.hash(name, topicConfigs);
+//            return Objects.hash(Name, topicConfigs);
 //        }
 
 
 //        public string ToString()
 //        {
 //            return "UnwindowedChangelogTopicConfig(" +
-//                    "name=" + name +
+//                    "Name=" + Name +
 //                    ", topicConfigs=" + topicConfigs +
 //                    ")";
 //        }

@@ -5,7 +5,7 @@
 
 //namespace Kafka.Streams.State.Internals
 //{
-//    public class WrappedWindowedKeyValueIterator : InMemoryWindowStoreIteratorWrapper, IKeyValueIterator<Windowed<Bytes>, byte[]>
+//    public class WrappedWindowedKeyValueIterator : InMemoryWindowStoreIteratorWrapper, IKeyValueIterator<IWindowed<Bytes>, byte[]>
 //    {
 
 //        private long windowSize;
@@ -21,7 +21,7 @@
 //            this.windowSize = windowSize;
 //        }
 
-//        public Windowed<Bytes> PeekNextKey()
+//        public IWindowed<Bytes> PeekNextKey()
 //        {
 //            if (!HasNext())
 //            {
@@ -30,19 +30,19 @@
 //            return getWindowedKey();
 //        }
 
-//        public KeyValuePair<Windowed<Bytes>, byte[]> next()
+//        public KeyValuePair<IWindowed<Bytes>, byte[]> next()
 //        {
 //            if (!HasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }
 
-//            KeyValuePair<Windowed<Bytes>, byte[]> result = KeyValuePair.Create(getWindowedKey(), base.next.value);
+//            KeyValuePair<IWindowed<Bytes>, byte[]> result = KeyValuePair.Create(getWindowedKey(), base.next.value);
 //            base.next = null;
 //            return result;
 //        }
 
-//        private Windowed<Bytes> getWindowedKey()
+//        private IWindowed<Bytes> getWindowedKey()
 //        {
 //            Bytes key = base.retainDuplicates ? getKey(base.next.key) : base.next.key;
 //            long endTime = base.currentTime + windowSize;
@@ -54,7 +54,7 @@
 //            }
 
 //            TimeWindow timeWindow = new TimeWindow(base.currentTime, endTime);
-//            return new Windowed<>(key, timeWindow);
+//            return new IWindowed<>(key, timeWindow);
 //        }
 //    }
 //}

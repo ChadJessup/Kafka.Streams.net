@@ -96,7 +96,7 @@
 //            metrics.config().recordLevel(Sensor.RecordingLevel.DEBUG);
 //            expect(context.metrics()).andReturn(new MockStreamsMetrics(metrics));
 //            expect(context.taskId()).andReturn(taskId);
-//            expect(inner.name()).andReturn("metered").anyTimes();
+//            expect(inner.Name()).andReturn("metered").anyTimes();
 //        }
 
 //        private void Init()
@@ -114,19 +114,19 @@
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
 //                    "scope", "test", taskId.ToString(), "scope", "metered")));
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
-//                    "scope", "test", taskId.ToString(), "scope", "all")));
+//                    "scope", "test", taskId.ToString(), "scope", "All")));
 //        }
 
 //        [Fact]
 //        public void ShouldWriteBytesToInnerStoreAndRecordPutMetric()
 //        {
-//            inner.put(eq(keyBytes), aryEq(valueBytes));
+//            inner.Put(eq(keyBytes), aryEq(valueBytes));
 //            expectLastCall();
 //            Init();
 
-//            metered.put(key, value);
+//            metered.Put(key, value);
 
-//            KafkaMetric metric = metric("put-rate");
+//            KafkaMetric metric = metric("Put-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }
@@ -152,14 +152,14 @@
 
 //            metered.putIfAbsent(key, value);
 
-//            KafkaMetric metric = metric("put-if-absent-rate");
+//            KafkaMetric metric = metric("Put-if-absent-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }
 
-//        private KafkaMetric Metric(string name)
+//        private KafkaMetric Metric(string Name)
 //        {
-//            return this.metrics.metric(new MetricName(name, "stream-scope-metrics", "", this.tags));
+//            return this.metrics.metric(new MetricName(Name, "stream-scope-metrics", "", this.tags));
 //        }
 
 
@@ -172,7 +172,7 @@
 
 //            metered.putAll(Collections.singletonList(KeyValuePair.Create(key, value)));
 
-//            KafkaMetric metric = metric("put-all-rate");
+//            KafkaMetric metric = metric("Put-All-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }
@@ -200,7 +200,7 @@
 //            IKeyValueIterator<string, string> iterator = metered.Range(key, key);
 //            Assert.Equal(iterator.MoveNext().value, (value));
 //            Assert.False(iterator.HasNext());
-//            iterator.close();
+//            iterator.Close();
 
 //            KafkaMetric metric = metric("range-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
@@ -210,15 +210,15 @@
 //        [Fact]
 //        public void ShouldGetAllFromInnerStoreAndRecordAllMetric()
 //        {
-//            expect(inner.all()).andReturn(new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValuePair).iterator()));
+//            expect(inner.All()).andReturn(new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValuePair).iterator()));
 //            Init();
 
-//            IKeyValueIterator<string, string> iterator = metered.all();
+//            IKeyValueIterator<string, string> iterator = metered.All();
 //            Assert.Equal(iterator.MoveNext().value, (value));
 //            Assert.False(iterator.HasNext());
-//            iterator.close();
+//            iterator.Close();
 
-//            KafkaMetric metric = metric(new MetricName("all-rate", "stream-scope-metrics", "", tags));
+//            KafkaMetric metric = metric(new MetricName("All-rate", "stream-scope-metrics", "", tags));
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }
@@ -226,13 +226,13 @@
 //        [Fact]
 //        public void ShouldFlushInnerWhenFlushTimeRecords()
 //        {
-//            inner.flush();
+//            inner.Flush();
 //            expectLastCall().once();
 //            Init();
 
-//            metered.flush();
+//            metered.Flush();
 
-//            KafkaMetric metric = metric("flush-rate");
+//            KafkaMetric metric = metric("Flush-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
 //            verify(inner);
 //        }

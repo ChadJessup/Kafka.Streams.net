@@ -32,70 +32,70 @@ namespace Kafka.Streams.State.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public K PeekNextKey()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return _next.Value.Key;
+            return this._next.Value.Key;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Close()
         {
-            underlying.Close();
-            open = false;
+            this.underlying.Close();
+            this.open = false;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool HasNext()
         {
-            if (!open)
+            if (!this.open)
             {
-                throw new InvalidStateStoreException(string.Format("Store %s has closed", storeName));
+                throw new InvalidStateStoreException(string.Format("Store %s has closed", this.storeName));
             }
 
-            if (_next != null)
+            if (this._next != null)
             {
                 return true;
             }
 
-            if (!underlying.MoveNext())
+            if (!this.underlying.MoveNext())
             {
                 return false;
             }
 
-            _next = underlying.Current;
+            this._next = this.underlying.Current;
             return true;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public KeyValuePair<K, V>? Next()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            var result = _next;
-            _next = null;
+            var result = this._next;
+            this._next = null;
 
             return result;
         }
 
         public void Remove()
         {
-            throw new InvalidOperationException("Remove() is not supported in " + GetType().FullName);
+            throw new InvalidOperationException("Remove() is not supported in " + this.GetType().FullName);
         }
 
         public KeyValuePair<K, V>? PeekNext()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return _next;
+            return this._next;
         }
 
         void IKeyValueIterator<K, V>.Close()
@@ -123,7 +123,7 @@ namespace Kafka.Streams.State.Internals
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!this.disposedValue)
             {
                 if (disposing)
                 {
@@ -133,7 +133,7 @@ namespace Kafka.Streams.State.Internals
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                this.disposedValue = true;
             }
         }
 
@@ -148,7 +148,7 @@ namespace Kafka.Streams.State.Internals
         void System.IDisposable.Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
+            this.Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }

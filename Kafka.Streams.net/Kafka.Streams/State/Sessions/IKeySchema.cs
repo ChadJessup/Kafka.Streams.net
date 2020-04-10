@@ -62,7 +62,7 @@ namespace Kafka.Streams.Internals
 
         /**
          * Create an implementation of {@link HasNextCondition} that knows when
-         * to stop iterating over the KeyValueSegments. Used during {@link SegmentedBytesStore#fetch(Bytes, Bytes, long, long)} operations
+         * to stop iterating over the KeyValueSegments. Used during {@link SegmentedBytesStore#Fetch(Bytes, Bytes, long, long)} operations
          * @param binaryKeyFrom the first key in the range
          * @param binaryKeyTo   the last key in the range
          * @param from          starting time range
@@ -72,7 +72,7 @@ namespace Kafka.Streams.Internals
         bool HasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to);
 
         /**
-         * Used during {@link SegmentedBytesStore#fetch(Bytes, long, long)} operations to determine
+         * Used during {@link SegmentedBytesStore#Fetch(Bytes, long, long)} operations to determine
          * which segments should be scanned.
          * @param segments
          * @param from

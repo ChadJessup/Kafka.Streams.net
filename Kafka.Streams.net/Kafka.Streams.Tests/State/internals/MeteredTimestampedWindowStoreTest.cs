@@ -57,7 +57,7 @@
 //        private Metrics metrics = new Metrics(new MetricConfig().recordLevel(Sensor.RecordingLevel.DEBUG));
 
 //    {
-//        EasyMock.expect(innerStoreMock.name()).andReturn("mocked-store").anyTimes();
+//        EasyMock.expect(innerStoreMock.Name()).andReturn("mocked-store").anyTimes();
 //    }
 
 
@@ -79,12 +79,12 @@
 //    [Fact]
 //    public void ShouldCloseUnderlyingStore()
 //    {
-//        innerStoreMock.close();
+//        innerStoreMock.Close();
 //        EasyMock.expectLastCall();
 //        EasyMock.replay(innerStoreMock);
 
 //        store.Init(context, store);
-//        store.close();
+//        store.Close();
 //        EasyMock.verify(innerStoreMock);
 //    }
 
@@ -101,7 +101,7 @@
 //    [Fact]
 //    public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromProcessorContext()
 //    {
-//        EasyMock.expect(innerStoreMock.name()).andStubReturn("mocked-store");
+//        EasyMock.expect(innerStoreMock.Name()).andStubReturn("mocked-store");
 //        EasyMock.replay(innerStoreMock);
 //        MeteredTimestampedWindowStore<string, long> store = new MeteredTimestampedWindowStore<>(
 //            innerStoreMock,
@@ -115,7 +115,7 @@
 
 //        try
 //        {
-//            store.put("key", ValueAndTimestamp.Make(42L, 60000));
+//            store.Put("key", ValueAndTimestamp.Make(42L, 60000));
 //        }
 //        catch (StreamsException exception)
 //        {
@@ -130,7 +130,7 @@
 //    [Fact]
 //    public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromConstructorParameters()
 //    {
-//        EasyMock.expect(innerStoreMock.name()).andStubReturn("mocked-store");
+//        EasyMock.expect(innerStoreMock.Name()).andStubReturn("mocked-store");
 //        EasyMock.replay(innerStoreMock);
 //        MeteredTimestampedWindowStore<string, long> store = new MeteredTimestampedWindowStore<>(
 //            innerStoreMock,
@@ -144,7 +144,7 @@
 
 //        try
 //        {
-//            store.put("key", ValueAndTimestamp.Make(42L, 60000));
+//            store.Put("key", ValueAndTimestamp.Make(42L, 60000));
 //        }
 //        catch (StreamsException exception)
 //        {

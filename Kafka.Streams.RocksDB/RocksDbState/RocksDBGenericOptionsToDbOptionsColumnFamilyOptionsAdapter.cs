@@ -3,9 +3,9 @@ using RocksDbSharp;
 using System;
 using System.Collections.Generic;
 /**
-* The generic {@link DbOptions} class allows users to Set all configs on one object if only default column family
+* The generic {@link DbOptions} class allows users to Set All configs on one object if only default column family
 * is used. Because we use multiple column families, we need to use {@link DbOptions} and {@link ColumnFamilyOptions}
-* that cover a part of all options each.
+* that cover a part of All options each.
 *
 * This class do the translation between generic {@link DbOptions} into {@link DbOptions} and {@link ColumnFamilyOptions}.
 */
@@ -28,28 +28,28 @@ namespace Kafka.Streams.RocksDbState
 
         public DbOptions SetIncreaseParallelism(int totalThreads)
         {
-            dbOptions.IncreaseParallelism(totalThreads);
+            this.dbOptions.IncreaseParallelism(totalThreads);
 
             return this;
         }
 
         public new DbOptions SetCreateIfMissing(bool flag)
         {
-            dbOptions.SetCreateIfMissing(flag);
+            this.dbOptions.SetCreateIfMissing(flag);
             return this;
         }
 
 
         public DbOptions SetCreateMissingColumnFamilies(bool flag)
         {
-            dbOptions.SetCreateMissingColumnFamilies(flag);
+            this.dbOptions.SetCreateMissingColumnFamilies(flag);
             return this;
         }
 
 
         public DbOptions SetEnv(Env env)
         {
-            dbOptions.SetEnv(env.Handle);
+            this.dbOptions.SetEnv(env.Handle);
             return this;
         }
 
@@ -70,7 +70,7 @@ namespace Kafka.Streams.RocksDbState
              *       Set options.level0_file_num_compaction_trigger,
              *           options.level0_slowdown_writes_trigger
              *           and options.level0_stop_writes_trigger to very large.
-             *     After inserting all the data, issue a manual compaction.
+             *     After inserting All the data, issue a manual compaction.
              *
              * 3-5 will be automatically done if you call DbOptions::PrepareForBulkLoad() to your option
              */
@@ -79,11 +79,11 @@ namespace Kafka.Streams.RocksDbState
             // (3) skipping because, not done in actual PrepareForBulkLoad() code in https://github.com/facebook/rocksdb/blob/master/options/options.cc
             //columnFamilyOptions.SetMemTableConfig(new VectorMemTableConfig());
             // (4-5) below:
-            dbOptions.SetMaxBackgroundFlushes(4);
-            columnFamilyOptions.SetDisableAutoCompactions(0);
-            columnFamilyOptions.SetLevel0FileNumCompactionTrigger(1 << 30);
-            columnFamilyOptions.SetLevel0SlowdownWritesTrigger(1 << 30);
-            columnFamilyOptions.SetLevel0StopWritesTrigger(1 << 30);
+            this.dbOptions.SetMaxBackgroundFlushes(4);
+            this.columnFamilyOptions.SetDisableAutoCompactions(0);
+            this.columnFamilyOptions.SetLevel0FileNumCompactionTrigger(1 << 30);
+            this.columnFamilyOptions.SetLevel0SlowdownWritesTrigger(1 << 30);
+            this.columnFamilyOptions.SetLevel0StopWritesTrigger(1 << 30);
             return this;
         }
 
@@ -91,42 +91,42 @@ namespace Kafka.Streams.RocksDbState
 
         public DbOptions OptimizeForPointLookup(ulong blockCacheSizeMb)
         {
-            columnFamilyOptions.OptimizeForPointLookup(blockCacheSizeMb);
+            this.columnFamilyOptions.OptimizeForPointLookup(blockCacheSizeMb);
             return this;
         }
 
 
         public DbOptions OptimizeLevelStyleCompaction()
         {
-            columnFamilyOptions.OptimizeLevelStyleCompaction(512 * 1024 * 1024);
+            this.columnFamilyOptions.OptimizeLevelStyleCompaction(512 * 1024 * 1024);
             return this;
         }
 
 
         public DbOptions OptimizeLevelStyleCompaction(ulong memtableMemoryBudget)
         {
-            columnFamilyOptions.OptimizeLevelStyleCompaction(memtableMemoryBudget);
+            this.columnFamilyOptions.OptimizeLevelStyleCompaction(memtableMemoryBudget);
             return this;
         }
 
 
         public DbOptions OptimizeUniversalStyleCompaction()
         {
-            columnFamilyOptions.OptimizeUniversalStyleCompaction(512 * 1024 * 1024);
+            this.columnFamilyOptions.OptimizeUniversalStyleCompaction(512 * 1024 * 1024);
             return this;
         }
 
 
         public DbOptions OptimizeUniversalStyleCompaction(ulong memtableMemoryBudget)
         {
-            columnFamilyOptions.OptimizeUniversalStyleCompaction(memtableMemoryBudget);
+            this.columnFamilyOptions.OptimizeUniversalStyleCompaction(memtableMemoryBudget);
             return this;
         }
 
 
         public DbOptions SetComparator(Comparator builtinComparator)
         {
-            columnFamilyOptions.SetComparator(builtinComparator);
+            this.columnFamilyOptions.SetComparator(builtinComparator);
             return this;
         }
 
@@ -679,112 +679,112 @@ namespace Kafka.Streams.RocksDbState
 
         public DbOptions SetInfoLogLevel(int infoLogLevel)
         {
-            dbOptions.SetInfoLogLevel(infoLogLevel);
+            this.dbOptions.SetInfoLogLevel(infoLogLevel);
             return this;
         }
 
 
         public DbOptions SetCompressionPerLevel(Compression[] compressionLevels, ulong numLevels)
         {
-            columnFamilyOptions.SetCompressionPerLevel(compressionLevels, numLevels);
+            this.columnFamilyOptions.SetCompressionPerLevel(compressionLevels, numLevels);
             return this;
         }
 
         public DbOptions SetCompression(Compression compressionType)
         {
-            columnFamilyOptions.SetCompression(compressionType);
+            this.columnFamilyOptions.SetCompression(compressionType);
             return this;
         }
 
         public DbOptions SetCompressionOptions(int p1, int p2, int p3, int p4)
         {
-            columnFamilyOptions.SetCompressionOptions(p1, p2, p3, p4);
+            this.columnFamilyOptions.SetCompressionOptions(p1, p2, p3, p4);
             return this;
         }
 
         public DbOptions SetCompactionStyle(Compaction compactionStyle)
         {
-            columnFamilyOptions.SetCompactionStyle(compactionStyle);
+            this.columnFamilyOptions.SetCompactionStyle(compactionStyle);
             return this;
         }
 
         public DbOptions SetNumLevels(int numLevels)
         {
-            columnFamilyOptions.SetNumLevels(numLevels);
+            this.columnFamilyOptions.SetNumLevels(numLevels);
             return this;
         }
 
         public DbOptions SetLevelZeroFileNumCompactionTrigger(int numFiles)
         {
-            columnFamilyOptions.SetLevel0FileNumCompactionTrigger(numFiles);
+            this.columnFamilyOptions.SetLevel0FileNumCompactionTrigger(numFiles);
             return this;
         }
 
         public DbOptions SetLevelZeroSlowdownWritesTrigger(int value)
         {
-            columnFamilyOptions.SetLevel0SlowdownWritesTrigger(value);
+            this.columnFamilyOptions.SetLevel0SlowdownWritesTrigger(value);
             return this;
         }
 
         public DbOptions SetTargetFileSizeBase(ulong targetFileSizeBase)
         {
-            columnFamilyOptions.SetTargetFileSizeBase(targetFileSizeBase);
+            this.columnFamilyOptions.SetTargetFileSizeBase(targetFileSizeBase);
             return this;
         }
 
         public new DbOptions SetTargetFileSizeMultiplier(int multiplier)
         {
-            columnFamilyOptions.SetTargetFileSizeMultiplier(multiplier);
+            this.columnFamilyOptions.SetTargetFileSizeMultiplier(multiplier);
             return this;
         }
 
         public DbOptions SetMaxBytesForLevelBase(ulong maxBytesForLevelBase)
         {
-            columnFamilyOptions.SetMaxBytesForLevelBase(maxBytesForLevelBase);
+            this.columnFamilyOptions.SetMaxBytesForLevelBase(maxBytesForLevelBase);
             return this;
         }
 
         public DbOptions SetLevelCompactionDynamicLevelBytes(bool enableLevelCompactionDynamicLevelBytes)
         {
-            columnFamilyOptions.SetLevelCompactionDynamicLevelBytes(enableLevelCompactionDynamicLevelBytes);
+            this.columnFamilyOptions.SetLevelCompactionDynamicLevelBytes(enableLevelCompactionDynamicLevelBytes);
             return this;
         }
 
         public DbOptions SetMaxBytesForLevelMultiplier(double multiplier)
         {
-            columnFamilyOptions.SetMaxBytesForLevelMultiplier(multiplier);
+            this.columnFamilyOptions.SetMaxBytesForLevelMultiplier(multiplier);
             return this;
         }
 
         public DbOptions SetMaxCompactionBytes(ulong maxCompactionBytes)
         {
-            columnFamilyOptions.SetMaxCompactionBytes(maxCompactionBytes);
+            this.columnFamilyOptions.SetMaxCompactionBytes(maxCompactionBytes);
             return this;
         }
 
         public DbOptions SetArenaBlockSize(ulong arenaBlockSize)
         {
-            columnFamilyOptions.SetArenaBlockSize(arenaBlockSize);
+            this.columnFamilyOptions.SetArenaBlockSize(arenaBlockSize);
             return this;
         }
 
         public DbOptions SetDisableAutoCompactions(int value)
         {
-            columnFamilyOptions.SetDisableAutoCompactions(value);
+            this.columnFamilyOptions.SetDisableAutoCompactions(value);
             return this;
         }
 
 
         public DbOptions SetMaxSequentialSkipInIterations(ulong maxSequentialSkipInIterations)
         {
-            columnFamilyOptions.SetMaxSequentialSkipInIterations(maxSequentialSkipInIterations);
+            this.columnFamilyOptions.SetMaxSequentialSkipInIterations(maxSequentialSkipInIterations);
             return this;
         }
 
 
         public DbOptions SetInplaceUpdateSupport(bool inplaceUpdateSupport)
         {
-            columnFamilyOptions.SetInplaceUpdateSupport(inplaceUpdateSupport);
+            this.columnFamilyOptions.SetInplaceUpdateSupport(inplaceUpdateSupport);
             return this;
         }
 
@@ -792,7 +792,7 @@ namespace Kafka.Streams.RocksDbState
 
         public DbOptions SetInplaceUpdateNumLocks(ulong inplaceUpdateNumLocks)
         {
-            columnFamilyOptions.SetInplaceUpdateNumLocks(inplaceUpdateNumLocks);
+            this.columnFamilyOptions.SetInplaceUpdateNumLocks(inplaceUpdateNumLocks);
             return this;
         }
 
@@ -800,39 +800,39 @@ namespace Kafka.Streams.RocksDbState
 
         public DbOptions SetMemtablePrefixBloomSizeRatio(double memtablePrefixBloomSizeRatio)
         {
-            columnFamilyOptions.SetMemtablePrefixBloomSizeRatio(memtablePrefixBloomSizeRatio);
+            this.columnFamilyOptions.SetMemtablePrefixBloomSizeRatio(memtablePrefixBloomSizeRatio);
             return this;
         }
 
         public DbOptions SetBloomLocality(uint bloomLocality)
         {
-            columnFamilyOptions.SetBloomLocality(bloomLocality);
+            this.columnFamilyOptions.SetBloomLocality(bloomLocality);
 
             return this;
         }
 
         public DbOptions SetMaxSuccessiveMerges(ulong maxSuccessiveMerges)
         {
-            columnFamilyOptions.SetMaxSuccessiveMerges(maxSuccessiveMerges);
+            this.columnFamilyOptions.SetMaxSuccessiveMerges(maxSuccessiveMerges);
             return this;
         }
 
         public DbOptions SetMinWriteBufferNumberToMerge(int minWriteBufferNumberToMerge)
         {
-            columnFamilyOptions.SetMinWriteBufferNumberToMerge(minWriteBufferNumberToMerge);
+            this.columnFamilyOptions.SetMinWriteBufferNumberToMerge(minWriteBufferNumberToMerge);
             return this;
         }
 
         public DbOptions SetOptimizeFiltersForHits(int value)
         {
-            columnFamilyOptions.SetOptimizeFiltersForHits(value);
+            this.columnFamilyOptions.SetOptimizeFiltersForHits(value);
             return this;
         }
 
 
         public DbOptions SetMemtableHugePageSize(ulong memtableHugePageSize)
         {
-            columnFamilyOptions.SetMemtableHugePageSize(memtableHugePageSize);
+            this.columnFamilyOptions.SetMemtableHugePageSize(memtableHugePageSize);
             return this;
         }
 
@@ -840,63 +840,63 @@ namespace Kafka.Streams.RocksDbState
 
         public DbOptions SetSoftPendingCompactionBytesLimit(ulong softPendingCompactionBytesLimit)
         {
-            columnFamilyOptions.SetSoftPendingCompactionBytesLimit(softPendingCompactionBytesLimit);
+            this.columnFamilyOptions.SetSoftPendingCompactionBytesLimit(softPendingCompactionBytesLimit);
             return this;
         }
 
         public DbOptions SetHardPendingCompactionBytesLimit(ulong hardPendingCompactionBytesLimit)
         {
-            columnFamilyOptions.SetHardPendingCompactionBytesLimit(hardPendingCompactionBytesLimit);
+            this.columnFamilyOptions.SetHardPendingCompactionBytesLimit(hardPendingCompactionBytesLimit);
             return this;
         }
 
 
         public DbOptions SetLevel0FileNumCompactionTrigger(int level0FileNumCompactionTrigger)
         {
-            columnFamilyOptions.SetLevel0FileNumCompactionTrigger(level0FileNumCompactionTrigger);
+            this.columnFamilyOptions.SetLevel0FileNumCompactionTrigger(level0FileNumCompactionTrigger);
             return this;
         }
 
         public DbOptions SetLevel0SlowdownWritesTrigger(int level0SlowdownWritesTrigger)
         {
-            columnFamilyOptions.SetLevel0SlowdownWritesTrigger(level0SlowdownWritesTrigger);
+            this.columnFamilyOptions.SetLevel0SlowdownWritesTrigger(level0SlowdownWritesTrigger);
             return this;
         }
 
 
         public DbOptions SetLevel0StopWritesTrigger(int level0StopWritesTrigger)
         {
-            columnFamilyOptions.SetLevel0StopWritesTrigger(level0StopWritesTrigger);
+            this.columnFamilyOptions.SetLevel0StopWritesTrigger(level0StopWritesTrigger);
             return this;
         }
 
         public DbOptions SetMaxBytesForLevelMultiplierAdditional(int[] maxBytesForLevelMultiplierAdditional, ulong numLevels)
         {
-            columnFamilyOptions.SetMaxBytesForLevelMultiplierAdditional(maxBytesForLevelMultiplierAdditional, numLevels);
+            this.columnFamilyOptions.SetMaxBytesForLevelMultiplierAdditional(maxBytesForLevelMultiplierAdditional, numLevels);
             return this;
         }
 
         public DbOptions SetMaxWriteBufferNumberToMaintain(int maxWriteBufferNumberToMaintain)
         {
-            columnFamilyOptions.SetMaxWriteBufferNumberToMaintain(maxWriteBufferNumberToMaintain);
+            this.columnFamilyOptions.SetMaxWriteBufferNumberToMaintain(maxWriteBufferNumberToMaintain);
             return this;
         }
 
         public DbOptions SetReportBgIoStats(bool reportBgIoStats)
         {
-            columnFamilyOptions.SetReportBgIoStats(reportBgIoStats);
+            this.columnFamilyOptions.SetReportBgIoStats(reportBgIoStats);
             return this;
         }
 
         public DbOptions SetCompactionOptionsUniversal(IntPtr compactionOptionsUniversal)
         {
-            columnFamilyOptions.SetUniversalCompactionOptions(compactionOptionsUniversal);
+            this.columnFamilyOptions.SetUniversalCompactionOptions(compactionOptionsUniversal);
             return this;
         }
 
         public DbOptions SetCompactionOptionsFIFO(IntPtr compactionOptionsFIFO)
         {
-            columnFamilyOptions.SetFifoCompactionOptions(compactionOptionsFIFO);
+            this.columnFamilyOptions.SetFifoCompactionOptions(compactionOptionsFIFO);
             return this;
         }
     }

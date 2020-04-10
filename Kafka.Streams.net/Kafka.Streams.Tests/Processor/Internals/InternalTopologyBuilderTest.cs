@@ -81,7 +81,7 @@
 //            try
 //            {
 //                builder.AddSource(Topology.AutoOffsetReset.LATEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer(), "topic-2");
-//                Assert.True(false, "Should throw TopologyException for duplicate source name");
+//                Assert.True(false, "Should throw TopologyException for duplicate source Name");
 //            }
 //            catch (TopologyException expected) { /* ok */ }
 //        }
@@ -93,7 +93,7 @@
 //            try
 //            {
 //                builder.AddSource<string, string>(null, "source", null, null, null, "topic-2");
-//                Assert.True(false, "Should throw TopologyException with source name conflict");
+//                Assert.True(false, "Should throw TopologyException with source Name conflict");
 //            }
 //            catch (TopologyException expected) { /* ok */ }
 //        }
@@ -118,7 +118,7 @@
 //            try
 //            {
 //                builder.AddProcessor("processor", new MockProcessorSupplier(), "source");
-//                Assert.True(false, "Should throw TopologyException with processor name conflict");
+//                Assert.True(false, "Should throw TopologyException with processor Name conflict");
 //            }
 //            catch (TopologyException expected) { /* ok */ }
 //        }
@@ -155,7 +155,7 @@
 //            try
 //            {
 //                builder.AddSink<string, string>("sink", "topic-3", null, null, null, "source");
-//                Assert.True(false, "Should throw TopologyException with sink name conflict");
+//                Assert.True(false, "Should throw TopologyException with sink Name conflict");
 //            }
 //            catch (TopologyException expected) { /* ok */ }
 //        }
@@ -260,7 +260,7 @@
 //            try
 //            {
 //                builder.AddSource<string, string>(null, "source-2", null, null, null, new Regex("f.*", RegexOptions.Compiled));
-//                Assert.True(false, "Should throw TopologyException with topic name/pattern conflict");
+//                Assert.True(false, "Should throw TopologyException with topic Name/pattern conflict");
 //            }
 //            catch (TopologyException expected) { /* ok */ }
 //        }
@@ -272,7 +272,7 @@
 //            try
 //            {
 //                builder.AddSource<string, string>(null, "source-2", null, null, null, "foo");
-//                Assert.True(false, "Should throw TopologyException with topic name/pattern conflict");
+//                Assert.True(false, "Should throw TopologyException with topic Name/pattern conflict");
 //            }
 //            catch (TopologyException expected) { /* ok */ }
 //        }
@@ -315,7 +315,7 @@
 //            try
 //            {
 //                builder.addStateStore(storeBuilder);
-//                Assert.True(false, "Should throw TopologyException with store name conflict");
+//                Assert.True(false, "Should throw TopologyException with store Name conflict");
 //            }
 //            catch (TopologyException expected) { /* ok */ }
 //        }
@@ -330,11 +330,11 @@
 
 //            Assert.Equal(0, builder.Build(null).stateStores().Count);
 
-//            builder.connectProcessorAndStateStores("processor-1", storeBuilder.name());
+//            builder.connectProcessorAndStateStores("processor-1", storeBuilder.Name());
 
 //            List<IStateStore> suppliers = builder.Build(null).stateStores();
 //            Assert.Equal(1, suppliers.Count);
-//            Assert.Equal(storeBuilder.name(), suppliers.Get(0).name());
+//            Assert.Equal(storeBuilder.Name(), suppliers.Get(0).Name());
 //        }
 
 //        [Fact]
@@ -358,9 +358,9 @@
 //            Dictionary<int, InternalTopologyBuilder.TopicsInfo> topicGroups = builder.topicGroups();
 
 //            Dictionary<int, InternalTopologyBuilder.TopicsInfo> expectedTopicGroups = new HashMap<>();
-//            expectedTopicGroups.put(0, new InternalTopologyBuilder.TopicsInfo(Collections.emptySet(), mkSet("topic-1", "X-topic-1x", "topic-2"), Collections.emptyMap(), Collections.emptyMap()));
-//            expectedTopicGroups.put(1, new InternalTopologyBuilder.TopicsInfo(Collections.emptySet(), mkSet("topic-3", "topic-4"), Collections.emptyMap(), Collections.emptyMap()));
-//            expectedTopicGroups.put(2, new InternalTopologyBuilder.TopicsInfo(Collections.emptySet(), mkSet("topic-5"), Collections.emptyMap(), Collections.emptyMap()));
+//            expectedTopicGroups.Put(0, new InternalTopologyBuilder.TopicsInfo(Collections.emptySet(), mkSet("topic-1", "X-topic-1x", "topic-2"), Collections.emptyMap(), Collections.emptyMap()));
+//            expectedTopicGroups.Put(1, new InternalTopologyBuilder.TopicsInfo(Collections.emptySet(), mkSet("topic-3", "topic-4"), Collections.emptyMap(), Collections.emptyMap()));
+//            expectedTopicGroups.Put(2, new InternalTopologyBuilder.TopicsInfo(Collections.emptySet(), mkSet("topic-5"), Collections.emptyMap(), Collections.emptyMap()));
 
 //            Assert.Equal(3, topicGroups.Count);
 //            Assert.Equal(expectedTopicGroups, topicGroups);
@@ -398,15 +398,15 @@
 //            string store1 = ProcessorStateManager.storeChangelogTopic("X", "store-1");
 //            string store2 = ProcessorStateManager.storeChangelogTopic("X", "store-2");
 //            string store3 = ProcessorStateManager.storeChangelogTopic("X", "store-3");
-//            expectedTopicGroups.put(0, new InternalTopologyBuilder.TopicsInfo(
+//            expectedTopicGroups.Put(0, new InternalTopologyBuilder.TopicsInfo(
 //                Collections.emptySet(), mkSet("topic-1", "topic-1x", "topic-2"),
 //                Collections.emptyMap(),
 //                Collections.singletonMap(store1, new UnwindowedChangelogTopicConfig(store1, Collections.emptyMap()))));
-//            expectedTopicGroups.put(1, new InternalTopologyBuilder.TopicsInfo(
+//            expectedTopicGroups.Put(1, new InternalTopologyBuilder.TopicsInfo(
 //                Collections.emptySet(), mkSet("topic-3", "topic-4"),
 //                Collections.emptyMap(),
 //                Collections.singletonMap(store2, new UnwindowedChangelogTopicConfig(store2, Collections.emptyMap()))));
-//            expectedTopicGroups.put(2, new InternalTopologyBuilder.TopicsInfo(
+//            expectedTopicGroups.Put(2, new InternalTopologyBuilder.TopicsInfo(
 //                Collections.emptySet(), mkSet("topic-5"),
 //                Collections.emptyMap(),
 //                Collections.singletonMap(store3, new UnwindowedChangelogTopicConfig(store3, Collections.emptyMap()))));
@@ -499,13 +499,13 @@
 //        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullTopicWhenAddingSink()
 //        {
-//            builder.AddSink("name", (string)null, null, null, null);
+//            builder.AddSink("Name", (string)null, null, null, null);
 //        }
 
 //        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullTopicChooserWhenAddingSink()
 //        {
-//            builder.AddSink("name", (TopicNameExtractor<object, object>)null, null, null, null);
+//            builder.AddSink("Name", (TopicNameExtractor<object, object>)null, null, null, null);
 //        }
 
 //        [Fact]// (expected = NullPointerException)
@@ -517,7 +517,7 @@
 //        [Fact]// (expected = NullPointerException)
 //        public void ShouldNotAllowNullProcessorSupplier()
 //        {
-//            builder.AddProcessor("name", null);
+//            builder.AddProcessor("Name", null);
 //        }
 
 //        [Fact]// (expected = NullPointerException)
@@ -561,7 +561,7 @@
 //            HashSet<string> nodeNames = new HashSet<>();
 //            foreach (ProcessorNode node in nodes)
 //            {
-//                nodeNames.Add(node.name());
+//                nodeNames.Add(node.Name());
 //            }
 //            return nodeNames;
 //        }
@@ -628,14 +628,14 @@
 //            Assert.Equal(2, properties1.Count);
 //            Assert.Equal(TopicConfig.CLEANUP_POLICY_COMPACT + "," + TopicConfig.CLEANUP_POLICY_DELETE, properties1.Get(TopicConfig.CLEANUP_POLICY_CONFIG));
 //            Assert.Equal("40000", properties1.Get(TopicConfig.RETENTION_MS_CONFIG));
-//            Assert.Equal("appId-store1-changelog", topicConfig1.name());
+//            Assert.Equal("appId-store1-changelog", topicConfig1.Name());
 //            Assert.True(topicConfig1 is WindowedChangelogTopicConfig);
 //            InternalTopicConfig topicConfig2 = topicsInfo.stateChangelogTopics.Get("appId-store2-changelog");
 //            Dictionary<string, string> properties2 = topicConfig2.getProperties(Collections.emptyMap(), 10000);
 //            Assert.Equal(2, properties2.Count);
 //            Assert.Equal(TopicConfig.CLEANUP_POLICY_COMPACT + "," + TopicConfig.CLEANUP_POLICY_DELETE, properties2.Get(TopicConfig.CLEANUP_POLICY_CONFIG));
 //            Assert.Equal("40000", properties2.Get(TopicConfig.RETENTION_MS_CONFIG));
-//            Assert.Equal("appId-store2-changelog", topicConfig2.name());
+//            Assert.Equal("appId-store2-changelog", topicConfig2.Name());
 //            Assert.True(topicConfig2 is WindowedChangelogTopicConfig);
 //        }
 
@@ -652,7 +652,7 @@
 //            Dictionary<string, string> properties = topicConfig.getProperties(Collections.emptyMap(), 10000);
 //            Assert.Equal(1, properties.Count);
 //            Assert.Equal(TopicConfig.CLEANUP_POLICY_COMPACT, properties.Get(TopicConfig.CLEANUP_POLICY_CONFIG));
-//            Assert.Equal("appId-store-changelog", topicConfig.name());
+//            Assert.Equal("appId-store-changelog", topicConfig.Name());
 //            Assert.True(topicConfig is UnwindowedChangelogTopicConfig);
 //        }
 
@@ -668,7 +668,7 @@
 //            Assert.Equal(3, properties.Count);
 //            Assert.Equal(string.valueOf(-1), properties.Get(TopicConfig.RETENTION_MS_CONFIG));
 //            Assert.Equal(TopicConfig.CLEANUP_POLICY_DELETE, properties.Get(TopicConfig.CLEANUP_POLICY_CONFIG));
-//            Assert.Equal("appId-foo", topicConfig.name());
+//            Assert.Equal("appId-foo", topicConfig.Name());
 //            Assert.True(topicConfig is RepartitionTopicConfig);
 //        }
 
@@ -734,32 +734,32 @@
 
 //            Assert.True(iterator.HasNext());
 //            InternalTopologyBuilder.AbstractNode node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
-//            Assert.Equal("source1", node.name);
+//            Assert.Equal("source1", node.Name);
 //            Assert.Equal(6, node.size);
 
 //            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
-//            Assert.Equal("source2", node.name);
+//            Assert.Equal("source2", node.Name);
 //            Assert.Equal(4, node.size);
 
 //            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
-//            Assert.Equal("processor2", node.name);
+//            Assert.Equal("processor2", node.Name);
 //            Assert.Equal(3, node.size);
 
 //            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
-//            Assert.Equal("processor1", node.name);
+//            Assert.Equal("processor1", node.Name);
 //            Assert.Equal(2, node.size);
 
 //            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
-//            Assert.Equal("processor3", node.name);
+//            Assert.Equal("processor3", node.Name);
 //            Assert.Equal(2, node.size);
 
 //            Assert.True(iterator.HasNext());
 //            node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
-//            Assert.Equal("sink1", node.name);
+//            Assert.Equal("sink1", node.Name);
 //            Assert.Equal(1, node.size);
 //        }
 
@@ -785,7 +785,7 @@
 //            builder.SetApplicationId("test-app");
 
 //            Dictionary<string, List<string>> stateStoreAndTopics = builder.stateStoreNameToSourceTopics();
-//            List<string> topics = stateStoreAndTopics.Get(storeBuilder.name());
+//            List<string> topics = stateStoreAndTopics.Get(storeBuilder.Name());
 
 //            Assert.Equal("Expected to contain two topics", 2, topics.Count);
 
@@ -814,28 +814,28 @@
 //        public void ShouldThrowIfNameIsNull()
 //        {
 //            Exception e = Assert.Throws<NullReferenceException>(() => new InternalTopologyBuilder.Source(null, Collections.emptySet(), null));
-//            Assert.Equal("name cannot be null", e.ToString());
+//            Assert.Equal("Name cannot be null", e.ToString());
 //        }
 
 //        [Fact]
 //        public void ShouldThrowIfTopicAndPatternAreNull()
 //        {
-//            Exception e = Assert.Throws(ArgumentException, () => new InternalTopologyBuilder.Source("name", null, null));
+//            Exception e = Assert.Throws(ArgumentException, () => new InternalTopologyBuilder.Source("Name", null, null));
 //            Assert.Equal("Either topics or pattern must be not-null, but both are null.", e.ToString());
 //        }
 
 //        [Fact]
 //        public void ShouldThrowIfBothTopicAndPatternAreNotNull()
 //        {
-//            Exception e = Assert.Throws(ArgumentException, () => new InternalTopologyBuilder.Source("name", Collections.emptySet(), new Regex("", RegexOptions.Compiled)));
+//            Exception e = Assert.Throws(ArgumentException, () => new InternalTopologyBuilder.Source("Name", Collections.emptySet(), new Regex("", RegexOptions.Compiled)));
 //            Assert.Equal("Either topics or pattern must be null, but both are not null.", e.ToString());
 //        }
 
 //        [Fact]
 //        public void SourceShouldBeEqualIfNameAndTopicListAreTheSame()
 //        {
-//            InternalTopologyBuilder.Source @base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
-//            InternalTopologyBuilder.Source sameAsBase = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
+//            InternalTopologyBuilder.Source @base = new InternalTopologyBuilder.Source("Name", Collections.singleton("topic"), null);
+//            InternalTopologyBuilder.Source sameAsBase = new InternalTopologyBuilder.Source("Name", Collections.singleton("topic"), null);
 
 //            Assert.Equal(@base, (sameAsBase));
 //        }
@@ -843,8 +843,8 @@
 //        [Fact]
 //        public void SourceShouldBeEqualIfNameAndPatternAreTheSame()
 //        {
-//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
-//            InternalTopologyBuilder.Source sameAsBase = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
+//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("Name", null, new Regex("topic", RegexOptions.Compiled));
+//            InternalTopologyBuilder.Source sameAsBase = new InternalTopologyBuilder.Source("Name", null, new Regex("topic", RegexOptions.Compiled));
 
 //            Assert.Equal(base, (sameAsBase));
 //        }
@@ -852,7 +852,7 @@
 //        [Fact]
 //        public void SourceShouldNotBeEqualForDifferentNamesWithSameTopicList()
 //        {
-//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
+//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("Name", Collections.singleton("topic"), null);
 //            InternalTopologyBuilder.Source differentName = new InternalTopologyBuilder.Source("name2", Collections.singleton("topic"), null);
 
 //            Assert.Equal(base, not(equalTo(differentName)));
@@ -861,7 +861,7 @@
 //        [Fact]
 //        public void SourceShouldNotBeEqualForDifferentNamesWithSamePattern()
 //        {
-//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
+//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("Name", null, new Regex("topic", RegexOptions.Compiled));
 //            InternalTopologyBuilder.Source differentName = new InternalTopologyBuilder.Source("name2", null, new Regex("topic", RegexOptions.Compiled));
 
 //            Assert.Equal(base, not(equalTo(differentName)));
@@ -870,9 +870,9 @@
 //        [Fact]
 //        public void SourceShouldNotBeEqualForDifferentTopicList()
 //        {
-//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
-//            InternalTopologyBuilder.Source differentTopicList = new InternalTopologyBuilder.Source("name", Collections.emptySet(), null);
-//            InternalTopologyBuilder.Source differentTopic = new InternalTopologyBuilder.Source("name", Collections.singleton("topic2"), null);
+//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("Name", Collections.singleton("topic"), null);
+//            InternalTopologyBuilder.Source differentTopicList = new InternalTopologyBuilder.Source("Name", Collections.emptySet(), null);
+//            InternalTopologyBuilder.Source differentTopic = new InternalTopologyBuilder.Source("Name", Collections.singleton("topic2"), null);
 
 //            Assert.Equal(base, not(equalTo(differentTopicList)));
 //            Assert.Equal(base, not(equalTo(differentTopic)));
@@ -881,9 +881,9 @@
 //        [Fact]
 //        public void SourceShouldNotBeEqualForDifferentPattern()
 //        {
-//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
-//            InternalTopologyBuilder.Source differentPattern = new InternalTopologyBuilder.Source("name", null, new Regex("topic2", RegexOptions.Compiled));
-//            InternalTopologyBuilder.Source overlappingPattern = new InternalTopologyBuilder.Source("name", null, new Regex("top*", RegexOptions.Compiled));
+//            InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("Name", null, new Regex("topic", RegexOptions.Compiled));
+//            InternalTopologyBuilder.Source differentPattern = new InternalTopologyBuilder.Source("Name", null, new Regex("topic2", RegexOptions.Compiled));
+//            InternalTopologyBuilder.Source overlappingPattern = new InternalTopologyBuilder.Source("Name", null, new Regex("top*", RegexOptions.Compiled));
 
 //            Assert.Equal(base, not(equalTo(differentPattern)));
 //            Assert.Equal(base, not(equalTo(overlappingPattern)));

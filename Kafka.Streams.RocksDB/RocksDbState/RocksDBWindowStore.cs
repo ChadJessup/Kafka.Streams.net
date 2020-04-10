@@ -26,25 +26,25 @@
 //            this.windowSize = windowSize;
 //        }
 
-//        public void init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
+//        public void Init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
 //        {
 //            this.context = context;
 //            base.Init(context, root);
 //        }
 
-//        public void put(Bytes key, byte[] value)
+//        public void Put(Bytes key, byte[] value)
 //        {
-//            put(key, value, context.timestamp());
+//            Put(key, value, context.timestamp());
 //        }
 
-//        public void put(Bytes key, byte[] value, long windowStartTimestamp)
+//        public void Put(Bytes key, byte[] value, long windowStartTimestamp)
 //        {
 //            maybeUpdateSeqnumForDups();
 
 //            wrapped.Add(WindowKeySchema.toStoreKeyBinary(key, windowStartTimestamp, seqnum), value);
 //        }
 
-//        public byte[] fetch(Bytes key, long timestamp)
+//        public byte[] Fetch(Bytes key, long timestamp)
 //        {
 //            byte[] bytesValue = wrapped.Get(WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum));
 //            if (bytesValue == null)
@@ -55,14 +55,14 @@
 //        }
 
 
-//        public IWindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
+//        public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
 //        {
 //            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.Fetch(key, timeFrom, timeTo);
 //            return new WindowStoreIteratorWrapper(bytesIterator, windowSize).valuesIterator();
 //        }
 
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from,
 //                                                               Bytes to,
 //                                                               long timeFrom,
 //                                                               long timeTo)
@@ -71,16 +71,16 @@
 //            return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
 //        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> all()
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
 //        {
-//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.all();
+//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.All();
 //            return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
 //        }
 
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
 //        {
-//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.fetchAll(timeFrom, timeTo);
+//            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.FetchAll(timeFrom, timeTo);
 //            return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
 //        }
 

@@ -16,7 +16,7 @@ namespace Kafka.Streams.Processors
         public string RestoreConsumerClientId { get; }
         public HashSet<string> ProducerClientIds { get; }
 
-        // the admin client should be shared among all threads, so the client id should be the same;
+        // the admin client should be shared among All threads, so the client id should be the same;
         // we keep it at the thread-level for user's convenience and possible extensions in the future
         public string AdminClientId { get; }
 
@@ -40,7 +40,7 @@ namespace Kafka.Streams.Processors
             this.StandbyTasks = standbyTasks;
         }
 
-        public string ConsumerClientId => MainConsumerClientId;
+        public string ConsumerClientId => this.MainConsumerClientId;
 
         public override bool Equals(object o)
         {
@@ -49,46 +49,46 @@ namespace Kafka.Streams.Processors
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var that = (ThreadMetadata)o;
-            return ThreadName.Equals(that.ThreadName)
-                && ThreadState.Equals(that.ThreadState)
-                && ActiveTasks.Equals(that.ActiveTasks)
-                && StandbyTasks.Equals(that.StandbyTasks)
-                && MainConsumerClientId.Equals(that.MainConsumerClientId)
-                && RestoreConsumerClientId.Equals(that.RestoreConsumerClientId)
-                && ProducerClientIds.Equals(that.ProducerClientIds)
-                && AdminClientId.Equals(that.AdminClientId);
+            return this.ThreadName.Equals(that.ThreadName)
+                && this.ThreadState.Equals(that.ThreadState)
+                && this.ActiveTasks.Equals(that.ActiveTasks)
+                && this.StandbyTasks.Equals(that.StandbyTasks)
+                && this.MainConsumerClientId.Equals(that.MainConsumerClientId)
+                && this.RestoreConsumerClientId.Equals(that.RestoreConsumerClientId)
+                && this.ProducerClientIds.Equals(that.ProducerClientIds)
+                && this.AdminClientId.Equals(that.AdminClientId);
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(
-                ThreadName,
-                ThreadState,
-                ActiveTasks,
-                StandbyTasks,
-                MainConsumerClientId,
-                RestoreConsumerClientId,
-                ProducerClientIds,
-                AdminClientId);
+                this.ThreadName,
+                this.ThreadState,
+                this.ActiveTasks,
+                this.StandbyTasks,
+                this.MainConsumerClientId,
+                this.RestoreConsumerClientId,
+                this.ProducerClientIds,
+                this.AdminClientId);
         }
 
         public override string ToString()
         {
             return "ThreadMetadata{" +
-                    $"threadName={ThreadName}" +
-                    $", threadState={ThreadState}" +
-                    $", activeTasks={ActiveTasks }" +
-                    $", standbyTasks={StandbyTasks}" +
-                    $", consumerClientId={MainConsumerClientId}" +
-                    $", restoreConsumerClientId={RestoreConsumerClientId}" +
-                    $", producerClientIds={ProducerClientIds}" +
-                    $", adminClientId={AdminClientId}" +
+                    $"threadName={this.ThreadName}" +
+                    $", threadState={this.ThreadState}" +
+                    $", activeTasks={this.ActiveTasks }" +
+                    $", standbyTasks={this.StandbyTasks}" +
+                    $", consumerClientId={this.MainConsumerClientId}" +
+                    $", restoreConsumerClientId={this.RestoreConsumerClientId}" +
+                    $", producerClientIds={this.ProducerClientIds}" +
+                    $", adminClientId={this.AdminClientId}" +
                     '}';
         }
     }

@@ -24,13 +24,13 @@ namespace Kafka.Streams.Processors
 
         public virtual void Update(To to)
         {
-            childName = to.childName;
-            Timestamp = to.Timestamp;
+            this.childName = to.childName;
+            this.Timestamp = to.Timestamp;
         }
 
         /**
-         * Forward the key/value pair to one of the downstream processors designated by the downstream processor name.
-         * @param childName name of downstream processor
+         * Forward the key/value pair to one of the downstream processors designated by the downstream processor Name.
+         * @param childName Name of downstream processor
          * @return a new {@link To} instance configured with {@code childName}
          */
         public static To Child(string childName)
@@ -39,8 +39,8 @@ namespace Kafka.Streams.Processors
         }
 
         /**
-         * Forward the key/value pair to all downstream processors
-         * @return a new {@link To} instance configured for all downstream processor
+         * Forward the key/value pair to All downstream processors
+         * @return a new {@link To} instance configured for All downstream processor
          */
         public static To All()
         {
@@ -65,13 +65,13 @@ namespace Kafka.Streams.Processors
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
             var to = (To)o;
-            return Timestamp == to.Timestamp &&
-                childName.Equals(to.childName);
+            return this.Timestamp == to.Timestamp &&
+                this.childName.Equals(to.childName);
         }
 
         /**

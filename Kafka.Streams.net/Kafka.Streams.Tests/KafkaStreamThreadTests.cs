@@ -82,15 +82,15 @@ namespace Kafka.Streams.Tests
             sp.AddSingleton(mockClientSupplier.GetType());
             this.streamsBuilder = new StreamsBuilder(sp);
 
-            internalTopologyBuilder.AddSource<string, string>(
+            this.internalTopologyBuilder.AddSource<string, string>(
                 offsetReset: null,
-                name: "source1",
+                Name: "source1",
                 timestampExtractor: null,
                 keyDeserializer: null,
                 valDeserializer: null,
                 topics: new[] { topic1 });
 
-            var thread = TestUtils.CreateStreamThread(this.streamsBuilder, clientId, false);
+            var thread = TestUtils.CreateStreamThread(this.streamsBuilder, this.clientId, false);
 
             var stateListener = new StateListenerStub();
             thread.SetStateListener(stateListener);
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Tests
             IConsumerRebalanceListener rebalanceListener = thread.RebalanceListener;
 
             List<TopicPartitionOffset> revokedPartitions;
-            var assignedPartitions = new List<TopicPartition> { t1p1 };
+            var assignedPartitions = new List<TopicPartition> { this.t1p1 };
 
             // revoke nothing
             thread.State.SetState(StreamThreadStates.STARTING);
@@ -115,7 +115,7 @@ namespace Kafka.Streams.Tests
 
             var consumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
             consumer.Assign(assignedPartitions);
-            consumer.UpdateBeginningOffsets(new Dictionary<TopicPartition, long> { { t1p1, 0L } });
+            consumer.UpdateBeginningOffsets(new Dictionary<TopicPartition, long> { { this.t1p1, 0L } });
 
             rebalanceListener.OnPartitionsAssigned(thread.Consumer, assignedPartitions);
 
@@ -132,7 +132,7 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void TestStateChangeStartClose()
         {
-            var thread = TestUtils.CreateStreamThread(this.streamsBuilder, clientId, false);
+            var thread = TestUtils.CreateStreamThread(this.streamsBuilder, this.clientId, false);
 
             var stateListener = new StateListenerStub();
             thread.SetStateListener(stateListener);
@@ -221,7 +221,7 @@ namespace Kafka.Streams.Tests
         // 
         // string TaskGroupName = "stream-Task-metrics";
         // var TaskTags =
-        //     mkMap(mkEntry("Task-id", "all"), mkEntry("client-id", thread.getName()));
+        //     mkMap(mkEntry("Task-id", "All"), mkEntry("client-id", thread.getName()));
         // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-latency-avg", TaskGroupName, descriptionIsNotVerified, TaskTags)));
         // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
@@ -235,7 +235,7 @@ namespace Kafka.Streams.Tests
         // Assert.True(reporter.ContainsMbean(string.Format("kafka.streams:type=%s,client-id=%s",
         //            defaultGroupName,
         //            thread.getName())));
-        // Assert.True(reporter.ContainsMbean("kafka.streams:type=stream-Task-metrics,client-id=" + thread.getName() + ",Task-id=all"));
+        // Assert.True(reporter.ContainsMbean("kafka.streams:type=stream-Task-metrics,client-id=" + thread.getName() + ",Task-id=All"));
         //}
 
         //[Fact]
@@ -732,8 +732,8 @@ namespace Kafka.Streams.Tests
                 [Fact]
                 public void shouldNotNullPointerWhenStandbyTasksAssignedAndNoStateStoresForTopology()
                 {
-                    internalTopologyBuilder.AddSource<string, string>(null, "name", null, null, null, "topic");
-                    internalTopologyBuilder.AddSink<string, string>("out", "output", null, null, null, "name");
+                    internalTopologyBuilder.AddSource<string, string>(null, "Name", null, null, null, "topic");
+                    internalTopologyBuilder.AddSink<string, string>("out", "output", null, null, null, "Name");
 
                     KafkaStreamThread thread = CreateStreamThread(clientId, config, false);
 
@@ -822,8 +822,8 @@ namespace Kafka.Streams.Tests
                 {
                     KafkaStreamThread thread = CreateStreamThread(clientId, new StreamsConfig(ConfigProps(true)), true);
 
-                    internalTopologyBuilder.AddSource<string, string>(null, "name", null, null, null, topic1);
-                    internalTopologyBuilder.AddSink<string, string>("out", "output", null, null, null, "name");
+                    internalTopologyBuilder.AddSource<string, string>(null, "Name", null, null, null, topic1);
+                    internalTopologyBuilder.AddSink<string, string>("out", "output", null, null, null, "Name");
 
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
@@ -861,8 +861,8 @@ namespace Kafka.Streams.Tests
                 {
                     KafkaStreamThread thread = CreateStreamThread(clientId, new StreamsConfig(ConfigProps(true)), true);
 
-                    internalTopologyBuilder.AddSource<string, string>(null, "name", null, null, null, topic1);
-                    internalTopologyBuilder.AddSink<string, string>("out", "output", null, null, null, "name");
+                    internalTopologyBuilder.AddSource<string, string>(null, "Name", null, null, null, topic1);
+                    internalTopologyBuilder.AddSink<string, string>("out", "output", null, null, null, "Name");
 
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
@@ -1134,7 +1134,7 @@ namespace Kafka.Streams.Tests
                     //    IProcessorSupplier<object, object> punctuateProcessor = () => new IProcessor<object, object>()
                     //    {
                     //    //
-                    //    public void init(IProcessorContext context)
+                    //    public void Init(IProcessorContext context)
                     //    {
                     //        context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, punctuatedStreamTime::add);
                     //        context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.WALL_CLOCK_TIME, punctuatedWallClockTime::add);
@@ -1144,7 +1144,7 @@ namespace Kafka.Streams.Tests
                     //                        object value)
                     //    { }
 
-                    //    public void close() { }
+                    //    public void Close() { }
                     //};
 
                     internalStreamsBuilder.Stream(new[] { topic1 }, consumed).process(punctuateProcessor);

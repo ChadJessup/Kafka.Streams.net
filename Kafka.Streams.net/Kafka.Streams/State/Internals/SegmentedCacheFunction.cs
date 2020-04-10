@@ -26,10 +26,10 @@ namespace Kafka.Streams.State.Internals
 
         public Bytes CacheKey(Bytes key)
         {
-            return CacheKey(key, SegmentId(key));
+            return this.CacheKey(key, this.SegmentId(key));
         }
 
-        Bytes CacheKey(Bytes key, long segmentId)
+        private Bytes CacheKey(Bytes key, long segmentId)
         {
             byte[] keyBytes = key.Get();
             ByteBuffer buf = new ByteBuffer().Allocate(SEGMENT_ID_BYTES + keyBytes.Length);
@@ -38,7 +38,7 @@ namespace Kafka.Streams.State.Internals
             return Bytes.Wrap(buf.Array());
         }
 
-        static byte[] BytesFromCacheKey(Bytes cacheKey)
+        private static byte[] BytesFromCacheKey(Bytes cacheKey)
         {
             byte[] binaryKey = new byte[cacheKey.Get().Length - SEGMENT_ID_BYTES];
             Array.Copy(cacheKey.Get(), SEGMENT_ID_BYTES, binaryKey, 0, binaryKey.Length);
@@ -48,22 +48,22 @@ namespace Kafka.Streams.State.Internals
 
         public long SegmentId(Bytes key)
         {
-            return SegmentId(keySchema.SegmentTimestamp(key));
+            return this.SegmentId(this.keySchema.SegmentTimestamp(key));
         }
 
-        long SegmentId(long timestamp)
+        private long SegmentId(long timestamp)
         {
-            return timestamp / segmentInterval;
+            return timestamp / this.segmentInterval;
         }
 
-        long GetSegmentInterval()
+        private long GetSegmentInterval()
         {
-            return segmentInterval;
+            return this.segmentInterval;
         }
 
         public int CompareSegmentedKeys(Bytes cacheKey, Bytes storeKey)
         {
-            long storeSegmentId = SegmentId(storeKey);
+            long storeSegmentId = this.SegmentId(storeKey);
             long cacheSegmentId = new ByteBuffer().Wrap(cacheKey.Get()).GetLong();
 
             int segmentCompare = cacheSegmentId.CompareTo(storeSegmentId);

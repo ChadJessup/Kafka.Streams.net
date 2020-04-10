@@ -38,14 +38,14 @@
 //        [Fact]
 //        public void ShouldRemoveExpired()
 //        {
-//            sessionStore.put(new Windowed<string>("a", new SessionWindow(0, 0)), 1L);
-//            sessionStore.put(new Windowed<string>("aa", new SessionWindow(0, 10)), 2L);
-//            sessionStore.put(new Windowed<string>("a", new SessionWindow(10, 20)), 3L);
+//            sessionStore.Put(new IWindowed<string>("a", new SessionWindow(0, 0)), 1L);
+//            sessionStore.Put(new IWindowed<string>("aa", new SessionWindow(0, 10)), 2L);
+//            sessionStore.Put(new IWindowed<string>("a", new SessionWindow(10, 20)), 3L);
 
 //            // Advance stream time to expire the first record
-//            sessionStore.put(new Windowed<string>("aa", new SessionWindow(10, RETENTION_PERIOD)), 4L);
+//            sessionStore.Put(new IWindowed<string>("aa", new SessionWindow(10, RETENTION_PERIOD)), 4L);
 
-//            IKeyValueIterator<Windowed<string>, long> iterator =
+//            IKeyValueIterator<IWindowed<string>, long> iterator =
 //                sessionStore.findSessions("a", "b", 0L, long.MaxValue);
 //            Assert.Equal(valuesToSet(iterator), new HashSet<>(Array.asList(2L, 3L, 4L)));
 //        }
@@ -53,19 +53,19 @@
 //        [Fact]
 //        public void ShouldNotExpireFromOpenIterator()
 //        {
-//            sessionStore.put(new Windowed<string>("a", new SessionWindow(0, 0)), 1L);
-//            sessionStore.put(new Windowed<string>("aa", new SessionWindow(0, 10)), 2L);
-//            sessionStore.put(new Windowed<string>("a", new SessionWindow(10, 20)), 3L);
+//            sessionStore.Put(new IWindowed<string>("a", new SessionWindow(0, 0)), 1L);
+//            sessionStore.Put(new IWindowed<string>("aa", new SessionWindow(0, 10)), 2L);
+//            sessionStore.Put(new IWindowed<string>("a", new SessionWindow(10, 20)), 3L);
 
-//            IKeyValueIterator<Windowed<string>, long> iterator = sessionStore.findSessions("a", "b", 0L, RETENTION_PERIOD);
+//            IKeyValueIterator<IWindowed<string>, long> iterator = sessionStore.findSessions("a", "b", 0L, RETENTION_PERIOD);
 
 //            // Advance stream time to expire the first three record
-//            sessionStore.put(new Windowed<string>("aa", new SessionWindow(100, 2 * RETENTION_PERIOD)), 4L);
+//            sessionStore.Put(new IWindowed<string>("aa", new SessionWindow(100, 2 * RETENTION_PERIOD)), 4L);
 
 //            Assert.Equal(valuesToSet(iterator), new HashSet<>(Array.asList(1L, 2L, 3L, 4L)));
 //            Assert.False(iterator.HasNext());
 
-//            iterator.close();
+//            iterator.Close();
 //            Assert.False(sessionStore.findSessions("a", "b", 0L, 20L).HasNext());
 //        }
 //    }

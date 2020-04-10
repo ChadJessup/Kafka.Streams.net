@@ -6,7 +6,7 @@
 //namespace Kafka.Streams.Tests.Integration
 //{
 //    /**
-//     * Tests all available joins of Kafka Streams DSL.
+//     * Tests All available joins of Kafka Streams DSL.
 //     */
 
 
@@ -35,7 +35,7 @@
 //        [Fact]
 //        public void TestInner()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,
@@ -77,7 +77,7 @@
 //        [Fact]
 //        public void TestInnerRepartitioned()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-repartitioned");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-repartitioned");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,
@@ -122,7 +122,7 @@
 //        [Fact]
 //        public void TestLeft()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,
@@ -164,7 +164,7 @@
 //        [Fact]
 //        public void TestLeftRepartitioned()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left-repartitioned");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left-repartitioned");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,
@@ -209,7 +209,7 @@
 //        [Fact]
 //        public void TestOuter()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,
@@ -251,7 +251,7 @@
 //        [Fact]
 //        public void TestOuterRepartitioned()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,
@@ -296,7 +296,7 @@
 //        [Fact]
 //        public void TestMultiInner()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-multi-inner");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-multi-inner");
 
 //            List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                null,

@@ -11,11 +11,11 @@
 //                int numPartitions = topic.numberOfPartitions;
 //                if (numPartitions == UNKNOWN)
 //                {
-//                    throw new StreamsException(string.Format("%sTopic [%s] number of partitions not defined", logPrefix, topic.name));
+//                    throw new StreamsException(string.Format("%sTopic [%s] number of partitions not defined", logPrefix, topic.Name));
 //                }
 
 //                topic.setNumberOfPartitions(numPartitions);
-//                topicsToMakeReady.Add(topic.name, topic);
+//                topicsToMakeReady.Add(topic.Name, topic);
 //            }
 
 //            if (!topicsToMakeReady.isEmpty())

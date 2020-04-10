@@ -12,12 +12,12 @@ namespace Kafka.Streams.Processors.Internals
     public class RecordDeserializer<K, V> : RecordDeserializer
     {
         private readonly ILogger<RecordDeserializer<K, V>> logger;
-        private readonly ISourceNode<K, V> sourceNode;
+        private readonly ISourceNode sourceNode;
         private readonly IDeserializationExceptionHandler deserializationExceptionHandler;
 
         public RecordDeserializer(
             ILogger<RecordDeserializer<K, V>> logger,
-            ISourceNode<K, V> sourceNode,
+            ISourceNode sourceNode,
             IDeserializationExceptionHandler deserializationExceptionHandler)
             : base(null, sourceNode, deserializationExceptionHandler)
         {
@@ -72,21 +72,21 @@ namespace Kafka.Streams.Processors.Internals
             }
             catch (Exception deserializationException)
             {
-                DeserializationHandlerResponses response;
+                DeserializationHandlerResponse response;
                 try
                 {
-                    response = deserializationExceptionHandler.Handle<K, V>(processorContext, rawRecord, deserializationException);
+                    response = this.deserializationExceptionHandler.Handle(processorContext, rawRecord, deserializationException);
                 }
                 catch (Exception fatalUserException)
                 {
-                    logger.LogError(
+                    this.logger.LogError(
                         "Deserialization error callback failed after deserialization error for record {}",
                         rawRecord,
                         deserializationException);
                     throw new StreamsException("Fatal user code error in deserialization error callback", fatalUserException);
                 }
 
-                if (response == DeserializationHandlerResponses.FAIL)
+                if (response == DeserializationHandlerResponse.FAIL)
                 {
                     throw new StreamsException("Deserialization exception handler is set to fail upon" +
                         " a deserialization error. If you would rather have the streaming pipeline" +
@@ -97,7 +97,7 @@ namespace Kafka.Streams.Processors.Internals
                 else
                 {
 
-                    logger.LogWarning(
+                    this.logger.LogWarning(
                         "Skipping record due to deserialization error. topic=[{}] partition=[{}] offset=[{}]",
                         rawRecord.Topic,
                         rawRecord.Partition,

@@ -8,11 +8,11 @@ namespace Kafka.Streams.KStream.Interfaces
     {
 
         /**
-         * Sets the name to be used for an operation.
+         * Sets the Name to be used for an operation.
          *
-         * @param name  the name to use.
+         * @param Name  the Name to use.
          * @return an instance of {@link NamedOperation}
          */
-        T WithName(string name);
+        T WithName(string Name);
     }
 }

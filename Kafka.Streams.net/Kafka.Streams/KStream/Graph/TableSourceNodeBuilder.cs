@@ -68,13 +68,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             return new TableSourceNode<K, V>(
                 this.context,
-                nodeName,
-                sourceName,
-                topic,
-                consumedInternal,
-                materializedInternal,
-                processorParameters,
-                isGlobalKTable);
+                this.nodeName,
+                this.sourceName,
+                this.topic,
+                this.consumedInternal,
+                this.materializedInternal,
+                this.processorParameters,
+                this.isGlobalKTable);
         }
     }
 }

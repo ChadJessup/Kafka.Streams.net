@@ -84,7 +84,7 @@
 //    };
 //    allIterator = new FilteredCacheIterator(
 //            new DelegatingPeekingKeyValueIterator<>("",
-//                                                    store.all()), allCondition, IDENTITY_FUNCTION);
+//                                                    store.All()), allCondition, IDENTITY_FUNCTION);
 
 //        HasNextCondition firstEntryCondition = new HasNextCondition()
 //        {
@@ -97,7 +97,7 @@
 //        };
 //        firstEntryIterator = new FilteredCacheIterator(
 //                new DelegatingPeekingKeyValueIterator<>("",
-//                                                        store.all()), firstEntryCondition, IDENTITY_FUNCTION);
+//                                                        store.All()), firstEntryCondition, IDENTITY_FUNCTION);
 
 //    }
 

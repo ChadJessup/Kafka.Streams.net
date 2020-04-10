@@ -123,9 +123,9 @@
 //        }
 
 //        /**
-//         * Print the records of a {@link KStream} with provided processor name.
+//         * Print the records of a {@link KStream} with provided processor Name.
 //         *
-//         * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
+//         * @param processorName the processor Name to be used. If {@code null} a default processor Name will be generated
 //         ** @return this
 //         */
 

@@ -55,7 +55,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        public void cleanup()
 //        {
-//            driver.close();
+//            driver.Close();
 //        }
 
 //        private void pushToStream(int messageCount, string valuePrefix, bool includeForeignKey)
@@ -128,7 +128,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            pushToGlobalTable(2, "Y");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce four items.
+//            // push All four items to the primary stream. this should produce four items.
 
 //            pushToStream(4, "X", true);
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
@@ -136,12 +136,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    new KeyValueTimestamp<>(2, "X2,FKey2+null", 2),
 //                    new KeyValueTimestamp<>(3, "X3,FKey3+null", 3));
 
-//            // push all items to the globalTable. this should not produce any item
+//            // push All items to the globalTable. this should not produce any item
 
 //            pushToGlobalTable(4, "YY");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce four items.
+//            // push All four items to the primary stream. this should produce four items.
 
 //            pushToStream(4, "X", true);
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+YY0", 0),
@@ -149,7 +149,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    new KeyValueTimestamp<>(2, "X2,FKey2+YY2", 2),
 //                    new KeyValueTimestamp<>(3, "X3,FKey3+YY3", 3));
 
-//            // push all items to the globalTable. this should not produce any item
+//            // push All items to the globalTable. this should not produce any item
 
 //            pushToGlobalTable(4, "YYY");
 //            processor.checkAndClearProcessResult(EMPTY);
@@ -164,7 +164,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            pushToGlobalTable(2, "Y");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce four items.
+//            // push All four items to the primary stream. this should produce four items.
 
 //            pushToStream(4, "X", true);
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
@@ -178,12 +178,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldClearGlobalTableEntryOnNullValueUpdates()
 //        {
 
-//            // push all four items to the globalTable. this should not produce any item.
+//            // push All four items to the globalTable. this should not produce any item.
 
 //            pushToGlobalTable(4, "Y");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce four items.
+//            // push All four items to the primary stream. this should produce four items.
 
 //            pushToStream(4, "X", true);
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
@@ -196,7 +196,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            pushNullValueToGlobalTable(2);
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream. this should produce four items.
+//            // push All four items to the primary stream. this should produce four items.
 
 //            pushToStream(4, "XX", true);
 //            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "XX0,FKey0+null", 0),
@@ -209,12 +209,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldJoinOnNullKeyMapperValues()
 //        {
 
-//            // push all items to the globalTable. this should not produce any item
+//            // push All items to the globalTable. this should not produce any item
 
 //            pushToGlobalTable(4, "Y");
 //            processor.checkAndClearProcessResult(EMPTY);
 
-//            // push all four items to the primary stream with no foreign key, resulting in null keyMapper values.
+//            // push All four items to the primary stream with no foreign key, resulting in null keyMapper values.
 //            // this should produce four items.
 
 //            pushToStream(4, "XXX", false);

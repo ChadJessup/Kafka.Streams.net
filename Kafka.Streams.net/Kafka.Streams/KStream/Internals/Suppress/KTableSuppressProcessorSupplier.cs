@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         public IKeyValueProcessor<K, IChange<V>> Get()
         {
             return (IKeyValueProcessor<K, IChange<V>>)new KTableSuppressProcessor<K, IChange<V>>(
-                suppress, storeName);
+                this.suppress, this.storeName);
         }
 
         IKeyValueProcessor IProcessorSupplier.Get()
@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public IKTableValueGetterSupplier<K, V> View()
         {
-            return parentKTable.ValueGetterSupplier<V>();
+            return this.parentKTable.ValueGetterSupplier<V>();
         }
 
         //public IKTableValueGetter<K, V> get()
@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         //    //            return new KTableValueGetter<K, V>()
         //    //            {
         //    //                    private ITimeOrderedKeyValueBuffer<K, V> buffer;
-        //    //        public void init(IProcessorContext<K, V> context)
+        //    //        public void Init(IProcessorContext context)
         //    //        {
         //    //            parentGetter.Init(context);
         //    //            // the main processor is responsible for the buffer's lifecycle
@@ -69,9 +69,9 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         //    //        }
 
 
-        //    //        public void close()
+        //    //        public void Close()
         //    //        {
-        //    //            parentGetter.close();
+        //    //            parentGetter.Close();
         //    //            // the main processor is responsible for the buffer's lifecycle
         //    //        }
         //    //    };
@@ -92,7 +92,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public void EnableSendingOldValues()
         {
-            parentKTable.EnableSendingOldValues();
+            this.parentKTable.EnableSendingOldValues();
         }
     }
 }

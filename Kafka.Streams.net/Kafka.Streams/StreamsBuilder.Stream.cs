@@ -49,12 +49,12 @@ namespace Kafka.Streams
             // If this is not the case it is the user's responsibility to repartition the data before any key based operation
             // (like aggregation or join) is applied to the returned {@link KStream}.
             // 
-            // @param topic the topic name; cannot be {@code null}
+            // @param topic the topic Name; cannot be {@code null}
             // @return a {@link KStream} for the specified topic
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> Stream<K, V>(string topic)
             {
-                return Stream<K, V>(new List<string>() { topic }.AsReadOnly());
+                return this.Stream<K, V>(new List<string>() { topic }.AsReadOnly());
             }
 
             /**
@@ -89,13 +89,13 @@ namespace Kafka.Streams
              * If this is not the case it is the user's responsibility to repartition the data before any key based operation
              * (like aggregation or join) is applied to the returned {@link KStream}.
              *
-             * @param topics the topic names; must contain at least one topic name
+             * @param topics the topic names; must contain at least one topic Name
              * @return a {@link KStream} for the specified topics
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> Stream<K, V>(IReadOnlyList<string> topics)
             {
-                return Stream(
+                return this.Stream(
                     topics,
                     Consumed.With<K, V>(null, null, null, null));
             }
@@ -111,7 +111,7 @@ namespace Kafka.Streams
              * If this is not the case it is the user's responsibility to repartition the data before any key based operation
              * (like aggregation or join) is applied to the returned {@link KStream}.
              *
-             * @param topics the topic names; must contain at least one topic name
+             * @param topics the topic names; must contain at least one topic Name
              * @param consumed      the instance of {@link Consumed} used to define optional parameters
              * @return a {@link KStream} for the specified topics
              */
@@ -131,7 +131,7 @@ namespace Kafka.Streams
              * The default {@code "auto.offset.reset"} strategy, default {@link ITimestampExtractor}, and default key and value
              * deserializers as specified in the {@link StreamsConfig config} are used.
              * <p>
-             * If multiple topics are matched by the specified pattern, the created {@link KStream} will read data from all of
+             * If multiple topics are matched by the specified pattern, the created {@link KStream} will read data from All of
              * them and there is no ordering guarantee between records from different topics.
              * <p>
              * Note that the specified input topics must be partitioned by key.
@@ -144,7 +144,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> Stream<K, V>(Regex topicPattern)
             {
-                return Stream(topicPattern, Consumed.With<K, V>(null, null));
+                return this.Stream(topicPattern, Consumed.With<K, V>(null, null));
             }
 
             /**
@@ -152,7 +152,7 @@ namespace Kafka.Streams
              * The {@code "auto.offset.reset"} strategy, {@link ITimestampExtractor}, key and value deserializers
              * are defined by the options in {@link Consumed} are used.
              * <p>
-             * If multiple topics are matched by the specified pattern, the created {@link KStream} will read data from all of
+             * If multiple topics are matched by the specified pattern, the created {@link KStream} will read data from All of
              * them and there is no ordering guarantee between records from different topics.
              * <p>
              * Note that the specified input topics must be partitioned by key.

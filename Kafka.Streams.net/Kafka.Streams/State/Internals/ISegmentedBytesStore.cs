@@ -11,8 +11,8 @@ namespace Kafka.Streams.Internals
     public interface ISegmentedBytesStore : IStateStore
     {
         /**
-         * Fetch all records from the segmented store with the provided key and time range
-         * from all existing segments
+         * Fetch All records from the segmented store with the provided key and time range
+         * from All existing segments
          * @param key       the key to match
          * @param from      earliest time to match
          * @param to        latest time to match
@@ -21,8 +21,8 @@ namespace Kafka.Streams.Internals
         IKeyValueIterator<Bytes, byte[]> Fetch(Bytes key, long from, long to);
 
         /**
-         * Fetch all records from the segmented store in the provided key range and time range
-         * from all existing segments
+         * Fetch All records from the segmented store in the provided key range and time range
+         * from All existing segments
          * @param keyFrom   The first key that could be in the range
          * @param keyTo     The last key that could be in the range
          * @param from      earliest time to match
@@ -32,19 +32,19 @@ namespace Kafka.Streams.Internals
         IKeyValueIterator<Bytes, byte[]> Fetch(Bytes keyFrom, Bytes keyTo, long from, long to);
 
         /**
-         * Gets all the key-value pairs in the existing windows.
+         * Gets All the key-value pairs in the existing windows.
          *
-         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+         * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          */
         IKeyValueIterator<Bytes, byte[]> All();
 
         /**
-         * Gets all the key-value pairs that belong to the windows within in the given time range.
+         * Gets All the key-value pairs that belong to the windows within in the given time range.
          *
          * @param from the beginning of the time slot from which to search
          * @param to   the end of the time slot from which to search
-         * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
+         * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws NullPointerException if null is used for any key
          */

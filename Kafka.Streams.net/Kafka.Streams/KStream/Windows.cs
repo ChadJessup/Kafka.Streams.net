@@ -53,7 +53,7 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentException("Window retention time (durationMs) cannot be negative.");
             }
 
-            maintainRetentionDuration = duration;
+            this.maintainRetentionDuration = duration;
 
             return this;
         }
@@ -67,7 +67,7 @@ namespace Kafka.Streams.KStream
         [Obsolete]
         public virtual TimeSpan MaintainDuration()
         {
-            return maintainRetentionDuration;
+            return this.maintainRetentionDuration;
         }
 
         /**
@@ -93,7 +93,7 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Create all windows that contain the provided timestamp, indexed by non-negative window start timestamps.
+         * Create All windows that contain the provided timestamp, indexed by non-negative window start timestamps.
          *
          * @param timestamp the timestamp window should get created for
          * @return a map of {@code windowStartTimestamp -> Window} entries

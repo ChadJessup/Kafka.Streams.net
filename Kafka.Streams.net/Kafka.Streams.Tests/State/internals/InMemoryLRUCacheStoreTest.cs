@@ -108,43 +108,43 @@
 //        public void TestEvict()
 //        {
 //            // Create the test driver ...
-//            store.put(0, "zero");
-//            store.put(1, "one");
-//            store.put(2, "two");
-//            store.put(3, "three");
-//            store.put(4, "four");
-//            store.put(5, "five");
-//            store.put(6, "six");
-//            store.put(7, "seven");
-//            store.put(8, "eight");
-//            store.put(9, "nine");
+//            store.Put(0, "zero");
+//            store.Put(1, "one");
+//            store.Put(2, "two");
+//            store.Put(3, "three");
+//            store.Put(4, "four");
+//            store.Put(5, "five");
+//            store.Put(6, "six");
+//            store.Put(7, "seven");
+//            store.Put(8, "eight");
+//            store.Put(9, "nine");
 //            Assert.Equal(10, driver.sizeOf(store));
 
-//            store.put(10, "ten");
-//            store.flush();
+//            store.Put(10, "ten");
+//            store.Flush();
 //            Assert.Equal(10, driver.sizeOf(store));
 //            Assert.True(driver.flushedEntryRemoved(0));
 //            Assert.Equal(1, driver.numFlushedEntryRemoved());
 
 //            store.delete(1);
-//            store.flush();
+//            store.Flush();
 //            Assert.Equal(9, driver.sizeOf(store));
 //            Assert.True(driver.flushedEntryRemoved(0));
 //            Assert.True(driver.flushedEntryRemoved(1));
 //            Assert.Equal(2, driver.numFlushedEntryRemoved());
 
-//            store.put(11, "eleven");
-//            store.flush();
+//            store.Put(11, "eleven");
+//            store.Flush();
 //            Assert.Equal(10, driver.sizeOf(store));
 //            Assert.Equal(2, driver.numFlushedEntryRemoved());
 
-//            store.put(2, "two-again");
-//            store.flush();
+//            store.Put(2, "two-again");
+//            store.Flush();
 //            Assert.Equal(10, driver.sizeOf(store));
 //            Assert.Equal(2, driver.numFlushedEntryRemoved());
 
-//            store.put(12, "twelve");
-//            store.flush();
+//            store.Put(12, "twelve");
+//            store.Flush();
 //            Assert.Equal(10, driver.sizeOf(store));
 //            Assert.True(driver.flushedEntryRemoved(0));
 //            Assert.True(driver.flushedEntryRemoved(1));
@@ -155,7 +155,7 @@
 //        [Fact]
 //        public void TestRestoreEvict()
 //        {
-//            store.close();
+//            store.Close();
 //            // Add any entries that will be restored to any store
 //            // that uses the driver's context ...
 //            driver.addEntryToRestoreLog(0, "zero");
@@ -173,7 +173,7 @@
 //            // Create the store, which should register with the context and automatically
 //            // receive the restore entries ...
 //            store = createKeyValueStore(driver.context);
-//            context.restore(store.name(), driver.restoredEntries());
+//            context.restore(store.Name(), driver.restoredEntries());
 //            // Verify that the store's changelog does not get more appends ...
 //            Assert.Equal(0, driver.numFlushedEntryStored());
 //            Assert.Equal(0, driver.numFlushedEntryRemoved());

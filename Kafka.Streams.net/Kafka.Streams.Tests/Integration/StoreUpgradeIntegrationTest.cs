@@ -77,21 +77,21 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private StreamsConfig props() {
 //        StreamsConfig streamsConfiguration = new StreamsConfig();
-//        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "addId-" + testCounter++);
-//        streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//        streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//        streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-//        streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//        streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//        streamsConfiguration.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
-//        streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//        streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, "addId-" + testCounter++);
+//        streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//        streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//        streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+//        streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//        streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//        streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
+//        streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 //        return streamsConfiguration;
 //    }
 
 
 //    public void shutdown() {
 //        if (kafkaStreams != null) {
-//            kafkaStreams.close(TimeSpan.ofSeconds(30L));
+//            kafkaStreams.Close(TimeSpan.ofSeconds(30L));
 //            kafkaStreams.cleanUp();
 //        }
 //    }
@@ -156,7 +156,7 @@ namespace Kafka.Streams.Tests.Integration
 //            KeyValuePair.Create(4, 3L)));
 //        long lastUpdateKeyFour = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //        kafkaStreams = null;
 
 
@@ -212,7 +212,7 @@ namespace Kafka.Streams.Tests.Integration
 //            KeyValuePair.Create(3, ValueAndTimestamp.Make(1L, lastUpdateKeyThree)),
 //            KeyValuePair.Create(4, ValueAndTimestamp.Make(6L, currentTime + 42L))));
 
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //    }
 
 //    [Fact]
@@ -262,7 +262,7 @@ namespace Kafka.Streams.Tests.Integration
 //            KeyValuePair.Create(3, 1L),
 //            KeyValuePair.Create(4, 3L)));
 
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //        kafkaStreams = null;
 
 
@@ -317,7 +317,7 @@ namespace Kafka.Streams.Tests.Integration
 //            KeyValuePair.Create(3, ValueAndTimestamp.Make(1L, -1L)),
 //            KeyValuePair.Create(4, ValueAndTimestamp.Make(6L, -1L))));
 
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //    }
 
 //    private void processKeyValueAndVerifyPlainCount<K, V>(K key,
@@ -338,10 +338,10 @@ namespace Kafka.Streams.Tests.Integration
 //                    IReadOnlyKeyValueStore<K, V> store =
 //                        kafkaStreams.store(STORE_NAME, QueryableStoreTypes.KeyValueStore());
 //                    try { 
-// (IKeyValueIterator<K, V> all = store.all());
+// (IKeyValueIterator<K, V> All = store.All());
 //                        List<KeyValuePair<K, V>> storeContent = new LinkedList<>();
-//                        while (all.HasNext()) {
-//                            storeContent.Add(all.MoveNext());
+//                        while (All.HasNext()) {
+//                            storeContent.Add(All.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
 //                    }
@@ -413,10 +413,10 @@ namespace Kafka.Streams.Tests.Integration
 //                    IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>> store =
 //                        kafkaStreams.store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
 //                    try { 
-// (IKeyValueIterator<K, ValueAndTimestamp<V>> all = store.all());
+// (IKeyValueIterator<K, ValueAndTimestamp<V>> All = store.All());
 //                        List<KeyValuePair<K, ValueAndTimestamp<V>>> storeContent = new LinkedList<>();
-//                        while (all.HasNext()) {
-//                            storeContent.Add(all.MoveNext());
+//                        while (All.HasNext()) {
+//                            storeContent.Add(All.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
 //                    }
@@ -449,10 +449,10 @@ namespace Kafka.Streams.Tests.Integration
 //                    IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>> store =
 //                        kafkaStreams.store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
 //                    try { 
-// (IKeyValueIterator<K, ValueAndTimestamp<V>> all = store.all());
+// (IKeyValueIterator<K, ValueAndTimestamp<V>> All = store.All());
 //                        List<KeyValuePair<K, ValueAndTimestamp<V>>> storeContent = new LinkedList<>();
-//                        while (all.HasNext()) {
-//                            storeContent.Add(all.MoveNext());
+//                        while (All.HasNext()) {
+//                            storeContent.Add(All.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
 //                    }
@@ -548,134 +548,134 @@ namespace Kafka.Streams.Tests.Integration
 //        kafkaStreams.start();
 
 //        processWindowedKeyValueAndVerifyPlainCount(1, singletonList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 1L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 1L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(1, singletonList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L)));
 //        long lastUpdateKeyOne = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processWindowedKeyValueAndVerifyPlainCount(2, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L)));
 //        long lastUpdateKeyTwo = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processWindowedKeyValueAndVerifyPlainCount(3, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L)));
 //        long lastUpdateKeyThree = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
 //        processWindowedKeyValueAndVerifyPlainCount(4, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), 1L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), 1L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(4, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), 2L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), 2L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(4, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), 3L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), 3L)));
 //        long lastUpdateKeyFour = persistentStore ? -1L : CLUSTER.time.NowAsEpochMilliseconds; - 1L;
 
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //        kafkaStreams = null;
 
 
 //        kafkaStreams = kafkaStreamsNew;
 //        kafkaStreams.start();
 
-//        verifyWindowedCountWithTimestamp(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L, lastUpdateKeyOne);
-//        verifyWindowedCountWithTimestamp(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L, lastUpdateKeyTwo);
-//        verifyWindowedCountWithTimestamp(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L, lastUpdateKeyThree);
-//        verifyWindowedCountWithTimestamp(new Windowed<>(4, new TimeWindow(0L, 1000L)), 3L, lastUpdateKeyFour);
+//        verifyWindowedCountWithTimestamp(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L, lastUpdateKeyOne);
+//        verifyWindowedCountWithTimestamp(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L, lastUpdateKeyTwo);
+//        verifyWindowedCountWithTimestamp(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L, lastUpdateKeyThree);
+//        verifyWindowedCountWithTimestamp(new IWindowed<>(4, new TimeWindow(0L, 1000L)), 3L, lastUpdateKeyFour);
 
 //        long currentTime = CLUSTER.time.NowAsEpochMilliseconds;;
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(1, currentTime + 42L, asList(
 //            KeyValuePair.Create(
-//                new Windowed<>(1, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(1, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(3L, currentTime + 42L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(2, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(2, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(1L, lastUpdateKeyTwo)),
 //            KeyValuePair.Create(
-//                new Windowed<>(3, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(3, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(1L, lastUpdateKeyThree)),
 //            KeyValuePair.Create(
-//                new Windowed<>(4, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(4, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(3L, lastUpdateKeyFour))));
 
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(2, currentTime + 45L, asList(
 //            KeyValuePair.Create(
-//                new Windowed<>(1, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(1, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(3L, currentTime + 42L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(2, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(2, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(2L, currentTime + 45L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(3, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(3, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(1L, lastUpdateKeyThree)),
 //            KeyValuePair.Create(
-//                new Windowed<>(4, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(4, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(3L, lastUpdateKeyFour))));
 
 //        // can process "out of order" record for different key
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(4, currentTime + 21L, asList(
 //            KeyValuePair.Create(
-//                new Windowed<>(1, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(1, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(3L, currentTime + 42L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(2, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(2, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(2L, currentTime + 45L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(3, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(3, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(1L, lastUpdateKeyThree)),
 //            KeyValuePair.Create(
-//                new Windowed<>(4, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(4, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(4L, currentTime + 21L))));
 
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(4, currentTime + 42L, asList(
 //            KeyValuePair.Create(
-//                new Windowed<>(1, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(1, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(3L, currentTime + 42L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(2, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(2, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(2L, currentTime + 45L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(3, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(3, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(1L, lastUpdateKeyThree)),
 //            KeyValuePair.Create(
-//                new Windowed<>(4, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(4, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(5L, currentTime + 42L))));
 
 //        // out of order (same key) record should not reduce result timestamp
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(4, currentTime + 10L, asList(
 //            KeyValuePair.Create(
-//                new Windowed<>(1, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(1, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(3L, currentTime + 42L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(2, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(2, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(2L, currentTime + 45L)),
 //            KeyValuePair.Create(
-//                new Windowed<>(3, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(3, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(1L, lastUpdateKeyThree)),
 //            KeyValuePair.Create(
-//                new Windowed<>(4, new TimeWindow(0L, 1000L)),
+//                new IWindowed<>(4, new TimeWindow(0L, 1000L)),
 //                ValueAndTimestamp.Make(6L, currentTime + 42L))));
 
 //        // test new segment
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(10, currentTime + 100001L, singletonList(
 //            KeyValuePair.Create(
-//                new Windowed<>(10, new TimeWindow(100000L, 101000L)), ValueAndTimestamp.Make(1L, currentTime + 100001L))));
+//                new IWindowed<>(10, new TimeWindow(100000L, 101000L)), ValueAndTimestamp.Make(1L, currentTime + 100001L))));
 
 
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //    }
 
 //    [Fact]
@@ -699,39 +699,39 @@ namespace Kafka.Streams.Tests.Integration
 //        kafkaStreams.start();
 
 //        processWindowedKeyValueAndVerifyPlainCount(1, singletonList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 1L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 1L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(1, singletonList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(2, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(3, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(4, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), 1L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), 1L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(4, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), 2L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), 2L)));
 
 //        processWindowedKeyValueAndVerifyPlainCount(4, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), 3L)));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), 3L)));
 
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //        kafkaStreams = null;
 
 
@@ -753,53 +753,53 @@ namespace Kafka.Streams.Tests.Integration
 //        kafkaStreams = new KafkaStreams(streamsBuilderForNewStore.Build(), props);
 //        kafkaStreams.start();
 
-//        verifyWindowedCountWithSurrogateTimestamp(new Windowed<>(1, new TimeWindow(0L, 1000L)), 2L);
-//        verifyWindowedCountWithSurrogateTimestamp(new Windowed<>(2, new TimeWindow(0L, 1000L)), 1L);
-//        verifyWindowedCountWithSurrogateTimestamp(new Windowed<>(3, new TimeWindow(0L, 1000L)), 1L);
-//        verifyWindowedCountWithSurrogateTimestamp(new Windowed<>(4, new TimeWindow(0L, 1000L)), 3L);
+//        verifyWindowedCountWithSurrogateTimestamp(new IWindowed<>(1, new TimeWindow(0L, 1000L)), 2L);
+//        verifyWindowedCountWithSurrogateTimestamp(new IWindowed<>(2, new TimeWindow(0L, 1000L)), 1L);
+//        verifyWindowedCountWithSurrogateTimestamp(new IWindowed<>(3, new TimeWindow(0L, 1000L)), 1L);
+//        verifyWindowedCountWithSurrogateTimestamp(new IWindowed<>(4, new TimeWindow(0L, 1000L)), 3L);
 
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(1, 42L, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L))));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L))));
 
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(2, 45L, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(2L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L))));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(2L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L))));
 
 //        // can process "out of order" record for different key
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(4, 21L, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(2L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(4L, -1L))));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(2L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(4L, -1L))));
 
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(4, 42L, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(2L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(5L, -1L))));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(2L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(5L, -1L))));
 
 //        // out of order (same key) record should not reduce result timestamp
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(4, 10L, asList(
-//            KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(2L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
-//            KeyValuePair.Create(new Windowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(6L, -1L))));
+//            KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(3L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(2L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(1L, -1L)),
+//            KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(0L, 1000L)), ValueAndTimestamp.Make(6L, -1L))));
 
 //        // test new segment
 //        processKeyValueAndVerifyWindowedCountWithTimestamp(10, 100001L, singletonList(
-//            KeyValuePair.Create(new Windowed<>(10, new TimeWindow(100000L, 101000L)), ValueAndTimestamp.Make(1L, -1L))));
+//            KeyValuePair.Create(new IWindowed<>(10, new TimeWindow(100000L, 101000L)), ValueAndTimestamp.Make(1L, -1L))));
 
 
-//        kafkaStreams.close();
+//        kafkaStreams.Close();
 //    }
 
 //    private void processWindowedKeyValueAndVerifyPlainCount<K, V>(K key,
-//                                                                   List<KeyValuePair<Windowed<int>, object>> expectedStoreContent)
+//                                                                   List<KeyValuePair<IWindowed<int>, object>> expectedStoreContent)
 //            //throws Exception {
 
 //        IntegrationTestUtils.produceKeyValuesSynchronously(
@@ -816,10 +816,10 @@ namespace Kafka.Streams.Tests.Integration
 //                    IReadOnlyWindowStore<K, V> store =
 //                        kafkaStreams.store(STORE_NAME, QueryableStoreTypes.windowStore());
 //                    try { 
-// (IKeyValueIterator<Windowed<K>, V> all = store.all());
-//                        List<KeyValuePair<Windowed<K>, V>> storeContent = new LinkedList<>();
-//                        while (all.HasNext()) {
-//                            storeContent.Add(all.MoveNext());
+// (IKeyValueIterator<IWindowed<K>, V> All = store.All());
+//                        List<KeyValuePair<IWindowed<K>, V>> storeContent = new LinkedList<>();
+//                        while (All.HasNext()) {
+//                            storeContent.Add(All.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
 //                    }
@@ -833,7 +833,7 @@ namespace Kafka.Streams.Tests.Integration
 //            "Could not get expected result in time.");
 //    }
 
-//    private <K> void verifyWindowedCountWithSurrogateTimestamp(Windowed<K> key,
+//    private <K> void verifyWindowedCountWithSurrogateTimestamp(IWindowed<K> key,
 //                                                               long value) {// throws Exception
 //        TestUtils.WaitForCondition(
 //            () => {
@@ -852,7 +852,7 @@ namespace Kafka.Streams.Tests.Integration
 //            "Could not get expected result in time.");
 //    }
 
-//    private <K> void verifyWindowedCountWithTimestamp(Windowed<K> key,
+//    private <K> void verifyWindowedCountWithTimestamp(IWindowed<K> key,
 //                                                      long value,
 //                                                      long timestamp) {// throws Exception
 //        TestUtils.WaitForCondition(
@@ -874,7 +874,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void processKeyValueAndVerifyWindowedCountWithTimestamp<K, V>(K key,
 //                                                                           long timestamp,
-//                                                                           List<KeyValuePair<Windowed<int>, object>> expectedStoreContent)
+//                                                                           List<KeyValuePair<IWindowed<int>, object>> expectedStoreContent)
 //            //throws Exception {
 
 //        IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(
@@ -891,10 +891,10 @@ namespace Kafka.Streams.Tests.Integration
 //                    IReadOnlyWindowStore<K, ValueAndTimestamp<V>> store =
 //                        kafkaStreams.store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
 //                    try { 
-// (IKeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> all = store.all());
-//                        List<KeyValuePair<Windowed<K>, ValueAndTimestamp<V>>> storeContent = new LinkedList<>();
-//                        while (all.HasNext()) {
-//                            storeContent.Add(all.MoveNext());
+// (IKeyValueIterator<IWindowed<K>, ValueAndTimestamp<V>> All = store.All());
+//                        List<KeyValuePair<IWindowed<K>, ValueAndTimestamp<V>>> storeContent = new LinkedList<>();
+//                        while (All.HasNext()) {
+//                            storeContent.Add(All.MoveNext());
 //                        }
 //                        return storeContent.equals(expectedStoreContent);
 //                    }
@@ -913,7 +913,7 @@ namespace Kafka.Streams.Tests.Integration
 
 
 
-//        public void init(ProcessorContext context) {
+//        public void Init(ProcessorContext context) {
 //            store = (IKeyValueStore<int, long>) context.getStateStore(STORE_NAME);
 //        }
 
@@ -928,11 +928,11 @@ namespace Kafka.Streams.Tests.Integration
 //                newCount = 1L;
 //            }
 
-//            store.put(key, newCount);
+//            store.Put(key, newCount);
 //        }
 
 
-//        public void close() {}
+//        public void Close() {}
 //    }
 
 //    private static class TimestampedKeyValueProcessor : Processor<int, int> {
@@ -941,7 +941,7 @@ namespace Kafka.Streams.Tests.Integration
 
 
 
-//        public void init(ProcessorContext context) {
+//        public void Init(ProcessorContext context) {
 //            this.context = context;
 //            store = (ITimestampedKeyValueStore<int, long>) context.getStateStore(STORE_NAME);
 //        }
@@ -961,11 +961,11 @@ namespace Kafka.Streams.Tests.Integration
 //                newTimestamp = Math.max(oldCountWithTimestamp.Timestamp, context.Timestamp);
 //            }
 
-//            store.put(key, ValueAndTimestamp.Make(newCount, newTimestamp));
+//            store.Put(key, ValueAndTimestamp.Make(newCount, newTimestamp));
 //        }
 
 
-//        public void close() {}
+//        public void Close() {}
 //    }
 
 //    private static class WindowedProcessor : Processor<int, int> {
@@ -973,7 +973,7 @@ namespace Kafka.Streams.Tests.Integration
 
 
 
-//        public void init(ProcessorContext context) {
+//        public void Init(ProcessorContext context) {
 //            store = (IWindowStore<int, long>) context.getStateStore(STORE_NAME);
 //        }
 
@@ -988,11 +988,11 @@ namespace Kafka.Streams.Tests.Integration
 //                newCount = 1L;
 //            }
 
-//            store.put(key, newCount, key < 10 ? 0L : 100000L);
+//            store.Put(key, newCount, key < 10 ? 0L : 100000L);
 //        }
 
 
-//        public void close() {}
+//        public void Close() {}
 //    }
 
 //    private static class TimestampedWindowedProcessor : Processor<int, int> {
@@ -1001,7 +1001,7 @@ namespace Kafka.Streams.Tests.Integration
 
 
 
-//        public void init(ProcessorContext context) {
+//        public void Init(ProcessorContext context) {
 //            this.context = context;
 //            store = (ITimestampedWindowStore<int, long>) context.getStateStore(STORE_NAME);
 //        }
@@ -1021,10 +1021,10 @@ namespace Kafka.Streams.Tests.Integration
 //                newTimestamp = Math.max(oldCountWithTimestamp.Timestamp, context.Timestamp);
 //            }
 
-//            store.put(key, ValueAndTimestamp.Make(newCount, newTimestamp), key < 10 ? 0L : 100000L);
+//            store.Put(key, ValueAndTimestamp.Make(newCount, newTimestamp), key < 10 ? 0L : 100000L);
 //        }
 
 
-//        public void close() {}
+//        public void Close() {}
 //    }
 //}

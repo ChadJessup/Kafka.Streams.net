@@ -18,13 +18,13 @@ namespace Kafka.Streams.Processors.Internals
         void Register(StateRestorer restorer);
 
         /**
-         * Restore all registered state stores by reading from their changelogs.
-         * @return all topic partitions that have been restored
+         * Restore All registered state stores by reading from their changelogs.
+         * @return All topic partitions that have been restored
          */
         List<TopicPartition> Restore(IRestoringTasks active);
 
         /**
-         * @return the restored offsets for all persistent stores.
+         * @return the restored offsets for All Persistent stores.
          */
         Dictionary<TopicPartition, long> GetRestoredOffsets();
 

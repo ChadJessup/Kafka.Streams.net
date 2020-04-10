@@ -730,7 +730,7 @@
 //        {
 //            ClientState clientState = new ClientState(capacity);
 //            clientState.addPreviousActiveTasks(Utils.mkSet(taskIds));
-//            clients.put(processId, clientState);
+//            clients.Put(processId, clientState);
 //            return clientState;
 //        }
 
@@ -755,7 +755,7 @@
 //            foreach (Map.Entry<int, ClientState> entry in clients.entrySet())
 //            {
 //                HashSet<TaskId> sorted = new TreeSet<>(entry.getValue().activeTasks());
-//                sortedAssignments.put(entry.getKey(), sorted);
+//                sortedAssignments.Put(entry.getKey(), sorted);
 //            }
 //            return sortedAssignments;
 //        }

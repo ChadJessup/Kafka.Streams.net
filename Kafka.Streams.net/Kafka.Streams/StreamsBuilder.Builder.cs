@@ -1,34 +1,30 @@
-﻿using Kafka.Common;
+﻿using System;
+using System.Runtime.CompilerServices;
+using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
+using Kafka.Streams.Clients.Producers;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Factories;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream;
-using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.NullModels;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads;
 using Kafka.Streams.Threads.GlobalStream;
-using Kafka.Streams.Threads.Stream;
 using Kafka.Streams.Threads.KafkaStreams;
+using Kafka.Streams.Threads.Stream;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using Confluent.Kafka;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.Clients.Producers;
-using Kafka.Streams.State.KeyValues;
-using Kafka.Streams.Interfaces;
-using Kafka.Streams.NullModels;
 
 namespace Kafka.Streams
 {
@@ -60,7 +56,7 @@ namespace Kafka.Streams
 
                 var services = serviceCollection.BuildServiceProvider();
                 this.Context = services.GetRequiredService<KafkaStreamsContext>();
-                this.Context = AddCircularDependencies(this.Context, services);
+                this.Context = this.AddCircularDependencies(this.Context, services);
             }
 
             private KafkaStreamsContext AddCircularDependencies(KafkaStreamsContext context, IServiceProvider services)
@@ -133,7 +129,7 @@ namespace Kafka.Streams
 
             /// <summary>
             /// Add Null dependencies to handle cases where no implementation
-            /// has been provided (e.g., RockDb persistent store not added).
+            /// has been provided (e.g., RockDb Persistent store not added).
             /// And we don't want to crash unexpectedly.
             /// </summary>
             /// <remarks>
@@ -141,7 +137,7 @@ namespace Kafka.Streams
             /// interfaces, there will be fallback paths to provide these,
             /// if needed.
             /// </remarks>
-            /// <param name="serviceCollection"></param>
+            /// <param Name="serviceCollection"></param>
             private void AddNullModels(IServiceCollection serviceCollection)
             {
                 serviceCollection.AddSingleton(new NullStoreSupplier());
@@ -307,13 +303,13 @@ namespace Kafka.Streams
 
             /**
              * Adds a global {@link StateStore} to the topology.
-             * The {@link StateStore} sources its data from all partitions of the provided input topic.
+             * The {@link StateStore} sources its data from All partitions of the provided input topic.
              * There will be exactly one instance of this {@link StateStore} per Kafka Streams instance.
              * <p>
              * A {@link SourceNode} with the provided sourceName will be added to consume the data arriving from the partitions
              * of the input topic.
              * <p>
-             * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
+             * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive All
              * records forwarded from the {@link SourceNode}. NOTE: you should not use the {@code IProcessor} to insert transformed records into
              * the global state store. This store uses the source topic as changelog and during restore will insert records directly
              * from the source.
@@ -321,7 +317,7 @@ namespace Kafka.Streams
              * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
              * <p>
              * It is not required to connect a global store to {@link IProcessor Processors}, {@link Transformer Transformers},
-             * or {@link ValueTransformer ValueTransformer}; those have read-only access to all global stores by default.
+             * or {@link ValueTransformer ValueTransformer}; those have read-only access to All global stores by default.
              *
              * @param storeBuilder          user defined {@link StoreBuilder}; can't be {@code null}
              * @param topic                 the topic to source the data from
@@ -359,7 +355,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public virtual Topology Build()
             {
-                return Build(null);
+                return this.Build(null);
             }
 
             /**
@@ -389,7 +385,7 @@ namespace Kafka.Streams
             public static string GetRestoreConsumerClientId(string threadClientId)
                 => $"{threadClientId}-restore-consumer";
 
-            // currently admin client is shared among all threads
+            // currently admin client is shared among All threads
             public static string GetSharedAdminClientId(string clientId)
                 => $"{clientId}-admin";
         }

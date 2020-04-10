@@ -15,12 +15,12 @@ namespace Kafka.Streams.Processors.Internals
 
         public bool HasTimestamp()
         {
-            return Timestamp != -1;
+            return this.Timestamp != -1;
         }
 
         public string Child()
         {
-            return childName;
+            return this.childName;
         }
     }
 }

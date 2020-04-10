@@ -48,19 +48,19 @@ namespace Kafka.Streams.Tests.Tests
 
 //        public void run()
 //        {
-//            streams.close(TimeSpan.ofSeconds(5));
+//            streams.Close(TimeSpan.ofSeconds(5));
 //        }
 //    }));
 
 //        StreamsConfig producerProps = new StreamsConfig();
-//    producerProps.put(ProducerConfig.CLIENT_ID_CONFIG, "SmokeTest");
-//        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
-//        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//    producerProps.Put(ProducerConfig.CLIENT_ID_CONFIG, "SmokeTest");
+//        producerProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//        producerProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+//        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
 //        KafkaProducer<string, string> producer = new KafkaProducer<>(producerProps);
 //    producer.send(new ProducerRecord<>(topic, "a", "a"));
-//        producer.flush();
+//        producer.Flush();
 
 //        streams.start();
 

@@ -4,7 +4,7 @@ using System;
 namespace Kafka.Streams.Errors
 {
     /**
-     * Indicates a processor state operation (e.g. put, get) has failed.
+     * Indicates a processor state operation (e.g. Put, get) has failed.
      *
      * @see org.apache.kafka.streams.processor.IStateStore
      */

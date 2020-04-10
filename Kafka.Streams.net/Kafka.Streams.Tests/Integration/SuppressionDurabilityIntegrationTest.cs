@@ -99,7 +99,7 @@
 //        private const int COMMIT_INTERVAL = 100;
 //        private readonly bool eosEnabled;
 
-//        //@Parameters(name = "{index}: eosEnabled={0}")
+//        //@Parameters(Name = "{index}: eosEnabled={0}")
 //        public static Collection<object[]> Parameters()
 //        {
 //            return asList(
@@ -142,7 +142,7 @@
 //            AtomicInteger eventCount = new AtomicInteger(0);
 //            suppressedCounts.ForEach((key, value) => eventCount.incrementAndGet());
 
-//            // expect all post-suppress records to keep the right input topic
+//            // expect All post-suppress records to keep the right input topic
 //            MetadataValidator metadataValidator = new MetadataValidator(input);
 
 //            suppressedCounts
@@ -167,7 +167,7 @@
 //            try
 //            {
 //                // start by putting some stuff in the buffer
-//                // note, we send all input records to partition 0
+//                // note, we send All input records to partition 0
 //                // to make sure that supppress doesn't erroneously send records to other partitions.
 //                produceSynchronouslyToPartitionZero(
 //                    input,
@@ -187,7 +187,7 @@
 //                );
 //                Assert.Equal(eventCount.Get(), (0));
 
-//                // flush two of the first three events System.Console.Out.
+//                // Flush two of the first three events System.Console.Out.
 //                produceSynchronouslyToPartitionZero(
 //                    input,
 //                    asList(
@@ -215,12 +215,12 @@
 //                // get restored properly. (i.e., we shouldn't see those first events again)
 
 //                // restart the driver
-//                driver.close();
+//                driver.Close();
 //                Assert.Equal(driver.state(), (KafkaStreams.State.NOT_RUNNING));
 //                driver = getStartedStreams(streamsConfig, builder, false);
 
 
-//                // flush those recovered buffered events System.Console.Out.
+//                // Flush those recovered buffered events System.Console.Out.
 //                produceSynchronouslyToPartitionZero(
 //                    input,
 //                    asList(
@@ -254,7 +254,7 @@
 //            }
 //            finally
 //            {
-//                driver.close();
+//                driver.Close();
 //                cleanStateAfterTest(CLUSTER, driver);
 //            }
 //        }

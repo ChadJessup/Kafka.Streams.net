@@ -38,142 +38,142 @@ namespace Kafka.Streams.State.Internals
         public bool HasNext()
         {
             // skip over items deleted from cache, and corresponding store items if they have the same key
-            while (cacheIterator.MoveNext() && IsDeletedCacheEntry(cacheIterator.PeekNext()))
+            while (this.cacheIterator.MoveNext() && this.IsDeletedCacheEntry(this.cacheIterator.PeekNext()))
             {
-                if (storeIterator.Current.Key != null)
+                if (this.storeIterator.Current.Key != null)
                 {
-                    KS nextStoreKey = storeIterator.PeekNextKey();
+                    KS nextStoreKey = this.storeIterator.PeekNextKey();
                     // advance the store iterator if the key is the same as the deleted cache key
-                    if (Compare(cacheIterator.PeekNextKey(), nextStoreKey) == 0)
+                    if (this.Compare(this.cacheIterator.PeekNextKey(), nextStoreKey) == 0)
                     {
-                        storeIterator.MoveNext();
+                        this.storeIterator.MoveNext();
                     }
                 }
-                cacheIterator.MoveNext();
+                this.cacheIterator.MoveNext();
             }
 
-            return cacheIterator.MoveNext() || storeIterator.MoveNext();
+            return this.cacheIterator.MoveNext() || this.storeIterator.MoveNext();
         }
 
         public KeyValuePair<K, V> Next()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new KeyNotFoundException();
             }
 
-            Bytes nextCacheKey = cacheIterator.MoveNext()
-                ? cacheIterator.PeekNextKey()
+            Bytes nextCacheKey = this.cacheIterator.MoveNext()
+                ? this.cacheIterator.PeekNextKey()
                 : null;
 
-            KS nextStoreKey = storeIterator.MoveNext()
-                ? storeIterator.PeekNextKey()
+            KS nextStoreKey = this.storeIterator.MoveNext()
+                ? this.storeIterator.PeekNextKey()
                 : default;
 
             if (nextCacheKey == null)
             {
-                return NextStoreValue(nextStoreKey);
+                return this.NextStoreValue(nextStoreKey);
             }
 
             if (nextStoreKey == null)
             {
-                return nextCacheValue(nextCacheKey);
+                return this.nextCacheValue(nextCacheKey);
             }
 
-            int comparison = Compare(nextCacheKey, nextStoreKey);
+            int comparison = this.Compare(nextCacheKey, nextStoreKey);
             if (comparison > 0)
             {
-                return NextStoreValue(nextStoreKey);
+                return this.NextStoreValue(nextStoreKey);
             }
             else if (comparison < 0)
             {
-                return nextCacheValue(nextCacheKey);
+                return this.nextCacheValue(nextCacheKey);
             }
             else
             {
                 // skip the same keyed element
-                storeIterator.MoveNext();
+                this.storeIterator.MoveNext();
 
-                return nextCacheValue(nextCacheKey);
+                return this.nextCacheValue(nextCacheKey);
             }
         }
 
         private KeyValuePair<K, V> NextStoreValue(KS nextStoreKey)
         {
-            KeyValuePair<KS, VS> next = storeIterator.Current;
+            KeyValuePair<KS, VS> next = this.storeIterator.Current;
 
             if (!next.Key.Equals(nextStoreKey))
             {
                 throw new InvalidOperationException("Next record key is not the peeked key value; this should not happen");
             }
 
-            return DeserializeStorePair(next);
+            return this.DeserializeStorePair(next);
         }
 
         private KeyValuePair<K, V> nextCacheValue(Bytes nextCacheKey)
         {
-            KeyValuePair<Bytes, LRUCacheEntry> next = cacheIterator.Current;
+            KeyValuePair<Bytes, LRUCacheEntry> next = this.cacheIterator.Current;
 
             if (!next.Key.Equals(nextCacheKey))
             {
                 throw new InvalidOperationException("Next record key is not the peeked key value; this should not happen");
             }
 
-            return KeyValuePair.Create(DeserializeCacheKey(next.Key), DeserializeCacheValue(next.Value));
+            return KeyValuePair.Create(this.DeserializeCacheKey(next.Key), this.DeserializeCacheValue(next.Value));
         }
 
         public K PeekNextKey()
         {
-            if (!HasNext())
+            if (!this.HasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            Bytes nextCacheKey = cacheIterator.MoveNext()
-                ? cacheIterator.PeekNextKey()
+            Bytes nextCacheKey = this.cacheIterator.MoveNext()
+                ? this.cacheIterator.PeekNextKey()
                 : null;
 
-            KS nextStoreKey = storeIterator.MoveNext()
-                ? storeIterator.PeekNextKey()
+            KS nextStoreKey = this.storeIterator.MoveNext()
+                ? this.storeIterator.PeekNextKey()
                 : default;
 
             if (nextCacheKey == null)
             {
-                return DeserializeStoreKey(nextStoreKey);
+                return this.DeserializeStoreKey(nextStoreKey);
             }
 
             if (nextStoreKey == null)
             {
-                return DeserializeCacheKey(nextCacheKey);
+                return this.DeserializeCacheKey(nextCacheKey);
             }
 
-            int comparison = Compare(nextCacheKey, nextStoreKey);
+            int comparison = this.Compare(nextCacheKey, nextStoreKey);
             if (comparison > 0)
             {
-                return DeserializeStoreKey(nextStoreKey);
+                return this.DeserializeStoreKey(nextStoreKey);
             }
             else if (comparison < 0)
             {
-                return DeserializeCacheKey(nextCacheKey);
+                return this.DeserializeCacheKey(nextCacheKey);
             }
             else
             {
                 // skip the same keyed element
-                storeIterator.MoveNext();
+                this.storeIterator.MoveNext();
 
-                return DeserializeCacheKey(nextCacheKey);
+                return this.DeserializeCacheKey(nextCacheKey);
             }
         }
 
         public void Remove()
         {
-            throw new InvalidOperationException("Remove() is not supported in " + GetType().FullName);
+            throw new InvalidOperationException("Remove() is not supported in " + this.GetType().FullName);
         }
 
         public void Close()
         {
-            cacheIterator.Close();
-            storeIterator.Close();
+            this.cacheIterator.Close();
+            this.storeIterator.Close();
         }
 
         public bool MoveNext()

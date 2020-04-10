@@ -18,7 +18,7 @@
 
         public LRUCacheEntry Entry()
         {
-            return recordContext;
+            return this.recordContext;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Kafka.Streams.KStream.Internals
          *
          * @param outputStream The output stream to write to.
          * @param mapper The mapper which can allow user to customize output will be printed.
-         * @param label The given name will be printed.
+         * @param label The given Name will be printed.
          */
         public PrintForeachAction(
             Stream outputStream,
@@ -34,24 +34,24 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Apply(K key, V value)
         {
-            var data = string.Format("[%s]: %s", label, mapper.Apply(key, value));
+            var data = string.Format("[%s]: %s", this.label, this.mapper.Apply(key, value));
             //printWriter.println(data);
-            if (!closable)
+            if (!this.closable)
             {
-              //  printWriter.flush();
+              //  printWriter.Flush();
             }
         }
 
         public void Close()
         {
-            if (closable)
+            if (this.closable)
             {
-              //  printWriter.close();
+              //  printWriter.Close();
             }
             else
             {
 
-                //printWriter.flush();
+                //printWriter.Flush();
             }
         }
     }

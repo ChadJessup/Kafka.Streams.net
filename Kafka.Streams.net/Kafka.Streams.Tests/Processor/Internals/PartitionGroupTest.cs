@@ -45,7 +45,7 @@
 
 //        // private static Sensor GetValueSensor(Metrics metrics, MetricName metricName)
 //        // {
-//        //     Sensor lastRecordedValue = metrics.sensor(metricName.name());
+//        //     Sensor lastRecordedValue = metrics.sensor(metricName.Name());
 //        //     lastRecordedValue.Add(metricName, new Value());
 //        //     return lastRecordedValue;
 //        // }

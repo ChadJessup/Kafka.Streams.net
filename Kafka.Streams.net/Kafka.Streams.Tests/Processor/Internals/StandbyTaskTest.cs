@@ -184,7 +184,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 //    public void cleanup(){ //throws IOException
 //        if (task != null && !task.isClosed()) {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            task = null;
 //        }
 //        Utils.delete(baseDir);
@@ -357,9 +357,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 //        Assert.Equal(
 //            asList(
-//                KeyValuePair.Create(new Windowed<>(1, new TimeWindow(0, 60_000)), ValueAndTimestamp.Make(100L, 60_000L)),
-//                KeyValuePair.Create(new Windowed<>(2, new TimeWindow(60_000, 120_000)), ValueAndTimestamp.Make(100L, 120_000L)),
-//                KeyValuePair.Create(new Windowed<>(3, new TimeWindow(120_000, 180_000)), ValueAndTimestamp.Make(100L, 180_000L))
+//                KeyValuePair.Create(new IWindowed<>(1, new TimeWindow(0, 60_000)), ValueAndTimestamp.Make(100L, 60_000L)),
+//                KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(60_000, 120_000)), ValueAndTimestamp.Make(100L, 120_000L)),
+//                KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(120_000, 180_000)), ValueAndTimestamp.Make(100L, 180_000L))
 //            ),
 //            getWindowedStoreContents(storeName, task)
 //        );
@@ -373,9 +373,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        // the first record's window should have expired.
 //        Assert.Equal(
 //            asList(
-//                KeyValuePair.Create(new Windowed<>(2, new TimeWindow(60_000, 120_000)), ValueAndTimestamp.Make(100L, 120_000L)),
-//                KeyValuePair.Create(new Windowed<>(3, new TimeWindow(120_000, 180_000)), ValueAndTimestamp.Make(100L, 180_000L)),
-//                KeyValuePair.Create(new Windowed<>(4, new TimeWindow(180_000, 240_000)), ValueAndTimestamp.Make(100L, 240_000L))
+//                KeyValuePair.Create(new IWindowed<>(2, new TimeWindow(60_000, 120_000)), ValueAndTimestamp.Make(100L, 120_000L)),
+//                KeyValuePair.Create(new IWindowed<>(3, new TimeWindow(120_000, 180_000)), ValueAndTimestamp.Make(100L, 180_000L)),
+//                KeyValuePair.Create(new IWindowed<>(4, new TimeWindow(180_000, 240_000)), ValueAndTimestamp.Make(100L, 240_000L))
 //            ),
 //            getWindowedStoreContents(storeName, task)
 //        );
@@ -386,9 +386,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //                                                                      int key,
 //                                                                      long start,
 //                                                                      long end) {
-//        Windowed<int> data = new Windowed<>(key, new TimeWindow(start, end));
+//        IWindowed<int> data = new IWindowed<>(key, new TimeWindow(start, end));
 //        Bytes wrap = Bytes.Wrap(new IntegerSerializer().Serialize(null, data.Key));
-//        byte[] keyBytes = WindowKeySchema.toStoreKeyBinary(new Windowed<>(wrap, data.window()), 1).Get();
+//        byte[] keyBytes = WindowKeySchema.toStoreKeyBinary(new IWindowed<>(wrap, data.window()), 1).Get();
 //        return new ConsumeResult<>(
 //            changelogName,
 //            1,
@@ -443,7 +443,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        );
 
 //        task.suspend();
-//        task.close(true, false);
+//        task.Close(true, false);
 
 //        File taskDir = stateDirectory.directoryForTask(taskId);
 //        OffsetCheckpoint checkpoint = new OffsetCheckpoint(new File(taskDir, StateManagerUtil.CHECKPOINT_FILE_NAME));
@@ -454,19 +454,19 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    }
 
 
-//    private List<KeyValuePair<Windowed<int>, ValueAndTimestamp<long>>> getWindowedStoreContents(string storeName,
+//    private List<KeyValuePair<IWindowed<int>, ValueAndTimestamp<long>>> getWindowedStoreContents(string storeName,
 //                                                                                                StandbyTask task) {
 //        StandbyContextImpl context = (StandbyContextImpl) task.context;
 
-//        List<KeyValuePair<Windowed<int>, ValueAndTimestamp<long>>> result = new ArrayList<>();
+//        List<KeyValuePair<IWindowed<int>, ValueAndTimestamp<long>>> result = new ArrayList<>();
 
-//        try (IKeyValueIterator<Windowed<byte[]>, ValueAndTimestamp<long>> iterator =
-//                 ((ITimestampedWindowStore) context.getStateMgr().getStore(storeName)).all()) {
+//        try (IKeyValueIterator<IWindowed<byte[]>, ValueAndTimestamp<long>> iterator =
+//                 ((ITimestampedWindowStore) context.getStateMgr().getStore(storeName)).All()) {
 
 //            while (iterator.HasNext()) {
-//                KeyValuePair<Windowed<byte[]>, ValueAndTimestamp<long>> next = iterator.MoveNext();
+//                KeyValuePair<IWindowed<byte[]>, ValueAndTimestamp<long>> next = iterator.MoveNext();
 //                int deserializedKey = Serializers.Int32.deserialize(null, next.key.Key);
-//                result.Add(KeyValuePair.Create(new Windowed<>(deserializedKey, next.key.window()), next.value));
+//                result.Add(KeyValuePair.Create(new IWindowed<>(deserializedKey, next.key.window()), next.value));
 //            }
 //        }
 
@@ -600,7 +600,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    public void shouldCheckpointStoreOffsetsOnCommit(){ //throws IOException
 //        consumer.assign(Collections.singletonList(globalTopicPartition));
 //        Dictionary<TopicPartition, OffsetAndMetadata> committedOffsets = new HashMap<>();
-//        committedOffsets.put(new TopicPartition(globalTopicPartition.Topic, globalTopicPartition.Partition),
+//        committedOffsets.Put(new TopicPartition(globalTopicPartition.Topic, globalTopicPartition.Partition),
 //                             new OffsetAndMetadata(100L));
 //        consumer.commitSync(committedOffsets);
 
@@ -650,7 +650,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    public void shouldCloseStateMangerOnTaskCloseWhenCommitFailed() {// throws Exception
 //        consumer.assign(Collections.singletonList(globalTopicPartition));
 //        Dictionary<TopicPartition, OffsetAndMetadata> committedOffsets = new HashMap<>();
-//        committedOffsets.put(new TopicPartition(globalTopicPartition.Topic, globalTopicPartition.Partition),
+//        committedOffsets.Put(new TopicPartition(globalTopicPartition.Topic, globalTopicPartition.Partition),
 //                             new OffsetAndMetadata(100L));
 //        consumer.commitSync(committedOffsets);
 
@@ -683,7 +683,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //        };
 //        task.initializeStateStores();
 //        try {
-//            task.close(true, false);
+//            task.Close(true, false);
 //            Assert.True(false, "should have thrown exception");
 //        } catch (Exception e) {
 //            // expected
@@ -693,7 +693,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 //    }
 
 //    private MetricName setupCloseTaskMetric() {
-//        MetricName metricName = new MetricName("name", "group", "description", Collections.emptyMap());
+//        MetricName metricName = new MetricName("Name", "group", "description", Collections.emptyMap());
 //        Sensor sensor = streamsMetrics.threadLevelSensor("task-closed", Sensor.RecordingLevel.INFO);
 //        sensor.Add(metricName, new CumulativeSum());
 //        return metricName;
@@ -723,7 +723,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 //        bool clean = true;
 //        bool isZombie = false;
-//        task.close(clean, isZombie);
+//        task.Close(clean, isZombie);
 
 //        double expectedCloseTaskMetric = 1.0;
 //        verifyCloseTaskMetric(expectedCloseTaskMetric, streamsMetrics, metricName);

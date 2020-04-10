@@ -15,7 +15,7 @@
 //        }
 
 
-//        public void init(IProcessorContext context)
+//        public void Init(IProcessorContext context)
 //        {
 //            base.Init(context);
 //            transformer.Init(context);
@@ -35,9 +35,9 @@
 //        }
 
 
-//        public override void close()
+//        public override void Close()
 //        {
-//            transformer.close();
+//            transformer.Close();
 //        }
 //    }
 //}

@@ -24,8 +24,8 @@ namespace Kafka.Streams.RocksDbState
         {
             iter.Seek(from.Get());
 
-            rawToKey = to.Get();
-            if (rawToKey == null)
+            this.rawToKey = to.Get();
+            if (this.rawToKey == null)
             {
                 throw new ArgumentNullException("RocksDbRangeIterator: RawToKey is null for key " + to);
             }
@@ -37,17 +37,17 @@ namespace Kafka.Streams.RocksDbState
 
             if (next == null)
             {
-                return allDone();
+                return this.allDone();
             }
             else
             {
-                if (comparator.Compare(next.Value.Key.Get(), rawToKey) <= 0)
+                if (this.comparator.Compare(next.Value.Key.Get(), this.rawToKey) <= 0)
                 {
                     return next.Value;
                 }
                 else
                 {
-                    return allDone();
+                    return this.allDone();
                 }
             }
         }

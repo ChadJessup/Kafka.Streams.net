@@ -17,15 +17,15 @@ namespace Kafka.Streams.Processors.Internals
 
             if (stateRestoreCallback is IStateRestoreListener)
             {
-                storeRestoreListener = (IStateRestoreListener)stateRestoreCallback;
+                this.storeRestoreListener = (IStateRestoreListener)stateRestoreCallback;
             }
             else
             {
 
-                storeRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
+                this.storeRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
             }
 
-            internalBatchingRestoreCallback = StateRestoreCallbackAdapter.Adapt(stateRestoreCallback);
+            this.internalBatchingRestoreCallback = StateRestoreCallbackAdapter.Adapt(stateRestoreCallback);
         }
 
         /**
@@ -38,8 +38,8 @@ namespace Kafka.Streams.Processors.Internals
             long startingOffset,
             long endingOffset)
         {
-            userRestoreListener.OnRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
-            storeRestoreListener.OnRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
+            this.userRestoreListener.OnRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
+            this.storeRestoreListener.OnRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
         }
 
         /**
@@ -52,8 +52,8 @@ namespace Kafka.Streams.Processors.Internals
             long batchEndOffset,
             long numRestored)
         {
-            userRestoreListener.OnBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
-            storeRestoreListener.OnBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
+            this.userRestoreListener.OnBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
+            this.storeRestoreListener.OnBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
         }
 
         /**
@@ -65,14 +65,14 @@ namespace Kafka.Streams.Processors.Internals
             string storeName,
             long totalRestored)
         {
-            userRestoreListener.OnRestoreEnd(topicPartition, storeName, totalRestored);
-            storeRestoreListener.OnRestoreEnd(topicPartition, storeName, totalRestored);
+            this.userRestoreListener.OnRestoreEnd(topicPartition, storeName, totalRestored);
+            this.storeRestoreListener.OnRestoreEnd(topicPartition, storeName, totalRestored);
         }
 
 
         public void RestoreBatch(List<ConsumeResult<byte[], byte[]>> records)
         {
-            internalBatchingRestoreCallback.RestoreBatch(records);
+            this.internalBatchingRestoreCallback.RestoreBatch(records);
         }
 
         public void SetUserRestoreListener(IStateRestoreListener userRestoreListener)

@@ -23,7 +23,7 @@
 //        [Fact]
 //        public void ShouldRemoveKeysWithNullValues()
 //        {
-//            store.close();
+//            store.Close();
 //            // Add any entries that will be restored to any store
 //            // that uses the driver's context ...
 //            driver.addEntryToRestoreLog(0, "zero");
@@ -33,7 +33,7 @@
 //            driver.addEntryToRestoreLog(0, null);
 
 //            store = createKeyValueStore(driver.context);
-//            context.restore(store.name(), driver.restoredEntries());
+//            context.restore(store.Name(), driver.restoredEntries());
 
 //            Assert.Equal(3, driver.sizeOf(store));
 

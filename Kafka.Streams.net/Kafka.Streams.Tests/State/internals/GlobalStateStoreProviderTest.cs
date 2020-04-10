@@ -91,7 +91,7 @@
 //        public void ShouldThrowExceptionIfStoreIsntOpen()
 //        {
 //            NoOpReadOnlyStore<object, object> store = new NoOpReadOnlyStore<object, object>();
-//            store.close();
+//            store.Close();
 //            GlobalStateStoreProvider provider =
 //                new GlobalStateStoreProvider(Collections.singletonMap("global", store));
 //            provider.Stores("global", QueryableStoreTypes.KeyValueStore<object, object>());

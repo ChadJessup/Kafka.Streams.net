@@ -7,7 +7,7 @@ using System.Linq;
 namespace Kafka.Streams.State.Internals
 {
     /**
-     * A wrapper over all of the {@link StateStoreProvider}s in a Topology
+     * A wrapper over All of the {@link StateStoreProvider}s in a Topology
      */
     public class QueryableStoreProvider
     {
@@ -26,7 +26,7 @@ namespace Kafka.Streams.State.Internals
          * Get a composite object wrapping the instances of the {@link IStateStore} with the provided
          * storeName and {@link QueryableStoreType}
          *
-         * @param storeName          name of the store
+         * @param storeName          Name of the store
          * @param queryableStoreType accept stores passing {@link QueryableStoreType#accepts(IStateStore)}
          * @param                The expected type of the returned store
          * @return A composite object that wraps the store instances.
@@ -35,14 +35,14 @@ namespace Kafka.Streams.State.Internals
             string storeName,
             IQueryableStoreType<T> queryableStoreType)
         {
-            List<T> globalStore = globalStoreProvider.Stores<T>(storeName, queryableStoreType);
+            List<T> globalStore = this.globalStoreProvider.Stores<T>(storeName, queryableStoreType);
             if (globalStore.Any())
             {
-                return queryableStoreType.Create(new WrappingStoreProvider(new List<IStateStoreProvider> { globalStoreProvider }), storeName);
+                return queryableStoreType.Create(new WrappingStoreProvider(new List<IStateStoreProvider> { this.globalStoreProvider }), storeName);
             }
 
             var allStores = new List<T>();
-            foreach (IStateStoreProvider storeProvider in storeProviders)
+            foreach (IStateStoreProvider storeProvider in this.storeProviders)
             {
                 allStores.AddRange(storeProvider.Stores(storeName, queryableStoreType));
             }
@@ -51,7 +51,7 @@ namespace Kafka.Streams.State.Internals
                 throw new InvalidStateStoreException("The state store, " + storeName + ", may have migrated to another instance.");
             }
             return queryableStoreType.Create(
-                    new WrappingStoreProvider(storeProviders),
+                    new WrappingStoreProvider(this.storeProviders),
                     storeName);
         }
     }

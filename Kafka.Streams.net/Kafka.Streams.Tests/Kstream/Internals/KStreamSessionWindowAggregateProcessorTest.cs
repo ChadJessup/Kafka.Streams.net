@@ -151,7 +151,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    public void closeStore()
 //    {
-//        sessionStore.close();
+//        sessionStore.Close();
 //    }
 
 //    [Fact]
@@ -162,7 +162,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        context.setTime(500);
 //        processor.process("john", "second");
 
-//        IKeyValueIterator<Windowed<string>, long> values =
+//        IKeyValueIterator<IWindowed<string>, long> values =
 //            sessionStore.findSessions("john", 0, 2000);
 //        Assert.True(values..AsNext());
 //        Assert.Equal(long.valueOf(2), values.MoveNext().value);
@@ -186,9 +186,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        context.setTime(GAP_MS / 2);
 //        processor.process(sessionId, "third");
 
-//        IKeyValueIterator<Windowed<string>, long> iterator =
+//        IKeyValueIterator<IWindowed<string>, long> iterator =
 //            sessionStore.findSessions(sessionId, 0, GAP_MS + 1);
-//        KeyValuePair<Windowed<string>, long> kv = iterator.MoveNext();
+//        KeyValuePair<IWindowed<string>, long> kv = iterator.MoveNext();
 
 //        Assert.Equal(long.valueOf(3), kv.value);
 //        Assert.False(iterator..AsNext());
@@ -200,7 +200,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        context.setTime(0);
 //        processor.process("mel", "first");
 //        processor.process("mel", "second");
-//        IKeyValueIterator<Windowed<string>, long> iterator =
+//        IKeyValueIterator<IWindowed<string>, long> iterator =
 //            sessionStore.findSessions("mel", 0, 0);
 //        Assert.Equal(long.valueOf(2L), iterator.MoveNext().value);
 //        Assert.False(iterator..AsNext());
@@ -221,19 +221,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        processor.process(sessionId, "third");
 //        processor.process(sessionId, "third");
 
-//        sessionStore.flush();
+//        sessionStore.Flush();
 //        Assert.Equal(
 //             Array.AsReadOnly(
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>(sessionId, new SessionWindow(0, 0)),
+//                     new IWindowed<>(sessionId, new SessionWindow(0, 0)),
 //                     new Change<>(1L, null),
 //                     0L),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>(sessionId, new SessionWindow(GAP_MS + 1, GAP_MS + 1)),
+//                     new IWindowed<>(sessionId, new SessionWindow(GAP_MS + 1, GAP_MS + 1)),
 //                     new Change<>(2L, null),
 //                     GAP_MS + 1),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>(sessionId, new SessionWindow(time, time)),
+//                     new IWindowed<>(sessionId, new SessionWindow(time, time)),
 //                     new Change<>(3L, null),
 //                     time)
 //             ),
@@ -249,17 +249,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        processor.process("a", "1");
 
 //        // first ensure it is in the store
-//        IKeyValueIterator<Windowed<string>, long> a1 =
+//        IKeyValueIterator<IWindowed<string>, long> a1 =
 //            sessionStore.findSessions("a", 0, 0);
-//        Assert.Equal(KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 0)), 1L), a1.MoveNext());
+//        Assert.Equal(KeyValuePair.Create(new IWindowed<>("a", new SessionWindow(0, 0)), 1L), a1.MoveNext());
 
 //        context.setTime(100);
 //        processor.process("a", "2");
 //        // a1 from above should have been removed
 //        // should have merged session in store
-//        IKeyValueIterator<Windowed<string>, long> a2 =
+//        IKeyValueIterator<IWindowed<string>, long> a2 =
 //            sessionStore.findSessions("a", 0, 100);
-//        Assert.Equal(KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 100)), 2L), a2.MoveNext());
+//        Assert.Equal(KeyValuePair.Create(new IWindowed<>("a", new SessionWindow(0, 100)), 2L), a2.MoveNext());
 //        Assert.False(a2..AsNext());
 //    }
 
@@ -280,35 +280,35 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        processor.process("a", "3");
 //        processor.process("c", "3");
 
-//        sessionStore.flush();
+//        sessionStore.Flush();
 
 //        Assert.Equal(
 //             Array.AsReadOnly(
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("a", new SessionWindow(0, 0)),
+//                     new IWindowed<>("a", new SessionWindow(0, 0)),
 //                     new Change<>(1L, null),
 //                     0L),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("b", new SessionWindow(0, 0)),
+//                     new IWindowed<>("b", new SessionWindow(0, 0)),
 //                     new Change<>(1L, null),
 //                     0L),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("c", new SessionWindow(0, 0)),
+//                     new IWindowed<>("c", new SessionWindow(0, 0)),
 //                     new Change<>(1L, null),
 //                     0L),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("d", new SessionWindow(0, GAP_MS / 2)),
+//                     new IWindowed<>("d", new SessionWindow(0, GAP_MS / 2)),
 //                     new Change<>(2L, null),
 //                     GAP_MS / 2),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("b", new SessionWindow(GAP_MS + 1, GAP_MS + 1)),
+//                     new IWindowed<>("b", new SessionWindow(GAP_MS + 1, GAP_MS + 1)),
 //                     new Change<>(1L, null),
 //                     GAP_MS + 1),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("a", new SessionWindow(GAP_MS + 1, GAP_MS + 1 + GAP_MS / 2)),
+//                     new IWindowed<>("a", new SessionWindow(GAP_MS + 1, GAP_MS + 1 + GAP_MS / 2)),
 //                     new Change<>(2L, null),
 //                     GAP_MS + 1 + GAP_MS / 2),
-//                 new KeyValueTimestamp<>(new Windowed<>(
+//                 new KeyValueTimestamp<>(new IWindowed<>(
 //                     "c",
 //                     new SessionWindow(GAP_MS + 1 + GAP_MS / 2, GAP_MS + 1 + GAP_MS / 2)), new Change<>(1L, null),
 //                     GAP_MS + 1 + GAP_MS / 2)
@@ -320,15 +320,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    [Fact]
 //    public void shouldGetAggregatedValuesFromValueGetter()
 //    {
-//        KTableValueGetter<Windowed<string>, long> getter = sessionAggregator.view().Get();
+//        KTableValueGetter<IWindowed<string>, long> getter = sessionAggregator.view().Get();
 //        getter.Init(context);
 //        context.setTime(0);
 //        processor.process("a", "1");
 //        context.setTime(GAP_MS + 1);
 //        processor.process("a", "1");
 //        processor.process("a", "2");
-//        long t0 = getter.Get(new Windowed<>("a", new SessionWindow(0, 0))).Value;
-//        long t1 = getter.Get(new Windowed<>("a", new SessionWindow(GAP_MS + 1, GAP_MS + 1))).Value;
+//        long t0 = getter.Get(new IWindowed<>("a", new SessionWindow(0, 0))).Value;
+//        long t1 = getter.Get(new IWindowed<>("a", new SessionWindow(GAP_MS + 1, GAP_MS + 1))).Value;
 //        Assert.Equal(1L, t0);
 //        Assert.Equal(2L, t1);
 //    }
@@ -347,15 +347,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        Assert.Equal(
 //             Array.AsReadOnly(
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("a", new SessionWindow(0, 0)),
+//                     new IWindowed<>("a", new SessionWindow(0, 0)),
 //                     new Change<>(1L, null),
 //                     0L),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("b", new SessionWindow(0, 0)),
+//                     new IWindowed<>("b", new SessionWindow(0, 0)),
 //                     new Change<>(1L, null),
 //                     0L),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("c", new SessionWindow(0, 0)),
+//                     new IWindowed<>("c", new SessionWindow(0, 0)),
 //                     new Change<>(1L, null),
 //                     0L)
 //             ),
@@ -376,15 +376,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        Assert.Equal(
 //             Array.AsReadOnly(
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("a", new SessionWindow(0, 0)),
+//                     new IWindowed<>("a", new SessionWindow(0, 0)),
 //                     new Change<>(1L, null),
 //                     0L),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("a", new SessionWindow(0, 0)),
+//                     new IWindowed<>("a", new SessionWindow(0, 0)),
 //                     new Change<>(null, null),
 //                     0L),
 //                 new KeyValueTimestamp<>(
-//                     new Windowed<>("a", new SessionWindow(0, 5)),
+//                     new IWindowed<>("a", new SessionWindow(0, 5)),
 //                     new Change<>(2L, null),
 //                     5L)
 //             ),

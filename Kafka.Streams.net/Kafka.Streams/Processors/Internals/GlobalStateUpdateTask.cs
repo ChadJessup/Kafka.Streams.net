@@ -29,31 +29,31 @@ namespace Kafka.Streams.Processors.Internals
 
         public Dictionary<TopicPartition, long?> Initialize()
         {
-            HashSet<string> storeNames = stateMgr.Initialize();
-            Dictionary<string, string> storeNameToTopic = topology.StoreToChangelogTopic;
+            HashSet<string> storeNames = this.stateMgr.Initialize();
+            Dictionary<string, string> storeNameToTopic = this.topology.StoreToChangelogTopic;
 
             foreach (string storeName in storeNames)
             {
                 string sourceTopic = storeNameToTopic[storeName];
-                ISourceNode source = topology.Source(sourceTopic);
-                deserializers.Add(
+                ISourceNode source = this.topology.Source(sourceTopic);
+                this.deserializers.Add(
                     sourceTopic,
                     new RecordDeserializer(
                         null,
                         source,
-                        deserializationExceptionHandler)
+                        this.deserializationExceptionHandler)
                 );
             }
 
-            InitTopology();
-            processorContext.Initialize();
-            return stateMgr.Checkpointed();
+            this.InitTopology();
+            this.processorContext.Initialize();
+            return this.stateMgr.Checkpointed();
         }
 
         public void Update(ConsumeResult<byte[], byte[]> record)
         {
-            var sourceNodeAndDeserializer = deserializers[record.Topic];
-            ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.Deserialize<object, object>(processorContext, record);
+            var sourceNodeAndDeserializer = this.deserializers[record.Topic];
+            ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.Deserialize<object, object>(this.processorContext, record);
 
             if (deserialized != null)
             {
@@ -63,8 +63,8 @@ namespace Kafka.Streams.Processors.Internals
                         deserialized.Partition,
                         deserialized.Topic,
                         deserialized.Headers);
-                processorContext.SetRecordContext(recordContext);
-                processorContext.SetCurrentNode(sourceNodeAndDeserializer.SourceNode);
+                this.processorContext.SetRecordContext(recordContext);
+                this.processorContext.SetCurrentNode(sourceNodeAndDeserializer.SourceNode);
 
                 sourceNodeAndDeserializer.SourceNode.Process(deserialized.Key, deserialized.Value);
             }
@@ -74,20 +74,20 @@ namespace Kafka.Streams.Processors.Internals
 
         public void FlushState()
         {
-            stateMgr.Flush();
-            stateMgr.Checkpoint(offsets);
+            this.stateMgr.Flush();
+            this.stateMgr.Checkpoint(this.offsets);
         }
 
         public void Close()
         {
-            stateMgr.Close(true);
+            this.stateMgr.Close(true);
         }
 
         private void InitTopology()
         {
             foreach (ProcessorNode node in this.topology.Processors())
             {
-                processorContext.SetCurrentNode(node);
+                this.processorContext.SetCurrentNode(node);
 
                 try
                 {
@@ -95,7 +95,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 finally
                 {
-                    processorContext.SetCurrentNode(null);
+                    this.processorContext.SetCurrentNode(null);
                 }
             }
         }

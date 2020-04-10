@@ -26,24 +26,24 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Init(IProcessorContext context, string storeName)
         {
-            valueGetter1.Init(context, storeName);
-            valueGetter2.Init(context, storeName);
+            this.valueGetter1.Init(context, storeName);
+            this.valueGetter2.Init(context, storeName);
         }
 
-        public ValueAndTimestamp<R>? Get(K key)
+        public IValueAndTimestamp<R>? Get(K key)
         {
-            var valueAndTimestamp1 = valueGetter1.Get(key);
+            var valueAndTimestamp1 = this.valueGetter1.Get(key);
             V1 value1 = ValueAndTimestamp.GetValueOrNull(valueAndTimestamp1);
 
             if (value1 != null)
             {
-                var valueAndTimestamp2 = valueGetter2.Get(keyValueMapper.Apply(key, value1));
+                var valueAndTimestamp2 = this.valueGetter2.Get(this.keyValueMapper.Apply(key, value1));
                 V2 value2 = ValueAndTimestamp.GetValueOrNull(valueAndTimestamp2);
 
                 if (value2 != null)
                 {
                     return ValueAndTimestamp.Make(
-                        joiner.Apply(value1, value2),
+                        this.joiner.Apply(value1, value2),
                         Math.Max(valueAndTimestamp1?.Timestamp ?? 0, valueAndTimestamp2.Timestamp));
                 }
                 else
@@ -59,8 +59,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Close()
         {
-            valueGetter1.Close();
-            valueGetter2.Close();
+            this.valueGetter1.Close();
+            this.valueGetter2.Close();
         }
     }
 }

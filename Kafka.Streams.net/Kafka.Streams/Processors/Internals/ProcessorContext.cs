@@ -30,13 +30,19 @@ namespace Kafka.Streams.Processors.Internals
         private readonly ToInternal toInternal = new ToInternal();
 
         public ProcessorContext(
+            KafkaStreamsContext context,
             TaskId id,
             StreamTask task,
             StreamsConfig config,
             IRecordCollector collector,
             ProcessorStateManager stateMgr,
             ThreadCache cache)
-            : base(id, config, stateMgr, cache)
+            : base(
+                  context,
+                  id,
+                  config,
+                  stateMgr,
+                  cache)
         {
             this.task = task;
             this.collector = collector;
@@ -44,83 +50,83 @@ namespace Kafka.Streams.Processors.Internals
 
         public ProcessorStateManager GetStateMgr()
         {
-            return (ProcessorStateManager)StateManager;
+            return (ProcessorStateManager)this.StateManager;
         }
 
         public IRecordCollector RecordCollector()
         {
-            return collector;
+            return this.collector;
         }
 
         /**
          * @throws StreamsException if an attempt is made to access this state store from an unknown node
          */
-        public override IStateStore GetStateStore(KafkaStreamsContext context, string name)
+        public override IStateStore GetStateStore(string Name)
         {
-            if (GetCurrentNode() == null)
+            if (this.GetCurrentNode() == null)
             {
                 throw new StreamsException("Accessing from an unknown node");
             }
 
-            IStateStore? global = StateManager.GetGlobalStore(name);
+            IStateStore? global = this.StateManager.GetGlobalStore(Name);
             if (global != null)
             {
                 if (global is ITimestampedKeyValueStore<K, V>)
                 {
-                    return new TimestampedKeyValueStoreReadOnlyDecorator<K, V>(context, (ITimestampedKeyValueStore<K, V>)global);
+                    return new TimestampedKeyValueStoreReadOnlyDecorator<K, V>(this.Context, (ITimestampedKeyValueStore<K, V>)global);
                 }
                 else if (global is IKeyValueStore<K, V>)
                 {
-                    return new KeyValueStoreReadOnlyDecorator<K, V>(context, (IKeyValueStore<K, V>)global);
+                    return new KeyValueStoreReadOnlyDecorator<K, V>(this.Context, (IKeyValueStore<K, V>)global);
                 }
                 else if (global is ITimestampedWindowStore<K, V>)
                 {
-                    return new TimestampedWindowStoreReadOnlyDecorator<K, V>(context, (ITimestampedWindowStore<K, V>)global);
+                    return new TimestampedWindowStoreReadOnlyDecorator<K, V>(this.Context, (ITimestampedWindowStore<K, V>)global);
                 }
                 else if (global is IWindowStore<K, V>)
                 {
-                    return new WindowStoreReadOnlyDecorator<K, V>(context, (IWindowStore<K, V>)global);
+                    return new WindowStoreReadOnlyDecorator<K, V>(this.Context, (IWindowStore<K, V>)global);
                 }
                 else if (global is ISessionStore<K, V>)
                 {
-                    return new SessionStoreReadOnlyDecorator<K, V>(context, (ISessionStore<K, V>)global);
+                    return new SessionStoreReadOnlyDecorator<K, V>(this.Context, (ISessionStore<K, V>)global);
                 }
 
                 return global;
             }
 
-            if (!GetCurrentNode().StateStores.Contains(name))
+            if (!this.GetCurrentNode().StateStores.Contains(Name))
             {
-                throw new StreamsException("IProcessor " + GetCurrentNode().Name + " has no access to IStateStore " + name +
+                throw new StreamsException("IProcessor " + this.GetCurrentNode().Name + " has no access to IStateStore " + Name +
                     " as the store is not connected to the processor. If you.Add stores manually via '.AddStateStore()' " +
-                    "make sure to connect the.Added store to the processor by providing the processor name to " +
+                    "make sure to connect the.Added store to the processor by providing the processor Name to " +
                     "'.AddStateStore()' or connect them via '.connectProcessorAndStateStores()'. " +
-                    "DSL users need to provide the store name to '.process()', '.transform()', or '.transformValues()' " +
+                    "DSL users need to provide the store Name to '.process()', '.transform()', or '.transformValues()' " +
                     "to connect the store to the corresponding operator. If you do not.Add stores manually, " +
                     "please file a bug report at https://issues.apache.org/jira/projects/KAFKA.");
             }
 
-            IStateStore? store = StateManager.GetStore(name);
+            IStateStore? store = this.StateManager.GetStore(Name);
 
             if (store is ITimestampedKeyValueStore<K, V>)
             {
-                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>(context, (ITimestampedKeyValueStore<K, V>)store);
+                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>(this.Context, (ITimestampedKeyValueStore<K, V>)store);
             }
             else if (store is IKeyValueStore<K, V>)
             {
-                return new KeyValueStoreReadWriteDecorator<K, V>(context, (IKeyValueStore<K, V>)store);
+                return new KeyValueStoreReadWriteDecorator<K, V>(this.Context, (IKeyValueStore<K, V>)store);
             }
             else if (store is ITimestampedWindowStore<K, V>)
             {
-                return new TimestampedWindowStoreReadWriteDecorator<K, V>(context, (ITimestampedWindowStore<K, V>)store);
+                return new TimestampedWindowStoreReadWriteDecorator<K, V>(this.Context, (ITimestampedWindowStore<K, V>)store);
             }
             else if (store is IWindowStore<K, V>)
             {
-                return new WindowStoreReadWriteDecorator<K, V>(context, (IWindowStore<K, V>)store);
+                return new WindowStoreReadWriteDecorator<K, V>(this.Context, (IWindowStore<K, V>)store);
             }
             else if (store is ISessionStore<K, V>)
             {
-                return new SessionStoreReadWriteDecorator<K, V>(context, (ISessionStore<K, V>)store);
+                return new SessionStoreReadWriteDecorator<K, V>(this.Context, (ISessionStore<K, V>)store);
             }
 
             return store;
@@ -128,31 +134,31 @@ namespace Kafka.Streams.Processors.Internals
 
         public override void Forward<K1, V1>(K1 key, V1 value)
         {
-            Forward(key, value, ProcessorContext.SEND_TO_ALL);
+            this.Forward(key, value, ProcessorContext.SEND_TO_ALL);
         }
 
         public override void Forward<K1, V1>(K1 key, V1 value, To to)
         {
-            var previousNode = GetCurrentNode();
-            ProcessorRecordContext previousContext = RecordContext;
+            var previousNode = this.GetCurrentNode();
+            ProcessorRecordContext previousContext = this.RecordContext;
 
             try
             {
-                toInternal.Update(to);
-                if (toInternal.HasTimestamp())
+                this.toInternal.Update(to);
+                if (this.toInternal.HasTimestamp())
                 {
-                    RecordContext = new ProcessorRecordContext(
-                        toInternal.Timestamp,
-                        RecordContext.offset,
-                        RecordContext.partition,
-                        RecordContext.Topic,
-                        RecordContext.headers);
+                    this.RecordContext = new ProcessorRecordContext(
+                        this.toInternal.Timestamp,
+                        this.RecordContext.offset,
+                        this.RecordContext.partition,
+                        this.RecordContext.Topic,
+                        this.RecordContext.headers);
                 }
 
-                var sendTo = toInternal.Child();
+                var sendTo = this.toInternal.Child();
                 if (sendTo == null)
                 {
-                    var children = new List<IProcessorNode<K, V>>(GetCurrentNode().Children.Select(c => (IProcessorNode<K, V>)c));
+                    var children = new List<IProcessorNode<K, V>>(this.GetCurrentNode().Children.Select(c => (IProcessorNode<K, V>)c));
                     foreach (var child in children)
                     {
                         //forward(child, key, value);
@@ -160,7 +166,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 else
                 {
-                    var child = GetCurrentNode().GetChild(sendTo);
+                    var child = this.GetCurrentNode().GetChild(sendTo);
                     if (child == null)
                     {
                         throw new StreamsException("Unknown downstream node: " + sendTo
@@ -172,14 +178,14 @@ namespace Kafka.Streams.Processors.Internals
             }
             finally
             {
-                RecordContext = previousContext;
-                SetCurrentNode(previousNode);
+                this.RecordContext = previousContext;
+                this.SetCurrentNode(previousNode);
             }
         }
 
         public override void Commit()
         {
-            task.RequestCommit();
+            this.task.RequestCommit();
         }
 
         public override ICancellable Schedule(
@@ -188,7 +194,7 @@ namespace Kafka.Streams.Processors.Internals
             IPunctuator callback)
         {
             var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(interval, "interval");
-            return Schedule(ApiUtils.ValidateMillisecondDuration(interval, msgPrefix), type, callback);
+            return this.Schedule(ApiUtils.ValidateMillisecondDuration(interval, msgPrefix), type, callback);
         }
 
         public void SetCurrentNode(IProcessorNode<K, V> currentNode)

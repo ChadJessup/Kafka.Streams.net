@@ -30,15 +30,15 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             this.storeName = storeName;
             // this.MaxRecords = suppress.bufferConfig.MaxRecords;
             // this.MaxBytes = suppress.bufferConfig.MaxBytes;
-            suppressDurationMillis = (long)suppress.TimeToWaitForMoreEvents().TotalMilliseconds;
-            bufferTimeDefinition = suppress.timeDefinition;
-            bufferFullStrategy = suppress.bufferConfig.BufferFullStrategy;
-            safeToDropTombstones = suppress.safeToDropTombstones;
+            this.suppressDurationMillis = (long)suppress.TimeToWaitForMoreEvents().TotalMilliseconds;
+            this.bufferTimeDefinition = suppress.timeDefinition;
+            this.bufferFullStrategy = suppress.bufferConfig.BufferFullStrategy;
+            this.safeToDropTombstones = suppress.safeToDropTombstones;
         }
 
         public void Init(IProcessorContext context)
         {
-            internalProcessorContext = (IInternalProcessorContext)context;
+            this.internalProcessorContext = (IInternalProcessorContext)context;
 
             //buffer = requireNonNull((ITimeOrderedKeyValueBuffer<K, V>)context.getStateStore(storeName));
             //buffer.setSerdesIfNull((ISerde<K>)context.keySerde, (ISerde<V>)context.valueSerde);
@@ -46,28 +46,28 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public void Process(K key, IChange<V> value)
         {
-            observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.Timestamp);
-            Buffer(key, value);
-            EnforceConstraints();
+            this.observedStreamTime = Math.Max(this.observedStreamTime, this.internalProcessorContext.Timestamp);
+            this.Buffer(key, value);
+            this.EnforceConstraints();
         }
 
         private void Buffer(K key, IChange<V> value)
         {
-            var bufferTime = bufferTimeDefinition.Time(internalProcessorContext, key);
+            var bufferTime = this.bufferTimeDefinition.Time(this.internalProcessorContext, key);
 
             // buffer.Add(bufferTime, key, value, internalProcessorContext.recordContext());
         }
 
         private void EnforceConstraints()
         {
-            var streamTime = observedStreamTime;
-            var expiryTime = streamTime - suppressDurationMillis;
+            var streamTime = this.observedStreamTime;
+            var expiryTime = streamTime - this.suppressDurationMillis;
 
             //buffer.evictWhile(() => buffer.minTimestamp() <= expiryTime, this.emit);
 
-            if (OverCapacity())
+            if (this.OverCapacity())
             {
-                switch (bufferFullStrategy)
+                switch (this.bufferFullStrategy)
                 {
                     case BufferFullStrategy.EMIT:
                         //    buffer.evictWhile(this.overCapacity, this.emit);
@@ -77,14 +77,14 @@ namespace Kafka.Streams.KStream.Internals.Suppress
                     case BufferFullStrategy.SHUT_DOWN:
                         throw new StreamsException(string.Format(
                             "%s buffer exceeded its max capacity. Currently [%d/%d] records and [%d/%d] bytes.",
-                            // internalProcessorContext.currentNode().name,
+                            // internalProcessorContext.currentNode().Name,
                             //buffer.numRecords(), maxRecords,
                             //buffer.bufferSize(), maxBytes));
                             null, null));
 
                     default:
                         throw new InvalidOperationException(
-                            "The bufferFullStrategy [" + bufferFullStrategy +
+                            "The bufferFullStrategy [" + this.bufferFullStrategy +
                                 "] is not implemented. This is a bug in Kafka Streams.");
                 }
             }
@@ -97,7 +97,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         private bool ShouldForward(IChange<V> value)
         {
-            return value.NewValue != null || !safeToDropTombstones;
+            return value.NewValue != null || !this.safeToDropTombstones;
         }
 
         public void Close()

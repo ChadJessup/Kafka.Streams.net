@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentNullException(nameof(configs));
             }
 
-            if (inner == null)
+            if (this.inner == null)
             {
                 string propertyName = isKey
                     ? StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
@@ -57,7 +57,7 @@ namespace Kafka.Streams.KStream
             }
         }
 
-        public byte[]? Serialize(string topic, Windowed<T> data)
+        public byte[]? Serialize(string topic, IWindowed<T> data)
         {
             // WindowedSerdes.verifyInnerSerializerNotNull<T>(inner, this);
 
@@ -72,26 +72,26 @@ namespace Kafka.Streams.KStream
 
         public void Close()
         {
-            if (inner != null)
+            if (this.inner != null)
             {
-                // inner.close();
+                // inner.Close();
             }
         }
 
-        public byte[] SerializeBaseKey(string topic, Windowed<T> data)
+        public byte[] SerializeBaseKey(string topic, IWindowed<T> data)
         {
-            WindowedSerdes.VerifyInnerSerializerNotNull<T>(inner, (ISerializer<T>)this);
+            WindowedSerdes.VerifyInnerSerializerNotNull<T>(this.inner, (ISerializer<T>)this);
 
-            return inner.Serialize(data.Key, new SerializationContext(MessageComponentType.Key, topic));
+            return this.inner.Serialize(data.Key, new SerializationContext(MessageComponentType.Key, topic));
         }
 
         // Only for testing
         public ISerializer<T> InnerSerializer()
         {
-            return inner;
+            return this.inner;
         }
 
-        public byte[] Serialize(Windowed<T> data, SerializationContext context)
+        public byte[] Serialize(IWindowed<T> data, SerializationContext context)
         {
             throw new NotImplementedException();
         }

@@ -10,7 +10,7 @@
 //     */
 //    public class MemoryLRUCache : IKeyValueStore<Bytes, byte[]>
 //    {
-//        private string name;
+//        private string Name;
 //        protected Dictionary<Bytes, byte[]> map;
 
 //        private bool restoring = false; // TODO: this is a sub-optimal solution to avoid logging during restoration.
@@ -19,9 +19,9 @@
 
 //        private IEldestEntryRemovalListener listener;
 
-//        public MemoryLRUCache(string name, int maxCacheSize)
+//        public MemoryLRUCache(string Name, int maxCacheSize)
 //        {
-//            //        this.name = name;
+//            //        this.Name = Name;
 
 //            //            // leave room for one extra entry to handle.Adding an entry before the oldest can be removed
 //            //            this.map = new Dictionary<Bytes, byte[]>(maxCacheSize + 1, 1.01f, true);
@@ -46,13 +46,13 @@
 //            //        this.listener = listener;
 //            //    }
 
-//            //    public override string name
+//            //    public override string Name
 //            //{
-//            //        return this.name;
+//            //        return this.Name;
 //            //    }
 
-//            //public override void init(
-//            //    IProcessorContext<K, V> context,
+//            //public override void Init(
+//            //    IProcessorContext context,
 //            //    IStateStore root)
 //            //{
 
@@ -60,17 +60,17 @@
 //            //    context.register(root, (key, value) =>
 //            //{
 //            //restoring = true;
-//            //put(Bytes.Wrap(key), value);
+//            //Put(Bytes.Wrap(key), value);
 //            //restoring = false;
 //            //});
 //            //}
 
-//            //    public override bool persistent()
+//            //    public override bool Persistent()
 //            //{
 //            //        return false;
 //            //    }
 
-//            //    public override bool isOpen()
+//            //    public override bool IsOpen()
 //            //{
 //            //        return open;
 //            //    }
@@ -83,7 +83,7 @@
 //            //        return this.map[key];
 //            //    }
 //            //[MethodImpl(MethodImplOptions.Synchronized)]
-//            //    public override void put(Bytes key, byte[] value)
+//            //    public override void Put(Bytes key, byte[] value)
 //            //{
 //            //        Objects.requireNonNull(key);
 //            //        if (value == null)
@@ -101,7 +101,7 @@
 //            //        byte[] originalValue = get(key);
 //            //        if (originalValue == null)
 //            //{
-//            //            put(key, value);
+//            //            Put(key, value);
 //            //        }
 //            //        return originalValue;
 //            //    }
@@ -110,7 +110,7 @@
 //            //{
 //            //        foreach (KeyValuePair<Bytes, byte[]> entry in entries)
 //            //{
-//            //            put(entry.key, entry.value);
+//            //            Put(entry.key, entry.value);
 //            //        }
 //            //    }
 //            //   [MethodImpl(MethodImplOptions.Synchronized)]
@@ -131,9 +131,9 @@
 //            //    /**
 //            //     * @throws InvalidOperationException at every invocation
 //            //     */
-//            //    public override KeyValueIterator<Bytes, byte[]> all()
+//            //    public override KeyValueIterator<Bytes, byte[]> All()
 //            //{
-//            //        throw new InvalidOperationException("MemoryLRUCache does not support all() function.");
+//            //        throw new InvalidOperationException("MemoryLRUCache does not support All() function.");
 //            //    }
 
 //            //    public override long approximateNumEntries
@@ -141,12 +141,12 @@
 //            //        return this.map.size();
 //            //    }
 
-//            //public override void flush()
+//            //public override void Flush()
 //            //{
 //            //    // do-nothing since it is in-memory
 //            //}
 
-//            //    public override void close()
+//            //    public override void Close()
 //            //{
 //            //        open = false;
 //            //    }
@@ -157,7 +157,7 @@
 //            //}
 //        }
 
-//        public void put(Bytes key, byte[] value)
+//        public void Put(Bytes key, byte[] value)
 //        {
 //            throw new System.NotImplementedException();
 //        }
@@ -177,34 +177,34 @@
 //            throw new System.NotImplementedException();
 //        }
 
-//        string IStateStore.name => throw new System.NotImplementedException();
+//        string IStateStore.Name => throw new System.NotImplementedException();
 
-//        public void init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
+//        public void Init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
 //        {
 //            throw new System.NotImplementedException();
 //        }
 
-//        public void flush()
+//        public void Flush()
 //        {
 //            throw new System.NotImplementedException();
 //        }
 
-//        public void close()
+//        public void Close()
 //        {
 //            throw new System.NotImplementedException();
 //        }
 
-//        public bool persistent()
+//        public bool Persistent()
 //        {
 //            throw new System.NotImplementedException();
 //        }
 
-//        public bool isOpen()
+//        public bool IsOpen()
 //        {
 //            throw new System.NotImplementedException();
 //        }
 
-//        public void init<K, V>(IProcessorContext<K, V> context, IStateStore root)
+//        public void Init<K, V>(IProcessorContext context, IStateStore root)
 //        {
 //            throw new System.NotImplementedException();
 //        }
@@ -219,7 +219,7 @@
 //            throw new System.NotImplementedException();
 //        }
 
-//        public IKeyValueIterator<Bytes, byte[]> all()
+//        public IKeyValueIterator<Bytes, byte[]> All()
 //        {
 //            throw new System.NotImplementedException();
 //        }

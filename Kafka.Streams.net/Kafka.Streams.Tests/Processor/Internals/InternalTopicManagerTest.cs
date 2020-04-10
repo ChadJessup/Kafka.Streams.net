@@ -24,11 +24,11 @@
 
 //        private Dictionary<string, object> config = new HashMap<string, object>() {
 //        {
-//            put(StreamsConfig.APPLICATION_ID_CONFIG, "app-id");
-//        put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, broker1.host() + ":" + broker1.port());
-//        put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 1);
-//        put(StreamsConfig.adminClientPrefix(StreamsConfig.RETRIES_CONFIG), 1);
-//        put(StreamsConfig.producerPrefix(ProducerConfig.BATCH_SIZE_CONFIG), 16384);
+//            Put(StreamsConfig.APPLICATION_ID_CONFIG, "app-id");
+//        Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, broker1.host() + ":" + broker1.port());
+//        Put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 1);
+//        Put(StreamsConfig.adminClientPrefix(StreamsConfig.RETRIES_CONFIG), 1);
+//        Put(StreamsConfig.producerPrefix(ProducerConfig.BATCH_SIZE_CONFIG), 16384);
 //    }
 //};
 
@@ -44,7 +44,7 @@
 
 //public void Shutdown()
 //{
-//    mockAdminClient.close();
+//    mockAdminClient.Close();
 //}
 
 //[Fact]
@@ -182,8 +182,8 @@
 //    internalTopicConfigII.SetNumberOfPartitions(1);
 
 //    Dictionary<string, InternalTopicConfig> topicConfigMap = new HashMap<>();
-//    topicConfigMap.put(topic, internalTopicConfig);
-//    topicConfigMap.put("internal-topic", internalTopicConfigII);
+//    topicConfigMap.Put(topic, internalTopicConfig);
+//    topicConfigMap.Put("internal-topic", internalTopicConfigII);
 
 
 //    internalTopicManager.makeReady(topicConfigMap);

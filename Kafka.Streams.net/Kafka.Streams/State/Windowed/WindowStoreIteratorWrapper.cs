@@ -22,7 +22,7 @@
 //            return new WrappedWindowStoreIterator(bytesIterator);
 //        }
 
-//        public IKeyValueIterator<Windowed<Bytes>, byte[]> keyValueIterator()
+//        public IKeyValueIterator<IWindowed<Bytes>, byte[]> keyValueIterator()
 //        {
 //            return null; // new WrappedKeyValueIterator(bytesIterator, windowSize);
 //        }

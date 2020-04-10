@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public override bool Overlap(Window other)
         {
-            if (GetType() != other.GetType())
+            if (this.GetType() != other.GetType())
             {
                 throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
                     + other.GetType() + ".");

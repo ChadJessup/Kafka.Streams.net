@@ -4,7 +4,7 @@ using Kafka.Streams.State.TimeStamped;
 namespace Kafka.Streams.Processors.Internals
 {
     public class TimestampedWindowStoreReadOnlyDecorator<K, V>
-        : WindowStoreReadOnlyDecorator<K, ValueAndTimestamp<V>>
+        : WindowStoreReadOnlyDecorator<K, IValueAndTimestamp<V>>
         , ITimestampedWindowStore<K, V>
     {
 
@@ -14,4 +14,3 @@ namespace Kafka.Streams.Processors.Internals
         }
     }
 }
-

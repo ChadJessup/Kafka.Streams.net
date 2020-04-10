@@ -51,9 +51,9 @@
 //        }
 
 
-//        public void close()
+//        public void Close()
 //        {
-//            inner.close();
+//            inner.Close();
 //        }
 //    }
 //}

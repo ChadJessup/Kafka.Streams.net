@@ -24,10 +24,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public string[] ParentNodeNames()
         {
-            var parentNames = new string[ParentNodes.Count];
+            var parentNames = new string[this.ParentNodes.Count];
             var index = 0;
 
-            foreach (var parentNode in ParentNodes)
+            foreach (var parentNode in this.ParentNodes)
             {
                 parentNames[index++] = parentNode.NodeName;
             }
@@ -37,7 +37,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public bool AllParentsWrittenToTopology()
         {
-            foreach (var parentNode in ParentNodes)
+            foreach (var parentNode in this.ParentNodes)
             {
                 if (!parentNode.HasWrittenToTopology)
                 {
@@ -50,22 +50,22 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public HashSet<IStreamsGraphNode> Children()
         {
-            return new HashSet<IStreamsGraphNode>(childNodes);
+            return new HashSet<IStreamsGraphNode>(this.childNodes);
         }
 
         public void ClearChildren()
         {
-            foreach (var childNode in childNodes)
+            foreach (var childNode in this.childNodes)
             {
                 childNode.ParentNodes.Remove(this);
             }
 
-            childNodes.Clear();
+            this.childNodes.Clear();
         }
 
         public bool RemoveChild(IStreamsGraphNode child)
         {
-            return childNodes.Remove(child) && (child?.ParentNodes.Remove(this) ?? false);
+            return this.childNodes.Remove(child) && (child?.ParentNodes.Remove(this) ?? false);
         }
 
         public void AddChild(IStreamsGraphNode childNode)
@@ -100,15 +100,15 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override string ToString()
         {
-            var parentNames = ParentNodeNames();
+            var parentNames = this.ParentNodeNames();
 
             return $"StreamsGraphNode{{" +
                    $"nodeName='{this.NodeName}'" +
                    $", buildPriority={this.BuildPriority}" +
                    $", hasWrittenToTopology={this.HasWrittenToTopology}" +
                    $", keyChangingOperation={this.IsKeyChangingOperation}" +
-                   $", valueChangingOperation={valueChangingOperation}" +
-                   $", mergeNode={mergeNode}" +
+                   $", valueChangingOperation={this.valueChangingOperation}" +
+                   $", mergeNode={this.mergeNode}" +
                    $", parentNodes={string.Join(',', parentNames)}}}";
         }
     }

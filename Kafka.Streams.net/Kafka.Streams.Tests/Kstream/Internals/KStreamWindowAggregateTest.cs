@@ -22,13 +22,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var builder = new StreamsBuilder();
 //            var topic1 = "topic1";
 
-//            IKTable<Windowed<string>, string> table2 = builder
+//            IKTable<IWindowed<string>, string> table2 = builder
 //                .Stream(topic1, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(5)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonized").withValueSerde(Serdes.String()));
 
-//            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
+//            MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<>();
 //            table2.toStream().process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
@@ -56,35 +56,35 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(
 //                asList(
-//                     new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1", 0),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2", 1),
-//                     new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+3", 2),
-//                     new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(0, 10)), "0+4", 3),
-//                     new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1", 4),
-//                     new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1+1", 5),
-//                     new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+1", 5),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2", 6),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+2", 6),
-//                     new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(0, 10)), "0+4+4", 7),
-//                     new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(5, 15)), "0+4", 7),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2", 8),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+2+2", 8),
-//                     new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+3+3", 9),
-//                     new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(5, 15)), "0+3", 9),
-//                     new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+1+1", 10),
-//                     new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(10, 20)), "0+1", 10),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+2+2+2", 11),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(10, 20)), "0+2", 11),
-//                     new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(5, 15)), "0+4+4", 12),
-//                     new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(10, 20)), "0+4", 12),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+2+2+2+2", 13),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(10, 20)), "0+2+2", 13),
-//                     new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(5, 15)), "0+3+3", 14),
-//                     new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(10, 20)), "0+3", 14),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2+1", 8),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2+1+2", 8),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2+1+2+3", 9),
-//                     new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+2+2+2+2+3", 13)
+//                     new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+1", 0),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2", 1),
+//                     new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(0, 10)), "0+3", 2),
+//                     new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(0, 10)), "0+4", 3),
+//                     new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+1+1", 4),
+//                     new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+1+1+1", 5),
+//                     new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(5, 15)), "0+1", 5),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2", 6),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+2", 6),
+//                     new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(0, 10)), "0+4+4", 7),
+//                     new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(5, 15)), "0+4", 7),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2+2", 8),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+2+2", 8),
+//                     new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(0, 10)), "0+3+3", 9),
+//                     new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(5, 15)), "0+3", 9),
+//                     new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(5, 15)), "0+1+1", 10),
+//                     new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(10, 20)), "0+1", 10),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+2+2+2", 11),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(10, 20)), "0+2", 11),
+//                     new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(5, 15)), "0+4+4", 12),
+//                     new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(10, 20)), "0+4", 12),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+2+2+2+2", 13),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(10, 20)), "0+2+2", 13),
+//                     new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(5, 15)), "0+3+3", 14),
+//                     new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(10, 20)), "0+3", 14),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2+2+1", 8),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2+2+1+2", 8),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2+2+1+2+3", 9),
+//                     new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+2+2+2+2+3", 13)
 
 //                     ),
 //                 supplier.theCapturedProcessor().processed
@@ -98,16 +98,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            var topic1 = "topic1";
 //            var topic2 = "topic2";
 
-//            IKTable<Windowed<string>, string> table1 = builder
+//            IKTable<IWindowed<string>, string> table1 = builder
 //                .Stream(topic1, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(5)))
 //                .aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonized").withValueSerde(Serdes.String()));
 
-//            MockProcessorSupplier<Windowed<string>, string> supplier = new MockProcessorSupplier<>();
+//            MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<>();
 //            table1.toStream().process(supplier);
 
-//            IKTable<Windowed<string>, string> table2 = builder
+//            IKTable<IWindowed<string>, string> table2 = builder
 //                .Stream(topic2, Consumed.With(Serdes.String(), Serdes.String()))
 //                .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
 //                .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)).advanceBy(TimeSpan.FromMilliseconds(5)))
@@ -123,15 +123,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(topic1, "D", "4", 3L));
 //            driver.PipeInput(recordFactory.Create(topic1, "A", "1", 9L));
 
-//            List<MockProcessor<Windowed<string>, string>> processors = supplier.capturedProcessors(3);
+//            List<MockProcessor<IWindowed<string>, string>> processors = supplier.capturedProcessors(3);
 
 //            processors.Get(0).checkAndClearProcessResult(
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1", 0),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2", 1),
-//                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+3", 2),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(0, 10)), "0+4", 3),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1", 9),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+1", 9)
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+1", 0),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2", 1),
+//                new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(0, 10)), "0+3", 2),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(0, 10)), "0+4", 3),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+1+1", 9),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(5, 15)), "0+1", 9)
 //            );
 //            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp[0]);
 //            processors.Get(2).checkAndClearProcessResult(new KeyValueTimestamp[0]);
@@ -143,16 +143,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(topic1, "C", "3", 9L));
 
 //            processors.Get(0).checkAndClearProcessResult(
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1+1", 9),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+1+1", 9),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2", 6),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+2", 6),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(0, 10)), "0+4+4", 7),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(5, 15)), "0+4", 7),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2", 8),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+2+2", 8),
-//                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+3+3", 9),
-//                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(5, 15)), "0+3", 9)
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+1+1+1", 9),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(5, 15)), "0+1+1", 9),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2", 6),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+2", 6),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(0, 10)), "0+4+4", 7),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(5, 15)), "0+4", 7),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2+2", 8),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+2+2", 8),
+//                new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(0, 10)), "0+3+3", 9),
+//                new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(5, 15)), "0+3", 9)
 //            );
 //            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp[0]);
 //            processors.Get(2).checkAndClearProcessResult(new KeyValueTimestamp[0]);
@@ -165,18 +165,18 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp[0]);
 //            processors.Get(1).checkAndClearProcessResult(
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+a", 0),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+b", 1),
-//                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+c", 2),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(15, 25)), "0+d", 20),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(20, 30)), "0+d", 20),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(15, 25)), "0+a", 20),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(20, 30)), "0+a", 20)
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+a", 0),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+b", 1),
+//                new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(0, 10)), "0+c", 2),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(15, 25)), "0+d", 20),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(20, 30)), "0+d", 20),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(15, 25)), "0+a", 20),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(20, 30)), "0+a", 20)
 //            );
 //            processors.Get(2).checkAndClearProcessResult(
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1+1%0+a", 9),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2%0+b", 8),
-//                new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(0, 10)), "0+3+3%0+c", 9));
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+1+1+1%0+a", 9),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2+2%0+b", 8),
+//                new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(0, 10)), "0+3+3%0+c", 9));
 
 //            driver.PipeInput(recordFactory.Create(topic2, "A", "a", 5L));
 //            driver.PipeInput(recordFactory.Create(topic2, "B", "b", 6L));
@@ -186,24 +186,24 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp[0]);
 //            processors.Get(1).checkAndClearProcessResult(
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+a+a", 5),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+a", 5),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+b+b", 6),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+b", 6),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(0, 10)), "0+d", 7),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(5, 15)), "0+d", 7),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(10, 20)), "0+d", 18),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(15, 25)), "0+d+d", 20),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(15, 25)), "0+a+a", 21),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(20, 30)), "0+a+a", 21)
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+a+a", 5),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(5, 15)), "0+a", 5),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+b+b", 6),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+b", 6),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(0, 10)), "0+d", 7),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(5, 15)), "0+d", 7),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(10, 20)), "0+d", 18),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(15, 25)), "0+d+d", 20),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(15, 25)), "0+a+a", 21),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(20, 30)), "0+a+a", 21)
 //            );
 //            processors.Get(2).checkAndClearProcessResult(
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(0, 10)), "0+1+1+1%0+a+a", 9),
-//                new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(5, 15)), "0+1+1%0+a", 9),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(0, 10)), "0+2+2+2%0+b+b", 8),
-//                new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(5, 15)), "0+2+2%0+b", 8),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(0, 10)), "0+4+4%0+d", 7),
-//                new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(5, 15)), "0+4%0+d", 7)
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(0, 10)), "0+1+1+1%0+a+a", 9),
+//                new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(5, 15)), "0+1+1%0+a", 9),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(0, 10)), "0+2+2+2%0+b+b", 8),
+//                new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(5, 15)), "0+2+2%0+b", 8),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(0, 10)), "0+4+4%0+d", 7),
+//                new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(5, 15)), "0+4%0+d", 7)
 //            );
 //        }
 //    }

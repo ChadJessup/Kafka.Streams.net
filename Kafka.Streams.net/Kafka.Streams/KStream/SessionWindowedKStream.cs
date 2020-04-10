@@ -6,7 +6,7 @@
 //     * {@code SessionWindowedKStream} is an abstraction of a <i>windowed</i> record stream of {@link KeyValuePair} pairs.
 //     * It is an intermediate representation after a grouping and windowing of a {@link KStream} before an aggregation is applied to the
 //     * new (partitioned) windows resulting in a windowed {@link KTable}
-//     * (a <emph>windowed</emph> {@code KTable} is a {@link KTable} with key type {@link Windowed Windowed<K>}.
+//     * (a <emph>windowed</emph> {@code KTable} is a {@link KTable} with key type {@link Windowed IWindowed<K>}.
 //     * <p>
 //     * {@link SessionWindows} are dynamic data driven windows.
 //     * They have no fixed time boundaries, rather the size of the window is determined by the records.
@@ -31,7 +31,7 @@
 //         * Count the number of records in this stream by the grouped key into {@link SessionWindows}.
 //         * Records with {@code null} key or value are ignored.
 //         * <p>
-//         * Not all updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
+//         * Not All updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
 //         * the same window and key.
 //         * The rate of propagated updates depends on your input data rate, the number of distinct keys, the number of
 //         * parallel running Kafka Streams instances, and the {@link StreamsConfig configuration} parameters for
@@ -41,15 +41,15 @@
 //         * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link long} values
 //         * that represent the latest (rolling) count (i.e., number of records) for each key within a window
 //         */
-//        IKTable<Windowed<K>, long> count();
+//        IKTable<IWindowed<K>, long> count();
 
 //        /**
 //         * Count the number of records in this stream by the grouped key into {@link SessionWindows}.
 //         * Records with {@code null} key or value are ignored.
 //         * The result is written into a local {@link ISessionStore} (which is basically an ever-updating
-//         * materialized view) that can be queried using the name provided with {@link Materialized}.
+//         * materialized view) that can be queried using the Name provided with {@link Materialized}.
 //         * <p>
-//         * Not all updates might get sent downstream, as an internal cache will be used to deduplicate consecutive updates to
+//         * Not All updates might get sent downstream, as an internal cache will be used to deduplicate consecutive updates to
 //         * the same window and key if caching is enabled on the {@link Materialized} instance.
 //         * When caching is enabled the rate of propagated updates depends on your input data rate, the number of distinct keys, the number of
 //         * parallel running Kafka Streams instances, and the {@link StreamsConfig configuration} parameters for
@@ -60,31 +60,31 @@
 //         * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}.
 //         * <pre>{@code
 //         * KafkaStreams streams = [] // compute sum
-//         * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
+//         * Sting queryableStoreName = [] // the queryableStoreName should be the Name of the store as defined by the Materialized instance
 //         * ReadOnlySessionStore<string,long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
 //         * string key = "some-key";
-//         * KeyValueIterator<Windowed<string>, long> sumForKeyForWindows = localWindowStore.Fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+//         * KeyValueIterator<IWindowed<string>, long> sumForKeyForWindows = localWindowStore.Fetch(key); // key must be local (application state is shared over All running Kafka Streams instances)
 //         * }</pre>
 //         * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
 //         * query the value of the key on a parallel running instance of your Kafka Streams application.
 //         *
 //         * <p>
 //         * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
-//         * Therefore, the store name defined by the Materialized instance must be a valid Kafka topic name and cannot contain characters other than ASCII
+//         * Therefore, the store Name defined by the Materialized instance must be a valid Kafka topic Name and cannot contain characters other than ASCII
 //         * alphanumerics, '.', '_' and '-'.
 //         * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
 //         * user-specified in {@link StreamsConfig} via parameter
 //         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
-//         * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
+//         * provide store Name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
 //         *
-//         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+//         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
 //         *
 //         * @param materialized  an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}.
 //         *                      Note: the valueSerde will be automatically set to {@link Serdes#long()} if there is no valueSerde provided
 //         * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link long} values
 //         * that represent the latest (rolling) count (i.e., number of records) for each key within a window
 //         */
-//        IKTable<Windowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized);
+//        IKTable<IWindowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized);
 
 //        /**
 //         * Aggregate the values of records in this stream by the grouped key and defined {@link SessionWindows}.
@@ -105,7 +105,7 @@
 //         * The default value serde from config will be used for serializing the result.
 //         * If a different serde is required then you should use {@link #aggregate(Initializer, IAggregator, Merger, Materialized)}.
 //         * <p>
-//         * Not all updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
+//         * Not All updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
 //         * the same window and key.
 //         * The rate of propagated updates depends on your input data rate, the number of distinct keys, the number of
 //         * parallel running Kafka Streams instances, and the {@link StreamsConfig configuration} parameters for
@@ -119,7 +119,7 @@
 //         * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
 //         * the latest (rolling) aggregate for each key within a window
 //         */
-//        IKTable<Windowed<K>, VR> aggregate(IInitializer<VR> initializer,
+//        IKTable<IWindowed<K>, VR> aggregate(IInitializer<VR> initializer,
 //                                                IAggregator<K, V, VR> aggregator,
 //                                                IMerger<K, VR> sessionMerger);
 
@@ -127,7 +127,7 @@
 //         * Aggregate the values of records in this stream by the grouped key and defined {@link SessionWindows}.
 //         * Records with {@code null} key or value are ignored.
 //         * The result is written into a local {@link ISessionStore} (which is basically an ever-updating
-//         * materialized view) that can be queried using the name provided with {@link Materialized}.
+//         * materialized view) that can be queried using the Name provided with {@link Materialized}.
 //         * Aggregating is a generalization of {@link #reduce(Reducer) combining via
 //         * reduce(...)} as it, for example, allows the result to have a different type than the input values.
 //         * <p>
@@ -141,7 +141,7 @@
 //         * Thus, {@code aggregate(Initializer, IAggregator, Merger)} can be used to compute
 //         * aggregate functions like count (c.f. {@link #count()})
 //         * <p>
-//         * Not all updates might get sent downstream, as an internal cache will be used to deduplicate consecutive updates to
+//         * Not All updates might get sent downstream, as an internal cache will be used to deduplicate consecutive updates to
 //         * the same window and key if caching is enabled on the {@link Materialized} instance.
 //         * When caching is enabled the rate of propagated updates depends on your input data rate, the number of distinct keys, the number of
 //         * parallel running Kafka Streams instances, and the {@link StreamsConfig configuration} parameters for
@@ -151,22 +151,22 @@
 //         * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}.
 //         * <pre>{@code
 //         * KafkaStreams streams = [] // some windowed aggregation on value type double
-//         * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
+//         * Sting queryableStoreName = [] // the queryableStoreName should be the Name of the store as defined by the Materialized instance
 //         * ReadOnlySessionStore<string, long> sessionStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>sessionStore());
 //         * string key = "some-key";
-//         * KeyValueIterator<Windowed<string>, long> aggForKeyForSession = localWindowStore.Fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+//         * KeyValueIterator<IWindowed<string>, long> aggForKeyForSession = localWindowStore.Fetch(key); // key must be local (application state is shared over All running Kafka Streams instances)
 //         * }</pre>
 //         *
 //         * <p>
 //         * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
-//         * Therefore, the store name defined by the Materialized instance must be a valid Kafka topic name and cannot contain characters other than ASCII
+//         * Therefore, the store Name defined by the Materialized instance must be a valid Kafka topic Name and cannot contain characters other than ASCII
 //         * alphanumerics, '.', '_' and '-'.
 //         * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
 //         * user-specified in {@link StreamsConfig} via parameter
 //         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
-//         * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
+//         * provide store Name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
 //         *
-//         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+//         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
 //         *
 //         * @param initializer    the instance of {@link Initializer}
 //         * @param aggregator     the instance of {@link IAggregator}
@@ -176,7 +176,7 @@
 //         * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
 //         * the latest (rolling) aggregate for each key within a window
 //         */
-//        IKTable<Windowed<K>, VR> aggregate(IInitializer<VR> initializer,
+//        IKTable<IWindowed<K>, VR> aggregate(IInitializer<VR> initializer,
 //                                                IAggregator<K, V, VR> aggregator,
 //                                                IMerger<K, VR> sessionMerger,
 //                                                Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized);
@@ -196,7 +196,7 @@
 //     * Thus, {@code reduce(Reducer)} can be used to compute aggregate functions like sum, min,
 //     * or max.
 //     * <p>
-//     * Not all updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
+//     * Not All updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
 //     * the same window and key.
 //     * The rate of propagated updates depends on your input data rate, the number of distinct keys, the number of
 //     * parallel running Kafka Streams instances, and the {@link StreamsConfig configuration} parameters for
@@ -207,7 +207,7 @@
 //     * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
 //     * the latest (rolling) aggregate for each key within a window
 //     */
-//    IKTable<Windowed<K>, V> reduce(IReducer<V> reducer);
+//    IKTable<IWindowed<K>, V> reduce(IReducer<V> reducer);
 
 //        /**
 //         * Combine values of this stream by the grouped key into {@link SessionWindows}.
@@ -235,7 +235,7 @@
 //         * Thus, {@code reduce(Reducer, Materialized)} can be used to compute aggregate functions like
 //         * sum, min, or max.
 //         * <p>
-//         * Not all updates might get sent downstream, as an internal cache will be used to deduplicate consecutive updates to
+//         * Not All updates might get sent downstream, as an internal cache will be used to deduplicate consecutive updates to
 //         * the same window and key if caching is enabled on the {@link Materialized} instance.
 //         * When caching is enabled the rate of propagated updates depends on your input data rate, the number of distinct keys, the number of
 //         * parallel running Kafka Streams instances, and the {@link StreamsConfig configuration} parameters for
@@ -246,23 +246,23 @@
 //         * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}.
 //         * <pre>{@code
 //         * KafkaStreams streams = [] // compute sum
-//         * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
+//         * Sting queryableStoreName = [] // the queryableStoreName should be the Name of the store as defined by the Materialized instance
 //         * ReadOnlySessionStore<string,long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
 //         * string key = "some-key";
-//         * KeyValueIterator<Windowed<string>, long> sumForKeyForWindows = localWindowStore.Fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+//         * KeyValueIterator<IWindowed<string>, long> sumForKeyForWindows = localWindowStore.Fetch(key); // key must be local (application state is shared over All running Kafka Streams instances)
 //         * }</pre>
 //         * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
 //         * query the value of the key on a parallel running instance of your Kafka Streams application.
 //         *
 //         * <p>
 //         * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
-//         * Therefore, the store name defined by the Materialized instance must be a valid Kafka topic name and cannot contain characters other than ASCII
+//         * Therefore, the store Name defined by the Materialized instance must be a valid Kafka topic Name and cannot contain characters other than ASCII
 //         * alphanumerics, '.', '_' and '-'.
 //         * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
 //         * user-specified in {@link StreamsConfig} via parameter
 //         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
-//         * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
-//         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+//         * provide store Name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
+//         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
 //         *
 //         *
 //         * @param reducer a {@link Reducer} that computes a new aggregate result. Cannot be {@code null}.
@@ -270,7 +270,7 @@
 //         * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
 //         * the latest (rolling) aggregate for each key within a window
 //         */
-//        IKTable<Windowed<K>, V> reduce(
+//        IKTable<IWindowed<K>, V> reduce(
 //            IReducer<V> reducer,
 //            Materialized<K, V, ISessionStore<Bytes, byte[]>> materializedAs);
 //    }

@@ -15,20 +15,20 @@ namespace Kafka.Streams.NullModels
         {
         }
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes key)
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes key)
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
         public byte[] FetchSession(Bytes key, long startTime, long endTime)
             => Array.Empty<byte>();
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(Bytes key, long earliestSessionEndTime, long latestSessionStartTime)
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(Bytes key, long earliestSessionEndTime, long latestSessionStartTime)
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
-        public IKeyValueIterator<Windowed<Bytes>, byte[]> FindSessions(Bytes keyFrom, Bytes keyTo, long earliestSessionEndTime, long latestSessionStartTime)
-            => new NullKeyValueIterator<Windowed<Bytes>, byte[]>();
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(Bytes keyFrom, Bytes keyTo, long earliestSessionEndTime, long latestSessionStartTime)
+            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
         public void Flush()
         {
@@ -42,11 +42,11 @@ namespace Kafka.Streams.NullModels
         public bool IsPresent() => true;
         public bool Persistent() => true;
 
-        public void Put(Windowed<Bytes> sessionKey, byte[] aggregate)
+        public void Put(IWindowed<Bytes> sessionKey, byte[] aggregate)
         {
         }
 
-        public void Remove(Windowed<Bytes> sessionKey)
+        public void Remove(IWindowed<Bytes> sessionKey)
         {
         }
     }

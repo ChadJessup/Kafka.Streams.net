@@ -20,8 +20,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public string[] StoreNames()
         {
-            string[] storeNames1 = valueGetterSupplier1.StoreNames();
-            string[] storeNames2 = valueGetterSupplier2.StoreNames();
+            string[] storeNames1 = this.valueGetterSupplier1.StoreNames();
+            string[] storeNames2 = this.valueGetterSupplier2.StoreNames();
             HashSet<string> stores = new HashSet<string>();
 
             stores.UnionWith(storeNames1);

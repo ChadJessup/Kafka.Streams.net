@@ -7,7 +7,7 @@
 //namespace Kafka.Streams.Tests.Integration
 //{
 //    /**
-//     * Tests all available joins of Kafka Streams DSL.
+//     * Tests All available joins of Kafka Streams DSL.
 //     */
 //    public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest
 //    {
@@ -70,7 +70,7 @@
 //        [Fact]
 //        public void TestInner()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
 
 //            if (cacheEnabled)
 //            {
@@ -105,7 +105,7 @@
 //        [Fact]
 //        public void TestLeft()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
 
 //            if (cacheEnabled)
 //            {
@@ -140,7 +140,7 @@
 //        [Fact]
 //        public void TestOuter()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
 
 //            if (cacheEnabled)
 //            {
@@ -175,7 +175,7 @@
 //        [Fact]
 //        public void TestInnerInner()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
 
 //            if (cacheEnabled)
 //            {
@@ -188,7 +188,7 @@
 //            }
 //            else
 //            {
-//                // FIXME: the duplicate below for all the multi-joins
+//                // FIXME: the duplicate below for All the multi-joins
 //                //        are due to KAFKA-6443, should be updated once it is fixed.
 //                List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
 //                    null,
@@ -226,7 +226,7 @@
 //        [Fact]
 //        public void TestInnerLeft()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
 
 //            if (cacheEnabled)
 //            {
@@ -275,7 +275,7 @@
 //        [Fact]
 //        public void TestInnerOuter()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
 
 //            if (cacheEnabled)
 //            {
@@ -328,7 +328,7 @@
 //        [Fact]
 //        public void TestLeftInner()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
 
 //            if (cacheEnabled)
 //            {
@@ -377,7 +377,7 @@
 //        [Fact]
 //        public void TestLeftLeft()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
 
 //            if (cacheEnabled)
 //            {
@@ -430,7 +430,7 @@
 //        [Fact]
 //        public void TestLeftOuter()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
 
 //            if (cacheEnabled)
 //            {
@@ -484,7 +484,7 @@
 //        [Fact]
 //        public void TestOuterInner()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
 
 //            if (cacheEnabled)
 //            {
@@ -535,7 +535,7 @@
 //        [Fact]
 //        public void TestOuterLeft()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
 
 //            if (cacheEnabled)
 //            {
@@ -590,7 +590,7 @@
 //        [Fact]
 //        public void TestOuterOuter()
 //        {// throws Exception
-//            STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
+//            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
 
 //            if (cacheEnabled)
 //            {

@@ -26,7 +26,7 @@ namespace Kafka.Streams.State.KeyValues
 
         public int CompareTo(KeyValueSegment segment)
         {
-            return id.CompareTo(segment.id);
+            return this.id.CompareTo(segment.id);
         }
 
         public override void OpenDB(IProcessorContext context)
@@ -38,22 +38,22 @@ namespace Kafka.Streams.State.KeyValues
 
         public override string ToString()
         {
-            return "KeyValueSegment(id=" + id + ", name=" + Name + ")";
+            return "KeyValueSegment(id=" + this.id + ", Name=" + this.Name + ")";
         }
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
+            if (obj == null || this.GetType() != obj.GetType())
             {
                 return false;
             }
             KeyValueSegment segment = (KeyValueSegment)obj;
-            return id == segment.id;
+            return this.id == segment.id;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(id);
+            return HashCode.Combine(this.id);
         }
     }
 }

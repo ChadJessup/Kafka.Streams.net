@@ -14,20 +14,20 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         public ForwardingDisabledProcessorContextTest()
         {
-            del = Mock.Of<IProcessorContext>();
-            context = new ForwardingDisabledProcessorContext<string, string>(del);
+            this.del = Mock.Of<IProcessorContext>();
+            this.context = new ForwardingDisabledProcessorContext<string, string>(this.del);
         }
 
         [Fact]
         public void ShouldThrowOnForward()
         {
-            Assert.Throws<StreamsException>(() => context.Forward("key", "value"));
+            Assert.Throws<StreamsException>(() => this.context.Forward("key", "value"));
         }
 
         [Fact]
         public void ShouldThrowOnForwardWithTo()
         {
-            Assert.Throws<StreamsException>(() => context.Forward("key", "value", To.All()));
+            Assert.Throws<StreamsException>(() => this.context.Forward("key", "value", To.All()));
         }
 
         // need to test deprecated code until removed
@@ -35,7 +35,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldThrowOnForwardWithChildIndex()
         {
 #pragma warning disable CS0612 // Type or member is obsolete
-            Assert.Throws<StreamsException>(() => context.Forward("key", "value", 1));
+            Assert.Throws<StreamsException>(() => this.context.Forward("key", "value", 1));
 #pragma warning restore CS0612 // Type or member is obsolete
         }
 
@@ -43,7 +43,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldThrowOnForwardWithChildName()
         {
-            Assert.Throws<StreamsException>(() => context.Forward("key", "value", "child1"));
+            Assert.Throws<StreamsException>(() => this.context.Forward("key", "value", "child1"));
         }
     }
 }

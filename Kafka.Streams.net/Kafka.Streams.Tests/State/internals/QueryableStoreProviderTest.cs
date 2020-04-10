@@ -92,7 +92,7 @@
 //        [Fact]
 //        public void ShouldFindGlobalStores()
 //        {
-//            globalStateStores.put("global", new NoOpReadOnlyStore<>());
+//            globalStateStores.Put("global", new NoOpReadOnlyStore<>());
 //            Assert.NotNull(storeProvider.getStore("global", QueryableStoreTypes.KeyValueStore()));
 //        }
 

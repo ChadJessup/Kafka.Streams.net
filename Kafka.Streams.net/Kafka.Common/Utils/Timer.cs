@@ -8,7 +8,7 @@ namespace Kafka.Common.Utils
      * In particular it enables use cases where a high-level blocking call with a timeout is
      * composed of several lower level calls, each of which has their own respective timeouts. The idea
      * is to create a single timer object for the high level timeout and carry it along to
-     * all of the lower level methods. This also handles common problems such as integer overflow.
+     * All of the lower level methods. This also handles common problems such as integer overflow.
      * This also ensures monotonic updates to the timer even if the underlying clock is subject
      * to non-monotonic behavior. For example, the remaining time returned by {@link #remainingMs()} is
      * guaranteed to decrease monotonically until it hits zero.
@@ -43,8 +43,8 @@ namespace Kafka.Common.Utils
         public Timer(IClock clock, long timeoutMs)
         {
             this.clock = clock;
-            update();
-            reset(timeoutMs);
+            this.update();
+            this.reset(timeoutMs);
         }
 
         /**
@@ -56,7 +56,7 @@ namespace Kafka.Common.Utils
          */
         public bool isExpired()
         {
-            return currentTimeMs >= deadlineMs;
+            return this.currentTimeMs >= this.deadlineMs;
         }
 
         /**
@@ -65,7 +65,7 @@ namespace Kafka.Common.Utils
          */
         public bool notExpired()
         {
-            return !isExpired();
+            return !this.isExpired();
         }
 
         /**
@@ -77,8 +77,8 @@ namespace Kafka.Common.Utils
          */
         public void updateAndReset(long timeoutMs)
         {
-            update();
-            reset(timeoutMs);
+            this.update();
+            this.reset(timeoutMs);
         }
 
         /**
@@ -97,13 +97,13 @@ namespace Kafka.Common.Utils
 
             this.startMs = this.currentTimeMs;
 
-            if (currentTimeMs > long.MaxValue - timeoutMs)
+            if (this.currentTimeMs > long.MaxValue - timeoutMs)
             {
                 this.deadlineMs = long.MaxValue;
             }
             else
             {
-                this.deadlineMs = currentTimeMs + timeoutMs;
+                this.deadlineMs = this.currentTimeMs + timeoutMs;
             }
         }
 
@@ -114,7 +114,7 @@ namespace Kafka.Common.Utils
          */
         public void update()
         {
-            update(clock.NowAsEpochMilliseconds);
+            this.update(this.clock.NowAsEpochMilliseconds);
         }
 
         /**
@@ -140,7 +140,7 @@ namespace Kafka.Common.Utils
          */
         public long remainingMs()
         {
-            return Math.Max(0, deadlineMs - currentTimeMs);
+            return Math.Max(0, this.deadlineMs - this.currentTimeMs);
         }
 
         /**

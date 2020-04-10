@@ -21,20 +21,20 @@ namespace Kafka.Streams.Processors.Internals.Assignments
                 return true;
             }
 
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var pair = (Pair)o;
 
-            return (task1.Equals(pair.task1) &&
-                    task2.Equals(pair.task2));
+            return (this.task1.Equals(pair.task1) &&
+                    this.task2.Equals(pair.task2));
         }
 
         public override int GetHashCode()
         {
-            return (task1, task2).GetHashCode();
+            return (this.task1, this.task2).GetHashCode();
         }
     }
 }

@@ -51,30 +51,30 @@
 //            Windows<W> windows,
 //            InternalStreamsBuilder builder,
 //            HashSet<string> sourceNodes,
-//            string name,
+//            string Name,
 //            ISerde<K> keySerde,
 //            ISerde<V> valSerde,
 //            GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
 //            StreamsGraphNode streamsGraphNode)
-//            : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
+//            : base(Name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
 //        {
 //            this.windows = windows = windows ?? throw new ArgumentNullException(nameof(windows));
 //            this.aggregateBuilder = aggregateBuilder;
 //        }
 
 
-//        public IKTable<Windowed<K>, long> count()
+//        public IKTable<IWindowed<K>, long> count()
 //        {
 //            return doCount(Materialized.with(keySerde, Serializers.Int64));
 //        }
 
 
-//        public IKTable<Windowed<K>, long> count(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized)
+//        public IKTable<IWindowed<K>, long> count(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized)
 //        {
 //            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
 //            // TODO: Remove this when we do a topology-incompatible release
-//            // we used to burn a topology name here, so we have to keep doing it for compatibility
+//            // we used to burn a topology Name here, so we have to keep doing it for compatibility
 //            if (new MaterializedInternal<K, long, IWindowStore<Bytes, byte[]>>(materialized).storeName() == null)
 //            {
 //                builder.newStoreName(AGGREGATE_NAME);
@@ -83,7 +83,7 @@
 //            return doCount(materialized);
 //        }
 
-//        private IKTable<Windowed<K>, long> doCount(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized)
+//        private IKTable<IWindowed<K>, long> doCount(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized)
 //        {
 //            MaterializedInternal<K, long, IWindowStore<Bytes, byte[]>> materializedInternal =
 //               new MaterializedInternal<K, long, IWindowStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
@@ -107,14 +107,14 @@
 //        }
 
 
-//        public IKTable<Windowed<K>, VR> aggregate<VR>(IInitializer<VR> initializer,
+//        public IKTable<IWindowed<K>, VR> aggregate<VR>(IInitializer<VR> initializer,
 //                                                       IAggregator<K, V, VR> aggregator)
 //        {
 //            return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
 //        }
 
 
-//        public IKTable<Windowed<K>, VR> aggregate<VR>(IInitializer<VR> initializer,
+//        public IKTable<IWindowed<K>, VR> aggregate<VR>(IInitializer<VR> initializer,
 //                                                       IAggregator<K, V, VR> aggregator,
 //                                                       Materialized<K, VR, IWindowStore<Bytes, byte[]>> materialized)
 //        {
@@ -137,13 +137,13 @@
 //        }
 
 
-//        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer)
+//        public IKTable<IWindowed<K>, V> reduce(IReducer<V> reducer)
 //        {
 //            return reduce(reducer, Materialized.with(keySerde, valSerde));
 //        }
 
 
-//        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer, Materialized<K, V, IWindowStore<Bytes, byte[]>> materialized)
+//        public IKTable<IWindowed<K>, V> reduce(IReducer<V> reducer, Materialized<K, V, IWindowStore<Bytes, byte[]>> materialized)
 //        {
 //            reducer = reducer ?? throw new ArgumentNullException(nameof(reducer));
 //            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
@@ -183,7 +183,7 @@
 //                    if ((windows.size() + windows.gracePeriodMs()) > retentionPeriod)
 //                    {
 //                        throw new System.ArgumentException("The retention period of the window store "
-//                                                               + name + " must be no smaller than its window size plus the grace period."
+//                                                               + Name + " must be no smaller than its window size plus the grace period."
 //                                                               + " Got size=[" + windows.size() + "],"
 //                                                               + " grace=[" + windows.gracePeriodMs() + "],"
 //                                                               + " retention=[" + retentionPeriod + "]");
@@ -208,7 +208,7 @@
 //                    if ((windows.size() + windows.gracePeriodMs()) > windows.maintainMs())
 //                    {
 //                        throw new System.ArgumentException("The retention period of the window store "
-//                                                               + name + " must be no smaller than its window size plus the grace period."
+//                                                               + Name + " must be no smaller than its window size plus the grace period."
 //                                                               + " Got size=[" + windows.size() + "],"
 //                                                               + " grace=[" + windows.gracePeriodMs() + "],"
 //                                                               + " retention=[" + windows.maintainMs() + "]");

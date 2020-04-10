@@ -9,7 +9,7 @@ namespace Kafka.Streams.State.Internals
         where T : IStateStore
     {
         public Dictionary<string, string> logConfig { get; private set; } = new Dictionary<string, string>();
-        public string name { get; }
+        public string Name { get; }
         public bool loggingEnabled { get; }
 
         public ISerde<K> keySerde { get; }
@@ -20,26 +20,26 @@ namespace Kafka.Streams.State.Internals
 
         public AbstractStoreBuilder(
             KafkaStreamsContext context,
-            string name,
+            string Name,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
-            this.name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Name = Name ?? throw new ArgumentNullException(nameof(Name));
             this.valueSerde = valueSerde;
             this.keySerde = keySerde;
         }
 
         public IStoreBuilder<T> WithCachingEnabled()
         {
-            enableCaching = true;
+            this.enableCaching = true;
 
             return this;
         }
 
         public IStoreBuilder<T> WithCachingDisabled()
         {
-            enableCaching = false;
+            this.enableCaching = false;
 
             return this;
         }
@@ -48,8 +48,8 @@ namespace Kafka.Streams.State.Internals
         {
             config = config ?? throw new ArgumentNullException(nameof(config));
 
-            enableLogging = true;
-            logConfig = config;
+            this.enableLogging = true;
+            this.logConfig = config;
 
 
             return this;
@@ -57,8 +57,8 @@ namespace Kafka.Streams.State.Internals
 
         public IStoreBuilder<T> WithLoggingDisabled()
         {
-            enableLogging = false;
-            logConfig.Clear();
+            this.enableLogging = false;
+            this.logConfig.Clear();
 
             return this;
         }

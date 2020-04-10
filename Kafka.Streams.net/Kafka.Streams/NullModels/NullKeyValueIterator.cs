@@ -9,11 +9,11 @@ namespace Kafka.Streams.NullModels
 {
     internal class NullKeyValueIterator<K, V> :
         IKeyValueIterator<K, V>,
-        IKeyValueIterator<Windowed<K>, V>
+        IKeyValueIterator<IWindowed<K>, V>
     {
         public KeyValuePair<K, V> Current { get; }
         object IEnumerator.Current { get; }
-        KeyValuePair<Windowed<K>, V> IEnumerator<KeyValuePair<Windowed<K>, V>>.Current { get; }
+        KeyValuePair<IWindowed<K>, V> IEnumerator<KeyValuePair<IWindowed<K>, V>>.Current { get; }
 
         public void Close()
         {
@@ -31,10 +31,10 @@ namespace Kafka.Streams.NullModels
         {
         }
 
-        Windowed<K> IKeyValueIterator<Windowed<K>, V>.PeekNextKey()
-            => new NullWindowedKeyValueIterator<Windowed<K>, V>();
+        IWindowed<K> IKeyValueIterator<IWindowed<K>, V>.PeekNextKey()
+            => new NullWindowedKeyValueIterator<IWindowed<K>, V>();
 
-        private class NullWindowedKeyValueIterator<T, V> : Windowed<K>
+        private class NullWindowedKeyValueIterator<T, V> : Windowed2<K>
         {
             public NullWindowedKeyValueIterator()
                 : base(default, new NullWindow())

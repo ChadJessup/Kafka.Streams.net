@@ -28,7 +28,7 @@
 //            this.storeName = storeName;
 //        }
 
-//        public V fetch(K key, long time)
+//        public V Fetch(K key, long time)
 //        {
 //            key = key ?? throw new ArgumentNullException(nameof(key));
 //            List<IReadOnlyWindowStore<K, V>> stores = provider.stores<IReadOnlyWindowStore<K, V>>(storeName, windowStoreType);
@@ -55,7 +55,7 @@
 //        }
 
 //        [Obsolete]
-//        public IWindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo)
+//        public IWindowStoreIterator<V> Fetch(K key, long timeFrom, long timeTo)
 //        {
 //            key = key ?? throw new ArgumentNullException(nameof(key));
 //            List<IReadOnlyWindowStore<K, V>> stores = provider.stores<IReadOnlyWindowStore<K, V>>(storeName, windowStoreType);
@@ -66,7 +66,7 @@
 //                    IWindowStoreIterator<V> result = windowStore.Fetch(key, timeFrom, timeTo);
 //                    if (!result.MoveNext())
 //                    {
-//                        result.close();
+//                        result.Close();
 //                    }
 //                    else
 //                    {
@@ -85,16 +85,16 @@
 //        }
 
 
-//        public IWindowStoreIterator<V> fetch(K key, DateTime from, DateTime to)
+//        public IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to)
 //        {
-//            return fetch(
+//            return Fetch(
 //                key,
 //                ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
 //                ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
 //        }
 
 
-//        public IKeyValueIterator<K, V> fetch(
+//        public IKeyValueIterator<K, V> Fetch(
 //            K from,
 //            K to,
 //            long timeFrom,
@@ -117,20 +117,20 @@
 //            return dpKVIterator;
 //        }
 
-//        public IKeyValueIterator<K, V> fetch(
+//        public IKeyValueIterator<K, V> Fetch(
 //            K from,
 //            K to,
 //            DateTime fromTime,
 //            DateTime toTime)
 //        {
-//            return fetch(
+//            return Fetch(
 //                from,
 //                to,
 //                ApiUtils.validateMillisecondInstant(fromTime, ApiUtils.prepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
 //                ApiUtils.validateMillisecondInstant(toTime, ApiUtils.prepareMillisCheckFailMsgPrefix(toTime, "toTime")));
 //        }
 
-//        public IKeyValueIterator<K, V> all()
+//        public IKeyValueIterator<K, V> All()
 //        {
 //            INextIteratorFunction<K, V, IReadOnlyWindowStore<K, V>> nextIteratorFunction = null;// IReadOnlyWindowStore;
 
@@ -143,10 +143,10 @@
 
 
 //        [System.Obsolete]
-//        public IKeyValueIterator<K, V> fetchAll(long timeFrom, long timeTo)
+//        public IKeyValueIterator<K, V> FetchAll(long timeFrom, long timeTo)
 //        {
 //            INextIteratorFunction<K, V, IReadOnlyWindowStore<K, V>> nextIteratorFunction = null;
-//                //store => store.fetchAll(timeFrom, timeTo);
+//                //store => store.FetchAll(timeFrom, timeTo);
 
 //            return new DelegatingPeekingKeyValueIterator<K, V>(
 //                storeName,
@@ -156,9 +156,9 @@
 //        }
 
 
-//        public IKeyValueIterator<K, V> fetchAll(DateTime from, DateTime to)
+//        public IKeyValueIterator<K, V> FetchAll(DateTime from, DateTime to)
 //        {
-//            return fetchAll(
+//            return FetchAll(
 //                ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
 //                ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
 //        }

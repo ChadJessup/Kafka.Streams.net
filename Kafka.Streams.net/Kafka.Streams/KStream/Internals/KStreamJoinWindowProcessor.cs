@@ -18,7 +18,7 @@
 //        public string windowName { get; }
 
 
-//        public override void init(IProcessorContext context)
+//        public override void Init(IProcessorContext context)
 //        {
 //            base.Init(context);
 
@@ -28,13 +28,13 @@
 
 //        public override void process(K key, V value)
 //        {
-//            // if the key is null, we do not need to put the record into window store
+//            // if the key is null, we do not need to Put the record into window store
 //            // since it will never be considered for join operations
 //            if (key != null)
 //            {
 //                context.Forward(key, value);
 //                // Every record basically starts a new window. We're using a window store mostly for the retention.
-//                window.put(key, value, context.timestamp());
+//                window.Put(key, value, context.timestamp());
 //            }
 //        }
 //    }

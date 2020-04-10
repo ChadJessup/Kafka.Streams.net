@@ -38,16 +38,16 @@ namespace Kafka.Streams.Clients
         public IProducer<byte[], byte[]> Get()
         {
             // eos
-            if (threadProducer == null)
+            if (this.threadProducer == null)
             {
-                var producerConfigs = config.GetProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
+                var producerConfigs = this.config.GetProducerConfigs(this.GetTaskProducerClientId(this.threadClientId, this.id));
                 //    log.LogInformation("Creating producer client for task {}", id);
-                producerConfigs.Set("transactional.id", $"{applicationId}-{id}");
+                producerConfigs.Set("transactional.id", $"{this.applicationId}-{this.id}");
 
-                return clientSupplier.GetProducer(producerConfigs);
+                return this.clientSupplier.GetProducer(producerConfigs);
             }
 
-            return threadProducer;
+            return this.threadProducer;
         }
 
         private string GetTaskProducerClientId(string threadClientId, TaskId taskId)

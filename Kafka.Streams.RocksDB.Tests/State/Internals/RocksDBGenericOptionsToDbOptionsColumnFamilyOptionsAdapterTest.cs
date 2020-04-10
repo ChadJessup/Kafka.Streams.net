@@ -65,7 +65,7 @@
 
 //    /**
 //     * The purpose of this test is, to catch interface changes if we upgrade {@link RocksDB}.
-//     * Using reflections, we make sure the {@link RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter} maps all
+//     * Using reflections, we make sure the {@link RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter} maps All
 //     * methods from {@link DBOptions} and {@link ColumnFamilyOptions} to/from {@link Options} correctly.
 //     */
 
@@ -284,7 +284,7 @@
 //                    }
 
 
-//                    public string name()
+//                    public string Name()
 //                    {
 //                        return "AbstractCompactionFilterFactory";
 //                    }
@@ -388,7 +388,7 @@
 
 ///**
 // * The purpose of this test is, to catch interface changes if we upgrade {@link RocksDB}.
-// * Using reflections, we make sure the {@link RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter} maps all
+// * Using reflections, we make sure the {@link RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter} maps All
 // * methods from {@link DBOptions} and {@link ColumnFamilyOptions} to/from {@link Options} correctly.
 // */
 

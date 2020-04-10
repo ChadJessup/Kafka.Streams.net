@@ -159,7 +159,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        ValueTransformerWithKeySupplier<string, string, string> valueTransformerWithKeySupplier =
 //            () => new ValueTransformerWithKey<string, string, string>() {
 
-//                public void init(IProcessorContext context) {}
+//                public void Init(IProcessorContext context) {}
 
 
 //                public string transform(string key, string value) {
@@ -167,7 +167,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                }
 
 
-//                public void close() {}
+//                public void Close() {}
 //            };
 
 //       Assert.Equal(
@@ -317,7 +317,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    private void assertTopologyContainsProcessor(Topology topology, string processorName) {
 //        foreach (TopologyDescription.Subtopology subtopology in topology.describe().subtopologies()) {
 //            foreach (TopologyDescription.Node node in subtopology.nodes()) {
-//                if (node.name().equals(processorName)) {
+//                if (node.Name().equals(processorName)) {
 //                    return;
 //                }
 //            }

@@ -27,23 +27,23 @@ namespace Kafka.Streams.Tests
             Confluent.Kafka.Library.Load();
 
             this.props = StreamsTestConfigs.GetStandardConfig(numberOfMockBrokers: NUM_BROKERS, numberOfThreads: NUM_THREADS);
-            globalStreams = TestUtils.GetStreamsBuilder(this.props).BuildKafkaStreams();
+            this.globalStreams = TestUtils.GetStreamsBuilder(this.props).BuildKafkaStreams();
         }
 
         public void Cleanup()
         {
-            if (globalStreams != null)
+            if (this.globalStreams != null)
             {
-                globalStreams.Close();
+                this.globalStreams.Close();
             }
         }
 
         [Fact]
         public void TestOsDefaultSocketBufferSizes()
         {
-            props.GetGlobalConsumerConfigs("").SocketReceiveBufferBytes = 0;
-            props.GetGlobalConsumerConfigs("").SocketReceiveBufferBytes = 0;
-            var streams = TestUtils.GetStreamsBuilder(props).BuildKafkaStreams();
+            this.props.GetGlobalConsumerConfigs("").SocketReceiveBufferBytes = 0;
+            this.props.GetGlobalConsumerConfigs("").SocketReceiveBufferBytes = 0;
+            var streams = TestUtils.GetStreamsBuilder(this.props).BuildKafkaStreams();
 
             streams.Close();
         }
@@ -51,8 +51,8 @@ namespace Kafka.Streams.Tests
         [Fact] //(expected = KafkaException))
         public void TestInvalidSocketSendBufferSize()
         {
-            props.GetGlobalConsumerConfigs("").SocketSendBufferBytes = -2;
-            var streams = TestUtils.GetStreamsBuilder(props).BuildKafkaStreams();
+            this.props.GetGlobalConsumerConfigs("").SocketSendBufferBytes = -2;
+            var streams = TestUtils.GetStreamsBuilder(this.props).BuildKafkaStreams();
 
             streams.Close();
         }
@@ -60,8 +60,8 @@ namespace Kafka.Streams.Tests
         [Fact] //(expected = KafkaException))
         public void TestInvalidSocketReceiveBufferSize()
         {
-            props.GetGlobalConsumerConfigs("").SocketReceiveBufferBytes = -2;
-            var streams = TestUtils.GetStreamsBuilder(props).BuildKafkaStreams();
+            this.props.GetGlobalConsumerConfigs("").SocketReceiveBufferBytes = -2;
+            var streams = TestUtils.GetStreamsBuilder(this.props).BuildKafkaStreams();
 
             streams.Close();
         }
@@ -69,9 +69,9 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void StateShouldTransitToNotRunningIfCloseRightAfterCreated()
         {
-            globalStreams.Close();
+            this.globalStreams.Close();
 
-            Assert.Equal(KafkaStreamsThreadStates.NOT_RUNNING, globalStreams.State.CurrentState);
+            Assert.Equal(KafkaStreamsThreadStates.NOT_RUNNING, this.globalStreams.State.CurrentState);
         }
 
         [Fact]
@@ -79,21 +79,21 @@ namespace Kafka.Streams.Tests
 
         {
             var stateListener = new KafkaStreamsTestsStateListenerStub();
-            globalStreams.SetStateListener(stateListener);
+            this.globalStreams.SetStateListener(stateListener);
 
             Assert.Equal(0, stateListener.numChanges);
-            Assert.Equal(KafkaStreamsThreadStates.CREATED, globalStreams.State.CurrentState);
+            Assert.Equal(KafkaStreamsThreadStates.CREATED, this.globalStreams.State.CurrentState);
 
-            globalStreams.Start();
+            this.globalStreams.Start();
 
             TestUtils.WaitForCondition(
                 () => stateListener.numChanges == 2,
                 timeout: TimeSpan.FromSeconds(5.0),
                 "Streams never started.");
 
-            Assert.Equal(KafkaStreamsThreadStates.RUNNING, globalStreams.State.CurrentState);
+            Assert.Equal(KafkaStreamsThreadStates.RUNNING, this.globalStreams.State.CurrentState);
 
-            foreach (StreamThread thread in globalStreams.Threads)
+            foreach (StreamThread thread in this.globalStreams.Threads)
             {
                 thread.StateListener.OnChange(
                     thread,
@@ -102,9 +102,9 @@ namespace Kafka.Streams.Tests
             }
 
             Assert.Equal(3, stateListener.numChanges);
-            Assert.Equal(KafkaStreamsThreadStates.REBALANCING, globalStreams.State.CurrentState);
+            Assert.Equal(KafkaStreamsThreadStates.REBALANCING, this.globalStreams.State.CurrentState);
 
-            foreach (var thread in globalStreams.Threads)
+            foreach (var thread in this.globalStreams.Threads)
             {
                 thread.StateListener.OnChange(
                     thread,
@@ -113,24 +113,24 @@ namespace Kafka.Streams.Tests
             }
 
             Assert.Equal(3, stateListener.numChanges);
-            Assert.Equal(KafkaStreamsThreadStates.REBALANCING, globalStreams.State.CurrentState);
+            Assert.Equal(KafkaStreamsThreadStates.REBALANCING, this.globalStreams.State.CurrentState);
 
-            globalStreams.Threads[NUM_THREADS - 1].StateListener.OnChange(
-                globalStreams.Threads[NUM_THREADS - 1],
+            this.globalStreams.Threads[NUM_THREADS - 1].StateListener.OnChange(
+                this.globalStreams.Threads[NUM_THREADS - 1],
                 StreamThreadStates.PENDING_SHUTDOWN,
                 StreamThreadStates.PARTITIONS_ASSIGNED);
 
-            globalStreams.Threads[NUM_THREADS - 1].StateListener.OnChange(
-                globalStreams.Threads[NUM_THREADS - 1],
+            this.globalStreams.Threads[NUM_THREADS - 1].StateListener.OnChange(
+                this.globalStreams.Threads[NUM_THREADS - 1],
                 StreamThreadStates.DEAD,
                 StreamThreadStates.PENDING_SHUTDOWN);
 
             Assert.Equal(3, stateListener.numChanges);
-            Assert.Equal(KafkaStreamsThreadStates.REBALANCING, globalStreams.State.CurrentState);
+            Assert.Equal(KafkaStreamsThreadStates.REBALANCING, this.globalStreams.State.CurrentState);
 
-            foreach (var thread in globalStreams.Threads)
+            foreach (var thread in this.globalStreams.Threads)
             {
-                if (thread != globalStreams.Threads[NUM_THREADS - 1])
+                if (thread != this.globalStreams.Threads[NUM_THREADS - 1])
                 {
                     thread.StateListener.OnChange(
                         thread,
@@ -140,15 +140,15 @@ namespace Kafka.Streams.Tests
             }
 
             Assert.Equal(4, stateListener.numChanges);
-            Assert.Equal(KafkaStreamsThreadStates.RUNNING, globalStreams.State.CurrentState);
+            Assert.Equal(KafkaStreamsThreadStates.RUNNING, this.globalStreams.State.CurrentState);
 
-            globalStreams.Close();
+            this.globalStreams.Close();
 
             TestUtils.WaitForCondition(
                 () => stateListener.numChanges == 6,
                 "Streams never closed.");
 
-            Assert.Equal(KafkaStreamsThreadStates.NOT_RUNNING, globalStreams.State.CurrentState);
+            Assert.Equal(KafkaStreamsThreadStates.NOT_RUNNING, this.globalStreams.State.CurrentState);
         }
 
         //[Fact]
@@ -210,7 +210,7 @@ namespace Kafka.Streams.Tests
         //    Assert.Equal(4, stateListener.numChanges);
         //    Assert.Equal(KafkaStreamsThreadStates.ERROR, globalStreams.State.CurrentState);
 
-        //    globalStreams.close();
+        //    globalStreams.Close();
 
         //    // the state should not stuck with ERROR, but transit to NOT_RUNNING in the end
         //    TestUtils.WaitForCondition(
@@ -230,7 +230,7 @@ namespace Kafka.Streams.Tests
         //    MockClientSupplier clientSupplier = new MockClientSupplier();
         //    clientSupplier.setClusterForAdminClient(cluster);
         //    var streams = new KafkaStreams(builder.Build(), props, clientSupplier);
-        //    streams.close();
+        //    streams.Close();
         //    TestUtils.WaitForCondition(
         //        () => streams.State.CurrentState == KafkaStreamsThreadStates.NOT_RUNNING,
         //        "Streams never stopped.");
@@ -280,7 +280,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    finally
         //    {
-        //        streams.close();
+        //        streams.Close();
         //    }
 
         //    TestUtils.WaitForCondition(
@@ -318,7 +318,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    finally
         //    {
-        //        streams.close();
+        //        streams.Close();
         //    }
 
         //    Assert.Equal(streams.State.CurrentState, KafkaStreamsThreadStates.NOT_RUNNING);
@@ -385,7 +385,7 @@ namespace Kafka.Streams.Tests
 
         ////streams.start();
         ////int oldCloseCount = MockMetricsReporter.CLOSE_COUNT.Get();
-        ////streams.close();
+        ////streams.Close();
         ////Assert.Equal(oldCloseCount + initDiff, MockMetricsReporter.CLOSE_COUNT.Get());
         ////}
         ////}
@@ -393,11 +393,11 @@ namespace Kafka.Streams.Tests
         //[Fact]
         //public void testCloseIsIdempotent()
         //{
-        //    globalStreams.close();
+        //    globalStreams.Close();
         //    int closeCount = MockMetricsReporter.CLOSE_COUNT.Get();
 
-        //    globalStreams.close();
-        //    Assert.Equal("subsequent close() calls should do nothing",
+        //    globalStreams.Close();
+        //    Assert.Equal("subsequent Close() calls should do nothing",
         //        closeCount, MockMetricsReporter.CLOSE_COUNT.Get());
         //}
 
@@ -405,7 +405,7 @@ namespace Kafka.Streams.Tests
         //public void testCannotStartOnceClosed()
         //{
         //    globalStreams.start();
-        //    globalStreams.close();
+        //    globalStreams.Close();
         //    try
         //    {
         //        globalStreams.start();
@@ -417,7 +417,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    finally
         //    {
-        //        globalStreams.close();
+        //        globalStreams.Close();
         //    }
         //}
 
@@ -437,7 +437,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    finally
         //    {
-        //        globalStreams.close();
+        //        globalStreams.Close();
         //    }
         //}
 
@@ -456,7 +456,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    finally
         //    {
-        //        globalStreams.close();
+        //        globalStreams.Close();
         //    }
         //}
 
@@ -507,10 +507,10 @@ namespace Kafka.Streams.Tests
         //public void testLegalMetricsConfig()
         //{
         //    //props.Set(StreamsConfigPropertyNames.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.INFO.ToString());
-        //    //new KafkaStreams(builder.Build(), props).close();
+        //    //new KafkaStreams(builder.Build(), props).Close();
 
         //    //props.Set(StreamsConfigPropertyNames.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.DEBUG.ToString());
-        //    //new KafkaStreams(builder.Build(), props).close();
+        //    //new KafkaStreams(builder.Build(), props).Close();
         //}
 
         //[Fact] //(expected = IllegalStateException))
@@ -578,7 +578,7 @@ namespace Kafka.Streams.Tests
         //        System.currentTimeMillis());
 
         //        Assert.True("Timed out waiting to receive single message", latch.wait(30, TimeUnit.SECONDS));
-        //        Assert.False(streams.close(TimeSpan.FromMilliseconds(10)));
+        //        Assert.False(streams.Close(TimeSpan.FromMilliseconds(10)));
         //    }
         //    finally
         //    {
@@ -586,7 +586,7 @@ namespace Kafka.Streams.Tests
         //        keepRunning = false;
         //        if (streams != null)
         //        {
-        //            streams.close();
+        //            streams.Close();
         //        }
         //    }
         //}
@@ -594,8 +594,8 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void ShouldReturnThreadMetadata()
         {
-            globalStreams.Start();
-            List<ThreadMetadata> threadMetadata = globalStreams.LocalThreadsMetadata();
+            this.globalStreams.Start();
+            List<ThreadMetadata> threadMetadata = this.globalStreams.LocalThreadsMetadata();
             Assert.NotNull(threadMetadata);
             Assert.Equal(2, threadMetadata.Count);
             foreach (var metadata in threadMetadata)
@@ -624,7 +624,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    finally
         //    {
-        //        globalStreams.close();
+        //        globalStreams.Close();
         //    }
         //    globalStreams.cleanUp();
         //}
@@ -690,8 +690,8 @@ namespace Kafka.Streams.Tests
         //    try
         //    {
         //        var streams = new KafkaStreams(builder.Build(), props);
-        //        streams.close(TimeSpan.FromMilliseconds(-1L));
-        //        Assert.False(true, "should not accept negative close parameter");
+        //        streams.Close(TimeSpan.FromMilliseconds(-1L));
+        //        Assert.False(true, "should not accept negative Close parameter");
         //    }
         //    catch (ArgumentException e)
         //    {
@@ -703,7 +703,7 @@ namespace Kafka.Streams.Tests
         //public void shouldNotBlockInCloseForZeroDuration() //// throws InterruptedException {
         //{
         //    var streams = new KafkaStreams(builder.Build(), props);
-        //    IThread th = new Thread(() => streams.close(TimeSpan.FromMilliseconds(0L)));
+        //    IThread th = new Thread(() => streams.Close(TimeSpan.FromMilliseconds(0L)));
 
         //    th.start();
 
@@ -714,7 +714,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    finally
         //    {
-        //        streams.close();
+        //        streams.Close();
         //    }
         //}
 
@@ -788,7 +788,7 @@ namespace Kafka.Streams.Tests
         //                        //            {
         //                        //                IKeyValueStore<string, long> kvStore =
         //                        //                        (IKeyValueStore<string, long>)context.getStateStore(storeName);
-        //                        //                kvStore.put(key, 5L);
+        //                        //                kvStore.Put(key, 5L);
         //                        //
         //                        //                context.Forward(key, "5");
         //                        //                context.commit();
@@ -824,7 +824,7 @@ namespace Kafka.Streams.Tests
         //    // changing the path of state directory to make sure that it should not c.Ash with other test Cases.
         //   StreamsConfig localProps = new StreamsConfig();
         //    localProps.putAll(props);
-        //    localProps.put(StreamsConfigPropertyNames.STATE_DIR_CONFIG, .AseDir.FullName);
+        //    localProps.Put(StreamsConfigPropertyNames.STATE_DIR_CONFIG, .AseDir.FullName);
 
         //    var streams = new KafkaStreams(topology, localProps);
         //    streams.start();
@@ -867,7 +867,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    finally
         //    {
-        //        streams.close();
+        //        streams.Close();
         //        streams.cleanUp();
         //        Utils.delete(.AseDir);
         //    }
@@ -895,7 +895,7 @@ namespace Kafka.Streams.Tests
                 where States : Enum
             {
 
-                if (!mapStates.TryGetValue(newState, out var prevCount))
+                if (!this.mapStates.TryGetValue(newState, out var prevCount))
                 {
 
                 }
@@ -903,12 +903,12 @@ namespace Kafka.Streams.Tests
                 this.oldState = oldState;
                 this.newState = newState;
 
-                mapStates.AddOrUpdate(
+                this.mapStates.AddOrUpdate(
                     key: newState,
                     addValue: 1,
                     updateValueFactory: (k, v) => v + 1);
 
-                numChanges++;
+                this.numChanges++;
             }
 
             public void SetThreadStates(Dictionary<long, StreamThreadState> threadStates)

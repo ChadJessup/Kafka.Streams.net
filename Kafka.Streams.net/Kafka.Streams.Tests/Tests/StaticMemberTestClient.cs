@@ -26,7 +26,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        System.Console.Out.WriteLine(testName + " instance started with group.instance.id " + groupInstanceId);
 //        System.Console.Out.WriteLine("props=" + streamsProperties);
-//        System.Console.Out.flush();
+//        System.Console.Out.Flush();
 
 //        StreamsBuilder builder = new StreamsBuilder();
 //        string inputTopic = (string) (Objects.requireNonNull(streamsProperties.remove("input.topic")));
@@ -36,7 +36,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        StreamsConfig config = new StreamsConfig();
 //        config.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, testName);
-//        config.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
+//        config.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
 
 //        config.putAll(streamsProperties);
 
@@ -44,7 +44,7 @@ namespace Kafka.Streams.Tests.Tests
 //        streams.setStateListener((newState, oldState) => {
 //            if (oldState == KafkaStreams.State.REBALANCING && newState == KafkaStreams.State.RUNNING) {
 //                System.Console.Out.WriteLine("REBALANCING => RUNNING");
-//                System.Console.Out.flush();
+//                System.Console.Out.Flush();
 //            }
 //        });
 
@@ -54,10 +54,10 @@ namespace Kafka.Streams.Tests.Tests
 
 //            public void run() {
 //                System.Console.Out.WriteLine("closing Kafka Streams instance");
-//                System.Console.Out.flush();
-//                streams.close();
+//                System.Console.Out.Flush();
+//                streams.Close();
 //                System.Console.Out.WriteLine("Static membership test closed");
-//                System.Console.Out.flush();
+//                System.Console.Out.Flush();
 //            }
 //        });
 //    }

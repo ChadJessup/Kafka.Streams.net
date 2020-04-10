@@ -27,8 +27,8 @@
 
 //        //        public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS, new StreamsConfig() {
 //        //        {
-//        //            put("log.retention.check.interval.ms", PURGE_INTERVAL_MS);
-//        //        put(TopicConfig.FILE_DELETE_DELAY_MS_CONFIG, 0);
+//        //            Put("log.retention.check.interval.ms", PURGE_INTERVAL_MS);
+//        //        Put(TopicConfig.FILE_DELETE_DELAY_MS_CONFIG, 0);
 //        //    }
 //        //    });
 
@@ -151,7 +151,7 @@
 //        {
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close(TimeSpan.ofSeconds(30));
+//                kafkaStreams.Close(TimeSpan.ofSeconds(30));
 //            }
 //        }
 

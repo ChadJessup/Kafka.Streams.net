@@ -14,7 +14,7 @@ namespace Kafka.Streams
     /// <summary>
     /// Context object that is built by the <seealso cref="StreamsBuilder"/>.
     /// This is injected into many components, and contains various thingys,
-    /// that will be needed all over the place.
+    /// that will be needed All over the place.
     /// </summary>
     public class KafkaStreamsContext : IServiceProvider, IDisposable, IAsyncDisposable
     {
@@ -53,16 +53,18 @@ namespace Kafka.Streams
         public IStoresFactory StoresFactory { get; }
         public IClock Clock { get; }
 
+        public ILogger<TCategory> CreateLogger<TCategory>()
+            => this.LoggerFactory.CreateLogger<TCategory>();
+
         public object? GetService<T>() => this.Services.GetService<T>();
         public object GetService(Type serviceType) => this.Services.GetService(serviceType);
         public T GetRequiredService<T>() => this.Services.GetRequiredService<T>();
         public IServiceScope CreateScope() => this.Services.CreateScope();
 
         private bool disposedValue = false;
-
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!this.disposedValue)
             {
                 if (disposing)
                 {
@@ -70,13 +72,13 @@ namespace Kafka.Streams
                     this.Services?.Dispose();
                 }
 
-                disposedValue = true;
+                this.disposedValue = true;
             }
         }
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 

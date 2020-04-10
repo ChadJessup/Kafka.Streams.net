@@ -3,7 +3,7 @@ using Kafka.Streams.Processors;
 namespace Kafka.Streams.KStream.Internals.Graph
 {
     /**
-     * Class used to represent a {@link IProcessorSupplier} and the name
+     * Class used to represent a {@link IProcessorSupplier} and the Name
      * used to register it with the {@link org.apache.kafka.streams.processor.Internals.InternalTopologyBuilder}
      *
      * Used by the Join nodes as there are several parameters, this abstraction helps
@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
         public override string ToString()
-            => $"ProcessorParameters{{processor={ProcessorSupplier.GetType().Name}, " +
-            $"processor name='{ProcessorName}'}}";
+            => $"ProcessorParameters{{processor={this.ProcessorSupplier.GetType().Name}, " +
+            $"processor Name='{this.ProcessorName}'}}";
     }
 }

@@ -127,7 +127,7 @@
 //            byte[] bytes = new BufferValue(priorValue, null, null, context).Serialize(0).array();
 //            byte[] withoutContext = Array.copyOfRange(bytes, serializedContext.Length, bytes.Length);
 
-//            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(1).put(priorValue).putInt(-1).putInt(-1).array());
+//            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(1).Put(priorValue).putInt(-1).putInt(-1).array());
 //        }
 
 //        [Fact]
@@ -141,7 +141,7 @@
 
 //            Array.Copy(bytes, withoutContext, bytes.Length);
 
-//            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(-1).putInt(1).put(oldValue).putInt(-1).array());
+//            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(-1).putInt(1).Put(oldValue).putInt(-1).array());
 //        }
 
 //        [Fact]
@@ -153,7 +153,7 @@
 //            byte[] bytes = new BufferValue(null, null, newValue, context).Serialize(0).array();
 //            byte[] withoutContext = Array.copyOfRange(bytes, serializedContext.Length, bytes.Length);
 
-//            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(-1).putInt(-1).putInt(1).put(newValue).array());
+//            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(-1).putInt(-1).putInt(1).Put(newValue).array());
 //        }
 
 //        [Fact]
@@ -165,7 +165,7 @@
 //            byte[] bytes = new BufferValue(duplicate, duplicate, null, context).Serialize(0).array();
 //            byte[] withoutContext = Array.copyOfRange(bytes, serializedContext.Length, bytes.Length);
 
-//            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(1).put(duplicate).putInt(-2).putInt(-1).array());
+//            Assert.Equal(withoutContext, new ByteBuffer().Allocate(sizeof(int) * 3 + 1).putInt(1).Put(duplicate).putInt(-2).putInt(-1).array());
 //        }
 
 //        [Fact]
@@ -177,7 +177,7 @@
 //            ByteBuffer serialValue =
 //                new ByteBuffer()
 //                    .Allocate(serializedContext.Length + sizeof(int) * 3 + priorValue.Length)
-//                    .Add(serializedContext).putInt(1).put(priorValue).putInt(-1).putInt(-1);
+//                    .Add(serializedContext).putInt(1).Put(priorValue).putInt(-1).putInt(-1);
 //            serialValue.Position(0);
 
 //            BufferValue deserialize = BufferValue.deserialize(serialValue);
@@ -193,7 +193,7 @@
 //            ByteBuffer serialValue =
 //                new ByteBuffer()
 //                    .Allocate(serializedContext.Length + sizeof(int) * 3 + oldValue.Length)
-//                    .Add(serializedContext).putInt(-1).putInt(1).put(oldValue).putInt(-1);
+//                    .Add(serializedContext).putInt(-1).putInt(1).Put(oldValue).putInt(-1);
 //            serialValue.position(0);
 
 //            Assert.Equal(BufferValue.deserialize(serialValue), new BufferValue(null, oldValue, null, context));
@@ -208,7 +208,7 @@
 //            ByteBuffer serialValue =
 //                new ByteBuffer()
 //                    .Allocate(serializedContext.Length + sizeof(int) * 3 + newValue.Length)
-//                    .Add(serializedContext).putInt(-1).putInt(-1).putInt(1).put(newValue);
+//                    .Add(serializedContext).putInt(-1).putInt(-1).putInt(1).Put(newValue);
 //            serialValue.position(0);
 
 //            Assert.Equal(BufferValue.deserialize(serialValue), new BufferValue(null, null, newValue, context));
@@ -223,7 +223,7 @@
 //            ByteBuffer serialValue =
 //                new ByteBuffer()
 //                    .Allocate(serializedContext.Length + sizeof(int) * 3 + duplicate.Length)
-//                    .Add(serializedContext).putInt(1).put(duplicate).putInt(-2).putInt(-1);
+//                    .Add(serializedContext).putInt(1).Put(duplicate).putInt(-2).putInt(-1);
 //            serialValue.position(0);
 
 //            BufferValue bufferValue = BufferValue.deserialize(serialValue);

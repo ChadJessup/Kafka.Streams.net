@@ -127,10 +127,10 @@
 //        private Dictionary<string, object> ConfigProps()
 //        {
 //            Dictionary<string, object> configurationMap = new HashMap<>();
-//            configurationMap.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//            configurationMap.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, userEndPoint);
-//            configurationMap.put(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, taskManager);
-//            configurationMap.put(StreamsConfig.InternalConfig.ASSIGNMENT_ERROR_CODE, new AtomicInteger());
+//            configurationMap.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//            configurationMap.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, userEndPoint);
+//            configurationMap.Put(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, taskManager);
+//            configurationMap.Put(StreamsConfig.InternalConfig.ASSIGNMENT_ERROR_CODE, new AtomicInteger());
 //            return configurationMap;
 //        }
 
@@ -251,13 +251,13 @@
 
 //            partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
 
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, prevTasks10, standbyTasks10, userEndPoint).encode()));
-//            subscriptions.put("consumer11",
+//            subscriptions.Put("consumer11",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, prevTasks11, standbyTasks11, userEndPoint).encode()));
-//            subscriptions.put("consumer20",
+//            subscriptions.Put("consumer20",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid2, prevTasks20, standbyTasks20, userEndPoint).encode()));
 
@@ -336,10 +336,10 @@
 
 //            partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
 
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                              new ConsumerPartitionAssignor.Subscription(topics,
 //                                      new SubscriptionInfo(uuid1, new HashSet<>(), new HashSet<>(), userEndPoint).encode()));
-//            subscriptions.put("consumer11",
+//            subscriptions.Put("consumer11",
 //                              new ConsumerPartitionAssignor.Subscription(topics,
 //                                      new SubscriptionInfo(uuid1, new HashSet<>(), new HashSet<>(), userEndPoint).encode()));
 
@@ -382,7 +382,7 @@
 //            partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
 
 //            // will throw exception if it fails
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, emptyTasks, emptyTasks, userEndPoint).encode()
 //            ));
@@ -417,7 +417,7 @@
 //            MockTaskManager(prevTasks10, standbyTasks10, uuid1, builder);
 //            configurePartitionAssignor(Collections.emptyMap());
 
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, prevTasks10, standbyTasks10, userEndPoint).encode()
 //                    ));
@@ -474,13 +474,13 @@
 
 //            partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
 
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, prevTasks10, emptyTasks, userEndPoint).encode()));
-//            subscriptions.put("consumer11",
+//            subscriptions.Put("consumer11",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, prevTasks11, emptyTasks, userEndPoint).encode()));
-//            subscriptions.put("consumer20",
+//            subscriptions.Put("consumer20",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid2, prevTasks20, emptyTasks, userEndPoint).encode()));
 
@@ -541,13 +541,13 @@
 
 //            partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
 
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, emptyTasks, emptyTasks, userEndPoint).encode()));
-//            subscriptions.put("consumer11",
+//            subscriptions.Put("consumer11",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, emptyTasks, emptyTasks, userEndPoint).encode()));
-//            subscriptions.put("consumer20",
+//            subscriptions.Put("consumer20",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid2, emptyTasks, emptyTasks, userEndPoint).encode()));
 
@@ -609,7 +609,7 @@
 //        public void TestAssignWithStandbyReplicas()
 //        {
 //            Dictionary<string, object> props = ConfigProps();
-//            props.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, "1");
+//            props.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, "1");
 //            StreamsConfig streamsConfig = new StreamsConfig(props);
 
 //            builder.AddSource(null, "source1", null, null, null, "topic1");
@@ -635,13 +635,13 @@
 
 //            partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
 
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, prevTasks00, standbyTasks01, userEndPoint).encode()));
-//            subscriptions.put("consumer11",
+//            subscriptions.Put("consumer11",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, prevTasks01, standbyTasks02, userEndPoint).encode()));
-//            subscriptions.put("consumer20",
+//            subscriptions.Put("consumer20",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid2, prevTasks02, standbyTasks00, "any:9097").encode()));
 
@@ -668,7 +668,7 @@
 //            allActiveTasks.addAll(info20.activeTasks());
 //            allStandbyTasks.addAll(info20.standbyTasks().keySet());
 
-//            // all task ids are in the active tasks and also in the standby tasks
+//            // All task ids are in the active tasks and also in the standby tasks
 
 //            Assert.Equal(3, allActiveTasks.Count);
 //            Assert.Equal(allTasks, allActiveTasks);
@@ -688,10 +688,10 @@
 //            Dictionary<HostInfo, HashSet<TopicPartition>> hostState = Collections.singletonMap(
 //                    new HostInfo("localhost", 9090),
 //                    Utils.mkSet(t3p0, t3p3));
-//            activeTasks.put(task0, Utils.mkSet(t3p0));
-//            activeTasks.put(task3, Utils.mkSet(t3p3));
-//            standbyTasks.put(task1, Utils.mkSet(t3p1));
-//            standbyTasks.put(task2, Utils.mkSet(t3p2));
+//            activeTasks.Put(task0, Utils.mkSet(t3p0));
+//            activeTasks.Put(task3, Utils.mkSet(t3p3));
+//            standbyTasks.Put(task1, Utils.mkSet(t3p1));
+//            standbyTasks.Put(task2, Utils.mkSet(t3p2));
 
 //            AssignmentInfo info = new AssignmentInfo(activeTaskList, standbyTasks, hostState);
 //            ConsumerPartitionAssignor.Assignment assignment = new ConsumerPartitionAssignor.Assignment(asList(t3p0, t3p3), info.encode());
@@ -732,7 +732,7 @@
 //            MockInternalTopicManager internalTopicManager = new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer);
 //            partitionAssignor.setInternalTopicManager(internalTopicManager);
 
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, emptyTasks, emptyTasks, userEndPoint).encode())
 //            );
@@ -767,7 +767,7 @@
 //            MockInternalTopicManager internalTopicManager = new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer);
 //            partitionAssignor.setInternalTopicManager(internalTopicManager);
 
-//            subscriptions.put("consumer10",
+//            subscriptions.Put("consumer10",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, emptyTasks, emptyTasks, userEndPoint).encode())
 //            );
@@ -820,7 +820,7 @@
 //                mockClientSupplier.restoreConsumer);
 //            partitionAssignor.setInternalTopicManager(mockInternalTopicManager);
 
-//            subscriptions.put(client,
+//            subscriptions.Put(client,
 //                    new ConsumerPartitionAssignor.Subscription(
 //                            asList("topic1", "topic3"),
 //                            new SubscriptionInfo(uuid, emptyTasks, emptyTasks, userEndPoint).encode())
@@ -828,12 +828,12 @@
 //            Dictionary<string, ConsumerPartitionAssignor.Assignment> assignment = partitionAssignor.assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
 
 //            Dictionary<string, int> expectedCreatedInternalTopics = new HashMap<>();
-//            expectedCreatedInternalTopics.put(applicationId + "-KTABLE-AGGREGATE-STATE-STORE-0000000006-repartition", 4);
-//            expectedCreatedInternalTopics.put(applicationId + "-KTABLE-AGGREGATE-STATE-STORE-0000000006-changelog", 4);
-//            expectedCreatedInternalTopics.put(applicationId + "-topic3-STATE-STORE-0000000002-changelog", 4);
-//            expectedCreatedInternalTopics.put(applicationId + "-KSTREAM-MAP-0000000001-repartition", 4);
+//            expectedCreatedInternalTopics.Put(applicationId + "-KTABLE-AGGREGATE-STATE-STORE-0000000006-repartition", 4);
+//            expectedCreatedInternalTopics.Put(applicationId + "-KTABLE-AGGREGATE-STATE-STORE-0000000006-changelog", 4);
+//            expectedCreatedInternalTopics.Put(applicationId + "-topic3-STATE-STORE-0000000002-changelog", 4);
+//            expectedCreatedInternalTopics.Put(applicationId + "-KSTREAM-MAP-0000000001-repartition", 4);
 
-//            // check if all internal topics were created as expected
+//            // check if All internal topics were created as expected
 //            Assert.Equal(mockInternalTopicManager.readyTopics, (expectedCreatedInternalTopics));
 
 //            List<TopicPartition> expectedAssignment = asList(
@@ -854,7 +854,7 @@
 //                new TopicPartition(applicationId + "-KSTREAM-MAP-0000000001-repartition", 3)
 //            );
 
-//            // check if we created a task for all expected topicPartitions.
+//            // check if we created a task for All expected topicPartitions.
 //            Assert.Equal(new HashSet<>(assignment.Get(client).partitions()), (new HashSet<>(expectedAssignment)));
 //        }
 
@@ -896,7 +896,7 @@
 
 //            partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
 
-//            subscriptions.put("consumer1",
+//            subscriptions.Put("consumer1",
 //                    new ConsumerPartitionAssignor.Subscription(topics,
 //                            new SubscriptionInfo(uuid1, emptyTasks, emptyTasks, userEndPoint).encode())
 //            );
@@ -1003,7 +1003,7 @@
 //                mockClientSupplier.restoreConsumer);
 //            partitionAssignor.setInternalTopicManager(mockInternalTopicManager);
 
-//            subscriptions.put(client,
+//            subscriptions.Put(client,
 //                    new ConsumerPartitionAssignor.Subscription(
 //                            Collections.singletonList("unknownTopic"),
 //                            new SubscriptionInfo(uuid, emptyTasks, emptyTasks, userEndPoint).encode())
@@ -1052,19 +1052,19 @@
 //                internalTopologyBuilder);
 
 //            Dictionary<string, object> props = new HashMap<>();
-//            props.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
-//            props.put(StreamsConfig.APPLICATION_SERVER_CONFIG, userEndPoint);
+//            props.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
+//            props.Put(StreamsConfig.APPLICATION_SERVER_CONFIG, userEndPoint);
 //            ConfigurePartitionAssignor(props);
 //            partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(
 //                streamsConfig,
 //                mockClientSupplier.restoreConsumer));
 
-//            subscriptions.put("consumer1",
+//            subscriptions.Put("consumer1",
 //                    new ConsumerPartitionAssignor.Subscription(
 //                            Collections.singletonList("topic1"),
 //                            new SubscriptionInfo(uuid, emptyTasks, emptyTasks, userEndPoint).encode())
 //            );
-//            subscriptions.put("consumer2",
+//            subscriptions.Put("consumer2",
 //                    new ConsumerPartitionAssignor.Subscription(
 //                            Collections.singletonList("topic1"),
 //                            new SubscriptionInfo(UUID.randomUUID(), emptyTasks, emptyTasks, "other:9090").encode())
@@ -1103,7 +1103,7 @@
 //        public void ShouldThrowKafkaExceptionIfTaskMangerConfigIsNotTaskManagerInstance()
 //        {
 //            Dictionary<string, object> config = ConfigProps();
-//            config.put(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, "i am not a task manager");
+//            config.Put(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, "i am not a task manager");
 
 //            try
 //            {
@@ -1138,7 +1138,7 @@
 //        public void ShouldThrowKafkaExceptionIfVersionProbingFlagConfigIsNotAtomicInteger()
 //        {
 //            Dictionary<string, object> config = ConfigProps();
-//            config.put(StreamsConfig.InternalConfig.ASSIGNMENT_ERROR_CODE, "i am not an AtomicInteger");
+//            config.Put(StreamsConfig.InternalConfig.ASSIGNMENT_ERROR_CODE, "i am not an AtomicInteger");
 
 //            try
 //            {
@@ -1173,12 +1173,12 @@
 //        private void ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(int smallestVersion,
 //                                                                                         int otherVersion)
 //        {
-//            subscriptions.put("consumer1",
+//            subscriptions.Put("consumer1",
 //                    new ConsumerPartitionAssignor.Subscription(
 //                            Collections.singletonList("topic1"),
 //                            new SubscriptionInfo(smallestVersion, UUID.randomUUID(), emptyTasks, emptyTasks, null).encode())
 //            );
-//            subscriptions.put("consumer2",
+//            subscriptions.Put("consumer2",
 //                    new ConsumerPartitionAssignor.Subscription(
 //                            Collections.singletonList("topic1"),
 //                            new SubscriptionInfo(otherVersion, UUID.randomUUID(), emptyTasks, emptyTasks, null).encode()
@@ -1270,16 +1270,16 @@
 //            HashSet<TaskId> standbyTasks = Utils.mkSet(task2);
 //            Dictionary<TaskId, HashSet<TopicPartition>> standbyTaskMap = new HashMap<TaskId, HashSet<TopicPartition>>() {
 //            {
-//                put(task2, Collections.singleton(t1p2));
+//                Put(task2, Collections.singleton(t1p2));
 //        }
 //    };
 
-//    subscriptions.put("consumer1",
+//    subscriptions.Put("consumer1",
 //                new ConsumerPartitionAssignor.Subscription(
 //                        Collections.singletonList("topic1"),
 //                        new SubscriptionInfo(UUID.randomUUID(), activeTasks, standbyTasks, null).encode())
 //        );
-//        subscriptions.put("future-consumer",
+//        subscriptions.Put("future-consumer",
 //                new ConsumerPartitionAssignor.Subscription(
 //                        Collections.singletonList("topic1"),
 //                        encodeFutureSubscription())
@@ -1330,12 +1330,12 @@
 
 //    private void ShouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(int oldVersion)
 //    {
-//        subscriptions.put("consumer1",
+//        subscriptions.Put("consumer1",
 //                new ConsumerPartitionAssignor.Subscription(
 //                        Collections.singletonList("topic1"),
 //                        new SubscriptionInfo(oldVersion, UUID.randomUUID(), emptyTasks, emptyTasks, null).encode())
 //        );
-//        subscriptions.put("future-consumer",
+//        subscriptions.Put("future-consumer",
 //                new ConsumerPartitionAssignor.Subscription(
 //                        Collections.singletonList("topic1"),
 //                        encodeFutureSubscription())
@@ -1391,7 +1391,7 @@
 //        }
 //        Assert.Equal(activeTasks, info.activeTasks());
 
-//        // check if active partitions cover all topics
+//        // check if active partitions cover All topics
 //        Assert.Equal(expectedTopics, activeTopics);
 
 //        // check if standby tasks are consistent
@@ -1411,7 +1411,7 @@
 
 //        if (info.standbyTasks().Count > 0)
 //        {
-//            // check if standby partitions cover all topics
+//            // check if standby partitions cover All topics
 //            Assert.Equal(expectedTopics, standbyTopics);
 //        }
 

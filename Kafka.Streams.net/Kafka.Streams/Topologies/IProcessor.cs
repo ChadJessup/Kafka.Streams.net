@@ -8,7 +8,7 @@ namespace Kafka.Streams.Topologies
     public interface IProcessor : INode
     {
         /**
-         * The names of all connected stores.
+         * The names of All connected stores.
          * @return set of store names
          */
         HashSet<string> stores { get; }

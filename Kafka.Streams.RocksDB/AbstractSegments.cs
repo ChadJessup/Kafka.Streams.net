@@ -17,26 +17,26 @@ namespace Kafka.Streams.State.Internals
         private readonly SimpleDateFormat formatter;
         private readonly long retentionPeriod;
         private readonly long segmentInterval;
-        private readonly string name;
+        private readonly string Name;
 
         public AbstractSegments(
             ILogger<AbstractSegments<S>> logger,
-            string name,
+            string Name,
             long retentionPeriod,
             long segmentInterval)
         {
             this.logger = logger;
-            this.name = name;
+            this.Name = Name;
             this.segmentInterval = segmentInterval;
             this.retentionPeriod = retentionPeriod;
-            // Create a date formatter. Formatted timestamps are used as segment name suffixes
+            // Create a date formatter. Formatted timestamps are used as segment Name suffixes
             this.formatter = new SimpleDateFormat("yyyyMMddHHmm");
             this.formatter.SetTimeZone(new SimpleTimeZone(0, "UTC"));
         }
 
         public long SegmentId(long timestamp)
         {
-            return timestamp / segmentInterval;
+            return timestamp / this.segmentInterval;
         }
 
         public string SegmentName(long segmentId)
@@ -45,12 +45,12 @@ namespace Kafka.Streams.State.Internals
             // then we should use something different.
             // (2) previous string.Format used : as a separator (which did break KafkaStreams on Windows OS)
             // so if this changes in the future then we should use something different.
-            return name + "." + segmentId * segmentInterval;
+            return this.Name + "." + segmentId * this.segmentInterval;
         }
 
         public S GetSegmentForTimestamp(long timestamp)
         {
-            return this.Segments[SegmentId(timestamp)];
+            return this.Segments[this.SegmentId(timestamp)];
         }
 
         public S GetOrCreateSegmentIfLive(
@@ -58,21 +58,21 @@ namespace Kafka.Streams.State.Internals
             IInternalProcessorContext context,
             long streamTime)
         {
-            long minLiveTimestamp = streamTime - retentionPeriod;
-            long minLiveSegment = SegmentId(minLiveTimestamp);
+            long minLiveTimestamp = streamTime - this.retentionPeriod;
+            long minLiveSegment = this.SegmentId(minLiveTimestamp);
 
             S toReturn;
             if (segmentId >= minLiveSegment)
             {
                 // The segment is live. get it, ensure it's open, and return it.
-                toReturn = GetOrCreateSegment(segmentId, context);
+                toReturn = this.GetOrCreateSegment(segmentId, context);
             }
             else
             {
                 toReturn = default;
             }
 
-            CleanupEarlierThan(minLiveSegment);
+            this.CleanupEarlierThan(minLiveSegment);
 
             return toReturn;
         }
@@ -81,7 +81,7 @@ namespace Kafka.Streams.State.Internals
         {
             try
             {
-                var dir = new DirectoryInfo(Path.Combine(context.StateDir.FullName, name));
+                var dir = new DirectoryInfo(Path.Combine(context.StateDir.FullName, this.Name));
                 if (dir.Exists)
                 {
                     var list = dir.GetFiles();
@@ -90,7 +90,7 @@ namespace Kafka.Streams.State.Internals
                         long[] segmentIds = new long[list.Length];
                         for (int i = 0; i < list.Length; i++)
                         {
-                            segmentIds[i] = SegmentIdFromSegmentName(list[i].FullName, dir);
+                            segmentIds[i] = this.SegmentIdFromSegmentName(list[i].FullName, dir);
                         }
 
                         // open segments in the id order
@@ -99,7 +99,7 @@ namespace Kafka.Streams.State.Internals
                         {
                             if (segmentId >= 0)
                             {
-                                GetOrCreateSegment(segmentId, context);
+                                this.GetOrCreateSegment(segmentId, context);
                             }
                         }
                     }
@@ -114,15 +114,15 @@ namespace Kafka.Streams.State.Internals
                 // ignore
             }
 
-            long minLiveSegment = SegmentId(streamTime - retentionPeriod);
-            CleanupEarlierThan(minLiveSegment);
+            long minLiveSegment = this.SegmentId(streamTime - this.retentionPeriod);
+            this.CleanupEarlierThan(minLiveSegment);
         }
 
         public List<S> GetSegments(long timeFrom, long timeTo)
         {
             List<S> result = new List<S>();
 
-            foreach (var segment in this.Segments.Where(s => s.Key >= SegmentId(timeFrom) && s.Key <= SegmentId(timeTo)))
+            foreach (var segment in this.Segments.Where(s => s.Key >= this.SegmentId(timeFrom) && s.Key <= this.SegmentId(timeTo)))
             {
                 if (segment.Value.IsOpen())
                 {
@@ -190,12 +190,12 @@ namespace Kafka.Streams.State.Internals
             string segmentName,
             DirectoryInfo parent)
         {
-            int segmentSeparatorIndex = name.Length;
+            int segmentSeparatorIndex = this.Name.Length;
             char segmentSeparator = segmentName[segmentSeparatorIndex];
             string segmentIdString = segmentName.Substring(segmentSeparatorIndex + 1);
             long segmentId;
 
-            // old style segment name with date
+            // old style segment Name with date
             if (segmentSeparator == '-')
             {
                 try
@@ -209,24 +209,24 @@ namespace Kafka.Streams.State.Internals
                     return -1L;
                 }
 
-                RenameSegmentFile(parent, segmentName, segmentId);
+                this.RenameSegmentFile(parent, segmentName, segmentId);
             }
             else
             {
                 // for both new formats (with : or .) parse segment ID identically
                 try
                 {
-                    segmentId = long.Parse(segmentIdString) / segmentInterval;
+                    segmentId = long.Parse(segmentIdString) / this.segmentInterval;
                 }
                 catch (Exception e)
                 {
                     throw new ProcessorStateException("Unable to parse segment id as long from segmentName: " + segmentName);
                 }
 
-                // intermediate segment name with : breaks KafkaStreams on Windows OS => rename segment file to new name with .
+                // intermediate segment Name with : breaks KafkaStreams on Windows OS => rename segment file to new Name with .
                 if (segmentSeparator == ':')
                 {
-                    RenameSegmentFile(parent, segmentName, segmentId);
+                    this.RenameSegmentFile(parent, segmentName, segmentId);
                 }
             }
 
@@ -238,7 +238,7 @@ namespace Kafka.Streams.State.Internals
             string segmentName,
             long segmentId)
         {
-            FileInfo newName = new FileInfo(Path.Combine(parent.FullName, SegmentName(segmentId)));
+            FileInfo newName = new FileInfo(Path.Combine(parent.FullName, this.SegmentName(segmentId)));
             FileInfo oldName = new FileInfo(Path.Combine(parent.FullName, segmentName));
 
             try
@@ -249,7 +249,7 @@ namespace Kafka.Streams.State.Internals
             {
                 throw new ProcessorStateException("Unable to rename old style segment from: "
                     + oldName
-                    + " to new name: "
+                    + " to new Name: "
                     + newName);
             }
         }

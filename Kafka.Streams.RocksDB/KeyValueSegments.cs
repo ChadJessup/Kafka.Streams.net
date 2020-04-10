@@ -2,11 +2,11 @@
 //    public class KeyValueSegments : AbstractSegments<KeyValueSegment>
 //    {
 
-//        KeyValueSegments(string name,
+//        KeyValueSegments(string Name,
 //                         long retentionPeriod,
 //                         long segmentInterval)
 //        {
-//            base(name, retentionPeriod, segmentInterval);
+//            base(Name, retentionPeriod, segmentInterval);
 //        }
 
 //        public override KeyValueSegment getOrCreateSegment(long segmentId,
@@ -18,7 +18,7 @@
 //            }
 //            else
 //            {
-//                KeyValueSegment newSegment = new KeyValueSegment(segmentName(segmentId), name, segmentId);
+//                KeyValueSegment newSegment = new KeyValueSegment(segmentName(segmentId), Name, segmentId);
 
 //                if (segments.Add(segmentId, newSegment) != null)
 //                {

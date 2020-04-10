@@ -43,19 +43,19 @@ namespace Kafka.Streams.KStream.Internals
 
         public void EnableSendingOldValues()
         {
-            parent.EnableSendingOldValues();
-            sendOldValues = true;
+            this.parent.EnableSendingOldValues();
+            this.sendOldValues = true;
         }
 
         public IKTableValueGetterSupplier<K, V> View()
         {
             // if the KTable is materialized, use the materialized store to return getter value;
             // otherwise rely on the parent getter and apply filter on-the-fly
-            if (queryableName != null)
+            if (this.queryableName != null)
             {
                 return new KTableMaterializedValueGetterSupplier<K, V>(
                     this.context,
-                    queryableName);
+                    this.queryableName);
             }
             else
             {

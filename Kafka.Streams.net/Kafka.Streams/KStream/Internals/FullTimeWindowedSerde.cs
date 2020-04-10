@@ -3,7 +3,7 @@
 
 //namespace Kafka.Streams.KStream.Internals
 //{
-//    public class FullTimeWindowedSerde<T> : WrapperSerde<Windowed<T>>
+//    public class FullTimeWindowedSerde<T> : WrapperSerde<IWindowed<T>>
 //    {
 //        public FullTimeWindowedSerde(ISerde<T> inner, long windowSize)
 //            : base(

@@ -29,8 +29,8 @@ namespace WordCountProcessorDemo
                 ApplicationId = "streams-wordcount",
                 GroupId = "streams-wordcount",
                 BootstrapServers = "localhost:9092",
-                KeySerde = Serdes.String().GetType(),
-                ValueSerde = Serdes.String().GetType(),
+                DefaultKeySerde = Serdes.String().GetType(),
+                DefaultValueSerde = Serdes.String().GetType(),
                 NumberOfStreamThreads = 1,
                 CacheMaxBytesBuffering = 10485760L,
                 // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data
@@ -150,7 +150,7 @@ namespace WordCountProcessorDemo
         private static void TestConsumer(StreamsConfig streamsConfig, CancellationToken token)
         {
             var consumerConfig = new ConsumerConfig();// ($"test-{DateTime.Now.Millisecond}", "test", 1);
-            consumerConfig.Set("debug", "all");
+            consumerConfig.Set("debug", "All");
             consumerConfig.Set("group.id", $"test-{DateTime.Now.Millisecond}");
             consumerConfig.BootstrapServers = "localhost:9092";
 
@@ -238,7 +238,7 @@ namespace WordCountProcessorDemo
         private static void TestProducer(StreamsConfig streamsConfig, CancellationToken token)
         {
             var producerConfig = streamsConfig.GetProducerConfigs("test");
-            producerConfig.Set("debug", "all");
+            producerConfig.Set("debug", "All");
             producerConfig.Partitioner = Partitioner.Murmur2Random;
             // producerConfig.PluginLibraryPaths = Assembly.GetExecutingAssembly().Location;
             //producerConfig.Set("partitioner", typeof(Program).FullName);

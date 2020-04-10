@@ -40,14 +40,14 @@ namespace Kafka.Streams.Tests.Integration
 //            createTopics();
 //            streamsConfiguration = new StreamsConfig();
 //            string applicationId = "kgrouped-stream-test-" + testNo.incrementAndGet();
-//            streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//            streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//            streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//            streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-//            streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//            streamsConfiguration.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//            streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//            streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+//            streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+//            streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
 
 //            KeyValueMapper<int, string, string> mapper = MockMapper.selectValueMapper();
 //            stream = builder.Stream(streamOneInput, Consumed.With(Serdes.Int(), Serdes.String()));
@@ -63,7 +63,7 @@ namespace Kafka.Streams.Tests.Integration
 //        { //throws IOException
 //            if (kafkaStreams != null)
 //            {
-//                kafkaStreams.close();
+//                kafkaStreams.Close();
 //            }
 //            IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
 //        }
@@ -127,7 +127,7 @@ namespace Kafka.Streams.Tests.Integration
 //            produceMessages(secondBatchTimestamp);
 //            produceMessages(secondBatchTimestamp);
 
-//            Serde<Windowed<string>> windowedSerde = WindowedSerdes.timeWindowedSerdeFrom(string);
+//            Serde<IWindowed<string>> windowedSerde = WindowedSerdes.timeWindowedSerdeFrom(string);
 //            groupedStream
 //                    .windowedBy(TimeWindows.of(FromMilliseconds(500L)))
 //                    .reduce(reducer)
@@ -136,7 +136,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //            startStreams();
 
-//            List<KeyValueTimestamp<Windowed<string>, string>> windowedOutput = receiveMessages(
+//            List<KeyValueTimestamp<IWindowed<string>, string>> windowedOutput = receiveMessages(
 //                new TimeWindowedDeserializer<>(),
 //                new Serdes.String().Deserializer(),
 //                string,
@@ -150,35 +150,35 @@ namespace Kafka.Streams.Tests.Integration
 //                15,
 //                true);
 
-//            Comparator<KeyValueTimestamp<Windowed<string>, string>> comparator =
-//                Comparator.comparing((KeyValueTimestamp<Windowed<string>, string> o) => o.Key.Key)
+//            Comparator<KeyValueTimestamp<IWindowed<string>, string>> comparator =
+//                Comparator.comparing((KeyValueTimestamp<IWindowed<string>, string> o) => o.Key.Key)
 //                    .thenComparing(KeyValueTimestamp::value);
 
 //            windowedOutput.sort(comparator);
 //            long firstBatchWindow = firstBatchTimestamp / 500 * 500;
 //            long secondBatchWindow = secondBatchTimestamp / 500 * 500;
 
-//            List<KeyValueTimestamp<Windowed<string>, string>> expectResult = Array.asList(
+//            List<KeyValueTimestamp<IWindowed<string>, string>> expectResult = Array.asList(
 //                    new KeyValueTimestamp(new Windowed("A", new TimeWindow(firstBatchWindow, long.MaxValue)), "A", firstBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(secondBatchWindow, long.MaxValue)), "A", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(secondBatchWindow, long.MaxValue)), "A:A", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(firstBatchWindow, long.MaxValue)), "B", firstBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(secondBatchWindow, long.MaxValue)), "B", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(secondBatchWindow, long.MaxValue)), "B:B", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(firstBatchWindow, long.MaxValue)), "C", firstBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(secondBatchWindow, long.MaxValue)), "C", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(secondBatchWindow, long.MaxValue)), "C:C", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(firstBatchWindow, long.MaxValue)), "D", firstBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(secondBatchWindow, long.MaxValue)), "D", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(secondBatchWindow, long.MaxValue)), "D:D", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("E", new TimeWindow(firstBatchWindow, long.MaxValue)), "E", firstBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("E", new TimeWindow(secondBatchWindow, long.MaxValue)), "E", secondBatchTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("E", new TimeWindow(secondBatchWindow, long.MaxValue)), "E:E", secondBatchTimestamp)
+//                    new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(secondBatchWindow, long.MaxValue)), "A", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(secondBatchWindow, long.MaxValue)), "A:A", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(firstBatchWindow, long.MaxValue)), "B", firstBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(secondBatchWindow, long.MaxValue)), "B", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(secondBatchWindow, long.MaxValue)), "B:B", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(firstBatchWindow, long.MaxValue)), "C", firstBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(secondBatchWindow, long.MaxValue)), "C", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(secondBatchWindow, long.MaxValue)), "C:C", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(firstBatchWindow, long.MaxValue)), "D", firstBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(secondBatchWindow, long.MaxValue)), "D", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(secondBatchWindow, long.MaxValue)), "D:D", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("E", new TimeWindow(firstBatchWindow, long.MaxValue)), "E", firstBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("E", new TimeWindow(secondBatchWindow, long.MaxValue)), "E", secondBatchTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("E", new TimeWindow(secondBatchWindow, long.MaxValue)), "E:E", secondBatchTimestamp)
 //            );
 //            Assert.Equal(windowedOutput, (expectResult));
 
 //            HashSet<string> expectResultString = new HashSet<>(expectResult.Count);
-//            foreach (KeyValueTimestamp<Windowed<string>, string> eachRecord in expectResult)
+//            foreach (KeyValueTimestamp<IWindowed<string>, string> eachRecord in expectResult)
 //            {
 //                expectResultString.Add("CreateTime:" + eachRecord.Timestamp + ", "
 //                    + eachRecord.Key + ", " + eachRecord.Value);
@@ -238,7 +238,7 @@ namespace Kafka.Streams.Tests.Integration
 //            produceMessages(secondTimestamp);
 //            produceMessages(secondTimestamp);
 
-//            Serde<Windowed<string>> windowedSerde = WindowedSerdes.timeWindowedSerdeFrom(string);
+//            Serde<IWindowed<string>> windowedSerde = WindowedSerdes.timeWindowedSerdeFrom(string);
 //            groupedStream.windowedBy(TimeWindows.of(FromMilliseconds(500L)))
 //                    .aggregate(
 //                            initializer,
@@ -250,7 +250,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //            startStreams();
 
-//            List<KeyValueTimestamp<Windowed<string>, int>> windowedMessages = receiveMessagesWithTimestamp(
+//            List<KeyValueTimestamp<IWindowed<string>, int>> windowedMessages = receiveMessagesWithTimestamp(
 //                new TimeWindowedDeserializer<>(),
 //                Serializers.Int32,
 //                string,
@@ -264,35 +264,35 @@ namespace Kafka.Streams.Tests.Integration
 //                15,
 //                true);
 
-//            Comparator<KeyValueTimestamp<Windowed<string>, int>> comparator =
-//                Comparator.comparing((KeyValueTimestamp<Windowed<string>, int> o) => o.Key.Key)
+//            Comparator<KeyValueTimestamp<IWindowed<string>, int>> comparator =
+//                Comparator.comparing((KeyValueTimestamp<IWindowed<string>, int> o) => o.Key.Key)
 //                    .thenComparingInt(KeyValueTimestamp::value);
 //            windowedMessages.sort(comparator);
 
 //            long firstWindow = firstTimestamp / 500 * 500;
 //            long secondWindow = secondTimestamp / 500 * 500;
 
-//            List<KeyValueTimestamp<Windowed<string>, int>> expectResult = Array.asList(
-//                    new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("A", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("B", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("C", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("D", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("E", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("E", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
-//                    new KeyValueTimestamp<>(new Windowed<>("E", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp));
+//            List<KeyValueTimestamp<IWindowed<string>, int>> expectResult = Array.asList(
+//                    new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("A", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("B", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("C", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("D", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("E", new TimeWindow(firstWindow, long.MaxValue)), 1, firstTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("E", new TimeWindow(secondWindow, long.MaxValue)), 1, secondTimestamp),
+//                    new KeyValueTimestamp<>(new IWindowed<>("E", new TimeWindow(secondWindow, long.MaxValue)), 2, secondTimestamp));
 
 //            Assert.Equal(windowedMessages, (expectResult));
 
 //            HashSet<string> expectResultString = new HashSet<>(expectResult.Count);
-//            foreach (KeyValueTimestamp<Windowed<string>, int> eachRecord in expectResult)
+//            foreach (KeyValueTimestamp<IWindowed<string>, int> eachRecord in expectResult)
 //            {
 //                expectResultString.Add("CreateTime:" + eachRecord.Timestamp + ", " + eachRecord.Key + ", " + eachRecord.Value);
 //            }
@@ -461,7 +461,7 @@ namespace Kafka.Streams.Tests.Integration
 //                    new StreamsConfig()),
 //                t5);
 
-//            Dictionary<Windowed<string>, KeyValuePair<long, long>> results = new HashMap<>();
+//            Dictionary<IWindowed<string>, KeyValuePair<long, long>> results = new HashMap<>();
 //            CountDownLatch latch = new CountDownLatch(13);
 
 //            builder.Stream(userSessionsStream, Consumed.With(Serdes.String(), Serdes.String()))
@@ -469,7 +469,7 @@ namespace Kafka.Streams.Tests.Integration
 //                    .windowedBy(SessionWindows.with(FromMilliseconds(sessionGap)))
 //                    .count()
 //                    .toStream()
-//                    .transform(() => new Transformer<Windowed<string>, long, KeyValuePair<object, object>>()
+//                    .transform(() => new Transformer<IWindowed<string>, long, KeyValuePair<object, object>>()
 //                    {
 //                                private ProcessorContext context;
 
@@ -480,27 +480,27 @@ namespace Kafka.Streams.Tests.Integration
 //        }
 
 
-//        public KeyValuePair<object, object> transform(Windowed<string> key, long value)
+//        public KeyValuePair<object, object> transform(IWindowed<string> key, long value)
 //        {
-//            results.put(key, KeyValuePair.Create(value, context.Timestamp));
+//            results.Put(key, KeyValuePair.Create(value, context.Timestamp));
 //            latch.countDown();
 //            return null;
 //        }
 
 
-//        public void close() { }
+//        public void Close() { }
 //    });
 
 //        startStreams();
 //    latch.await(30, TimeUnit.SECONDS);
 
-//        Assert.Equal(results.Get(new Windowed<>("bob", new SessionWindow(t1, t1))), (KeyValuePair.Create(1L, t1)));
-//        Assert.Equal(results.Get(new Windowed<>("penny", new SessionWindow(t1, t1))), (KeyValuePair.Create(1L, t1)));
-//        Assert.Equal(results.Get(new Windowed<>("jo", new SessionWindow(t1, t1))), (KeyValuePair.Create(1L, t1)));
-//        Assert.Equal(results.Get(new Windowed<>("jo", new SessionWindow(t5, t4))), (KeyValuePair.Create(2L, t4)));
-//        Assert.Equal(results.Get(new Windowed<>("emily", new SessionWindow(t1, t2))), (KeyValuePair.Create(2L, t2)));
-//        Assert.Equal(results.Get(new Windowed<>("bob", new SessionWindow(t3, t4))), (KeyValuePair.Create(2L, t4)));
-//        Assert.Equal(results.Get(new Windowed<>("penny", new SessionWindow(t3, t3))), (KeyValuePair.Create(1L, t3)));
+//        Assert.Equal(results.Get(new IWindowed<>("bob", new SessionWindow(t1, t1))), (KeyValuePair.Create(1L, t1)));
+//        Assert.Equal(results.Get(new IWindowed<>("penny", new SessionWindow(t1, t1))), (KeyValuePair.Create(1L, t1)));
+//        Assert.Equal(results.Get(new IWindowed<>("jo", new SessionWindow(t1, t1))), (KeyValuePair.Create(1L, t1)));
+//        Assert.Equal(results.Get(new IWindowed<>("jo", new SessionWindow(t5, t4))), (KeyValuePair.Create(2L, t4)));
+//        Assert.Equal(results.Get(new IWindowed<>("emily", new SessionWindow(t1, t2))), (KeyValuePair.Create(2L, t2)));
+//        Assert.Equal(results.Get(new IWindowed<>("bob", new SessionWindow(t3, t4))), (KeyValuePair.Create(2L, t4)));
+//        Assert.Equal(results.Get(new IWindowed<>("penny", new SessionWindow(t3, t3))), (KeyValuePair.Create(1L, t3)));
 //    }
 
 //[Fact]
@@ -573,7 +573,7 @@ namespace Kafka.Streams.Tests.Integration
 //            new StreamsConfig()),
 //        t5);
 
-//    Dictionary<Windowed<string>, KeyValuePair<string, long>> results = new HashMap<>();
+//    Dictionary<IWindowed<string>, KeyValuePair<string, long>> results = new HashMap<>();
 //    CountDownLatch latch = new CountDownLatch(13);
 //    string userSessionsStore = "UserSessionsStore";
 //    builder.Stream(userSessionsStream, Consumed.With(Serdes.String(), Serdes.String()))
@@ -581,46 +581,46 @@ namespace Kafka.Streams.Tests.Integration
 //            .windowedBy(SessionWindows.with(FromMilliseconds(sessionGap)))
 //            .reduce((value1, value2) => value1 + ":" + value2, Materialized.As(userSessionsStore))
 //            .toStream()
-//        .transform(() => new Transformer<Windowed<string>, string, KeyValuePair<object, object>>()
+//        .transform(() => new Transformer<IWindowed<string>, string, KeyValuePair<object, object>>()
 //        {
 //                private ProcessorContext context;
 
 
-//public void init(ProcessorContext context)
+//public void Init(ProcessorContext context)
 //{
 //    this.context = context;
 //}
 
 
-//public KeyValuePair<object, object> transform(Windowed<string> key, string value)
+//public KeyValuePair<object, object> transform(IWindowed<string> key, string value)
 //{
-//    results.put(key, KeyValuePair.Create(value, context.Timestamp));
+//    results.Put(key, KeyValuePair.Create(value, context.Timestamp));
 //    latch.countDown();
 //    return null;
 //}
 
 
-//public void close() { }
+//public void Close() { }
 //            });
 
 //        startStreams();
 //latch.await(30, TimeUnit.SECONDS);
 
 //        // verify correct data received
-//        Assert.Equal(results.Get(new Windowed<>("bob", new SessionWindow(t1, t1))), (KeyValuePair.Create("start", t1)));
-//        Assert.Equal(results.Get(new Windowed<>("penny", new SessionWindow(t1, t1))), (KeyValuePair.Create("start", t1)));
-//        Assert.Equal(results.Get(new Windowed<>("jo", new SessionWindow(t1, t1))), (KeyValuePair.Create("pause", t1)));
-//        Assert.Equal(results.Get(new Windowed<>("jo", new SessionWindow(t5, t4))), (KeyValuePair.Create("resume:late", t4)));
-//        Assert.Equal(results.Get(new Windowed<>("emily", new SessionWindow(t1, t2))), (KeyValuePair.Create("pause:resume", t2)));
-//        Assert.Equal(results.Get(new Windowed<>("bob", new SessionWindow(t3, t4))), (KeyValuePair.Create("pause:resume", t4)));
-//        Assert.Equal(results.Get(new Windowed<>("penny", new SessionWindow(t3, t3))), (KeyValuePair.Create("stop", t3)));
+//        Assert.Equal(results.Get(new IWindowed<>("bob", new SessionWindow(t1, t1))), (KeyValuePair.Create("start", t1)));
+//        Assert.Equal(results.Get(new IWindowed<>("penny", new SessionWindow(t1, t1))), (KeyValuePair.Create("start", t1)));
+//        Assert.Equal(results.Get(new IWindowed<>("jo", new SessionWindow(t1, t1))), (KeyValuePair.Create("pause", t1)));
+//        Assert.Equal(results.Get(new IWindowed<>("jo", new SessionWindow(t5, t4))), (KeyValuePair.Create("resume:late", t4)));
+//        Assert.Equal(results.Get(new IWindowed<>("emily", new SessionWindow(t1, t2))), (KeyValuePair.Create("pause:resume", t2)));
+//        Assert.Equal(results.Get(new IWindowed<>("bob", new SessionWindow(t3, t4))), (KeyValuePair.Create("pause:resume", t4)));
+//        Assert.Equal(results.Get(new IWindowed<>("penny", new SessionWindow(t3, t3))), (KeyValuePair.Create("stop", t3)));
 
 //        // verify can query data via IQ
 //        ReadOnlySessionStore<string, string> sessionStore =
 //            kafkaStreams.store(userSessionsStore, QueryableStoreTypes.sessionStore());
-//IKeyValueIterator<Windowed<string>, string> bob = sessionStore.Fetch("bob");
-//Assert.Equal(bob.MoveNext(), (KeyValuePair.Create(new Windowed<>("bob", new SessionWindow(t1, t1)), "start")));
-//        Assert.Equal(bob.MoveNext(), (KeyValuePair.Create(new Windowed<>("bob", new SessionWindow(t3, t4)), "pause:resume")));
+//IKeyValueIterator<IWindowed<string>, string> bob = sessionStore.Fetch("bob");
+//Assert.Equal(bob.MoveNext(), (KeyValuePair.Create(new IWindowed<>("bob", new SessionWindow(t1, t1)), "start")));
+//        Assert.Equal(bob.MoveNext(), (KeyValuePair.Create(new IWindowed<>("bob", new SessionWindow(t3, t4)), "pause:resume")));
 //        Assert.False(bob.HasNext());
 //    }
 
@@ -677,7 +677,7 @@ namespace Kafka.Streams.Tests.Integration
 //        producerConfig,
 //        t4);
 
-//    Dictionary<Windowed<string>, KeyValuePair<long, long>> results = new HashMap<>();
+//    Dictionary<IWindowed<string>, KeyValuePair<long, long>> results = new HashMap<>();
 //    CountDownLatch latch = new CountDownLatch(5);
 
 //    builder.Stream(userSessionsStream, Consumed.With(Serdes.String(), Serdes.String()))
@@ -685,34 +685,34 @@ namespace Kafka.Streams.Tests.Integration
 //           .windowedBy(UnlimitedWindows.of().startOn(ofEpochMilli(startTime)))
 //           .count()
 //           .toStream()
-//           .transform(() => new Transformer<Windowed<string>, long, KeyValuePair<object, object>>()
+//           .transform(() => new Transformer<IWindowed<string>, long, KeyValuePair<object, object>>()
 //           {
 //                   private ProcessorContext context;
 
 
-//public void init(ProcessorContext context)
+//public void Init(ProcessorContext context)
 //{
 //    this.context = context;
 //}
 
 
-//public KeyValuePair<object, object> transform(Windowed<string> key, long value)
+//public KeyValuePair<object, object> transform(IWindowed<string> key, long value)
 //{
-//    results.put(key, KeyValuePair.Create(value, context.Timestamp));
+//    results.Put(key, KeyValuePair.Create(value, context.Timestamp));
 //    latch.countDown();
 //    return null;
 //}
 
 
-//public void close() { }
+//public void Close() { }
 //               });
 //        startStreams();
 //Assert.True(latch.await(30, TimeUnit.SECONDS));
 
-//        Assert.Equal(results.Get(new Windowed<>("bob", new UnlimitedWindow(startTime))), (KeyValuePair.Create(2L, t4)));
-//        Assert.Equal(results.Get(new Windowed<>("penny", new UnlimitedWindow(startTime))), (KeyValuePair.Create(1L, t3)));
-//        Assert.Equal(results.Get(new Windowed<>("jo", new UnlimitedWindow(startTime))), (KeyValuePair.Create(1L, t4)));
-//        Assert.Equal(results.Get(new Windowed<>("emily", new UnlimitedWindow(startTime))), (KeyValuePair.Create(1L, t2)));
+//        Assert.Equal(results.Get(new IWindowed<>("bob", new UnlimitedWindow(startTime))), (KeyValuePair.Create(2L, t4)));
+//        Assert.Equal(results.Get(new IWindowed<>("penny", new UnlimitedWindow(startTime))), (KeyValuePair.Create(1L, t3)));
+//        Assert.Equal(results.Get(new IWindowed<>("jo", new UnlimitedWindow(startTime))), (KeyValuePair.Create(1L, t4)));
+//        Assert.Equal(results.Get(new IWindowed<>("emily", new UnlimitedWindow(startTime))), (KeyValuePair.Create(1L, t2)));
 //    }
 
 
@@ -833,7 +833,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //        ConsoleConsumer.messageCount_$eq(0); //reset the message count
 //        ConsoleConsumer.run(new ConsoleConsumer.ConsumerConfig(args));
-//        newStream.flush();
+//        newStream.Flush();
 //        System.setOut(originalStream);
 //        return newConsole.ToString();
 //    }

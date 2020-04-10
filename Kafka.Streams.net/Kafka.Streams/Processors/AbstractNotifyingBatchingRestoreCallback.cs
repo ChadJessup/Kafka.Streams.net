@@ -15,7 +15,7 @@ namespace Kafka.Streams.Processors
         IBatchingStateRestoreCallback, IStateRestoreListener
     {
         /**
-         * Single put restore operations not supported, please use {@link AbstractNotifyingRestoreCallback}
+         * Single Put restore operations not supported, please use {@link AbstractNotifyingRestoreCallback}
          * or {@link StateRestoreCallback} instead for single action restores.
          */
 

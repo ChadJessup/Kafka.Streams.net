@@ -8,15 +8,15 @@ namespace Kafka.Streams.Topologies
     public interface ISink : INode
     {
         /// <summary>
-        /// Gets the topic name this sink node is writing to.
-        /// Could be null if the topic name can only be dynamically determined based on <seealso cref="ITopicNameExtractor"/>.
+        /// Gets the topic Name this sink node is writing to.
+        /// Could be null if the topic Name can only be dynamically determined based on <seealso cref="ITopicNameExtractor"/>.
         /// </summary>
         string? Topic { get; }
 
         /// <summary>
         /// The <seealso cref="ITopicNameExtractor"/> that this sink node uses to dynamically
-        /// extract the topic name to write to.
-        /// Could be null if the topic name is not dynamically determined.
+        /// extract the topic Name to write to.
+        /// Could be null if the topic Name is not dynamically determined.
         /// </summary>
         ITopicNameExtractor TopicNameExtractor { get; }
     }

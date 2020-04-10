@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Sessions
          * @return iterator of sessions with the matching key and aggregated values
          * @throws ArgumentNullException If null is used for key.
          */
-        IKeyValueIterator<Windowed<K>, AGG> FindSessions(K key, long earliestSessionEndTime, long latestSessionStartTime);
+        IKeyValueIterator<IWindowed<K>, AGG> FindSessions(K key, long earliestSessionEndTime, long latestSessionStartTime);
 
         /**
          * Fetch any sessions in the given range of keys and the sessions end is &ge; earliestSessionEndTime and the sessions
@@ -45,12 +45,12 @@ namespace Kafka.Streams.State.Sessions
          * @return iterator of sessions with the matching keys and aggregated values
          * @throws ArgumentNullException If null is used for any key.
          */
-        IKeyValueIterator<Windowed<K>, AGG> FindSessions(K keyFrom, K keyTo, long earliestSessionEndTime, long latestSessionStartTime);
+        IKeyValueIterator<IWindowed<K>, AGG> FindSessions(K keyFrom, K keyTo, long earliestSessionEndTime, long latestSessionStartTime);
 
         /**
          * Get the value of key from a single session.
          *
-         * @param key            the key to fetch
+         * @param key            the key to Fetch
          * @param startTime      start timestamp of the session
          * @param endTime        end timestamp of the session
          * @return The value or {@code null} if no session associated with the key can be found
@@ -63,7 +63,7 @@ namespace Kafka.Streams.State.Sessions
          * @param sessionKey key of the session to Remove
          * @throws ArgumentNullException If null is used for sessionKey.
          */
-        void Remove(Windowed<K> sessionKey);
+        void Remove(IWindowed<K> sessionKey);
 
         /**
          * Write the aggregated value for the provided key to the store
@@ -72,6 +72,6 @@ namespace Kafka.Streams.State.Sessions
          *                   if the serialized bytes are also null it is interpreted as deletes
          * @throws ArgumentNullException If null is used for sessionKey.
          */
-        void Put(Windowed<K> sessionKey, AGG aggregate);
+        void Put(IWindowed<K> sessionKey, AGG aggregate);
     }
 }

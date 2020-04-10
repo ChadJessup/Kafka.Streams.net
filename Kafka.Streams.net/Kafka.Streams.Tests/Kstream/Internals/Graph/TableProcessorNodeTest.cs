@@ -12,7 +12,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //        private class TestProcessor : AbstractProcessor<string, string>
 //        {
 
-//            public void init(IProcessorContext context)
+//            public void Init(IProcessorContext context)
 //            {
 //            }
 
@@ -22,7 +22,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //            }
 
 
-//            public void close()
+//            public void Close()
 //            {
 //            }
 //        }
@@ -31,7 +31,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 //        public void shouldConvertToStringWithNullStoreBuilder()
 //        {
 //            TableProcessorNode<string, string> node = new TableProcessorNode<>(
-//                "name",
+//                "Name",
 //                new ProcessorParameters<>(typeof(TestProcessor), "processor"),
 //                null,
 //                new string[] { "store1", "store2" }

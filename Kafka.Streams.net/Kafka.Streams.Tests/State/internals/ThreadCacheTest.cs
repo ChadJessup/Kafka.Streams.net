@@ -30,7 +30,7 @@
 //            {
 //                Bytes key = Bytes.Wrap(kvToInsert.key.getBytes());
 //                byte[] value = kvToInsert.value.getBytes();
-//                cache.put(ns, key, new LRUCacheEntry(value, null, true, 1L, 1L, 1, ""));
+//                cache.Put(ns, key, new LRUCacheEntry(value, null, true, 1L, 1L, 1, ""));
 //            }
 
 //            foreach (KeyValuePair<string, string> kvToInsert in toInsert)
@@ -67,7 +67,7 @@
 //                string keyStr = "K" + i;
 //                Bytes key = Bytes.Wrap(keyStr.getBytes());
 //                byte[] value = new byte[valueSizeBytes];
-//                cache.put(ns, key, new LRUCacheEntry(value, null, true, 1L, 1L, 1, ""));
+//                cache.Put(ns, key, new LRUCacheEntry(value, null, true, 1L, 1L, 1, ""));
 //            }
 
 
@@ -152,7 +152,7 @@
 //            {
 //                Bytes key = Bytes.Wrap(kvToInsert.key.getBytes());
 //                byte[] value = kvToInsert.value.getBytes();
-//                cache.put(ns, key, new LRUCacheEntry(value, null, true, 1, 1, 1, ""));
+//                cache.Put(ns, key, new LRUCacheEntry(value, null, true, 1, 1, 1, ""));
 //            }
 
 //            for (int i = 0; i < expected.Count; i++)
@@ -170,7 +170,7 @@
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            Bytes key = Bytes.Wrap(new byte[] { 0 });
 
-//            cache.put(ns, key, dirtyEntry(key.Get()));
+//            cache.Put(ns, key, dirtyEntry(key.Get()));
 //            Assert.Equal(key.Get(), cache.delete(ns, key).Value);
 //            Assert.Null(cache.Get(ns, key));
 //        }
@@ -182,11 +182,11 @@
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            List<ThreadCache.DirtyEntry> received = new ArrayList<>();
 //            cache.addDirtyEntryFlushListener(ns, received::addAll);
-//            cache.put(ns, key, dirtyEntry(key.Get()));
+//            cache.Put(ns, key, dirtyEntry(key.Get()));
 //            Assert.Equal(key.Get(), cache.delete(ns, key).Value);
 
 //            // flushing should have no further effect
-//            cache.flush(ns);
+//            cache.Flush(ns);
 //            Assert.Equal(0, received.Count);
 //            Assert.Equal(cache.flushes(), 1);
 //        }
@@ -197,7 +197,7 @@
 //            Bytes key = Bytes.Wrap(new byte[] { 0 });
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 
-//            cache.put(ns, key, dirtyEntry(key.Get()));
+//            cache.Put(ns, key, dirtyEntry(key.Get()));
 //            Assert.Null(cache.delete(ns, Bytes.Wrap(new byte[] { 1 })));
 //        }
 
@@ -214,8 +214,8 @@
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            Bytes nameByte = Bytes.Wrap(new byte[] { 0 });
 //            Bytes name1Byte = Bytes.Wrap(new byte[] { 1 });
-//            cache.put(namespace1, nameByte, dirtyEntry(nameByte.Get()));
-//            cache.put(namespace2, nameByte, dirtyEntry(name1Byte.Get()));
+//            cache.Put(namespace1, nameByte, dirtyEntry(nameByte.Get()));
+//            cache.Put(namespace2, nameByte, dirtyEntry(name1Byte.Get()));
 
 //            assertArrayEquals(nameByte.Get(), cache.Get(namespace1, nameByte).Value);
 //            assertArrayEquals(name1Byte.Get(), cache.Get(namespace2, nameByte).Value);
@@ -226,7 +226,7 @@
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            Bytes theByte = Bytes.Wrap(new byte[] { 0 });
-//            cache.put(ns, theByte, dirtyEntry(theByte.Get()));
+//            cache.Put(ns, theByte, dirtyEntry(theByte.Get()));
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, theByte, Bytes.Wrap(new byte[] { 1 }));
 //            Assert.Equal(theByte, iterator.PeekNextKey());
 //            Assert.Equal(theByte, iterator.PeekNextKey());
@@ -237,7 +237,7 @@
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            Bytes theByte = Bytes.Wrap(new byte[] { 0 });
-//            cache.put(ns, theByte, dirtyEntry(theByte.Get()));
+//            cache.Put(ns, theByte, dirtyEntry(theByte.Get()));
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, theByte, Bytes.Wrap(new byte[] { 1 }));
 //            Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
 //        }
@@ -265,7 +265,7 @@
 //            byte[][] bytes = { { 0 }, { 1 }, { 2 }, { 3 }, { 4 }, { 5 }, { 6 }, { 7 }, { 8 }, { 9 }, { 10 } };
 //            foreach (byte[] aByte in bytes)
 //            {
-//                cache.put(ns, Bytes.Wrap(aByte), dirtyEntry(aByte));
+//                cache.Put(ns, Bytes.Wrap(aByte), dirtyEntry(aByte));
 //            }
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, Bytes.Wrap(new byte[] { 1 }), Bytes.Wrap(new byte[] { 4 }));
 //            int bytesIndex = 1;
@@ -290,12 +290,12 @@
 //            byte[][] bytes = { { 0 }, { 1 }, { 2 }, { 3 }, { 4 }, { 5 }, { 6 }, { 7 }, { 8 }, { 9 } };
 //            for (int i = 0; i < 5; i++)
 //            {
-//                cache.put(ns, Bytes.Wrap(bytes[i]), dirtyEntry(bytes[i]));
+//                cache.Put(ns, Bytes.Wrap(bytes[i]), dirtyEntry(bytes[i]));
 //            }
 //            Assert.Equal(5, cache.Count);
 
 //            // should evict byte[] {0}
-//            cache.put(ns, Bytes.Wrap(new byte[] { 6 }), dirtyEntry(new byte[] { 6 }));
+//            cache.Put(ns, Bytes.Wrap(new byte[] { 6 }), dirtyEntry(new byte[] { 6 }));
 
 //            ThreadCache.MemoryLRUCacheBytesIterator range = cache.Range(ns, Bytes.Wrap(new byte[] { 0 }), Bytes.Wrap(new byte[] { 5 }));
 
@@ -317,11 +317,11 @@
 //            List<byte[]> expected = Array.asList(new byte[] { 0 }, new byte[] { 1 }, new byte[] { 2 });
 //            foreach (byte[] bytes in expected)
 //            {
-//                cache.put(namespace1, Bytes.Wrap(bytes), dirtyEntry(bytes));
+//                cache.Put(namespace1, Bytes.Wrap(bytes), dirtyEntry(bytes));
 //            }
-//            cache.put(namespace2, Bytes.Wrap(new byte[] { 4 }), dirtyEntry(new byte[] { 4 }));
+//            cache.Put(namespace2, Bytes.Wrap(new byte[] { 4 }), dirtyEntry(new byte[] { 4 }));
 
-//            cache.flush(namespace1);
+//            cache.Flush(namespace1);
 //            Assert.Equal(expected, received);
 //        }
 
@@ -340,11 +340,11 @@
 //            List<byte[]> toInsert = Array.asList(new byte[] { 0 }, new byte[] { 1 }, new byte[] { 2 });
 //            foreach (byte[] bytes in toInsert)
 //            {
-//                cache.put(namespace1, Bytes.Wrap(bytes), cleanEntry(bytes));
+//                cache.Put(namespace1, Bytes.Wrap(bytes), cleanEntry(bytes));
 //            }
-//            cache.put(namespace2, Bytes.Wrap(new byte[] { 4 }), cleanEntry(new byte[] { 4 }));
+//            cache.Put(namespace2, Bytes.Wrap(new byte[] { 4 }), cleanEntry(new byte[] { 4 }));
 
-//            cache.flush(namespace1);
+//            cache.Flush(namespace1);
 //            Assert.Equal(Collections.emptyList(), received);
 //        }
 
@@ -354,11 +354,11 @@
 //            List<ThreadCache.DirtyEntry> received = new ArrayList<>();
 
 //            cache.addDirtyEntryFlushListener(ns, received::addAll);
-//            cache.put(ns, Bytes.Wrap(new byte[] { 0 }), dirtyEntry(new byte[] { 0 }));
+//            cache.Put(ns, Bytes.Wrap(new byte[] { 0 }), dirtyEntry(new byte[] { 0 }));
 //            Assert.Equal(1, received.Count);
 
 //            // flushing should have no further effect
-//            cache.flush(ns);
+//            cache.Flush(ns);
 //            Assert.Equal(1, received.Count);
 //        }
 
@@ -408,7 +408,7 @@
 //            ThreadCache cache = new ThreadCache(logContext, 0, new MockStreamsMetrics(new Metrics()));
 //            List<ThreadCache.DirtyEntry> received = new ArrayList<>();
 //            cache.addDirtyEntryFlushListener(ns, received::addAll);
-//            cache.put(ns, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 0 }));
+//            cache.Put(ns, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 0 }));
 //            Assert.Equal(0, received.Count);
 //        }
 //        [Fact]
@@ -442,32 +442,32 @@
 //        {
 //            int maxCacheSizeInBytes = 100;
 //            ThreadCache threadCache = new ThreadCache(logContext, maxCacheSizeInBytes, new MockStreamsMetrics(new Metrics()));
-//            // trigger a put into another cache on eviction from "name"
+//            // trigger a Put into another cache on eviction from "Name"
 //            threadCache.addDirtyEntryFlushListener(ns, dirty =>
 //            {
-//                // put an item into an empty cache when the total cache size
+//                // Put an item into an empty cache when the total cache size
 //                // is already > than maxCacheSizeBytes
-//                threadCache.put(namespace1, Bytes.Wrap(new byte[] { 0 }), dirtyEntry(new byte[2]));
+//                threadCache.Put(namespace1, Bytes.Wrap(new byte[] { 0 }), dirtyEntry(new byte[2]));
 //            });
 //            threadCache.addDirtyEntryFlushListener(namespace1, dirty => { });
 //            threadCache.addDirtyEntryFlushListener(namespace2, dirty => { });
 
-//            threadCache.put(namespace2, Bytes.Wrap(new byte[] { 1 }), dirtyEntry(new byte[1]));
-//            threadCache.put(ns, Bytes.Wrap(new byte[] { 1 }), dirtyEntry(new byte[1]));
+//            threadCache.Put(namespace2, Bytes.Wrap(new byte[] { 1 }), dirtyEntry(new byte[1]));
+//            threadCache.Put(ns, Bytes.Wrap(new byte[] { 1 }), dirtyEntry(new byte[1]));
 //            // Put a large item such that when the eldest item is removed
 //            // cache sizeInBytes() > maxCacheSizeBytes
 //            int remaining = (int)(maxCacheSizeInBytes - threadCache.sizeBytes());
-//            threadCache.put(ns, Bytes.Wrap(new byte[] { 2 }), dirtyEntry(new byte[remaining + 100]));
+//            threadCache.Put(ns, Bytes.Wrap(new byte[] { 2 }), dirtyEntry(new byte[remaining + 100]));
 //        }
 
 //        [Fact]
 //        public void ShouldCleanupNamedCacheOnClose()
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
-//            cache.put(namespace1, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 1 }));
-//            cache.put(namespace2, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 1 }));
+//            cache.Put(namespace1, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 1 }));
+//            cache.Put(namespace2, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 1 }));
 //            Assert.Equal(cache.Count, 2);
-//            cache.close(namespace2);
+//            cache.Close(namespace2);
 //            Assert.Equal(cache.Count, 1);
 //            Assert.Null(cache.Get(namespace2, Bytes.Wrap(new byte[] { 1 })));
 //        }
@@ -476,7 +476,7 @@
 //        public void ShouldReturnNullIfKeyIsNull()
 //        {
 //            ThreadCache threadCache = new ThreadCache(logContext, 10, new MockStreamsMetrics(new Metrics()));
-//            threadCache.put(ns, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 1 }));
+//            threadCache.Put(ns, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 1 }));
 //            Assert.Null(threadCache.Get(ns, null));
 //        }
 
@@ -485,7 +485,7 @@
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
 //            NamedCache.LRUNode node = new NamedCache.LRUNode(Bytes.Wrap(new byte[] { 1 }), dirtyEntry(new byte[] { 0 }));
-//            cache.put(namespace1, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 0 }));
+//            cache.Put(namespace1, Bytes.Wrap(new byte[] { 1 }), cleanEntry(new byte[] { 0 }));
 //            Assert.Equal(cache.sizeBytes(), node.Count);
 //        }
 

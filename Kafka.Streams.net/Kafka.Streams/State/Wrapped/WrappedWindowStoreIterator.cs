@@ -41,9 +41,9 @@
 //        }
 
 
-//        public void close()
+//        public void Close()
 //        {
-//            bytesIterator.close();
+//            bytesIterator.Close();
 //        }
 //    }
 //}

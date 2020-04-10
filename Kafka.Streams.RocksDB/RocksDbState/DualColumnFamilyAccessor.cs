@@ -12,10 +12,10 @@ namespace Kafka.Streams.RocksDbState
         private readonly ColumnFamilyHandle newColumnFamily;
         private readonly RocksDb db;
         private readonly WriteOptions wOptions;
-        private readonly string name;
+        private readonly string Name;
 
         public DualColumnFamilyAccessor(
-            string name,
+            string Name,
             RocksDb db,
             WriteOptions writeOptions,
             ColumnFamilyHandle oldColumnFamily,
@@ -36,44 +36,44 @@ namespace Kafka.Streams.RocksDbState
             {
                 try
                 {
-                    db.Remove(key, oldColumnFamily, wOptions);
+                    this.db.Remove(key, this.oldColumnFamily, this.wOptions);
                 }
                 catch (RocksDbException e)
                 {
                     // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                    throw new ProcessorStateException("Error while removing key from store " + name, e);
+                    throw new ProcessorStateException("Error while removing key from store " + this.Name, e);
                 }
 
                 try
                 {
-                    db.Remove(key, newColumnFamily, wOptions);
+                    this.db.Remove(key, this.newColumnFamily, this.wOptions);
                 }
                 catch (RocksDbException e)
                 {
                     // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                    throw new ProcessorStateException("Error while removing key from store " + name, e);
+                    throw new ProcessorStateException("Error while removing key from store " + this.Name, e);
                 }
             }
             else
             {
                 try
                 {
-                    db.Remove(key, oldColumnFamily, wOptions);
+                    this.db.Remove(key, this.oldColumnFamily, this.wOptions);
                 }
                 catch (RocksDbException e)
                 {
                     // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                    throw new ProcessorStateException("Error while removing key from store " + name, e);
+                    throw new ProcessorStateException("Error while removing key from store " + this.Name, e);
                 }
 
                 try
                 {
-                    db.Put(key, valueWithTimestamp, newColumnFamily, wOptions);
+                    this.db.Put(key, valueWithTimestamp, this.newColumnFamily, this.wOptions);
                 }
                 catch (RocksDbException e)
                 {
                     // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                    throw new ProcessorStateException("Error while putting key/value into store " + name, e);
+                    throw new ProcessorStateException("Error while putting key/value into store " + this.Name, e);
                 }
             }
         }
@@ -84,29 +84,29 @@ namespace Kafka.Streams.RocksDbState
         {
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
-                AddToBatch(entry.Key.Get(), entry.Value, batch);
+                this.AddToBatch(entry.Key.Get(), entry.Value, batch);
             }
         }
 
 
         public byte[] Get(byte[] key)
         {
-            var valueWithTimestamp = db.Get(key, newColumnFamily);
+            var valueWithTimestamp = this.db.Get(key, this.newColumnFamily);
 
             if (valueWithTimestamp != null)
             {
                 return valueWithTimestamp;
             }
 
-            var plainValue = db.Get(key, oldColumnFamily);
+            var plainValue = this.db.Get(key, this.oldColumnFamily);
 
             if (plainValue != null)
             {
                 var valueWithUnknownTimestamp = ApiUtils.ConvertToTimestampedFormat(plainValue);
                 // this does only work, because the changelog topic contains correct data already
                 // for other string.Format changes, we cannot take this short cut and can only migrate data
-                // from old to new store on put()
-                Put(key, valueWithUnknownTimestamp);
+                // from old to new store on Put()
+                this.Put(key, valueWithUnknownTimestamp);
                 return valueWithUnknownTimestamp;
             }
 
@@ -116,14 +116,14 @@ namespace Kafka.Streams.RocksDbState
 
         public byte[] GetOnly(byte[] key)
         {
-            var valueWithTimestamp = db.Get(key, newColumnFamily);
+            var valueWithTimestamp = this.db.Get(key, this.newColumnFamily);
 
             if (valueWithTimestamp != null)
             {
                 return valueWithTimestamp;
             }
 
-            var plainValue = db.Get(key, oldColumnFamily);
+            var plainValue = this.db.Get(key, this.oldColumnFamily);
 
             if (plainValue != null)
             {
@@ -139,27 +139,27 @@ namespace Kafka.Streams.RocksDbState
             Bytes to)
         {
             return new RocksDbDualCFRangeIterator(
-                name,
-                db.NewIterator(newColumnFamily),
-                db.NewIterator(oldColumnFamily),
+                this.Name,
+                this.db.NewIterator(this.newColumnFamily),
+                this.db.NewIterator(this.oldColumnFamily),
                 from,
                 to);
         }
 
         public IKeyValueIterator<Bytes, byte[]> All()
         {
-            Iterator innerIterWithTimestamp = db.NewIterator(newColumnFamily);
+            Iterator innerIterWithTimestamp = this.db.NewIterator(this.newColumnFamily);
             innerIterWithTimestamp.SeekToFirst();
-            Iterator innerIterNoTimestamp = db.NewIterator(oldColumnFamily);
+            Iterator innerIterNoTimestamp = this.db.NewIterator(this.oldColumnFamily);
             innerIterNoTimestamp.SeekToFirst();
-            return new RocksDbDualCFIterator(name, innerIterWithTimestamp, innerIterNoTimestamp);
+            return new RocksDbDualCFIterator(this.Name, innerIterWithTimestamp, innerIterNoTimestamp);
         }
 
 
         public long ApproximateNumEntries()
         {
-            return long.Parse(db.GetProperty("rocksdb.estimate-num-keys", oldColumnFamily))
-                + long.Parse(db.GetProperty("rocksdb.estimate-num-keys", newColumnFamily));
+            return long.Parse(this.db.GetProperty("rocksdb.estimate-num-keys", this.oldColumnFamily))
+                + long.Parse(this.db.GetProperty("rocksdb.estimate-num-keys", this.newColumnFamily));
         }
 
 
@@ -175,7 +175,7 @@ namespace Kafka.Streams.RocksDbState
         {
             foreach (KeyValuePair<byte[], byte[]> record in records)
             {
-                AddToBatch(record.Key, record.Value, batch);
+                this.AddToBatch(record.Key, record.Value, batch);
             }
         }
 
@@ -187,21 +187,21 @@ namespace Kafka.Streams.RocksDbState
         {
             if (value == null)
             {
-                batch.Delete(key, oldColumnFamily);
-                batch.Delete(key, newColumnFamily);
+                batch.Delete(key, this.oldColumnFamily);
+                batch.Delete(key, this.newColumnFamily);
             }
             else
             {
-                batch.Delete(key, oldColumnFamily);
-                batch.Put(key, value, newColumnFamily);
+                batch.Delete(key, this.oldColumnFamily);
+                batch.Put(key, value, this.newColumnFamily);
             }
         }
 
 
         public void Close()
         {
-            // oldColumnFamily.close();
-            // newColumnFamily.close();
+            // oldColumnFamily.Close();
+            // newColumnFamily.Close();
         }
 
         public void ToggleDbForBulkLoading()
@@ -212,7 +212,7 @@ namespace Kafka.Streams.RocksDbState
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
+                throw new ProcessorStateException("Error while range compacting during restoring  store " + this.Name, e);
             }
 
             try
@@ -221,7 +221,7 @@ namespace Kafka.Streams.RocksDbState
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
+                throw new ProcessorStateException("Error while range compacting during restoring  store " + this.Name, e);
             }
         }
     }

@@ -47,8 +47,8 @@
 //    public void ShouldIterateOverRange() {// throws Exception
 //        byte[][] bytes = {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}};
 //        for (int i = 0; i < bytes.Length; i += 2) {
-//            store.put(Bytes.Wrap(bytes[i]), bytes[i]);
-//            cache.put(namespace, Bytes.Wrap(bytes[i + 1]), new LRUCacheEntry(bytes[i + 1]));
+//            store.Put(Bytes.Wrap(bytes[i]), bytes[i]);
+//            cache.Put(namespace, Bytes.Wrap(bytes[i + 1]), new LRUCacheEntry(bytes[i + 1]));
 //        }
 
 //        Bytes from = Bytes.Wrap(new byte[]{2});
@@ -65,15 +65,15 @@
 //            values[index++] = value;
 //            assertArrayEquals(bytes[bytesIndex++], value);
 //        }
-//        iterator.close();
+//        iterator.Close();
 //    }
 
 
 //    [Fact]
 //    public void ShouldSkipLargerDeletedCacheValue() {// throws Exception
 //        byte[][] bytes = {{0}, {1}};
-//        store.put(Bytes.Wrap(bytes[0]), bytes[0]);
-//        cache.put(namespace, Bytes.Wrap(bytes[1]), new LRUCacheEntry(null));
+//        store.Put(Bytes.Wrap(bytes[0]), bytes[0]);
+//        cache.Put(namespace, Bytes.Wrap(bytes[1]), new LRUCacheEntry(null));
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
 //        assertArrayEquals(bytes[0], iterator.MoveNext().key.Get());
 //        Assert.False(iterator.HasNext());
@@ -82,8 +82,8 @@
 //    [Fact]
 //    public void ShouldSkipSmallerDeletedCachedValue() {// throws Exception
 //        byte[][] bytes = {{0}, {1}};
-//        cache.put(namespace, Bytes.Wrap(bytes[0]), new LRUCacheEntry(null));
-//        store.put(Bytes.Wrap(bytes[1]), bytes[1]);
+//        cache.Put(namespace, Bytes.Wrap(bytes[0]), new LRUCacheEntry(null));
+//        store.Put(Bytes.Wrap(bytes[1]), bytes[1]);
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
 //        assertArrayEquals(bytes[1], iterator.MoveNext().key.Get());
 //        Assert.False(iterator.HasNext());
@@ -92,8 +92,8 @@
 //    [Fact]
 //    public void ShouldIgnoreIfDeletedInCacheButExistsInStore() {// throws Exception
 //        byte[][] bytes = {{0}};
-//        cache.put(namespace, Bytes.Wrap(bytes[0]), new LRUCacheEntry(null));
-//        store.put(Bytes.Wrap(bytes[0]), bytes[0]);
+//        cache.Put(namespace, Bytes.Wrap(bytes[0]), new LRUCacheEntry(null));
+//        store.Put(Bytes.Wrap(bytes[0]), bytes[0]);
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
 //        Assert.False(iterator.HasNext());
 //    }
@@ -103,8 +103,8 @@
 //        byte[][] bytes = {{0}, {1}, {2}};
 //        foreach (byte[] aByte in bytes) {
 //            Bytes aBytes = Bytes.Wrap(aByte);
-//            store.put(aBytes, aByte);
-//            cache.put(namespace, aBytes, new LRUCacheEntry(null));
+//            store.Put(aBytes, aByte);
+//            cache.Put(namespace, aBytes, new LRUCacheEntry(null));
 //        }
 //        Assert.False(createIterator().HasNext());
 //    }
@@ -113,7 +113,7 @@
 //    public void ShouldNotHaveNextIfOnlyCacheItemsAndAllDeleted() {// throws Exception
 //        byte[][] bytes = {{0}, {1}, {2}};
 //        foreach (byte[] aByte in bytes) {
-//            cache.put(namespace, Bytes.Wrap(aByte), new LRUCacheEntry(null));
+//            cache.Put(namespace, Bytes.Wrap(aByte), new LRUCacheEntry(null));
 //        }
 //        Assert.False(createIterator().HasNext());
 //    }
@@ -123,14 +123,14 @@
 //        byte[][] bytes = {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}};
 //        foreach (byte[] aByte in bytes) {
 //            Bytes aBytes = Bytes.Wrap(aByte);
-//            store.put(aBytes, aByte);
-//            cache.put(namespace, aBytes, new LRUCacheEntry(aByte));
+//            store.Put(aBytes, aByte);
+//            cache.Put(namespace, aBytes, new LRUCacheEntry(aByte));
 //        }
-//        cache.put(namespace, Bytes.Wrap(bytes[1]), new LRUCacheEntry(null));
-//        cache.put(namespace, Bytes.Wrap(bytes[2]), new LRUCacheEntry(null));
-//        cache.put(namespace, Bytes.Wrap(bytes[3]), new LRUCacheEntry(null));
-//        cache.put(namespace, Bytes.Wrap(bytes[8]), new LRUCacheEntry(null));
-//        cache.put(namespace, Bytes.Wrap(bytes[11]), new LRUCacheEntry(null));
+//        cache.Put(namespace, Bytes.Wrap(bytes[1]), new LRUCacheEntry(null));
+//        cache.Put(namespace, Bytes.Wrap(bytes[2]), new LRUCacheEntry(null));
+//        cache.Put(namespace, Bytes.Wrap(bytes[3]), new LRUCacheEntry(null));
+//        cache.Put(namespace, Bytes.Wrap(bytes[8]), new LRUCacheEntry(null));
+//        cache.Put(namespace, Bytes.Wrap(bytes[11]), new LRUCacheEntry(null));
 
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
 //        assertArrayEquals(bytes[0], iterator.MoveNext().key.Get());
@@ -150,8 +150,8 @@
 //        ThreadCache cache = new ThreadCache(new LogContext("testCache "), 1000000L, new MockStreamsMetrics(new Metrics()));
 //        byte[][] bytes = {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}};
 //        for (int i = 0; i < bytes.Length - 1; i += 2) {
-//            kv.put(Bytes.Wrap(bytes[i]), bytes[i]);
-//            cache.put(namespace, Bytes.Wrap(bytes[i + 1]), new LRUCacheEntry(bytes[i + 1]));
+//            kv.Put(Bytes.Wrap(bytes[i]), bytes[i]);
+//            cache.Put(namespace, Bytes.Wrap(bytes[i + 1]), new LRUCacheEntry(bytes[i + 1]));
 //        }
 
 //        Bytes from = Bytes.Wrap(new byte[]{2});
@@ -172,12 +172,12 @@
 //            assertArrayEquals(bytes[bytesIndex++], keys);
 //            iterator.MoveNext();
 //        }
-//        iterator.close();
+//        iterator.Close();
 //    }
 
 //    private MergedSortedCacheKeyValueBytesStoreIterator CreateIterator() {
-//        ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.all(namespace);
-//        IKeyValueIterator<Bytes, byte[]> storeIterator = new DelegatingPeekingKeyValueIterator<>("store", store.all());
+//        ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.All(namespace);
+//        IKeyValueIterator<Bytes, byte[]> storeIterator = new DelegatingPeekingKeyValueIterator<>("store", store.All());
 //        return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
 //    }
 //}

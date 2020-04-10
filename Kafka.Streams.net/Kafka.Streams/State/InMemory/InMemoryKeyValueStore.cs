@@ -7,20 +7,20 @@
 //{
 //    public class InMemoryKeyValueStore<K, V> : IKeyValueStore<Bytes, byte[]>
 //    {
-//        private string name;
+//        private string Name;
 //        private ConcurrentDictionary<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
 //        private volatile bool open = false;
 
 //        private static ILogger LOG = new LoggerFactory().CreateLogger<InMemoryKeyValueStore>();
 
-//        public InMemoryKeyValueStore(string name)
+//        public InMemoryKeyValueStore(string Name)
 //        {
-//            this.name = name;
+//            this.Name = Name;
 //        }
 
-//        public override string name { get; }
+//        public override string Name { get; }
 
-//        public override void init(IProcessorContext<K, V> context,
+//        public override void Init(IProcessorContext context,
 //                         IStateStore root)
 //        {
 
@@ -36,7 +36,7 @@
 //        }
 //        else
 //        {
-//            put(Bytes.Wrap(key), value);
+//            Put(Bytes.Wrap(key), value);
 //        }
 //    });
 //            }
@@ -44,12 +44,12 @@
 //            open = true;
 //        }
 
-//        public override bool persistent()
+//        public override bool Persistent()
 //        {
 //            return false;
 //        }
 
-//        public override bool isOpen()
+//        public override bool IsOpen()
 //        {
 //            return open;
 //        }
@@ -59,7 +59,7 @@
 //            return map[key];
 //        }
 
-//        public override void put(Bytes key, byte[] value)
+//        public override void Put(Bytes key, byte[] value)
 //        {
 //            if (value == null)
 //            {
@@ -76,7 +76,7 @@
 //            byte[] originalValue = get(key);
 //            if (originalValue == null)
 //            {
-//                put(key, value);
+//                Put(key, value);
 //            }
 //            return originalValue;
 //        }
@@ -85,7 +85,7 @@
 //        {
 //            foreach (KeyValuePair<Bytes, byte[]> entry in entries)
 //            {
-//                put(entry.key, entry.value);
+//                Put(entry.key, entry.value);
 //            }
 //        }
 
@@ -99,21 +99,21 @@
 
 //            if (from.CompareTo(to) > 0)
 //            {
-//                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+//                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
 //                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
 //                    "Note that the built-in numerical serdes do not follow this for negative numbers");
 //                return KeyValueIterators.emptyIterator();
 //            }
 
 //            return new DelegatingPeekingKeyValueIterator<>(
-//                name,
+//                Name,
 //                new InMemoryKeyValueIterator(map.subMap(from, true, to, true).iterator()));
 //        }
 
-//        public override IKeyValueIterator<Bytes, byte[]> all()
+//        public override IKeyValueIterator<Bytes, byte[]> All()
 //        {
 //            return new DelegatingPeekingKeyValueIterator<>(
-//                name,
+//                Name,
 //                new InMemoryKeyValueIterator(map.iterator()));
 //        }
 
@@ -122,12 +122,12 @@
 //            return map.size();
 //        }
 
-//        public override void flush()
+//        public override void Flush()
 //        {
 //            // do-nothing since it is in-memory
 //        }
 
-//        public override void close()
+//        public override void Close()
 //        {
 //            map.clear();
 //            open = false;

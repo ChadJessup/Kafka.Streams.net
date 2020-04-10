@@ -2,9 +2,13 @@
 
 namespace Kafka.Streams.State
 {
-    public interface IStateSerdes<K, V>
+    public interface IStateSerdes
     {
         string Topic { get; }
+    }
+
+    public interface IStateSerdes<K, V> : IStateSerdes
+    {
         IDeserializer<K> KeyDeserializer();
         K KeyFrom(byte[] rawKey);
         ISerializer<K> KeySerializer();

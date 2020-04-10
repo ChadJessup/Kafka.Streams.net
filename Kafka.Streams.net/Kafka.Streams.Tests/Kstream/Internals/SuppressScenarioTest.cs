@@ -328,7 +328,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //public void shouldSupportFinalResultsForTimeWindows()
 //{
 //    var builder = new StreamsBuilder();
-//    IKTable<Windowed<string>, long> valueCounts = builder
+//    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(1L)))
@@ -336,11 +336,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
@@ -381,7 +381,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //public void shouldSupportFinalResultsForTimeWindowsWithLargeJump()
 //{
 //    var builder = new StreamsBuilder();
-//    IKTable<Windowed<string>, long> valueCounts = builder
+//    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(2L)))
@@ -389,11 +389,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
@@ -438,7 +438,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //public void shouldSupportFinalResultsForSessionWindows()
 //{
 //    var builder = new StreamsBuilder();
-//    IKTable<Windowed<string>, long> valueCounts = builder
+//    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(0L)))
@@ -446,11 +446,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
@@ -465,9 +465,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 1L));
 //    // any record in the same partition advances stream time (note the key is different)
 //    driver.PipeInput(recordFactory.Create("input", "k2", "v1", 6L));
-//    // late event for first window - this should get dropped from all streams, since the first window is now closed.
+//    // late event for first window - this should get dropped from All streams, since the first window is now closed.
 //    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 5L));
-//    // just pushing stream time forward to flush the other events through.
+//    // just pushing stream time forward to Flush the other events through.
 //    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 30L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
@@ -547,7 +547,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 
 //            driver.PipeInput(recordFactory.Create("right", "tick", "tick", 10L));
-//    // flush buffer
+//    // Flush buffer
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
 //               asList(
@@ -641,7 +641,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 
 //            driver.PipeInput(recordFactory.Create("left", "tick", "tick", 10L));
-//        // flush buffer
+//        // Flush buffer
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
 //               asList(

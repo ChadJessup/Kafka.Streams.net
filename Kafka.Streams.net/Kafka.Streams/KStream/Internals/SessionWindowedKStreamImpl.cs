@@ -19,12 +19,12 @@
 //            SessionWindows windows,
 //            InternalStreamsBuilder builder,
 //            HashSet<string> sourceNodes,
-//            string name,
+//            string Name,
 //            ISerde<K> keySerde,
 //            ISerde<V> valSerde,
 //            GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
 //            StreamsGraphNode streamsGraphNode)
-//            : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
+//            : base(Name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
 //        {
 //            windows = windows ?? throw new ArgumentNullException(nameof(windows));
 //            this.windows = windows;
@@ -32,18 +32,18 @@
 //        }
 
 
-//        public IKTable<Windowed<K>, long> count()
+//        public IKTable<IWindowed<K>, long> count()
 //        {
 //            return doCount(Materialized.with(keySerde, Serdes.Long()));
 //        }
 
 
-//        public IKTable<Windowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
+//        public IKTable<IWindowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
 //        {
 //            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
 //            // TODO: Remove this when we do a topology-incompatible release
-//            // we used to burn a topology name here, so we have to keep doing it for compatibility
+//            // we used to burn a topology Name here, so we have to keep doing it for compatibility
 //            if (new MaterializedInternal<>(materialized).storeName() == null)
 //            {
 //                builder.newStoreName(AGGREGATE_NAME);
@@ -52,7 +52,7 @@
 //            return doCount(materialized);
 //        }
 
-//        private IKTable<Windowed<K>, long> doCount(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
+//        private IKTable<IWindowed<K>, long> doCount(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
 //        {
 //            MaterializedInternal<K, long, ISessionStore<Bytes, byte[]>> materializedInternal =
 //               new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
@@ -80,13 +80,13 @@
 //        }
 
 
-//        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer)
+//        public IKTable<IWindowed<K>, V> reduce(IReducer<V> reducer)
 //        {
 //            return reduce(reducer, Materialized.with(keySerde, valSerde));
 //        }
 
 
-//        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer,
+//        public IKTable<IWindowed<K>, V> reduce(IReducer<V> reducer,
 //                                              Materialized<K, V, ISessionStore<Bytes, byte[]>> materialized)
 //        {
 //            reducer = reducer ?? throw new ArgumentNullException(nameof(reducer));
@@ -119,7 +119,7 @@
 //        }
 
 
-//        public IKTable<Windowed<K>, T> aggregate<T>(
+//        public IKTable<IWindowed<K>, T> aggregate<T>(
 //            IInitializer<T> initializer,
 //            IAggregator<K, V, T> aggregator,
 //            IMerger<K, T> sessionMerger)
@@ -128,7 +128,7 @@
 //        }
 
 
-//        public IKTable<Windowed<K>, VR> aggregate<VR>(
+//        public IKTable<IWindowed<K>, VR> aggregate<VR>(
 //            IInitializer<VR> initializer,
 //            IAggregator<K, V, VR> aggregator,
 //            IMerger<K, VR> sessionMerger,

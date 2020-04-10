@@ -38,12 +38,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override string ToString()
             => "BaseRepartitionNode{" +
-                    $"keySerde={KeySerde}" +
-                    $", valueSerde={ValueSerde}" +
-                    $", sinkName='{SinkName}'" +
-                    $", sourceName='{SourceName}'" +
-                    $", repartitionTopic='{RepartitionTopic}'" +
-                    $", processorParameters={ProcessorParameters}" +
+                    $"keySerde={this.KeySerde}" +
+                    $", valueSerde={this.ValueSerde}" +
+                    $", sinkName='{this.SinkName}'" +
+                    $", sourceName='{this.SourceName}'" +
+                    $", repartitionTopic='{this.RepartitionTopic}'" +
+                    $", processorParameters={this.ProcessorParameters}" +
                     $"}} {base.ToString()}";
     }
 }

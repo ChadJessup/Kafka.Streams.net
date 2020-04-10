@@ -7,7 +7,7 @@ namespace Kafka.Streams.State.Interfaces
      *
      * When calling {@link org.apache.kafka.streams.KafkaStreams#setGlobalStateRestoreListener(StateRestoreListener)}
      * the passed instance is expected to be stateless since the {@code StateRestoreListener} is shared
-     * across all {@link org.apache.kafka.streams.processor.Internals.KafkaStreamThread} instances.
+     * across All {@link org.apache.kafka.streams.processor.Internals.KafkaStreamThread} instances.
      *
      * Users desiring stateful operations will need to provide synchronization internally in
      * the {@code StateRestorerListener} implementation.
@@ -24,7 +24,7 @@ namespace Kafka.Streams.State.Interfaces
          * Method called at the very beginning of {@link IStateStore} restoration.
          *
          * @param topicPartition the TopicPartition containing the values to restore
-         * @param storeName      the name of the store undergoing restoration
+         * @param storeName      the Name of the store undergoing restoration
          * @param startingOffset the starting offset of the entire restoration process for this TopicPartition
          * @param endingOffset   the exclusive ending offset of the entire restoration process for this TopicPartition
          */
@@ -45,7 +45,7 @@ namespace Kafka.Streams.State.Interfaces
          * If you need to do any extended processing or connecting to an external service consider doing so asynchronously.
          *
          * @param topicPartition the TopicPartition containing the values to restore
-         * @param storeName the name of the store undergoing restoration
+         * @param storeName the Name of the store undergoing restoration
          * @param batchEndOffset the inclusive ending offset for the current restored batch for this TopicPartition
          * @param numRestored the total number of records restored in this batch for this TopicPartition
          */
@@ -59,7 +59,7 @@ namespace Kafka.Streams.State.Interfaces
          * Method called when restoring the {@link IStateStore} is complete.
          *
          * @param topicPartition the TopicPartition containing the values to restore
-         * @param storeName the name of the store just restored
+         * @param storeName the Name of the store just restored
          * @param totalRestored the total number of records restored for this TopicPartition
          */
         void OnRestoreEnd(

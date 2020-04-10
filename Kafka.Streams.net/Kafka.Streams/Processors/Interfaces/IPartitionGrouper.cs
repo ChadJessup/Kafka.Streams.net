@@ -23,7 +23,7 @@ namespace Kafka.Streams.Processors
          * task should always be the same regardless of the input parameters to this function. This is to ensure task's
          * local state stores remain valid through workload rebalances among Kafka Streams instances.
          *
-         * The default partition grouper : this interface by assigning all partitions across different topics with the same
+         * The default partition grouper : this interface by assigning All partitions across different topics with the same
          * partition id into the same task. See {@link DefaultPartitionGrouper} for more information.
          *
          * @param topicGroups The map from the topic group id to topics

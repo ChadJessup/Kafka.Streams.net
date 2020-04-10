@@ -49,7 +49,7 @@
 //        // we double the value passed to `time.sleep` in each iteration in one of the map functions, so we disable
 //        // expiration of connections by the brokers to avoid errors when `AdminClient` sends requests after potentially
 //        // very long sleep times
-//        //brokerProps.put(KafkaConfig$.MODULE$.ConnectionsMaxIdleMsProp(), -1L);
+//        //brokerProps.Put(KafkaConfig$.MODULE$.ConnectionsMaxIdleMsProp(), -1L);
 //        //CLUSTER = new EmbeddedKafkaCluster(1, brokerProps);
 
 //        Dictionary<string, object> GetClientSslConfig()

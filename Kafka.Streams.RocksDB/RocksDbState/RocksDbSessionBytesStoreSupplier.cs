@@ -7,20 +7,20 @@
 //{
 //    public class RocksDbSessionBytesStoreSupplier : ISessionBytesStoreSupplier
 //    {
-//        private string name;
+//        private string Name;
 //        public long retentionPeriod { get; }
 
-//        public RocksDbSessionBytesStoreSupplier(string name,
+//        public RocksDbSessionBytesStoreSupplier(string Name,
 //                                                long retentionPeriod)
 //        {
-//            this.name = name;
+//            this.Name = Name;
 //            this.retentionPeriod = retentionPeriod;
 //        }
 
 //        public ISessionStore<Bytes, byte[]> get()
 //        {
 //            RocksDbSegmentedBytesStore segmented = new RocksDbSegmentedBytesStore(
-//                name,
+//                Name,
 //                metricsScope(),
 //                retentionPeriod,
 //                segmentIntervalMs(),

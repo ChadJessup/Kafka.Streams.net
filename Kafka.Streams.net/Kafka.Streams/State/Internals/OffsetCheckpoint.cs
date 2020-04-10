@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.Internals
         public OffsetCheckpoint(FileInfo file)
         {
             this.file = file;
-            lockObject = new object();
+            this.lockObject = new object();
         }
 
         /**
@@ -51,28 +51,28 @@ namespace Kafka.Streams.State.Internals
                 return;
             }
 
-            lock (lockObject)
+            lock (this.lockObject)
             {
                 // write to temp file and then swap with the existing file
-                FileStream temp = File.OpenWrite(file.FullName + ".tmp");
+                FileStream temp = File.OpenWrite(this.file.FullName + ".tmp");
                 LOG.LogTrace("Writing tmp checkpoint file {}", temp.Name);
 
                 var fileOutputStream = new FileStream(temp.SafeFileHandle, FileAccess.Write);
                 using var writer = new StreamWriter(fileOutputStream, System.Text.Encoding.UTF8);
 
-                WriteIntLine(writer, VERSION);
-                WriteIntLine(writer, offsets.Count);
+                this.WriteIntLine(writer, VERSION);
+                this.WriteIntLine(writer, offsets.Count);
 
                 foreach (var entry in offsets)
                 {
-                    WriteEntry(writer, entry.Key, entry.Value);
+                    this.WriteEntry(writer, entry.Key, entry.Value);
                 }
 
                 writer.Flush();
                 //fileOutputStream.getFD().sync();
 
-                LOG.LogTrace("Swapping tmp checkpoint file {} {}", temp.Name, file.FullName);
-                File.Move(temp.Name, file.FullName);
+                LOG.LogTrace("Swapping tmp checkpoint file {} {}", temp.Name, this.file.FullName);
+                File.Move(temp.Name, this.file.FullName);
             }
         }
 
@@ -108,17 +108,17 @@ namespace Kafka.Streams.State.Internals
          */
         public Dictionary<TopicPartition, long> Read()
         {
-            lock (lockObject)
+            lock (this.lockObject)
             {
                 try
                 {
-                    using var reader = new StreamReader(file.FullName);
+                    using var reader = new StreamReader(this.file.FullName);
 
-                    var version = ReadInt(reader);
+                    var version = this.ReadInt(reader);
                     switch (version)
                     {
                         case 0:
-                            var expectedSize = ReadInt(reader);
+                            var expectedSize = this.ReadInt(reader);
                             var offsets = new Dictionary<TopicPartition, long>();
                             var line = reader.ReadLine();
 
@@ -174,12 +174,12 @@ namespace Kafka.Streams.State.Internals
          */
         public void Delete()
         {
-            file.Delete();
+            this.file.Delete();
         }
 
         public override string ToString()
         {
-            return file.FullName;
+            return this.file.FullName;
         }
     }
 }

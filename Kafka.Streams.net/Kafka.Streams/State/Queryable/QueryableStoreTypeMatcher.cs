@@ -15,7 +15,7 @@ namespace Kafka.Streams.State.Queryable
 
         public bool Accepts(IStateStore stateStore)
         {
-            foreach (var matchToClass in matchTo)
+            foreach (var matchToClass in this.matchTo)
             {
                 if (!matchToClass.IsAssignableFrom(stateStore.GetType()))
                 {

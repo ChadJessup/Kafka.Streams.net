@@ -4,7 +4,7 @@ namespace Kafka.Streams.Processors
 {
     /**
      * An abstract implementation of {@link IProcessor} that manages the {@link IProcessorContext} instance and provides default no-op
-     * implementation of {@link #close()}.
+     * implementation of {@link #Close()}.
      *
      * @param the type of keys
      * @param the type of values
@@ -33,7 +33,6 @@ namespace Kafka.Streams.Processors
 
         public void Process<K1, V1>(K1 key, V1 value)
         {
-            throw new System.NotImplementedException();
         }
     }
 }

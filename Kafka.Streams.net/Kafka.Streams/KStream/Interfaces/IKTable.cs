@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Interfaces
     public interface IKTable<K, V>
     {
         /**
-         * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
+         * Create a new {@code KTable} that consists of All records of this {@code KTable} which satisfy the given
          * predicate, with default serializers, deserializers, and state store.
          * All records that do not satisfy the predicate are dropped.
          * For each {@code KTable} update, the filter is evaluated based on the current update
@@ -65,7 +65,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKTable<K, V> Filter(Func<K, V, bool> predicate);
 
         /**
-         * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
+         * Create a new {@code KTable} that consists of All records of this {@code KTable} which satisfy the given
          * predicate, with default serializers, deserializers, and state store.
          * All records that do not satisfy the predicate are dropped.
          * For each {@code KTable} update, the filter is evaluated based on the current update
@@ -81,14 +81,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * is forwarded.
          *
          * @param predicate a filter {@link Predicate} that is applied to each record
-         * @param named     a {@link Named} config used to name the processor in the topology
+         * @param named     a {@link Named} config used to Name the processor in the topology
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
         IKTable<K, V> Filter(Func<K, V, bool> predicate, Named named);
 
         /**
-         * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
+         * Create a new {@code KTable} that consists of All records of this {@code KTable} which satisfy the given
          * predicate, with the {@link Serde key serde}, {@link Serde value serde}, and the underlying
          * {@link KeyValueStore materialized state storage} configured in the {@link Materialized} instance.
          * All records that do not satisfy the predicate are dropped.
@@ -110,11 +110,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * KafkaStreams streams = [] // filtering words
          * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
          * K key = "some-word";
-         * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
+         * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
          * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
          * query the value of the key on a parallel running instance of your Kafka Streams application.
-         * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
+         * The store Name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
          * <p>
          *
          * @param predicate     a filter {@link Predicate} that is applied to each record
@@ -130,7 +130,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKTableValueGetterSupplier<K, V> ValueGetterSupplier<VR>();
 
         /**
-         * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
+         * Create a new {@code KTable} that consists of All records of this {@code KTable} which satisfy the given
          * predicate, with the {@link Serde key serde}, {@link Serde value serde}, and the underlying
          * {@link KeyValueStore materialized state storage} configured in the {@link Materialized} instance.
          * All records that do not satisfy the predicate are dropped.
@@ -152,15 +152,15 @@ namespace Kafka.Streams.KStream.Interfaces
          * KafkaStreams streams = [] // filtering words
          * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
          * K key = "some-word";
-         * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
+         * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
          * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
          * query the value of the key on a parallel running instance of your Kafka Streams application.
-         * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
+         * The store Name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
          * <p>
          *
          * @param predicate     a filter {@link Predicate} that is applied to each record
-         * @param named         a {@link Named} config used to name the processor in the topology
+         * @param named         a {@link Named} config used to Name the processor in the topology
          * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
          *                      should be materialized. Cannot be {@code null}
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
@@ -171,7 +171,7 @@ namespace Kafka.Streams.KStream.Interfaces
                              Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
-         * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
+         * Create a new {@code KTable} that consists All records of this {@code KTable} which do <em>not</em> satisfy the
          * given predicate, with default serializers, deserializers, and state store.
          * All records that <em>do</em> satisfy the predicate are dropped.
          * For each {@code KTable} update, the filter is evaluated based on the current update
@@ -193,7 +193,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKTable<K, V> FilterNot(Func<K, V, bool> predicate);
 
         /**
-         * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
+         * Create a new {@code KTable} that consists All records of this {@code KTable} which do <em>not</em> satisfy the
          * given predicate, with default serializers, deserializers, and state store.
          * All records that <em>do</em> satisfy the predicate are dropped.
          * For each {@code KTable} update, the filter is evaluated based on the current update
@@ -209,14 +209,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * forwarded.
          *
          * @param predicate a filter {@link Predicate} that is applied to each record
-         * @param named     a {@link Named} config used to name the processor in the topology
+         * @param named     a {@link Named} config used to Name the processor in the topology
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
         IKTable<K, V> FilterNot(Func<K, V, bool> predicate, Named named);
 
         /**
-         * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
+         * Create a new {@code KTable} that consists All records of this {@code KTable} which do <em>not</em> satisfy the
          * given predicate, with the {@link Serde key serde}, {@link Serde value serde}, and the underlying
          * {@link KeyValueStore materialized state storage} configured in the {@link Materialized} instance.
          * All records that <em>do</em> satisfy the predicate are dropped.
@@ -238,11 +238,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * KafkaStreams streams = [] // filtering words
          * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
          * K key = "some-word";
-         * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
+         * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
          * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
          * query the value of the key on a parallel running instance of your Kafka Streams application.
-         * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
+         * The store Name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
          * <p>
          * @param predicate a filter {@link Predicate} that is applied to each record
          * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
@@ -255,7 +255,7 @@ namespace Kafka.Streams.KStream.Interfaces
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
-         * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
+         * Create a new {@code KTable} that consists All records of this {@code KTable} which do <em>not</em> satisfy the
          * given predicate, with the {@link Serde key serde}, {@link Serde value serde}, and the underlying
          * {@link KeyValueStore materialized state storage} configured in the {@link Materialized} instance.
          * All records that <em>do</em> satisfy the predicate are dropped.
@@ -277,14 +277,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * KafkaStreams streams = [] // filtering words
          * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
          * K key = "some-word";
-         * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
+         * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
          * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
          * query the value of the key on a parallel running instance of your Kafka Streams application.
-         * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
+         * The store Name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
          * <p>
          * @param predicate a filter {@link Predicate} that is applied to each record
-         * @param named     a {@link Named} config used to name the processor in the topology
+         * @param named     a {@link Named} config used to Name the processor in the topology
          * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
          *                      should be materialized. Cannot be {@code null}
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
@@ -350,7 +350,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * delete the corresponding record in the result {@code KTable}.
          *
          * @param mapper a {@link ValueMapper} that computes a new output value
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
@@ -416,7 +416,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * delete the corresponding record in the result {@code KTable}.
          *
          * @param mapper a {@link ValueMapperWithKey} that computes a new output value
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
          */
@@ -448,7 +448,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
          * query the value of the key on a parallel running instance of your Kafka Streams application.
-         * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
+         * The store Name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
          * <p>
          * This operation preserves data co-location with respect to the key.
          * Thus, <em>no</em> internal data redistribution is required if a key based operator (like a join) is applied to
@@ -498,7 +498,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
          * query the value of the key on a parallel running instance of your Kafka Streams application.
-         * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
+         * The store Name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
          * <p>
          * This operation preserves data co-location with respect to the key.
          * Thus, <em>no</em> internal data redistribution is required if a key based operator (like a join) is applied to
@@ -511,7 +511,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * delete the corresponding record in the result {@code KTable}.
          *
          * @param mapper a {@link ValueMapper} that computes a new output value
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
          *                      should be materialized. Cannot be {@code null}
          * @param   the value type of the result {@code KTable}
@@ -547,7 +547,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
          * query the value of the key on a parallel running instance of your Kafka Streams application.
-         * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
+         * The store Name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
          * <p>
          * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
          * This operation preserves data co-location with respect to the key.
@@ -595,7 +595,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
          * query the value of the key on a parallel running instance of your Kafka Streams application.
-         * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
+         * The store Name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
          * <p>
          * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
          * This operation preserves data co-location with respect to the key.
@@ -609,7 +609,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * delete the corresponding record in the result {@code KTable}.
          *
          * @param mapper a {@link ValueMapperWithKey} that computes a new output value
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
          *                      should be materialized. Cannot be {@code null}
          * @param   the value type of the result {@code KTable}
@@ -636,7 +636,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Note that this is a logical operation and only changes the "interpretation" of the stream, i.e., each record of
          * this changelog stream is no longer treated as an updated record (cf. {@link KStream} vs {@code KTable}).
          *
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          *
          * @return a {@link KStream} that contains the same records as this {@code KTable}
          */
@@ -693,7 +693,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * each record of this changelog stream is no longer treated as an updated record (cf. {@link KStream} vs {@code KTable}).
          *
          * @param mapper a {@link KeyValueMapper} that computes a new key for each record
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param the new key type of the result stream
          * @return a {@link KStream} that contains the same records as this {@code KTable}
          */
@@ -752,7 +752,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private KeyValueStore<string, string> state;
          *
-         *             void init(IProcessorContext<K, V> context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
          *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
@@ -764,7 +764,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new NewValueType(readOnlyKey); // or null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -831,7 +831,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private KeyValueStore<string, string> state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
          *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
@@ -843,7 +843,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new NewValueType(readOnlyKey); // or null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -859,7 +859,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                            {@link ValueTransformerWithKey}.
          *                            At least one transformer instance will be created per streaming task.
          *                            Transformers do not need to be thread-safe.
-         * @param named               a {@link Named} config used to name the processor in the topology
+         * @param named               a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames     the names of the state stores used by the processor
          * @param                the value type of the result table
          * @return a {@code KTable} that contains records with unmodified key and new values (possibly of different type)
@@ -881,7 +881,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and.Additional
          * periodic actions can be performed.
          * The resulting {@code KTable} is materialized into another state store .Additional to the provided state store names)
-         * as specified by the user via {@link Materialized} parameter, and is queryable through its given name.
+         * as specified by the user via {@link Materialized} parameter, and is queryable through its given Name.
          * <p>
          * In order to assign a state, the state must be created and registered beforehand:
          * <pre>{@code
@@ -914,7 +914,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private KeyValueStore<string, string> state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
          *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
@@ -926,7 +926,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new NewValueType(readOnlyKey); // or null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -966,7 +966,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and.Additional
          * periodic actions can be performed.
          * The resulting {@code KTable} is materialized into another state store .Additional to the provided state store names)
-         * as specified by the user via {@link Materialized} parameter, and is queryable through its given name.
+         * as specified by the user via {@link Materialized} parameter, and is queryable through its given Name.
          * <p>
          * In order to assign a state, the state must be created and registered beforehand:
          * <pre>{@code
@@ -999,7 +999,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private KeyValueStore<string, string> state;
          *
-         *             void init(IProcessorContext context)
+         *             void Init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
          *                 context.schedule(TimeSpan.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
@@ -1011,7 +1011,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 return new NewValueType(readOnlyKey); // or null
          *             }
          *
-         *             void close()
+         *             void Close()
 {
          *                 // can access this.state
          *             }
@@ -1030,7 +1030,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param materialized        an instance of {@link Materialized} used to describe how the state store of the
          *                            resulting table should be materialized.
          *                            Cannot be {@code null}
-         * @param named               a {@link Named} config used to name the processor in the topology
+         * @param named               a {@link Named} config used to Name the processor in the topology
          * @param stateStoreNames     the names of the state stores used by the processor
          * @param                the value type of the result table
          * @return a {@code KTable} that contains records with unmodified key and new values (possibly of different type)
@@ -1053,15 +1053,15 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the new record key is {@code null} the record will not be included in the resulting {@link KGroupedTable}
          * <p>
          * Because a new key is selected, an internal repartitioning topic will be created in Kafka.
-         * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is
-         * an internally generated name, and "-repartition" is a fixed suffix.
+         * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
+         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is
+         * an internally generated Name, and "-repartition" is a fixed suffix.
          *
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * <p>
-         * All data of this {@code KTable} will be redistributed through the repartitioning topic by writing all update
-         * records to and rereading all updated records from it, such that the resulting {@link KGroupedTable} is partitioned
+         * All data of this {@code KTable} will be redistributed through the repartitioning topic by writing All update
+         * records to and rereading All updated records from it, such that the resulting {@link KGroupedTable} is partitioned
          * on the new key.
          * <p>
          * If the key or value type is changed, it is recommended to use {@link #groupBy(KeyValueMapper, Grouped)}
@@ -1085,15 +1085,15 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the new record key is {@code null} the record will not be included in the resulting {@link KGroupedTable}
          * <p>
          * Because a new key is selected, an internal repartitioning topic will be created in Kafka.
-         * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;name&gt;" is
-         * an internally generated name, and "-repartition" is a fixed suffix.
+         * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
+         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is
+         * an internally generated Name, and "-repartition" is a fixed suffix.
          *
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * <p>
-         * All data of this {@code KTable} will be redistributed through the repartitioning topic by writing all update
-         * records to and rereading all updated records from it, such that the resulting {@link KGroupedTable} is partitioned
+         * All data of this {@code KTable} will be redistributed through the repartitioning topic by writing All update
+         * records to and rereading All updated records from it, such that the resulting {@link KGroupedTable} is partitioned
          * on the new key.
          *
          * @param selector      a {@link KeyValueMapper} that computes a new grouping key and value to be aggregated
@@ -1120,21 +1120,21 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the new record key is {@code null} the record will not be included in the resulting {@link KGroupedTable}
          * <p>
          * Because a new key is selected, an internal repartitioning topic will be created in Kafka.
-         * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},  "&lt;name&gt;" is
-         * either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an internally generated name.
+         * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
+         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},  "&lt;Name&gt;" is
+         * either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an internally generated Name.
          *
          * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
+         * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * <p>
-         * All data of this {@code KTable} will be redistributed through the repartitioning topic by writing all update
-         * records to and rereading all updated records from it, such that the resulting {@link KGroupedTable} is partitioned
+         * All data of this {@code KTable} will be redistributed through the repartitioning topic by writing All update
+         * records to and rereading All updated records from it, such that the resulting {@link KGroupedTable} is partitioned
          * on the new key.
          *
          * @param selector      a {@link KeyValueMapper} that computes a new grouping key and value to be aggregated
          * @param grouped       the {@link Grouped} instance used to specify {@link org.apache.kafka.common.serialization.Serdes}
-         *                      and the name for a repartition topic if repartitioning is required.
+         *                      and the Name for a repartition topic if repartitioning is required.
          * @param          the key type of the result {@link KGroupedTable}
          * @param          the value type of the result {@link KGroupedTable}
          * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
@@ -1283,7 +1283,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param other  the other {@code KTable} to be joined with this {@code KTable}
          * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the value type of the other {@code KTable}
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains join-records for each key and values computed by the given
@@ -1442,7 +1442,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param other         the other {@code KTable} to be joined with this {@code KTable}
          * @param joiner        a {@link ValueJoiner} that computes the join result for a pair of matching records
-         * @param named         a {@link Named} config used to name the processor in the topology
+         * @param named         a {@link Named} config used to Name the processor in the topology
          * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
          *                      Cannot be {@code null}
          * @param          the value type of the other {@code KTable}
@@ -1462,7 +1462,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
          * non-windowed left equi join, with default serializers, deserializers, and state store.
          * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
-         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, all records from left {@code KTable} will produce
+         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, All records from left {@code KTable} will produce
          * an output record (cf. below).
          * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
          * of the join.
@@ -1545,7 +1545,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
          * non-windowed left equi join, with default serializers, deserializers, and state store.
          * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
-         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, all records from left {@code KTable} will produce
+         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, All records from left {@code KTable} will produce
          * an output record (cf. below).
          * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
          * of the join.
@@ -1612,7 +1612,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param other  the other {@code KTable} to be joined with this {@code KTable}
          * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the value type of the other {@code KTable}
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains join-records for each key and values computed by the given
@@ -1631,7 +1631,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * non-windowed left equi join, with the {@link Materialized} instance for configuration of the {@link Serde key serde},
          * {@link Serde the result table's value serde}, and {@link KeyValueStore state store}.
          * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
-         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, all records from left {@code KTable} will produce
+         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, All records from left {@code KTable} will produce
          * an output record (cf. below).
          * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
          * of the join.
@@ -1718,7 +1718,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * non-windowed left equi join, with the {@link Materialized} instance for configuration of the {@link Serde key serde},
          * {@link Serde the result table's value serde}, and {@link KeyValueStore state store}.
          * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
-         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, all records from left {@code KTable} will produce
+         * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, All records from left {@code KTable} will produce
          * an output record (cf. below).
          * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
          * of the join.
@@ -1785,7 +1785,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param other         the other {@code KTable} to be joined with this {@code KTable}
          * @param joiner        a {@link ValueJoiner} that computes the join result for a pair of matching records
-         * @param named         a {@link Named} config used to name the processor in the topology
+         * @param named         a {@link Named} config used to Name the processor in the topology
          * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
          *                      Cannot be {@code null}
          * @param          the value type of the other {@code KTable}
@@ -1806,7 +1806,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * non-windowed outer equi join, with default serializers, deserializers, and state store.
          * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
          * In contrast to {@link #join(KTable, ValueJoiner) inner-join} or {@link #leftJoin(KTable, ValueJoiner) left-join},
-         * all records from both input {@code KTable}s will produce an output record (cf. below).
+         * All records from both input {@code KTable}s will produce an output record (cf. below).
          * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
          * of the join.
          * <p>
@@ -1888,7 +1888,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * non-windowed outer equi join, with default serializers, deserializers, and state store.
          * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
          * In contrast to {@link #join(KTable, ValueJoiner) inner-join} or {@link #leftJoin(KTable, ValueJoiner) left-join},
-         * all records from both input {@code KTable}s will produce an output record (cf. below).
+         * All records from both input {@code KTable}s will produce an output record (cf. below).
          * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
          * of the join.
          * <p>
@@ -1953,7 +1953,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param other  the other {@code KTable} to be joined with this {@code KTable}
          * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
-         * @param named  a {@link Named} config used to name the processor in the topology
+         * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the value type of the other {@code KTable}
          * @param   the value type of the result {@code KTable}
          * @return a {@code KTable} that contains join-records for each key and values computed by the given
@@ -1972,7 +1972,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link Serde the result table's value serde}, and {@link KeyValueStore state store}.
          * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
          * In contrast to {@link #join(KTable, ValueJoiner) inner-join} or {@link #leftJoin(KTable, ValueJoiner) left-join},
-         * all records from both input {@code KTable}s will produce an output record (cf. below).
+         * All records from both input {@code KTable}s will produce an output record (cf. below).
          * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
          * of the join.
          * <p>
@@ -2058,7 +2058,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link Serde the result table's value serde}, and {@link KeyValueStore state store}.
          * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
          * In contrast to {@link #join(KTable, ValueJoiner) inner-join} or {@link #leftJoin(KTable, ValueJoiner) left-join},
-         * all records from both input {@code KTable}s will produce an output record (cf. below).
+         * All records from both input {@code KTable}s will produce an output record (cf. below).
          * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
          * of the join.
          * <p>
@@ -2123,7 +2123,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param other         the other {@code KTable} to be joined with this {@code KTable}
          * @param joiner        a {@link ValueJoiner} that computes the join result for a pair of matching records
-         * @param named         a {@link Named} config used to name the processor in the topology
+         * @param named         a {@link Named} config used to Name the processor in the topology
          * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
          *                      Cannot be {@code null}
          * @param          the value type of the other {@code KTable}
@@ -2140,9 +2140,9 @@ namespace Kafka.Streams.KStream.Interfaces
                                           Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
-         * Get the name of the local state store used that can be used to query this {@code KTable}.
+         * Get the Name of the local state store used that can be used to query this {@code KTable}.
          *
-         * @return the underlying state store name, or {@code null} if this {@code KTable} cannot be queried.
+         * @return the underlying state store Name, or {@code null} if this {@code KTable} cannot be queried.
          */
         string? QueryableStoreName { get; }
     }

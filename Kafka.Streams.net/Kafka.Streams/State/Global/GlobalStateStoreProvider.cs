@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals
 
         public List<T> Stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
         {
-            IStateStore store = globalStateStores[storeName];
+            IStateStore store = this.globalStateStores[storeName];
             if (store == null || !queryableStoreType.Accepts(store))
             {
                 return new List<T>();

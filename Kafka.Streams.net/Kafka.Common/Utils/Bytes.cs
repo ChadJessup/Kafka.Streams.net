@@ -42,7 +42,7 @@ namespace Kafka.Common.Utils
             this.bytes = bytes;
 
             // initialize hash code to 0
-            hashCode = 0;
+            this.hashCode = 0;
         }
 
         /**
@@ -63,13 +63,13 @@ namespace Kafka.Common.Utils
             {
                 unchecked
                 {
-                    if (bytes == null)
+                    if (this.bytes == null)
                     {
                         return 0;
                     }
 
                     int hash = 17;
-                    foreach (var @byte in bytes)
+                    foreach (var @byte in this.bytes)
                     {
                         hash = hash * 31 + @byte.GetHashCode();
                     }
@@ -116,7 +116,7 @@ namespace Kafka.Common.Utils
 
         public override string ToString()
         {
-            return Bytes2.ToString(bytes, 0, bytes.Length);
+            return Bytes2.ToString(this.bytes, 0, this.bytes.Length);
         }
 
         /**

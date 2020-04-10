@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals
         public override IKeyValueProcessor<K, IChange<V1>> Get()
         {
             return new KTableKTableJoinProcessor<K, R, V1, V2>(
-                valueGetterSupplier2.Get(),
+                this.valueGetterSupplier2.Get(),
                 this.joiner,
                 this.storeName,
                 this.sendOldValues);
@@ -34,8 +34,8 @@ namespace Kafka.Streams.KStream.Internals
         public override IKTableValueGetterSupplier<K, R> View()
         {
             return new KTableKTableInnerJoinValueGetterSupplier<K, R, V1, V2>(
-                valueGetterSupplier1,
-                valueGetterSupplier2,
+                this.valueGetterSupplier1,
+                this.valueGetterSupplier2,
                 this.keyValueMapper,
                 this.joiner);
         }

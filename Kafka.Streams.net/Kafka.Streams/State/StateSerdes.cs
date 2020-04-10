@@ -10,9 +10,9 @@ namespace Kafka.Streams.State
     public static class StateSerdes
     {
         /**
-        * Create a new instance of {@link StateSerdes} for the given state name and key-/value-type classes.
+        * Create a new instance of {@link StateSerdes} for the given state Name and key-/value-type classes.
         *
-        * @param topic      the topic name
+        * @param topic      the topic Name
         * @param keyClass   the class of the key type
         * @param valueClass the class of the value type
         * @param <K>        the key type
@@ -44,9 +44,9 @@ namespace Kafka.Streams.State
          * Create a context for serialization using the specified serializers and deserializers which
          * <em>must</em> match the key and value types used as parameters for this object; the state changelog topic
          * is provided to bind this serde factory to, so that future calls for serialize / deserialize do not
-         * need to provide the topic name any more.
+         * need to provide the topic Name any more.
          *
-         * @param topic         the topic name
+         * @param topic         the topic Name
          * @param keySerde      the serde for keys; cannot be null
          * @param valueSerde    the serde for values; cannot be null
          * @throws IllegalArgumentException if key or value serde is null
@@ -64,7 +64,7 @@ namespace Kafka.Streams.State
          * @return the key deserializer
          */
         public IDeserializer<K> KeyDeserializer()
-            => keySerde.Deserializer;
+            => this.keySerde.Deserializer;
 
         /**
          * Return the key serializer.
@@ -72,7 +72,7 @@ namespace Kafka.Streams.State
          * @return the key serializer
          */
         public ISerializer<K> KeySerializer()
-            => keySerde.Serializer;
+            => this.keySerde.Serializer;
 
         /**
          * Return the value deserializer.
@@ -80,7 +80,7 @@ namespace Kafka.Streams.State
          * @return the value deserializer
          */
         public IDeserializer<V> ValueDeserializer()
-            => valueSerde.Deserializer;
+            => this.valueSerde.Deserializer;
 
         /**
          * Return the value serializer.
@@ -88,7 +88,7 @@ namespace Kafka.Streams.State
          * @return the value serializer
          */
         public ISerializer<V> ValueSerializer()
-            => valueSerde.Serializer;
+            => this.valueSerde.Serializer;
 
         /**
          * Deserialize the key from raw bytes.
@@ -97,10 +97,10 @@ namespace Kafka.Streams.State
          * @return        the key as typed object
          */
         public K KeyFrom(byte[] rawKey)
-            => keySerde.Deserializer.Deserialize(
+            => this.keySerde.Deserializer.Deserialize(
                 rawKey,
                 isNull: rawKey == null,
-                new SerializationContext(MessageComponentType.Key, Topic));
+                new SerializationContext(MessageComponentType.Key, this.Topic));
 
         /**
          * Deserialize the value from raw bytes.
@@ -109,10 +109,10 @@ namespace Kafka.Streams.State
          * @return          the value as typed object
          */
         public V ValueFrom(byte[] RawValue)
-            => valueSerde.Deserializer.Deserialize(
+            => this.valueSerde.Deserializer.Deserialize(
                 RawValue,
                 RawValue == null,
-                new SerializationContext(MessageComponentType.Value, Topic));
+                new SerializationContext(MessageComponentType.Value, this.Topic));
 
         /**
          * Serialize the given key.
@@ -124,7 +124,7 @@ namespace Kafka.Streams.State
         {
             try
             {
-                return keySerde.Serializer.Serialize(key, new SerializationContext(MessageComponentType.Key, Topic));
+                return this.keySerde.Serializer.Serialize(key, new SerializationContext(MessageComponentType.Key, this.Topic));
             }
             catch (InvalidCastException e)
             {
@@ -133,7 +133,7 @@ namespace Kafka.Streams.State
                     : key.GetType().FullName;
 
                 throw new StreamsException(
-                        $"A serializer ({KeySerializer().GetType().FullName}) is not compatible to the actual key type " +
+                        $"A serializer ({this.KeySerializer().GetType().FullName}) is not compatible to the actual key type " +
                         $"(key type: {keyClass}). Change the default Serdes in StreamConfig or " +
                         "provide correct Serdes via method parameters.", e);
             }
@@ -149,20 +149,20 @@ namespace Kafka.Streams.State
         {
             try
             {
-                return valueSerde.Serializer.Serialize(value, new SerializationContext(MessageComponentType.Value, Topic));
+                return this.valueSerde.Serializer.Serialize(value, new SerializationContext(MessageComponentType.Value, this.Topic));
             }
             catch (InvalidCastException e)
             {
                 string valueClass;
                 Type serializerClass;
-                if (ValueSerializer() is ValueAndTimestampSerializer<V>)
+                if (this.ValueSerializer() is ValueAndTimestampSerializer<V>)
                 {
-                    serializerClass = ((ValueAndTimestampSerializer<V>)ValueSerializer()).valueSerializer.GetType();
+                    serializerClass = ((ValueAndTimestampSerializer<V>)this.ValueSerializer()).valueSerializer.GetType();
                     valueClass = value == null ? "unknown because value is null" : value.GetType().FullName;
                 }
                 else
                 {
-                    serializerClass = ValueSerializer().GetType();
+                    serializerClass = this.ValueSerializer().GetType();
                     valueClass = value == null ? "unknown because value is null" : value.GetType().FullName;
                 }
 

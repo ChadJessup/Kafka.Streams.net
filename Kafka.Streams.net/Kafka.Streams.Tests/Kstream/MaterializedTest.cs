@@ -13,8 +13,8 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void ShouldAllowValidTopicNamesAsStoreName()
         {
-            Materialized.As<string, string>("valid-name");
-            Materialized.As<string, string>("valid.name");
+            Materialized.As<string, string>("valid-Name");
+            Materialized.As<string, string>("valid.Name");
             Materialized.As<string, string>("valid_name");
         }
 

@@ -10,7 +10,7 @@
 //        [Fact]// (expected = StreamsException)
 //        public void ShouldThrowStreamsExceptionIfExceptionCaughtDuringInit()
 //        {
-//            ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
+//            ProcessorNode node = new ProcessorNode("Name", new ExceptionalProcessor(), Collections.emptySet());
 //            node.Init(null);
 //        }
 
@@ -18,8 +18,8 @@
 //        [Fact]// (expected = StreamsException)
 //        public void ShouldThrowStreamsExceptionIfExceptionCaughtDuringClose()
 //        {
-//            ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
-//            node.close();
+//            ProcessorNode node = new ProcessorNode("Name", new ExceptionalProcessor(), Collections.emptySet());
+//            node.Close();
 //        }
 
 //        private static class ExceptionalProcessor : Processor
@@ -81,16 +81,16 @@
 //                metrics
 //            );
             
-//            ProcessorNode<object, object> node = new ProcessorNode<>("name", new NoOpProcessor(), Collections.< string > emptySet());
+//            ProcessorNode<object, object> node = new ProcessorNode<>("Name", new NoOpProcessor(), Collections.< string > emptySet());
 //            node.Init(context);
 
 //            string[] latencyOperations = { "process", "punctuate", "Create", "destroy" };
 //            string throughputOperation = "forward";
 //            string groupName = "stream-processor-node-metrics";
 //            Dictionary<string, string> metricTags = new LinkedHashMap<>();
-//            metricTags.put("processor-node-id", node.name());
-//            metricTags.put("task-id", context.taskId().ToString());
-//            metricTags.put("client-id", "mock");
+//            metricTags.Put("processor-node-id", node.Name());
+//            metricTags.Put("task-id", context.taskId().ToString());
+//            metricTags.Put("client-id", "mock");
 
 //            foreach (string opName in latencyOperations)
 //            {
@@ -103,8 +103,8 @@
 //                                                                   "The average number of occurrence of " + throughputOperation + " operation per second.",
 //                                                                   metricTags)));
 
-//            // test "all"
-//            metricTags.put("processor-node-id", "all");
+//            // test "All"
+//            metricTags.Put("processor-node-id", "All");
 //            foreach (string opName in latencyOperations)
 //            {
 //                StreamsTestUtils.getMetricByNameFilterByTags(metrics.metrics(), opName + "-latency-avg", groupName, metricTags);
@@ -120,7 +120,7 @@
 //            JmxReporter reporter = new JmxReporter("kafka.streams");
 //            metrics.addReporter(reporter);
 //            Assert.True(reporter.containsMbean(string.format("kafka.streams:type=%s,client-id=mock,task-id=%s,processor-node-id=%s",
-//                    groupName, context.taskId().ToString(), node.name())));
+//                    groupName, context.taskId().ToString(), node.Name())));
 //        }
 
 //    }

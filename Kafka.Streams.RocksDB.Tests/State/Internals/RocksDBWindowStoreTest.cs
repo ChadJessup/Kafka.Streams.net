@@ -85,22 +85,22 @@
 //        {
 //            long currentTime = 0;
 //            setCurrentTime(currentTime);
-//            windowStore.put(1, "one");
+//            windowStore.Put(1, "one");
 
 //            currentTime = currentTime + SEGMENT_INTERVAL;
 //            setCurrentTime(currentTime);
-//            windowStore.put(1, "two");
+//            windowStore.Put(1, "two");
 //            currentTime = currentTime + SEGMENT_INTERVAL;
 
 //            setCurrentTime(currentTime);
-//            windowStore.put(1, "three");
+//            windowStore.Put(1, "three");
 
 //            IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0L, currentTime);
 
-//            // roll to the next segment that will close the first
+//            // roll to the next segment that will Close the first
 //            currentTime = currentTime + SEGMENT_INTERVAL;
 //            setCurrentTime(currentTime);
-//            windowStore.put(1, "four");
+//            windowStore.Put(1, "four");
 
 //            // should only have 2 values as the first segment is no longer open
 //            Assert.Equal(KeyValuePair.Create(SEGMENT_INTERVAL, "two"), iterator.MoveNext());
@@ -116,15 +116,15 @@
 //            long startTime = SEGMENT_INTERVAL * 2;
 //            long increment = SEGMENT_INTERVAL / 2;
 //            setCurrentTime(startTime);
-//            windowStore.put(0, "zero");
+//            windowStore.Put(0, "zero");
 //            Assert.Equal(Utils.mkSet(segments.segmentName(2)), SegmentDirs(baseDir));
 
 //            setCurrentTime(startTime + increment);
-//            windowStore.put(1, "one");
+//            windowStore.Put(1, "one");
 //            Assert.Equal(Utils.mkSet(segments.segmentName(2)), SegmentDirs(baseDir));
 
 //            setCurrentTime(startTime + increment * 2);
-//            windowStore.put(2, "two");
+//            windowStore.Put(2, "two");
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(2),
@@ -134,7 +134,7 @@
 //            );
 
 //            setCurrentTime(startTime + increment * 4);
-//            windowStore.put(4, "four");
+//            windowStore.Put(4, "four");
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(2),
@@ -145,7 +145,7 @@
 //            );
 
 //            setCurrentTime(startTime + increment * 5);
-//            windowStore.put(5, "five");
+//            windowStore.Put(5, "five");
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(2),
@@ -193,7 +193,7 @@
 //                    ofEpochMilli(startTime + increment * 5 + WINDOW_SIZE))));
 
 //            setCurrentTime(startTime + increment * 6);
-//            windowStore.put(6, "six");
+//            windowStore.Put(6, "six");
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(3),
@@ -247,7 +247,7 @@
 //                    ofEpochMilli(startTime + increment * 6 + WINDOW_SIZE))));
 
 //            setCurrentTime(startTime + increment * 7);
-//            windowStore.put(7, "seven");
+//            windowStore.Put(7, "seven");
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(3),
@@ -307,7 +307,7 @@
 //                    ofEpochMilli(startTime + increment * 7 + WINDOW_SIZE))));
 
 //            setCurrentTime(startTime + increment * 8);
-//            windowStore.put(8, "eight");
+//            windowStore.Put(8, "eight");
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(4),
@@ -373,7 +373,7 @@
 //                    ofEpochMilli(startTime + increment * 8 + WINDOW_SIZE))));
 
 //            // check segment directories
-//            windowStore.flush();
+//            windowStore.Flush();
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(4),
@@ -394,22 +394,22 @@
 
 //            context.setTime(0L);
 //            setCurrentTime(0);
-//            windowStore.put(0, "v");
+//            windowStore.Put(0, "v");
 //            Assert.Equal(
 //                Utils.mkSet(segments.segmentName(0L)),
 //                SegmentDirs(baseDir)
 //            );
 
 //            setCurrentTime(SEGMENT_INTERVAL - 1);
-//            windowStore.put(0, "v");
-//            windowStore.put(0, "v");
+//            windowStore.Put(0, "v");
+//            windowStore.Put(0, "v");
 //            Assert.Equal(
 //                Utils.mkSet(segments.segmentName(0L)),
 //                SegmentDirs(baseDir)
 //            );
 
 //            setCurrentTime(SEGMENT_INTERVAL);
-//            windowStore.put(0, "v");
+//            windowStore.Put(0, "v");
 //            Assert.Equal(
 //                Utils.mkSet(segments.segmentName(0L), segments.segmentName(1L)),
 //                SegmentDirs(baseDir)
@@ -433,7 +433,7 @@
 //            );
 
 //            setCurrentTime(SEGMENT_INTERVAL * 3);
-//            windowStore.put(0, "v");
+//            windowStore.Put(0, "v");
 
 //            iter = windowStore.Fetch(0, ofEpochMilli(0L), ofEpochMilli(SEGMENT_INTERVAL * 4));
 //            fetchedCount = 0;
@@ -450,7 +450,7 @@
 //            );
 
 //            setCurrentTime(SEGMENT_INTERVAL * 5);
-//            windowStore.put(0, "v");
+//            windowStore.Put(0, "v");
 
 //            iter = windowStore.Fetch(0, ofEpochMilli(SEGMENT_INTERVAL * 4), ofEpochMilli(SEGMENT_INTERVAL * 10));
 //            fetchedCount = 0;
@@ -481,13 +481,13 @@
 //            new File(storeDir, segments.segmentName(4L)).mkdir();
 //            new File(storeDir, segments.segmentName(5L)).mkdir();
 //            new File(storeDir, segments.segmentName(6L)).mkdir();
-//            windowStore.close();
+//            windowStore.Close();
 
 //            windowStore = buildWindowStore(RETENTION_PERIOD, WINDOW_SIZE, false, Serdes.Int(), Serdes.String());
 //            windowStore.Init(context, windowStore);
 
-//            // put something in the store to advance its stream time and expire the old segments
-//            windowStore.put(1, "v", 6L * SEGMENT_INTERVAL);
+//            // Put something in the store to advance its stream time and expire the old segments
+//            windowStore.Put(1, "v", 6L * SEGMENT_INTERVAL);
 
 //            List<string> expected = asList(
 //                segments.segmentName(4L),
@@ -525,26 +525,26 @@
 //            long increment = SEGMENT_INTERVAL / 2;
 
 //            setCurrentTime(startTime);
-//            windowStore.put(0, "zero");
+//            windowStore.Put(0, "zero");
 //            setCurrentTime(startTime + increment);
-//            windowStore.put(1, "one");
+//            windowStore.Put(1, "one");
 //            setCurrentTime(startTime + increment * 2);
-//            windowStore.put(2, "two");
+//            windowStore.Put(2, "two");
 //            setCurrentTime(startTime + increment * 3);
-//            windowStore.put(3, "three");
+//            windowStore.Put(3, "three");
 //            setCurrentTime(startTime + increment * 4);
-//            windowStore.put(4, "four");
+//            windowStore.Put(4, "four");
 //            setCurrentTime(startTime + increment * 5);
-//            windowStore.put(5, "five");
+//            windowStore.Put(5, "five");
 //            setCurrentTime(startTime + increment * 6);
-//            windowStore.put(6, "six");
+//            windowStore.Put(6, "six");
 //            setCurrentTime(startTime + increment * 7);
-//            windowStore.put(7, "seven");
+//            windowStore.Put(7, "seven");
 //            setCurrentTime(startTime + increment * 8);
-//            windowStore.put(8, "eight");
-//            windowStore.flush();
+//            windowStore.Put(8, "eight");
+//            windowStore.Flush();
 
-//            windowStore.close();
+//            windowStore.Close();
 
 //            // remove local store image
 //            Utils.delete(baseDir);
@@ -669,7 +669,7 @@
 //                    ofEpochMilli(startTime + increment * 8 + WINDOW_SIZE))));
 
 //            // check segment directories
-//            windowStore.flush();
+//            windowStore.Flush();
 //            Assert.Equal(
 //                Utils.mkSet(
 //                    segments.segmentName(4L),
@@ -681,7 +681,7 @@
 
 //        private HashSet<string> SegmentDirs(File baseDir)
 //        {
-//            File windowDir = new File(baseDir, windowStore.name());
+//            File windowDir = new File(baseDir, windowStore.Name());
 
 //            return new HashSet<>(asList(requireNonNull(windowDir.list())));
 //        }

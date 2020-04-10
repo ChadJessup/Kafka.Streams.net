@@ -73,7 +73,7 @@
 //        private Metrics metrics = new Metrics(new MetricConfig().recordLevel(Sensor.RecordingLevel.DEBUG));
 
 //    {
-//        expect(innerStoreMock.name()).andReturn("mocked-store").anyTimes();
+//        expect(innerStoreMock.Name()).andReturn("mocked-store").anyTimes();
 //    }
 
 
@@ -102,7 +102,7 @@
 //        Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
 //                "scope", "test", context.taskId().ToString(), "scope", "mocked-store")));
 //        Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
-//                "scope", "test", context.taskId().ToString(), "scope", "all")));
+//                "scope", "test", context.taskId().ToString(), "scope", "All")));
 //    }
 
 //    [Fact]
@@ -113,7 +113,7 @@
 //        replay(innerStoreMock);
 //        store.Init(context, store);
 //        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "restore-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "restore-total", "stream-scope-metrics", singletonMap("scope-id", "All")).metricValue());
 //        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "restore-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
 //    }
 
@@ -121,15 +121,15 @@
 //    public void ShouldRecordPutLatency()
 //    {
 //        byte[] bytes = "a".getBytes();
-//        innerStoreMock.put(eq(Bytes.Wrap(bytes)), anyObject(), eq(context.Timestamp));
+//        innerStoreMock.Put(eq(Bytes.Wrap(bytes)), anyObject(), eq(context.Timestamp));
 //        expectLastCall();
 //        replay(innerStoreMock);
 
 //        store.Init(context, store);
-//        store.put("a", "a");
+//        store.Put("a", "a");
 //        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "put-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "put-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Put-total", "stream-scope-metrics", singletonMap("scope-id", "All")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Put-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
 //        verify(innerStoreMock);
 //    }
 
@@ -140,51 +140,51 @@
 //        replay(innerStoreMock);
 
 //        store.Init(context, store);
-//        store.Fetch("a", ofEpochMilli(1), ofEpochMilli(1)).close(); // recorded on close;
+//        store.Fetch("a", ofEpochMilli(1), ofEpochMilli(1)).Close(); // recorded on Close;
 //        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "fetch-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "fetch-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Fetch-total", "stream-scope-metrics", singletonMap("scope-id", "All")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Fetch-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
 //        verify(innerStoreMock);
 //    }
 
 //    [Fact]
 //    public void ShouldRecordFetchRangeLatency()
 //    {
-//        expect(innerStoreMock.Fetch(Bytes.Wrap("a".getBytes()), Bytes.Wrap("b".getBytes()), 1, 1)).andReturn(KeyValueIterators.< Windowed<Bytes>, byte[] > emptyIterator());
+//        expect(innerStoreMock.Fetch(Bytes.Wrap("a".getBytes()), Bytes.Wrap("b".getBytes()), 1, 1)).andReturn(KeyValueIterators.< IWindowed<Bytes>, byte[] > emptyIterator());
 //        replay(innerStoreMock);
 
 //        store.Init(context, store);
-//        store.Fetch("a", "b", ofEpochMilli(1), ofEpochMilli(1)).close(); // recorded on close;
+//        store.Fetch("a", "b", ofEpochMilli(1), ofEpochMilli(1)).Close(); // recorded on Close;
 //        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "fetch-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "fetch-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Fetch-total", "stream-scope-metrics", singletonMap("scope-id", "All")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Fetch-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
 //        verify(innerStoreMock);
 //    }
 
 //    [Fact]
 //    public void ShouldRecordFlushLatency()
 //    {
-//        innerStoreMock.flush();
+//        innerStoreMock.Flush();
 //        expectLastCall();
 //        replay(innerStoreMock);
 
 //        store.Init(context, store);
-//        store.flush();
+//        store.Flush();
 //        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "flush-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
-//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "flush-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Flush-total", "stream-scope-metrics", singletonMap("scope-id", "All")).metricValue());
+//        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Flush-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
 //        verify(innerStoreMock);
 //    }
 
 //    [Fact]
 //    public void ShouldCloseUnderlyingStore()
 //    {
-//        innerStoreMock.close();
+//        innerStoreMock.Close();
 //        expectLastCall();
 //        replay(innerStoreMock);
 
 //        store.Init(context, store);
-//        store.close();
+//        store.Close();
 //        verify(innerStoreMock);
 //    }
 

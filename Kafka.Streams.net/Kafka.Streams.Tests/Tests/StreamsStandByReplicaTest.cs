@@ -28,17 +28,17 @@ namespace Kafka.Streams.Tests.Tests
 //            System.exit(1);
 //        }
 
-//        streamsProperties.put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-standby-tasks");
-//        streamsProperties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//        streamsProperties.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
-//        streamsProperties.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//        streamsProperties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//        streamsProperties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//        streamsProperties.put(StreamsConfig.producerPrefix(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG), true);
+//        streamsProperties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-standby-tasks");
+//        streamsProperties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//        streamsProperties.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
+//        streamsProperties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//        streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//        streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//        streamsProperties.Put(StreamsConfig.producerPrefix(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG), true);
 
 //        if (additionalConfigs == null) {
 //            System.Console.Error.println("additional configs are not provided");
-//            System.Console.Error.flush();
+//            System.Console.Error.Flush();
 //            System.exit(1);
 //        }
 
@@ -55,14 +55,14 @@ namespace Kafka.Streams.Tests.Tests
 //                sourceTopic,
 //                sinkTopic1,
 //                sinkTopic2));
-//            System.Console.Error.flush();
+//            System.Console.Error.Flush();
 //            System.exit(1);
 //        }
 
 //        streamsProperties.putAll(updated);
 
 //        if (!confirmCorrectConfigs(streamsProperties)) {
-//            System.Console.Error.println(string.format("ERROR: Did not have all required configs expected  to contain %s, %s,  %s,  %s",
+//            System.Console.Error.println(string.format("ERROR: Did not have All required configs expected  to contain %s, %s,  %s,  %s",
 //                                             StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG),
 //                                             StreamsConfig.producerPrefix(ProducerConfig.RETRIES_CONFIG),
 //                                             StreamsConfig.producerPrefix(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG),
@@ -74,7 +74,7 @@ namespace Kafka.Streams.Tests.Tests
 //        StreamsBuilder builder = new StreamsBuilder();
 
 //        string inMemoryStoreName = "in-memory-store";
-//        string persistentMemoryStoreName = "persistent-memory-store";
+//        string persistentMemoryStoreName = "Persistent-memory-store";
 
 //        IKeyValueBytesStoreSupplier inMemoryStoreSupplier = Stores.InMemoryKeyValueStore(inMemoryStoreName);
 //        IKeyValueBytesStoreSupplier persistentStoreSupplier = Stores.PersistentKeyValueStore(persistentMemoryStoreName);
@@ -95,7 +95,7 @@ namespace Kafka.Streams.Tests.Tests
 //        streams.setUncaughtExceptionHandler((t, e) => {
 //            System.Console.Error.println("FATAL: An unexpected exception " + e);
 //            e.printStackTrace(System.Console.Error);
-//            System.Console.Error.flush();
+//            System.Console.Error.Flush();
 //            shutdown(streams);
 //        });
 
@@ -120,7 +120,7 @@ namespace Kafka.Streams.Tests.Tests
 //    }
 
 //    private static void shutdown(KafkaStreams streams) {
-//        streams.close(TimeSpan.ofSeconds(10));
+//        streams.Close(TimeSpan.ofSeconds(10));
 //    }
 
 //    private static bool confirmCorrectConfigs(StreamsConfig properties) {

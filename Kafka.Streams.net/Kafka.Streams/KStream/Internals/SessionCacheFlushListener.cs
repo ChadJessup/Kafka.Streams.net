@@ -5,7 +5,7 @@
 
 //namespace Kafka.Streams.KStream.Internals
 //{
-//    public class SessionCacheFlushListener<K, V> : ICacheFlushListener<Windowed<K>, V>
+//    public class SessionCacheFlushListener<K, V> : ICacheFlushListener<IWindowed<K>, V>
 //    {
 //        private IInternalProcessorContext<K, V> context;
 //        private ProcessorNode<K, V> myNode;
@@ -17,7 +17,7 @@
 //        }
 
 
-//        public void apply(Windowed<K> key,
+//        public void apply(IWindowed<K> key,
 //                           V newValue,
 //                           V oldValue,
 //                           long timestamp)

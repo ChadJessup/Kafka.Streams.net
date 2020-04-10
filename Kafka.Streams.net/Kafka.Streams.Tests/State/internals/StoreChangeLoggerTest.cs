@@ -35,8 +35,8 @@
 //        //         ISerializer<K1> keySerializer,
 //        //         ISerializer<V1> valueSerializer)
 //        // {
-//        //     logged.put((int)key, ValueAndTimestamp.Make((string)value, timestamp));
-//        //     loggedHeaders.put((int)key, headers);
+//        //     logged.Put((int)key, ValueAndTimestamp.Make((string)value, timestamp));
+//        //     loggedHeaders.Put((int)key, headers);
 //        // }
 
 //        public void Send<K1, V1>(

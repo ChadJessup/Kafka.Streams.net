@@ -37,14 +37,14 @@ namespace Kafka.Streams.KStream.Graph
 
         public List<string> GetTopicNames()
         {
-            return new List<string>(topicNames);
+            return new List<string>(this.topicNames);
         }
 
         public override string ToString()
             => "StreamSourceNode{" +
-                   $"topicNames={topicNames.ToJoinedString()}" +
-                   $", topicPattern={topicPattern}" +
-                   $", consumedInternal={consumedInternal.GetType().Name}" +
+                   $"topicNames={this.topicNames.ToJoinedString()}" +
+                   $", topicPattern={this.topicPattern}" +
+                   $", consumedInternal={this.consumedInternal.GetType().Name}" +
                    $"}} {base.ToString()}";
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
@@ -54,25 +54,25 @@ namespace Kafka.Streams.KStream.Graph
                 throw new ArgumentNullException(nameof(topologyBuilder));
             }
 
-            if (topicPattern != null)
+            if (this.topicPattern != null)
             {
                 topologyBuilder.AddSource(
-                    consumedInternal.OffsetResetPolicy(),
-                    NodeName,
-                    consumedInternal.timestampExtractor,
-                    consumedInternal.KeyDeserializer(),
-                    consumedInternal.ValueDeserializer(),
-                    topicPattern.ToString());
+                    this.consumedInternal.OffsetResetPolicy(),
+                    this.NodeName,
+                    this.consumedInternal.timestampExtractor,
+                    this.consumedInternal.KeyDeserializer(),
+                    this.consumedInternal.ValueDeserializer(),
+                    this.topicPattern.ToString());
             }
             else
             {
                 topologyBuilder.AddSource(
-                    consumedInternal.OffsetResetPolicy(),
-                    NodeName,
-                    consumedInternal.timestampExtractor,
-                    consumedInternal.KeyDeserializer(),
-                    consumedInternal.ValueDeserializer(),
-                    topicNames.ToArray());
+                    this.consumedInternal.OffsetResetPolicy(),
+                    this.NodeName,
+                    this.consumedInternal.timestampExtractor,
+                    this.consumedInternal.KeyDeserializer(),
+                    this.consumedInternal.ValueDeserializer(),
+                    this.topicNames.ToArray());
             }
         }
     }

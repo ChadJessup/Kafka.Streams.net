@@ -28,10 +28,10 @@ namespace Kafka.Streams.KStream.Internals
             return new KStreamKTableJoinProcessor<K1, K2, V1, V2, R>(
                 null,
                 string.Empty,
-                valueGetterSupplier.Get(),
-                mapper,
-                joiner,
-                leftJoin);
+                this.valueGetterSupplier.Get(),
+                this.mapper,
+                this.joiner,
+                this.leftJoin);
         }
 
         IKeyValueProcessor IProcessorSupplier.Get()

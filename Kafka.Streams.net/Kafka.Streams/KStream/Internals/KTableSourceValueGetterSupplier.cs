@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public string[] StoreNames()
         {
-            return new string[] { storeName ?? string.Empty };
+            return new string[] { this.storeName ?? string.Empty };
         }
     }
 }

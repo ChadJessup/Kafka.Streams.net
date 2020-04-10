@@ -45,9 +45,9 @@
 //            try
 //            {
 //                Dictionary<TopicPartition, long> offsets = new HashMap<>();
-//                offsets.put(new TopicPartition(topic, 0), 0L);
-//                offsets.put(new TopicPartition(topic, 1), 1L);
-//                offsets.put(new TopicPartition(topic, 2), 2L);
+//                offsets.Put(new TopicPartition(topic, 0), 0L);
+//                offsets.Put(new TopicPartition(topic, 1), 1L);
+//                offsets.Put(new TopicPartition(topic, 2), 2L);
 
 //                checkpoint.write(offsets);
 //                Assert.Equal(offsets, checkpoint.read());
@@ -55,7 +55,7 @@
 //                checkpoint.delete();
 //                Assert.False(f.Exists);
 
-//                offsets.put(new TopicPartition(topic, 3), 3L);
+//                offsets.Put(new TopicPartition(topic, 3), 3L);
 //                checkpoint.write(offsets);
 //                Assert.Equal(offsets, checkpoint.read());
 //            }
@@ -68,7 +68,7 @@
 //        [Fact]
 //        public void ShouldNotWriteCheckpointWhenNoOffsets()
 //        { //throws IOException
-//          // we do not need to worry about file name uniqueness since this file should not be created
+//          // we do not need to worry about file Name uniqueness since this file should not be created
 //            File f = new File(TestUtils.GetTempDirectory().FullName, "kafka.tmp");
 //            OffsetCheckpoint checkpoint = new OffsetCheckpoint(f);
 

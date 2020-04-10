@@ -22,7 +22,7 @@ namespace Kafka.Streams.Factories
 
         public SourceNodeFactory(
             IClock clock,
-            string name,
+            string Name,
             string[]? topics,
             Regex? pattern,
             ITimestampExtractor? timestampExtractor,
@@ -31,7 +31,7 @@ namespace Kafka.Streams.Factories
             InternalTopologyBuilder internalTopologyBuilder,
             IDeserializer<K>? keyDeserializer,
             IDeserializer<V>? valueDeserializer)
-            : base(clock, name, Array.Empty<string>())
+            : base(clock, Name, Array.Empty<string>())
         {
             this.clock = clock;
             this.Topics = topics != null
@@ -60,31 +60,31 @@ namespace Kafka.Streams.Factories
         public List<string> GetTopics(List<string> subscribedTopics)
         {
             // if it is subscribed via patterns, it is possible that the topic metadata has not been updated
-            // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
+            // yet and hence the map from source node to topics is stale, in this case we Put the pattern as a place holder;
             // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
-            if (!subscribedTopics.Any() && Pattern != null)
+            if (!subscribedTopics.Any() && this.Pattern != null)
             {
-                return new List<string>(new[] { Pattern.ToString() });
+                return new List<string>(new[] { this.Pattern.ToString() });
             }
 
             var matchedTopics = new List<string>();
             foreach (var update in subscribedTopics ?? Enumerable.Empty<string>())
             {
-                if (Pattern == topicToPatterns[update])
+                if (this.Pattern == this.topicToPatterns[update])
                 {
                     matchedTopics.Add(update);
                 }
-                else if (topicToPatterns.ContainsKey(update) && IsMatch(update))
+                else if (this.topicToPatterns.ContainsKey(update) && this.IsMatch(update))
                 {
                     // the same topic cannot be matched to more than one pattern
                     // TODO: we should lift this requirement in the future
                     throw new TopologyException($"Topic {update}" +
-                        $" is already matched for another regex pattern {topicToPatterns[update]}" +
-                        $" and hence cannot be matched to this regex pattern {Pattern} any more.");
+                        $" is already matched for another regex pattern {this.topicToPatterns[update]}" +
+                        $" and hence cannot be matched to this regex pattern {this.Pattern} any more.");
                 }
-                else if (IsMatch(update))
+                else if (this.IsMatch(update))
                 {
-                    topicToPatterns.Add(update, Pattern);
+                    this.topicToPatterns.Add(update, this.Pattern);
                     matchedTopics.Add(update);
                 }
             }
@@ -94,45 +94,45 @@ namespace Kafka.Streams.Factories
 
         public override IProcessorNode Build()
         {
-            List<string> sourceTopics = nodeToSourceTopics[Name];
+            List<string> sourceTopics = this.nodeToSourceTopics[this.Name];
 
             // if it is subscribed via patterns, it is possible that the topic metadata has not been updated
-            // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
+            // yet and hence the map from source node to topics is stale, in this case we Put the pattern as a place holder;
             // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
             if (sourceTopics == null)
             {
                 return new SourceNode<K, V>(
                     this.clock,
-                    Name,
+                    this.Name,
                     new List<string>(),
-                    timestampExtractor,
-                    keyDeserializer,
-                    valueDeserializer);
+                    this.timestampExtractor,
+                    this.keyDeserializer,
+                    this.valueDeserializer);
             }
             else
             {
                 return new SourceNode<K, V>(
                     this.clock,
-                    Name,
-                    internalTopologyBuilder.MaybeDecorateInternalSourceTopics(sourceTopics),
-                    timestampExtractor,
-                    keyDeserializer,
-                    valueDeserializer);
+                    this.Name,
+                    this.internalTopologyBuilder.MaybeDecorateInternalSourceTopics(sourceTopics),
+                    this.timestampExtractor,
+                    this.keyDeserializer,
+                    this.valueDeserializer);
             }
         }
 
         private bool IsMatch(string topic)
         {
-            return Pattern?.IsMatch(topic) ?? false;
+            return this.Pattern?.IsMatch(topic) ?? false;
         }
 
         public override INode Describe()
         {
-            return new Source(Name,
-                Topics.Count == 0
+            return new Source(this.Name,
+                this.Topics.Count == 0
                     ? null
-                    : new HashSet<string>(Topics),
-                Pattern);
+                    : new HashSet<string>(this.Topics),
+                this.Pattern);
         }
     }
 }

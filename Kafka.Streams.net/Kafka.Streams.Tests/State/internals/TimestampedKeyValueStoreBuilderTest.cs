@@ -54,8 +54,8 @@
 //        public void SetUp()
 //        {
 //            expect(supplier.Get()).andReturn(inner);
-//            expect(supplier.name()).andReturn("name");
-//            expect(inner.persistent()).andReturn(true).anyTimes();
+//            expect(supplier.Name()).andReturn("Name");
+//            expect(inner.Persistent()).andReturn(true).anyTimes();
 //            replay(supplier, inner);
 
 //            builder = new TimestampedKeyValueStoreBuilder<>(
@@ -130,8 +130,8 @@
 //        public void ShouldNotWrapTimestampedByteStore()
 //        {
 //            reset(supplier);
-//            expect(supplier.Get()).andReturn(new RocksDBTimestampedStore("name"));
-//            expect(supplier.name()).andReturn("name");
+//            expect(supplier.Get()).andReturn(new RocksDBTimestampedStore("Name"));
+//            expect(supplier.Name()).andReturn("Name");
 //            replay(supplier);
 
 //            ITimestampedKeyValueStore<string, string> store = builder
@@ -145,8 +145,8 @@
 //        public void ShouldWrapPlainKeyValueStoreAsTimestampStore()
 //        {
 //            reset(supplier);
-//            expect(supplier.Get()).andReturn(new RocksDbStore("name"));
-//            expect(supplier.name()).andReturn("name");
+//            expect(supplier.Get()).andReturn(new RocksDbStore("Name"));
+//            expect(supplier.Name()).andReturn("Name");
 //            replay(supplier);
 
 //            ITimestampedKeyValueStore<string, string> store = builder

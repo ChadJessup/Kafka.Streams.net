@@ -191,8 +191,8 @@
 //        {
 //            string operation = "commit";
 //            string operationLatency = operation + StreamsMetricsImpl.LATENCY_SUFFIX;
-//            string totalDescription = "The total number of commit calls over all tasks";
-//            string rateDescription = "The average per-second number of commit calls over all tasks";
+//            string totalDescription = "The total number of commit calls over All tasks";
+//            string rateDescription = "The average per-second number of commit calls over All tasks";
 //            mockStatic(StreamsMetricsImpl);
 //            expect(streamsMetrics.threadLevelSensor(operation, RecordingLevel.DEBUG)).andReturn(dummySensor);
 //            expect(streamsMetrics.threadLevelTagMap(TASK_ID_TAG, ALL_TASKS)).andReturn(dummyTagMap);

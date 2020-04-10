@@ -66,7 +66,7 @@
 //            //          state.putIfAbsent(key, 0);
 //            //          int storedValue = state.Get(key);
 //            //          KeyValuePair<int, int> result = KeyValuePair.Create(key + 1, value + storedValue++);
-//            //          state.put(key, storedValue);
+//            //          state.Put(key, storedValue);
 //            //          return result;
 //            //      }
 //            //
@@ -114,7 +114,7 @@
 //            //            {
 //            //                result.Add(KeyValuePair.Create(key + i, value + storedValue++));
 //            //            }
-//            //            state.put(key, storedValue);
+//            //            state.Put(key, storedValue);
 //            //            return result;
 //            //        }
 //            //
@@ -169,7 +169,7 @@
 //            //          state.putIfAbsent(key, 0);
 //            //          int storedValue = state.Get(key);
 //            //          int result = value + storedValue++;
-//            //          state.put(key, storedValue);
+//            //          state.Put(key, storedValue);
 //            //          return result;
 //            //      }
 //            //
@@ -211,7 +211,7 @@
 //            //        {
 //            //            state.putIfAbsent(value, 0);
 //            //            int counter = state.Get(value);
-//            //            state.put(value, ++counter);
+//            //            state.Put(value, ++counter);
 //            //            return counter;
 //            //        }
 //            //
@@ -257,7 +257,7 @@
 //            //            {
 //            //                result.Add(value + storedValue++);
 //            //            }
-//            //            state.put(key, storedValue);
+//            //            state.Put(key, storedValue);
 //            //            return result;
 //            //        }
 //            //
@@ -316,7 +316,7 @@
 //            //            {
 //            //                result.Add(++counter);
 //            //            }
-//            //            state.put(value, counter);
+//            //            state.Put(value, counter);
 //            //            return result;
 //            //        }
 //            //

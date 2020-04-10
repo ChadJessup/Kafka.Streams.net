@@ -8,7 +8,7 @@ namespace Kafka.Streams.Errors.Interfaces
      * Interface that specifies how an exception from source node deserialization
      * (e.g., reading from Kafka) should be handled.
      */
-    public interface IDeserializationExceptionHandler //: Configurable
+    public interface IDeserializationExceptionHandler
     {
         /**
          * Inspect a record and the exception received.
@@ -16,22 +16,13 @@ namespace Kafka.Streams.Errors.Interfaces
          * @param record record that failed deserialization
          * @param exception the actual exception
          */
-        DeserializationHandlerResponses Handle<K, V>(
+        DeserializationHandlerResponse Handle(
             IProcessorContext context,
             ConsumeResult<byte[], byte[]> record,
             Exception exception);
     }
 
-    /**
-     * Enumeration that describes the response from the exception handler.
-     */
-    public class DeserializationHandlerResponse
-    {
-        public static DeserializationHandlerResponses Response { get; }
-        public static DeserializationHandlerResponse FAIL { get; }
-    }
-
-    public enum DeserializationHandlerResponses
+    public enum DeserializationHandlerResponse
     {
         /* continue with processing */
         CONTINUE,

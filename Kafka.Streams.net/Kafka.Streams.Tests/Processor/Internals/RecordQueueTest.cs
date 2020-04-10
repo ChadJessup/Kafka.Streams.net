@@ -56,7 +56,7 @@
 
 //        public void After()
 //        {
-//            mockSourceNodeWithMetrics.close();
+//            mockSourceNodeWithMetrics.Close();
 //        }
 
 //        [Fact]

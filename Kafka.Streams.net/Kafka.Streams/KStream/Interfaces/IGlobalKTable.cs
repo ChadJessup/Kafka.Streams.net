@@ -6,7 +6,7 @@ namespace Kafka.Streams.KStream.Interfaces
      * <p>
      * {@code GlobalKTable} can only be used as right-hand side input for {@link KStream stream}-table joins.
      * <p>
-     * In contrast to a {@link KTable} that is partitioned over all {@link KafkaStreams} instances, a {@code GlobalKTable}
+     * In contrast to a {@link KTable} that is partitioned over All {@link KafkaStreams} instances, a {@code GlobalKTable}
      * is fully replicated per {@link KafkaStreams} instance.
      * Every partition of the underlying topic is consumed by each {@code GlobalKTable}, such that the full set of data is
      * available in every {@link KafkaStreams} instance.
@@ -16,9 +16,9 @@ namespace Kafka.Streams.KStream.Interfaces
      * <p>
      * A {@code GlobalKTable} is created via a {@link StreamsBuilder}. For example:
      * <pre>{@code
-     * builder.globalTable("topic-name", "queryable-store-name");
+     * builder.globalTable("topic-Name", "queryable-store-Name");
      * }</pre>
-     * all {@code GlobalKTable}s are backed by a {@link IReadOnlyKeyValueStore} and are therefore queryable via the
+     * All {@code GlobalKTable}s are backed by a {@link IReadOnlyKeyValueStore} and are therefore queryable via the
      * interactive queries API.
      * For example:
      * <pre>{@code
@@ -29,10 +29,10 @@ namespace Kafka.Streams.KStream.Interfaces
      * streams.start()
      * ...
      * IReadOnlyKeyValueStore view = streams.store("g1-store", QueryableStoreTypes.KeyValueStore());
-     * view[key]; // can be done on any key, as all keys are present
+     * view[key]; // can be done on any key, as All keys are present
      *}</pre>
      * Note that in contrast to {@link KTable} a {@code GlobalKTable}'s state holds a full copy of the underlying topic,
-     * thus all keys can be queried locally.
+     * thus All keys can be queried locally.
      * <p>
      * Records from the source topic that have null keys are dropped.
      *
@@ -47,9 +47,9 @@ namespace Kafka.Streams.KStream.Interfaces
     public interface IGlobalKTable<K, V>
     {
         /**
-         * Get the name of the local state store that can be used to query this {@code GlobalKTable}.
+         * Get the Name of the local state store that can be used to query this {@code GlobalKTable}.
          *
-         * @return the underlying state store name, or {@code null} if this {@code GlobalKTable} cannot be queried.
+         * @return the underlying state store Name, or {@code null} if this {@code GlobalKTable} cannot be queried.
          */
         string QueryableStoreName { get; }
     }

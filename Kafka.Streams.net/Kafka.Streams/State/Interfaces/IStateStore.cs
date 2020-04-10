@@ -5,16 +5,16 @@ namespace Kafka.Streams.State
     /**
      * A storage engine for managing state maintained by a stream processor.
      * <p>
-     * If the store is implemented as a persistent store, it <em>must</em> use the store name as directory name and write
-     * all data into this store directory.
+     * If the store is implemented as a Persistent store, it <em>must</em> use the store Name as directory Name and write
+     * All data into this store directory.
      * The store directory must be created with the state directory.
      * The state directory can be obtained via {@link IProcessorContext#stateDir() #stateDir()} using the
-     * {@link IProcessorContext} provided via {@link #init(IProcessorContext, IStateStore) init(...)}.
+     * {@link IProcessorContext} provided via {@link #Init(IProcessorContext, IStateStore) Init(...)}.
      * <p>
      * Using nested store directories within the state directory isolates different state stores.
      * If a state store would write into the state directory directly, it might conflict with others state stores and thus,
      * data might get corrupted and/or Streams might fail with an error.
-     * Furthermore, Kafka Streams relies on using the store name as store directory name to perform internal cleanup tasks.
+     * Furthermore, Kafka Streams relies on using the store Name as store directory Name to perform internal cleanup tasks.
      * <p>
      * This interface does not specify any query capabilities, which, of course,
      * would be query engine specific. Instead it just specifies the minimum
@@ -24,8 +24,8 @@ namespace Kafka.Streams.State
     public interface IStateStore
     {
         /**
-         * The name of this store.
-         * @return the storage name
+         * The Name of this store.
+         * @return the storage Name
          */
         string Name { get; }
 
@@ -63,9 +63,9 @@ namespace Kafka.Streams.State
         void Close();
 
         /**
-         * Return if the storage is persistent or not.
+         * Return if the storage is Persistent or not.
          *
-         * @return  {@code true} if the storage is persistent&mdash;{@code false} otherwise
+         * @return  {@code true} if the storage is Persistent&mdash;{@code false} otherwise
          */
         bool Persistent();
 

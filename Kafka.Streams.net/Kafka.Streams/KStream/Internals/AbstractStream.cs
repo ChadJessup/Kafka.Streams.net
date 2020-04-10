@@ -19,7 +19,7 @@ namespace Kafka.Streams.KStream.Internals
      */
     public abstract class AbstractStream<K, V>
     {
-        protected string name { get; }
+        protected string Name { get; }
         protected ISerde<K>? keySerde { get; }
         protected ISerde<V>? valSerde { get; }
         public HashSet<string> sourceNodes { get; }
@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            this.name = stream.name;
+            this.Name = stream.Name;
             this.builder = stream.builder;
             this.keySerde = stream.keySerde;
             this.valSerde = stream.valSerde;
@@ -44,7 +44,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         public AbstractStream(
-            string name,
+            string Name,
             ISerde<K>? keySerde,
             ISerde<V>? valSerde,
             HashSet<string> sourceNodes,
@@ -56,7 +56,7 @@ namespace Kafka.Streams.KStream.Internals
                 throw new ArgumentException("parameter <sourceNodes> must not be null or empty");
             }
 
-            this.name = name;
+            this.Name = Name;
             this.builder = builder;
             this.keySerde = keySerde;
             this.valSerde = valSerde;
@@ -67,7 +67,7 @@ namespace Kafka.Streams.KStream.Internals
         // This method allows to expose the InternalTopologyBuilder instance
         // to uses that extend AbstractStream.
         protected InternalTopologyBuilder InternalTopologyBuilder()
-            => builder.InternalTopologyBuilder;
+            => this.builder.InternalTopologyBuilder;
 
         public HashSet<string> EnsureJoinableWith<VO>(AbstractStream<K, VO> other)
         {
@@ -77,10 +77,10 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             var allSourceNodes = new HashSet<string>();
-            allSourceNodes.UnionWith(sourceNodes);
+            allSourceNodes.UnionWith(this.sourceNodes);
             allSourceNodes.UnionWith(other.sourceNodes);
 
-            builder.InternalTopologyBuilder.CopartitionSources(allSourceNodes);
+            this.builder.InternalTopologyBuilder.CopartitionSources(allSourceNodes);
 
             return allSourceNodes;
         }
@@ -115,7 +115,7 @@ namespace Kafka.Streams.KStream.Internals
             //        return new ValueTransformerWithKey<K, V, VR>()
             //        {
 
-            //        public void init(IProcessorContext<K, V> context)
+            //        public void Init(IProcessorContext context)
             //        {
             //            valueTransformer.Init(context);
             //        }
@@ -127,9 +127,9 @@ namespace Kafka.Streams.KStream.Internals
             //        }
 
 
-            //        public void close()
+            //        public void Close()
             //        {
-            //            valueTransformer.close();
+            //            valueTransformer.Close();
             //        }
             //    };
             //};

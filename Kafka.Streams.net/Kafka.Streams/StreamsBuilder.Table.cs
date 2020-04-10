@@ -30,7 +30,7 @@ namespace Kafka.Streams
              * {@code Materialized} instance.
              * An internal changelog topic is created by default. Because the source topic can
              * be used for recovery, you can avoid creating the changelog topic by setting
-             * the {@code "topology.optimization"} to {@code "all"} in the {@link StreamsConfig}.
+             * the {@code "topology.optimization"} to {@code "All"} in the {@link StreamsConfig}.
              * <p>
              * You should only specify serdes in the {@link Consumed} instance as these will also be used to overwrite the
              * serdes in {@link Materialized}, i.e.,
@@ -44,12 +44,12 @@ namespace Kafka.Streams
              * KafkaStreams streams = ...
              * IReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>KeyValueStore());
              * String key = "some-key";
-             * Long valueForKey = localStore.Get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+             * Long valueForKey = localStore.Get(key); // key must be local (application state is shared over All running Kafka Streams instances)
              * }</pre>
              * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
              * query the value of the key on a parallel running instance of your Kafka Streams application.
              *
-             * @param topic              the topic name; cannot be {@code null}
+             * @param topic              the topic Name; cannot be {@code null}
              * @param consumed           the instance of {@link Consumed} used to define optional parameters; cannot be {@code null}
              * @param materialized       the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
@@ -96,12 +96,12 @@ namespace Kafka.Streams
              * If this is not the case the returned {@link KTable} will be corrupted.
              * <p>
              * The resulting {@link KTable} will be materialized in a local {@link KeyValueStore} with an internal
-             * store name. Note that store name may not be queriable through Interactive Queries.
+             * store Name. Note that store Name may not be queriable through Interactive Queries.
              * An internal changelog topic is created by default. Because the source topic can
              * be used for recovery, you can avoid creating the changelog topic by setting
-             * the {@code "topology.optimization"} to {@code "all"} in the {@link StreamsConfig}.
+             * the {@code "topology.optimization"} to {@code "All"} in the {@link StreamsConfig}.
              *
-             * @param topic the topic name; cannot be {@code null}
+             * @param topic the topic Name; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
@@ -120,12 +120,12 @@ namespace Kafka.Streams
              * If this is not the case the returned {@link KTable} will be corrupted.
              * <p>
              * The resulting {@link KTable} will be materialized in a local {@link KeyValueStore} with an internal
-             * store name. Note that store name may not be queriable through Interactive Queries.
+             * store Name. Note that store Name may not be queriable through Interactive Queries.
              * An internal changelog topic is created by default. Because the source topic can
              * be used for recovery, you can avoid creating the changelog topic by setting
-             * the {@code "topology.optimization"} to {@code "all"} in the {@link StreamsConfig}.
+             * the {@code "topology.optimization"} to {@code "All"} in the {@link StreamsConfig}.
              *
-             * @param topic     the topic name; cannot be {@code null}
+             * @param topic     the topic Name; cannot be {@code null}
              * @param consumed  the instance of {@link Consumed} used to define optional parameters; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
@@ -166,9 +166,9 @@ namespace Kafka.Streams
              * The resulting {@link KTable} will be materialized in a local {@link KeyValueStore} using the {@link Materialized} instance.
              * An internal changelog topic is created by default. Because the source topic can
              * be used for recovery, you can avoid creating the changelog topic by setting
-             * the {@code "topology.optimization"} to {@code "all"} in the {@link StreamsConfig}.
+             * the {@code "topology.optimization"} to {@code "All"} in the {@link StreamsConfig}.
              *
-             * @param topic         the topic name; cannot be {@code null}
+             * @param topic         the topic Name; cannot be {@code null}
              * @param materialized  the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
@@ -201,14 +201,14 @@ namespace Kafka.Streams
              * Input {@link KeyValuePair records} with {@code null} key will be dropped.
              * <p>
              * The resulting {@link GlobalKTable} will be materialized in a local {@link KeyValueStore} with an internal
-             * store name. Note that store name may not be queriable through Interactive Queries.
+             * store Name. Note that store Name may not be queriable through Interactive Queries.
              * No internal changelog topic is created since the original input topic can be used for recovery (cf.
              * methods of {@link KGroupedStream} and {@link KGroupedTable} that return a {@link KTable}).
              * <p>
              * Note that {@link GlobalKTable} always applies {@code "auto.offset.reset"} strategy {@code "earliest"}
              * regardless of the specified value in {@link StreamsConfig} or {@link Consumed}.
              *
-             * @param topic the topic name; cannot be {@code null}
+             * @param topic the topic Name; cannot be {@code null}
              * @param consumed  the instance of {@link Consumed} used to define optional parameters
              * @return a {@link GlobalKTable} for the specified topic
              */
@@ -246,14 +246,14 @@ namespace Kafka.Streams
              * Input {@link KeyValuePair records} with {@code null} key will be dropped.
              * <p>
              * The resulting {@link GlobalKTable} will be materialized in a local {@link KeyValueStore} with an internal
-             * store name. Note that store name may not be queriable through Interactive Queries.
+             * store Name. Note that store Name may not be queriable through Interactive Queries.
              * No internal changelog topic is created since the original input topic can be used for recovery (cf.
              * methods of {@link KGroupedStream} and {@link KGroupedTable} that return a {@link KTable}).
              * <p>
              * Note that {@link GlobalKTable} always applies {@code "auto.offset.reset"} strategy {@code "earliest"}
              * regardless of the specified value in {@link StreamsConfig}.
              *
-             * @param topic the topic name; cannot be {@code null}
+             * @param topic the topic Name; cannot be {@code null}
              * @return a {@link GlobalKTable} for the specified topic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
@@ -291,7 +291,7 @@ namespace Kafka.Streams
              * Note that {@link GlobalKTable} always applies {@code "auto.offset.reset"} strategy {@code "earliest"}
              * regardless of the specified value in {@link StreamsConfig} or {@link Consumed}.
              *
-             * @param topic         the topic name; cannot be {@code null}
+             * @param topic         the topic Name; cannot be {@code null}
              * @param consumed      the instance of {@link Consumed} used to define optional parameters; can't be {@code null}
              * @param materialized   the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link GlobalKTable} for the specified topic
@@ -350,7 +350,7 @@ namespace Kafka.Streams
              * Note that {@link GlobalKTable} always applies {@code "auto.offset.reset"} strategy {@code "earliest"}
              * regardless of the specified value in {@link StreamsConfig}.
              *
-             * @param topic         the topic name; cannot be {@code null}
+             * @param topic         the topic Name; cannot be {@code null}
              * @param materialized   the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link GlobalKTable} for the specified topic
              */

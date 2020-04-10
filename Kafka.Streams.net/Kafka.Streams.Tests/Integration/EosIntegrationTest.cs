@@ -105,12 +105,12 @@
 //            output.To(outputTopic);
 
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
-//            properties.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//            properties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//            properties.put(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_RECORDS_CONFIG), 1);
-//            properties.put(StreamsConfig.consumerPrefix(ConsumerConfig.METADATA_MAX_AGE_CONFIG), "1000");
-//            properties.put(StreamsConfig.consumerPrefix(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG), "earliest");
+//            properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//            properties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//            properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_RECORDS_CONFIG), 1);
+//            properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.METADATA_MAX_AGE_CONFIG), "1000");
+//            properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG), "earliest");
 
 //            for (int i = 0; i < numberOfRestarts; ++i)
 //            {
@@ -142,7 +142,7 @@
 //                            LongDeserializer,
 //                            Utils.mkProperties(Collections.singletonMap(
 //                                ConsumerConfig.ISOLATION_LEVEL_CONFIG,
-//                                IsolationLevel.READ_COMMITTED.name().toLowerCase(Locale.ROOT)))
+//                                IsolationLevel.READ_COMMITTED.Name().toLowerCase(Locale.ROOT)))
 //                            ),
 //                        outputTopic,
 //                        inputData.Count
@@ -198,11 +198,11 @@
 //            builder.Stream(SINGLE_PARTITION_INPUT_TOPIC).To(SINGLE_PARTITION_OUTPUT_TOPIC);
 
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
-//            properties.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//            properties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-//            properties.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "1000");
-//            properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//            properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//            properties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//            properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+//            properties.Put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "1000");
+//            properties.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
 //            StreamsConfig config = StreamsTestUtils.getStreamsConfig(
 //                applicationId,
@@ -233,7 +233,7 @@
 //                        LongDeserializer,
 //                        Utils.mkProperties(Collections.singletonMap(
 //                            ConsumerConfig.ISOLATION_LEVEL_CONFIG,
-//                            IsolationLevel.READ_COMMITTED.name().toLowerCase(Locale.ROOT)))
+//                            IsolationLevel.READ_COMMITTED.Name().toLowerCase(Locale.ROOT)))
 //                        ),
 //                    SINGLE_PARTITION_OUTPUT_TOPIC,
 //                    firstBurstOfData.Count
@@ -257,7 +257,7 @@
 //                        LongDeserializer,
 //                        Utils.mkProperties(Collections.singletonMap(
 //                            ConsumerConfig.ISOLATION_LEVEL_CONFIG,
-//                            IsolationLevel.READ_COMMITTED.name().toLowerCase(Locale.ROOT)))
+//                            IsolationLevel.READ_COMMITTED.Name().toLowerCase(Locale.ROOT)))
 //                        ),
 //                    SINGLE_PARTITION_OUTPUT_TOPIC,
 //                    secondBurstOfData.Count
@@ -270,7 +270,7 @@
 //        public void ShouldNotViolateEosIfOneTaskFails()
 //        {// throws Exception
 //         // this test writes 10 + 5 + 5 records per partition (running with 2 partitions)
-//         // the app is supposed to copy all 40 records into the output topic
+//         // the app is supposed to copy All 40 records into the output topic
 //         // the app commits after each 10 records per partition, and thus will have 2*5 uncommitted writes
 //         //
 //         // the failure gets inject after 20 committed and 30 uncommitted records got received
@@ -336,7 +336,7 @@
 //    public void ShouldNotViolateEosIfOneTaskFailsWithState()
 //    {// throws Exception
 //     // this test updates a store with 10 + 5 + 5 records per partition (running with 2 partitions)
-//     // the app is supposed to emit all 40 update records into the output topic
+//     // the app is supposed to emit All 40 update records into the output topic
 //     // the app commits after each 10 records per partition, and thus will have 2*5 uncommitted writes
 //     // and store updates (ie, another 5 uncommitted writes to a changelog topic per partition)
 //     // in the uncommitted batch sending some data for the new key to validate that upon resuming they will not be shown up in the store
@@ -409,7 +409,7 @@
 //public void ShouldNotViolateEosIfOneTaskGetsFencedUsingIsolatedAppInstances()
 //{// throws Exception
 // // this test writes 10 + 5 + 5 + 10 records per partition (running with 2 partitions)
-// // the app is supposed to copy all 60 records into the output topic
+// // the app is supposed to copy All 60 records into the output topic
 // // the app commits after each 10 records per partition, and thus will have 2*5 uncommitted writes
 // //
 // // a GC pause gets inject after 20 committed and 30 uncommitted records got received
@@ -544,7 +544,7 @@
 //        IKeyValueStore<long, long> state = null;
 
 
-//        public void init(ProcessorContext context)
+//        public void Init(ProcessorContext context)
 //        {
 //            this.context = context;
 
@@ -591,8 +591,8 @@
 //                {
 //                    sum += value;
 //                }
-//                state.put(key, sum);
-//                state.flush();
+//                state.Put(key, sum);
+//                state.Flush();
 //            }
 
 
@@ -613,24 +613,24 @@
 //        }
 
 
-//        public void close() { }
+//        public void Close() { }
 //    };
 //}
 //}, storeNames)
 //            .To(SINGLE_PARTITION_OUTPUT_TOPIC);
 
 //StreamsConfig properties = new StreamsConfig();
-//properties.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
-//    properties.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, numberOfStreamsThreads);
-//    properties.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, long.MaxValue);
-//    properties.put(StreamsConfig.consumerPrefix(ConsumerConfig.METADATA_MAX_AGE_CONFIG), "1000");
-//    properties.put(StreamsConfig.consumerPrefix(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG), "earliest");
-//    properties.put(StreamsConfig.consumerPrefix(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG), 5 * 1000);
-//    properties.put(StreamsConfig.consumerPrefix(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG), 5 * 1000 - 1);
-//    properties.put(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG), MAX_POLL_INTERVAL_MS);
-//    properties.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//    properties.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath() + Path.DirectorySeparatorChar + appDir);
-//    properties.put(StreamsConfig.APPLICATION_SERVER_CONFIG, "dummy:2142");
+//properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//    properties.Put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, numberOfStreamsThreads);
+//    properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, long.MaxValue);
+//    properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.METADATA_MAX_AGE_CONFIG), "1000");
+//    properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG), "earliest");
+//    properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG), 5 * 1000);
+//    properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG), 5 * 1000 - 1);
+//    properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG), MAX_POLL_INTERVAL_MS);
+//    properties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
+//    properties.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath() + Path.DirectorySeparatorChar + appDir);
+//    properties.Put(StreamsConfig.APPLICATION_SERVER_CONFIG, "dummy:2142");
 
 //    StreamsConfig config = StreamsTestUtils.getStreamsConfig(
 //        applicationId,
@@ -677,7 +677,7 @@
 //                LongDeserializer,
 //                Utils.mkProperties(Collections.singletonMap(
 //                    ConsumerConfig.ISOLATION_LEVEL_CONFIG,
-//                    IsolationLevel.READ_COMMITTED.name().toLowerCase(Locale.ROOT)))),
+//                    IsolationLevel.READ_COMMITTED.Name().toLowerCase(Locale.ROOT)))),
 //            SINGLE_PARTITION_OUTPUT_TOPIC,
 //            numberOfRecords
 //        );
@@ -708,7 +708,7 @@
 //        {
 //            sum += record.value;
 //        }
-//        sums.put(record.key, sum);
+//        sums.Put(record.key, sum);
 //        expectedResult.Add(KeyValuePair.Create(record.key, sum));
 //    }
 
@@ -726,7 +726,7 @@
 //        long max = maxPerKey.Get(record.key);
 //        if (max == null || record.value > max)
 //        {
-//            maxPerKey.put(record.key, record.value);
+//            maxPerKey.Put(record.key, record.value);
 //        }
 
 //    }
@@ -764,7 +764,7 @@
 
 //    Assert.NotNull(store);
 
-//    IKeyValueIterator<long, long> it = store.all();
+//    IKeyValueIterator<long, long> it = store.All();
 //    while (it.HasNext())
 //    {
 //        Assert.True(expectedStoreContent.remove(it.MoveNext()));

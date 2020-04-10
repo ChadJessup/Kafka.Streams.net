@@ -39,7 +39,7 @@ namespace Kafka.Streams.Tests.Mocks
          * Create a mock producer
          *
          * @param cluster The cluster holding metadata for this producer
-         * @param autoComplete If true automatically complete all requests successfully and execute the callback. Otherwise
+         * @param autoComplete If true automatically complete All requests successfully and execute the callback. Otherwise
          *        the user must call {@link #completeNext()} or {@link #errorNext(RuntimeException)} after
          *        {@link #send(Message) send()} to complete the call and unblock the {@link
          *        java.util.concurrent.Future Future&lt;RecordMetadata&gt;} that is returned.
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     if (uncommittedOffsets == null)
         //     {
         //         uncommittedOffsets = new HashMap<>();
-        //         this.uncommittedConsumerGroupOffsets.put(consumerGroupId, uncommittedOffsets);
+        //         this.uncommittedConsumerGroupOffsets.Put(consumerGroupId, uncommittedOffsets);
         //     }
         //     uncommittedOffsets.putAll(offsets);
         //     this.sentOffsets = true;
@@ -184,7 +184,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     verifyTransactionsInitialized();
         //     verifyNoTransactionInFlight();
         // 
-        //     flush();
+        //     Flush();
         // 
         //     this.sent.addAll(this.uncommittedSends);
         //     if (!this.uncommittedConsumerGroupOffsets.isEmpty())
@@ -205,7 +205,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     verifyProducerState();
         //     verifyTransactionsInitialized();
         //     verifyNoTransactionInFlight();
-        //     flush();
+        //     Flush();
         //     this.uncommittedSends.Clear();
         //     this.uncommittedConsumerGroupOffsets.Clear();
         //     this.transactionCommitted = false;
@@ -298,18 +298,18 @@ namespace Kafka.Streams.Tests.Mocks
         //     long offset = this.offsets.Get(tp);
         //     if (offset == null)
         //     {
-        //         this.offsets.put(tp, 1L);
+        //         this.offsets.Put(tp, 1L);
         //         return 0L;
         //     }
         //     else
         //     {
         //         long next = offset + 1;
-        //         this.offsets.put(tp, next);
+        //         this.offsets.Put(tp, next);
         //         return offset;
         //     }
         // }
         // 
-        // public void flush()
+        // public void Flush()
         // {
         //     verifyProducerState();
         //     while (!this.completions.isEmpty())
@@ -329,19 +329,19 @@ namespace Kafka.Streams.Tests.Mocks
         // /**
         //  * Set a mock metric for testing purpose
         //  */
-        // public void setMockMetrics(MetricName name, Metric metric)
+        // public void setMockMetrics(MetricName Name, Metric metric)
         // {
-        //     mockMetrics.put(name, metric);
+        //     mockMetrics.Put(Name, metric);
         // }
         // 
         // 
-        // public void close()
+        // public void Close()
         // {
-        //     close(TimeSpan.FromMilliseconds(0));
+        //     Close(TimeSpan.FromMilliseconds(0));
         // }
         // 
         // 
-        // public void close(TimeSpan timeout)
+        // public void Close(TimeSpan timeout)
         // {
         //     if (producerFencedOnClose)
         //     {

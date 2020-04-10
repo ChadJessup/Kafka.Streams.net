@@ -19,7 +19,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTableValueGetter<K, V> Get()
         {
-            return new KTableMapValueGetter<K, V>(parentValueGetterSupplier.Get());
+            return new KTableMapValueGetter<K, V>(this.parentValueGetterSupplier.Get());
         }
 
         public string[] StoreNames()

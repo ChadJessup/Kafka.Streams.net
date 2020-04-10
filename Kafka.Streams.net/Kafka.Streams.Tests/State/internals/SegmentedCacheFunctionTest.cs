@@ -39,7 +39,7 @@
 //        private static Bytes THE_CACHE_KEY = Bytes.Wrap(
 //            new ByteBuffer().Allocate(8 + THE_KEY.Get().Length)
 //                .putLong(TIMESTAMP / SEGMENT_INTERVAL)
-//                .put(THE_KEY.Get()).array()
+//                .Put(THE_KEY.Get()).array()
 //        );
 
 //        private SegmentedCacheFunction cacheFunction = new SegmentedCacheFunction(new WindowKeySchema(), SEGMENT_INTERVAL);

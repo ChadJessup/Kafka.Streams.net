@@ -76,7 +76,7 @@ namespace Kafka.Streams.KStream
                 return false;
             }
 
-            if (GetType() != obj.GetType())
+            if (this.GetType() != obj.GetType())
             {
                 return false;
             }

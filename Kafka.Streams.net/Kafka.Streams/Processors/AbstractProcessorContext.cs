@@ -17,18 +17,20 @@ namespace Kafka.Streams.Processors
     public abstract class AbstractProcessorContext<K, V> : AbstractProcessorContext
     {
         public AbstractProcessorContext(
+            KafkaStreamsContext context,
             TaskId taskId,
             StreamsConfig config,
             IStateManager stateManager,
             ThreadCache cache)
             : base(
+                context,
                 taskId,
                 config,
                 stateManager,
                 cache)
         {
-            KeySerde = (ISerde<K>)config.GetDefaultKeySerde();
-            ValueSerde = (ISerde<V>)config.GetDefaultValueSerde();
+            this.KeySerde = config.GetDefaultKeySerde(context);
+            this.ValueSerde = config.GetDefaultValueSerde(context);
         }
     }
 
@@ -39,23 +41,21 @@ namespace Kafka.Streams.Processors
         private readonly ThreadCache cache;
         private bool initialized;
         public virtual ProcessorRecordContext RecordContext { get; protected set; }
-
+        public IProcessorNode GetCurrentNode() => this.CurrentNode;
         public virtual IProcessorNode CurrentNode { get; set; }
-
-        public IProcessorNode GetCurrentNode()
-            => this.CurrentNode;
-
         protected IStateManager StateManager { get; }
-
+        public KafkaStreamsContext Context { get; }
         public TaskId TaskId { get; }
         public string ApplicationId { get; }
 
         public AbstractProcessorContext(
+            KafkaStreamsContext context,
             TaskId taskId,
             StreamsConfig config,
             IStateManager stateManager,
             ThreadCache cache)
         {
+            this.Context = context;
             this.TaskId = taskId;
             this.ApplicationId = config.ApplicationId;
             this.config = config;
@@ -63,20 +63,20 @@ namespace Kafka.Streams.Processors
             this.cache = cache;
         }
 
-        public DirectoryInfo StateDir => StateManager.BaseDir;
+        public DirectoryInfo StateDir => this.StateManager.BaseDir;
 
         public virtual void Register(
             IStateStore store,
             IStateRestoreCallback stateRestoreCallback)
         {
-            if (initialized)
+            if (this.initialized)
             {
                 throw new InvalidOperationException("Can only create state stores during initialization.");
             }
 
             store = store ?? throw new ArgumentNullException(nameof(store));
 
-            StateManager.Register(store, stateRestoreCallback);
+            this.StateManager.Register(store, stateRestoreCallback);
         }
 
         /**
@@ -86,12 +86,12 @@ namespace Kafka.Streams.Processors
         {
             get
             {
-                if (RecordContext == null)
+                if (this.RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as Topic should only be called while a record is processed");
                 }
 
-                var topic = RecordContext.Topic;
+                var topic = this.RecordContext.Topic;
 
                 if (topic.Equals(NONEXIST_TOPIC))
                 {
@@ -109,12 +109,12 @@ namespace Kafka.Streams.Processors
         {
             get
             {
-                if (RecordContext == null)
+                if (this.RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as Partition should only be called while a record is processed");
                 }
 
-                return RecordContext.partition;
+                return this.RecordContext.partition;
             }
         }
 
@@ -125,12 +125,12 @@ namespace Kafka.Streams.Processors
         {
             get
             {
-                if (RecordContext == null)
+                if (this.RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as offset() should only be called while a record is processed");
                 }
 
-                return RecordContext.offset;
+                return this.RecordContext.offset;
             }
         }
 
@@ -138,12 +138,12 @@ namespace Kafka.Streams.Processors
         {
             get
             {
-                if (RecordContext == null)
+                if (this.RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as Headers should only be called while a record is processed");
                 }
 
-                return RecordContext.headers;
+                return this.RecordContext.headers;
             }
         }
 
@@ -154,12 +154,12 @@ namespace Kafka.Streams.Processors
         {
             get
             {
-                if (RecordContext == null)
+                if (this.RecordContext == null)
                 {
                     throw new InvalidOperationException("This should not happen as timestamp() should only be called while a record is processed");
                 }
 
-                return RecordContext.timestamp;
+                return this.RecordContext.timestamp;
             }
         }
 
@@ -189,20 +189,20 @@ namespace Kafka.Streams.Processors
 
         public ThreadCache GetCache()
         {
-            return cache;
+            return this.cache;
         }
 
         public void Initialize()
         {
-            initialized = true;
+            this.initialized = true;
         }
 
         public void Uninitialize()
         {
-            initialized = false;
+            this.initialized = false;
         }
 
-        public virtual IStateStore GetStateStore(KafkaStreamsContext context, string name)
+        public virtual IStateStore GetStateStore(string Name)
         {
             throw new NotImplementedException();
         }

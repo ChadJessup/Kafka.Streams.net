@@ -16,7 +16,7 @@ namespace Kafka.Streams.Tests.Tests
 //            return printProcessorSupplier(topic, "");
 //        }
 
-//        static ProcessorSupplier<object, object> printProcessorSupplier(string topic, string name)
+//        static ProcessorSupplier<object, object> printProcessorSupplier(string topic, string Name)
 //        {
 //            return new ProcessorSupplier<object, object>()
 //            {
@@ -29,7 +29,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    private int numRecordsProcessed = 0;
 
 
-//        public void init(ProcessorContext context)
+//        public void Init(ProcessorContext context)
 //        {
 //            base.Init(context);
 //            System.Console.Out.WriteLine("[DEV] initializing processor: topic=" + topic + " taskId=" + context.taskId());
@@ -42,7 +42,7 @@ namespace Kafka.Streams.Tests.Tests
 //            numRecordsProcessed++;
 //            if (numRecordsProcessed % 100 == 0)
 //            {
-//                System.Console.Out.printf("%s: %s%n", name, Instant.now());
+//                System.Console.Out.printf("%s: %s%n", Name, Instant.now());
 //                System.Console.Out.WriteLine("processed " + numRecordsProcessed + " records from topic=" + topic);
 //            }
 //        }
@@ -51,9 +51,9 @@ namespace Kafka.Streams.Tests.Tests
 //        };
 //    }
 
-//    public static class Unwindow<K, V> : KeyValueMapper<Windowed<K>, V, K> {
+//    public static class Unwindow<K, V> : KeyValueMapper<IWindowed<K>, V, K> {
 
-//    public K apply(Windowed<K> winKey, V value)
+//    public K apply(IWindowed<K> winKey, V value)
 //    {
 //        return winKey.Key;
 //    }
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Tests
 //    };
 //}
 
-//public Initializer<long> init()
+//public Initializer<long> Init()
 //{
 //    return new Initializer<long>()
 //    {

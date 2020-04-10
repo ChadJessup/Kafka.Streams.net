@@ -28,10 +28,10 @@ namespace Kafka.Streams.KStream.Interfaces
         /**
          * Initialize this transformer.
          * This is called once per instance when the topology gets initialized.
-         * When the framework is done with the transformer, {@link #close()} will be called on it; the
-         * framework may later re-use the transformer by calling {@link #init(IProcessorContext)} again.
+         * When the framework is done with the transformer, {@link #Close()} will be called on it; the
+         * framework may later re-use the transformer by calling {@link #Init(IProcessorContext)} again.
          * <p>
-         * The provided {@link IProcessorContext<K, V> context} can be used to access topology and record meta data, to
+         * The provided {@link IProcessorContext context} can be used to access topology and record meta data, to
          * {@link IProcessorContext#schedule(TimeSpan, PunctuationType, Punctuator) schedule} a method to be
          * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
          * <p>
@@ -65,9 +65,9 @@ namespace Kafka.Streams.KStream.Interfaces
 
         /**
          * Close this transformer and clean up any resources. The framework may
-         * later re-use this transformer by calling {@link #init(IProcessorContext)} on it again.
+         * later re-use this transformer by calling {@link #Init(IProcessorContext)} on it again.
          * <p>
-         * It is not possible to return any new output records within {@code close()}.
+         * It is not possible to return any new output records within {@code Close()}.
          * Using {@link IProcessorContext#forward(object, object)} or {@link IProcessorContext#forward(object, object, To)}
          * will result in an {@link StreamsException exception}.
          */
