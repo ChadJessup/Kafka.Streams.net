@@ -154,7 +154,7 @@ namespace Kafka.Streams.Topologies
 
         public void AddSource<K, V>(
             AutoOffsetReset? offsetReset,
-            string Name,
+            string name,
             ITimestampExtractor? timestampExtractor,
             IDeserializer<K>? keyDeserializer,
             IDeserializer<V>? valDeserializer,
@@ -162,7 +162,7 @@ namespace Kafka.Streams.Topologies
         {
             this.AddSource(
                 offsetReset,
-                Name,
+                name,
                 timestampExtractor,
                 keyDeserializer,
                 valDeserializer,
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Topologies
 
         public void AddSource<K, V>(
             AutoOffsetReset? offsetReset,
-            string Name,
+            string name,
             ITimestampExtractor? timestampExtractor,
             IDeserializer<K>? keyDeserializer,
             IDeserializer<V>? valDeserializer,
@@ -187,10 +187,10 @@ namespace Kafka.Streams.Topologies
                 throw new TopologyException("You must provide at least one topic");
             }
 
-            Name = Name ?? throw new ArgumentNullException(nameof(Name));
-            if (this.nodeFactories.ContainsKey(Name))
+            name = name ?? throw new ArgumentNullException(nameof(name));
+            if (this.nodeFactories.ContainsKey(name))
             {
-                throw new TopologyException("IProcessor " + Name + " is already.Added.");
+                throw new TopologyException("IProcessor " + name + " is already.Added.");
             }
 
             foreach (var topic in topics.Where(t => t != null))
@@ -200,13 +200,13 @@ namespace Kafka.Streams.Topologies
                 this.sourceTopicNames.Add(topic);
             }
 
-            this.nodeToSourceTopics.Add(Name, topics.ToList());
+            this.nodeToSourceTopics.Add(name, topics.ToList());
 
             this.nodeFactories.Add(
-                Name,
+                name,
                 new SourceNodeFactory<K, V>(
                     this.Clock,
-                    Name,
+                    name,
                     topics,
                     null,
                     timestampExtractor,
@@ -216,7 +216,7 @@ namespace Kafka.Streams.Topologies
                     keyDeserializer,
                     valDeserializer));
 
-            this.nodeGrouper.Add(Name);
+            this.nodeGrouper.Add(name);
             this._nodeGroups = null;
         }
 

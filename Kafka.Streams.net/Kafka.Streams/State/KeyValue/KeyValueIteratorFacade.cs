@@ -29,7 +29,7 @@ namespace Kafka.Streams.State.KeyValues
         {
             var innerKeyValue = this.iterator.Current;
 
-            var vat = (ValueAndTimestamp<V>)(object)innerKeyValue.Value;
+            var vat = (IValueAndTimestamp<V>)(object)innerKeyValue.Value;
             return KeyValuePair.Create(innerKeyValue.Key, ValueAndTimestamp.GetValueOrNull(vat));
         }
 

@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.Metered
             KafkaStreamsContext context,
             IWindowStore<Bytes, byte[]> inner,
             TimeSpan windowSize,
-            ISerde<IWindowed<K>> keySerde,
+            ISerde<K> keySerde,
             ISerde<IValueAndTimestamp<V>> valueSerde)
             : base(
                   context,
@@ -28,12 +28,12 @@ namespace Kafka.Streams.State.Metered
         {
         }
 
-        private void InitStoreSerde(IProcessorContext context)
+        protected override void InitStoreSerde(IProcessorContext context)
         {
-            serdes = new StateSerdes<K, V>(
-                ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, Name),
-                KeySerde ?? (ISerde<IWindowed<K>>)context.KeySerde,
-                ValueSerde ?? new ValueAndTimestampSerde<V>((ISerde<V>)context.ValueSerde));
+            this.serdes = new StateSerdes<K, IValueAndTimestamp<V>>(
+                ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, this.Name),
+                this.KeySerde ?? (ISerde<K>)context.KeySerde,
+                this.ValueSerde ?? new ValueAndTimestampSerde<V>((ISerde<V>)context.ValueSerde));
         }
     }
 }

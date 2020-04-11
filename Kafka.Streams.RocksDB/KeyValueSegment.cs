@@ -29,11 +29,13 @@ namespace Kafka.Streams.State.KeyValues
             return this.id.CompareTo(segment.id);
         }
 
-        public override void OpenDB(IProcessorContext context)
+        public override IDisposable OpenDB(IProcessorContext context)
         {
-            base.OpenDB(context);
+            var disposable = base.OpenDB(context);
             // skip the registering step
-            //internalProcessorContext = context;
+            this.InternalProcessorContext = context;
+
+            return disposable;
         }
 
         public override string ToString()

@@ -84,7 +84,7 @@ namespace Kafka.Streams.Tests
 
             this.internalTopologyBuilder.AddSource<string, string>(
                 offsetReset: null,
-                Name: "source1",
+                name: "source1",
                 timestampExtractor: null,
                 keyDeserializer: null,
                 valDeserializer: null,

@@ -36,7 +36,7 @@ namespace Kafka.Streams.State.Metered
 
         public KeyValuePair<K, V> next()
         {
-            KeyValuePair<Bytes, byte[]> keyValue = iter.Current;
+            KeyValuePair<Bytes, byte[]> keyValue = this.iter.Current;
             return new KeyValuePair<K, V>();
             //KeyValuePair.Create(
             //serdes.keyFrom(keyValue.Key),
@@ -54,7 +54,7 @@ namespace Kafka.Streams.State.Metered
         {
             try
             {
-                iter.Close();
+                this.iter.Close();
             }
             finally
             {

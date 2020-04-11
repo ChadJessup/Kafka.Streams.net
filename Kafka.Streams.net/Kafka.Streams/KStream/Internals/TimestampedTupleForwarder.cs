@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             this.context = context;
             this.sendOldValues = sendOldValues;
-            this.cachingEnabled = ((WrappedStateStore<K, ValueAndTimestamp<V>>)store).SetFlushListener(//
+            this.cachingEnabled = ((WrappedStateStore<K, IValueAndTimestamp<V>>)store).SetFlushListener(//
                 (key, oldV, newV, ts) => flushListener.Apply(key, oldV, newV, ts), sendOldValues);
         }
 

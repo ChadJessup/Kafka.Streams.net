@@ -52,16 +52,16 @@ namespace Kafka.Streams.State.ReadOnly
 
         public IKeyValueIterator<IWindowed<K>, V> FetchAll(DateTime from, DateTime to)
         {
-            IKeyValueIterator<IWindowed<K>, ValueAndTimestamp<V>> innerIterator = this.inner.FetchAll(from, to);
+            IKeyValueIterator<IWindowed<K>, IValueAndTimestamp<V>> innerIterator = this.inner.FetchAll(from, to);
 
-            return (IKeyValueIterator<IWindowed<K>, V>)new KeyValueIteratorFacade<IWindowed<K>, ValueAndTimestamp<V>>(innerIterator);
+            return (IKeyValueIterator<IWindowed<K>, V>)new KeyValueIteratorFacade<IWindowed<K>, IValueAndTimestamp<V>>(innerIterator);
         }
 
         public IKeyValueIterator<IWindowed<K>, V> All()
         {
-            IKeyValueIterator<IWindowed<K>, ValueAndTimestamp<V>> innerIterator = this.inner.All();
+            IKeyValueIterator<IWindowed<K>, IValueAndTimestamp<V>> innerIterator = this.inner.All();
 
-            return (IKeyValueIterator<IWindowed<K>, V>)new KeyValueIteratorFacade<IWindowed<K>, ValueAndTimestamp<V>>(innerIterator);
+            return (IKeyValueIterator<IWindowed<K>, V>)new KeyValueIteratorFacade<IWindowed<K>, IValueAndTimestamp<V>>(innerIterator);
         }
     }
 }

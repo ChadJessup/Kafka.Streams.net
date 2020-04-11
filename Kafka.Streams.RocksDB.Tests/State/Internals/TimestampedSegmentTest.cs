@@ -13,24 +13,25 @@ namespace Kafka.Streams.Tests.State.Internals
     {
         [Fact]
         public void ShouldDeleteStateDirectoryOnDestroy()
-        {// throws Exception
+        {
             TimestampedSegment segment = new TimestampedSegment("segment", "window", 0L);
             string directoryPath = TestUtils.GetTempDirectory().FullName;
             DirectoryInfo directory = new DirectoryInfo(directoryPath);
 
-            IProcessorContext mockContext = Mock.Of<IProcessorContext>();
-            //expect(mockContext.AppConfigs()).andReturn(emptyMap());
-            //expect(mockContext.stateDir).andReturn(directory);
-            //replay(mockContext);
+            IProcessorContext mockContext = Mock.Of<IProcessorContext>(pc =>
+                pc.AppConfigs() == new Dictionary<string, object>()
+                && pc.StateDir == directory);
 
-            segment.OpenDB(mockContext);
+            using (segment.OpenDB(mockContext))
+            {
+                Assert.True(new DirectoryInfo(Path.Combine(directoryPath, "window")).Exists);
+                Assert.True(new DirectoryInfo(Path.Combine(directoryPath, "window", "segment")).Exists);
+                Assert.True(new DirectoryInfo(Path.Combine(directoryPath, "window", "segment")).GetFileSystemInfos().Length > 0);
+            }
 
-            Assert.True(new FileInfo(Path.Combine(directoryPath, "window")).Exists);
-            Assert.True(new FileInfo(Path.Combine(directoryPath, "window", "segment")).Exists);
-            //Assert.True(new FileInfo(Path.Combine(directoryPath, "window", "segment")).list().Length > 0);
             segment.Destroy();
-            Assert.False(new FileInfo(Path.Combine(directoryPath, "window", "segment")).Exists);
-            Assert.True(new FileInfo(Path.Combine(directoryPath, "window")).Exists);
+            Assert.False(new DirectoryInfo(Path.Combine(directoryPath, "window", "segment")).Exists);
+            Assert.True(new DirectoryInfo(Path.Combine(directoryPath, "window")).Exists);
         }
 
         [Fact]

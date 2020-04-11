@@ -221,7 +221,7 @@ namespace Kafka.Streams.State.Metered
 
         public IKeyValueIterator<K, V> All()
         {
-            return new MeteredKeyValueIterator<K, V>(this.Context, Wrapped.All());//, allTime);
+            return new MeteredKeyValueIterator<K, V>(this.Context, this.Wrapped.All());//, allTime);
         }
 
         public override void Flush()

@@ -1049,7 +1049,7 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public IKeyValueStore<K, ValueAndTimestamp<V>>? GetTimestampedKeyValueStore<K, V>(string Name)
+        public IKeyValueStore<K, IValueAndTimestamp<V>>? GetTimestampedKeyValueStore<K, V>(string Name)
         {
             IStateStore store = this.GetStateStore(Name, false);
             return store is ITimestampedKeyValueStore
@@ -1107,7 +1107,7 @@ namespace Kafka.Streams.Tests
          * @see #getWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public IWindowStore<K, ValueAndTimestamp<V>>? GetTimestampedWindowStore<K, V>(string Name)
+        public IWindowStore<K, IValueAndTimestamp<V>>? GetTimestampedWindowStore<K, V>(string Name)
         {
             var store = this.GetStateStore(Name, false);
             return store is ITimestampedWindowStore<K, V>

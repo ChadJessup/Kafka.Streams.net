@@ -162,7 +162,7 @@ namespace Kafka.Streams.State.Internals
 
         private Bytes SegmentLowerRangeFixedSize(Bytes key, long segmentBeginTime)
         {
-            IWindowed<Bytes> sessionKey = new IWindowed<Bytes>(
+            IWindowed<Bytes> sessionKey = new Windowed2<Bytes>(
                 key,
                 new SessionWindow(0, Math.Max(0, segmentBeginTime)));
 
@@ -171,7 +171,7 @@ namespace Kafka.Streams.State.Internals
 
         private Bytes SegmentUpperRangeFixedSize(Bytes key, long segmentEndTime)
         {
-            IWindowed<Bytes> sessionKey = new IWindowed<Bytes>(key, new SessionWindow(Math.Min(this.latestSessionStartTime, segmentEndTime), segmentEndTime));
+            IWindowed<Bytes> sessionKey = new Windowed2<Bytes>(key, new SessionWindow(Math.Min(this.latestSessionStartTime, segmentEndTime), segmentEndTime));
             return SessionKeySchema.ToBinary(sessionKey);
         }
 

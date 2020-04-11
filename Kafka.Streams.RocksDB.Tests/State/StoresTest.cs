@@ -257,7 +257,7 @@ namespace Kafka.Streams.Tests.State
         [Fact]
         public void ShouldBuildTimestampedWindowStore()
         {
-            ITimestampedWindowStore<string, string> store = this.storesFactory.TimestampedWindowStoreBuilder(
+            ITimestampedWindowStore<string, string> store = this.storesFactory.TimestampedWindowStoreBuilder<string, string>(
                 this.streamsBuilder.Context,
                 this.storesFactory.PersistentTimestampedWindowStore("store", TimeSpan.FromMilliseconds(3L), TimeSpan.FromMilliseconds(3L), true),
                 Serdes.String(),
@@ -269,7 +269,7 @@ namespace Kafka.Streams.Tests.State
         [Fact]
         public void ShouldBuildTimestampedWindowStoreThatWrapsWindowStore()
         {
-            ITimestampedWindowStore<string, string> store = this.storesFactory.TimestampedWindowStoreBuilder(
+            ITimestampedWindowStore<string, string> store = this.storesFactory.TimestampedWindowStoreBuilder<string, string>(
                 this.streamsBuilder.Context,
                 this.storesFactory.PersistentWindowStore("store", TimeSpan.FromMilliseconds(3L), TimeSpan.FromMilliseconds(3L), true),
                 Serdes.String(),

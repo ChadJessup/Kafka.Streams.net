@@ -34,8 +34,8 @@ namespace Kafka.Streams.State.Metered
 
         public KeyValuePair<long, V> next()
         {
-            KeyValuePair<long, byte[]> next = iter.Current;
-            return KeyValuePair.Create(next.Key, serdes.ValueFrom(next.Value));
+            KeyValuePair<long, byte[]> next = this.iter.Current;
+            return KeyValuePair.Create(next.Key, this.serdes.ValueFrom(next.Value));
         }
 
         public void Remove()
@@ -47,7 +47,7 @@ namespace Kafka.Streams.State.Metered
         {
             try
             {
-                iter.Close();
+                this.iter.Close();
             }
             finally
             {
@@ -57,7 +57,7 @@ namespace Kafka.Streams.State.Metered
 
         public long PeekNextKey()
         {
-            return iter.PeekNextKey();
+            return this.iter.PeekNextKey();
         }
 
         public bool MoveNext()

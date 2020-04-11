@@ -1,9 +1,8 @@
-using Kafka.Common;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.Metered;
 using Kafka.Streams.State.Windowed;
-
 using System;
 
 namespace Kafka.Streams.State.TimeStamped
@@ -44,12 +43,12 @@ namespace Kafka.Streams.State.TimeStamped
                 }
             }
 
-            return new MeteredTimestampedWindowStore<K, V>(
-                context,
+            return (ITimestampedWindowStore<K, V>)new MeteredTimestampedWindowStore<K, V>(
+                this.context,
                 store, //MaybeWrapCaching(MaybeWrapLogging(store)),
-                storeSupplier.WindowSize,
-                keySerde,
-                valueSerde);
+                this.storeSupplier.WindowSize,
+                this.keySerde,
+                this.valueSerde);
         }
 
         public long RetentionPeriod()

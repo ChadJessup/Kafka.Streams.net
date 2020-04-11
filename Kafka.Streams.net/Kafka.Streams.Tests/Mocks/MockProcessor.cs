@@ -10,7 +10,7 @@ namespace Kafka.Streams.Tests.Mocks
     public class MockProcessor<K, V> : AbstractProcessor<K, V>
     {
         public List<KeyValueTimestamp<K, V>> processed = new List<KeyValueTimestamp<K, V>>();
-        public Dictionary<K, ValueAndTimestamp<V>> lastValueAndTimestampPerKey = new Dictionary<K, ValueAndTimestamp<V>>();
+        public Dictionary<K, IValueAndTimestamp<V>> lastValueAndTimestampPerKey = new Dictionary<K, IValueAndTimestamp<V>>();
 
         public List<long> punctuatedStreamTime = new List<long>();
         public List<long> punctuatedSystemTime = new List<long>();

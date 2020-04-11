@@ -30,6 +30,11 @@ namespace Kafka.Streams.KStream.Internals
         {
         }
 
+        public TimeWindow(long startMs, long endMs)
+           : base(startMs, endMs)
+        {
+        }
+
         public TimeWindow(TimeSpan duration)
             : base(duration)
         {

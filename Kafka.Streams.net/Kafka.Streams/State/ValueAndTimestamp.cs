@@ -50,7 +50,7 @@ namespace Kafka.Streams.State
         long Timestamp { get; }
     }
 
-    public interface IValueAndTimestamp<V> : IValueAndTimestamp
+    public interface IValueAndTimestamp<out V> : IValueAndTimestamp
     {
         V Value { get; }
     }

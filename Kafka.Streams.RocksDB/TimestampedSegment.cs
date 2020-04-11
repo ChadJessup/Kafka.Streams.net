@@ -5,9 +5,9 @@ using System;
 
 namespace Kafka.Streams.State.TimeStamped
 {
-    public class TimestampedSegment : RocksDbTimestampedStore, IComparable<TimestampedSegment>, ISegment
+    public class TimestampedSegment : RocksDbTimestampedStore, IComparable<TimestampedSegment>, ISegment, IDisposable
     {
-        public long id;
+        public long Id { get; }
 
         public TimestampedSegment(
             string segmentName,
@@ -15,29 +15,38 @@ namespace Kafka.Streams.State.TimeStamped
             long id)
                 : base(segmentName, windowName)
         {
-            this.id = id;
+            this.Id = id;
         }
 
         public void Destroy()
         {
-            //Utils.delete(this.DbDir);
+            try
+            {
+                this.DbDir.Delete(recursive: true);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         public int CompareTo(TimestampedSegment segment)
         {
-            return this.id.CompareTo(segment.id);
+            return this.Id.CompareTo(segment.Id);
         }
 
-        public override void OpenDB(IProcessorContext context)
+        public override IDisposable OpenDB(IProcessorContext context)
         {
-            base.OpenDB(context);
+            var disposable = base.OpenDB(context);
             // skip the registering step
-            //internalProcessorContext = context;
+            this.InternalProcessorContext = context;
+
+            return disposable;
         }
 
         public override string ToString()
         {
-            return "TimestampedSegment(id=" + this.id + ", Name=" + this.Name + ")";
+            return $"TimestampedSegment(id={this.Id}, Name={this.Name})";
         }
 
         public override bool Equals(object obj)
@@ -46,13 +55,12 @@ namespace Kafka.Streams.State.TimeStamped
             {
                 return false;
             }
+
             TimestampedSegment segment = (TimestampedSegment)obj;
-            return this.id == segment.id;
+            return this.Id == segment.Id;
         }
 
         public override int GetHashCode()
-        {
-            return HashCode.Combine(this.id);
-        }
+            => HashCode.Combine(this.Id);
     }
 }

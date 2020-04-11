@@ -112,7 +112,7 @@ namespace Kafka.Streams.State.Internals
 
             KeyValuePair<long, byte[]> nextRecord = this.recordIterator.Current;
             SessionWindow sessionWindow = new SessionWindow(nextRecord.Key, this.currentEndTime);
-            IWindowed<Bytes> windowedKey = new IWindowed<Bytes>(this.currentKey, sessionWindow);
+            IWindowed<Bytes> windowedKey = new Windowed2<Bytes>(this.currentKey, sessionWindow);
 
             return KeyValuePair.Create(windowedKey, nextRecord.Value);
         }

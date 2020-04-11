@@ -27,8 +27,7 @@ namespace Kafka.Streams.RocksDbState
             this.columnFamily = columnFamily;
         }
 
-        public void Put(byte[] key,
-                        byte[] value)
+        public void Put(byte[] key, byte[] value)
         {
             if (value == null)
             {
@@ -56,9 +55,7 @@ namespace Kafka.Streams.RocksDbState
             }
         }
 
-        public void PrepareBatch(
-            List<KeyValuePair<Bytes, byte[]>> entries,
-            WriteBatch batch)
+        public void PrepareBatch(List<KeyValuePair<Bytes, byte[]>> entries, WriteBatch batch)
         {
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
@@ -76,9 +73,7 @@ namespace Kafka.Streams.RocksDbState
             return this.db.Get(key, this.columnFamily);
         }
 
-        public IKeyValueIterator<Bytes, byte[]> Range(
-            Bytes from,
-            Bytes to)
+        public IKeyValueIterator<Bytes, byte[]> Range(Bytes from, Bytes to)
         {
             return new RocksDbRangeIterator(
                 this.Name,
@@ -112,8 +107,9 @@ namespace Kafka.Streams.RocksDbState
         }
 
 
-        public void PrepareBatchForRestore(List<KeyValuePair<byte[], byte[]>> records,
-                                           WriteBatch batch)
+        public void PrepareBatchForRestore(
+            List<KeyValuePair<byte[], byte[]>> records,
+            WriteBatch batch)
         {
             foreach (KeyValuePair<byte[], byte[]> record in records)
             {

@@ -56,7 +56,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (this.queryableName != null)
             {
-                ValueAndTimestamp<V> oldValueAndTimestamp = this.store.Get(key);
+                IValueAndTimestamp<V> oldValueAndTimestamp = this.store.Get(key);
 
                 V oldValue;
                 if (oldValueAndTimestamp != null)

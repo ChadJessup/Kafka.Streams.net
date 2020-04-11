@@ -19,7 +19,7 @@ namespace Kafka.Streams.RocksDbState
     /**
      * A Persistent key-value store based on RocksDb.
      */
-    public class RocksDbStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
+    public class RocksDbStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore, IDisposable
     {
         private static readonly ILogger log = new LoggerFactory().CreateLogger<RocksDbStore>();
 
@@ -54,7 +54,7 @@ namespace Kafka.Streams.RocksDbState
         private IRocksDbConfigSetter configSetter;
 
         private bool prepareForBulkload = false;
-        public IProcessorContext InternalProcessorContext { get; private set; }
+        public IProcessorContext InternalProcessorContext { get; set; }
 
         // visible for testing
         IBatchingStateRestoreCallback batchingStateRestoreCallback = null;
@@ -75,7 +75,7 @@ namespace Kafka.Streams.RocksDbState
             this.parentDir = parentDir;
         }
 
-        public virtual void OpenDB(IProcessorContext context)
+        public virtual IDisposable OpenDB(IProcessorContext context)
         {
             // initialize the default rocksdb options
 
@@ -106,26 +106,29 @@ namespace Kafka.Streams.RocksDbState
 
             this.WOptions = new WriteOptions();
             this.WOptions.DisableWal(1);
-
-            //fOptions = new FlushOptions();
-            //fOptions.setWaitForFlush(true);
+            
+            // fOptions = new FlushOptions();
+            // fOptions.setWaitForFlush(true);
 
             Dictionary<string, object> configs = context.AppConfigs();
-            var configSetterClass =
-                (IRocksDbConfigSetter)configs[StreamsConfigPropertyNames.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG];
 
-            if (configSetterClass != null)
+
+            if (configs.TryGetValue(StreamsConfigPropertyNames.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, out var classString))
             {
-                this.configSetter = (IRocksDbConfigSetter)Activator.CreateInstance(configSetterClass.GetType());
-                this.configSetter.SetConfig(this.Name, this.dbOptions, configs);
+                var configSetterClass = Type.GetType(classString.ToString());
+                if (configSetterClass != null)
+                {
+                    this.configSetter = (IRocksDbConfigSetter)Activator.CreateInstance(configSetterClass.GetType());
+                    this.configSetter.SetConfig(this.Name, this.dbOptions, configs);
+                }
             }
 
             if (this.prepareForBulkload)
             {
-                //userSpecifiedOptions.prepareForBulkLoad();
+                // userSpecifiedOptions.prepareForBulkLoad();
             }
 
-            this.DbDir = new DirectoryInfo(Path.Combine(Path.Combine(context.StateDir.FullName, this.parentDir), this.Name));
+            this.DbDir = new DirectoryInfo(Path.Combine(context.StateDir.FullName, this.parentDir, this.Name));
 
             try
             {
@@ -138,6 +141,8 @@ namespace Kafka.Streams.RocksDbState
 
             this.OpenRocksDb(this.dbOptions, this.columnFamilyOptions);
             this.open = true;
+
+            return this;
         }
 
         void OpenRocksDb(
@@ -146,8 +151,6 @@ namespace Kafka.Streams.RocksDbState
         {
             var columnFamilyDescriptors = new ColumnFamilies(columnFamilyOptions);
 
-            var columnFamilies = new List<ColumnFamilyHandle>(columnFamilyDescriptors.Count());
-
             try
             {
                 this.Db = RocksDb.Open(
@@ -155,12 +158,13 @@ namespace Kafka.Streams.RocksDbState
                     this.DbDir.FullName,
                     columnFamilyDescriptors);
 
+                var columnFamilyHandle = this.Db.GetDefaultColumnFamily();
                 this.DbAccessor = new SingleColumnFamilyAccessor(
                     this.Name,
                     this.Db,
                     this.WOptions,
                     this.OpenIterators,
-                    columnFamilies[0]);
+                    columnFamilyHandle);
             }
             catch (RocksDbException e)
             {
@@ -331,12 +335,12 @@ namespace Kafka.Streams.RocksDbState
                 {
                     throw new ProcessorStateException("Error fetching property from store " + this.Name, e);
                 }
-                
+
                 if (this.IsOverflowing(numEntries))
                 {
                     return long.MaxValue;
                 }
-             
+
                 return numEntries;
             }
         }
@@ -386,8 +390,9 @@ namespace Kafka.Streams.RocksDbState
             this.OpenDB(this.InternalProcessorContext);
         }
 
-        public void AddToBatch(KeyValuePair<byte[], byte[]> record,
-                               WriteBatch batch)
+        public void AddToBatch(
+            KeyValuePair<byte[], byte[]> record,
+            WriteBatch batch)
         {
             this.DbAccessor.AddToBatch(record.Key, record.Value, batch);
         }
@@ -417,15 +422,10 @@ namespace Kafka.Streams.RocksDbState
             // Important: do not rearrange the order in which the below objects are closed!
             // Order of closing must follow: ColumnFamilyHandle > RocksDb > DBOptions > ColumnFamilyOptions
             this.DbAccessor.Close();
-            //db.Close();
-            //wOptions.Close();
-            //fOptions.Close();
-            //filter.Close();
-            //cache.Close();
+            this.Db?.Dispose();
 
             this.DbAccessor = null;
             this.WOptions = null;
-            //fOptions = null;
             this.Db = null;
             this.filter = null;
             this.cache = null;
@@ -473,6 +473,25 @@ namespace Kafka.Streams.RocksDbState
         public void Write()
         {
             throw new NotImplementedException();
+        }
+
+        private bool disposedValue = false; // To detect redundant calls
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposedValue)
+            {
+                if (disposing)
+                {
+                    this.Db?.Dispose();
+                }
+
+                this.disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
         }
     }
 }

@@ -18,13 +18,13 @@ namespace Kafka.Streams.State.Sessions
 
         public Bytes UpperRangeFixedSize(Bytes key, long to)
         {
-            IWindowed<Bytes> sessionKey = new IWindowed<Bytes>(key, new SessionWindow(to, long.MaxValue));
+            IWindowed<Bytes> sessionKey = new Windowed2<Bytes>(key, new SessionWindow(to, long.MaxValue));
             return SessionKeySchema.ToBinary(sessionKey);
         }
 
         public Bytes LowerRangeFixedSize(Bytes key, long from)
         {
-            IWindowed<Bytes> sessionKey = new IWindowed<Bytes>(key, new SessionWindow(0, Math.Max(0, from)));
+            IWindowed<Bytes> sessionKey = new Windowed2<Bytes>(key, new SessionWindow(0, Math.Max(0, from)));
             return SessionKeySchema.ToBinary(sessionKey);
         }
 
@@ -139,14 +139,14 @@ namespace Kafka.Streams.State.Sessions
             K key = ExtractKey(binaryKey, keyDeserializer, topic);
             Window window = ExtractWindow(binaryKey);
 
-            return new IWindowed<K>(key, window);
+            return new Windowed2<K>(key, window);
         }
 
         public static IWindowed<Bytes> From(Bytes bytesKey)
         {
             byte[] binaryKey = Array.Empty<byte>();
             Window window = ExtractWindow(binaryKey);
-            return new IWindowed<Bytes>(Bytes.Wrap(ExtractKeyBytes(binaryKey)), window);
+            return new Windowed2<Bytes>(Bytes.Wrap(ExtractKeyBytes(binaryKey)), window);
         }
 
         public static IWindowed<K> From<K>(
@@ -155,7 +155,7 @@ namespace Kafka.Streams.State.Sessions
             string topic)
         {
             K key = keyDeserializer.Deserialize(topic, keyBytes.Key, isKey: true);
-            return new IWindowed<K>(key, keyBytes.window);
+            return new Windowed2<K>(key, keyBytes.window);
         }
 
         public static byte[] ToBinary<K>(

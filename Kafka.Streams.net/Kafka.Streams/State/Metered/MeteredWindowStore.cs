@@ -11,12 +11,11 @@ using System;
 namespace Kafka.Streams.State.Metered
 {
     public class MeteredWindowStore<K, V>
-        : WrappedStateStore<IWindowStore<Bytes, byte[]>,
-        IWindowed<K>, V>,
+        : WrappedStateStore<IWindowStore<Bytes, byte[]>, IWindowed<K>, V>,
         IWindowStore<K, V>
     {
         private TimeSpan windowSize;
-        protected ISerde<IWindowed<K>> KeySerde { get; set; }
+        protected ISerde<K> KeySerde { get; set; }
         protected ISerde<V> ValueSerde { get; set; }
         protected IStateSerdes<K, V> serdes { get; set; }
         private IProcessorContext context;
@@ -26,7 +25,7 @@ namespace Kafka.Streams.State.Metered
             KafkaStreamsContext context,
             IWindowStore<Bytes, byte[]> inner,
             TimeSpan windowSizeMs,
-            ISerde<IWindowed<K>> keySerde,
+            ISerde<K> keySerde,
             ISerde<V> valueSerde)
             : base(context, inner)
         {
@@ -65,17 +64,17 @@ namespace Kafka.Streams.State.Metered
             }
         }
 
-        private void InitStoreSerde(IProcessorContext context)
+        protected virtual void InitStoreSerde(IProcessorContext context)
         {
             this.serdes = new StateSerdes<K, V>(
                 ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, this.Name),
-                this.KeySerde ?? (ISerde<IWindowed<K>>)context.KeySerde,
+                this.KeySerde ?? (ISerde<K>)context.KeySerde,
                 this.ValueSerde ?? (ISerde<V>)context.ValueSerde);
         }
 
-        public bool SetFlushListener(FlushListener<K, V> listener, bool sendOldValues)
+        public override bool SetFlushListener(FlushListener<IWindowed<K>, V> listener, bool sendOldValues)
         {
-            IWindowStore<Bytes, byte[]> wrapped = Wrapped;
+            IWindowStore<Bytes, byte[]> wrapped = this.Wrapped;
             if (wrapped is ICachedStateStore)
             {
                 return ((ICachedStateStore<byte[], byte[]>)wrapped)
@@ -90,11 +89,11 @@ namespace Kafka.Streams.State.Metered
                             this.serdes.KeyDeserializer(),
                             this.serdes.Topic);
 
-                        listener?.Invoke(
-                            windowed,
-                            nv,
-                            ov,
-                            timestamp);
+                         listener?.Invoke(
+                             windowed,
+                             nv,
+                             ov,
+                             timestamp);
                     },
                    sendOldValues);
             }
@@ -104,7 +103,7 @@ namespace Kafka.Streams.State.Metered
 
         public void Put(K key, V value)
         {
-            Put(key, value, this.context.Timestamp);
+            this.Put(key, value, this.context.Timestamp);
         }
 
         public void Put(K key, V value, long windowStartTimestamp)
@@ -130,7 +129,7 @@ namespace Kafka.Streams.State.Metered
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
             try
             {
-                byte[] result = Wrapped.Fetch(this.KeyBytes(key), timestamp);
+                byte[] result = this.Wrapped.Fetch(this.KeyBytes(key), timestamp);
                 if (result == null)
                 {
                     return default;
@@ -151,9 +150,9 @@ namespace Kafka.Streams.State.Metered
         {
             return new MeteredWindowStoreIterator<V>(
                 this.Context,
-                Wrapped.Fetch(this.KeyBytes(key), timeFrom, timeTo),
+                this.Wrapped.Fetch(this.KeyBytes(key), timeFrom, timeTo),
                 // fetchTime,
-                this.serdes);
+                (IStateSerdes<long, V>)this.serdes);
         }
 
         public IKeyValueIterator<IWindowed<K>, V> Fetch(
@@ -164,7 +163,7 @@ namespace Kafka.Streams.State.Metered
         {
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
-                Wrapped.Fetch(this.KeyBytes(from), this.KeyBytes(to), timeFrom, timeTo),
+                this.Wrapped.Fetch(this.KeyBytes(from), this.KeyBytes(to), timeFrom, timeTo),
                 //fetchTime,
                 this.serdes);
         }
@@ -174,7 +173,7 @@ namespace Kafka.Streams.State.Metered
         {
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
-                Wrapped.FetchAll(timeFrom, timeTo),
+                this.Wrapped.FetchAll(timeFrom, timeTo),
                 //fetchTime,
                 this.serdes);
         }
@@ -183,7 +182,7 @@ namespace Kafka.Streams.State.Metered
         {
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
-                Wrapped.All(),
+                this.Wrapped.All(),
                 // fetchTime, 
                 this.serdes);
         }

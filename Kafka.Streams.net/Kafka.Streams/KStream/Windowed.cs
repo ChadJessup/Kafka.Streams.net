@@ -7,7 +7,7 @@ namespace Kafka.Streams.KStream
         Window window { get; }
     }
 
-    public interface IWindowed<K> : IWindowed
+    public interface IWindowed<out K> : IWindowed
     {
         K Key { get; }
     }
