@@ -1,8 +1,8 @@
-using Kafka.Common;
-using Kafka.Streams.Interfaces;
-using Kafka.Streams.State.Internals;
-
 using System;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.State.ChangeLogging;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.Metered;
 
 namespace Kafka.Streams.State.Windowed
 {
@@ -24,19 +24,43 @@ namespace Kafka.Streams.State.Windowed
             this.storeSupplier = storeSupplier;
         }
 
+        public TimeSpan RetentionPeriod => this.storeSupplier.RetentionPeriod;
+
         public override IWindowStore<K, V> Build()
         {
-            return null;
-            //new MeteredWindowStore<K, V>(
-            //    maybeWrapCaching(maybeWrapLogging(storeSupplier)),
-            //    storeSupplier.windowSize(),
-            //    storeSupplier.metricsScope(),
-            //    time,
-            //    keySerde,
-            //    valueSerde);
+            return new MeteredWindowStore<K, V>(
+                this.context,
+                this.MaybeWrapCaching(this.MaybeWrapLogging(this.storeSupplier.Get())),
+                this.storeSupplier.WindowSize,
+                this.keySerde,
+                this.valueSerde);
         }
 
-        public TimeSpan RetentionPeriod
-            => this.storeSupplier.RetentionPeriod;
+        private IWindowStore<Bytes, byte[]> MaybeWrapCaching(IWindowStore<Bytes, byte[]> inner)
+        {
+            if (!this.enableCaching)
+            {
+                return inner;
+            }
+
+            return new CachingWindowStore(
+                this.context,
+                inner,
+                this.storeSupplier.WindowSize,
+                this.storeSupplier.SegmentInterval);
+        }
+
+        private IWindowStore<Bytes, byte[]> MaybeWrapLogging(IWindowStore<Bytes, byte[]> inner)
+        {
+            if (!this.enableLogging)
+            {
+                return inner;
+            }
+         
+            return new ChangeLoggingWindowBytesStore(
+                this.context,
+                inner, 
+                this.storeSupplier.RetainDuplicates);
+        }
     }
 }

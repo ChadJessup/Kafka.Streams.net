@@ -44,7 +44,7 @@ namespace Kafka.Streams.State.Internals
         public byte[] Serialize(
             string topic,
             V data,
-            long timestamp)
+            DateTime timestamp)
         {
             if (data == null)
             {
@@ -52,7 +52,7 @@ namespace Kafka.Streams.State.Internals
             }
 
             var RawValue = this.valueSerializer.Serialize(data, new SerializationContext(MessageComponentType.Value, topic));
-            var rawTimestamp = this.timestampSerializer.Serialize(timestamp, new SerializationContext(MessageComponentType.Value, topic));
+            var rawTimestamp = this.timestampSerializer.Serialize(Timestamp.DateTimeToUnixTimestampMs(timestamp), new SerializationContext(MessageComponentType.Value, topic));
 
             return new ByteBuffer()
                 .Allocate(rawTimestamp.Length + RawValue.Length)

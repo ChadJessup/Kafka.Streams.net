@@ -71,18 +71,18 @@
 //            {
 //                throw new InvalidStateStoreException("Store is not open");
 //            }
-//            List<KeyValuePair<IWindowed<K>, V>> results = new ArrayList<>();
+//            List<KeyValuePair<IWindowed<K>, V>> results = new List<KeyValuePair<IWindowed<K>, V>>();
 //            foreach (long now in data.Keys)
 //            {
 //                var kvMap = data[now];
 //                if (kvMap != null)
 //                {
-//                    foreach (var entry in kvMap.entrySet())
+//                    foreach (var entry in kvMap)
 //                    {
 //                        results.Add(new KeyValuePair<IWindowed<K>, V>(
-//                            new IWindowed<K>(
-//                                entry.getKey(),
-//                                new TimeWindow(now, now + windowSize)), entry.getValue()));
+//                            new Windowed2<K>(
+//                                entry.Key,
+//                                new TimeWindow(now, now + windowSize)), entry.Value));
 //                    }
 //                }
 //            }
@@ -129,7 +129,7 @@
 //        {
 //            throw new InvalidStateStoreException("Store is not open");
 //        }
-//        List<KeyValuePair<IWindowed<K>, V>> results = new ArrayList<>();
+//        List<KeyValuePair<IWindowed<K>, V>> results = new List<KeyValuePair<IWindowed<K>, V>>();
 //        foreach (long now in data.keySet())
 //        {
 //            if (!(now >= timeFrom && now <= timeTo))
@@ -139,9 +139,9 @@
 //            NavigableDictionary<K, V> kvMap = data.Get(now);
 //            if (kvMap != null)
 //            {
-//                foreach (Entry<K, V> entry in kvMap.entrySet())
+//                foreach (Entry<K, V> entry in kvMap)
 //                {
-//                    results.Add(KeyValuePair.Create(new IWindowed<>(entry.getKey(), new TimeWindow(now, now + windowSize)), entry.getValue()));
+//                    results.Add(KeyValuePair.Create(new Windowed2<>(entry.Key, new TimeWindow(now, now + windowSize)), entry.Value));
 //                }
 //            }
 //        }
@@ -196,15 +196,15 @@
 //    {
 //        throw new InvalidStateStoreException("Store is not open");
 //    }
-//    List<KeyValuePair<IWindowed<K>, V>> results = new ArrayList<>();
+//    List<KeyValuePair<IWindowed<K>, V>> results = new List<KeyValuePair<IWindowed<K>, V>>();
 //    for (long now = timeFrom; now <= timeTo; now++)
 //    {
 //        NavigableDictionary<K, V> kvMap = data.Get(now);
 //        if (kvMap != null)
 //        {
-//            foreach (Entry<K, V> entry in kvMap.subMap(from, true, to, true).entrySet())
+//            foreach (Entry<K, V> entry in kvMap.subMap(from, true, to, true))
 //            {
-//                results.Add(KeyValuePair.Create(new IWindowed<>(entry.getKey(), new TimeWindow(now, now + windowSize)), entry.getValue()));
+//                results.Add(KeyValuePair.Create(new Windowed2<>(entry.Key, new TimeWindow(now, now + windowSize)), entry.Value));
 //            }
 //        }
 //    }
@@ -257,7 +257,7 @@
 
 //public void Put(K key, V value, long timestamp)
 //{
-//    if (!data.containsKey(timestamp))
+//    if (!data.ContainsKey(timestamp))
 //    {
 //        data.Put(timestamp, new TreeMap<>());
 //    }
@@ -271,7 +271,7 @@
 //}
 
 
-//public void Init(ProcessorContext context, IStateStore root) { }
+//public void Init(IProcessorContext context, IStateStore root) { }
 
 
 //public void Flush() { }

@@ -821,8 +821,8 @@
 //        IWindowStoreIterator<string> singleKeyIterator = windowStore.Fetch(2, 0L, 5L);
 //        IKeyValueIterator<IWindowed<int>, string> keyRangeIterator = windowStore.Fetch(2, 2, 0L, 5L);
 
-//        Assert.Equal(singleKeyIterator.MoveNext().value, keyRangeIterator.MoveNext().value);
-//        Assert.Equal(singleKeyIterator.MoveNext().value, keyRangeIterator.MoveNext().value);
+//        Assert.Equal(singleKeyIterator.MoveNext().Value, keyRangeIterator.MoveNext().Value);
+//        Assert.Equal(singleKeyIterator.MoveNext().Value, keyRangeIterator.MoveNext().Value);
 //        Assert.False(singleKeyIterator.HasNext());
 //        Assert.False(keyRangeIterator.HasNext());
 //    }
@@ -914,7 +914,7 @@
 //        IWindowed<int> nextKey = iterator.PeekNextKey();
 
 //        Assert.Equal(iterator.PeekNextKey(), nextKey);
-//        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
+//        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().Key);
 //        Assert.False(iterator.HasNext());
 //    }
 
@@ -929,7 +929,7 @@
 //        long nextKey = iterator.PeekNextKey();
 
 //        Assert.Equal(iterator.PeekNextKey(), nextKey);
-//        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().key);
+//        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().Key);
 //        Assert.False(iterator.HasNext());
 //    }
 
@@ -1056,8 +1056,8 @@
 //        {
 //            long timestamp = WindowKeySchema.extractStoreTimestamp(entry.Key);
 
-//            int key = WindowKeySchema.extractStoreKey(entry.key, serdes);
-//            string value = entry.value == null ? null : serdes.valueFrom(entry.value);
+//            int key = WindowKeySchema.extractStoreKey(entry.Key, serdes);
+//            string value = entry.Value == null ? null : serdes.valueFrom(entry.Value);
 
 //            HashSet<string> entries = entriesByKey.computeIfAbsent(key, k => new HashSet<>());
 //            entries.Add(value + "@" + (timestamp - startTime));
@@ -1073,7 +1073,7 @@
 
 //    private static KeyValuePair<IWindowed<K>, V> WindowedPair<K, V>(K key, V value, long timestamp, long windowSize)
 //    {
-//        return KeyValuePair.Create(new IWindowed<>(key, WindowKeySchema.timeWindowForSize(timestamp, windowSize)), value);
+//        return KeyValuePair.Create(new Windowed2<>(key, WindowKeySchema.timeWindowForSize(timestamp, windowSize)), value);
 //    }
 
 //    protected void SetCurrentTime(long currentTime)

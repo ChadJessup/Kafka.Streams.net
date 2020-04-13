@@ -1,3 +1,4 @@
+using System;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
@@ -40,8 +41,8 @@ namespace Kafka.Streams.State.ChangeLogging
 
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes key,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             return this.Wrapped.FindSessions(
                 key,
@@ -52,8 +53,8 @@ namespace Kafka.Streams.State.ChangeLogging
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes keyFrom,
             Bytes keyTo,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             return this.Wrapped.FindSessions(
                 keyFrom,
@@ -75,7 +76,7 @@ namespace Kafka.Streams.State.ChangeLogging
 
         }
 
-        public byte[] FetchSession(Bytes key, long startTime, long endTime)
+        public byte[] FetchSession(Bytes key, DateTime startTime, DateTime endTime)
         {
             return this.Wrapped.FetchSession(key, startTime, endTime);
         }

@@ -91,7 +91,7 @@ namespace Kafka.Streams.KStream
      * key and value serdes like:
      * <pre>{@code
      * StreamsBuilder builder = new StreamsBuilder();
-     * KStream<string, long> stream = builder.stream(
+     * IKStream<K, V> stream = builder.stream(
      *   "topicName",
      *   Consumed.With(Serdes.string(), Serdes.Long())
      *           .withTimestampExtractor(new LogAndSkipOnInvalidTimestamp()));

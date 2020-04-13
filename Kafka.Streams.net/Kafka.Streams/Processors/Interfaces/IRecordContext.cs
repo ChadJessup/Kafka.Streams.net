@@ -1,3 +1,4 @@
+using System;
 using Confluent.Kafka;
 
 namespace Kafka.Streams.Processors
@@ -12,13 +13,13 @@ namespace Kafka.Streams.Processors
          * @return  The offset of the original record received from Kafka;
          *          could be -1 if it is not available
          */
-        long offset { get; }
+        long Offset { get; }
 
         /**
          * @return  The timestamp extracted from the record received from Kafka;
          *          could be -1 if it is not available
          */
-        long timestamp { get; }
+        DateTime Timestamp { get; }
 
         /**
          * @return  The topic the record was received on;
@@ -30,12 +31,12 @@ namespace Kafka.Streams.Processors
          * @return  The partition the record was received on;
          *          could be -1 if it is not available
          */
-        int partition { get; }
+        int Partition { get; }
 
         /**
          * @return  The headers from the record received from Kafka;
          *          could be null if it is not available
          */
-        Headers headers { get; }
+        Headers Headers { get; }
     }
 }

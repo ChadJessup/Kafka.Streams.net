@@ -27,14 +27,10 @@ namespace Kafka.Streams.State.Internals
         //}
 
         // In-memory store is not *really* segmented, so just say it is 1 (for ordering consistency with caching enabled)
-        public long SegmentIntervalMs()
-        {
-            return 1;
-        }
+        public TimeSpan SegmentInterval => TimeSpan.FromMilliseconds(1);
 
         public void SetName(string Name)
         {
-            throw new NotImplementedException();
         }
     }
 }

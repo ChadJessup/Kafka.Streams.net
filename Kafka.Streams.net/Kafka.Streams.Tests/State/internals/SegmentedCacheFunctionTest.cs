@@ -48,7 +48,7 @@
 //        public void Key()
 //        {
 //            Assert.Equal(
-//                cacheFunction.key(THE_CACHE_KEY),
+//                cacheFunction.Key(THE_CACHE_KEY),
 //                equalTo(THE_KEY)
 //            );
 //        }
@@ -72,12 +72,12 @@
 //        public void TestRoundTripping()
 //        {
 //            Assert.Equal(
-//                cacheFunction.key(cacheFunction.cacheKey(THE_KEY)),
+//                cacheFunction.Key(cacheFunction.cacheKey(THE_KEY)),
 //                equalTo(THE_KEY)
 //            );
 
 //            Assert.Equal(
-//                cacheFunction.cacheKey(cacheFunction.key(THE_CACHE_KEY)),
+//                cacheFunction.cacheKey(cacheFunction.Key(THE_CACHE_KEY)),
 //                equalTo(THE_CACHE_KEY)
 //            );
 //        }

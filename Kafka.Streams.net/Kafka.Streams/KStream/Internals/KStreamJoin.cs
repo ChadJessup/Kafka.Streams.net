@@ -78,16 +78,16 @@ namespace Kafka.Streams.KStream.Internals
             var joinThis = new KStreamKStreamJoin<K1, R, V1, V2>(
                 this.context,
                 otherWindowStore.Name,
-                windows.beforeMs,
-                windows.afterMs,
+                windows.before,
+                windows.after,
                 joiner,
                 this.leftOuter);
 
             var joinOther = new KStreamKStreamJoin<K1, R, V2, V1>(
                 this.context,
                 thisWindowStore.Name,
-                windows.afterMs,
-                windows.beforeMs,
+                windows.after,
+                windows.before,
                 AbstractStream<K1, V1>.ReverseJoiner(joiner),
                 this.rightOuter);
 

@@ -25,13 +25,13 @@
 
 //        private TimeWindow storeWindow = new TimeWindow(0, 1);
 //        private Iterator<KeyValuePair<IWindowed<Bytes>, byte[]>> storeKvs = Collections.singleton(
-//            KeyValuePair.Create(new IWindowed<>(Bytes.Wrap(storeKey.getBytes()), storeWindow), storeKey.getBytes())).iterator();
+//            KeyValuePair.Create(new Windowed2<>(Bytes.Wrap(storeKey.getBytes()), storeWindow), storeKey.getBytes())).iterator();
 
 //        private TimeWindow cacheWindow = new TimeWindow(10, 20);
 //        private Iterator<KeyValuePair<Bytes, LRUCacheEntry>> cacheKvs = Collections.singleton(
 //            KeyValuePair.Create(
 //                SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary(
-//                        new IWindowed<K>(cacheKey, cacheWindow), 0, new StateSerdes<>("dummy", Serdes.String(), Serdes.ByteArray()))
+//                        new Windowed2<K>(cacheKey, cacheWindow), 0, new StateSerdes<>("dummy", Serdes.String(), Serdes.ByteArray()))
 //                ),
 //                new LRUCacheEntry(cacheKey.getBytes())
 //            )).iterator();
@@ -51,7 +51,7 @@
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
 //                createIterator(storeKvs, Collections.emptyIterator());
-//            Assert.Equal(convertKeyValuePair(mergeIterator.MoveNext()), (KeyValuePair.Create(new IWindowed<>(storeKey, storeWindow), storeKey)));
+//            Assert.Equal(convertKeyValuePair(mergeIterator.MoveNext()), (KeyValuePair.Create(new Windowed2<>(storeKey, storeWindow), storeKey)));
 //        }
 
 //        [Fact]
@@ -59,7 +59,7 @@
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
 //                createIterator(storeKvs, Collections.emptyIterator());
-//            Assert.Equal(convertWindowedKey(mergeIterator.PeekNextKey()), (new IWindowed<>(storeKey, storeWindow)));
+//            Assert.Equal(convertWindowedKey(mergeIterator.PeekNextKey()), (new Windowed2<>(storeKey, storeWindow)));
 //        }
 
 //        [Fact]
@@ -75,7 +75,7 @@
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
 //                createIterator(Collections.emptyIterator(), cacheKvs);
-//            Assert.Equal(convertKeyValuePair(mergeIterator.MoveNext()), (KeyValuePair.Create(new IWindowed<>(cacheKey, cacheWindow), cacheKey)));
+//            Assert.Equal(convertKeyValuePair(mergeIterator.MoveNext()), (KeyValuePair.Create(new Windowed2<>(cacheKey, cacheWindow), cacheKey)));
 //        }
 
 //        [Fact]
@@ -83,15 +83,15 @@
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator mergeIterator =
 //                createIterator(Collections.emptyIterator(), cacheKvs);
-//            Assert.Equal(convertWindowedKey(mergeIterator.PeekNextKey()), (new IWindowed<string>(cacheKey, cacheWindow)));
+//            Assert.Equal(convertWindowedKey(mergeIterator.PeekNextKey()), (new Windowed2<string>(cacheKey, cacheWindow)));
 //        }
 
 //        [Fact]
 //        public void ShouldIterateBothStoreAndCache()
 //        {
 //            MergedSortedCacheWindowStoreKeyValueIterator iterator = createIterator(storeKvs, cacheKvs);
-//            Assert.Equal(convertKeyValuePair(iterator.MoveNext()), (KeyValuePair.Create(new IWindowed<string>(storeKey, storeWindow), storeKey)));
-//            Assert.Equal(convertKeyValuePair(iterator.MoveNext()), (KeyValuePair.Create(new IWindowed<>(cacheKey, cacheWindow), cacheKey)));
+//            Assert.Equal(convertKeyValuePair(iterator.MoveNext()), (KeyValuePair.Create(new Windowed2<string>(storeKey, storeWindow), storeKey)));
+//            Assert.Equal(convertKeyValuePair(iterator.MoveNext()), (KeyValuePair.Create(new Windowed2<>(cacheKey, cacheWindow), cacheKey)));
 //            Assert.False(iterator.HasNext());
 //        }
 
@@ -103,8 +103,8 @@
 
 //        private IWindowed<string> ConvertWindowedKey(IWindowed<Bytes> bytesWindowed)
 //        {
-//            string key = deserializer.deserialize("", bytesWindowed.Key.Get());
-//            return new IWindowed<string>(key, bytesWindowed.window());
+//            string key = deserializer.Deserialize("", bytesWindowed.Key.Get());
+//            return new Windowed2<string>(key, bytesWindowed.window());
 //        }
 
 //        private MergedSortedCacheWindowStoreKeyValueIterator CreateIterator(

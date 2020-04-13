@@ -34,7 +34,7 @@ namespace Kafka.Streams.NullModels
         IWindowed<K> IKeyValueIterator<IWindowed<K>, V>.PeekNextKey()
             => new NullWindowedKeyValueIterator<IWindowed<K>, V>();
 
-        private class NullWindowedKeyValueIterator<T, V> : Windowed2<K>
+        private class NullWindowedKeyValueIterator<T, V> : Windowed<K>
         {
             public NullWindowedKeyValueIterator()
                 : base(default, new NullWindow())

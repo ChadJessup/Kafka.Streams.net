@@ -12,7 +12,7 @@ namespace Kafka.Streams.State.Windowed
      *
      * @param Type of values
      */
-    public interface IWindowStoreIterator<V> : IKeyValueIterator<long, V>, IDisposable
+    public interface IWindowStoreIterator<V> : IKeyValueIterator<DateTime, V>, IDisposable
     {
     }
 }

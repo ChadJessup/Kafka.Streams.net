@@ -60,7 +60,7 @@
 //        private ISerde<string> serde = Serdes.String();
 
 //        private Window window = new TimeWindow(startTime, endTime);
-//        private IWindowed<string> windowedKey = new IWindowed<>(key, window);
+//        private IWindowed<string> windowedKey = new Windowed2<>(key, window);
 //        private WindowKeySchema windowKeySchema = new WindowKeySchema();
 //        private ISerde<IWindowed<string>> keySerde = new WindowedSerdes.TimeWindowedSerde<>(serde);
 //        private StateSerdes<string, byte[]> stateSerdes = new StateSerdes<string, byte[]>("dummy", serde, Serdes.ByteArray());
@@ -68,23 +68,23 @@
 //        [Fact]
 //        public void TestHasNextConditionUsingNullKeys()
 //        {
-//            List<KeyValuePair<Bytes, int>> keys = Array.asList(
-//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0 }), new TimeWindow(0, 1)), 0), 1),
-//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0 }), new TimeWindow(0, 1)), 0), 2),
-//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new TimeWindow(0, 1)), 0), 3),
-//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0 }), new TimeWindow(10, 20)), 4), 4),
-//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0 }), new TimeWindow(10, 20)), 5), 5),
-//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new TimeWindow(10, 20)), 6), 6));
+//            List<KeyValuePair<Bytes, int>> keys = Arrays.asList(
+//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0, 0 }), new TimeWindow(0, 1)), 0), 1),
+//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0 }), new TimeWindow(0, 1)), 0), 2),
+//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new TimeWindow(0, 1)), 0), 3),
+//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0 }), new TimeWindow(10, 20)), 4), 4),
+//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0, 0 }), new TimeWindow(10, 20)), 5), 5),
+//                    KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new TimeWindow(10, 20)), 6), 6));
 //            DelegatingPeekingKeyValueIterator<Bytes, int> iterator = new DelegatingPeekingKeyValueIterator<>("foo", new KeyValueIteratorStub<>(keys.iterator()));
 
 //            HasNextCondition hasNextCondition = windowKeySchema.hasNextCondition(null, null, 0, long.MaxValue);
-//            List<int> results = new ArrayList<>();
+//            List<int> results = new List<int>();
 //            while (hasNextCondition.hasNext(iterator))
 //            {
-//                results.Add(iterator.MoveNext().value);
+//                results.Add(iterator.MoveNext().Value);
 //            }
 
-//            Assert.Equal(results, Array.asList(1, 2, 3, 4, 5, 6));
+//            Assert.Equal(results, Arrays.asList(1, 2, 3, 4, 5, 6));
 //        }
 
 //        [Fact]
@@ -94,7 +94,7 @@
 
 //            Assert.Equal(
 //                "shorter key with max timestamp should be in range",
-//                upper.compareTo(
+//                upper.CompareTo(
 //                    WindowKeySchema.toStoreKeyBinary(
 //                        new byte[] { 0xA },
 //                        long.MaxValue,
@@ -105,7 +105,7 @@
 
 //            Assert.Equal(
 //                "shorter key with max timestamp should be in range",
-//                upper.compareTo(
+//                upper.CompareTo(
 //                    WindowKeySchema.toStoreKeyBinary(
 //                        new byte[] { 0xA, 0xB },
 //                        long.MaxValue,
@@ -124,7 +124,7 @@
 
 //            Assert.Equal(
 //                "shorter key with max timestamp should be in range",
-//                upper.compareTo(
+//                upper.CompareTo(
 //                    WindowKeySchema.toStoreKeyBinary(
 //                        new byte[] { 0xA, (byte)0x8F },
 //                        long.MaxValue,
@@ -144,7 +144,7 @@
 
 //            Assert.Equal(
 //                "shorter key with max timestamp should be in range",
-//                upper.compareTo(
+//                upper.CompareTo(
 //                    WindowKeySchema.toStoreKeyBinary(
 //                        new byte[] { 0xC, 0xC },
 //                        0x0AffffffffffffffL,
@@ -184,7 +184,7 @@
 
 //            Assert.Equal(
 //                "appending zeros to key should still be in range",
-//                lower.compareTo(
+//                lower.CompareTo(
 //                        WindowKeySchema.toStoreKeyBinary(
 //                            new byte[] { 0xA, 0xB, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 //                            long.MaxValue - 1,
@@ -202,7 +202,7 @@
 //            byte[] bytes = keySerde.Serializer.Serialize(topic, windowedKey);
 //            IWindowed<string> result = keySerde.Deserializer.Deserialize(topic, bytes);
 //            // TODO: fix this part as last bits of KAFKA-4468
-//            Assert.Equal(new IWindowed<>(key, new TimeWindow(startTime, long.MaxValue)), result);
+//            Assert.Equal(new Windowed2<>(key, new TimeWindow(startTime, long.MaxValue)), result);
 //        }
 
 //        [Fact]
@@ -210,8 +210,8 @@
 //        {
 //            byte[] bytes = keySerde.Serializer.Serialize(topic, windowedKey);
 //            IWindowed<string> result = new TimeWindowedDeserializer<>(serde.deserializer(), long.MaxValue - 1)
-//                    .deserialize(topic, bytes);
-//            Assert.Equal(new IWindowed<>(key, new TimeWindow(startTime, long.MaxValue)), result);
+//                    .Deserialize(topic, bytes);
+//            Assert.Equal(new Windowed2<>(key, new TimeWindow(startTime, long.MaxValue)), result);
 //        }
 
 //        [Fact]
@@ -219,7 +219,7 @@
 //        {
 //            byte[] bytes = keySerde.Serializer.Serialize(topic, windowedKey);
 //            IWindowed<string> result = new TimeWindowedDeserializer<>(serde.deserializer(), endTime - startTime)
-//                .deserialize(topic, bytes);
+//                .Deserialize(topic, bytes);
 //            Assert.Equal(windowedKey, result);
 //        }
 
@@ -227,22 +227,22 @@
 //        public void ShouldSerializeDeserializeExpectedChangelogWindowSize()
 //        {
 //            // Key-value containing serialized store key binary and the key's window size
-//            List<KeyValuePair<Bytes, int>> keys = Array.asList(
-//                KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0 }), new TimeWindow(0, 1)), 0), 1),
-//                KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0 }), new TimeWindow(0, 10)), 0), 10),
-//                KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new IWindowed<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new TimeWindow(10, 30)), 6), 20));
+//            List<KeyValuePair<Bytes, int>> keys = Arrays.asList(
+//                KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0 }), new TimeWindow(0, 1)), 0), 1),
+//                KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0, 0 }), new TimeWindow(0, 10)), 0), 10),
+//                KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed2<>(Bytes.Wrap(new byte[] { 0, 0, 0 }), new TimeWindow(10, 30)), 6), 20));
 
-//            List<long> results = new ArrayList<>();
+//            List<long> results = new List<long>();
 //            foreach (KeyValuePair<Bytes, int> keyValue in keys)
 //            {
 //                // Let the deserializer know that it's deserializing a changelog windowed key
-//                Serde<IWindowed<string>> keySerde = new WindowedSerdes.TimeWindowedSerde<>(serde, keyValue.value).forChangelog(true);
-//                IWindowed<string> result = keySerde.deserializer().deserialize(topic, keyValue.key.Get());
+//                Serde<IWindowed<string>> keySerde = new WindowedSerdes.TimeWindowedSerde<>(serde, keyValue.Value).forChangelog(true);
+//                IWindowed<string> result = keySerde.deserializer().Deserialize(topic, keyValue.Key.Get());
 //                Window resultWindow = result.window();
 //                results.Add(resultWindow.end() - resultWindow.start());
 //            }
 
-//            Assert.Equal(results, Array.asList(1L, 10L, 20L));
+//            Assert.Equal(results, Arrays.asList(1L, 10L, 20L));
 //        }
 
 //        [Fact]
@@ -309,7 +309,7 @@
 //        [Fact]
 //        public void ShouldExtractBytesKeyFromBinary()
 //        {
-//            IWindowed<Bytes> windowedBytesKey = new IWindowed<Bytes>(Bytes.Wrap(key.getBytes()), window);
+//            IWindowed<Bytes> windowedBytesKey = new Windowed2<Bytes>(Bytes.Wrap(key.getBytes()), window);
 //            Bytes serialized = WindowKeySchema.toStoreKeyBinary(windowedBytesKey, 0);
 //            Assert.Equal(windowedBytesKey, WindowKeySchema.fromStoreBytesKey(serialized.Get(), endTime - startTime));
 //        }

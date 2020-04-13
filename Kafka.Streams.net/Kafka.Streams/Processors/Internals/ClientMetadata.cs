@@ -18,7 +18,7 @@
 //                topicsToMakeReady.Add(topic.Name, topic);
 //            }
 
-//            if (!topicsToMakeReady.isEmpty())
+//            if (!topicsToMakeReady.IsEmpty())
 //            {
 //                internalTopicManager.makeReady(topicsToMakeReady);
 //            }

@@ -11,8 +11,8 @@ namespace Kafka.Streams.KStream.Internals
         private IWindowStore<K, V2> otherWindow;
         private readonly KafkaStreamsContext context;
         private readonly IValueJoiner<V1, V2, R> joiner;
-        private readonly TimeSpan joinBeforeMs;
-        private readonly TimeSpan joinAfterMs;
+        private readonly TimeSpan joinBefore;
+        private readonly TimeSpan joinAfter;
         private readonly bool outer;
 
         public KStreamKStreamJoinProcessor(
@@ -25,8 +25,8 @@ namespace Kafka.Streams.KStream.Internals
             this.context = context;
             this.outer = outer;
             this.joiner = joiner;
-            this.joinBeforeMs = joinBeforeMs;
-            this.joinAfterMs = joinAfterMs;
+            this.joinBefore = joinBeforeMs;
+            this.joinAfter = joinAfterMs;
         }
 
         public override void Init(IProcessorContext context)
@@ -55,19 +55,19 @@ namespace Kafka.Streams.KStream.Internals
             var needOuterJoin = this.outer;
 
             var inputRecordTimestamp = this.Context.Timestamp;
-            var timeFrom = Math.Max(0L, inputRecordTimestamp - (long)this.joinBeforeMs.TotalMilliseconds);
-            var timeTo = Math.Max(0L, inputRecordTimestamp + (long)this.joinAfterMs.TotalMilliseconds);
+            var timeFrom = (inputRecordTimestamp - this.joinBefore).GetNewest(DateTime.MinValue);
+            var timeTo = (inputRecordTimestamp + this.joinAfter).GetNewest(DateTime.MinValue);
 
             using IWindowStoreIterator<V2> iter = this.otherWindow.Fetch(key, timeFrom, timeTo);
             {
                 while (iter.MoveNext())
                 {
                     needOuterJoin = false;
-                    KeyValuePair<long, V2> otherRecord = iter.Current;
+                    KeyValuePair<DateTime, V2> otherRecord = iter.Current;
                     this.Context.Forward(
                         key,
                         this.joiner.Apply(value, otherRecord.Value),
-                        To.All().WithTimestamp(Math.Max(inputRecordTimestamp, otherRecord.Key)));
+                        To.All().WithTimestamp(inputRecordTimestamp.GetNewest(otherRecord.Key)));
                 }
 
                 if (needOuterJoin)

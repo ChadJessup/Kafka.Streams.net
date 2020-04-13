@@ -66,11 +66,11 @@
 //        [Fact]
 //        public void ShouldPutAllKeyValuePairs()
 //        {
-//            List<KeyValuePair<int, string>> kvPairs = Array.asList(KeyValuePair.Create(1, "1"),
+//            List<KeyValuePair<int, string>> kvPairs = Arrays.asList(KeyValuePair.Create(1, "1"),
 //                    KeyValuePair.Create(2, "2"),
 //                    KeyValuePair.Create(3, "3"));
 
-//            store.putAll(kvPairs);
+//            store.PutAll(kvPairs);
 
 //            Assert.Equal(store.approximateNumEntries, (3L));
 
@@ -83,24 +83,24 @@
 //        [Fact]
 //        public void ShouldUpdateValuesForExistingKeysOnPutAll()
 //        {
-//            List<KeyValuePair<int, string>> kvPairs = Array.asList(KeyValuePair.Create(1, "1"),
+//            List<KeyValuePair<int, string>> kvPairs = Arrays.asList(KeyValuePair.Create(1, "1"),
 //                    KeyValuePair.Create(2, "2"),
 //                    KeyValuePair.Create(3, "3"));
 
-//            store.putAll(kvPairs);
+//            store.PutAll(kvPairs);
 
 
-//            List<KeyValuePair<int, string>> updatedKvPairs = Array.asList(KeyValuePair.Create(1, "ONE"),
+//            List<KeyValuePair<int, string>> updatedKvPairs = Arrays.asList(KeyValuePair.Create(1, "ONE"),
 //                    KeyValuePair.Create(2, "TWO"),
 //                    KeyValuePair.Create(3, "THREE"));
 
-//            store.putAll(updatedKvPairs);
+//            store.PutAll(updatedKvPairs);
 
 //            Assert.Equal(store.approximateNumEntries, (3L));
 
 //            foreach (KeyValuePair<int, string> kvPair in updatedKvPairs)
 //            {
-//                Assert.Equal(store.Get(kvPair.key), (kvPair.value));
+//                Assert.Equal(store.Get(kvPair.Key), (kvPair.Value));
 //            }
 //        }
 
@@ -126,7 +126,7 @@
 //            Assert.True(driver.flushedEntryRemoved(0));
 //            Assert.Equal(1, driver.numFlushedEntryRemoved());
 
-//            store.delete(1);
+//            store.Delete(1);
 //            store.Flush();
 //            Assert.Equal(9, driver.sizeOf(store));
 //            Assert.True(driver.flushedEntryRemoved(0));

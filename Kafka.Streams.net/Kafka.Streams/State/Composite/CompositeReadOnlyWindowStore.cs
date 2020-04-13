@@ -89,8 +89,8 @@
 //        {
 //            return Fetch(
 //                key,
-//                ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
-//                ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
+//                ApiUtils.validateMillisecondInstant(from, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(from, "from")),
+//                ApiUtils.validateMillisecondInstant(to, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(to, "to")));
 //        }
 
 
@@ -126,8 +126,8 @@
 //            return Fetch(
 //                from,
 //                to,
-//                ApiUtils.validateMillisecondInstant(fromTime, ApiUtils.prepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
-//                ApiUtils.validateMillisecondInstant(toTime, ApiUtils.prepareMillisCheckFailMsgPrefix(toTime, "toTime")));
+//                ApiUtils.validateMillisecondInstant(fromTime, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
+//                ApiUtils.validateMillisecondInstant(toTime, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(toTime, "toTime")));
 //        }
 
 //        public IKeyValueIterator<K, V> All()
@@ -159,8 +159,8 @@
 //        public IKeyValueIterator<K, V> FetchAll(DateTime from, DateTime to)
 //        {
 //            return FetchAll(
-//                ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
-//                ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
+//                ApiUtils.validateMillisecondInstant(from, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(from, "from")),
+//                ApiUtils.validateMillisecondInstant(to, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(to, "to")));
 //        }
 //    }
 //}

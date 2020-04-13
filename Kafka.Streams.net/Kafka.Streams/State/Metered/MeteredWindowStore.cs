@@ -5,6 +5,7 @@ using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.ReadOnly;
 using Kafka.Streams.State.Windowed;
 using System;
 
@@ -14,11 +15,11 @@ namespace Kafka.Streams.State.Metered
         : WrappedStateStore<IWindowStore<Bytes, byte[]>, IWindowed<K>, V>,
         IWindowStore<K, V>
     {
-        private TimeSpan windowSize;
         protected ISerde<K> KeySerde { get; set; }
         protected ISerde<V> ValueSerde { get; set; }
         protected IStateSerdes<K, V> serdes { get; set; }
         private IProcessorContext context;
+        private TimeSpan windowSize;
         private string taskName;
 
         public MeteredWindowStore(
@@ -30,8 +31,8 @@ namespace Kafka.Streams.State.Metered
             : base(context, inner)
         {
             this.windowSize = windowSizeMs;
-            this.KeySerde = keySerde;
             this.ValueSerde = valueSerde;
+            this.KeySerde = keySerde;
         }
 
         public override void Init(IProcessorContext context, IStateStore root)
@@ -89,13 +90,13 @@ namespace Kafka.Streams.State.Metered
                             this.serdes.KeyDeserializer(),
                             this.serdes.Topic);
 
-                         listener?.Invoke(
-                             windowed,
-                             nv,
-                             ov,
-                             timestamp);
+                        listener?.Invoke(
+                            windowed,
+                            nv,
+                            ov,
+                            timestamp);
                     },
-                   sendOldValues);
+                    sendOldValues);
             }
 
             return false;
@@ -106,7 +107,7 @@ namespace Kafka.Streams.State.Metered
             this.Put(key, value, this.context.Timestamp);
         }
 
-        public void Put(K key, V value, long windowStartTimestamp)
+        public void Put(K key, V value, DateTime windowStartTimestamp)
         {
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
             try
@@ -116,6 +117,7 @@ namespace Kafka.Streams.State.Metered
             catch (ProcessorStateException e)
             {
                 string message = string.Format(e.ToString(), key, value);
+
                 throw new ProcessorStateException(message, e);
             }
             finally
@@ -124,7 +126,7 @@ namespace Kafka.Streams.State.Metered
             }
         }
 
-        public V Fetch(K key, long timestamp)
+        public V Fetch(K key, DateTime timestamp)
         {
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
             try
@@ -143,38 +145,33 @@ namespace Kafka.Streams.State.Metered
             }
         }
 
-        public IWindowStoreIterator<V> Fetch(
-            K key,
-            long timeFrom,
-            long timeTo)
+        public IWindowStoreIterator<V> Fetch(K key, DateTime timeFrom, DateTime timeTo)
         {
+            var iter = this.Wrapped.Fetch(this.KeyBytes(key), timeFrom, timeTo);
             return new MeteredWindowStoreIterator<V>(
                 this.Context,
-                this.Wrapped.Fetch(this.KeyBytes(key), timeFrom, timeTo),
-                // fetchTime,
+                iter,
                 (IStateSerdes<long, V>)this.serdes);
         }
 
         public IKeyValueIterator<IWindowed<K>, V> Fetch(
             K from,
             K to,
-            long timeFrom,
-            long timeTo)
+            DateTime timeFrom,
+            DateTime timeTo)
         {
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
                 this.Wrapped.Fetch(this.KeyBytes(from), this.KeyBytes(to), timeFrom, timeTo),
-                //fetchTime,
                 this.serdes);
         }
 
 
-        public IKeyValueIterator<IWindowed<K>, V> FetchAll(long timeFrom, long timeTo)
+        public IKeyValueIterator<IWindowed<K>, V> FetchAll(DateTime timeFrom, DateTime timeTo)
         {
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
                 this.Wrapped.FetchAll(timeFrom, timeTo),
-                //fetchTime,
                 this.serdes);
         }
 
@@ -183,14 +180,13 @@ namespace Kafka.Streams.State.Metered
             return new MeteredWindowedKeyValueIterator<K, V>(
                 this.Context,
                 this.Wrapped.All(),
-                // fetchTime, 
                 this.serdes);
         }
 
         public override void Flush()
         {
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
-            ;
+
             try
             {
                 base.Flush();
@@ -214,21 +210,6 @@ namespace Kafka.Streams.State.Metered
 
         public void Add(K key, V value)
         {
-        }
-
-        public IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, DateTime fromTime, DateTime toTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKeyValueIterator<IWindowed<K>, V> FetchAll(DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
         }
     }
 }

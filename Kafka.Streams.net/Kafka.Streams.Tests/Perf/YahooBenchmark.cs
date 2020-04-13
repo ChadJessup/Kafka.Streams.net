@@ -182,7 +182,7 @@
 //        int numCampaigns = 100;
 //        int adsPerCampaign = 10;
 
-//        List<string> ads = new ArrayList<>(numCampaigns * adsPerCampaign);
+//        List<string> ads = new List<>(numCampaigns * adsPerCampaign);
 //        maybeSetupPhaseCampaigns(campaignsTopic, "simple-benchmark-produce-campaigns", false, numCampaigns, adsPerCampaign, ads);
 //        maybeSetupPhaseEvents(eventsTopic, "simple-benchmark-produce-events", parent.numRecords, ads);
 
@@ -277,12 +277,12 @@
 //        projectedEventDeserializer.configure(serdeProps, false);
 
 //        StreamsBuilder builder = new StreamsBuilder();
-//        KStream<string, ProjectedEvent> kEvents = builder.Stream(eventsTopic,
+//        IKStream<K, V> kEvents = builder.Stream(eventsTopic,
 //                                                                       Consumed.With(Serdes.String(),
 //                                                                                     Serdes.SerdeFrom(projectedEventSerializer, projectedEventDeserializer)));
 //        KTable<string, string> kCampaigns = builder.table(campaignsTopic, Consumed.With(Serdes.String(), Serdes.String()));
 
-//        KStream<string, ProjectedEvent> filteredEvents = kEvents
+//        IKStream<K, V> filteredEvents = kEvents
 //            // use peek to quick when last element is processed
 //            .peek((key, value) =>
 //            {
@@ -297,9 +297,9 @@
 //                }
 //            })
 //            // only keep "view" events
-//            .filter((key, value) => value.eventType.equals("view"))
+//            .filter((key, value) => value.eventType.Equals("view"))
 //            // select just a few of the columns
-//            .mapValues(value =>
+//            .MapValues(value =>
 //            {
 //                ProjectedEvent event = new ProjectedEvent();
 //                event.adID = value.adID;
@@ -309,7 +309,7 @@
 //            });
 
 //        // deserialize the add ID and campaign ID from the stored value in Kafka
-//        KTable<string, CampaignAd> deserCampaigns = kCampaigns.mapValues(value =>
+//        KTable<string, CampaignAd> deserCampaigns = kCampaigns.MapValues(value =>
 //        {
 //            string[] parts = value.Split(":");
 //            CampaignAd cAdd = new CampaignAd();
@@ -319,21 +319,21 @@
 //        });
 
 //        // join the events with the campaigns
-//        KStream<string, string> joined = filteredEvents.join(
+//        IKStream<K, V> joined = filteredEvents.Join(
 //            deserCampaigns,
 //            (value1, value2) => value2.campaignID,
-//            Joined.with(Serdes.String(), Serdes.SerdeFrom(projectedEventSerializer, projectedEventDeserializer), null)
+//            Joined.With(Serdes.String(), Serdes.SerdeFrom(projectedEventSerializer, projectedEventDeserializer), null)
 //        );
 
 //        // key by campaign rather than by ad as original
-//        KStream<string, string> keyedByCampaign = joined
+//        IKStream<K, V> keyedByCampaign = joined
 //            .selectKey((key, value) => value);
 
 //        // calculate windowed counts
 //        keyedByCampaign
-//            .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10 * 1000)))
-//            .count(Materialized.As("time-windows"));
+//            .GroupByKey(Grouped.With(Serdes.String(), Serdes.String()))
+//            .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10 * 1000)))
+//            .Count(Materialized.As("time-windows"));
 
 //        return new KafkaStreams(builder.Build(), streamConfig);
 //    }

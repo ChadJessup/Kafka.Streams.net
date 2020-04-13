@@ -489,7 +489,7 @@
 //            // Put something in the store to advance its stream time and expire the old segments
 //            windowStore.Put(1, "v", 6L * SEGMENT_INTERVAL);
 
-//            List<string> expected = asList(
+//            List<string> expected = Arrays.asList(
 //                segments.segmentName(4L),
 //                segments.segmentName(5L),
 //                segments.segmentName(6L));

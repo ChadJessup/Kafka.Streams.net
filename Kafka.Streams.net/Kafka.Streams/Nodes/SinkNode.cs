@@ -63,7 +63,7 @@ namespace Kafka.Streams.Nodes
             IRecordCollector collector = ((ISupplier)this.context).RecordCollector();
 
             var timestamp = this.context.Timestamp;
-            if (timestamp < 0)
+            if (timestamp < DateTime.MinValue)
             {
                 throw new StreamsException("Invalid (negative) timestamp of " + timestamp + " for output record <" + key + ":" + value + ">.");
             }

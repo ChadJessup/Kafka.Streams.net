@@ -150,7 +150,7 @@ namespace Kafka.Streams.KStream.Internals
                 materializedInternal);
         }
 
-        //public ITimeWindowedKStream<K, V> windowedBy<W>(Windows<W> windows)
+        //public ITimeWindowedIIKStream<K, V> windows)
         //    where W : Window
         //{
         //    return new TimeWindowedKStreamImpl<K, V, W>(

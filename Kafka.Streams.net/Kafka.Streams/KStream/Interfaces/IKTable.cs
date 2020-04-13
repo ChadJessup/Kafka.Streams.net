@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Interfaces
      *     streams.start()
      *     ...
      *      string queryableStoreName = table.queryableStoreName(); // returns null if KTable is not queryable
-     *     IReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.KeyValueStore());
+     *     IReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.KeyValueStore);
      *     view[key];
      *}</pre>
      *<p>
@@ -108,7 +108,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -150,7 +150,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -236,7 +236,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -275,7 +275,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore());
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -306,7 +306,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of token of the value string.
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
-         * KTable<string, int> outputTable = inputTable.mapValues(value => value.Split(" ").Length);
+         * KTable<string, int> outputTable = inputTable.MapValues(value => value.Split(" ").Length);
          * }</pre>
          * <p>
          * This operation preserves data co-location with respect to the key.
@@ -336,7 +336,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of token of the value string.
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
-         * KTable<string, int> outputTable = inputTable.mapValues(value => value.Split(" ").Length, Named.As("countTokenValue"));
+         * KTable<string, int> outputTable = inputTable.MapValues(value => value.Split(" ").Length, Named.As("countTokenValue"));
          * }</pre>
          * <p>
          * This operation preserves data co-location with respect to the key.
@@ -369,7 +369,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
          * KTable<string, int> outputTable =
-         *  inputTable.mapValues((readOnlyKey, value) => readOnlyKey.Split(" ").Length + value.Split(" ").Length);
+         *  inputTable.MapValues((readOnlyKey, value) => readOnlyKey.Split(" ").Length + value.Split(" ").Length);
          * }</pre>
          * <p>
          * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -401,7 +401,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
          * KTable<string, int> outputTable =
-         *  inputTable.mapValues((readOnlyKey, value) => readOnlyKey.Split(" ").Length + value.Split(" ").Length, Named.As("countTokenValueAndKey"));
+         *  inputTable.MapValues((readOnlyKey, value) => readOnlyKey.Split(" ").Length + value.Split(" ").Length, Named.As("countTokenValueAndKey"));
          * }</pre>
          * <p>
          * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.

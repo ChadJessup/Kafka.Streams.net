@@ -112,8 +112,7 @@ namespace Kafka.Streams.RocksDbState
 
             Dictionary<string, object> configs = context.AppConfigs();
 
-
-            if (configs.TryGetValue(StreamsConfigPropertyNames.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, out var classString))
+            if (configs.TryGetValue(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, out var classString))
             {
                 var configSetterClass = Type.GetType(classString.ToString());
                 if (configSetterClass != null)

@@ -40,7 +40,7 @@ namespace Kafka.Streams.State.Sessions
                 return inner;
             }
 
-            return new CachingSessionStore(this.context, inner, this.storeSupplier.SegmentIntervalMs());
+            return new CachingSessionStore(this.context, inner, this.storeSupplier.SegmentInterval);
         }
 
         private ISessionStore<Bytes, byte[]> MaybeWrapLogging(ISessionStore<Bytes, byte[]> inner)

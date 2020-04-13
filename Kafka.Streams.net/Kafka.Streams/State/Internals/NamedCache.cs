@@ -12,7 +12,7 @@ namespace Kafka.Streams.State.Internals
         private readonly string Name;
         private readonly ConcurrentDictionary<Bytes, LRUNode> cache = new ConcurrentDictionary<Bytes, LRUNode>();
         private readonly HashSet<Bytes> dirtyKeys = new HashSet<Bytes>();
-        private IDirtyEntryFlushListener listener;
+        private Action<IEnumerable<DirtyEntry>> listener;
         private LRUNode _tail;
         private LRUNode _head;
         private long currentSizeBytes;
@@ -48,7 +48,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void SetListener(IDirtyEntryFlushListener listener)
+        public void SetListener(Action<IEnumerable<DirtyEntry>> listener)
         {
             this.listener = listener;
         }
@@ -76,7 +76,7 @@ namespace Kafka.Streams.State.Internals
 
             //    }
 
-            //if (dirtyKeys.isEmpty())
+            //if (dirtyKeys.IsEmpty())
             //    {
             //        return;
             //    }

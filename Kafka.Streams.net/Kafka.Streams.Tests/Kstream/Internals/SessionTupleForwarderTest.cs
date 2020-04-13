@@ -20,10 +20,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        private void setFlushListener(bool sendOldValues)
 //        {
-//            WrappedStateStore<IStateStore, IWindowed<object>, object> store = mock(WrappedStateStore));
-//            SessionCacheFlushListener<object, object> flushListener = mock(SessionCacheFlushListener));
+//            WrappedStateStore<IStateStore, IWindowed<object>, object> store = Mock.Of<WrappedStateStore));
+//            SessionCacheFlushListener<object, object> flushListener = Mock.Of<SessionCacheFlushListener));
 
-//            expect(store.setFlushListener(flushListener, sendOldValues)).andReturn(false);
+//            expect(store.SetFlushListener(flushListener, sendOldValues)).andReturn(false);
 //            replay(store);
 
 //            new SessionTupleForwarder<>(store, null, flushListener, sendOldValues);
@@ -40,21 +40,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        private void shouldForwardRecordsIfWrappedStateStoreDoesNotCache(bool sendOldValued)
 //        {
-//            WrappedStateStore<IStateStore, string, string> store = mock(WrappedStateStore));
-//            IProcessorContext context = mock(IProcessorContext));
+//            WrappedStateStore<IStateStore, string, string> store = Mock.Of<WrappedStateStore));
+//            IProcessorContext context = Mock.Of<IProcessorContext));
 
-//            expect(store.setFlushListener(null, sendOldValued)).andReturn(false);
+//            expect(store.SetFlushListener(null, sendOldValued)).andReturn(false);
 //            if (sendOldValued)
 //            {
 //                context.Forward(
-//                    new IWindowed<>("key", new SessionWindow(21L, 42L)),
+//                    new Windowed2<>("key", new SessionWindow(21L, 42L)),
 //                    new Change<>("value", "oldValue"),
 //                    To.All().WithTimestamp(42L));
 //            }
 //            else
 //            {
 //                context.Forward(
-//                    new IWindowed<>("key", new SessionWindow(21L, 42L)),
+//                    new Windowed2<>("key", new SessionWindow(21L, 42L)),
 //                    new Change<>("value", null),
 //                    To.All().WithTimestamp(42L));
 //            }
@@ -62,7 +62,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            replay(store, context);
 
 //            new SessionTupleForwarder<>(store, context, null, sendOldValued)
-//                .maybeForward(new IWindowed<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
+//                .maybeForward(new Windowed2<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
 
 //            verify(store, context);
 //        }
@@ -70,14 +70,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldNotForwardRecordsIfWrappedStateStoreDoesCache()
 //        {
-//            WrappedStateStore<IStateStore, string, string> store = mock(WrappedStateStore));
-//            IProcessorContext context = mock(IProcessorContext));
+//            WrappedStateStore<IStateStore, string, string> store = Mock.Of<WrappedStateStore));
+//            IProcessorContext context = Mock.Of<IProcessorContext));
 
-//            expect(store.setFlushListener(null, false)).andReturn(true);
+//            expect(store.SetFlushListener(null, false)).andReturn(true);
 //            replay(store, context);
 
 //            new SessionTupleForwarder<>(store, context, null, false)
-//                .maybeForward(new IWindowed<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
+//                .maybeForward(new Windowed2<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
 
 //            verify(store, context);
 //        }

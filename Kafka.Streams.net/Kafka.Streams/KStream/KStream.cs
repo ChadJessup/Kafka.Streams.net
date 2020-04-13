@@ -42,6 +42,46 @@ namespace Kafka.Streams.KStream.Internals
         public const string WINDOWED_NAME = "KSTREAM-WINDOWED-";
         public const string ForEachName = "KSTREAM-FOREACH-";
 
+        public static string CreateRepartitionedSource<K1, V1>(
+            InternalStreamsBuilder builder,
+            ISerde<K1>? keySerde,
+            ISerde<V1>? valSerde,
+            string repartitionTopicNamePrefix,
+            OptimizableRepartitionNodeBuilder<K1, V1> optimizableRepartitionNodeBuilder)
+        {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (optimizableRepartitionNodeBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(optimizableRepartitionNodeBuilder));
+            }
+
+            var repartitionTopic = repartitionTopicNamePrefix + KStream.RepartitionTopicSuffix;
+            var sinkName = builder.NewProcessorName(KStream.SinkName);
+            var nullKeyFilterProcessorName = builder.NewProcessorName(KStream.FilterName);
+            var sourceName = builder.NewProcessorName(KStream.SourceName);
+
+            var processorParameters = new ProcessorParameters<K1, V1>(
+               new KStreamFilter<K1, V1>((k, v) => k != null, false),
+               nullKeyFilterProcessorName);
+
+            optimizableRepartitionNodeBuilder
+                .WithKeySerde(keySerde)
+                .WithValueSerde(valSerde)
+                .WithSourceName(sourceName)
+                .WithRepartitionTopic(repartitionTopic)
+                .WithSinkName(sinkName)
+                .WithProcessorParameters(processorParameters)
+                // reusing the source Name for the graph node Name
+                // adding explicit variable as it simplifies logic
+                .WithNodeName(sourceName);
+
+            return sourceName;
+        }
+
         public static IStoreBuilder<IWindowStore<K, V>> JoinWindowStoreBuilder<K, V>(
             KafkaStreamsContext context,
             string joinName,
@@ -939,7 +979,7 @@ namespace Kafka.Streams.KStream.Internals
             var optimizableRepartitionNodeBuilder =
                OptimizableRepartitionNode.GetOptimizableRepartitionNodeBuilder<K, V>();
 
-            var repartitionedSourceName = CreateRepartitionedSource(
+            var repartitionedSourceName = KStream.CreateRepartitionedSource(
                 this.builder,
                 repartitionKeySerde,
                 repartitionValueSerde,
@@ -959,46 +999,6 @@ namespace Kafka.Streams.KStream.Internals
                 false,
                 optimizableRepartitionNode,
                 this.builder);
-        }
-
-        public static string CreateRepartitionedSource<K1, V1>(
-            InternalStreamsBuilder builder,
-            ISerde<K1>? keySerde,
-            ISerde<V1>? valSerde,
-            string repartitionTopicNamePrefix,
-            OptimizableRepartitionNodeBuilder<K1, V1> optimizableRepartitionNodeBuilder)
-        {
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (optimizableRepartitionNodeBuilder is null)
-            {
-                throw new ArgumentNullException(nameof(optimizableRepartitionNodeBuilder));
-            }
-
-            var repartitionTopic = repartitionTopicNamePrefix + KStream.RepartitionTopicSuffix;
-            var sinkName = builder.NewProcessorName(KStream.SinkName);
-            var nullKeyFilterProcessorName = builder.NewProcessorName(KStream.FilterName);
-            var sourceName = builder.NewProcessorName(KStream.SourceName);
-
-            var processorParameters = new ProcessorParameters<K1, V1>(
-               new KStreamFilter<K1, V1>((k, v) => k != null, false),
-               nullKeyFilterProcessorName);
-
-            optimizableRepartitionNodeBuilder
-                .WithKeySerde(keySerde)
-                .WithValueSerde(valSerde)
-                .WithSourceName(sourceName)
-                .WithRepartitionTopic(repartitionTopic)
-                .WithSinkName(sinkName)
-                .WithProcessorParameters(processorParameters)
-                // reusing the source Name for the graph node Name
-                // adding explicit variable as it simplifies logic
-                .WithNodeName(sourceName);
-
-            return sourceName;
         }
 
         public IKStream<K, VR> LeftJoin<VO, VR>(

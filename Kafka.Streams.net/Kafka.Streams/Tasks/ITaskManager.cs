@@ -2,6 +2,7 @@
 using Kafka.Common;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Tasks
@@ -23,7 +24,7 @@ namespace Kafka.Streams.Tasks
         int MaybeCommitActiveTasksPerUserRequested();
         void MaybePurgeCommitedRecords();
         HashSet<TaskId> PrevActiveTaskIds();
-        int Process(long now);
+        int Process(DateTime now);
         int Punctuate();
         void SetAssignmentMetadata(Dictionary<TaskId, HashSet<TopicPartition>> activeTasks, Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks);
         void SetClusterMetadata(Cluster cluster);

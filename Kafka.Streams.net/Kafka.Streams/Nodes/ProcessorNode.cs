@@ -3,7 +3,6 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +19,7 @@ namespace Kafka.Streams.Nodes
         IProcessorNode GetChild(string childName);
         string ToString(string indent);
         ITimestampExtractor? TimestampExtractor { get; }
-        void Punctuate(long timestamp, IPunctuator punctuator);
+        void Punctuate(DateTime timestamp, IPunctuator punctuator);
         void Process<K, V>(K key, V value);
     }
 
@@ -72,7 +71,7 @@ namespace Kafka.Streams.Nodes
 
         private readonly IKeyValueProcessor? processor;
 
-        public void Punctuate(long timestamp, IPunctuator punctuator)
+        public void Punctuate(DateTime timestamp, IPunctuator punctuator)
         {
             punctuator.Punctuate(timestamp);
         }

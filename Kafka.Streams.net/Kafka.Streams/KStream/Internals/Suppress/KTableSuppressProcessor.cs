@@ -8,7 +8,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 {
     public class KTableSuppressProcessor<K, V> : IKeyValueProcessor<K, IChange<V>>
     {
-        private readonly long suppressDurationMillis;
+        private readonly TimeSpan suppressDuration;
         private readonly ITimeDefinition<K> bufferTimeDefinition;
         private readonly BufferFullStrategy bufferFullStrategy;
         private readonly bool safeToDropTombstones;
@@ -16,7 +16,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         // private ITimeOrderedKeyValueBuffer<K, V> buffer;
         private IInternalProcessorContext internalProcessorContext;
-        private long observedStreamTime = -1L;// ConsumeResult.NO_TIMESTAMP;
+        private DateTime observedStreamTime = DateTime.MinValue; //-1L;// ConsumeResult.NO_TIMESTAMP;
 
         public KTableSuppressProcessor(
             SuppressedInternal<K> suppress,
@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             this.storeName = storeName;
             // this.MaxRecords = suppress.bufferConfig.MaxRecords;
             // this.MaxBytes = suppress.bufferConfig.MaxBytes;
-            this.suppressDurationMillis = (long)suppress.TimeToWaitForMoreEvents().TotalMilliseconds;
+            this.suppressDuration = suppress.TimeToWaitForMoreEvents();
             this.bufferTimeDefinition = suppress.timeDefinition;
             this.bufferFullStrategy = suppress.bufferConfig.BufferFullStrategy;
             this.safeToDropTombstones = suppress.safeToDropTombstones;
@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public void Process(K key, IChange<V> value)
         {
-            this.observedStreamTime = Math.Max(this.observedStreamTime, this.internalProcessorContext.Timestamp);
+            this.observedStreamTime = this.observedStreamTime.GetNewest(this.internalProcessorContext.Timestamp);
             this.Buffer(key, value);
             this.EnforceConstraints();
         }
@@ -61,7 +61,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private void EnforceConstraints()
         {
             var streamTime = this.observedStreamTime;
-            var expiryTime = streamTime - this.suppressDurationMillis;
+            var expiryTime = streamTime - this.suppressDuration;
 
             //buffer.evictWhile(() => buffer.minTimestamp() <= expiryTime, this.emit);
 

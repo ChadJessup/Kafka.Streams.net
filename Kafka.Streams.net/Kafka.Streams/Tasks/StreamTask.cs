@@ -29,7 +29,7 @@ namespace Kafka.Streams.Tasks
     {
         private static readonly ConsumeResult<object, object> DUMMY_RECORD = new ConsumeResult<object, object>();// ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
 
-        private readonly long maxTaskIdleMs;
+        private readonly TimeSpan maxTaskIdle;
         private readonly int maxBufferedSize;
         private readonly PartitionGroup partitionGroup;
         private readonly IRecordCollector recordCollector;
@@ -39,7 +39,7 @@ namespace Kafka.Streams.Tasks
         private readonly PunctuationQueue systemTimePunctuationQueue;
         private readonly IProducerSupplier producerSupplier;
 
-        private long idleStartTime;
+        private DateTime idleStartTime;
         private IProducer<byte[], byte[]> producer;
         public bool commitRequested { get; private set; } = false;
         private bool transactionInFlight = false;
@@ -153,8 +153,8 @@ namespace Kafka.Streams.Tasks
 
             this.streamTimePunctuationQueue = new PunctuationQueue();
             this.systemTimePunctuationQueue = new PunctuationQueue();
-            this.maxTaskIdleMs = config.GetLong(StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG) ?? 0L;
-            this.maxBufferedSize = config.GetInt(StreamsConfigPropertyNames.BUFFERED_RECORDS_PER_PARTITION_CONFIG) ?? 1000;
+            this.maxTaskIdle = TimeSpan.FromMilliseconds(config.GetLong(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG) ?? 0L);
+            this.maxBufferedSize = config.GetInt(StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIG) ?? 1000;
 
             // initialize the consumed and committed offset cache
             this.consumedOffsets = new Dictionary<TopicPartition, long>();
@@ -284,7 +284,7 @@ namespace Kafka.Streams.Tasks
          * An active task is processable if its buffer contains data for All of its input
          * source topic partitions, or if it is enforced to be processable
          */
-        public bool IsProcessable(long now)
+        public bool IsProcessable(DateTime now)
         {
             if (this.partitionGroup.AllPartitionsBuffered())
             {
@@ -298,7 +298,7 @@ namespace Kafka.Streams.Tasks
                     this.idleStartTime = now;
                 }
 
-                if (now - this.idleStartTime >= this.maxTaskIdleMs)
+                if (now - this.idleStartTime >= this.maxTaskIdle)
                 {
                     //taskMetrics.taskEnforcedProcessSensor.record();
                     return true;
@@ -401,11 +401,11 @@ namespace Kafka.Streams.Tasks
          * @throws InvalidOperationException if the current node is not null
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public void Punctuate(IProcessorNode<byte[], byte[]> node, long timestamp, PunctuationType type, IPunctuator punctuator)
+        public void Punctuate(IProcessorNode<byte[], byte[]> node, DateTime timestamp, PunctuationType type, IPunctuator punctuator)
         {
             if (this.processorContext.GetCurrentNode() != null)
             {
-                throw new InvalidOperationException(string.Format("%sCurrent node is not null", this.logPrefix));
+                throw new InvalidOperationException($"{this.logPrefix}Current node is not null");
             }
 
             this.UpdateProcessorContext(new StampedRecord(DUMMY_RECORD, timestamp), node);
@@ -843,12 +843,12 @@ namespace Kafka.Streams.Tasks
          * @param type     the punctuation type
          * @throws InvalidOperationException if the current node is not null
          */
-        public ICancellable Schedule(long interval, PunctuationType type, IPunctuator punctuator)
+        public ICancellable Schedule(TimeSpan interval, PunctuationType type, IPunctuator punctuator)
         {
             return type switch
             {
-                PunctuationType.STREAM_TIME => this.Schedule(0L, interval, type, punctuator),
-                PunctuationType.WALL_CLOCK_TIME => this.Schedule(this.Context.Clock.NowAsEpochMilliseconds + interval, interval, type, punctuator),
+                PunctuationType.STREAM_TIME => this.Schedule(DateTime.MinValue, interval, type, punctuator),
+                PunctuationType.WALL_CLOCK_TIME => this.Schedule(this.Context.Clock.UtcNow + interval, interval, type, punctuator),
                 _ => throw new ArgumentException("Unrecognized PunctuationType: " + type),
             };
         }
@@ -861,7 +861,7 @@ namespace Kafka.Streams.Tasks
          * @param type      the punctuation type
          * @throws InvalidOperationException if the current node is not null
          */
-        private ICancellable Schedule(long startTime, long interval, PunctuationType type, IPunctuator punctuator)
+        private ICancellable Schedule(DateTime startTime, TimeSpan interval, PunctuationType type, IPunctuator punctuator)
         {
             if (this.processorContext.GetCurrentNode() == null)
             {
@@ -918,9 +918,7 @@ namespace Kafka.Streams.Tasks
          */
         public bool MaybePunctuateSystemTime()
         {
-            var systemTime = this.Context.Clock.NowAsEpochMilliseconds;
-
-            var punctuated = this.systemTimePunctuationQueue.MayPunctuate(systemTime, PunctuationType.WALL_CLOCK_TIME, this);
+            var punctuated = this.systemTimePunctuationQueue.MayPunctuate(this.Context.Clock.UtcNow, PunctuationType.WALL_CLOCK_TIME, this);
 
             if (punctuated)
             {
@@ -1024,7 +1022,7 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        private long DecodeTimestamp(string encryptedString)
+        private DateTime DecodeTimestamp(string encryptedString)
         {
             if (!encryptedString.Any())
             {

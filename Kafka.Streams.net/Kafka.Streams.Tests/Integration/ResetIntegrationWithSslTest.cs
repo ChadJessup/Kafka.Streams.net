@@ -25,7 +25,7 @@
 
 //        //brokerProps.Put(KafkaConfig$.MODULE$.ListenersProp(), "SSL://localhost:0");
 //        //brokerProps.Put(KafkaConfig$.MODULE$.InterBrokerListenerNameProp(), "SSL");
-//        //brokerProps.putAll(sslConfig);
+//        //brokerProps.PutAll(sslConfig);
 //        //} catch (Exception e) {
 //        //    throw new RuntimeException(e);
 //        //}

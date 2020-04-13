@@ -29,7 +29,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    private int numRecordsProcessed = 0;
 
 
-//        public void Init(ProcessorContext context)
+//        public void Init(IProcessorContext context)
 //        {
 //            base.Init(context);
 //            System.Console.Out.WriteLine("[DEV] initializing processor: topic=" + topic + " taskId=" + context.taskId());
@@ -70,7 +70,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //                public KeyValuePair<string, long> apply(string key, long value)
 //        {
-//            return KeyValuePair.Create(value == null ? null : long.toString(value), 1L);
+//            return KeyValuePair.Create(value == null ? null : long.ToString(value), 1L);
 //        }
 //    };
 //}
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //static File createDir(File parent, string child)
 //{
-//    File dir = new File(parent, child);
+//    File dir = new FileInfo(parent, child);
 
 //    dir.mkdir();
 
@@ -136,7 +136,7 @@ namespace Kafka.Streams.Tests.Tests
 //{
 //    try
 //    {
-//        Thread.sleep(duration);
+//        Thread.Sleep(duration);
 //    }
 //    catch (Exception ignore) { }
 //}

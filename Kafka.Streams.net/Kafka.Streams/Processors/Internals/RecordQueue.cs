@@ -19,7 +19,7 @@ namespace Kafka.Streams.Processors.Internals
      */
     public abstract class RecordQueue
     {
-        public static long UNKNOWN { get; } = ConsumerRecord.NO_TIMESTAMP;
+        public static DateTime UNKNOWN { get; } = DateTime.MinValue; //DateTime.ConsumerRecord.NO_TIMESTAMP;
         protected ILogger<RecordQueue> logger { get; set; }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Kafka.Streams.Processors.Internals
         public TopicPartition partition { get; protected set; }
         protected ITimestampExtractor timestampExtractor;
         protected Queue<ConsumeResult<byte[], byte[]>> fifoQueue;
-        protected long partitionTime = RecordQueue.UNKNOWN;
+        protected DateTime partitionTime = RecordQueue.UNKNOWN;
         protected StampedRecord? headRecord = null;
         protected IProcessorContext processorContext { get; set; }
 
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processors.Internals
          *
          * @return timestamp
          */
-        public long headRecordTimestamp
+        public DateTime headRecordTimestamp
             => this.headRecord == null ? UNKNOWN : this.headRecord.timestamp;
 
         /**
@@ -94,7 +94,6 @@ namespace Kafka.Streams.Processors.Internals
             return !this.fifoQueue.Any() && this.headRecord == null;
         }
 
-
         /**
          * Clear the fifo queue of its elements, also clear the time tracker's kept stamped elements
          */
@@ -121,7 +120,7 @@ namespace Kafka.Streams.Processors.Internals
                     continue;
                 }
 
-                long timestamp;
+                DateTime timestamp;
                 try
                 {
                     //timestamp = timestampExtractor.Extract(deserialized, partitionTime);
@@ -140,7 +139,7 @@ namespace Kafka.Streams.Processors.Internals
                 // log.LogTrace($"Source node {source.Name} extracted timestamp {timestamp} for record {deserialized}");
 
                 // drop message if TS is invalid, i.e., negative
-                if (timestamp < 0)
+                if (timestamp.Ticks < 0)
                 {
                     //log.LogWarning(
                     //        "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
@@ -151,7 +150,7 @@ namespace Kafka.Streams.Processors.Internals
 
                 //headRecord = new StampedRecord(deserialized, timestamp);
 
-                this.partitionTime = Math.Max(this.partitionTime, timestamp);
+                this.partitionTime = this.partitionTime.GetNewest(timestamp);
             }
         }
     }

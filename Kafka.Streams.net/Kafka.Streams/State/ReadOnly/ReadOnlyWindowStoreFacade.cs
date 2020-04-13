@@ -15,24 +15,14 @@ namespace Kafka.Streams.State.ReadOnly
             this.inner = store;
         }
 
-        public V Fetch(K key, long time)
+        public V Fetch(K key, DateTime time)
         {
             return ValueAndTimestamp.GetValueOrNull(this.inner.Fetch(key, time));
-        }
-
-        public IWindowStoreIterator<V> Fetch(K key, long timeFrom, long timeTo)
-        {
-            return new WindowStoreIteratorFacade<V>(this.inner.Fetch(key, timeFrom, timeTo));
         }
 
         public IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to)
         {
             return new WindowStoreIteratorFacade<V>(this.inner.Fetch(key, from, to));
-        }
-
-        public IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo)
-        {
-            return new KeyValueIteratorFacade<IWindowed<K>, V>((IKeyValueIterator<IWindowed<K>, V>)this.inner.Fetch(from, to, timeFrom, timeTo));
         }
 
         public IKeyValueIterator<IWindowed<K>, V> Fetch(
@@ -42,12 +32,6 @@ namespace Kafka.Streams.State.ReadOnly
             DateTime toTime)
         {
             return new KeyValueIteratorFacade<IWindowed<K>, V>((IKeyValueIterator<IWindowed<K>, V>)this.inner.Fetch(from, to, fromTime, toTime));
-        }
-
-        public IKeyValueIterator<IWindowed<K>, V> FetchAll(long timeFrom,
-                                                         long timeTo)
-        {
-            return new KeyValueIteratorFacade<IWindowed<K>, V>((IKeyValueIterator<IWindowed<K>, V>)this.inner.FetchAll(timeFrom, timeTo));
         }
 
         public IKeyValueIterator<IWindowed<K>, V> FetchAll(DateTime from, DateTime to)

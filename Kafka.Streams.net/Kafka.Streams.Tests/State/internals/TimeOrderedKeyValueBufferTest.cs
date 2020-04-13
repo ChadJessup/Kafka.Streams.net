@@ -20,7 +20,7 @@
 //        // @Parameterized.Parameters(Name = "{index}: test={0}")
 //        public static Collection<object[]> Parameters()
 //        {
-//            return singletonList(
+//            return Collections.singletonList(
 //                new object[] {
 //                "in-memory buffer",
 //                (Function<string, InMemoryTimeOrderedKeyValueBuffer<string, string>>) Name =>
@@ -40,8 +40,8 @@
 //        private static MockInternalProcessorContext MakeContext()
 //        {
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
-//            properties.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "");
+//            properties.Set(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
+//            properties.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "");
 
 //            TaskId taskId = new TaskId(0, 0);
 
@@ -57,7 +57,7 @@
 //            try
 //            {
 //                buffer.Close();
-//                Utils.delete(context.stateDir());
+//                Utils.Delete(context.stateDir());
 //            }
 //            catch (IOException e)
 //            {
@@ -193,7 +193,7 @@
 //            Assert.Equal(buffer.bufferSize(), (82L));
 //            Assert.Equal(buffer.minTimestamp(), (0L));
 
-//            AtomicInteger callbackCount = new AtomicInteger(0);
+//            int callbackCount = new int(0);
 //            buffer.evictWhile(() => true, kv =>
 //            {
 //                switch (callbackCount.incrementAndGet())
@@ -288,7 +288,7 @@
 //                        {
 //                            byte[] serializedValue = pr.Value;
 //                            ByteBuffer valueBuffer = new ByteBuffer().Wrap(serializedValue);
-//                            BufferValue contextualRecord = BufferValue.deserialize(valueBuffer);
+//                            BufferValue contextualRecord = BufferValue.Deserialize(valueBuffer);
 //                            long timestamp = valueBuffer.GetLong();
 //                            niceValue = KeyValuePair.Create(timestamp, contextualRecord);
 //                        }

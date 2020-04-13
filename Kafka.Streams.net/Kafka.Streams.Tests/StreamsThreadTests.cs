@@ -155,7 +155,7 @@ namespace Kafka.Streams.Tests
         //            Node node = new Node(0, "localhost", 8121);
         //            return new Cluster(
         //                "mockClusterId",
-        //                singletonList(node),
+        //                Collections.singletonList(node),
         //                Collections.emptySet(),
         //                Collections.emptySet(),
         //                Collections.emptySet(),
@@ -241,8 +241,8 @@ namespace Kafka.Streams.Tests
             var commitInterval = 1000L;
             var props = StreamsTestConfigs.GetStandardConfig();
 
-            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, this.stateDir);
-            props.Set(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG, commitInterval.ToString());
+            props.Set(StreamsConfig.STATE_DIR_CONFIG, this.stateDir);
+            props.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, commitInterval.ToString());
 
             var sc = new ServiceCollection().AddSingleton(props);
 
@@ -255,10 +255,10 @@ namespace Kafka.Streams.Tests
 
             IStreamThread thread = TestUtils.CreateStreamThread(sb);
 
-            thread.SetNow(this.mockTime.NowAsEpochMilliseconds);
+            thread.SetNow(this.mockTime.UtcNow);
             thread.MaybeCommit();
             this.mockTime.Sleep(commitInterval - 10L);
-            thread.SetNow(this.mockTime.NowAsEpochMilliseconds);
+            thread.SetNow(this.mockTime.UtcNow);
             thread.MaybeCommit();
         }
 
@@ -271,7 +271,7 @@ namespace Kafka.Streams.Tests
         //            internalTopologyBuilder.AddProcessor("processor2", () => new MockProcessor(PunctuationType.STREAM_TIME, 10L), "source1");
 
         //           StreamsConfig properties = new StreamsConfig();
-        //            properties.Add(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG, 100L);
+        //            properties.Add(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100L);
         //            StreamsConfig config = new StreamsConfig(StreamsTestConfigs.GetStandardConfig(applicationId,
         //               "localhost:2171",
         //               Serdes.ByteArraySerde.getName(),
@@ -293,41 +293,41 @@ namespace Kafka.Streams.Tests
         //            mockConsumer.Assign(Collections.singleton(t1p1));
         //            mockConsumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
         //            thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
-        //            thread.runOnce();
+        //            thread.RunOnce();
 
         //            // processed one record, punctuated after the first record, and hence num.iterations is still 1
         //            long offset = -1;
         //            addRecord(mockConsumer, ++offset, 0L);
-        //            thread.runOnce();
+        //            thread.RunOnce();
 
         //            Assert.Equal(thread.currentNumIterations(), (1));
 
         //            // processed one more record without punctuation, and bump num.iterations to 2
         //            addRecord(mockConsumer, ++offset, 1L);
-        //            thread.runOnce();
+        //            thread.RunOnce();
 
         //            Assert.Equal(thread.currentNumIterations(), (2));
 
         //            // processed zero records, early exit and iterations stays.As 2
-        //            thread.runOnce();
+        //            thread.RunOnce();
         //            Assert.Equal(thread.currentNumIterations(), (2));
 
         //            // system time .Ased punctutation halves to 1
-        //            mockTime.sleep(11L);
+        //            mockTime.Sleep(11L);
 
-        //            thread.runOnce();
+        //            thread.RunOnce();
         //            Assert.Equal(thread.currentNumIterations(), (1));
 
         //            // processed two records, bumping up iterations to 2
         //            addRecord(mockConsumer, ++offset, 5L);
         //            addRecord(mockConsumer, ++offset, 6L);
-        //            thread.runOnce();
+        //            thread.RunOnce();
 
         //            Assert.Equal(thread.currentNumIterations(), (2));
 
         //            // stream time .Ased punctutation halves to 1
         //            addRecord(mockConsumer, ++offset, 11L);
-        //            thread.runOnce();
+        //            thread.RunOnce();
 
         //            Assert.Equal(thread.currentNumIterations(), (1));
 
@@ -335,20 +335,20 @@ namespace Kafka.Streams.Tests
         //            addRecord(mockConsumer, ++offset, 12L);
         //            addRecord(mockConsumer, ++offset, 13L);
         //            addRecord(mockConsumer, ++offset, 14L);
-        //            thread.runOnce();
+        //            thread.RunOnce();
 
         //            Assert.Equal(thread.currentNumIterations(), (3));
 
         //            mockProcessor.requestCommit();
         //            addRecord(mockConsumer, ++offset, 15L);
-        //            thread.runOnce();
+        //            thread.RunOnce();
 
         //            // user requested commit should not impact on iteration adjustment
         //            Assert.Equal(thread.currentNumIterations(), (3));
 
         //            // time .Ased commit, halves iterations to 3 / 2 = 1
-        //            mockTime.sleep(90L);
-        //            thread.runOnce();
+        //            mockTime.Sleep(90L);
+        //            thread.RunOnce();
 
         //            Assert.Equal(thread.currentNumIterations(), (1));
 
@@ -359,11 +359,11 @@ namespace Kafka.Streams.Tests
         //        {
         //            long commitInterval = 1000L;
         //           StreamsConfig props = configProps(false);
-        //            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, stateDir);
-        //            props.Set(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG, long.ToString(commitInterval));
+        //            props.Set(StreamsConfig.STATE_DIR_CONFIG, stateDir);
+        //            props.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, long.ToString(commitInterval));
 
         //            StreamsConfig config = new StreamsConfig(props);
-        //            IConsumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
+        //            IConsumer<byte[], byte[]> consumer = Mock.Of<Consumer);
         //            TaskManager TaskManager = mockTaskManagerCommit(consumer, 1, 0);
 
         //            StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -379,12 +379,12 @@ namespace Kafka.Streams.Tests
         //               internalTopologyBuilder,
         //               clientId,
         //                       new LogContext(""),
-        //                       new AtomicInteger()
+        //                       new int()
         //                   );
-        //            thread.setNow(mockTime.NowAsEpochMilliseconds;);
+        //            thread.SetNow(mockTime.NowAsEpochMilliseconds);
         //            thread.maybeCommit();
-        //            mockTime.sleep(commitInterval - 10L);
-        //            thread.setNow(mockTime.NowAsEpochMilliseconds;);
+        //            mockTime.Sleep(commitInterval - 10L);
+        //            thread.SetNow(mockTime.NowAsEpochMilliseconds);
         //            thread.maybeCommit();
 
         //            EasyMock.verify(TaskManager);
@@ -395,11 +395,11 @@ namespace Kafka.Streams.Tests
         //        {
         //            long commitInterval = 1000L;
         //           StreamsConfig props = configProps(false);
-        //            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, stateDir);
-        //            props.Set(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG, long.ToString(commitInterval));
+        //            props.Set(StreamsConfig.STATE_DIR_CONFIG, stateDir);
+        //            props.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, long.ToString(commitInterval));
 
         //            StreamsConfig config = new StreamsConfig(props);
-        //            IConsumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
+        //            IConsumer<byte[], byte[]> consumer = Mock.Of<Consumer);
         //            TaskManager TaskManager = mockTaskManagerCommit(consumer, 2, 1);
 
         //            StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -415,12 +415,12 @@ namespace Kafka.Streams.Tests
         //               internalTopologyBuilder,
         //               clientId,
         //                       new LogContext(""),
-        //                       new AtomicInteger()
+        //                       new int()
         //                   );
-        //            thread.setNow(mockTime.NowAsEpochMilliseconds;);
+        //            thread.SetNow(mockTime.NowAsEpochMilliseconds);
         //            thread.maybeCommit();
-        //            mockTime.sleep(commitInterval + 1);
-        //            thread.setNow(mockTime.NowAsEpochMilliseconds;);
+        //            mockTime.Sleep(commitInterval + 1);
+        //            thread.SetNow(mockTime.NowAsEpochMilliseconds);
         //            thread.maybeCommit();
 
         //            EasyMock.verify(TaskManager);
@@ -476,7 +476,7 @@ namespace Kafka.Streams.Tests
         //            StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
 
         //            thread.SetState(StreamThreadStates.STARTING);
-        //            thread.RebalanceListener.onPartitionsRevoked(Collections.emptyList());
+        //            thread.RebalanceListener.OnPartitionsRevoked(Collections.emptyList());
 
         //            Dictionary<TaskId, List<TopicPartition>> activeTasks = new HashMap<>();
         //            List<TopicPartition>assignedPartitions = new List<>();
@@ -497,7 +497,7 @@ namespace Kafka.Streams.Tests
         //            mockConsumer.UpdateBeginningOffsets(beginOffsets);
         //            thread.RebalanceListener.onPartitionsAssigned(new HashSet<>assignedPartitions));
 
-        //            thread.runOnce();
+        //            thread.RunOnce();
 
         //            Assert.Equal(thread.Tasks().Count, clientSupplier.producers.Count);
         //           .AssertSame(clientSupplier.Consumer, thread.Consumer);
@@ -512,7 +512,7 @@ namespace Kafka.Streams.Tests
         //            StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
 
         //            thread.SetState(StreamThreadStates.STARTING);
-        //            thread.RebalanceListener.onPartitionsRevoked(Collections.emptyList());
+        //            thread.RebalanceListener.OnPartitionsRevoked(Collections.emptyList());
 
         //            Dictionary<TaskId, List<TopicPartition>> activeTasks = new HashMap<>();
         //            List<TopicPartition>assignedPartitions = new List<>();
@@ -533,7 +533,7 @@ namespace Kafka.Streams.Tests
 
         //            thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
 
-        //            thread.shutdown();
+        //            thread.Shutdown();
         //            thread.run();
 
         //            foreach (Task Task in thread.Tasks().values())
@@ -545,9 +545,9 @@ namespace Kafka.Streams.Tests
         //        [Fact]
         //        public void shouldShutdownTaskManagerOnClose()
         //        {
-        //            IConsumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
-        //            TaskManager TaskManager = EasyMock.createNiceMock(TaskManager);
-        //            TaskManager.shutdown(true);
+        //            IConsumer<byte[], byte[]> consumer = Mock.Of<Consumer);
+        //            TaskManager TaskManager = Mock.Of<TaskManager);
+        //            TaskManager.Shutdown(true);
         //            EasyMock.expect.AstCall();
         //            EasyMock.replay(TaskManager, consumer);
 
@@ -564,14 +564,14 @@ namespace Kafka.Streams.Tests
         //               internalTopologyBuilder,
         //               clientId,
         //                       new LogContext(""),
-        //                       new AtomicInteger()
-        //                   ).updateThreadMetadata(getSharedAdminClientId(clientId));
+        //                       new int()
+        //                   ).UpdateThreadMetadata(getSharedAdminClientId(clientId));
         //            thread.SetStateListener(
         //                (t, newState, oldState) =>
         //                {
         //                    if (oldState == StreamThreadStates.CREATED && newState == StreamThreadStates.STARTING)
         //                    {
-        //                        thread.shutdown();
+        //                        thread.Shutdown();
         //                    }
         //                });
         //            thread.run();
@@ -581,9 +581,9 @@ namespace Kafka.Streams.Tests
         //        [Fact]
         //        public void shouldShutdownTaskManagerOnCloseWithoutStart()
         //        {
-        //            IConsumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
-        //            TaskManager TaskManager = EasyMock.createNiceMock(TaskManager);
-        //            TaskManager.shutdown(true);
+        //            IConsumer<byte[], byte[]> consumer = Mock.Of<Consumer);
+        //            TaskManager TaskManager = Mock.Of<TaskManager);
+        //            TaskManager.Shutdown(true);
         //            EasyMock.expect.AstCall();
         //            EasyMock.replay(TaskManager, consumer);
 
@@ -600,9 +600,9 @@ namespace Kafka.Streams.Tests
         //               internalTopologyBuilder,
         //               clientId,
         //                       new LogContext(""),
-        //                       new AtomicInteger()
-        //                   ).updateThreadMetadata(getSharedAdminClientId(clientId));
-        //            thread.shutdown();
+        //                       new int()
+        //                   ).UpdateThreadMetadata(getSharedAdminClientId(clientId));
+        //            thread.Shutdown();
         //            EasyMock.verify(TaskManager);
         //        }
 
@@ -615,7 +615,7 @@ namespace Kafka.Streams.Tests
         //        [Fact]
         //        public void shouldNotThrowWithoutPendingShutdownInRunOnce()
         //        {
-        //            // A reference test to verify that without intermediate shutdown the runOnce should .Ass
+        //            // A reference test to verify that without intermediate Shutdown the RunOnce should .Ass
         //            // without any exception.
         //            mockRunOnce(false);
         //        }
@@ -638,7 +638,7 @@ namespace Kafka.Streams.Tests
         //            Assert.NotNull(streamThread);
         //            if (shutdownOnPoll)
         //            {
-        //                streamThread.shutdown();
+        //                streamThread.Shutdown();
         //            }
         //            streamThread.RebalanceListener.onPartitionsAssignedassignedPartitions);
         //            return base.poll(timeout);
@@ -663,7 +663,7 @@ namespace Kafka.Streams.Tests
         //                                                           null,
         //                                                           new AssignedStreamsTasks(new LogContext()),
         //                                                           new AssignedStandbyTasks(new LogContext()));
-        //    TaskManager.setConsumer(mockStreamThreadConsumer);
+        //    TaskManager.SetConsumer(mockStreamThreadConsumer);
         //        TaskManager.SetAssignmentMetadata(Collections.emptyMap(), Collections.emptyMap());
 
         //         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -679,8 +679,8 @@ namespace Kafka.Streams.Tests
         //       internalTopologyBuilder,
         //       clientId,
         //               new LogContext(""),
-        //               new AtomicInteger()
-        //           ).updateThreadMetadata(getSharedAdminClientId(clientId));
+        //               new int()
+        //           ).UpdateThreadMetadata(getSharedAdminClientId(clientId));
 
         //    mockStreamThreadConsumer.setStreamThread(thread);
         //        mockStreamThreadConsumer.Assign(assignedPartitions);
@@ -689,15 +689,15 @@ namespace Kafka.Streams.Tests
         //        addRecord(mockStreamThreadConsumer, 1L, 0L);
         //    thread.SetState(StreamThreadStates.STARTING);
         //        thread.SetState(StreamThreadStates.PARTITIONS_REVOKED);
-        //        thread.runOnce();
+        //        thread.RunOnce();
         //    }
 
         //[Fact]
         //public void shouldOnlyShutdownOnce()
         //{
-        //    IConsumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
-        //    TaskManager TaskManager = EasyMock.createNiceMock(TaskManager);
-        //    TaskManager.shutdown(true);
+        //    IConsumer<byte[], byte[]> consumer = Mock.Of<Consumer);
+        //    TaskManager TaskManager = Mock.Of<TaskManager);
+        //    TaskManager.Shutdown(true);
         //    EasyMock.expect.AstCall();
         //    EasyMock.replay(TaskManager, consumer);
 
@@ -714,10 +714,10 @@ namespace Kafka.Streams.Tests
         //       internalTopologyBuilder,
         //       clientId,
         //               new LogContext(""),
-        //               new AtomicInteger()
-        //           ).updateThreadMetadata(getSharedAdminClientId(clientId));
-        //    thread.shutdown();
-        //    // Execute the run method. Verification of the mock will check that shutdown .As only done once
+        //               new int()
+        //           ).UpdateThreadMetadata(getSharedAdminClientId(clientId));
+        //    thread.Shutdown();
+        //    // Execute the run method. Verification of the mock will check that Shutdown .As only done once
         //    thread.run();
         //    EasyMock.verify(TaskManager);
         //}
@@ -731,7 +731,7 @@ namespace Kafka.Streams.Tests
         //    StreamThread thread = createStreamThread(clientId, config, false);
 
         //    thread.SetState(StreamThreadStates.STARTING);
-        //    thread.RebalanceListener.onPartitionsRevoked(Collections.emptyList());
+        //    thread.RebalanceListener.OnPartitionsRevoked(Collections.emptyList());
 
         //    Dictionary<TaskId, List<TopicPartition>> standbyTasks = new HashMap<>();
 
@@ -739,7 +739,7 @@ namespace Kafka.Streams.Tests
         //    standbyTasks.Add(Task1, Collections.singleton(t1p1));
 
         //    thread.TaskManager.SetAssignmentMetadata(Collections.emptyMap(), standbyTasks);
-        //    thread.TaskManager.createTasks(Collections.emptyList());
+        //    thread.TaskManager.CreateTasks(Collections.emptyList());
 
         //    thread.RebalanceListener.onPartitionsAssigned(Collections.emptyList());
         //}
@@ -755,10 +755,10 @@ namespace Kafka.Streams.Tests
 
         //         MockConsumer<byte[], byte[]> consumer = clientSupplier.Consumer;
 
-        //consumer.updatePartitions(topic1, singletonList(new PartitionInfo(topic1, 1, null, null, null)));
+        //consumer.updatePartitions(topic1, Collections.singletonList(new PartitionInfo(topic1, 1, null, null, null)));
 
         //        thread.SetState(StreamThreadStates.STARTING);
-        //        thread.RebalanceListener.onPartitionsRevoked(null);
+        //        thread.RebalanceListener.OnPartitionsRevoked(null);
 
         //         Dictionary<TaskId, List<TopicPartition>> activeTasks = new HashMap<>();
         //List<TopicPartition>assignedPartitions = new List<>();
@@ -774,7 +774,7 @@ namespace Kafka.Streams.Tests
         //        mockConsumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
         //        thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
 
-        //        thread.runOnce();
+        //        thread.RunOnce();
         //        Assert.Equal(thread.Tasks().Count, (1));
         //         MockProducer producer = clientSupplier.producers.Get(0);
 
@@ -783,26 +783,26 @@ namespace Kafka.Streams.Tests
         //        consumer.unsubscribe();
         //        consumer.Assign(new HashSet<>assignedPartitions));
 
-        //        consumer.addRecord(new ConsumeResult<>(topic1, 1, 0, new byte[0], new byte[0]));
-        //        mockTime.sleep(config.GetLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1);
-        //        thread.runOnce();
+        //        consumer.AddRecord(new ConsumeResult<>(topic1, 1, 0, new byte[0], new byte[0]));
+        //        mockTime.Sleep(config.GetLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1);
+        //        thread.RunOnce();
         //        Assert.Equal(producer.history().Count, (1));
 
         //       Assert.False(producer.transactionCommitted());
-        //mockTime.sleep(config.GetLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1L);
+        //mockTime.Sleep(config.GetLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1L);
         //        TestUtils.WaitForCondition(
         //            () => producer.commitCount() == 1,
         //            "StreamsThread did not commit transaction.");
 
         //        producer.fenceProducer();
-        //        mockTime.sleep(config.GetLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1L);
-        //        consumer.addRecord(new ConsumeResult<>(topic1, 1, 1, new byte[0], new byte[0]));
+        //        mockTime.Sleep(config.GetLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG) + 1L);
+        //        consumer.AddRecord(new ConsumeResult<>(topic1, 1, 1, new byte[0], new byte[0]));
         //        try {
-        //            thread.runOnce();
+        //            thread.RunOnce();
         //            Assert.False(true, "Should have thrown TaskMigratedException");
         //        } catch (TaskMigratedException expected) { /* ignore */ }
         //        TestUtils.WaitForCondition(
-        //            () => thread.Tasks().isEmpty(),
+        //            () => thread.Tasks().IsEmpty(),
         //            "StreamsThread did not remove fenced zombie Task.");
 
         //        Assert.Equal(producer.commitCount(), (1L));
@@ -817,7 +817,7 @@ namespace Kafka.Streams.Tests
         //    internalTopologyBuilder.AddSink("out", "output", null, null, null, "Name");
 
         //    thread.SetState(StreamThreadStates.STARTING);
-        //    thread.RebalanceListener.onPartitionsRevoked(null);
+        //    thread.RebalanceListener.OnPartitionsRevoked(null);
 
         //    Dictionary<TaskId, List<TopicPartition>> activeTasks = new HashMap<>();
         //    List<TopicPartition>assignedPartitions = new List<>();
@@ -833,16 +833,16 @@ namespace Kafka.Streams.Tests
         //    mockConsumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
         //    thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
 
-        //    thread.runOnce();
+        //    thread.RunOnce();
 
         //    Assert.Equal(thread.Tasks().Count, (1));
 
         //    clientSupplier.producers.Get(0).fenceProducer();
-        //    thread.RebalanceListener.onPartitionsRevoked(null);
+        //    thread.RebalanceListener.OnPartitionsRevoked(null);
         //    Assert.True(clientSupplier.producers.Get(0).transactionInFlight());
         //   Assert.False(clientSupplier.producers.Get(0).transactionCommitted());
         //    Assert.True(clientSupplier.producers.Get(0).closed());
-        //    Assert.True(thread.Tasks().isEmpty());
+        //    Assert.True(thread.Tasks().IsEmpty());
         //}
 
         //[Fact]
@@ -854,7 +854,7 @@ namespace Kafka.Streams.Tests
         //    internalTopologyBuilder.AddSink("out", "output", null, null, null, "Name");
 
         //    thread.SetState(StreamThreadStates.STARTING);
-        //    thread.RebalanceListener.onPartitionsRevoked(null);
+        //    thread.RebalanceListener.OnPartitionsRevoked(null);
 
         //    Dictionary<TaskId, List<TopicPartition>> activeTasks = new HashMap<>();
         //    List<TopicPartition>assignedPartitions = new List<>();
@@ -870,17 +870,17 @@ namespace Kafka.Streams.Tests
         //    mockConsumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
         //    thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
 
-        //    thread.runOnce();
+        //    thread.RunOnce();
 
         //    Assert.Equal(thread.Tasks().Count, (1));
 
         //    clientSupplier.producers.Get(0).fenceProducerOnClose();
-        //    thread.RebalanceListener.onPartitionsRevoked(null);
+        //    thread.RebalanceListener.OnPartitionsRevoked(null);
 
         //   Assert.False(clientSupplier.producers.Get(0).transactionInFlight());
         //    Assert.True(clientSupplier.producers.Get(0).transactionCommitted());
         //   Assert.False(clientSupplier.producers.Get(0).closed());
-        //    Assert.True(thread.Tasks().isEmpty());
+        //    Assert.True(thread.Tasks().IsEmpty());
         //}
 
         //private static class StateListenerStub : StreamThread.StateListener
@@ -915,7 +915,7 @@ namespace Kafka.Streams.Tests
         //    StreamThread thread = createStreamThread(clientId, config, false);
 
         //    thread.SetState(StreamThreadStates.STARTING);
-        //    thread.RebalanceListener.onPartitionsRevoked(null);
+        //    thread.RebalanceListener.OnPartitionsRevoked(null);
 
         //    Dictionary<TaskId, List<TopicPartition>> activeTasks = new HashMap<>();
         //    List<TopicPartition>assignedPartitions = new List<>();
@@ -931,26 +931,26 @@ namespace Kafka.Streams.Tests
         //    mockConsumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
         //    thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
 
-        //    thread.runOnce();
+        //    thread.RunOnce();
 
         //    ThreadMetadata threadMetadata = thread.threadMetadata();
         //    Assert.Equal(StreamThreadStates.RUNNING.Name(), threadMetadata.ThreadState);
         //    Assert.True(threadMetadata.activeTasks.Contains(new TaskMetadata(Task1.ToString(), Utils.mkSet(t1p1))));
-        //    Assert.True(threadMetadata.StandbyTasks.isEmpty());
+        //    Assert.True(threadMetadata.StandbyTasks.IsEmpty());
         //}
 
         //[Fact]
         //public void shouldReturnStandbyTaskMetadataWhileRunningState()
         //{
         //    internalStreamsBuilder.Stream(Collections.singleton(topic1), consumed)
-        //        .groupByKey().count(Materialized.As ("count-one"));
+        //        .GroupByKey().Count(Materialized.As ("count-one"));
 
-        //    internalStreamsBuilder.buildAndOptimizeTopology();
+        //    internalStreamsBuilder.BuildAndOptimizeTopology();
         //    StreamThread thread = createStreamThread(clientId, config, false);
         //    MockConsumer<byte[], byte[]> restoreConsumer = clientSupplier.restoreConsumer;
         //    restoreConsumer.updatePartitions(
         //        "stream-thread-test-count-one-changelog",
-        //        singletonList(
+        //        Collections.singletonList(
         //            new PartitionInfo("stream-thread-test-count-one-changelog",
         //            0,
         //            null,
@@ -965,7 +965,7 @@ namespace Kafka.Streams.Tests
         //    restoreConsumer.UpdateBeginningOffsets(offsets);
 
         //    thread.SetState(StreamThreadStates.STARTING);
-        //    thread.RebalanceListener.onPartitionsRevoked(null);
+        //    thread.RebalanceListener.OnPartitionsRevoked(null);
 
         //    Dictionary<TaskId, List<TopicPartition>> standbyTasks = new HashMap<>();
 
@@ -976,12 +976,12 @@ namespace Kafka.Streams.Tests
 
         //    thread.RebalanceListener.onPartitionsAssigned(Collections.emptyList());
 
-        //    thread.runOnce();
+        //    thread.RunOnce();
 
         //    ThreadMetadata threadMetadata = thread.threadMetadata();
         //    Assert.Equal(StreamThreadStates.RUNNING.Name(), threadMetadata.ThreadState);
         //    Assert.True(threadMetadata.StandbyTasks.Contains(new TaskMetadata(Task1.ToString(), Utils.mkSet(t1p1))));
-        //    Assert.True(threadMetadata.activeTasks.isEmpty());
+        //    Assert.True(threadMetadata.activeTasks.IsEmpty());
         //}
 
         //
@@ -997,18 +997,18 @@ namespace Kafka.Streams.Tests
         //TopicPartition partition2 = new TopicPartition(changelogName2, 1);
         //internalStreamsBuilder
         //    .Stream(Collections.singleton(topic1), consumed)
-        //            .groupByKey()
-        //            .count(Materialized.As(storeName1));
+        //            .GroupByKey()
+        //            .Count(Materialized.As(storeName1));
         //MaterializedInternal<object, object, IKeyValueStore<Bytes, byte[]>> materialized
 
         //   = new MaterializedInternal<>(Materialized.As (storeName2), internalStreamsBuilder, "");
         //internalStreamsBuilder.Table(topic2, new ConsumedInternal<>(), materialized);
 
-        //        internalStreamsBuilder.buildAndOptimizeTopology();
+        //        internalStreamsBuilder.BuildAndOptimizeTopology();
         //         StreamThread thread = createStreamThread(clientId, config, false);
         //MockConsumer<byte[], byte[]> restoreConsumer = clientSupplier.restoreConsumer;
         //restoreConsumer.updatePartitions(changelogName1,
-        //    singletonList(
+        //    Collections.singletonList(
         //                new PartitionInfo(
         //                    changelogName1,
         //                    1,
@@ -1026,17 +1026,17 @@ namespace Kafka.Streams.Tests
         //        restoreConsumer.UpdateBeginningOffsets(Collections.singletonMap(partition2, 0L));
         //        // let the store1 be restored from 0 to 10; store2 be restored from 5 (checkpointed) to 10
         //         OffsetCheckpoint checkpoint
-        //            = new OffsetCheckpoint(new File(stateDirectory.directoryForTask(Task3), CHECKPOINT_FILE_NAME));
+        //            = new OffsetCheckpoint(new FileInfo(stateDirectory.directoryForTask(Task3), CHECKPOINT_FILE_NAME));
         //checkpoint.write(Collections.singletonMap(partition2, 5L));
 
         //        for (long i = 0L; i< 10L; i++) {
-        //            restoreConsumer.addRecord(new ConsumeResult<>(
+        //            restoreConsumer.AddRecord(new ConsumeResult<>(
         //                changelogName1,
         //                1,
         //                i,
         //                ("K" + i).getBytes(),
         //                ("V" + i).getBytes()));
-        //            restoreConsumer.addRecord(new ConsumeResult<>(
+        //            restoreConsumer.AddRecord(new ConsumeResult<>(
         //                changelogName2,
         //                1,
         //                i,
@@ -1045,7 +1045,7 @@ namespace Kafka.Streams.Tests
         //        }
 
         //        thread.SetState(StreamThreadStates.STARTING);
-        //        thread.RebalanceListener.onPartitionsRevoked(null);
+        //        thread.RebalanceListener.OnPartitionsRevoked(null);
 
         //         Dictionary<TaskId, List<TopicPartition>> standbyTasks = new HashMap<>();
 
@@ -1057,7 +1057,7 @@ namespace Kafka.Streams.Tests
 
         //thread.RebalanceListener.onPartitionsAssigned(Collections.emptyList());
 
-        //        thread.runOnce();
+        //        thread.RunOnce();
 
         //         StandbyTask standbyTask1 = thread.TaskManager.standbyTask(partition1);
         //StandbyTask standbyTask2 = thread.TaskManager.standbyTask(partition2);
@@ -1073,7 +1073,7 @@ namespace Kafka.Streams.Tests
         //public void shouldCreateStandbyTask()
         //{
         //    setupInternalTopologyWithoutState();
-        //    internalTopologyBuilder.addStateStore(new MockKeyValueStoreBuilder("myStore", true), "processor1");
+        //    internalTopologyBuilder.AddStateStore(new MockKeyValueStoreBuilder("myStore", true), "processor1");
 
         //    StandbyTask standbyTask = createStandbyTask();
 
@@ -1096,7 +1096,7 @@ namespace Kafka.Streams.Tests
         //    setupInternalTopologyWithoutState();
         //    IStoreBuilder storeBuilder = new MockKeyValueStoreBuilder("myStore", true);
         //    storeBuilder.withLoggingDisabled();
-        //    internalTopologyBuilder.addStateStore(storeBuilder, "processor1");
+        //    internalTopologyBuilder.AddStateStore(storeBuilder, "processor1");
 
         //    StandbyTask standbyTask = createStandbyTask();
 
@@ -1151,13 +1151,13 @@ namespace Kafka.Streams.Tests
         //            public void Close() { }
         //};
 
-        //internalStreamsBuilder.Stream(Collections.singleton(topic1), consumed).process(punctuateProcessor);
-        //internalStreamsBuilder.buildAndOptimizeTopology();
+        //internalStreamsBuilder.Stream(Collections.singleton(topic1), consumed).Process(punctuateProcessor);
+        //internalStreamsBuilder.BuildAndOptimizeTopology();
 
         //         StreamThread thread = createStreamThread(clientId, config, false);
 
         //thread.SetState(StreamThreadStates.STARTING);
-        //        thread.RebalanceListener.onPartitionsRevoked(null);
+        //        thread.RebalanceListener.OnPartitionsRevoked(null);
         //         List<TopicPartition>assignedPartitions = new List<>();
 
         //Dictionary<TaskId, List<TopicPartition>> activeTasks = new HashMap<>();
@@ -1172,14 +1172,14 @@ namespace Kafka.Streams.Tests
         //        clientSupplier.Consumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
         //        thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
 
-        //        thread.runOnce();
+        //        thread.RunOnce();
 
         //        Assert.Equal(0, punctuatedStreamTime.Count);
         //Assert.Equal(0, punctuatedWallClockTime.Count);
 
-        //mockTime.sleep(100L);
+        //mockTime.Sleep(100L);
         //        for (long i = 0L; i< 10L; i++) {
-        //            clientSupplier.Consumer.addRecord(new ConsumeResult<>(
+        //            clientSupplier.Consumer.AddRecord(new ConsumeResult<>(
         //                topic1,
         //                1,
         //                i,
@@ -1192,14 +1192,14 @@ namespace Kafka.Streams.Tests
         //                ("V" + i).getBytes()));
         //        }
 
-        //        thread.runOnce();
+        //        thread.RunOnce();
 
         //        Assert.Equal(1, punctuatedStreamTime.Count);
         //Assert.Equal(1, punctuatedWallClockTime.Count);
 
-        //mockTime.sleep(100L);
+        //mockTime.Sleep(100L);
 
-        //        thread.runOnce();
+        //        thread.RunOnce();
 
         //        // we should skip stream time punctuation, only trigger wall-clock time punctuation
         //        Assert.Equal(1, punctuatedStreamTime.Count);
@@ -1225,13 +1225,13 @@ namespace Kafka.Streams.Tests
         //public void shouldAlwaysReturnEmptyTasksMetadataWhileRebalancingStateAndTasksNotRunning()
         //{
         //    internalStreamsBuilder.Stream(Collections.singleton(topic1), consumed)
-        //        .groupByKey().count(Materialized.As ("count-one"));
-        //    internalStreamsBuilder.buildAndOptimizeTopology();
+        //        .GroupByKey().Count(Materialized.As ("count-one"));
+        //    internalStreamsBuilder.BuildAndOptimizeTopology();
 
         //    StreamThread thread = createStreamThread(clientId, config, false);
         //    MockConsumer<byte[], byte[]> restoreConsumer = clientSupplier.restoreConsumer;
         //    restoreConsumer.updatePartitions("stream-thread-test-count-one-changelog",
-        //       asList(
+        //       Arrays.asList(
         //            new PartitionInfo("stream-thread-test-count-one-changelog",
         //                0,
         //                null,
@@ -1277,8 +1277,8 @@ namespace Kafka.Streams.Tests
 
         //{
         //    internalStreamsBuilder.Stream(Collections.singleton("topic"), consumed)
-        //            .groupByKey().count(Materialized.As("count"));
-        //    internalStreamsBuilder.buildAndOptimizeTopology();
+        //            .GroupByKey().Count(Materialized.As("count"));
+        //    internalStreamsBuilder.BuildAndOptimizeTopology();
 
         //    StreamThread thread = createStreamThread("clientId", config, false);
         //    MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>) thread.Consumer;
@@ -1293,7 +1293,7 @@ namespace Kafka.Streams.Tests
 
         //mockConsumer.updatePartitions(
         //            "topic",
-        //            singletonList(
+        //            Collections.singletonList(
         //                new PartitionInfo(
         //                    "topic",
         //                    0,
@@ -1307,7 +1307,7 @@ namespace Kafka.Streams.Tests
 
         //        mockRestoreConsumer.updatePartitions(
         //            "stream-thread-test-count-changelog",
-        //            singletonList(
+        //            Collections.singletonList(
         //                new PartitionInfo(
         //                    "stream-thread-test-count-changelog",
         //                    0,
@@ -1335,7 +1335,7 @@ namespace Kafka.Streams.Tests
         //                () => mockRestoreConsumer.Assignment().Count == 1,
         //                "Never restore first record");
 
-        //            mockRestoreConsumer.addRecord(new ConsumeResult<>(
+        //            mockRestoreConsumer.AddRecord(new ConsumeResult<>(
         //                "stream-thread-test-count-changelog",
         //                0,
         //                0L,
@@ -1355,13 +1355,13 @@ namespace Kafka.Streams.Tests
         //    }
         //});
 
-        //            mockRestoreConsumer.addRecord(new ConsumeResult<>(
+        //            mockRestoreConsumer.AddRecord(new ConsumeResult<>(
         //                "stream-thread-test-count-changelog",
         //                0,
         //                0L,
         //                "K1".getBytes(),
         //                "V1".getBytes()));
-        //            mockRestoreConsumer.addRecord(new ConsumeResult<>(
+        //            mockRestoreConsumer.AddRecord(new ConsumeResult<>(
         //                "stream-thread-test-count-changelog",
         //                0,
         //                1L,
@@ -1375,8 +1375,8 @@ namespace Kafka.Streams.Tests
         //                },
         //                "Never finished restore");
         //        } finally {
-        //            thread.shutdown();
-        //            thread.join(10000);
+        //            thread.Shutdown();
+        //            thread.Join(10000);
         //        }
         //    }
 
@@ -1389,9 +1389,9 @@ namespace Kafka.Streams.Tests
 
         //   StreamsConfig config = configProps(false);
         //    config.Set(
-        //        StreamsConfigPropertyNames.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG,
+        //        StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG,
         //        LogAndContinueExceptionHandler.getName());
-        //    config.Set(StreamsConfigPropertyNames.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType().FullName);
+        //    config.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType().FullName);
         //    StreamThread thread = createStreamThread(clientId, new StreamsConfig(config), false);
 
         //    thread.SetState(StreamThreadStates.STARTING);
@@ -1408,7 +1408,7 @@ namespace Kafka.Streams.Tests
         //    mockConsumer.Assign(Collections.singleton(t1p1));
         //    mockConsumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
         //    thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
-        //    thread.runOnce();
+        //    thread.RunOnce();
 
         //    MetricName skippedTotalMetric = metrics.metricName(
         //       "skipped-records-total",
@@ -1422,7 +1422,7 @@ namespace Kafka.Streams.Tests
         //    Assert.Equal(0.0, metrics.metric(skippedRateMetric).metricValue());
 
         //    long offset = -1;
-        //    mockConsumer.addRecord(new ConsumeResult<>(
+        //    mockConsumer.AddRecord(new ConsumeResult<>(
         //        t1p1.Topic,
         //                t1p1.Partition,
         //                ++offset, -1,
@@ -1432,7 +1432,7 @@ namespace Kafka.Streams.Tests
         //                -1,
         //                new byte[0],
         //                "I am not an integer.".getBytes()));
-        //    mockConsumer.addRecord(new ConsumeResult<>(
+        //    mockConsumer.AddRecord(new ConsumeResult<>(
         //        t1p1.Topic,
         //        t1p1.Partition,
         //        ++offset,
@@ -1443,7 +1443,7 @@ namespace Kafka.Streams.Tests
         //        -1,
         //        new byte[0],
         //        "I am not an integer.".getBytes()));
-        //    thread.runOnce();
+        //    thread.RunOnce();
         //    Assert.Equal(2.0, metrics.metric(skippedTotalMetric).metricValue());
         //   Assert.NotEqual(0.0, metrics.metric(skippedRateMetric).metricValue());
 
@@ -1462,7 +1462,7 @@ namespace Kafka.Streams.Tests
 
         //   StreamsConfig config = configProps(false);
         //    config.Set(
-        //        StreamsConfigPropertyNames.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG,
+        //        StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG,
         //        LogAndSkipOnInvalidTimestamp.getName());
         //    StreamThread thread = createStreamThread(clientId, new StreamsConfig(config), false);
 
@@ -1480,7 +1480,7 @@ namespace Kafka.Streams.Tests
         //    mockConsumer.Assign(Collections.singleton(t1p1));
         //    mockConsumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
         //    thread.RebalanceListener.onPartitionsAssignedassignedPartitions);
-        //    thread.runOnce();
+        //    thread.RunOnce();
 
         //    MetricName skippedTotalMetric = metrics.metricName(
         //       "skipped-records-total",
@@ -1496,7 +1496,7 @@ namespace Kafka.Streams.Tests
         //    long offset = -1;
         //    addRecord(mockConsumer, ++offset);
         //    addRecord(mockConsumer, ++offset);
-        //    thread.runOnce();
+        //    thread.RunOnce();
         //    Assert.Equal(2.0, metrics.metric(skippedTotalMetric).metricValue());
         //   Assert.NotEqual(0.0, metrics.metric(skippedRateMetric).metricValue());
 
@@ -1504,13 +1504,13 @@ namespace Kafka.Streams.Tests
         //    addRecord(mockConsumer, ++offset);
         //    addRecord(mockConsumer, ++offset);
         //    addRecord(mockConsumer, ++offset);
-        //    thread.runOnce();
+        //    thread.RunOnce();
         //    Assert.Equal(6.0, metrics.metric(skippedTotalMetric).metricValue());
         //   Assert.NotEqual(0.0, metrics.metric(skippedRateMetric).metricValue());
 
         //    addRecord(mockConsumer, ++offset, 1L);
         //    addRecord(mockConsumer, ++offset, 1L);
-        //    thread.runOnce();
+        //    thread.RunOnce();
         //    Assert.Equal(6.0, metrics.metric(skippedTotalMetric).metricValue());
         //   Assert.NotEqual(0.0, metrics.metric(skippedRateMetric).metricValue());
 
@@ -1552,8 +1552,8 @@ namespace Kafka.Streams.Tests
         //                                                         StreamThreadStates state)
         //{
         //    Assert.Equal(state.Name(), metadata.ThreadState);
-        //    Assert.True(metadata.activeTasks.isEmpty());
-        //    Assert.True(metadata.StandbyTasks.isEmpty());
+        //    Assert.True(metadata.activeTasks.IsEmpty());
+        //    Assert.True(metadata.StandbyTasks.IsEmpty());
         //}
 
         //[Fact]
@@ -1561,7 +1561,7 @@ namespace Kafka.Streams.Tests
         //public void producerMetricsVerificationWithoutEOS()
         //{
         //    MockProducer<byte[], byte[]> producer = new MockProducer<>();
-        //    IConsumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
+        //    IConsumer<byte[], byte[]> consumer = Mock.Of<Consumer);
         //    TaskManager TaskManager = mockTaskManagerCommit(consumer, 1, 0);
 
         //    StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -1577,7 +1577,7 @@ namespace Kafka.Streams.Tests
         //           internalTopologyBuilder,
         //           clientId,
         //                   new LogContext(""),
-        //                   new AtomicInteger()
+        //                   new int()
         //                   );
         //    MetricName testMetricName = new MetricName("test_metric", "", "", new HashMap<>());
         //    Metric testMetric = new KafkaMetric(
@@ -1601,8 +1601,8 @@ namespace Kafka.Streams.Tests
         //    MockAdminClient adminClient = new MockAdminClient(cluster, broker1, null);
 
         //    MockProducer<byte[], byte[]> producer = new MockProducer<>();
-        //    IConsumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
-        //    TaskManager TaskManager = EasyMock.createNiceMock(TaskManager);
+        //    IConsumer<byte[], byte[]> consumer = Mock.Of<Consumer);
+        //    TaskManager TaskManager = Mock.Of<TaskManager);
 
         //    StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
         //    StreamThread thread = new StreamThread(
@@ -1617,7 +1617,7 @@ namespace Kafka.Streams.Tests
         //           internalTopologyBuilder,
         //           clientId,
         //                   new LogContext(""),
-        //                   new AtomicInteger()
+        //                   new int()
         //                   );
         //    MetricName testMetricName = new MetricName("test_metric", "", "", new HashMap<>());
         //    Metric testMetric = new KafkaMetric(
@@ -1627,7 +1627,7 @@ namespace Kafka.Streams.Tests
         //       null,
         //       new MockTime());
 
-        //    EasyMock.expect(TaskManager.getAdminClient()).andReturn(adminClient);
+        //    EasyMock.expect(TaskManager.GetAdminClient()).andReturn(adminClient);
         //    EasyMock.expect.AstCall();
         //    EasyMock.replay(TaskManager, consumer);
 
@@ -1646,7 +1646,7 @@ namespace Kafka.Streams.Tests
         //                        long offset,
         //                        long timestamp)
         //{
-        //    mockConsumer.addRecord(new ConsumeResult<>(
+        //    mockConsumer.AddRecord(new ConsumeResult<>(
         //        t1p1.Topic,
         //        t1p1.Partition,
         //        offset,

@@ -36,15 +36,15 @@ namespace Kafka.Streams.Threads.Stream
         private readonly IServiceProvider services;
         private readonly IClock clock;
         private readonly TimeSpan pollTime;
-        private readonly long commitTimeMs;
-        private readonly int maxPollTimeMs;
+        private readonly TimeSpan commitTime;
+        private readonly TimeSpan maxPollTime;
         private readonly AutoOffsetReset? originalReset;
 
         public int AssignmentErrorCode { get; set; }
 
-        private long now;
-        private long lastPollMs;
-        private long lastCommitMs;
+        private DateTime now;
+        private DateTime lastPoll;
+        private DateTime lastCommit;
         private int numIterations;
         private Exception? rebalanceException = null;
         private bool processStandbyRecords = false;
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Threads.Stream
             };
 
             this.pollTime = TimeSpan.FromMilliseconds(this.config.PollMs);
-            this.commitTimeMs = this.config.CommitIntervalMs;
+            this.commitTime = TimeSpan.FromMilliseconds(this.config.CommitIntervalMs);
             this.numIterations = 1;
 
             this.logPrefix = this.logger.BeginScope($"stream-thread [{threadClientId}] ");
@@ -180,7 +180,7 @@ namespace Kafka.Streams.Threads.Stream
         {
             IProducer<byte[], byte[]>? threadProducer = null;
 
-            var eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(config.GetString(StreamsConfigPropertyNames.ProcessingGuarantee));
+            var eosEnabled = StreamsConfig.ExactlyOnce.Equals(config.GetString(StreamsConfig.ProcessingGuarantee));
             if (!eosEnabled)
             {
                 var producerConfigs = config.GetProducerConfigs(StreamsBuilder.GetThreadProducerClientId(threadClientId));
@@ -196,7 +196,7 @@ namespace Kafka.Streams.Threads.Stream
         {
             this.logger.LogInformation("Creating consumer client");
 
-            var applicationId = config.ApplicationId ?? throw new ArgumentNullException(StreamsConfigPropertyNames.ApplicationId);
+            var applicationId = config.ApplicationId ?? throw new ArgumentNullException(StreamsConfig.ApplicationId);
 
             var consumerConfigs = config.GetMainConsumerConfigs(applicationId, StreamsBuilder.GetConsumerClientId(threadClientId), threadId);
             // consumerConfigs.Add(InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, this.taskManager);
@@ -390,7 +390,7 @@ namespace Kafka.Streams.Threads.Stream
         public void RunOnce()
         {
             ConsumerRecords<byte[], byte[]>? records;
-            this.now = SystemClock.AsEpochMilliseconds;
+            this.now = SystemClock.AsUtcNow;
 
             if (this.State.CurrentState == StreamThreadStates.PARTITIONS_ASSIGNED)
             {
@@ -466,7 +466,7 @@ namespace Kafka.Streams.Threads.Stream
                 // 4. If none of the the above happens, increment N.
                 // 5. If one of the above happens, half the value of N.
                 var processed = 0;
-                var timeSinceLastPoll = 0L;
+                var timeSinceLastPoll = TimeSpan.Zero;
 
                 do
                 {
@@ -495,7 +495,7 @@ namespace Kafka.Streams.Threads.Stream
                         }
                     }
 
-                    timeSinceLastPoll = Math.Max(this.now - this.lastPollMs, 0);
+                    timeSinceLastPoll = (this.now - this.lastPoll);
 
                     if (this.MaybePunctuate() || this.MaybeCommit())
                     {
@@ -503,7 +503,7 @@ namespace Kafka.Streams.Threads.Stream
                             ? this.numIterations / 2
                             : this.numIterations;
                     }
-                    else if (timeSinceLastPoll > this.maxPollTimeMs / 2)
+                    else if (timeSinceLastPoll > this.maxPollTime / 2)
                     {
                         this.numIterations = this.numIterations > 1
                             ? this.numIterations / 2
@@ -536,7 +536,7 @@ namespace Kafka.Streams.Threads.Stream
         {
             ConsumerRecords<byte[], byte[]>? records = null;
 
-            this.lastPollMs = this.now;
+            this.lastPoll = this.now;
 
             try
             {
@@ -685,11 +685,11 @@ namespace Kafka.Streams.Threads.Stream
         {
             var committed = 0;
 
-            if (this.now - this.lastCommitMs > this.commitTimeMs)
+            if (this.now - this.lastCommit > this.commitTime)
             {
                 if (this.logger.IsEnabled(LogLevel.Trace))
                 {
-                    this.logger.LogTrace($"Committing All active tasks {this.TaskManager.ActiveTaskIds().ToJoinedString()} and standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} since {this.now - this.lastCommitMs}ms has elapsed (commit interval is {this.commitTimeMs}ms)");
+                    this.logger.LogTrace($"Committing All active tasks {this.TaskManager.ActiveTaskIds().ToJoinedString()} and standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} since {this.now - this.lastCommit}ms has elapsed (commit interval is {this.commitTime}ms)");
                 }
 
                 committed += this.TaskManager.CommitAll();
@@ -707,7 +707,7 @@ namespace Kafka.Streams.Threads.Stream
                     }
                 }
 
-                this.lastCommitMs = this.now;
+                this.lastCommit = this.now;
                 this.processStandbyRecords = true;
             }
             else
@@ -768,7 +768,7 @@ namespace Kafka.Streams.Threads.Stream
 
                         if (this.logger.IsEnabled(LogLevel.Debug))
                         {
-                            this.logger.LogDebug($"Updated standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} in {this.clock.NowAsEpochMilliseconds - this.now} ms");
+                            this.logger.LogDebug($"Updated standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} in {(this.clock.UtcNow - this.now).TotalMilliseconds} ms");
                         }
                     }
                     this.processStandbyRecords = false;
@@ -851,9 +851,9 @@ namespace Kafka.Streams.Threads.Stream
         private long AdvanceNowAndComputeLatency()
         {
             var previous = this.now;
-            this.now = SystemClock.AsEpochMilliseconds;
+            this.now = SystemClock.AsUtcNow;
 
-            return Math.Max(this.now - previous, 0);
+            return (long)Math.Max((this.now - previous).TotalMilliseconds, 0);
         }
 
         /**
@@ -948,7 +948,7 @@ namespace Kafka.Streams.Threads.Stream
         }
 
         // the following are for testing only
-        public void SetNow(long now)
+        public void SetNow(DateTime now)
         {
             this.now = now;
         }

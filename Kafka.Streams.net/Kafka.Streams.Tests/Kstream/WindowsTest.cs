@@ -10,8 +10,7 @@ namespace Kafka.Streams.Tests
         private class TestWindows<W> : Windows<W>
              where W : Window
         {
-
-            public override Dictionary<long, W>? WindowsFor(TimeSpan timestamp)
+            public override Dictionary<DateTime, W>? WindowsFor(DateTime timestamp)
             {
                 return null;
             }

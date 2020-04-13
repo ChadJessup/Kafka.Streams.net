@@ -155,7 +155,7 @@ namespace Kafka.Streams.State
         //    }
 
         //    /**
-        //     * Create a LRU Map {@link KeyValueBytesStoreSupplier}.
+        //     * Create a LRU Dictionary {@link KeyValueBytesStoreSupplier}.
         //     * <p>
         //     * This store supplier can be passed into a {@link #keyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}
         //     * or {@link #TimestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
@@ -163,7 +163,7 @@ namespace Kafka.Streams.State
         //     * @param Name          Name of the store (cannot be {@code null})
         //     * @param maxCacheSize  maximum number of items in the LRU (cannot be negative)
         //     * @return an instance of a {@link KeyValueBytesStoreSupplier} that can be used to build
-        //     * an LRU Map based store
+        //     * an LRU Dictionary based store
         //     */
         //    public KeyValueBytesStoreSupplier lruMap(string Name, int maxCacheSize)
         //    {

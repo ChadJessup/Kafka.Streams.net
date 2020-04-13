@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals
             K key,
             IValueAndTimestamp<V> newValue,
             IValueAndTimestamp<V> oldValue,
-            long timestamp)
+            DateTime timestamp)
         {
             var prev = this.context.GetCurrentNode();
             this.context.SetCurrentNode(this.myNode);

@@ -44,14 +44,14 @@
 //        }
 //    };
 
-//    private List<KeyValuePair<long, byte[]>> windowStoreKvPairs = new ArrayList<>();
+//    private List<KeyValuePair<long, byte[]>> windowStoreKvPairs = new List<KeyValuePair<long, byte[]>>();
 //    private ThreadCache cache = new ThreadCache(new LogContext("testCache "), 1000000L,  new MockStreamsMetrics(new Metrics()));
 //    private string namespace = "0.0-one";
 //    private StateSerdes<string, string> stateSerdes = new StateSerdes<>("foo", Serdes.String(), Serdes.String());
 
 //    [Fact]
 //    public void ShouldIterateOverValueFromBothIterators() {
-//        List<KeyValuePair<long, byte[]>> expectedKvPairs = new ArrayList<>();
+//        List<KeyValuePair<long, byte[]>> expectedKvPairs = new List<KeyValuePair<long, byte[]>>();
 //        for (long t = 0; t < 100; t += 20) {
 //            byte[] v1Bytes = string.valueOf(t).getBytes();
 //            KeyValuePair<long, byte[]> v1 = KeyValuePair.Create(t, v1Bytes);
@@ -78,8 +78,8 @@
 //        while (iterator.HasNext()) {
 //            KeyValuePair<long, byte[]> next = iterator.MoveNext();
 //            KeyValuePair<long, byte[]> expected = expectedKvPairs.Get(index++);
-//            assertArrayEquals(expected.value, next.value);
-//            Assert.Equal(expected.key, next.key);
+//            assertArrayEquals(expected.Value, next.Value);
+//            Assert.Equal(expected.Key, next.Key);
 //        }
 //        iterator.Close();
 //    }

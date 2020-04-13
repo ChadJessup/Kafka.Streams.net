@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals
                 throw new ArgumentNullException(nameof(change));
             }
 
-            long resultTimestamp;
+            DateTime resultTimestamp;
 
             var valueAndTimestampRight = this.valueGetter.Get(key);
             V2 valueRight = ValueAndTimestamp.GetValueOrNull(valueAndTimestampRight);
@@ -59,7 +59,7 @@ namespace Kafka.Streams.KStream.Internals
 
             R newValue = default;
             R oldValue = default;
-            resultTimestamp = Math.Max(this.Context.Timestamp, valueAndTimestampRight.Timestamp);
+            resultTimestamp = this.Context.Timestamp.GetNewest(valueAndTimestampRight.Timestamp);
 
             if (change.NewValue != null)
             {

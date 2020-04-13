@@ -256,8 +256,9 @@ namespace Kafka.Streams.Tests.State
                 this.streamsBuilder.Context,
                 this.storesFactory.PersistentWindowStore("store", TimeSpan.FromMilliseconds(3L), TimeSpan.FromMilliseconds(3L), true),
                 Serdes.String(),
-                Serdes.String()
-            ).Build();
+                Serdes.String())
+            .Build();
+
             Assert.NotNull(store);
         }
 

@@ -18,7 +18,7 @@ namespace Kafka.Streams.Tests
             throw new System.NotImplementedException();
         }
 
-        public IConsumer<byte[], byte[]> GetConsumer(ConsumerConfig config, IConsumerRebalanceListener rebalanceListener)
+        public IConsumer<byte[], byte[]> GetConsumer(ConsumerConfig config, IConsumerRebalanceListener RebalanceListener)
         {
             throw new System.NotImplementedException();
         }

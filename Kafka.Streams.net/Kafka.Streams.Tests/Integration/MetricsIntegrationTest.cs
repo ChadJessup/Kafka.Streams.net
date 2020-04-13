@@ -180,8 +180,8 @@ namespace Kafka.Streams.Tests.Integration
 //        streamsConfiguration = new StreamsConfig();
 //        streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, "stream-metrics-test");
 //        streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-//        streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//        streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//        streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
+//        streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType());
 //        streamsConfiguration.Put(StreamsConfig.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.DEBUG.Name);
 //        streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 10 * 1024 * 1024L);
 //        streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
@@ -205,7 +205,7 @@ namespace Kafka.Streams.Tests.Integration
 //    private void closeApplication() {// throws Exception
 //        kafkaStreams.Close();
 //        kafkaStreams.cleanUp();
-//        IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
+//        IntegrationTestUtils.PurgeLocalStreamsState(streamsConfiguration);
 //        long timeout = 60000;
 //        TestUtils.WaitForCondition(
 //            () => kafkaStreams.state() == State.NOT_RUNNING,
@@ -219,15 +219,15 @@ namespace Kafka.Streams.Tests.Integration
 //            .To(STREAM_OUTPUT_1, Produced.With(Serdes.Int(), Serdes.String()));
 //        builder.table(STREAM_OUTPUT_1,
 //                      Materialized.As(Stores.InMemoryKeyValueStore(MY_STORE_IN_MEMORY)).withCachingEnabled())
-//            .toStream()
+//            .ToStream()
 //            .To(STREAM_OUTPUT_2);
 //        builder.table(STREAM_OUTPUT_2,
 //                      Materialized.As(Stores.PersistentKeyValueStore(MY_STORE_PERSISTENT_KEY_VALUE)).withCachingEnabled())
-//            .toStream()
+//            .ToStream()
 //            .To(STREAM_OUTPUT_3);
 //        builder.table(STREAM_OUTPUT_3,
 //                      Materialized.As(Stores.lruMap(MY_STORE_LRU_MAP, 10000)).withCachingEnabled())
-//            .toStream()
+//            .ToStream()
 //            .To(STREAM_OUTPUT_4);
 //        startApplication();
 
@@ -247,9 +247,9 @@ namespace Kafka.Streams.Tests.Integration
 //    [Fact]
 //    public void shouldAddMetricsForWindowStore() {// throws Exception
 //        builder.Stream(STREAM_INPUT, Consumed.With(Serdes.Int(), Serdes.String()))
-//            .groupByKey()
-//            .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(50)))
-//            .aggregate(() => 0L,
+//            .GroupByKey()
+//            .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(50)))
+//            .Aggregate(() => 0L,
 //                (aggKey, newValue, aggValue) => aggValue,
 //                Materialized<int, long, IWindowStore<Bytes, byte[]>>.As(TIME_WINDOWED_AGGREGATED_STREAM_STORE)
 //                    .withValueSerde(Serdes.Long()));
@@ -265,9 +265,9 @@ namespace Kafka.Streams.Tests.Integration
 //    [Fact]
 //    public void shouldAddMetricsForSessionStore() {// throws Exception
 //        builder.Stream(STREAM_INPUT, Consumed.With(Serdes.Int(), Serdes.String()))
-//            .groupByKey()
-//            .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(50)))
-//            .aggregate(() => 0L,
+//            .GroupByKey()
+//            .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(50)))
+//            .Aggregate(() => 0L,
 //                (aggKey, newValue, aggValue) => aggValue,
 //                (aggKey, leftAggValue, rightAggValue) => leftAggValue,
 //                Materialized<int, long, ISessionStore<Bytes, byte[]>>.As(SESSION_AGGREGATED_STREAM_STORE)
@@ -283,7 +283,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    // private void checkThreadLevelMetrics() {
 //    //     List<Metric> listMetricThread = new ArrayList<Metric>(kafkaStreams.metrics().values()).Stream()
-//    //         .filter(m => m.metricName().group().equals(STREAM_THREAD_NODE_METRICS))
+//    //         .filter(m => m.metricName().group().Equals(STREAM_THREAD_NODE_METRICS))
 //    //         .collect(Collectors.toList());
 //    //     checkMetricByName(listMetricThread, COMMIT_LATENCY_AVG, 1);
 //    //     checkMetricByName(listMetricThread, COMMIT_LATENCY_MAX, 1);
@@ -311,7 +311,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void checkTaskLevelMetrics() {
 //        List<Metric> listMetricTask = new ArrayList<Metric>(kafkaStreams.metrics().values()).Stream()
-//            .filter(m => m.metricName().group().equals(STREAM_TASK_NODE_METRICS))
+//            .filter(m => m.metricName().group().Equals(STREAM_TASK_NODE_METRICS))
 //            .collect(Collectors.toList());
 //        checkMetricByName(listMetricTask, COMMIT_LATENCY_AVG, 5);
 //        checkMetricByName(listMetricTask, COMMIT_LATENCY_MAX, 5);
@@ -323,7 +323,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void checkProcessorLevelMetrics() {
 //        List<Metric> listMetricProcessor = new ArrayList<Metric>(kafkaStreams.metrics().values()).Stream()
-//            .filter(m => m.metricName().group().equals(STREAM_PROCESSOR_NODE_METRICS))
+//            .filter(m => m.metricName().group().Equals(STREAM_PROCESSOR_NODE_METRICS))
 //            .collect(Collectors.toList());
 //        checkMetricByName(listMetricProcessor, PROCESS_LATENCY_AVG, 18);
 //        checkMetricByName(listMetricProcessor, PROCESS_LATENCY_MAX, 18);
@@ -346,7 +346,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void checkKeyValueStoreMetricsByType(string storeType) {
 //        List<Metric> listMetricStore = new ArrayList<Metric>(kafkaStreams.metrics().values()).Stream()
-//            .filter(m => m.metricName().group().equals(storeType))
+//            .filter(m => m.metricName().group().Equals(storeType))
 //            .collect(Collectors.toList());
 //        checkMetricByName(listMetricStore, PUT_LATENCY_AVG, 2);
 //        checkMetricByName(listMetricStore, PUT_LATENCY_MAX, 2);
@@ -394,7 +394,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void checkCacheMetrics() {
 //        List<Metric> listMetricCache = new ArrayList<Metric>(kafkaStreams.metrics().values()).Stream()
-//            .filter(m => m.metricName().group().equals(STREAM_CACHE_NODE_METRICS))
+//            .filter(m => m.metricName().group().Equals(STREAM_CACHE_NODE_METRICS))
 //            .collect(Collectors.toList());
 //        checkMetricByName(listMetricCache, HIT_RATIO_AVG, 6);
 //        checkMetricByName(listMetricCache, HIT_RATIO_MIN, 6);
@@ -403,7 +403,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void checkWindowStoreMetrics() {
 //        List<Metric> listMetricStore = new ArrayList<Metric>(kafkaStreams.metrics().values()).Stream()
-//            .filter(m => m.metricName().group().equals(STREAM_STORE_WINDOW_ROCKSDB_STATE_METRICS))
+//            .filter(m => m.metricName().group().Equals(STREAM_STORE_WINDOW_ROCKSDB_STATE_METRICS))
 //            .collect(Collectors.toList());
 //        checkMetricByName(listMetricStore, PUT_LATENCY_AVG, 2);
 //        checkMetricByName(listMetricStore, PUT_LATENCY_MAX, 2);
@@ -444,7 +444,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void checkSessionStoreMetrics() {
 //        List<Metric> listMetricStore = new ArrayList<Metric>(kafkaStreams.metrics().values()).Stream()
-//            .filter(m => m.metricName().group().equals(STREAM_STORE_SESSION_ROCKSDB_STATE_METRICS))
+//            .filter(m => m.metricName().group().Equals(STREAM_STORE_SESSION_ROCKSDB_STATE_METRICS))
 //            .collect(Collectors.toList());
 //        checkMetricByName(listMetricStore, PUT_LATENCY_AVG, 2);
 //        checkMetricByName(listMetricStore, PUT_LATENCY_MAX, 2);
@@ -485,7 +485,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    private void checkMetricByName(List<Metric> listMetric, string metricName, int numMetric) {
 //        List<Metric> metrics = listMetric.Stream()
-//            .filter(m => m.metricName().Name().equals(metricName))
+//            .filter(m => m.metricName().Name().Equals(metricName))
 //            .collect(Collectors.toList());
 //        Assert.Equal("Size of metrics of type:'" + metricName + "' must be equal to:" + numMetric + " but it's equal to " + metrics.Count, numMetric, metrics.Count);
 //        foreach (Metric m in metrics) {

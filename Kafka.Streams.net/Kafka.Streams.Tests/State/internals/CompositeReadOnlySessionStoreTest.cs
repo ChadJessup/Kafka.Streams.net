@@ -59,19 +59,19 @@
 
 
 //            sessionStore = new CompositeReadOnlySessionStore<>(
-//                    new WrappingStoreProvider(Array.< StateStoreProvider > asList(stubProviderOne, stubProviderTwo)),
+//                    new WrappingStoreProvider(Array.< StateStoreProvider > Arrays.asList(stubProviderOne, stubProviderTwo)),
 //                    QueryableStoreTypes.< string, long > sessionStore(), storeName);
 //        }
 
 //        [Fact]
 //        public void ShouldFetchResulstFromUnderlyingSessionStore()
 //        {
-//            underlyingSessionStore.Put(new IWindowed<>("a", new SessionWindow(0, 0)), 1L);
-//            underlyingSessionStore.Put(new IWindowed<>("a", new SessionWindow(10, 10)), 2L);
+//            underlyingSessionStore.Put(new Windowed2<>("a", new SessionWindow(0, 0)), 1L);
+//            underlyingSessionStore.Put(new Windowed2<>("a", new SessionWindow(10, 10)), 2L);
 
 //            List<KeyValuePair<IWindowed<string>, long>> results = toList(sessionStore.Fetch("a"));
-//            Assert.Equal(Array.asList(KeyValuePair.Create(new IWindowed<>("a", new SessionWindow(0, 0)), 1L),
-//                                       KeyValuePair.Create(new IWindowed<>("a", new SessionWindow(10, 10)), 2L)),
+//            Assert.Equal(Arrays.asList(KeyValuePair.Create(new Windowed2<>("a", new SessionWindow(0, 0)), 1L),
+//                                       KeyValuePair.Create(new Windowed2<>("a", new SessionWindow(10, 10)), 2L)),
 //                         results);
 //        }
 
@@ -89,8 +89,8 @@
 //                    ReadOnlySessionStoreStub<>();
 //            stubProviderTwo.addStore(storeName, secondUnderlying);
 
-//            IWindowed<string> keyOne = new IWindowed<>("key-one", new SessionWindow(0, 0));
-//            IWindowed<string> keyTwo = new IWindowed<>("key-two", new SessionWindow(0, 0));
+//            IWindowed<string> keyOne = new Windowed2<>("key-one", new SessionWindow(0, 0));
+//            IWindowed<string> keyTwo = new Windowed2<>("key-two", new SessionWindow(0, 0));
 //            underlyingSessionStore.Put(keyOne, 0L);
 //            secondUnderlying.Put(keyTwo, 10L);
 
@@ -104,8 +104,8 @@
 //        [Fact]
 //        public void ShouldNotGetValueFromOtherStores()
 //        {
-//            IWindowed<string> expectedKey = new IWindowed<>("foo", new SessionWindow(0, 0));
-//            otherUnderlyingStore.Put(new IWindowed<>("foo", new SessionWindow(10, 10)), 10L);
+//            IWindowed<string> expectedKey = new Windowed2<>("foo", new SessionWindow(0, 0));
+//            otherUnderlyingStore.Put(new Windowed2<>("foo", new SessionWindow(10, 10)), 10L);
 //            underlyingSessionStore.Put(expectedKey, 1L);
 
 //            IKeyValueIterator<IWindowed<string>, long> result = sessionStore.Fetch("foo");
@@ -149,8 +149,8 @@
 //            ReadOnlySessionStoreStub<string, long> secondUnderlying = new
 //                    ReadOnlySessionStoreStub<>();
 //            stubProviderTwo.addStore(storeName, secondUnderlying);
-//            underlyingSessionStore.Put(new IWindowed<>("a", new SessionWindow(0, 0)), 0L);
-//            secondUnderlying.Put(new IWindowed<>("b", new SessionWindow(0, 0)), 10L);
+//            underlyingSessionStore.Put(new Windowed2<>("a", new SessionWindow(0, 0)), 0L);
+//            secondUnderlying.Put(new Windowed2<>("b", new SessionWindow(0, 0)), 10L);
 //            List<KeyValuePair<IWindowed<string>, long>> results = StreamsTestUtils.toList(sessionStore.Fetch("a", "b"));
 //            Assert.Equal(results.Count, (2));
 //        }

@@ -39,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals
             int[] expectedKeys = { 0, 1, 2, 3 };
 
             var supplier = new MockProcessorSupplier<string, string>();
-            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With<int, string>(Serdes.Int(), Serdes.String()));
+            IKStream<K, V>(Serdes.Int(), Serdes.String()));
 
             stream.FlatMap(mapper).Process(supplier);
 
@@ -53,12 +53,12 @@ namespace Kafka.Streams.KStream.Internals
 
             var expected = new KeyValueTimestamp<string, string>[]
             {
-                new KeyValueTimestamp<string, string>("10", "V1", 0),
-                new KeyValueTimestamp<string, string>("20", "V2", 0),
-                new KeyValueTimestamp<string, string>("21", "V2", 0),
-                new KeyValueTimestamp<string, string>("30", "V3", 0),
-                new KeyValueTimestamp<string, string>("31", "V3", 0),
-                new KeyValueTimestamp<string, string>("32", "V3", 0),
+                new KeyValueTimestamp<string, string>("10", "V1", Timestamp.UnixTimestampMsToDateTime(0)),
+                new KeyValueTimestamp<string, string>("20", "V2", Timestamp.UnixTimestampMsToDateTime(0)),
+                new KeyValueTimestamp<string, string>("21", "V2", Timestamp.UnixTimestampMsToDateTime(0)),
+                new KeyValueTimestamp<string, string>("30", "V3", Timestamp.UnixTimestampMsToDateTime(0)),
+                new KeyValueTimestamp<string, string>("31", "V3", Timestamp.UnixTimestampMsToDateTime(0)),
+                new KeyValueTimestamp<string, string>("32", "V3", Timestamp.UnixTimestampMsToDateTime(0)),
             };
 
             for (var i = 0; i < expected.Length; i++)

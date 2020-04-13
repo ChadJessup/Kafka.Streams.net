@@ -65,7 +65,7 @@
 //            //effectiveConfig.Put(KafkaConfig$.MODULE$.ZkSessionTimeoutMsProp(), 10000);
 
 //            effectiveConfig.SetAll(initialConfig);
-//            //effectiveConfig.setProperty(KafkaConfig$.MODULE$.LogDirProp(), logDir.FullName);
+//            //effectiveConfig.Set(KafkaConfig$.MODULE$.LogDirProp(), logDir.FullName);
 //            return effectiveConfig;
 //        }
 
@@ -101,18 +101,18 @@
 //        {
 //            log.debug("Shutting down embedded Kafka broker at {} (with ZK ensemble at {}) ...",
 //                BrokerList(), ZookeeperConnect());
-//            kafka.shutdown();
+//            kafka.Shutdown();
 //            kafka.awaitShutdown();
 //            log.debug("Removing log dir at {} ...", logDir);
 //            try
 //            {
-//                Utils.delete(logDir);
+//                Utils.Delete(logDir);
 //            }
 //            catch (IOException e)
 //            {
 //                throw new RuntimeException("", e);
 //            }
-//            tmpFolder.delete();
+//            tmpFolder.Delete();
 //            log.debug("Shutdown of embedded Kafka broker at {} completed (with ZK ensemble at {}) ...",
 //                BrokerList(), ZookeeperConnect());
 //        }

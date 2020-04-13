@@ -233,7 +233,7 @@
 //    { //throws IOException
 //        if (args.Length < 5)
 //        {
-//            System.Console.Error.println("Not enough parameters are provided; expecting propFileName, testName, numRecords, keySkew, valueSize");
+//            System.Console.Error.WriteLine("Not enough parameters are provided; expecting propFileName, testName, numRecords, keySkew, valueSize");
 //            System.exit(1);
 //        }
 
@@ -248,7 +248,7 @@
 
 //        if (kafka == null)
 //        {
-//            System.Console.Error.println("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 //            System.exit(1);
 //        }
 
@@ -272,8 +272,8 @@
 //        props.Put(StreamsConfig.CLIENT_ID_CONFIG, "simple-benchmark");
 //        props.Put(StreamsConfig.POLL_MS_CONFIG, POLL_MS);
 //        props.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL_MS);
-//        props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-//        props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().getClass());
+//        props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
+//        props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().GetType());
 //        // the socket buffer needs to be large, especially when running in AWS with
 //        // high latency. if running locally the default is fine.
 //        props.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -356,13 +356,13 @@
 //        KafkaProducer<int, byte[]> producer = new KafkaProducer<>(producerProps)) {
 //            List<TopicPartition> partitions = getAllPartitions(consumer, topic);
 
-//            consumer.assign(partitions);
+//            consumer.Assign(partitions);
 //            consumer.seekToBeginning(partitions);
 
 //            while (true)
 //            {
-//                ConsumeResult<int, byte[]> records = consumer.poll(FromMilliseconds(POLL_MS));
-//                if (records.isEmpty())
+//                ConsumeResult<int, byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(POLL_MS));
+//                if (records.IsEmpty())
 //                {
 //                    if (processedRecords == numRecords)
 //                    {
@@ -405,13 +405,13 @@
 //                (KafkaConsumer<int, byte[]> consumer = new KafkaConsumer<>(consumerProps));
 //        List<TopicPartition> partitions = getAllPartitions(consumer, topic);
 
-//        consumer.assign(partitions);
+//        consumer.Assign(partitions);
 //        consumer.seekToBeginning(partitions);
 
 //        while (true)
 //        {
-//            ConsumeResult<int, byte[]> records = consumer.poll(FromMilliseconds(POLL_MS));
-//            if (records.isEmpty())
+//            ConsumeResult<int, byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(POLL_MS));
+//            if (records.IsEmpty())
 //            {
 //                if (processedRecords == numRecords)
 //                {
@@ -464,7 +464,7 @@
 
 //        StreamsBuilder builder = new StreamsBuilder();
 
-//        KStream<int, byte[]> source = builder.Stream(topic);
+//        IKStream<K, V> source = builder.Stream(topic);
 //        source.peek(new CountDownAction(latch)).To(SINK_TOPIC);
 
 //        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
@@ -480,11 +480,11 @@
 //        StreamsBuilder builder = new StreamsBuilder();
 //        IStoreBuilder<IKeyValueStore<int, byte[]>> storeBuilder =
 //            Stores.KeyValueStoreBuilder(Stores.PersistentKeyValueStore("store"), INTEGER_SERDE, BYTE_SERDE);
-//        builder.addStateStore(storeBuilder.withCachingEnabled());
+//        builder.AddStateStore(storeBuilder.withCachingEnabled());
 
-//        KStream<int, byte[]> source = builder.Stream(topic);
+//        IKStream<K, V> source = builder.Stream(topic);
 
-//        source.peek(new CountDownAction(latch)).process(new ProcessorSupplier<int, byte[]>()
+//        source.peek(new CountDownAction(latch)).Process(new ProcessorSupplier<int, byte[]>()
 //        {
 
 
@@ -495,7 +495,7 @@
 
 
 
-//            public void Init(ProcessorContext context)
+//            public void Init(IProcessorContext context)
 //            {
 //                base.Init(context);
 //                store = (IKeyValueStore<int, byte[]>)context.getStateStore("store");
@@ -533,11 +533,11 @@
 //            INTEGER_SERDE,
 //            BYTE_SERDE
 //        );
-//        builder.addStateStore(storeBuilder.withCachingEnabled());
+//        builder.AddStateStore(storeBuilder.withCachingEnabled());
 
-//        KStream<int, byte[]> source = builder.Stream(topic);
+//        IKStream<K, V> source = builder.Stream(topic);
 
-//        source.peek(new CountDownAction(latch)).process(new ProcessorSupplier<int, byte[]>()
+//        source.peek(new CountDownAction(latch)).Process(new ProcessorSupplier<int, byte[]>()
 //        {
 
 
@@ -548,7 +548,7 @@
 
 
 
-//            public void Init(ProcessorContext context)
+//            public void Init(IProcessorContext context)
 //            {
 //                base.Init(context);
 //                store = (IWindowStore<int, byte[]>)context.getStateStore("store");
@@ -587,11 +587,11 @@
 //        setStreamProperties("simple-benchmark-nonwindowed-count");
 
 //        StreamsBuilder builder = new StreamsBuilder();
-//        KStream<int, byte[]> input = builder.Stream(sourceTopic);
+//        IKStream<K, V> input = builder.Stream(sourceTopic);
 
 //        input.peek(new CountDownAction(latch))
-//                .groupByKey()
-//                .count();
+//                .GroupByKey()
+//                .Count();
 
 //        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 //        runGenericBenchmark(streams, "Streams Count Performance [records/latency/rec-sec/MB-sec counted]: ", latch);
@@ -609,12 +609,12 @@
 //        setStreamProperties("simple-benchmark-windowed-count");
 
 //        StreamsBuilder builder = new StreamsBuilder();
-//        KStream<int, byte[]> input = builder.Stream(sourceTopic);
+//        IKStream<K, V> input = builder.Stream(sourceTopic);
 
 //        input.peek(new CountDownAction(latch))
-//                .groupByKey()
-//                .windowedBy(TimeWindows.of(FromMilliseconds(AGGREGATE_WINDOW_SIZE)).advanceBy(FromMilliseconds(AGGREGATE_WINDOW_ADVANCE)))
-//                .count();
+//                .GroupByKey()
+//                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(AGGREGATE_WINDOW_SIZE)).advanceBy(TimeSpan.FromMilliseconds(AGGREGATE_WINDOW_ADVANCE)))
+//                .Count();
 
 //        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 //        runGenericBenchmark(streams, "Streams Count Windowed Performance [records/latency/rec-sec/MB-sec counted]: ", latch);
@@ -632,10 +632,10 @@
 
 //        StreamsBuilder builder = new StreamsBuilder();
 
-//        KStream<int, byte[]> input1 = builder.Stream(kStreamTopic);
+//        IKStream<K, V> input1 = builder.Stream(kStreamTopic);
 //        KTable<int, byte[]> input2 = builder.table(kTableTopic);
 
-//        input1.leftJoin(input2, VALUE_JOINER).ForEach(new CountDownAction(latch));
+//        input1.LeftJoin(input2, VALUE_JOINER).ForEach(new CountDownAction(latch));
 
 //        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
@@ -655,10 +655,10 @@
 
 //        StreamsBuilder builder = new StreamsBuilder();
 
-//        KStream<int, byte[]> input1 = builder.Stream(kStreamTopic1);
-//        KStream<int, byte[]> input2 = builder.Stream(kStreamTopic2);
+//        IKStream<K, V> input1 = builder.Stream(kStreamTopic1);
+//        IKStream<K, V> input2 = builder.Stream(kStreamTopic2);
 
-//        input1.leftJoin(input2, VALUE_JOINER, JoinWindows.of(FromMilliseconds(STREAM_STREAM_JOIN_WINDOW))).ForEach(new CountDownAction(latch));
+//        input1.LeftJoin(input2, VALUE_JOINER, JoinWindows.of(TimeSpan.FromMilliseconds(STREAM_STREAM_JOIN_WINDOW))).ForEach(new CountDownAction(latch));
 
 //        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
@@ -682,7 +682,7 @@
 //        KTable<int, byte[]> input1 = builder.table(kTableTopic1);
 //        KTable<int, byte[]> input2 = builder.table(kTableTopic2);
 
-//        input1.leftJoin(input2, VALUE_JOINER).toStream().ForEach(new CountDownAction(latch));
+//        input1.LeftJoin(input2, VALUE_JOINER).ToStream().ForEach(new CountDownAction(latch));
 
 //        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
@@ -757,7 +757,7 @@
 //        {
 //            System.Console.Out.WriteLine("FATAL: An unexpected exception is encountered on thread " + t + ": " + e);
 
-//            streamsClient.Close(ofSeconds(30));
+//            streamsClient.Close(FromSeconds(30));
 //        }
 //    });
 
@@ -776,7 +776,7 @@
 
 //    private List<TopicPartition> GetAllPartitions(KafkaConsumer<?, ?> consumer, string... topics)
 //    {
-//        ArrayList<TopicPartition> partitions = new ArrayList<>();
+//        ArrayList<TopicPartition> partitions = new List<TopicPartition>();
 
 //        foreach (string topic in topics)
 //        {

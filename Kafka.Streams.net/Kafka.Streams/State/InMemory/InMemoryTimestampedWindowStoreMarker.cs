@@ -34,17 +34,17 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public void Put(Bytes key, byte[] value, long windowStartTimestamp)
+        public void Put(Bytes key, byte[] value, DateTime windowStartTimestamp)
         {
             this.wrapped.Put(key, value, windowStartTimestamp);
         }
 
-        public byte[] Fetch(Bytes key, long time)
+        public byte[] Fetch(Bytes key, DateTime time)
         {
             return this.wrapped.Fetch(key, time);
         }
 
-        public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
+        public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime timeFrom, DateTime timeTo)
         {
             return this.wrapped.Fetch(key, timeFrom, timeTo);
         }
@@ -52,13 +52,13 @@ namespace Kafka.Streams.State.Internals
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(
             Bytes from,
             Bytes to,
-            long timeFrom,
-            long timeTo)
+            DateTime timeFrom,
+            DateTime timeTo)
         {
             return this.wrapped.Fetch(from, to, timeFrom, timeTo);
         }
 
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime timeFrom, DateTime timeTo)
         {
             return this.wrapped.FetchAll(timeFrom, timeTo);
         }
@@ -98,21 +98,6 @@ namespace Kafka.Streams.State.Internals
         public bool IsPresent()
         {
             return this.wrapped.IsPresent();
-        }
-
-        public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime from, DateTime to)
-        {
-            return this.wrapped.Fetch(key, from, to);
-        }
-
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime fromTime, DateTime toTime)
-        {
-            return this.wrapped.Fetch(from, to, fromTime, toTime);
-        }
-
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
-        {
-            return this.wrapped.FetchAll(from, to);
         }
     }
 }

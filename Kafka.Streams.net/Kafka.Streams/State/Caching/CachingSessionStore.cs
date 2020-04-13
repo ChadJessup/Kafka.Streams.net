@@ -20,9 +20,12 @@ namespace Kafka.Streams.State.Internals
         private FlushListener<byte[], byte[]> flushListener;
         private bool sendOldValues;
 
-        private long maxObservedTimestamp; // Refers to the window end time (determines segmentId)
+        private DateTime maxObservedTimestamp; // Refers to the window end time (determines segmentId)
 
-        public CachingSessionStore(KafkaStreamsContext context, ISessionStore<Bytes, byte[]> bytesStore, long segmentInterval)
+        public CachingSessionStore(
+            KafkaStreamsContext context,
+            ISessionStore<Bytes, byte[]> bytesStore,
+            TimeSpan segmentInterval)
             : base(context, bytesStore)
         {
             this.keySchema = new SessionKeySchema();
@@ -35,7 +38,6 @@ namespace Kafka.Streams.State.Internals
             this.InitInternal((IInternalProcessorContext)context);
             base.Init(context, root);
         }
-
 
         private void InitInternal(IInternalProcessorContext context)
         {
@@ -62,7 +64,8 @@ namespace Kafka.Streams.State.Internals
             {
                 byte[] newValueBytes = entry.NewValue;
                 byte[] oldValueBytes = newValueBytes == null || this.sendOldValues ?
-                    this.Wrapped.FetchSession(bytesKey.Key, bytesKey.window.Start(), bytesKey.window.End()) : null;
+                    this.Wrapped.FetchSession(bytesKey.Key, bytesKey.Window.StartTime, bytesKey.Window.EndTime)
+                    : null;
 
                 // this is an optimization: if this key did not exist in underlying store and also not in the cache,
                 // we can skip flushing to downstream as well as writing to underlying store
@@ -79,7 +82,7 @@ namespace Kafka.Streams.State.Internals
                             binaryKey.Get(),
                             newValueBytes,
                             this.sendOldValues ? oldValueBytes : null,
-                            entry.Entry().context.timestamp);
+                            entry.Entry().context.Timestamp);
                     }
                     finally
                     {
@@ -117,7 +120,7 @@ namespace Kafka.Streams.State.Internals
 
             this.cache.Put(this.cacheName, this.cacheFunction.CacheKey(binaryKey), entry);
 
-            this.maxObservedTimestamp = Math.Max(this.keySchema.SegmentTimestamp(binaryKey), this.maxObservedTimestamp);
+            this.maxObservedTimestamp = this.keySchema.SegmentTimestamp(binaryKey).GetNewest(this.maxObservedTimestamp);
         }
 
         public void Remove(IWindowed<Bytes> sessionKey)
@@ -128,8 +131,8 @@ namespace Kafka.Streams.State.Internals
 
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes key,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             this.ValidateStoreOpen();
 
@@ -164,8 +167,8 @@ namespace Kafka.Streams.State.Internals
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes keyFrom,
             Bytes keyTo,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             if (keyFrom.CompareTo(keyTo) > 0)
             {
@@ -200,7 +203,7 @@ namespace Kafka.Streams.State.Internals
                 this.cacheFunction);
         }
 
-        public byte[] FetchSession(Bytes key, long startTime, long endTime)
+        public byte[] FetchSession(Bytes key, DateTime startTime, DateTime endTime)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
             this.ValidateStoreOpen();
@@ -228,7 +231,7 @@ namespace Kafka.Streams.State.Internals
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes key)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
-            return this.FindSessions(key, 0, long.MaxValue);
+            return this.FindSessions(key, DateTime.MinValue, DateTime.MaxValue);
         }
 
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
@@ -236,7 +239,7 @@ namespace Kafka.Streams.State.Internals
             from = from ?? throw new ArgumentNullException(nameof(from));
             to = to ?? throw new ArgumentNullException(nameof(to));
 
-            return this.FindSessions(from, to, 0, long.MaxValue);
+            return this.FindSessions(from, to, DateTime.MinValue, DateTime.MaxValue);
         }
 
         public override void Flush()
@@ -252,7 +255,7 @@ namespace Kafka.Streams.State.Internals
             base.Close();
         }
 
-        public new bool SetFlushListener(Action<byte[], byte[], byte[], long> listener, bool sendOldValues)
+        public bool SetFlushListener(Action<byte[], byte[], byte[], long> listener, bool sendOldValues)
         {
             throw new NotImplementedException();
         }

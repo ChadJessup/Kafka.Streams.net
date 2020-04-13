@@ -1,6 +1,7 @@
 ﻿using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using Moq;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -12,36 +13,36 @@ namespace Kafka.Streams.Tests.Mocks
         public List<KeyValueTimestamp<K, V>> processed = new List<KeyValueTimestamp<K, V>>();
         public Dictionary<K, IValueAndTimestamp<V>> lastValueAndTimestampPerKey = new Dictionary<K, IValueAndTimestamp<V>>();
 
-        public List<long> punctuatedStreamTime = new List<long>();
-        public List<long> punctuatedSystemTime = new List<long>();
+        public List<DateTime> punctuatedStreamTime = new List<DateTime>();
+        public List<DateTime> punctuatedSystemTime = new List<DateTime>();
 
 
         private readonly PunctuationType punctuationType;
-        private readonly long scheduleInterval;
+        private readonly TimeSpan scheduleInterval;
 
         private bool commitRequested = false;
         private ICancellable scheduleCancellable;
 
         public MockProcessor(
             PunctuationType punctuationType,
-            long scheduleInterval)
+            TimeSpan scheduleInterval)
         {
             this.punctuationType = punctuationType;
             this.scheduleInterval = scheduleInterval;
         }
 
         public MockProcessor()
-            : this(PunctuationType.STREAM_TIME, -1)
+            : this(PunctuationType.STREAM_TIME, TimeSpan.MinValue)
         {
         }
 
         public override void Init(IProcessorContext context)
         {
             base.Init(context);
-            if (this.scheduleInterval > 0L)
+            if (this.scheduleInterval > TimeSpan.Zero)
             {
                 this.scheduleCancellable = context.Schedule(
-                    TimeSpan.FromMilliseconds(this.scheduleInterval),
+                    this.scheduleInterval,
                     this.punctuationType,
                     timestamp =>
                     {
@@ -105,7 +106,7 @@ namespace Kafka.Streams.Tests.Mocks
             this.processed.Clear();
         }
 
-        public void CheckAndClearPunctuateResult(PunctuationType type, params long[] expected)
+        public void CheckAndClearPunctuateResult(PunctuationType type, params DateTime[] expected)
         {
             var punctuated = type == PunctuationType.STREAM_TIME
                 ? this.punctuatedStreamTime

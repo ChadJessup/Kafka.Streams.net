@@ -89,11 +89,11 @@ namespace Kafka.Streams.Configs
      * @see ConsumerConfig
      * @see ProducerConfig
      */
-    public class StreamsConfig : Config
+    public partial class StreamsConfig : Config
     {
-        private static readonly string[] NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS = new string[] { StreamsConfigPropertyNames.ENABLE_AUTO_COMMIT_CONFIG };
-        private static readonly string[] NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS = new string[] { StreamsConfigPropertyNames.ISOLATION_LEVEL_CONFIG };
-        private static readonly string[] NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS = new string[] { StreamsConfigPropertyNames.ENABLE_IDEMPOTENCE_CONFIG, StreamsConfigPropertyNames.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION };
+        private static readonly string[] NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS = new string[] { StreamsConfig.ENABLE_AUTO_COMMIT_CONFIGConfig };
+        private static readonly string[] NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS = new string[] { StreamsConfig.ISOLATION_LEVEL_CONFIGConfig };
+        private static readonly string[] NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS = new string[] { StreamsConfig.ENABLE_IDEMPOTENCE_CONFIGConfig, StreamsConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTIONConfig };
 
         /// <summary>
         /// Initialize a new <see cref="StreamsConfig" /> instance.
@@ -115,68 +115,74 @@ namespace Kafka.Streams.Configs
         }
         public string GroupId
         {
-            get => this.Get(StreamsConfigPropertyNames.GroupId);
-            set => this.SetObject(StreamsConfigPropertyNames.GroupId, value);
+            get => this.Get(StreamsConfig.GroupIdConfig);
+            set => this.SetObject(StreamsConfig.GroupIdConfig, value);
         }
 
         public string ApplicationId
         {
-            get => this.Get(StreamsConfigPropertyNames.ApplicationId);
-            set => this.SetObject(StreamsConfigPropertyNames.ApplicationId, value);
+            get => this.Get(StreamsConfig.ApplicationIdConfig);
+            set => this.SetObject(StreamsConfig.ApplicationIdConfig, value);
         }
 
         public string PartitionAssignmentStrategy
         {
-            get => this.Get(StreamsConfigPropertyNames.PARTITION_ASSIGNMENT_STRATEGY_CONFIG);
-            set => this.SetObject(StreamsConfigPropertyNames.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, value);
+            get => this.Get(StreamsConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIGConfig);
+            set => this.SetObject(StreamsConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIGConfig, value);
         }
 
         public long StateCleanupDelayMs
         {
-            get => this.GetLong(StreamsConfigPropertyNames.StateCleanupDelayMs) ?? 10 * 60 * 1000L;
-            set => this.SetObject(StreamsConfigPropertyNames.StateCleanupDelayMs, value);
+            get => this.GetLong(StreamsConfig.StateCleanupDelayMsConfig) ?? 10 * 60 * 1000L;
+            set => this.SetObject(StreamsConfig.StateCleanupDelayMsConfig, value);
         }
 
         public string ApplicationServer
         {
-            get => this.Get(StreamsConfigPropertyNames.ApplicationServer) ?? "";
-            set => this.SetObject(StreamsConfigPropertyNames.ApplicationServer, value);
+            get => this.Get(StreamsConfig.ApplicationServerConfig) ?? "";
+            set => this.SetObject(StreamsConfig.ApplicationServerConfig, value);
         }
 
         public string BootstrapServers
         {
-            get => this.Get(StreamsConfigPropertyNames.BootstrapServers);
-            set => this.Set(StreamsConfigPropertyNames.BootstrapServers, value);
+            get => this.Get(StreamsConfig.BootstrapServersConfig);
+            set => this.Set(StreamsConfig.BootstrapServersConfig, value);
         }
 
         public string ClientId
         {
-            get => this.Get(StreamsConfigPropertyNames.ClientId);
-            set => this.SetObject(StreamsConfigPropertyNames.ClientId, value);
+            get => this.Get(StreamsConfig.ClientIdConfig);
+            set => this.SetObject(StreamsConfig.ClientIdConfig, value);
         }
 
-        public Type DefaultKeySerde
+        public Type DefaultKeySerdeType
         {
-            get => Type.GetType(this.Get(StreamsConfigPropertyNames.DefaultKeySerdeClass));
-            set => this.SetObject(StreamsConfigPropertyNames.DefaultKeySerdeClass, value);
+            get => Type.GetType(this.Get(StreamsConfig.DefaultKeySerdeClassConfig));
+            set => this.SetObject(StreamsConfig.DefaultKeySerdeClassConfig, value);
         }
 
-        public Type DefaultValueSerde
+        public Type DefaultValueSerdeType
         {
-            get => Type.GetType(this.Get(StreamsConfigPropertyNames.DefaultValueSerdeClass));
-            set => this.SetObject(StreamsConfigPropertyNames.DefaultValueSerdeClass, value);
+            get => Type.GetType(this.Get(StreamsConfig.DefaultValueSerdeClassConfig));
+            set => this.SetObject(StreamsConfig.DefaultValueSerdeClassConfig, value);
+        }
+
+        public Type DefaultTimestampExtractorType
+        {
+            get => Type.GetType(this.Get(StreamsConfig.DefaultTimestampExtractorClassConfig));
+            set => this.SetObject(StreamsConfig.DefaultTimestampExtractorClassConfig, value);
         }
 
         public int NumberOfStreamThreads
         {
-            get => this.GetInt(StreamsConfigPropertyNames.NumberOfStreamThreads) ?? 1;
-            set => this.Set(StreamsConfigPropertyNames.NumberOfStreamThreads, value.ToString());
+            get => this.GetInt(StreamsConfig.NumberOfStreamThreadsConfig) ?? 1;
+            set => this.Set(StreamsConfig.NumberOfStreamThreadsConfig, value.ToString());
         }
 
         public long CacheMaxBytesBuffering
         {
-            get => this.GetLong(StreamsConfigPropertyNames.CacheMaxBytesBuffering) ?? 10485760L;
-            set => this.Set(StreamsConfigPropertyNames.CacheMaxBytesBuffering, value.ToString());
+            get => this.GetLong(StreamsConfig.CacheMaxBytesBufferingConfig) ?? 10485760L;
+            set => this.Set(StreamsConfig.CacheMaxBytesBufferingConfig, value.ToString());
         }
 
         public bool EnableIdempotence
@@ -187,20 +193,20 @@ namespace Kafka.Streams.Configs
 
         public int Retries
         {
-            get => this.GetInt(StreamsConfigPropertyNames.Retries) ?? int.MaxValue;
-            set => this.SetObject(StreamsConfigPropertyNames.Retries, value);
+            get => this.GetInt(StreamsConfig.RetriesConfig) ?? int.MaxValue;
+            set => this.SetObject(StreamsConfig.RetriesConfig, value);
         }
 
         public long RetryBackoffMs
         {
-            get => this.GetInt(StreamsConfigPropertyNames.RetryBackoffMs) ?? 100L;
-            set => this.SetObject(StreamsConfigPropertyNames.RetryBackoffMs, value);
+            get => this.GetInt(StreamsConfig.RetryBackoffMsConfig) ?? 100L;
+            set => this.SetObject(StreamsConfig.RetryBackoffMsConfig, value);
         }
 
-        public string StateStoreDirectory
+        public DirectoryInfo StateStoreDirectory
         {
-            get => this.GetString(StreamsConfigPropertyNames.STATE_DIR_CONFIG) ?? Path.Combine(Path.GetTempPath(), "kafka-streams");
-            set => this.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, value);
+            get => new DirectoryInfo(this.GetString(StreamsConfig.STATE_DIR_CONFIGConfig) ?? Path.Combine(Path.GetTempPath(), "kafka-streams"));
+            set => this.Set(StreamsConfig.STATE_DIR_CONFIGConfig, value.FullName);
         }
 
         /// <summary>
@@ -211,8 +217,8 @@ namespace Kafka.Streams.Configs
         /// </summary>
         public bool? EnableAutoCommit
         {
-            get => this.GetBool(StreamsConfigPropertyNames.ENABLE_AUTO_COMMIT_CONFIG);
-            set => this.SetObject(StreamsConfigPropertyNames.ENABLE_AUTO_COMMIT_CONFIG, value);
+            get => this.GetBool(StreamsConfig.ENABLE_AUTO_COMMIT_CONFIGConfig);
+            set => this.SetObject(StreamsConfig.ENABLE_AUTO_COMMIT_CONFIGConfig, value);
         }
 
         /// <summary>
@@ -222,8 +228,8 @@ namespace Kafka.Streams.Configs
         /// </summary>
         public long CommitIntervalMs
         {
-            get => this.GetLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) ?? 30000L;
-            set => this.Set(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG, value.ToString());
+            get => this.GetLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIGConfig) ?? 30000L;
+            set => this.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIGConfig, value.ToString());
         }
 
         /// <summary>
@@ -243,19 +249,20 @@ namespace Kafka.Streams.Configs
         /// </summary>
         public long PollMs
         {
-            get => this.GetLong(StreamsConfigPropertyNames.PollMs) ?? 100L;
-            set => this.Set(StreamsConfigPropertyNames.PollMs, value.ToString());
+            get => this.GetLong(StreamsConfig.PollMsConfig) ?? 100L;
+            set => this.Set(StreamsConfig.PollMsConfig, value.ToString());
         }
 
         private void SetDefaultConfiguration()
         {
             this.EnableAutoCommit = false;
-            this.Set(StreamsConfigPropertyNames.DefaultTimestampExtractorClass, typeof(FailOnInvalidTimestamp).AssemblyQualifiedName);
-            this.Set(StreamsConfigPropertyNames.DefaultDeserializationExceptionHandlerClass, typeof(LogAndFailExceptionHandler).AssemblyQualifiedName);
-            this.Set(StreamsConfigPropertyNames.DefaultProductionExceptionHandlerClass, typeof(DefaultProductionExceptionHandler).AssemblyQualifiedName);
+            this.DefaultTimestampExtractorType = typeof(FailOnInvalidTimestamp);
 
-            this.DefaultKeySerde = typeof(ISerde<byte[]>);
-            this.DefaultValueSerde = typeof(ISerde<byte[]>);
+            this.Set(StreamsConfig.DefaultDeserializationExceptionHandlerClassConfig, typeof(LogAndFailExceptionHandler).AssemblyQualifiedName);
+            this.Set(StreamsConfig.DefaultProductionExceptionHandlerClassConfig, typeof(DefaultProductionExceptionHandler).AssemblyQualifiedName);
+
+            this.DefaultKeySerdeType = typeof(ISerde<byte[]>);
+            this.DefaultValueSerdeType = typeof(ISerde<byte[]>);
 
             // TODO: make sure this and the producer configs that are required cannot be overridden:
             // NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS, etc
@@ -270,7 +277,7 @@ namespace Kafka.Streams.Configs
          */
         public static string ConsumerPrefix(string consumerProp)
         {
-            return StreamsConfigPropertyNames.ConsumerPrefix + consumerProp;
+            return StreamsConfig.ConsumerPrefixConfig + consumerProp;
         }
 
         /**
@@ -282,7 +289,7 @@ namespace Kafka.Streams.Configs
          */
         public static string MainConsumerPrefix(string consumerProp)
         {
-            return StreamsConfigPropertyNames.MainConsumerPrefix + consumerProp;
+            return StreamsConfig.MainConsumerPrefixConfig + consumerProp;
         }
 
         /**
@@ -294,7 +301,7 @@ namespace Kafka.Streams.Configs
          */
         public static string RestoreConsumerPrefix(string consumerProp)
         {
-            return StreamsConfigPropertyNames.RestoreConsumerPrefix + consumerProp;
+            return StreamsConfig.RestoreConsumerPrefixConfig + consumerProp;
         }
 
         /**
@@ -306,7 +313,7 @@ namespace Kafka.Streams.Configs
          */
         public static string GlobalConsumerPrefix(string consumerProp)
         {
-            return StreamsConfigPropertyNames.GlobalConsumerPrefix + consumerProp;
+            return StreamsConfig.GlobalConsumerPrefixConfig + consumerProp;
         }
 
         /**
@@ -318,7 +325,7 @@ namespace Kafka.Streams.Configs
          */
         public static string ProducerPrefix(string producerProp)
         {
-            return StreamsConfigPropertyNames.ProducerPrefix + producerProp;
+            return StreamsConfig.ProducerPrefixConfig + producerProp;
         }
 
         /**
@@ -330,7 +337,7 @@ namespace Kafka.Streams.Configs
          */
         public static string AdminClientPrefix(string adminClientProp)
         {
-            return StreamsConfigPropertyNames.AdminClientPrefix + adminClientProp;
+            return StreamsConfig.AdminClientPrefixConfig + adminClientProp;
         }
 
         /**
@@ -342,7 +349,7 @@ namespace Kafka.Streams.Configs
          */
         public static string TopicPrefix(string topicProp)
         {
-            return StreamsConfigPropertyNames.TopicPrefix + topicProp;
+            return StreamsConfig.TopicPrefixConfig + topicProp;
         }
 
         /**
@@ -374,7 +381,7 @@ namespace Kafka.Streams.Configs
 
         private ConsumerConfig GetCommonConsumerConfigs()
         {
-            var clientProvidedProps = this.GetClientPropsWithPrefix(StreamsConfigPropertyNames.ConsumerPrefix, this);
+            var clientProvidedProps = this.GetClientPropsWithPrefix(StreamsConfig.ConsumerPrefixConfig, this);
 
             this.CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS);
             this.CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS);
@@ -384,18 +391,18 @@ namespace Kafka.Streams.Configs
             consumerProps.PutAll(clientProvidedProps);
 
             // bootstrap.servers should be from StreamsConfig
-            if (consumerProps.ContainsKey(StreamsConfigPropertyNames.BootstrapServers))
+            if (consumerProps.ContainsKey(StreamsConfig.BootstrapServersConfig))
             {
-                consumerProps[StreamsConfigPropertyNames.BootstrapServers] = this.BootstrapServers;
+                consumerProps[StreamsConfig.BootstrapServersConfig] = this.BootstrapServers;
             }
             else
             {
-                consumerProps.Add(StreamsConfigPropertyNames.BootstrapServers, this.properties[StreamsConfigPropertyNames.BootstrapServers]);
+                consumerProps.Add(StreamsConfig.BootstrapServersConfig, this.properties[StreamsConfig.BootstrapServersConfig]);
             }
 
-            if (!consumerProps.ContainsKey(StreamsConfigPropertyNames.GroupId))
+            if (!consumerProps.ContainsKey(StreamsConfig.GroupIdConfig))
             {
-                consumerProps.Add(StreamsConfigPropertyNames.GroupId, this.properties[StreamsConfigPropertyNames.GroupId]);
+                consumerProps.Add(StreamsConfig.GroupIdConfig, this.properties[StreamsConfig.GroupIdConfig]);
             }
 
             return new ConsumerConfig(consumerProps);
@@ -405,9 +412,19 @@ namespace Kafka.Streams.Configs
             Dictionary<string, string> clientProvidedProps,
             string[] nonConfigurableConfigs)
         {
+            if (clientProvidedProps is null)
+            {
+                throw new ArgumentNullException(nameof(clientProvidedProps));
+            }
+
+            if (nonConfigurableConfigs is null)
+            {
+                throw new ArgumentNullException(nameof(nonConfigurableConfigs));
+            }
+
             // Streams does not allow users to configure certain consumer/producer configurations, for example,
             // enable.auto.commit. In cases where user tries to override such non-configurable
-            // consumer/producer configurations, log a warning and Remove the user defined value from the Map.
+            // consumer/producer configurations, log a warning and Remove the user defined value from the Dictionary.
             // Thus the default values for these consumer/producer configurations that are suitable for
             // Streams will be used instead.
 
@@ -498,18 +515,18 @@ namespace Kafka.Streams.Configs
          * @param groupId      consumer groupId
          * @param clientId     clientId
          * @param threadIdx    stream thread index
-         * @return Map of the consumer configuration.
+         * @return Dictionary of the consumer configuration.
          */
         public ConsumerConfig GetMainConsumerConfigs(string groupId, string clientId, int threadIdx)
         {
             var consumerProps = this.GetCommonConsumerConfigs();
 
             // Get main consumer override configs
-            var mainConsumerProps = this.OriginalsWithPrefix(StreamsConfigPropertyNames.MainConsumerPrefix);
+            var mainConsumerProps = this.OriginalsWithPrefix(StreamsConfig.MainConsumerPrefixConfig);
             consumerProps.SetAll(mainConsumerProps);
 
             // this is a hack to work around StreamsConfig constructor inside StreamsPartitionAssignor to avoid casting
-            // consumerProps.Set(StreamsConfigPropertyNames.ApplicationId, groupId);
+            // consumerProps.Set(StreamsConfig.ApplicationId, groupId);
 
             // add group id, client id with stream client id prefix, and group instance id
             consumerProps.GroupId = groupId;
@@ -525,20 +542,20 @@ namespace Kafka.Streams.Configs
 
             // add configs required for stream partition assignor
             // consumerProps.Add(UPGRADE_FROM_CONFIG, getString(UPGRADE_FROM_CONFIG));
-            // consumerProps.Add(StreamsConfigPropertyNames.REPLICATION_FACTOR_CONFIG, GetInt(StreamsConfigPropertyNames.REPLICATION_FACTOR_CONFIG));
-            consumerProps.Set(StreamsConfigPropertyNames.ApplicationServer, this.GetString(StreamsConfigPropertyNames.ApplicationServer));
-            consumerProps.Set(StreamsConfigPropertyNames.NUM_STANDBY_REPLICAS_CONFIG, this.GetString(StreamsConfigPropertyNames.NUM_STANDBY_REPLICAS_CONFIG));
-            consumerProps.Set(StreamsConfigPropertyNames.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, this.GetString(typeof(StreamsPartitionAssignor).FullName));
-            consumerProps.Set(StreamsConfigPropertyNames.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, this.GetString(StreamsConfigPropertyNames.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG));
+            // consumerProps.Add(StreamsConfig.REPLICATION_FACTOR_CONFIG, GetInt(StreamsConfig.REPLICATION_FACTOR_CONFIG));
+            consumerProps.Set(StreamsConfig.ApplicationServerConfig, this.GetString(StreamsConfig.ApplicationServerConfig));
+            consumerProps.Set(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIGConfig, this.GetString(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIGConfig));
+            consumerProps.Set(StreamsConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIGConfig, this.GetString(typeof(StreamsPartitionAssignor).FullName));
+            consumerProps.Set(StreamsConfig.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIGConfig, this.GetString(StreamsConfig.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIGConfig));
 
             // add admin retries configs for creating topics
-            var adminClientDefaultConfig = new AdminClientConfig(this.GetClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig()));
+            var adminClientDefaultConfig = new AdminClientConfig(this.GetClientPropsWithPrefix(StreamsConfig.AdminClientPrefixConfig, new AdminClientConfig()));
             // consumerProps.Set(adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), adminClientDefaultConfig.GetInt(AdminClientConfig.RETRIES_CONFIG));
             // consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.GetLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
 
             // verify that producer batch config is no larger than segment size, then.Add topic configs required for creating topics
-            Dictionary<string, string> topicProps = this.OriginalsWithPrefix(StreamsConfigPropertyNames.TopicPrefix, stripPrefix: false);
-            Dictionary<string, string> producerProps = this.GetClientPropsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, new ProducerConfig());
+            Dictionary<string, string> topicProps = this.OriginalsWithPrefix(StreamsConfig.TopicPrefixConfig, stripPrefix: false);
+            Dictionary<string, string> producerProps = this.GetClientPropsWithPrefix(StreamsConfig.ProducerPrefixConfig, new ProducerConfig());
 
             // if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
             //     producerProps.ContainsKey(ProducerConfig.BATCH_SIZE_CONFIG))
@@ -578,14 +595,14 @@ namespace Kafka.Streams.Configs
          * prefixed by {@link #CONSUMER_PREFIX}.
          *
          * @param clientId clientId
-         * @return Map of the restore consumer configuration.
+         * @return Dictionary of the restore consumer configuration.
          */
         public RestoreConsumerConfig GetRestoreConsumerConfigs(string? clientId = null)
         {
             var baseConsumerProps = this.GetCommonConsumerConfigs();
 
             // Get restore consumer override configs
-            var restoreConsumerProps = this.OriginalsWithPrefix(StreamsConfigPropertyNames.RestoreConsumerPrefix);
+            var restoreConsumerProps = this.OriginalsWithPrefix(StreamsConfig.RestoreConsumerPrefixConfig);
             baseConsumerProps.SetAll(restoreConsumerProps);
 
             // add client id with stream client id prefix
@@ -611,19 +628,19 @@ namespace Kafka.Streams.Configs
          * prefixed by {@link #CONSUMER_PREFIX}.
          *
          * @param clientId clientId
-         * @return Map of the global consumer configuration.
+         * @return Dictionary of the global consumer configuration.
          */
         public ConsumerConfig GetGlobalConsumerConfigs(string clientId)
         {
             var baseConsumerProps = this.GetCommonConsumerConfigs();
 
             // Get global consumer override configs
-            var globalConsumerProps = this.OriginalsWithPrefix(StreamsConfigPropertyNames.GlobalConsumerPrefix);
+            var globalConsumerProps = this.OriginalsWithPrefix(StreamsConfig.GlobalConsumerPrefixConfig);
 
             baseConsumerProps.SetAll(globalConsumerProps);
 
             // no need to set group id for a global consumer
-            // baseConsumerProps.Remove(StreamsConfigPropertyNames.GroupId);
+            // baseConsumerProps.Remove(StreamsConfig.GroupId);
 
             // add client id with stream client id prefix
             baseConsumerProps.ClientId = $"{clientId}-global-consumer";
@@ -639,12 +656,12 @@ namespace Kafka.Streams.Configs
          * version as we only support reading/writing from/to the same Kafka Cluster.
          *
          * @param clientId clientId
-         * @return Map of the producer configuration.
+         * @return Dictionary of the producer configuration.
          */
         public ProducerConfig GetProducerConfigs(string clientId)
         {
             var producerConfig = new ProducerConfig();
-            var clientProvidedProps = this.GetClientPropsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, new ProducerConfig());
+            var clientProvidedProps = this.GetClientPropsWithPrefix(StreamsConfig.ProducerPrefixConfig, new ProducerConfig());
 
             this.CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS);
 
@@ -652,7 +669,7 @@ namespace Kafka.Streams.Configs
             producerConfig.SetAll(this.GetClientCustomProps());
             producerConfig.SetAll(clientProvidedProps);
 
-            producerConfig.BootstrapServers = (string)this.properties[StreamsConfigPropertyNames.BootstrapServers];
+            producerConfig.BootstrapServers = (string)this.properties[StreamsConfig.BootstrapServersConfig];
 
             // add client id with stream client id prefix
             producerConfig.ClientId = clientId;
@@ -663,13 +680,13 @@ namespace Kafka.Streams.Configs
         /**
          * Get the configs for the {@link Admin admin client}.
          * @param clientId clientId
-         * @return Map of the admin client configuration.
+         * @return Dictionary of the admin client configuration.
          */
         public AdminClientConfig GetAdminConfigs(string clientId)
         {
             var adminConfig = new AdminClientConfig(new Dictionary<string, string>());
 
-            var clientProvidedProps = this.GetClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, this.properties);
+            var clientProvidedProps = this.GetClientPropsWithPrefix(StreamsConfig.AdminClientPrefixConfig, this.properties);
 
             adminConfig.SetAll(this.GetClientCustomProps());
             adminConfig.SetAll(clientProvidedProps);
@@ -711,7 +728,7 @@ namespace Kafka.Streams.Configs
          * Gets All original settings with the given prefix, stripping the prefix before adding it to the output.
          *
          * @param prefix the prefix to use as a filter
-         * @return a Map containing the settings with the prefix
+         * @return a Dictionary containing the settings with the prefix
          */
         private Dictionary<string, string> OriginalsWithPrefix(string prefix)
         {
@@ -723,7 +740,7 @@ namespace Kafka.Streams.Configs
          *
          * @param prefix the prefix to use as a filter
          * @param strip strip the prefix before adding to the output if set true
-         * @return a Map containing the settings with the prefix
+         * @return a Dictionary containing the settings with the prefix
          */
         private Dictionary<string, string> OriginalsWithPrefix(string prefix, bool stripPrefix)
         {
@@ -771,26 +788,26 @@ namespace Kafka.Streams.Configs
                     "default.key.serde",
                     "default.value.serde",
                     "num.stream.threads",
-                    "cache.max.bytes.buffering",
+                    "cache.Max.bytes.buffering",
                     "commit.interval.ms",
                 })
-                .RemoveAll(this.OriginalsWithPrefix(StreamsConfigPropertyNames.ConsumerPrefix, stripPrefix: false).Keys)
-                .RemoveAll(this.OriginalsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, stripPrefix: false).Keys)
-                .RemoveAll(this.OriginalsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, stripPrefix: false).Keys);
+                .RemoveAll(this.OriginalsWithPrefix(StreamsConfig.ConsumerPrefixConfig, stripPrefix: false).Keys)
+                .RemoveAll(this.OriginalsWithPrefix(StreamsConfig.ProducerPrefixConfig, stripPrefix: false).Keys)
+                .RemoveAll(this.OriginalsWithPrefix(StreamsConfig.AdminClientPrefixConfig, stripPrefix: false).Keys);
         }
 
         /**
-         * Return an {@link Serde#configure(Map, bool) configured} instance of {@link #DEFAULT_KEY_SERDE_CLASS_CONFIG key Serde }
+         * Return an {@link Serde#configure(Dictionary, bool) configured} instance of {@link #DEFAULT_KEY_SERDE_CLASS_CONFIG key Serde }
          *
          * @return an configured instance of key Serde
          */
         public ISerde GetDefaultKeySerde(IServiceProvider services)
         {
-            object keySerdeConfigSetting = this.Get(StreamsConfigPropertyNames.DefaultKeySerdeClass);
+            object keySerdeConfigSetting = this.Get(StreamsConfig.DefaultKeySerdeClassConfig);
 
             try
             {
-                if (this.TryGetConfiguredInstance<ISerde>(services, StreamsConfigPropertyNames.DefaultKeySerdeClass, out var serde))
+                if (this.TryGetConfiguredInstance<ISerde>(services, StreamsConfig.DefaultKeySerdeClassConfig, out var serde))
                 {
                     serde.Configure(this.properties, true);
                 }
@@ -805,18 +822,18 @@ namespace Kafka.Streams.Configs
         }
 
         /**
-         * Return an {@link Serde#configure(Map, bool) configured} instance of {@link #DEFAULT_VALUE_SERDE_CLASS_CONFIG value
+         * Return an {@link Serde#configure(Dictionary, bool) configured} instance of {@link #DEFAULT_VALUE_SERDE_CLASS_CONFIG value
          * Serde}.
          *
          * @return an configured instance of value Serde
          */
         public ISerde GetDefaultValueSerde(IServiceProvider services)
         {
-            object valueSerdeConfigSetting = this.Get(StreamsConfigPropertyNames.DefaultValueSerdeClass);
+            object valueSerdeConfigSetting = this.Get(StreamsConfig.DefaultValueSerdeClassConfig);
 
             try
             {
-                if (this.TryGetConfiguredInstance<ISerde>(services, StreamsConfigPropertyNames.DefaultValueSerdeClass, out var serde))
+                if (this.TryGetConfiguredInstance<ISerde>(services, StreamsConfig.DefaultValueSerdeClassConfig, out var serde))
                 {
                     serde.Configure(this.properties, true);
                 }
@@ -833,7 +850,7 @@ namespace Kafka.Streams.Configs
         {
             this.TryGetConfiguredInstance<ITimestampExtractor>(
                 services,
-                StreamsConfigPropertyNames.DefaultTimestampExtractorClass,
+                StreamsConfig.DefaultTimestampExtractorClassConfig,
                 out var timestampExtractor);
 
             return timestampExtractor;
@@ -843,7 +860,7 @@ namespace Kafka.Streams.Configs
         {
             this.TryGetConfiguredInstance<IDeserializationExceptionHandler>(
                 services,
-                StreamsConfigPropertyNames.DefaultDeserializationExceptionHandlerClass,
+                StreamsConfig.DefaultDeserializationExceptionHandlerClassConfig,
                 out var handler);
 
             return handler;
@@ -888,7 +905,7 @@ namespace Kafka.Streams.Configs
         {
             this.TryGetConfiguredInstance<IProductionExceptionHandler>(
                 services,
-                StreamsConfigPropertyNames.DefaultProductionExceptionHandlerClass,
+                StreamsConfig.DefaultProductionExceptionHandlerClassConfig,
                 out var handler);
 
             return handler;

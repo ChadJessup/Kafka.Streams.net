@@ -1,3 +1,4 @@
+using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.State.KeyValues;
 
 namespace Kafka.Streams.KStream.Interfaces
@@ -65,7 +66,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // counting words
          * string queryableStoreName = "storeName"; // the store Name should be the Name of the store as defined by the Materialized instance
-         * IReadOnlyKeyValueStore<string,long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore());
+         * IReadOnlyKeyValueStore<string,long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
          * string key = "some-word";
          * long countForWord = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -167,7 +168,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // compute sum
          * string queryableStoreName = "storeName" // the store Name should be the Name of the store as defined by the Materialized instance
-         * IReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore());
+         * IReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
          * string key = "some-key";
          * long sumForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -274,7 +275,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // some aggregation on value type double
          * string queryableStoreName = "storeName" // the store Name should be the Name of the store as defined by the Materialized instance
-         * IReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore());
+         * IReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
          * string key = "some-key";
          * long aggForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -317,14 +318,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the window type
          * @return an instance of {@link TimeWindowedKStream}
          */
-        //TimeWindowedKStream<K, V> windowedBy<W>(Windows<W> windows)
-        //    where W : Window;
+        ITimeWindowedKStream<K, V> WindowedBy<W>(Windows<W> windows)
+            where W : Window;
 
         /**
          * Create a new {@link SessionWindowedKStream} instance that can be used to perform session windowed aggregations.
          * @param windows the specification of the aggregation {@link SessionWindows}
          * @return an instance of {@link TimeWindowedKStream}
          */
-        //SessionWindowedKStream<K, V> windowedBy(SessionWindows windows);
+        ISessionWindowedKStream<K, V> WindowedBy(SessionWindows windows);
     }
 }

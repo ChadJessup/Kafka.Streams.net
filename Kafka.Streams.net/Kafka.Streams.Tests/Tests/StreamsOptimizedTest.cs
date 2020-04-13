@@ -11,7 +11,7 @@
 //        {// throws Exception
 //            if (args.Length < 1)
 //            {
-//                System.Console.Error.println("StreamsOptimizedTest requires one argument (properties-file) but no provided: ");
+//                System.Console.Error.WriteLine("StreamsOptimizedTest requires one argument (properties-file) but no provided: ");
 //            }
 //            string propFileName = args[0];
 
@@ -30,52 +30,52 @@
 //            Initializer<int> initializer = () => 0;
 //            Aggregator<string, string, int> aggregator = (k, v, agg) => agg + v.Length();
 
-//            Reducer<string> reducer = (v1, v2) => int.toString(int.parseInt(v1) + int.parseInt(v2));
+//            Reducer<string> reducer = (v1, v2) => int.ToString(int.parseInt(v1) + int.parseInt(v2));
 
-//            Function<string, string> keyFunction = s => int.toString(int.parseInt(s) % 9);
+//            Function<string, string> keyFunction = s => int.ToString(int.parseInt(s) % 9);
 
 //            StreamsBuilder builder = new StreamsBuilder();
 
-//            KStream<string, string> sourceStream = builder.Stream(inputTopic, Consumed.With(Serdes.String(), Serdes.String()));
+//            IKStream<K, V> sourceStream = builder.Stream(inputTopic, Consumed.With(Serdes.String(), Serdes.String()));
 
-//            KStream<string, string> mappedStream = sourceStream.selectKey((k, v) => keyFunction.apply(v));
+//            IKStream<K, V> keyFunction.apply(v));
 
-//            KStream<string, long> countStream = mappedStream.groupByKey()
-//                                                                   .count(Materialized.with(Serdes.String(),
-//                                                                                            Serdes.Long())).toStream();
+//            IKStream<K, V> countStream = mappedStream.GroupByKey()
+//                                                                   .Count(Materialized.With(Serdes.String(),
+//                                                                                            Serdes.Long())).ToStream();
 
-//            mappedStream.groupByKey().aggregate(
+//            mappedStream.GroupByKey().Aggregate(
 //                initializer,
 //                aggregator,
-//                Materialized.with(Serdes.String(), Serdes.Int()))
-//                .toStream()
+//                Materialized.With(Serdes.String(), Serdes.Int()))
+//                .ToStream()
 //                .peek((k, v) => System.Console.Out.WriteLine(string.format("AGGREGATED key=%s value=%s", k, v)))
 //                .To(aggregationTopic, Produced.With(Serdes.String(), Serdes.Int()));
 
 
-//            mappedStream.groupByKey()
-//                .reduce(reducer, Materialized.with(Serdes.String(), Serdes.String()))
-//                .toStream()
+//            mappedStream.GroupByKey()
+//                .Reduce(reducer, Materialized.With(Serdes.String(), Serdes.String()))
+//                .ToStream()
 //                .peek((k, v) => System.Console.Out.WriteLine(string.format("REDUCED key=%s value=%s", k, v)))
 //                .To(reduceTopic, Produced.With(Serdes.String(), Serdes.String()));
 
-//            mappedStream.join(countStream, (v1, v2) => v1 + ":" + v2.ToString(),
-//                JoinWindows.of(FromMilliseconds(500)),
-//                Joined.with(Serdes.String(), Serdes.String(), Serdes.Long()))
+//            mappedStream.Join(countStream, (v1, v2) => v1 + ":" + v2.ToString(),
+//                JoinWindows.of(TimeSpan.FromMilliseconds(500)),
+//                Joined.With(Serdes.String(), Serdes.String(), Serdes.Long()))
 //                .peek((k, v) => System.Console.Out.WriteLine(string.format("JOINED key=%s value=%s", k, v)))
 //                .To(joinTopic, Produced.With(Serdes.String(), Serdes.String()));
 
 //            StreamsConfig config = new StreamsConfig();
 
 
-//            config.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsOptimizedTest");
-//            config.setProperty(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
-//            config.setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            config.setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            config.setProperty(StreamsConfig.adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), "100");
+//            config.Set(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsOptimizedTest");
+//            config.Set(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
+//            config.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            config.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            config.Set(StreamsConfig.adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), "100");
 
 
-//            config.putAll(streamsProperties);
+//            config.PutAll(streamsProperties);
 
 //            Topology topology = builder.Build(config);
 //            KafkaStreams streams = new KafkaStreams(topology, config);
@@ -113,7 +113,7 @@
 //                                                        Pattern repartitionTopicPattern)
 //    {
 //        Matcher matcher = repartitionTopicPattern.matcher(topologyString);
-//        List<string> repartitionTopicsFound = new ArrayList<>();
+//        List<string> repartitionTopicsFound = new List<string>();
 //        while (matcher.find())
 //        {
 //            string repartitionTopic = matcher.group();

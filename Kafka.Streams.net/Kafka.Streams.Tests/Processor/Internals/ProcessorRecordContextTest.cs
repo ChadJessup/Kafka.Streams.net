@@ -17,7 +17,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             Headers headers = new Headers();
             ProcessorRecordContext context = new ProcessorRecordContext(
-                42L,
+                Timestamp.UnixTimestampMsToDateTime(42L),
                 73L,
                 0,
                 null,
@@ -31,7 +31,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldEstimateEmptyHeaderAsZeroLength()
         {
             ProcessorRecordContext context = new ProcessorRecordContext(
-                42L,
+                Timestamp.UnixTimestampMsToDateTime(42L),
                 73L,
                 0,
                 null,
@@ -45,7 +45,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldEstimateTopicLength()
         {
             ProcessorRecordContext context = new ProcessorRecordContext(
-                42L,
+                Timestamp.UnixTimestampMsToDateTime(42L),
                 73L,
                 0,
                 "topic",
@@ -64,7 +64,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             };
 
             ProcessorRecordContext context = new ProcessorRecordContext(
-                42L,
+                Timestamp.UnixTimestampMsToDateTime(42L),
                 73L,
                 0,
                 null,
@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             };
 
             ProcessorRecordContext context = new ProcessorRecordContext(
-                42L,
+                Timestamp.UnixTimestampMsToDateTime(42L),
                 73L,
                 0,
                 null,

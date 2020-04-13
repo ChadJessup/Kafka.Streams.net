@@ -253,7 +253,7 @@ namespace Kafka.Streams.Tests
 
         //    try
         //    {
-        //        java.lang.reflect.Field threadsField = streams.getClass().getDeclaredField("threads");
+        //        java.lang.reflect.Field threadsField = streams.GetType().getDeclaredField("threads");
         //        threadsField.setAccessible(true);
         //        StreamThread[] threads = (StreamThread[])threadsField.Get(streams);
 
@@ -268,11 +268,11 @@ namespace Kafka.Streams.Tests
         //        for (int i = 0; i < NUM_THREADS; i++)
         //        {
         //            StreamThread tmpThread = threads[i];
-        //            tmpThread.shutdown();
+        //            tmpThread.Shutdown();
         //            TestUtils.WaitForCondition(
-        //                () => tmpThread.State.CurrentState == StreamThread.State.DEAD,
+        //                () => tmpThread.State.CurrentState == StreamThreadStates.DEAD,
         //                "Thread never stopped.");
-        //            threads[i].join();
+        //            threads[i].Join();
         //        }
         //        TestUtils.WaitForCondition(
         //            () => streams.State.CurrentState == KafkaStreamsThreadStates.ERROR,
@@ -287,7 +287,7 @@ namespace Kafka.Streams.Tests
         //        () => streams.State.CurrentState == KafkaStreamsThreadStates.NOT_RUNNING,
         //        "Streams never stopped.");
 
-        //    java.lang.reflect.Field globalThreadField = streams.getClass().getDeclaredField("globalStreamThread");
+        //    java.lang.reflect.Field globalThreadField = streams.GetType().getDeclaredField("globalStreamThread");
         //    globalThreadField.setAccessible(true);
         //    GlobalStreamThread globalStreamThread = (GlobalStreamThread)globalThreadField.Get(streams);
         //   Assert.Null(globalStreamThread);
@@ -306,14 +306,14 @@ namespace Kafka.Streams.Tests
         //        TestUtils.WaitForCondition(
         //            () => streams.State.CurrentState == KafkaStreamsThreadStates.RUNNING,
         //            errorMessage: "Streams never started.");
-        //        var globalThreadField = streams.getClass().getDeclaredField("globalStreamThread");
+        //        var globalThreadField = streams.GetType().getDeclaredField("globalStreamThread");
         //        globalThreadField.setAccessible(true);
         //        GlobalStreamThread globalStreamThread = (GlobalStreamThread)globalThreadField.Get(streams);
         //        globalStreamThread.Shutdown();
         //        TestUtils.WaitForCondition(
         //            () => globalStreamThread.State.CurrentState == GlobalStreamThreadStates.DEAD,
         //            errorMessage: "Thread never stopped.");
-        //        globalStreamThread.join();
+        //        globalStreamThread.Join();
         //        Assert.Equal(streams.State.CurrentState, KafkaStreamsThreadStates.ERROR);
         //    }
         //    finally
@@ -328,11 +328,11 @@ namespace Kafka.Streams.Tests
         //public void globalThreadShouldTimeoutWhenBrokerConnectionCannotBeEstablished()
         //{
         //   StreamsConfig props = new StreamsConfig();
-        //    props.Set(StreamsConfigPropertyNames.ApplicationId, "appId");
-        //    props.Set(StreamsConfigPropertyNames.BootstrapServers, "localhost:1");
-        //    props.Set(StreamsConfigPropertyNames.METRIC_REPORTER_CLASSES_CONFIG, MockMetricsReporter.getName());
-        //    props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-        //    props.Set(StreamsConfigPropertyNames.NUM_STREAM_THREADS_CONFIG, NUM_THREADS);
+        //    props.Set(StreamsConfig.ApplicationId, "appId");
+        //    props.Set(StreamsConfig.BootstrapServers, "localhost:1");
+        //    props.Set(StreamsConfig.METRIC_REPORTER_CLASSES_CONFIG, MockMetricsReporter.getName());
+        //    props.Set(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+        //    props.Set(StreamsConfig.NUM_STREAM_THREADS_CONFIG, NUM_THREADS);
 
         //    props.Set(ConsumerConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 200);
 
@@ -355,11 +355,11 @@ namespace Kafka.Streams.Tests
         //public void testLocalThreadCloseWithoutConnectingToBroker()
         //{
         //   StreamsConfig props = new StreamsConfig();
-        //    props.Set(StreamsConfigPropertyNames.ApplicationId, "appId");
-        //    props.Set(StreamsConfigPropertyNames.BootstrapServers, "localhost:1");
-        //    props.Set(StreamsConfigPropertyNames.METRIC_REPORTER_CLASSES_CONFIG, MockMetricsReporter.getName());
-        //    props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-        //    props.Set(StreamsConfigPropertyNames.NUM_STREAM_THREADS_CONFIG, NUM_THREADS);
+        //    props.Set(StreamsConfig.ApplicationId, "appId");
+        //    props.Set(StreamsConfig.BootstrapServers, "localhost:1");
+        //    props.Set(StreamsConfig.METRIC_REPORTER_CLASSES_CONFIG, MockMetricsReporter.getName());
+        //    props.Set(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+        //    props.Set(StreamsConfig.NUM_STREAM_THREADS_CONFIG, NUM_THREADS);
 
         //    // make sure we have the global state thread running too
         //    builder.Table("anyTopic");
@@ -493,7 +493,7 @@ namespace Kafka.Streams.Tests
         //[Fact]
         //public void testIllegalMetricsConfig()
         //{
-        //    props.Set(StreamsConfigPropertyNames.METRICS_RECORDING_LEVEL_CONFIG, "illegalConfig");
+        //    props.Set(StreamsConfig.METRICS_RECORDING_LEVEL_CONFIG, "illegalConfig");
 
         //    try
         //    {
@@ -506,10 +506,10 @@ namespace Kafka.Streams.Tests
         //[Fact]
         //public void testLegalMetricsConfig()
         //{
-        //    //props.Set(StreamsConfigPropertyNames.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.INFO.ToString());
+        //    //props.Set(StreamsConfig.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.INFO.ToString());
         //    //new KafkaStreams(builder.Build(), props).Close();
 
-        //    //props.Set(StreamsConfigPropertyNames.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.DEBUG.ToString());
+        //    //props.Set(StreamsConfig.METRICS_RECORDING_LEVEL_CONFIG, Sensor.RecordingLevel.DEBUG.ToString());
         //    //new KafkaStreams(builder.Build(), props).Close();
         //}
 
@@ -558,7 +558,7 @@ namespace Kafka.Streams.Tests
         //                       latch.countDown();
         //                       while (keepRunning.Get())
         //                       {
-        //                           Thread.sleep(10);
+        //                           Thread.Sleep(10);
         //                       }
         //                   }
         //                   catch (InterruptedException e)
@@ -568,7 +568,7 @@ namespace Kafka.Streams.Tests
         //               });
         //        streams = new KafkaStreams(builder.Build(), props);
         //        streams.start();
-        //        IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(topic,
+        //        IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(topic,
         //            Collections.singletonList(KeyValuePair.Create("A", "A")),
         //            TestUtils.producerConfig(
         //                CLUSTER.bootstrapServers(),
@@ -651,7 +651,7 @@ namespace Kafka.Streams.Tests
         //[Fact]
         //public void shouldCleanupOldStateDirs() //// throws InterruptedException
         //{
-        //    props.Set(StreamsConfigPropertyNames.StateCleanupDelayMs, "1");
+        //    props.Set(StreamsConfig.StateCleanupDelayMs, "1");
 
         //    string topic = "topic";
         //    CLUSTER.createTopic(topic);
@@ -670,8 +670,8 @@ namespace Kafka.Streams.Tests
         //                latch.countDown();
         //            }
         //        });
-        //        string appDir = props.Get(StreamsConfigPropertyNames.STATE_DIR_CONFIG) + Path.DirectorySeparatorChar + props.getProperty(StreamsConfigPropertyNames.ApplicationId);
-        //        File oldTaskDir = new File(appDir, "10_1");
+        //        string appDir = props.Get(StreamsConfig.STATE_DIR_CONFIG) + Path.DirectorySeparatorChar + props.getProperty(StreamsConfig.ApplicationId);
+        //        File oldTaskDir = new FileInfo(appDir, "10_1");
         //        Assert.True(oldTaskDir.mkdirs());
 
         //        streams.start();
@@ -709,7 +709,7 @@ namespace Kafka.Streams.Tests
 
         //    try
         //    {
-        //        th.join(30_000L);
+        //        th.Join(30_000L);
         //        Assert.False(th.isAlive());
         //    }
         //    finally
@@ -791,10 +791,10 @@ namespace Kafka.Streams.Tests
         //                        //                kvStore.Put(key, 5L);
         //                        //
         //                        //                context.Forward(key, "5");
-        //                        //                context.commit();
+        //                        //                context.Commit();
         //                        //            }
         //                    }, "source")
-        //        .addStateStore(storeBuilder, "process")
+        //        .AddStateStore(storeBuilder, "process")
         //        .AddSink("sink", outputTopic, Serdes.String(), Serdes.String(), "process");
 
         //    IStoreBuilder<IKeyValueStore<string, string>> globalStoreBuilder = Stores.KeyValueStoreBuilder(
@@ -815,7 +815,7 @@ namespace Kafka.Streams.Tests
         //                                           string outputTopic,
         //                                           bool shouldFilesExist) //// throws Exception
         //{
-        //    File .AseDir = new File(TestUtils.IO_TMP_DIR + Path.DirectorySeparatorChar + "kafka-" + TestUtils.randomString(5));
+        //    File .AseDir = new FileInfo(TestUtils.IO_TMP_DIR + Path.DirectorySeparatorChar + "kafka-" + TestUtils.randomString(5));
         //    Path .AsePath = .AseDir.toPath();
         //    if (!.AseDir.Exists)
         //    {
@@ -823,15 +823,15 @@ namespace Kafka.Streams.Tests
         //    }
         //    // changing the path of state directory to make sure that it should not c.Ash with other test Cases.
         //   StreamsConfig localProps = new StreamsConfig();
-        //    localProps.putAll(props);
-        //    localProps.Put(StreamsConfigPropertyNames.STATE_DIR_CONFIG, .AseDir.FullName);
+        //    localProps.PutAll(props);
+        //    localProps.Put(StreamsConfig.STATE_DIR_CONFIG, .AseDir.FullName);
 
         //    var streams = new KafkaStreams(topology, localProps);
         //    streams.start();
 
         //    foreach (string topic in inputTopics)
         //    {
-        //        IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(topic,
+        //        IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(topic,
         //                Collections.singletonList(KeyValuePair.Create("A", "A")),
         //                TestUtils.producerConfig(
         //                        CLUSTER.bootstrapServers(),
@@ -851,12 +851,12 @@ namespace Kafka.Streams.Tests
 
         //    try
         //    {
-        //        List<Path> files = Files.find(.AsePath, 999, (p, bfa) => !p.equals(.AsePath)).collect(Collectors.toList());
-        //        if (shouldFilesExist && files.isEmpty())
+        //        List<Path> files = Files.find(.AsePath, 999, (p, bfa) => !p.Equals(.AsePath)).collect(Collectors.toList());
+        //        if (shouldFilesExist && files.IsEmpty())
         //        {
         //            Assert.False(true, "Files should have existed, but it didn't: " + files);
         //        }
-        //        if (!shouldFilesExist && !files.isEmpty())
+        //        if (!shouldFilesExist && !files.IsEmpty())
         //        {
         //            Assert.False(true, "Files should not have existed, but it did: " + files);
         //        }
@@ -869,7 +869,7 @@ namespace Kafka.Streams.Tests
         //    {
         //        streams.Close();
         //        streams.cleanUp();
-        //        Utils.delete(.AseDir);
+        //        Utils.Delete(.AseDir);
         //    }
         //}
 
@@ -877,7 +877,7 @@ namespace Kafka.Streams.Tests
         //                                   File oldTaskDir) //// throws InterruptedException
 
         //{
-        //    File TaskDir = new File(appDir, "0_0");
+        //    File TaskDir = new FileInfo(appDir, "0_0");
         //    TestUtils.WaitForCondition(
         //        () => !oldTaskDir.Exists && TaskDir.Exists,
         //                "cleanup .As not successfully run");

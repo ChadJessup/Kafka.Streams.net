@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processors.Interfaces
             V value,
             Headers headers,
             int? partition,
-            long timestamp,
+            DateTime timestamp,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer);
 
@@ -35,7 +35,7 @@ namespace Kafka.Streams.Processors.Interfaces
             K key,
             V value,
             Headers headers,
-            long timestamp,
+            DateTime timestamp,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             IStreamPartitioner<K, V> partitioner);

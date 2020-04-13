@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.MergeSorted
             byte[] keyBytes = SessionKeySchema.ExtractKeyBytes(binaryKey);
             Window window = SessionKeySchema.ExtractWindow(binaryKey);
 
-            return new Windowed2<Bytes>(Bytes.Wrap(keyBytes), window);
+            return new Windowed<Bytes>(Bytes.Wrap(keyBytes), window);
         }
 
         public override byte[] DeserializeCacheValue(LRUCacheEntry cacheEntry)

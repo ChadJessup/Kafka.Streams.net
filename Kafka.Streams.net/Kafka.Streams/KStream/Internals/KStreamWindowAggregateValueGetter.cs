@@ -1,4 +1,5 @@
-﻿using Kafka.Streams.Processors.Interfaces;
+﻿using System;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.TimeStamped;
 
@@ -11,20 +12,30 @@ namespace Kafka.Streams.KStream.Internals
 
         public KStreamWindowAggregateValueGetter(KafkaStreamsContext context)
         {
-            this.context = context;
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public void Init(IProcessorContext context, string storeName)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             this.windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(storeName);
         }
 
         public IValueAndTimestamp<Agg> Get(IWindowed<K> windowedKey)
         {
-            K key = windowedKey.Key;
-            var window = windowedKey.window;
+            if (windowedKey is null)
+            {
+                throw new System.ArgumentNullException(nameof(windowedKey));
+            }
 
-            return this.windowStore.Fetch(key, window.Start());
+            K key = windowedKey.Key;
+            var window = windowedKey.Window;
+
+            return this.windowStore.Fetch(key, window.StartTime);
         }
 
         public void Close() { }

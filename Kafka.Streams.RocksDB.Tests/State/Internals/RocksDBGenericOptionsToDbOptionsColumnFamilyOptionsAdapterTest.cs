@@ -76,7 +76,7 @@
 //            add("isOwningHandle");
 //        add("dispose");
 //        add("wait");
-//        add("equals");
+//        add(.Equals");
 //        add("getClass");
 //        add("hashCode");
 //        add("notify");
@@ -161,7 +161,7 @@
 //                    parameters[i] = 0L;
 //                    break;
 //                case "java.util.Collection":
-//                    parameters[i] = new ArrayList<>();
+//                    parameters[i] = new List<>();
 //                    break;
 //                case "org.rocksdb.AccessHint":
 //                    parameters[i] = AccessHint.NONE;
@@ -267,7 +267,7 @@
 //                    parameters[i] = System.Array.Empty<int>();
 //                    break;
 //                case "java.util.List":
-//                    parameters[i] = new ArrayList<>();
+//                    parameters[i] = new List<>();
 //                    break;
 //                case "org.rocksdb.AbstractCompactionFilter":
 //                    parameters[i] = new RemoveEmptyValueCompactionFilter();

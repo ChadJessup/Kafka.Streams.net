@@ -121,7 +121,7 @@
 //    public void ShouldRecordPutLatency()
 //    {
 //        byte[] bytes = "a".getBytes();
-//        innerStoreMock.Put(eq(Bytes.Wrap(bytes)), anyObject(), eq(context.Timestamp));
+//        innerStoreMock.Put(eq(Bytes.Wrap(bytes)), default(), eq(context.Timestamp));
 //        expectLastCall();
 //        replay(innerStoreMock);
 
@@ -204,9 +204,9 @@
 //    [Fact]
 //    public void ShouldSetFlushListenerOnWrappedCachingStore()
 //    {
-//        CachedWindowStore cachedWindowStore = mock(CachedWindowStore);
+//        CachedWindowStore cachedWindowStore = Mock.Of<CachedWindowStore);
 
-//        expect(cachedWindowStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
+//        expect(cachedWindowStore.SetFlushListener(default(CacheFlushListener), eq(false))).andReturn(true);
 //        replay(cachedWindowStore);
 
 //        MeteredWindowStore<string, string> metered = new MeteredWindowStore<>(
@@ -217,7 +217,7 @@
 //            Serdes.String(),
 //            new SerdeThatDoesntHandleNull()
 //        );
-//        Assert.True(metered.setFlushListener(null, false));
+//        Assert.True(metered.SetFlushListener(null, false));
 
 //        verify(cachedWindowStore);
 //    }
@@ -225,7 +225,7 @@
 //    [Fact]
 //    public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore()
 //    {
-//        Assert.False(store.setFlushListener(null, false));
+//        Assert.False(store.SetFlushListener(null, false));
 //    }
 
 //}

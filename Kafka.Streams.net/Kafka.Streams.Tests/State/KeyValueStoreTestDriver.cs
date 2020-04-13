@@ -37,7 +37,7 @@
 //     * Assert.Equal("four", store.Get(4));
 //     * Assert.Equal("five", store.Get(5));
 //     * Assert.Null(store.Get(3));
-//     * store.delete(5);
+//     * store.Delete(5);
 //     *
 //     * // Flush the store and verify All current entries were properly flushed ...
 //     * store.Flush();
@@ -198,8 +198,8 @@
 //        props.Put(StreamsConfig.APPLICATION_ID_CONFIG, "application-id");
 //        props.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 //        props.Put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor);
-//        props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, serdes.keySerde().getClass());
-//        props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, ISerde.valueSerde().getClass());
+//        props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, serdes.keySerde().GetType());
+//        props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, ISerde.valueSerde().GetType());
 //        props.Put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBKeyValueStoreTest.TheRocksDbConfigSetter);
 
 //        // context = new InternalMockProcessorContext(stateDir, serdes.keySerde(), serdes.valueSerde(), recordCollector, null)
@@ -318,8 +318,8 @@
 //        {
 //            if (kv != null)
 //            {
-//                V value = store.Get(stateSerdes.keyFrom(kv.key));
-//                if (!Objects.equals(value, stateSerdes.valueFrom(kv.value)))
+//                V value = store.Get(stateSerdes.keyFrom(kv.Key));
+//                if (!Objects.Equals(value, stateSerdes.valueFrom(kv.Value)))
 //                {
 //                    ++missing;
 //                }

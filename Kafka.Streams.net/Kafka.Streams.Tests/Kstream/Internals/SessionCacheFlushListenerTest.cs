@@ -13,19 +13,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldForwardKeyNewValueOldValueAndTimestamp()
 //        {
-//            IInternalProcessorContext context = mock(IInternalProcessorContext);
+//            IInternalProcessorContext context = Mock.Of<IInternalProcessorContext);
 //            expect(context.currentNode()).andReturn(null).anyTimes();
 //            context.setCurrentNode(null);
 //            context.setCurrentNode(null);
 //            context.Forward(
-//                new IWindowed<>("key", new SessionWindow(21L, 73L)),
+//                new Windowed2<>("key", new SessionWindow(21L, 73L)),
 //                new Change<>("newValue", "oldValue"),
 //                To.All().WithTimestamp(73L));
 //            expect.AstCall();
 //            replay(context);
 
 //            new SessionCacheFlushListener<>(context).apply(
-//                new IWindowed<>("key", new SessionWindow(21L, 73L)),
+//                new Windowed2<>("key", new SessionWindow(21L, 73L)),
 //                "newValue",
 //                "oldValue",
 //                42L);

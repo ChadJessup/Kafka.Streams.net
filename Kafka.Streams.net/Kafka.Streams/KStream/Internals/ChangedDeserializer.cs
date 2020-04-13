@@ -1,59 +1,47 @@
+using System;
+using Confluent.Kafka;
 
-//using Confluent.Kafka;
+namespace Kafka.Streams.KStream.Internals
+{
+    public class ChangedDeserializer<T> : IDeserializer<IChange<T>>
+    {
+        private static int NEWFLAG_SIZE = 1;
 
-//namespace Kafka.Streams.KStream.Internals
-//{
-//    public class ChangedDeserializer<T> : IDeserializer<Change<T>>
-//    {
+        private IDeserializer<T> inner;
 
-//        private static int NEWFLAG_SIZE = 1;
+        public ChangedDeserializer(IDeserializer<T> inner)
+        {
+            this.inner = inner;
+        }
 
-//        private IDeserializer<T> inner;
+        public void SetInner(IDeserializer<T> inner)
+        {
+            this.inner = inner;
+        }
 
-//        public ChangedDeserializer(IDeserializer<T> inner)
-//        {
-//            this.inner = inner;
-//        }
+        public IChange<T> Deserialize(string topic, Headers headers, byte[] data)
+        {
+            byte[] bytes = new byte[data.Length - NEWFLAG_SIZE];
 
-//        public IDeserializer<T> inner()
-//        {
-//            return inner;
-//        }
+            Array.Copy(data, 0, bytes, 0, bytes.Length);
 
-//        public void setInner(IDeserializer<T> inner)
-//        {
-//            this.inner = inner;
-//        }
+            if (new ByteBuffer().Wrap(data).GetLong(data.Length - NEWFLAG_SIZE) != 0)
+            {
+                return new Change<T>(inner.Deserialize(topic, bytes, isKey: true), default);
+            }
+            else
+            {
+                return new Change<T>(default, inner.Deserialize(topic, bytes, isKey: true));
+            }
+        }
 
+        public IChange<T> Deserialize(string topic, byte[] data)
+            => Deserialize(topic, headers: null, data);
 
-//        public Change<T> deserialize(string topic, Headers headers, byte[] data)
-//        {
-
-//            byte[] bytes = new byte[data.Length - NEWFLAG_SIZE];
-
-//            System.arraycopy(data, 0, bytes, 0, bytes.Length);
-
-//            if (new ByteBuffer().Wrap(data)[data.Length - NEWFLAG_SIZE] != 0)
-//            {
-//                return new Change<>(inner.Deserialize(topic, headers, bytes), null);
-//            }
-//            else
-//            {
-
-//                return new Change<>(null, inner.Deserialize(topic, headers, bytes));
-//            }
-//        }
-
-
-//        public Change<T> deserialize(string topic, byte[] data)
-//        {
-//            return deserialize(topic, null, data);
-//        }
-
-
-//        public void Close()
-//        {
-//            inner.Close();
-//        }
-//    }
-//}
+        public IChange<T> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+        {
+            //  => this.Deserialize(inner.Deserialize<T>(context.Topic, data, context.Component.Ha);
+            return default;
+        }
+    }
+}

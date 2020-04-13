@@ -16,6 +16,6 @@ namespace Kafka.Streams.Threads.Stream
         void RunOnce();
         void Shutdown();
         bool MaybeCommit();
-        void SetNow(long now);
+        void SetNow(DateTime now);
     }
 }

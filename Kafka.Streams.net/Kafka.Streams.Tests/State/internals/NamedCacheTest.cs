@@ -67,7 +67,7 @@
 //        [Fact]
 //        public void ShouldKeepTrackOfMostRecentlyAndLeastRecentlyUsed()
 //        { //throws IOException
-//            List<KeyValuePair<string, string>> toInsert = Array.asList(
+//            List<KeyValuePair<string, string>> toInsert = Arrays.asList(
 //                    KeyValuePair.Create("K1", "V1"),
 //                    KeyValuePair.Create("K2", "V2"),
 //                    KeyValuePair.Create("K3", "V3"),
@@ -75,13 +75,13 @@
 //                    KeyValuePair.Create("K5", "V5"));
 //            for (int i = 0; i < toInsert.Count; i++)
 //            {
-//                byte[] key = toInsert.Get(i).key.getBytes();
-//                byte[] value = toInsert.Get(i).value.getBytes();
+//                byte[] key = toInsert.Get(i).Key.getBytes();
+//                byte[] value = toInsert.Get(i).Value.getBytes();
 //                cache.Put(Bytes.Wrap(key), new LRUCacheEntry(value, null, true, 1, 1, 1, ""));
 //                LRUCacheEntry head = cache.first();
 //                LRUCacheEntry tail = cache.last();
-//                Assert.Equal(new string(head.Value), toInsert.Get(i).value);
-//                Assert.Equal(new string(tail.Value), toInsert.Get(0).value);
+//                Assert.Equal(new string(head.Value), toInsert.Get(i).Value);
+//                Assert.Equal(new string(tail.Value), toInsert.Get(0).Value);
 //                Assert.Equal(cache.flushes(), 0);
 //                Assert.Equal(cache.hits(), 0);
 //                Assert.Equal(cache.misses(), 0);
@@ -144,8 +144,8 @@
 //        public void ShouldPutIfAbsent()
 //        {
 //            cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
-//            cache.putIfAbsent(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 20 }));
-//            cache.putIfAbsent(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 30 }));
+//            cache.PutIfAbsent(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 20 }));
+//            cache.PutIfAbsent(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 30 }));
 
 //            assertArrayEquals(new byte[] { 10 }, cache.Get(Bytes.Wrap(new byte[] { 0 })).Value);
 //            assertArrayEquals(new byte[] { 30 }, cache.Get(Bytes.Wrap(new byte[] { 1 })).Value);
@@ -155,7 +155,7 @@
 //        public void ShouldDeleteAndUpdateSize()
 //        {
 //            cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }));
-//            LRUCacheEntry deleted = cache.delete(Bytes.Wrap(new byte[] { 0 }));
+//            LRUCacheEntry deleted = cache.Delete(Bytes.Wrap(new byte[] { 0 }));
 //            assertArrayEquals(new byte[] { 10 }, deleted.Value);
 //            Assert.Equal(0, cache.sizeInBytes());
 //        }
@@ -163,7 +163,7 @@
 //        [Fact]
 //        public void ShouldPutAll()
 //        {
-//            cache.putAll(Array.asList(KeyValuePair.Create(new byte[] { 0 }, new LRUCacheEntry(new byte[] { 0 })),
+//            cache.PutAll(Arrays.asList(KeyValuePair.Create(new byte[] { 0 }, new LRUCacheEntry(new byte[] { 0 })),
 //                                       KeyValuePair.Create(new byte[] { 1 }, new LRUCacheEntry(new byte[] { 1 })),
 //                                       KeyValuePair.Create(new byte[] { 2 }, new LRUCacheEntry(new byte[] { 2 }))));
 
@@ -175,7 +175,7 @@
 //        [Fact]
 //        public void ShouldOverwriteAll()
 //        {
-//            cache.putAll(Array.asList(KeyValuePair.Create(new byte[] { 0 }, new LRUCacheEntry(new byte[] { 0 })),
+//            cache.PutAll(Arrays.asList(KeyValuePair.Create(new byte[] { 0 }, new LRUCacheEntry(new byte[] { 0 })),
 //                KeyValuePair.Create(new byte[] { 0 }, new LRUCacheEntry(new byte[] { 1 })),
 //                KeyValuePair.Create(new byte[] { 0 }, new LRUCacheEntry(new byte[] { 2 }))));
 
@@ -198,7 +198,7 @@
 //        [Fact]
 //        public void ShouldFlushDirtEntriesOnEviction()
 //        {
-//            List<ThreadCache.DirtyEntry> flushed = new ArrayList<>();
+//            List<ThreadCache.DirtyEntry> flushed = new List<ThreadCache.DirtyEntry>();
 //            cache.Put(Bytes.Wrap(new byte[] { 0 }), new LRUCacheEntry(new byte[] { 10 }, headers, true, 0, 0, 0, ""));
 //            cache.Put(Bytes.Wrap(new byte[] { 1 }), new LRUCacheEntry(new byte[] { 20 }));
 //            cache.Put(Bytes.Wrap(new byte[] { 2 }), new LRUCacheEntry(new byte[] { 30 }, headers, true, 0, 0, 0, ""));

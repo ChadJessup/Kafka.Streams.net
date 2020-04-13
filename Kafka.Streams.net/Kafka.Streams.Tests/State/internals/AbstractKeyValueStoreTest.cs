@@ -81,7 +81,7 @@
 //            while (iter.HasNext())
 //            {
 //                KeyValuePair<int, string> entry = iter.MoveNext();
-//                result.Put(entry.key, entry.value);
+//                result.Put(entry.Key, entry.Value);
 //            }
 //            return result;
 //        }
@@ -113,8 +113,8 @@
 //    store.Put(0, "zero");
 //        store.Put(1, "one");
 //        store.Put(2, "two");
-//        store.delete(0);
-//        store.delete(1);
+//        store.Delete(0);
+//        store.Delete(1);
 
 //        // should not include deleted records in iterator
 //        Dictionary<int, string> expectedContents = Collections.singletonMap(2, "two");
@@ -132,7 +132,7 @@
 
 //            public byte[] serialize(string topic, string data)
 //        {
-//            if (data.equals("null"))
+//            if (data.Equals("null"))
 //            {
 //                // will be serialized to null bytes, indicating deletes
 //                return null;
@@ -173,7 +173,7 @@
 //        Assert.Equal("five", store.Get(5));
 //        // Flush now so that for caching store, we will not skip the deletion following an Put
 //        store.Flush();
-//        store.delete(5);
+//        store.Delete(5);
 //        Assert.Equal(4, driver.sizeOf(store));
 
 //        // Flush the store and verify All current entries were properly flushed ...
@@ -221,7 +221,7 @@
 //        Assert.Equal("four", store.Get(4));
 //        Assert.Equal("five", store.Get(5));
 //        store.Flush();
-//        store.delete(5);
+//        store.Delete(5);
 
 //        // Flush the store and verify All current entries were properly flushed ...
 //        store.Flush();
@@ -287,11 +287,11 @@
 //    public void TestPutIfAbsent()
 //    {
 //        // Verify that the store reads and writes correctly ...
-//        Assert.Null(store.putIfAbsent(0, "zero"));
-//        Assert.Null(store.putIfAbsent(1, "one"));
-//        Assert.Null(store.putIfAbsent(2, "two"));
-//        Assert.Null(store.putIfAbsent(4, "four"));
-//        Assert.Equal("four", store.putIfAbsent(4, "unexpected value"));
+//        Assert.Null(store.PutIfAbsent(0, "zero"));
+//        Assert.Null(store.PutIfAbsent(1, "one"));
+//        Assert.Null(store.PutIfAbsent(2, "two"));
+//        Assert.Null(store.PutIfAbsent(4, "four"));
+//        Assert.Equal("four", store.PutIfAbsent(4, "unexpected value"));
 //        Assert.Equal(4, driver.sizeOf(store));
 //        Assert.Equal("zero", store.Get(0));
 //        Assert.Equal("one", store.Get(1));
@@ -327,31 +327,31 @@
 //    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutIfAbsentNullKey()
 //    {
-//        store.putIfAbsent(null, "anyValue");
+//        store.PutIfAbsent(null, "anyValue");
 //    }
 
 //    [Fact]
 //    public void ShouldNotThrowNullPointerExceptionOnPutIfAbsentNullValue()
 //    {
-//        store.putIfAbsent(1, null);
+//        store.PutIfAbsent(1, null);
 //    }
 
 //    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnPutAllNullKey()
 //    {
-//        store.putAll(Collections.singletonList(KeyValuePair.Create(null, "anyValue")));
+//        store.PutAll(Collections.singletonList(KeyValuePair.Create(null, "anyValue")));
 //    }
 
 //    [Fact]
 //    public void ShouldNotThrowNullPointerExceptionOnPutAllNullKey()
 //    {
-//        store.putAll(Collections.singletonList(KeyValuePair.Create(1, null)));
+//        store.PutAll(Collections.singletonList(KeyValuePair.Create(1, null)));
 //    }
 
 //    [Fact]// (expected = NullPointerException)
 //    public void ShouldThrowNullPointerExceptionOnDeleteNullKey()
 //    {
-//        store.delete(null);
+//        store.Delete(null);
 //    }
 
 //    [Fact]// (expected = NullPointerException)
@@ -389,14 +389,14 @@
 //    [Fact]
 //    public void ShouldPutAll()
 //    {
-//        List<KeyValuePair<int, string>> entries = new ArrayList<>();
+//        List<KeyValuePair<int, string>> entries = new List<KeyValuePair<int, string>>();
 //        entries.Add(KeyValuePair.Create(1, "one"));
 //        entries.Add(KeyValuePair.Create(2, "two"));
 
-//        store.putAll(entries);
+//        store.PutAll(entries);
 
-//        List<KeyValuePair<int, string>> allReturned = new ArrayList<>();
-//        List<KeyValuePair<int, string>> expectedReturned = Array.asList(KeyValuePair.Create(1, "one"), KeyValuePair.Create(2, "two"));
+//        List<KeyValuePair<int, string>> allReturned = new List<KeyValuePair<int, string>>();
+//        List<KeyValuePair<int, string>> expectedReturned = Arrays.asList(KeyValuePair.Create(1, "one"), KeyValuePair.Create(2, "two"));
 //        Iterator<KeyValuePair<int, string>> iterator = store.All();
 
 //        while (iterator.HasNext())
@@ -412,23 +412,23 @@
 //    {
 //        store.Put(1, "one");
 //        store.Put(2, "two");
-//        store.delete(2);
+//        store.Delete(2);
 //        Assert.Null(store.Get(2));
 //    }
 
 //    [Fact]
 //    public void ShouldReturnSameResultsForGetAndRangeWithEqualKeys()
 //    {
-//        List<KeyValuePair<int, string>> entries = new ArrayList<>();
+//        List<KeyValuePair<int, string>> entries = new List<KeyValuePair<int, string>>();
 //        entries.Add(KeyValuePair.Create(1, "one"));
 //        entries.Add(KeyValuePair.Create(2, "two"));
 //        entries.Add(KeyValuePair.Create(3, "three"));
 
-//        store.putAll(entries);
+//        store.PutAll(entries);
 
 //        Iterator<KeyValuePair<int, string>> iterator = store.Range(2, 2);
 
-//        Assert.Equal(iterator.MoveNext().value, store.Get(2));
+//        Assert.Equal(iterator.MoveNext().Value, store.Get(2));
 //        Assert.False(iterator.HasNext());
 //    }
 

@@ -142,7 +142,7 @@
 //                                 stringSerializer.Serialize(null, message));
 //            }
 
-//            List<KeyValuePair<byte[], byte[]>> restoreBytes = new ArrayList<>();
+//            List<KeyValuePair<byte[], byte[]>> restoreBytes = new List<KeyValuePair<byte[], byte[]>>();
 
 //            byte[] restoredKey = "restoredKey".getBytes(UTF_8);
 //            byte[] restoredValue = "restoredValue".getBytes(UTF_8);
@@ -189,7 +189,7 @@
 //        [Fact]
 //        public void ShouldPutAll()
 //        {
-//            List<KeyValuePair<Bytes, byte[]>> entries = new ArrayList<>();
+//            List<KeyValuePair<Bytes, byte[]>> entries = new List<KeyValuePair<Bytes, byte[]>>();
 //            entries.Add(KeyValuePair.Create(
 //                new Bytes(stringSerializer.Serialize(null, "1")),
 //                stringSerializer.Serialize(null, "a")));
@@ -316,7 +316,7 @@
 //        [Fact]
 //        public void ShouldHandleDeletesAndPutbackOnRestoreAll()
 //        {
-//            List<KeyValuePair<byte[], byte[]>> entries = new ArrayList<>();
+//            List<KeyValuePair<byte[], byte[]>> entries = new List<KeyValuePair<byte[], byte[]>>();
 //            entries.Add(KeyValuePair.Create("1".getBytes(UTF_8), "a".getBytes(UTF_8)));
 //            entries.Add(KeyValuePair.Create("2".getBytes(UTF_8), "b".getBytes(UTF_8)));
 //            // this will be deleted
@@ -501,7 +501,7 @@
 //            enableBloomFilters = false;
 //            rocksDBStore.Init(context, rocksDBStore);
 
-//            List<string> expectedValues = new ArrayList<>();
+//            List<string> expectedValues = new List<string>();
 //            expectedValues.Add("a");
 //            expectedValues.Add("b");
 //            expectedValues.Add("c");
@@ -593,7 +593,7 @@
 
 //        private List<KeyValuePair<byte[], byte[]>> GetKeyValueEntries()
 //        {
-//            List<KeyValuePair<byte[], byte[]>> entries = new ArrayList<>();
+//            List<KeyValuePair<byte[], byte[]>> entries = new List<KeyValuePair<byte[], byte[]>>();
 //            entries.Add(KeyValuePair.Create("1".getBytes(UTF_8), "a".getBytes(UTF_8)));
 //            entries.Add(KeyValuePair.Create("2".getBytes(UTF_8), "b".getBytes(UTF_8)));
 //            entries.Add(KeyValuePair.Create("3".getBytes(UTF_8), "c".getBytes(UTF_8)));

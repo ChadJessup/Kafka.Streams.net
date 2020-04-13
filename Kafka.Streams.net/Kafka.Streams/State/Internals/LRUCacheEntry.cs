@@ -1,3 +1,4 @@
+using System;
 using Confluent.Kafka;
 using Kafka.Streams.Processors.Internals;
 
@@ -13,7 +14,7 @@ namespace Kafka.Streams.State.Internals
         public bool isDirty { get; private set; }
 
         public LRUCacheEntry(byte[] value)
-            : this(value, null, false, -1, -1, -1, "")
+            : this(value, null, false, -1, DateTime.MinValue, -1, "")
         {
         }
 
@@ -21,7 +22,7 @@ namespace Kafka.Streams.State.Internals
                       Headers headers,
                       bool isDirty,
                       long offset,
-                      long timestamp,
+                      DateTime timestamp,
                       int partition,
                       string topic)
         {
@@ -34,8 +35,7 @@ namespace Kafka.Streams.State.Internals
 
             this.record = new ContextualRecord(
                 value,
-                context
-            );
+                context);
 
             this.isDirty = isDirty;
             this.sizeBytes = 1 + // isDirty
@@ -68,6 +68,7 @@ namespace Kafka.Streams.State.Internals
             {
                 return true;
             }
+
             if (o == null || this.GetType() != o.GetType())
             {
                 return false;
@@ -82,7 +83,7 @@ namespace Kafka.Streams.State.Internals
 
         public override int GetHashCode()
         {
-            return (this.record, this.sizeBytes, this.isDirty).GetHashCode();
+            return HashCode.Combine(this.record, this.sizeBytes, this.isDirty);
         }
     }
 }

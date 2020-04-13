@@ -76,7 +76,7 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            var timestamp = this.timestampDeserializer.Deserialize(ValueAndTimestampDeserializer.RawTimestamp(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
+            var timestamp = Timestamp.UnixTimestampMsToDateTime(this.timestampDeserializer.Deserialize(ValueAndTimestampDeserializer.RawTimestamp(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic)));
             V value = this.valueDeserializer.Deserialize(ValueAndTimestampDeserializer.RawValue(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
 
             return ValueAndTimestamp.Make(value, timestamp);

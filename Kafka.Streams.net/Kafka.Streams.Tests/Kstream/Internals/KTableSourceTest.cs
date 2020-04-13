@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            IKTable<string, int> table1 = builder.Table(topic1, Consumed.With(Serdes.String(), Serdes.Int()));
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
-//            table1.toStream().process(supplier);
+//            table1.ToStream().Process(supplier);
 
 //            ConsumerRecordFactory<string, int> integerFactory =
 //                new ConsumerRecordFactory<>(Serdes.String(), Serdes.Int(), 0L);
@@ -41,13 +41,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(integerFactory.Create(topic1, "B", null, 15L));
 
 //            Assert.Equal(
-//                asList(new KeyValueTimestamp<>("A", 1, 10L),
+//                Arrays.asList(new KeyValueTimestamp<>("A", 1, 10L),
 //                     new KeyValueTimestamp<>("B", 2, 11L),
 //                     new KeyValueTimestamp<>("C", 3, 12L),
 //                     new KeyValueTimestamp<>("D", 4, 13L),
 //                     new KeyValueTimestamp<>("A", null, 14L),
 //                     new KeyValueTimestamp<>("B", null, 15L)),
-//                 supplier.theCapturedProcessor().processed);
+//                 supplier.TheCapturedProcessor().processed);
 //        }
 
 //        [Fact]
@@ -130,7 +130,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Topology topology = builder.Build().AddProcessor("proc1", supplier, table1.Name);
 
 //            var driver = new TopologyTestDriver(topology, props);
-//            MockProcessor<string, int> proc1 = supplier.theCapturedProcessor();
+//            MockProcessor<string, int> proc1 = supplier.TheCapturedProcessor();
 
 //            driver.PipeInput(recordFactory.Create(topic1, "A", "01", 10L));
 //            driver.PipeInput(recordFactory.Create(topic1, "B", "01", 20L));
@@ -170,7 +170,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            try
 //            {
 //                var driver = new TopologyTestDriver(topology, props);
-//                MockProcessor<string, int> proc1 = supplier.theCapturedProcessor();
+//                MockProcessor<string, int> proc1 = supplier.TheCapturedProcessor();
 
 //                driver.PipeInput(recordFactory.Create(topic1, "A", "01", 10L));
 //                driver.PipeInput(recordFactory.Create(topic1, "B", "01", 20L));

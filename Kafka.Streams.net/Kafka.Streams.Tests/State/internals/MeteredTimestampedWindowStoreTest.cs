@@ -45,7 +45,7 @@
 //    {
 //        private InternalMockProcessorContext context;
 
-//        private IWindowStore<Bytes, byte[]> innerStoreMock = EasyMock.createNiceMock(IWindowStore);
+//        private IWindowStore<Bytes, byte[]> innerStoreMock = Mock.Of<IWindowStore);
 //        private MeteredTimestampedWindowStore<string, string> store = new MeteredTimestampedWindowStore<>(
 //            innerStoreMock,
 //            10L, // any size

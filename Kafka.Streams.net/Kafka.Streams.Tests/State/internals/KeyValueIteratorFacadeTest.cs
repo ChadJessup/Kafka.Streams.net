@@ -8,7 +8,7 @@
 //    public class KeyValueIteratorFacadeTest
 //    {
 
-//        private IKeyValueIterator<string, ValueAndTimestamp<string>> mockedKeyValueIterator;
+//        private IKeyValueIterator<string, IValueAndTimestamp<string>> mockedKeyValueIterator;
 
 //        private KeyValueIteratorFacade<string, string> keyValueIteratorFacade;
 

@@ -127,7 +127,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            expect.AstCall();
 //            replay(context);
 
-//            processor.process("Key", new Change<>("newValue", "oldValue"));
+//            processor.Process("Key", new Change<>("newValue", "oldValue"));
 
 //            verify(context);
 //        }
@@ -146,7 +146,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            expect.AstCall();
 //            replay(context);
 
-//            processor.process("Key", new Change<>("newValue", "oldValue"));
+//            processor.Process("Key", new Change<>("newValue", "oldValue"));
 
 //            verify(context);
 //        }
@@ -290,14 +290,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldTransformValuesWithKey()
 //        {
 //            builder
-//                .addStateStore(storeBuilder(STORE_NAME))
-//                .addStateStore(storeBuilder(OTHER_STORE_NAME))
+//                .AddStateStore(storeBuilder(STORE_NAME))
+//                .AddStateStore(storeBuilder(OTHER_STORE_NAME))
 //                .Table(INPUT_TOPIC, CONSUMED)
 //                .transformValues(
 //                    new ExclamationValueTransformerSupplier(STORE_NAME, OTHER_STORE_NAME),
 //                    STORE_NAME, OTHER_STORE_NAME)
-//                .toStream()
-//                .process(capture);
+//                .ToStream()
+//                .Process(capture);
 
 //            driver = new TopologyTestDriver(builder.Build(), props());
 
@@ -310,23 +310,23 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    new KeyValueTimestamp<>("B", "B=>b!", 10),
 //                    new KeyValueTimestamp<>("D", "D=>null!", 15)
 //            ));
-//            Assert.Null("Store should not be materialized", driver.getKeyValueStore(QUERYABLE_NAME));
+//            Assert.Null("Store should not be materialized", driver.GetKeyValueStore(QUERYABLE_NAME));
 //        }
 
 //        [Fact]
 //        public void shouldTransformValuesWithKeyAndMaterialize()
 //        {
 //            builder
-//                .addStateStore(storeBuilder(STORE_NAME))
+//                .AddStateStore(storeBuilder(STORE_NAME))
 //                .Table(INPUT_TOPIC, CONSUMED)
 //                .transformValues(
 //                    new ExclamationValueTransformerSupplier(STORE_NAME, QUERYABLE_NAME),
-//                    Materialize.As < string, string, IKeyValueStore<Bytes, byte[]>(QUERYABLE_NAME)
+//                    Materialized.As < string, string, IKeyValueStore<Bytes, byte[]>(QUERYABLE_NAME)
 //                        .WithKeySerde(Serdes.String())
 //                        .withValueSerde(Serdes.String()),
 //                    STORE_NAME)
-//                .toStream()
-//                .process(capture);
+//                .ToStream()
+//                .Process(capture);
 
 //            driver = new TopologyTestDriver(builder.Build(), props());
 
@@ -339,13 +339,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    new KeyValueTimestamp<>("C", "C=>null!", 15)));
 
 //            {
-//                IKeyValueStore<string, string> KeyValueStore = driver.getKeyValueStore(QUERYABLE_NAME);
+//                IKeyValueStore<string, string> KeyValueStore = driver.GetKeyValueStore(QUERYABLE_NAME);
 //                Assert.Equal(KeyValueStore.Get("A"), ("A=>a!"));
 //                Assert.Equal(KeyValueStore.Get("B"), ("B=>b!"));
 //                Assert.Equal(KeyValueStore.Get("C"), ("C=>null!"));
 //            }
 //            {
-//                IKeyValueStore<string, ValueAndTimestamp<string>> KeyValueStore = driver.getTimestampedKeyValueStore(QUERYABLE_NAME);
+//                IKeyValueStore<string, IValueAndTimestamp<string>> KeyValueStore = driver.getTimestampedKeyValueStore(QUERYABLE_NAME);
 //                Assert.Equal(KeyValueStore.Get("A"), (ValueAndTimestamp.Make("A=>a!", 5L)));
 //                Assert.Equal(KeyValueStore.Get("B"), (ValueAndTimestamp.Make("B=>b!", 10L)));
 //                Assert.Equal(KeyValueStore.Get("C"), (ValueAndTimestamp.Make("C=>null!", 15L)));
@@ -359,14 +359,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .Table(INPUT_TOPIC, CONSUMED)
 //                .transformValues(
 //                    new StatefulTransformerSupplier(),
-//                    Materialize.As < string, int, IKeyValueStore<Bytes, byte[]>(QUERYABLE_NAME)
+//                    Materialized.As < string, int, IKeyValueStore<Bytes, byte[]>(QUERYABLE_NAME)
 //                        .WithKeySerde(Serdes.String())
 //                        .withValueSerde(Serdes.Int()))
-//                .groupBy(toForceSendingOfOldValues(), Grouped.with(Serdes.String(), Serdes.Int()))
-//                .reduce(MockReducer.INTEGER_ADDER, MockReducer.INTEGER_SUBTRACTOR)
-//                .mapValues(mapBackToStrings())
-//                .toStream()
-//                .process(capture);
+//                .GroupBy(toForceSendingOfOldValues(), Grouped.With(Serdes.String(), Serdes.Int()))
+//                .Reduce(MockReducer.INTEGER_ADDER, MockReducer.INTEGER_SUBTRACTOR)
+//                .MapValues(mapBackToStrings())
+//                .ToStream()
+//                .Process(capture);
 
 //            driver = new TopologyTestDriver(builder.Build(), props());
 
@@ -380,7 +380,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    new KeyValueTimestamp<>("A", "0", 15),
 //                    new KeyValueTimestamp<>("A", "3", 15)));
 
-//            IKeyValueStore<string, int> KeyValueStore = driver.getKeyValueStore(QUERYABLE_NAME);
+//            IKeyValueStore<string, int> KeyValueStore = driver.GetKeyValueStore(QUERYABLE_NAME);
 //            Assert.Equal(KeyValueStore.Get("A"), (3));
 //        }
 
@@ -390,11 +390,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            builder
 //                .Table(INPUT_TOPIC, CONSUMED)
 //                .transformValues(new StatelessTransformerSupplier())
-//                .groupBy(toForceSendingOfOldValues(), Grouped.with(Serdes.String(), Serdes.Int()))
-//                .reduce(MockReducer.INTEGER_ADDER, MockReducer.INTEGER_SUBTRACTOR)
-//                .mapValues(mapBackToStrings())
-//                .toStream()
-//                .process(capture);
+//                .GroupBy(toForceSendingOfOldValues(), Grouped.With(Serdes.String(), Serdes.Int()))
+//                .Reduce(MockReducer.INTEGER_ADDER, MockReducer.INTEGER_SUBTRACTOR)
+//                .MapValues(mapBackToStrings())
+//                .ToStream()
+//                .Process(capture);
 
 //            driver = new TopologyTestDriver(builder.Build(), props());
 
@@ -432,11 +432,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public StreamsConfig props()
 //        {
 //            var props = new StreamsConfig();
-//            props.Set(StreamsConfigPropertyNames.ApplicationId, "kstream-transform-values-test");
-//            props.Set(StreamsConfigPropertyNames.BootstrapServers, "localhost:9091");
-//            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory());
-//            props.Set(StreamsConfigPropertyNames.DefaultKeySerdeClass, Serdes.Int().GetType().FullName);
-//            props.Set(StreamsConfigPropertyNames.DefaultValueSerdeClass, Serdes.Int().GetType().FullName);
+//            props.Set(StreamsConfig.ApplicationId, "kstream-transform-values-test");
+//            props.Set(StreamsConfig.BootstrapServers, "localhost:9091");
+//            props.Set(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory());
+//            props.Set(StreamsConfig.DefaultKeySerdeClass, Serdes.Int().GetType().FullName);
+//            props.Set(StreamsConfig.DefaultValueSerdeClass, Serdes.Int().GetType().FullName);
 //            return props;
 //        }
 

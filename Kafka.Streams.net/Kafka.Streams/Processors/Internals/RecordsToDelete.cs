@@ -1,7 +1,7 @@
 ﻿namespace Kafka.Streams.Processors.Internals
 {
     /**
-     * Describe records to delete in a call to {@link Admin#deleteRecords(Map)}
+     * Describe records to delete in a call to {@link Admin#deleteRecords(Dictionary)}
      *
      * The API of this class is evolving, see {@link Admin} for details.
      */
@@ -34,8 +34,15 @@
 
         public override bool Equals(object o)
         {
-            if (this == o) return true;
-            if (o == null || this.GetType() != o.GetType()) return false;
+            if (this == o)
+            {
+                return true;
+            }
+
+            if (o == null || this.GetType() != o.GetType())
+            {
+                return false;
+            }
 
             var that = (RecordsToDelete)o;
 

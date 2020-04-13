@@ -180,7 +180,7 @@
 //                    .Add(serializedContext).putInt(1).Put(priorValue).putInt(-1).putInt(-1);
 //            serialValue.Position(0);
 
-//            BufferValue deserialize = BufferValue.deserialize(serialValue);
+//            BufferValue deserialize = BufferValue.Deserialize(serialValue);
 //            Assert.Equal(deserialize, new BufferValue(priorValue, null, null, context));
 //        }
 
@@ -196,7 +196,7 @@
 //                    .Add(serializedContext).putInt(-1).putInt(1).Put(oldValue).putInt(-1);
 //            serialValue.position(0);
 
-//            Assert.Equal(BufferValue.deserialize(serialValue), new BufferValue(null, oldValue, null, context));
+//            Assert.Equal(BufferValue.Deserialize(serialValue), new BufferValue(null, oldValue, null, context));
 //        }
 
 //        [Fact]
@@ -211,7 +211,7 @@
 //                    .Add(serializedContext).putInt(-1).putInt(-1).putInt(1).Put(newValue);
 //            serialValue.position(0);
 
-//            Assert.Equal(BufferValue.deserialize(serialValue), new BufferValue(null, null, newValue, context));
+//            Assert.Equal(BufferValue.Deserialize(serialValue), new BufferValue(null, null, newValue, context));
 //        }
 
 //        [Fact]
@@ -226,7 +226,7 @@
 //                    .Add(serializedContext).putInt(1).Put(duplicate).putInt(-2).putInt(-1);
 //            serialValue.position(0);
 
-//            BufferValue bufferValue = BufferValue.deserialize(serialValue);
+//            BufferValue bufferValue = BufferValue.Deserialize(serialValue);
 //            Assert.Equal(bufferValue, new BufferValue(duplicate, duplicate, null, context));
 //            Assert.Same(bufferValue.priorValue(), bufferValue.oldValue());
 //        }

@@ -88,9 +88,9 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        public void onChange(Thread thread,
 //                             ThreadStateTransitionValidator newState,
 //                             ThreadStateTransitionValidator oldState) {
-//            if (oldState == StreamThread.State.STARTING && newState == StreamThread.State.PARTITIONS_REVOKED) {
+//            if (oldState == StreamThreadStates.STARTING && newState == StreamThreadStates.PARTITIONS_REVOKED) {
 //                startingToRevokedSeen = true;
-//            } else if (oldState == StreamThread.State.PARTITIONS_REVOKED && newState == StreamThread.State.PENDING_SHUTDOWN) {
+//            } else if (oldState == StreamThreadStates.PARTITIONS_REVOKED && newState == StreamThreadStates.PENDING_SHUTDOWN) {
 //                revokedToPendingShutdownSeen = true;
 //            }
 //        }
@@ -109,7 +109,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     *
 //     * @param streamsConfiguration Streams configuration settings
 //     */
-//    public static void purgeLocalStreamsState(StreamsConfig streamsConfiguration) throws
+//    public static void PurgeLocalStreamsState(StreamsConfig streamsConfiguration) throws
 //        IOException {
 //        string tmpDir = TestUtils.IO_TMP_DIR.getPath();
 //        string path = streamsConfiguration.getProperty(StreamsConfig.STATE_DIR_CONFIG);
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //            // Only purge state when it's under java.io.tmpdir.  This is a safety net to prevent accidentally
 //            // deleting important local directory trees.
 //            if (node.FullName.startsWith(tmpDir)) {
-//                Utils.delete(new File(node.FullName));
+//                Utils.Delete(new FileInfo(node.FullName));
 //            }
 //        }
 //    }
@@ -155,10 +155,10 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param <K>            Key type of the data records
 //     * @param <V>            Value type of the data records
 //     */
-//    public static void produceKeyValuesSynchronously<K, V>(
+//    public static void ProduceKeyValuesSynchronously<K, V>(
 //        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig producerConfig, Time time)
 //        //throws ExecutionException, InterruptedException {
-//        produceKeyValuesSynchronously(topic, records, producerConfig, time, false);
+//        ProduceKeyValuesSynchronously(topic, records, producerConfig, time, false);
 //    }
 
 //    /**
@@ -170,10 +170,10 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
-//    public static void produceKeyValuesSynchronously<K, V>(
+//    public static void ProduceKeyValuesSynchronously<K, V>(
 //        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig producerConfig, Headers headers, Time time)
 //        //throws ExecutionException, InterruptedException {
-//        produceKeyValuesSynchronously(topic, records, producerConfig, headers, time, false);
+//        ProduceKeyValuesSynchronously(topic, records, producerConfig, headers, time, false);
 //    }
 
 //    /**
@@ -185,10 +185,10 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
-//    public static void produceKeyValuesSynchronously<K, V>(
+//    public static void ProduceKeyValuesSynchronously<K, V>(
 //        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig producerConfig, Time time, bool enableTransactions)
 //        //throws ExecutionException, InterruptedException {
-//        produceKeyValuesSynchronously(topic, records, producerConfig, null, time, enableTransactions);
+//        ProduceKeyValuesSynchronously(topic, records, producerConfig, null, time, enableTransactions);
 //    }
 
 //    /**
@@ -201,7 +201,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
-//    public static void produceKeyValuesSynchronously<K, V>(string topic,
+//    public static void ProduceKeyValuesSynchronously<K, V>(string topic,
 //                                                            Collection<KeyValuePair<K, V>> records,
 //                                                            StreamsConfig producerConfig,
 //                                                            Headers headers,
@@ -209,13 +209,13 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                                                            bool enableTransactions)
 //        //throws ExecutionException, InterruptedException {
 //        foreach (KeyValuePair<K, V> record in records) {
-//            produceKeyValuesSynchronouslyWithTimestamp(topic,
+//            ProduceKeyValuesSynchronouslyWithTimestamp(topic,
 //                Collections.singleton(record),
 //                producerConfig,
 //                headers,
 //                time.NowAsEpochMilliseconds;,
 //                enableTransactions);
-//            time.sleep(1L);
+//            time.Sleep(1L);
 //        }
 //    }
 
@@ -227,12 +227,12 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
-//    public static void produceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
+//    public static void ProduceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                         Collection<KeyValuePair<K, V>> records,
 //                                                                         StreamsConfig producerConfig,
 //                                                                         long timestamp)
 //        //throws ExecutionException, InterruptedException {
-//        produceKeyValuesSynchronouslyWithTimestamp(topic, records, producerConfig, timestamp, false);
+//        ProduceKeyValuesSynchronouslyWithTimestamp(topic, records, producerConfig, timestamp, false);
 //    }
 
 //    /**
@@ -245,14 +245,14 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param <V>                 Value type of the data records
 //     */
 
-//    public static void produceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
+//    public static void ProduceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                         Collection<KeyValuePair<K, V>> records,
 //                                                                         StreamsConfig producerConfig,
 //                                                                         long timestamp,
 //                                                                         bool enableTransactions)
 //            //throws ExecutionException, InterruptedException {
 
-//        produceKeyValuesSynchronouslyWithTimestamp(topic, records, producerConfig, null, timestamp, enableTransactions);
+//        ProduceKeyValuesSynchronouslyWithTimestamp(topic, records, producerConfig, null, timestamp, enableTransactions);
 //    }
 
 //    /**
@@ -266,7 +266,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param <V>                 Value type of the data records
 //     */
 
-//    public static void produceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
+//    public static void ProduceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                         Collection<KeyValuePair<K, V>> records,
 //                                                                         StreamsConfig producerConfig,
 //                                                                         Headers headers,
@@ -282,7 +282,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //            }
 //            foreach (KeyValuePair<K, V> record in records) {
 //                Future<RecordMetadata> f = producer.send(
-//                    new ProducerRecord<>(topic, null, timestamp, record.key, record.value, headers));
+//                    new ProducerRecord<>(topic, null, timestamp, record.Key, record.Value, headers));
 //                f.Get();
 //            }
 //            if (enableTransactions) {
@@ -349,7 +349,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //            foreach (KeyValuePair<K, V> record in records) {
 //                producer.beginTransaction();
 //                Future<RecordMetadata> f = producer
-//                        .send(new ProducerRecord<>(topic, null, timestamp, record.key, record.value));
+//                        .send(new ProducerRecord<>(topic, null, timestamp, record.Key, record.Value));
 //                f.Get();
 //                producer.abortTransaction();
 //            }
@@ -386,12 +386,12 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                                                      Time time,
 //                                                      bool enableTransactions)
 //            //throws ExecutionException, InterruptedException {
-//        Collection<KeyValuePair<object, V>> keyedRecords = new ArrayList<>();
+//        Collection<KeyValuePair<object, V>> keyedRecords = new List<>();
 //        foreach (V value in records) {
 //            KeyValuePair<object, V> kv = KeyValuePair.Create(null, value);
 //            keyedRecords.Add(kv);
 //        }
-//        produceKeyValuesSynchronously(topic, keyedRecords, producerConfig, time, enableTransactions);
+//        ProduceKeyValuesSynchronously(topic, keyedRecords, producerConfig, time, enableTransactions);
 //    }
 
 //    /**
@@ -411,7 +411,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //            int lagMetrics = 0;
 //            double totalLag = 0.0;
 //            foreach (Metric metric in streams.metrics().values()) {
-//                if (metric.metricName().Name().equals("records-lag")) {
+//                if (metric.metricName().Name().Equals("records-lag")) {
 //                    lagMetrics++;
 //                    totalLag += ((Number) metric.metricValue()).doubleValue();
 //                }
@@ -461,9 +461,9 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                                                                                string topic,
 //                                                                                int expectedNumRecords,
 //                                                                                long waitTime) {// throws InterruptedException
-//        List<ConsumeResult<K, V>> accumData = new ArrayList<>();
+//        List<ConsumeResult<K, V>> accumData = new List<ConsumeResult<K, V>>();
 //        try { 
-// (Consumer<K, V> consumer = createConsumer(consumerConfig));
+// (IConsumer<K, V> consumer = createConsumer(consumerConfig));
 //            TestCondition valuesRead = () => {
 //                List<ConsumeResult<K, V>> readData =
 //                    readRecords(topic, consumer, waitTime, expectedNumRecords);
@@ -508,9 +508,9 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                                                                                  string topic,
 //                                                                                  int expectedNumRecords,
 //                                                                                  long waitTime) {// throws InterruptedException
-//        List<KeyValuePair<K, V>> accumData = new ArrayList<>();
+//        List<KeyValuePair<K, V>> accumData = new List<KeyValuePair<K, V>>();
 //        try { 
-// (Consumer<K, V> consumer = createConsumer(consumerConfig));
+// (IConsumer<K, V> consumer = createConsumer(consumerConfig));
 //            TestCondition valuesRead = () => {
 //                List<KeyValuePair<K, V>> readData =
 //                    readKeyValues(topic, consumer, waitTime, expectedNumRecords);
@@ -538,9 +538,9 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                                                                                                               string topic,
 //                                                                                                               int expectedNumRecords,
 //                                                                                                               long waitTime) {// throws InterruptedException
-//        List<KeyValueTimestamp<K, V>> accumData = new ArrayList<>();
+//        List<KeyValueTimestamp<K, V>> accumData = new List<KeyValueTimestamp<K, V>>();
 //        try { 
-// (Consumer<K, V> consumer = createConsumer(consumerConfig));
+// (IConsumer<K, V> consumer = createConsumer(consumerConfig));
 //            TestCondition valuesRead = () => {
 //                List<KeyValueTimestamp<K, V>> readData =
 //                    readKeyValuesWithTimestamp(topic, consumer, waitTime, expectedNumRecords);
@@ -617,9 +617,9 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                                                                           List<T> expectedRecords,
 //                                                                           long waitTime,
 //                                                                           bool WithTimestamp) {// throws InterruptedException
-//        List<T> accumData = new ArrayList<>();
+//        List<T> accumData = new List<T>();
 //        try { 
-// (Consumer<K, V> consumer = createConsumer(consumerConfig));
+// (IConsumer<K, V> consumer = createConsumer(consumerConfig));
 //            TestCondition valuesRead = () => {
 //                List<T> readData;
 //                if (WithTimestamp) {
@@ -636,19 +636,19 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                Dictionary<K, List<T>> finalAccumData = new HashMap<>();
 //                foreach (T kv in accumulatedActual) {
 //                    finalAccumData.computeIfAbsent(
-//                        (K) (WithTimestamp ? ((KeyValueTimestamp) kv).Key : ((KeyValuePair) kv).key),
-//                        key => new ArrayList<>()).Add(kv);
+//                        (K) (WithTimestamp ? ((KeyValueTimestamp) kv).Key : ((KeyValuePair) kv).Key),
+//                        key => new List<>()).Add(kv);
 //                }
 //                Dictionary<K, List<T>> finalExpected = new HashMap<>();
 //                foreach (T kv in expectedRecords) {
 //                    finalExpected.computeIfAbsent(
-//                        (K) (WithTimestamp ? ((KeyValueTimestamp) kv).Key : ((KeyValuePair) kv).key),
-//                        key => new ArrayList<>()).Add(kv);
+//                        (K) (WithTimestamp ? ((KeyValueTimestamp) kv).Key : ((KeyValuePair) kv).Key),
+//                        key => new List<>()).Add(kv);
 //                }
 
 //                // returns true only if the remaining records in both lists are the same and in the same order
 //                // and the last record received matches the last expected record
-//                return finalAccumData.equals(finalExpected);
+//                return finalAccumData.Equals(finalExpected);
 
 //            };
 //            string conditionDetails = "Did not receive All " + expectedRecords + " records from topic " + topic;
@@ -687,9 +687,9 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                                                                string topic,
 //                                                                int expectedNumRecords,
 //                                                                long waitTime) {// throws InterruptedException
-//        List<V> accumData = new ArrayList<>();
+//        List<V> accumData = new List<V>();
 //        try { 
-// (Consumer<object, V> consumer = createConsumer(consumerConfig));
+// (IConsumer<object, V> consumer = createConsumer(consumerConfig));
 //            TestCondition valuesRead = () => {
 //                List<V> readData =
 //                    readValues(topic, consumer, waitTime, expectedNumRecords);
@@ -725,7 +725,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                MetadataCache metadataCache = server.dataPlaneRequestProcessor().metadataCache();
 //                Option<UpdateMetadataRequest.PartitionState> partitionInfo =
 //                        metadataCache.getPartitionInfo(topic, partition);
-//                if (partitionInfo.isEmpty()) {
+//                if (partitionInfo.IsEmpty()) {
 //                    return false;
 //                }
 //                UpdateMetadataRequest.PartitionState metadataPartitionState = partitionInfo.Get();
@@ -796,14 +796,14 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        AssertionError error = new AssertionError("Expected <" + expectedKey + ", " + expectedValue + "> with timestamp=" + expectedTimestamp +
 //                                                            " but was <" + recordKey + ", " + recordValue + "> with timestamp=" + recordTimestamp);
 //        if (recordKey != null) {
-//            if (!recordKey.equals(expectedKey)) {
+//            if (!recordKey.Equals(expectedKey)) {
 //                throw error;
 //            }
 //        } else if (expectedKey != null) {
 //            throw error;
 //        }
 //        if (recordValue != null) {
-//            if (!recordValue.equals(expectedValue)) {
+//            if (!recordValue.Equals(expectedValue)) {
 //                throw error;
 //            }
 //        } else if (expectedValue != null) {
@@ -837,7 +837,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        long waitTime, int maxMessages) {
 //        List<V> returnList;
 //        try { 
-// (Consumer<object, V> consumer = createConsumer(consumerConfig));
+// (IConsumer<object, V> consumer = createConsumer(consumerConfig));
 //            returnList = readValues(topic, consumer, waitTime, maxMessages);
 //        }
 //        return returnList;
@@ -857,7 +857,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        StreamsConfig consumerConfig, long waitTime, int maxMessages) {
 //        List<KeyValuePair<K, V>> consumedValues;
 //        try { 
-// (Consumer<K, V> consumer = createConsumer(consumerConfig));
+// (IConsumer<K, V> consumer = createConsumer(consumerConfig));
 //            consumedValues = readKeyValues(topic, consumer, waitTime, maxMessages);
 //        }
 //        return consumedValues;
@@ -882,13 +882,13 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @return The values retrieved via the consumer.
 //     */
 //    private static <V> List<V> readValues(string topic,
-//                                          Consumer<object, V> consumer,
+//                                          IConsumer<object, V> consumer,
 //                                          long waitTime,
 //                                          int maxMessages) {
-//        List<V> returnList = new ArrayList<>();
+//        List<V> returnList = new List<V>();
 //        List<KeyValuePair<object, V>> kvs = readKeyValues(topic, consumer, waitTime, maxMessages);
 //        foreach (KeyValuePair<?, V> kv in kvs) {
-//            returnList.Add(kv.value);
+//            returnList.Add(kv.Value);
 //        }
 //        return returnList;
 //    }
@@ -904,10 +904,10 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @return The KeyValuePair elements retrieved via the consumer
 //     */
 //    private static List<KeyValuePair<K, V>> readKeyValues<K, V>(string topic,
-//                                                             Consumer<K, V> consumer,
+//                                                             IConsumer<K, V> consumer,
 //                                                             long waitTime,
 //                                                             int maxMessages) {
-//        List<KeyValuePair<K, V>> consumedValues = new ArrayList<>();
+//        List<KeyValuePair<K, V>> consumedValues = new List<KeyValuePair<K, V>>();
 //        List<ConsumeResult<K, V>> records = readRecords(topic, consumer, waitTime, maxMessages);
 //        foreach (ConsumeResult<K, V> record in records) {
 //            consumedValues.Add(KeyValuePair.Create(record.Key, record.Value));
@@ -926,10 +926,10 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @return The KeyValuePair elements retrieved via the consumer
 //     */
 //    private static List<KeyValueTimestamp<K, V>> readKeyValuesWithTimestamp<K, V>(string topic,
-//                                                                                   Consumer<K, V> consumer,
+//                                                                                   IConsumer<K, V> consumer,
 //                                                                                   long waitTime,
 //                                                                                   int maxMessages) {
-//        List<KeyValueTimestamp<K, V>> consumedValues = new ArrayList<>();
+//        List<KeyValueTimestamp<K, V>> consumedValues = new List<KeyValueTimestamp<K, V>>();
 //        List<ConsumeResult<K, V>> records = readRecords(topic, consumer, waitTime, maxMessages);
 //        foreach (ConsumeResult<K, V> record in records) {
 //            consumedValues.Add(new KeyValueTimestamp<>(record.Key, record.Value, record.Timestamp));
@@ -938,13 +938,13 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    }
 
 //    private static List<ConsumeResult<K, V>> readRecords<K, V>(string topic,
-//                                                                 Consumer<K, V> consumer,
+//                                                                 IConsumer<K, V> consumer,
 //                                                                 long waitTime,
 //                                                                 int maxMessages) {
 //        List<ConsumeResult<K, V>> consumerRecords;
 //        consumer.subscribe(Collections.singletonList(topic));
 //        int pollIntervalMs = 100;
-//        consumerRecords = new ArrayList<>();
+//        consumerRecords = new List<>();
 //        int totalPollTimeMs = 0;
 //        while (totalPollTimeMs < waitTime &&
 //            continueConsuming(consumerRecords.Count, maxMessages)) {
@@ -971,9 +971,9 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     */
 //    private static KafkaConsumer<K, V> createConsumer<K, V>(StreamsConfig consumerConfig) {
 //        StreamsConfig filtered = new StreamsConfig();
-//        filtered.putAll(consumerConfig);
-//        filtered.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        filtered.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+//        filtered.PutAll(consumerConfig);
+//        filtered.Set(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//        filtered.Set(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
 //        return new KafkaConsumer<>(filtered);
 //    }
 //}

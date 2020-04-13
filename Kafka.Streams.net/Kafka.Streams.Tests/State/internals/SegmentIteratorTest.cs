@@ -91,7 +91,7 @@
 //        public void ShouldIterateOverAllSegments()
 //        {
 //            iterator = new SegmentIterator<>(
-//                Array.asList(segmentOne, segmentTwo).iterator(),
+//                Arrays.asList(segmentOne, segmentTwo).iterator(),
 //                hasNextCondition,
 //                Bytes.Wrap("a".getBytes()),
 //                Bytes.Wrap("z".getBytes()));
@@ -133,7 +133,7 @@
 //        public void ShouldOnlyIterateOverSegmentsInRange()
 //        {
 //            iterator = new SegmentIterator<>(
-//                Array.asList(segmentOne, segmentTwo).iterator(),
+//                Arrays.asList(segmentOne, segmentTwo).iterator(),
 //                hasNextCondition,
 //                Bytes.Wrap("a".getBytes()),
 //                Bytes.Wrap("b".getBytes()));
@@ -153,7 +153,7 @@
 //        public void ShouldThrowNoSuchElementOnPeekNextKeyIfNoNext()
 //        {
 //            iterator = new SegmentIterator<>(
-//                Array.asList(segmentOne, segmentTwo).iterator(),
+//                Arrays.asList(segmentOne, segmentTwo).iterator(),
 //                hasNextCondition,
 //                Bytes.Wrap("f".getBytes()),
 //                Bytes.Wrap("h".getBytes()));
@@ -165,7 +165,7 @@
 //        public void ShouldThrowNoSuchElementOnNextIfNoNext()
 //        {
 //            iterator = new SegmentIterator<>(
-//                Array.asList(segmentOne, segmentTwo).iterator(),
+//                Arrays.asList(segmentOne, segmentTwo).iterator(),
 //                hasNextCondition,
 //                Bytes.Wrap("f".getBytes()),
 //                Bytes.Wrap("h".getBytes()));

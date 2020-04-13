@@ -22,24 +22,15 @@ namespace Kafka.Streams.NullModels
         {
         }
 
-        public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
+        public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime timeFrom, DateTime timeTo)
             => new NullKeyValueIterator<byte[]>();
 
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, long timeFrom, long timeTo)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime timeFrom, DateTime timeTo)
             => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
-        public byte[] Fetch(Bytes key, long time) => Array.Empty<byte>();
+        public byte[] Fetch(Bytes key, DateTime time) => Array.Empty<byte>();
 
-        public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime from, DateTime to)
-            => new NullKeyValueIterator<byte[]>();
-
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, DateTime fromTime, DateTime toTime)
-            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
-
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
-            => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
-
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime timeFrom, DateTime timeTo)
             => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
         public void Flush()
@@ -60,7 +51,7 @@ namespace Kafka.Streams.NullModels
         {
         }
 
-        public void Put(Bytes key, byte[] value, long windowStartTimestamp)
+        public void Put(Bytes key, byte[] value, DateTime windowStartTimestamp)
         {
         }
     }

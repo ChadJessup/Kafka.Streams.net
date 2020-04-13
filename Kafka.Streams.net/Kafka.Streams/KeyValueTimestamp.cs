@@ -4,16 +4,20 @@ namespace Kafka.Streams
 {
     public class KeyValueTimestamp<K, V>
     {
-        public KeyValueTimestamp(K key, V value, long timestamp)
+        public KeyValueTimestamp(K key, V value, DateTime timestamp)
         {
             this.Key = key;
             this.Value = value;
             this.Timestamp = timestamp;
         }
 
+        public KeyValueTimestamp(K key, V value, long timeStampMs)
+            : this(key, value, Confluent.Kafka.Timestamp.UnixTimestampMsToDateTime(timeStampMs))
+        { }
+
         public K Key { get; }
         public V Value { get; }
-        public long Timestamp { get; }
+        public DateTime Timestamp { get; }
 
         public override string ToString()
         {
@@ -24,8 +28,15 @@ namespace Kafka.Streams
 
         public override bool Equals(object o)
         {
-            if (this == o) return true;
-            if (o == null || this.GetType() != o.GetType()) return false;
+            if (this == o)
+            {
+                return true;
+            }
+
+            if (o == null || this.GetType() != o.GetType())
+            {
+                return false;
+            }
 
             var that = (KeyValueTimestamp<K, V>)o;
 

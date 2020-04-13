@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.Serialization;
 using System;
 
 namespace Kafka.Streams.KStream
@@ -30,9 +31,7 @@ namespace Kafka.Streams.KStream
         public static ISerde<byte[]> ByteArray()
             => new Serde<byte[]>(Serializers.ByteArray, Deserializers.ByteArray);
 
-        public static ISerde<object> SerdeFrom<T>(ISerializer<object> valueSerializer, IDeserializer<object> valueDeserializer)
-        {
-            throw new NotImplementedException();
-        }
+        public static ISerde<Bytes> Bytes()
+            => new BytesSerdes();
     }
 }

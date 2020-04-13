@@ -27,8 +27,8 @@
 //            stubProviderOne.addStore("other-store", otherUnderlyingStore);
 
 //            theStore = new CompositeReadOnlyKeyValueStore<>(
-//                new WrappingStoreProvider(Array.< StateStoreProvider > asList(stubProviderOne, stubProviderTwo)),
-//                                            QueryableStoreTypes.< string, string > KeyValueStore(),
+//                new WrappingStoreProvider(Array.< StateStoreProvider > Arrays.asList(stubProviderOne, stubProviderTwo)),
+//                                            QueryableStoreTypes.< string, string > KeyValueStore,
 //                                            storeName);
 //        }
 
@@ -293,8 +293,8 @@
 
 //    private CompositeReadOnlyKeyValueStore<object, object> Rebalancing()
 //{
-//    return new CompositeReadOnlyKeyValueStore<>(new WrappingStoreProvider(Collections.< StateStoreProvider > singletonList(new StateStoreProviderStub(true))),
-//            QueryableStoreTypes.KeyValueStore(), storeName);
+//    return new CompositeReadOnlyKeyValueStore<>(new WrappingStoreProvider(Collections.< StateStoreProvider > Collections.singletonList(new StateStoreProviderStub(true))),
+//            QueryableStoreTypes.KeyValueStore, storeName);
 //}
 
 //}}

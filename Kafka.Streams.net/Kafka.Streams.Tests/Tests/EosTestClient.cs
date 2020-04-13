@@ -12,7 +12,7 @@ namespace Kafka.Streams.Tests.Tests
 //        static string APP_ID = "EosTest";
 //        private StreamsConfig properties;
 //        private bool withRepartitioning;
-//        private AtomicBoolean notRunningCallbackReceived = new AtomicBoolean(false);
+//        private bool notRunningCallbackReceived = new bool(false);
 
 //        private KafkaStreams streams;
 //        private bool uncaughtException;
@@ -35,7 +35,7 @@ namespace Kafka.Streams.Tests.Tests
 //            public void run()
 //            {
 //                isRunning = false;
-//                streams.Close(TimeSpan.ofSeconds(300));
+//                streams.Close(TimeSpan.FromSeconds(300));
 
 //                // need to wait for callback to avoid race condition
 //                // => make sure the callback printout to stdout is there as it is expected test output
@@ -85,7 +85,7 @@ namespace Kafka.Streams.Tests.Tests
 //                streams.start();
 //            }
 //            if (uncaughtException) {
-//                streams.Close(TimeSpan.ofSeconds(60_000L));
+//                streams.Close(TimeSpan.FromSeconds(60_000L));
 //                streams = null;
 //            }
 //            sleep(1000);
@@ -100,19 +100,19 @@ namespace Kafka.Streams.Tests.Tests
 //    props.Put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 3);
 //    props.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
 //    props.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//    props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//    props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+//    props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType());
+//    props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
 
 //    StreamsBuilder builder = new StreamsBuilder();
-//    KStream<string, int> data = builder.Stream("data");
+//    IKStream<K, V> data = builder.Stream("data");
 
 //    data.To("echo");
-//    data.process(SmokeTestUtil.printProcessorSupplier("data"));
+//    data.Process(SmokeTestUtil.printProcessorSupplier("data"));
 
-//    KGroupedStream<string, int> groupedData = data.groupByKey();
+//    KGroupedStream<string, int> groupedData = data.GroupByKey();
 //    // min
 //    groupedData
-//        .aggregate(
+//        .Aggregate(
 //            new Initializer<int>()
 //            {
 
@@ -132,11 +132,11 @@ namespace Kafka.Streams.Tests.Tests
 //}
 //                },
 //                Materialized.<string, int, IKeyValueStore<Bytes, byte[]>>with(null, intSerde))
-//            .toStream()
+//            .ToStream()
 //            .To("min", Produced.With(stringSerde, intSerde));
 
 //// sum
-//groupedData.aggregate(
+//groupedData.Aggregate(
 //            new Initializer<long>() {
 
 //                public long apply()
@@ -154,18 +154,18 @@ namespace Kafka.Streams.Tests.Tests
 //}
 //            },
 //            Materialized.<string, long, IKeyValueStore<Bytes, byte[]>>with(null, longSerde))
-//            .toStream()
+//            .ToStream()
 //            .To("sum", Produced.With(stringSerde, longSerde));
 
 //        if (withRepartitioning) {
-//            KStream<string, int> repartitionedData = data.through("repartition");
+//            IKStream<K, V> repartitionedData = data.through("repartition");
 
-//repartitionedData.process(SmokeTestUtil.printProcessorSupplier("repartition"));
+//repartitionedData.Process(SmokeTestUtil.printProcessorSupplier("repartition"));
 
-//            KGroupedStream<string, int> groupedDataAfterRepartitioning = repartitionedData.groupByKey();
+//            KGroupedStream<string, int> groupedDataAfterRepartitioning = repartitionedData.GroupByKey();
 //// max
 //groupedDataAfterRepartitioning
-//    .aggregate(
+//    .Aggregate(
 //                    new Initializer<int>() {
 
 //                        public int apply()
@@ -183,12 +183,12 @@ namespace Kafka.Streams.Tests.Tests
 //}
 //                    },
 //                    Materialized.<string, int, IKeyValueStore<Bytes, byte[]>>with(null, intSerde))
-//                .toStream()
+//                .ToStream()
 //                .To("max", Produced.With(stringSerde, intSerde));
 
 //// count
-//groupedDataAfterRepartitioning.count()
-//                .toStream()
+//groupedDataAfterRepartitioning.Count()
+//                .ToStream()
 //                .To("cnt", Produced.With(stringSerde, longSerde));
 //        }
 
@@ -202,13 +202,13 @@ namespace Kafka.Streams.Tests.Tests
 //    {
 //        try
 //        {
-//            Thread.sleep(500);
+//            Thread.Sleep(500);
 //        }
 //        catch (InterruptedException ignoreAndSwallow) { /* just keep waiting */ }
 //    }
 //    if (!notRunningCallbackReceived.Get())
 //    {
-//        System.Console.Error.println("State transition callback to NOT_RUNNING never received. Timed out after 5 minutes.");
+//        System.Console.Error.WriteLine("State transition callback to NOT_RUNNING never received. Timed out after 5 minutes.");
 //        System.Console.Error.Flush();
 //    }
 //}

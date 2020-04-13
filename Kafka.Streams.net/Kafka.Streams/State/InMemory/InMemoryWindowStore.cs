@@ -108,7 +108,7 @@
 //                    //                  segmentMap.computeIfPresent(windowStartTimestamp, (t, kvMap) =>
 //                    //{
 //                    //    kvMap.Remove(keyBytes);
-//                    //    if (kvMap.isEmpty())
+//                    //    if (kvMap.IsEmpty())
 //                    //    {
 //                    //        segmentMap.Remove(windowStartTimestamp);
 //                    //    }

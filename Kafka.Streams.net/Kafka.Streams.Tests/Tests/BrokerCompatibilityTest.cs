@@ -16,7 +16,7 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            if (args.Length < 2)
 //            {
-//                System.Console.Error.println("BrokerCompatibilityTest are expecting two parameters: propFile, eosEnabled; but only see " + args.Length + " parameter");
+//                System.Console.Error.WriteLine("BrokerCompatibilityTest are expecting two parameters: propFile, eosEnabled; but only see " + args.Length + " parameter");
 //                System.exit(1);
 //            }
 
@@ -30,14 +30,14 @@ namespace Kafka.Streams.Tests.Tests
 
 //            if (kafka == null)
 //            {
-//                System.Console.Error.println("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//                System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 //                System.exit(1);
 //            }
 
 //            streamsProperties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-system-test-broker-compatibility");
 //            streamsProperties.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//            streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//            streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//            streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType());
+//            streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType());
 //            streamsProperties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
 //            streamsProperties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
 //            if (eosEnabled)
@@ -52,10 +52,10 @@ namespace Kafka.Streams.Tests.Tests
 
 
 //            StreamsBuilder builder = new StreamsBuilder();
-//            builder.< string, string > stream(SOURCE_TOPIC).groupByKey(Grouped.with(stringSerde, stringSerde))
-//                         .count()
-//                         .toStream()
-//                         .mapValues(new ValueMapper<long, string>()
+//            builder.< string, string > stream(SOURCE_TOPIC).GroupByKey(Grouped.With(stringSerde, stringSerde))
+//                         .Count()
+//                         .ToStream()
+//                         .MapValues(new ValueMapper<long, string>()
 //                         {
 
 
@@ -80,10 +80,10 @@ namespace Kafka.Streams.Tests.Tests
 //                    cause = cause.getCause();
 //                }
 //            }
-//            System.Console.Error.println("FATAL: An unexpected exception " + cause);
+//            System.Console.Error.WriteLine("FATAL: An unexpected exception " + cause);
 //            e.printStackTrace(System.Console.Error);
 //            System.Console.Error.Flush();
-//            streams.Close(TimeSpan.ofSeconds(30));
+//            streams.Close(TimeSpan.FromSeconds(30));
 //        }
 //    });
 //        System.Console.Out.WriteLine("start Kafka Streams");
@@ -107,7 +107,7 @@ namespace Kafka.Streams.Tests.Tests
 //                streams.Close();
 //            }
 //        } catch (RuntimeException e) {
-//            System.Console.Error.println("Non-Streams exception occurred: ");
+//            System.Console.Error.WriteLine("Non-Streams exception occurred: ");
 //            e.printStackTrace(System.Console.Error);
 //            System.Console.Error.Flush();
 //        }
@@ -132,7 +132,7 @@ namespace Kafka.Streams.Tests.Tests
 //            while (true) {
 //                ConsumeResult<string, string> records = consumer.poll(TimeSpan.FromMilliseconds(100));
 //                foreach (ConsumeResult<string, string> record in records) {
-//                    if (record.Key.equals("key") && record.Value.equals("1")) {
+//                    if (record.Key.Equals("key") && record.Value.Equals("1")) {
 //                        return;
 //                    }
 //                }

@@ -15,16 +15,16 @@ namespace Kafka.Streams.Tests.Helpers
             int numberOfThreads = 2)
             => new StreamsConfig(new Dictionary<string, string>
                 {
-                    { StreamsConfigPropertyNames.ClientId, "clientId" },
+                    { StreamsConfig.ClientId, "clientId" },
                     { "test.mock.num.brokers", numberOfMockBrokers.ToString() },
-                    { StreamsConfigPropertyNames.BootstrapServers, "localhost:9092" },
-                    { StreamsConfigPropertyNames.NumberOfStreamThreads, numberOfThreads.ToString() },
-                    { StreamsConfigPropertyNames.ApplicationId, applicationId },
-                    { StreamsConfigPropertyNames.BUFFERED_RECORDS_PER_PARTITION_CONFIG, "3" },
-                    { StreamsConfigPropertyNames.DefaultTimestampExtractorClass, typeof(MockTimestampExtractor).AssemblyQualifiedName },
-                    { StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName },
-                    { StreamsConfigPropertyNames.ProcessingGuarantee, enableEoS? StreamsConfigPropertyNames.ExactlyOnce : StreamsConfigPropertyNames.AtLeastOnce },
-                    { StreamsConfigPropertyNames.GroupId, "testGroupId" },
+                    { StreamsConfig.BootstrapServers, "localhost:9092" },
+                    { StreamsConfig.NumberOfStreamThreads, numberOfThreads.ToString() },
+                    { StreamsConfig.ApplicationId, applicationId },
+                    { StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIG, "3" },
+                    { StreamsConfig.DefaultTimestampExtractorClass, typeof(MockTimestampExtractor).AssemblyQualifiedName },
+                    { StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName },
+                    { StreamsConfig.ProcessingGuarantee, enableEoS? StreamsConfig.ExactlyOnce : StreamsConfig.AtLeastOnce },
+                    { StreamsConfig.GroupId, "testGroupId" },
                 });
 
         public static StreamsConfig GetStandardConfig(
@@ -36,10 +36,10 @@ namespace Kafka.Streams.Tests.Helpers
         {
             StreamsConfig props = GetStandardConfig(applicationId, enableEoS: false);
 
-            props.Set(StreamsConfigPropertyNames.BootstrapServers, bootstrapServers);
-            props.Set(StreamsConfigPropertyNames.DefaultKeySerdeClass, keySerdeClassName);
-            props.Set(StreamsConfigPropertyNames.DefaultValueSerdeClass, valueSerdeClassName);
-            props.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
+            props.Set(StreamsConfig.BootstrapServers, bootstrapServers);
+            props.Set(StreamsConfig.DefaultKeySerdeClass, keySerdeClassName);
+            props.Set(StreamsConfig.DefaultValueSerdeClass, valueSerdeClassName);
+            props.Set(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
             props.SetAll(additional);
 
             return props;

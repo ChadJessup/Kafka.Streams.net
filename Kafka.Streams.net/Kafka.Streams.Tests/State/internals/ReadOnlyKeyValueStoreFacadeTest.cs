@@ -12,7 +12,7 @@
 
 //        private ITimestampedKeyValueStore<string, string> mockedKeyValueTimestampStore;
 
-//        private IKeyValueIterator<string, ValueAndTimestamp<string>> mockedKeyValueTimestampIterator;
+//        private IKeyValueIterator<string, IValueAndTimestamp<string>> mockedKeyValueTimestampIterator;
 
 //        private ReadOnlyKeyValueStoreFacade<string, string> readOnlyKeyValueStoreFacade;
 

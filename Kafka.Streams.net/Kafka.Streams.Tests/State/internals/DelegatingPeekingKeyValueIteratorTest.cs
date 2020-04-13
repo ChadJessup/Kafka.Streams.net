@@ -82,7 +82,7 @@
 //            while (peekingIterator.HasNext())
 //            {
 //                string peekNext = peekingIterator.PeekNextKey();
-//                string key = peekingIterator.MoveNext().key;
+//                string key = peekingIterator.MoveNext().Key;
 //                Assert.Equal(kvs[index], peekNext);
 //                Assert.Equal(kvs[index], key);
 //                index++;

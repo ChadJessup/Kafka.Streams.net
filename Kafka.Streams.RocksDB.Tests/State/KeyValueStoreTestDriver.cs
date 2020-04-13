@@ -319,7 +319,7 @@
 //            if (kv != null)
 //            {
 //                V value = store.Get(stateSerdes.keyFrom(kv.key));
-//                if (!Objects.equals(value, stateSerdes.valueFrom(kv.value)))
+//                if (!Objects.Equals(value, stateSerdes.valueFrom(kv.value)))
 //                {
 //                    ++missing;
 //                }

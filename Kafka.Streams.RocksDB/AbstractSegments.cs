@@ -1,3 +1,4 @@
+using Kafka.Common.Extensions;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Interfaces;
@@ -15,15 +16,15 @@ namespace Kafka.Streams.State.Internals
         private readonly ILogger<AbstractSegments<S>> logger;
         public Dictionary<long, S> Segments { get; } = new Dictionary<long, S>();
         private readonly SimpleDateFormat formatter;
-        private readonly long retentionPeriod;
-        private readonly long segmentInterval;
+        private readonly TimeSpan retentionPeriod;
+        private readonly TimeSpan segmentInterval;
         private readonly string Name;
 
         public AbstractSegments(
             ILogger<AbstractSegments<S>> logger,
             string Name,
-            long retentionPeriod,
-            long segmentInterval)
+            TimeSpan retentionPeriod,
+            TimeSpan segmentInterval)
         {
             this.logger = logger;
             this.Name = Name;
@@ -34,9 +35,12 @@ namespace Kafka.Streams.State.Internals
             this.formatter.SetTimeZone(new SimpleTimeZone(0, "UTC"));
         }
 
+        public long SegmentId(DateTime timeStamp)
+            => this.SegmentId(timeStamp.ToEpochMilliseconds());
+
         public long SegmentId(long timestamp)
         {
-            return timestamp / this.segmentInterval;
+            return timestamp / (long)this.segmentInterval.TotalMilliseconds;
         }
 
         public string SegmentName(long segmentId)
@@ -48,7 +52,7 @@ namespace Kafka.Streams.State.Internals
             return this.Name + "." + segmentId * this.segmentInterval;
         }
 
-        public S GetSegmentForTimestamp(long timestamp)
+        public S GetSegmentForTimestamp(DateTime timestamp)
         {
             return this.Segments[this.SegmentId(timestamp)];
         }
@@ -56,10 +60,10 @@ namespace Kafka.Streams.State.Internals
         public S GetOrCreateSegmentIfLive(
             long segmentId,
             IInternalProcessorContext context,
-            long streamTime)
+            DateTime streamTime)
         {
-            long minLiveTimestamp = streamTime - this.retentionPeriod;
-            long minLiveSegment = this.SegmentId(minLiveTimestamp);
+            var minLiveTimestamp = streamTime - this.retentionPeriod;
+            var minLiveSegment = this.SegmentId(minLiveTimestamp.ToEpochMilliseconds());
 
             S toReturn;
             if (segmentId >= minLiveSegment)
@@ -77,7 +81,7 @@ namespace Kafka.Streams.State.Internals
             return toReturn;
         }
 
-        public void OpenExisting(IInternalProcessorContext context, long streamTime)
+        public void OpenExisting(IInternalProcessorContext context, DateTime streamTime)
         {
             try
             {
@@ -114,11 +118,11 @@ namespace Kafka.Streams.State.Internals
                 // ignore
             }
 
-            long minLiveSegment = this.SegmentId(streamTime - this.retentionPeriod);
+            var minLiveSegment = this.SegmentId((streamTime - this.retentionPeriod).ToEpochMilliseconds());
             this.CleanupEarlierThan(minLiveSegment);
         }
 
-        public List<S> GetSegments(long timeFrom, long timeTo)
+        public List<S> GetSegments(DateTime timeFrom, DateTime timeTo)
         {
             List<S> result = new List<S>();
 
@@ -216,7 +220,7 @@ namespace Kafka.Streams.State.Internals
                 // for both new formats (with : or .) parse segment ID identically
                 try
                 {
-                    segmentId = long.Parse(segmentIdString) / this.segmentInterval;
+                    segmentId = long.Parse(segmentIdString) / (long)this.segmentInterval.TotalMilliseconds;
                 }
                 catch (Exception e)
                 {

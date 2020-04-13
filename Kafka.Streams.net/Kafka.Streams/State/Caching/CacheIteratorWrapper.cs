@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Confluent.Kafka;
+using Kafka.Common.Extensions;
 using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Internals;
@@ -10,14 +12,15 @@ namespace Kafka.Streams.State.Internals
 {
     public class CacheIteratorWrapper : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
     {
-        private long segmentInterval;
-
         private Bytes keyFrom;
         private Bytes keyTo;
-        private long latestSessionStartTime;
-        private long lastSegmentId;
 
-        private long currentSegmentId;
+        private TimeSpan segmentInterval;
+        private DateTime latestSessionStartTime;
+
+        private DateTime lastSegmentId;
+        private DateTime currentSegmentId;
+        
         private Bytes cacheKeyFrom;
         private Bytes cacheKeyTo;
 
@@ -28,8 +31,8 @@ namespace Kafka.Streams.State.Internals
 
         public CacheIteratorWrapper(
             Bytes key,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
             : this(key, key, earliestSessionEndTime, latestSessionStartTime)
         {
         }
@@ -37,8 +40,8 @@ namespace Kafka.Streams.State.Internals
         public CacheIteratorWrapper(
             Bytes keyFrom,
             Bytes keyTo,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             this.keyFrom = keyFrom;
             this.keyTo = keyTo;
@@ -97,7 +100,6 @@ namespace Kafka.Streams.State.Internals
             return this.current.Current;
         }
 
-
         public KeyValuePair<Bytes, LRUCacheEntry> Next()
         {
             if (!this.HasNext())
@@ -108,25 +110,24 @@ namespace Kafka.Streams.State.Internals
             return this.current.Current;
         }
 
-
         public void Close()
         {
             this.current.Close();
         }
 
-        private long CurrentSegmentBeginTime()
+        private DateTime CurrentSegmentBeginTime()
         {
-            return this.currentSegmentId * this.segmentInterval;
+            return Timestamp.UnixTimestampMsToDateTime(this.currentSegmentId.ToEpochMilliseconds() * (long)this.segmentInterval.TotalMilliseconds);
         }
 
-        private long CurrentSegmentLastTime()
+        private DateTime CurrentSegmentLastTime()
         {
-            return this.CurrentSegmentBeginTime() + this.segmentInterval - 1;
+            return this.CurrentSegmentBeginTime() + this.segmentInterval;// - 1;
         }
 
         private void GetNextSegmentIterator()
         {
-            ++this.currentSegmentId;
+            //++this.currentSegmentId;
             //lastSegmentId = cacheFunction.segmentId(maxObservedTimestamp);
 
             if (this.currentSegmentId > this.lastSegmentId)
@@ -141,7 +142,7 @@ namespace Kafka.Streams.State.Internals
             // current = cache.Range(cacheName, cacheKeyFrom, cacheKeyTo);
         }
 
-        private void SetCacheKeyRange(long lowerRangeEndTime, long upperRangeEndTime)
+        private void SetCacheKeyRange(DateTime lowerRangeEndTime, DateTime upperRangeEndTime)
         {
             // if (cacheFunction.segmentId(lowerRangeEndTime) != cacheFunction.segmentId(upperRangeEndTime))
             // {
@@ -162,16 +163,19 @@ namespace Kafka.Streams.State.Internals
 
         private Bytes SegmentLowerRangeFixedSize(Bytes key, long segmentBeginTime)
         {
-            IWindowed<Bytes> sessionKey = new Windowed2<Bytes>(
+            IWindowed<Bytes> sessionKey = new Windowed<Bytes>(
                 key,
                 new SessionWindow(0, Math.Max(0, segmentBeginTime)));
 
             return SessionKeySchema.ToBinary(sessionKey);
         }
 
-        private Bytes SegmentUpperRangeFixedSize(Bytes key, long segmentEndTime)
+        private Bytes SegmentUpperRangeFixedSize(Bytes key, DateTime segmentEndTime)
         {
-            IWindowed<Bytes> sessionKey = new Windowed2<Bytes>(key, new SessionWindow(Math.Min(this.latestSessionStartTime, segmentEndTime), segmentEndTime));
+            IWindowed<Bytes> sessionKey = new Windowed<Bytes>(
+                key, 
+                new SessionWindow(this.latestSessionStartTime.GetOldest(segmentEndTime), segmentEndTime));
+
             return SessionKeySchema.ToBinary(sessionKey);
         }
 

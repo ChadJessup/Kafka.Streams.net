@@ -15,7 +15,7 @@
 //        {// throws Exception
 //            if (args.Length < 1)
 //            {
-//                System.Console.Error.println("StreamsNamedRepartitionTest requires one argument (properties-file) but none provided: ");
+//                System.Console.Error.WriteLine("StreamsNamedRepartitionTest requires one argument (properties-file) but none provided: ");
 //            }
 //            string propFileName = args[0];
 
@@ -32,41 +32,41 @@
 //            Initializer<int> initializer = () => 0;
 //            Aggregator<string, string, int> aggregator = (k, v, agg) => agg + int.parseInt(v);
 
-//            Function<string, string> keyFunction = s => int.toString(int.parseInt(s) % 9);
+//            Function<string, string> keyFunction = s => int.ToString(int.parseInt(s) % 9);
 
 //            StreamsBuilder builder = new StreamsBuilder();
 
-//            KStream<string, string> sourceStream = builder.Stream(inputTopic, Consumed.With(Serdes.String(), Serdes.String()));
+//            IKStream<K, V> sourceStream = builder.Stream(inputTopic, Consumed.With(Serdes.String(), Serdes.String()));
 //            sourceStream.peek((k, v) => System.Console.Out.WriteLine(string.format("input data key=%s, value=%s", k, v)));
 
-//            KStream<string, string> mappedStream = sourceStream.selectKey((k, v) => keyFunction.apply(v));
+//            IKStream<K, V> keyFunction.apply(v));
 
-//            KStream<string, string> maybeUpdatedStream;
+//            IKStream<K, V> maybeUpdatedStream;
 
 //            if (addOperators)
 //            {
-//                maybeUpdatedStream = mappedStream.filter((k, v) => true).mapValues(v => int.toString(int.parseInt(v) + 1));
+//                maybeUpdatedStream = mappedStream.filter((k, v) => true).MapValues(v => int.ToString(int.parseInt(v) + 1));
 //            }
 //            else
 //            {
 //                maybeUpdatedStream = mappedStream;
 //            }
 
-//            maybeUpdatedStream.groupByKey(Grouped.with("grouped-stream", Serdes.String(), Serdes.String()))
-//                .aggregate(initializer, aggregator, Materialized<string, int, IKeyValueStore<Bytes, byte[]>>.As("count-store").WithKeySerde(Serdes.String()).withValueSerde(Serdes.Int()))
-//            .toStream()
+//            maybeUpdatedStream.GroupByKey(Grouped.With("grouped-stream", Serdes.String(), Serdes.String()))
+//                .Aggregate(initializer, aggregator, Materialized<string, int, IKeyValueStore<Bytes, byte[]>>.As("count-store").WithKeySerde(Serdes.String()).withValueSerde(Serdes.Int()))
+//            .ToStream()
 //            .peek((k, v) => System.Console.Out.WriteLine(string.format("AGGREGATED key=%s value=%s", k, v)))
 //            .To(aggregationTopic, Produced.With(Serdes.String(), Serdes.Int()));
 
 //            StreamsConfig config = new StreamsConfig();
 
-//            config.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsNamedRepartitionTest");
-//            config.setProperty(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
-//            config.setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            config.setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            config.Set(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsNamedRepartitionTest");
+//            config.Set(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
+//            config.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            config.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
 
 
-//            config.putAll(streamsProperties);
+//            config.PutAll(streamsProperties);
 
 //            Topology topology = builder.Build(config);
 //            KafkaStreams streams = new KafkaStreams(topology, config);

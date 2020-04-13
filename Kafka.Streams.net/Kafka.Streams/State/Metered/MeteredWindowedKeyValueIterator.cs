@@ -29,7 +29,7 @@ namespace Kafka.Streams.State.Metered
         {
             K key = this.serdes.KeyFrom(bytesKey.Key.Get());
 
-            return new Windowed2<K>(key, bytesKey.window);
+            return new Windowed<K>(key, bytesKey.Window);
         }
 
         public KeyValuePair<IWindowed<K>, V> Current

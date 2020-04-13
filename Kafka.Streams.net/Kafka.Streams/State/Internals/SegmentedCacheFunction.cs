@@ -1,5 +1,6 @@
 using System;
-using Kafka.Common.Utils;
+using Confluent.Kafka;
+using Kafka.Common.Extensions;
 using Kafka.Streams.Internals;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.State.Interfaces;
@@ -8,12 +9,12 @@ namespace Kafka.Streams.State.Internals
 {
     public class SegmentedCacheFunction : ICacheFunction
     {
-        private static int SEGMENT_ID_BYTES = 8;
+        internal static int SEGMENT_ID_BYTES = 8;
 
         private IKeySchema keySchema;
-        private long segmentInterval;
+        private TimeSpan segmentInterval;
 
-        public SegmentedCacheFunction(IKeySchema keySchema, long segmentInterval)
+        public SegmentedCacheFunction(IKeySchema keySchema, TimeSpan segmentInterval)
         {
             this.keySchema = keySchema;
             this.segmentInterval = segmentInterval;
@@ -51,14 +52,9 @@ namespace Kafka.Streams.State.Internals
             return this.SegmentId(this.keySchema.SegmentTimestamp(key));
         }
 
-        private long SegmentId(long timestamp)
+        private long SegmentId(DateTime timestamp)
         {
-            return timestamp / this.segmentInterval;
-        }
-
-        private long GetSegmentInterval()
-        {
-            return this.segmentInterval;
+            return timestamp.Ticks / this.segmentInterval.Ticks;
         }
 
         public int CompareSegmentedKeys(Bytes cacheKey, Bytes storeKey)

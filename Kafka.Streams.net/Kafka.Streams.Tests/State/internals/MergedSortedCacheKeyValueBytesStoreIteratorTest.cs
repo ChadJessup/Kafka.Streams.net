@@ -61,7 +61,7 @@
 //        int index = 0;
 //        int bytesIndex = 2;
 //        while (iterator.HasNext()) {
-//            byte[] value = iterator.MoveNext().value;
+//            byte[] value = iterator.MoveNext().Value;
 //            values[index++] = value;
 //            assertArrayEquals(bytes[bytesIndex++], value);
 //        }
@@ -75,7 +75,7 @@
 //        store.Put(Bytes.Wrap(bytes[0]), bytes[0]);
 //        cache.Put(namespace, Bytes.Wrap(bytes[1]), new LRUCacheEntry(null));
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
-//        assertArrayEquals(bytes[0], iterator.MoveNext().key.Get());
+//        assertArrayEquals(bytes[0], iterator.MoveNext().Key.Get());
 //        Assert.False(iterator.HasNext());
 //    }
 
@@ -85,7 +85,7 @@
 //        cache.Put(namespace, Bytes.Wrap(bytes[0]), new LRUCacheEntry(null));
 //        store.Put(Bytes.Wrap(bytes[1]), bytes[1]);
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
-//        assertArrayEquals(bytes[1], iterator.MoveNext().key.Get());
+//        assertArrayEquals(bytes[1], iterator.MoveNext().Key.Get());
 //        Assert.False(iterator.HasNext());
 //    }
 
@@ -133,13 +133,13 @@
 //        cache.Put(namespace, Bytes.Wrap(bytes[11]), new LRUCacheEntry(null));
 
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
-//        assertArrayEquals(bytes[0], iterator.MoveNext().key.Get());
-//        assertArrayEquals(bytes[4], iterator.MoveNext().key.Get());
-//        assertArrayEquals(bytes[5], iterator.MoveNext().key.Get());
-//        assertArrayEquals(bytes[6], iterator.MoveNext().key.Get());
-//        assertArrayEquals(bytes[7], iterator.MoveNext().key.Get());
-//        assertArrayEquals(bytes[9], iterator.MoveNext().key.Get());
-//        assertArrayEquals(bytes[10], iterator.MoveNext().key.Get());
+//        assertArrayEquals(bytes[0], iterator.MoveNext().Key.Get());
+//        assertArrayEquals(bytes[4], iterator.MoveNext().Key.Get());
+//        assertArrayEquals(bytes[5], iterator.MoveNext().Key.Get());
+//        assertArrayEquals(bytes[6], iterator.MoveNext().Key.Get());
+//        assertArrayEquals(bytes[7], iterator.MoveNext().Key.Get());
+//        assertArrayEquals(bytes[9], iterator.MoveNext().Key.Get());
+//        assertArrayEquals(bytes[10], iterator.MoveNext().Key.Get());
 //        Assert.False(iterator.HasNext());
 
 //    }

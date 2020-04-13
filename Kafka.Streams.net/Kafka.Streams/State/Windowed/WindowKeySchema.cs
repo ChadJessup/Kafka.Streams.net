@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Kafka.Common.Extensions;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Internals;
 using System;
@@ -33,7 +34,7 @@ namespace Kafka.Streams.State.Windowed
             byte[] bytes = serializer.Serialize(topic, timeKey.Key, isKey: true);
             ByteBuffer buf = new ByteBuffer().Allocate(bytes.Length + TIMESTAMP_SIZE);
             buf.Add(bytes);
-            buf.PutLong(timeKey.window.Start());
+            buf.PutLong(timeKey.Window.Start());
 
             return buf.Array();
         }
@@ -49,7 +50,7 @@ namespace Kafka.Streams.State.Windowed
             K key = deserializer.Deserialize(topic, bytes, isKey: true);
             Window window = ExtractWindow(binaryKey, windowSize);
 
-            return new Windowed2<K>(key, window);
+            return new Windowed<K>(key, window);
         }
 
         private static Window ExtractWindow(
@@ -65,7 +66,7 @@ namespace Kafka.Streams.State.Windowed
         // for store serdes
         public static Bytes ToStoreKeyBinary(
             Bytes key,
-            long timestamp,
+            DateTime timestamp,
             int seqnum)
         {
             byte[] serializedKey = key.Get();
@@ -74,7 +75,7 @@ namespace Kafka.Streams.State.Windowed
 
         public static Bytes ToStoreKeyBinary<K>(
             K key,
-            long timestamp,
+            DateTime timestamp,
             int seqnum,
             IStateSerdes<K, object> serdes)
         {
@@ -87,7 +88,7 @@ namespace Kafka.Streams.State.Windowed
             int seqnum)
         {
             byte[] bytes = timeKey.Key.Get();
-            return ToStoreKeyBinary(bytes, timeKey.window.Start(), seqnum);
+            return ToStoreKeyBinary(bytes, timeKey.Window.StartTime, seqnum);
         }
 
         public static Bytes ToStoreKeyBinary<K>(
@@ -97,18 +98,18 @@ namespace Kafka.Streams.State.Windowed
         {
             byte[] serializedKey = serdes.RawKey(timeKey.Key);
 
-            return ToStoreKeyBinary(serializedKey, timeKey.window.Start(), seqnum);
+            return ToStoreKeyBinary(serializedKey, timeKey.Window.StartTime, seqnum);
         }
 
         // package private for testing
         private static Bytes ToStoreKeyBinary(
             byte[] serializedKey,
-            long timestamp,
+            DateTime timestamp,
             int seqnum)
         {
             ByteBuffer buf = new ByteBuffer().Allocate(serializedKey.Length + TIMESTAMP_SIZE + SEQNUM_SIZE);
             buf.Add(serializedKey);
-            buf.PutLong(timestamp);
+            buf.PutLong(timestamp.ToEpochMilliseconds());
             buf.PutInt(seqnum);
 
             return Bytes.Wrap(buf.Array());
@@ -130,9 +131,11 @@ namespace Kafka.Streams.State.Windowed
             return serdes.KeyFrom(bytes);
         }
 
-        public static long ExtractStoreTimestamp(byte[] binaryKey)
+        public static DateTime ExtractStoreTimestamp(byte[] binaryKey)
         {
-            return new ByteBuffer().Wrap(binaryKey).GetLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE);
+            return Timestamp.UnixTimestampMsToDateTime(new ByteBuffer()
+                .Wrap(binaryKey)
+                .GetLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE));
         }
 
         private static int ExtractStoreSequence(byte[] binaryKey)
@@ -149,7 +152,7 @@ namespace Kafka.Streams.State.Windowed
             K key = deserializer.Deserialize(topic, ExtractStoreKeyBytes(binaryKey), isKey: true);
             var window = ExtractStoreWindow(binaryKey, windowSize);
 
-            return new Windowed2<K>(key, window);
+            return new Windowed<K>(key, window);
         }
 
         public static IWindowed<K> FromStoreKey<K>(
@@ -158,7 +161,7 @@ namespace Kafka.Streams.State.Windowed
             string topic)
         {
             var key = deserializer.Deserialize(topic, windowedKey.Key.Get(), isKey: true);
-            return new Windowed2<K>(key, windowedKey.window);
+            return new Windowed<K>(key, windowedKey.Window);
         }
 
         public static IWindowed<Bytes> FromStoreBytesKey(
@@ -167,7 +170,7 @@ namespace Kafka.Streams.State.Windowed
         {
             Bytes key = Bytes.Wrap(ExtractStoreKeyBytes(binaryKey));
             var window = ExtractStoreWindow(binaryKey, windowSize);
-            return new Windowed2<Bytes>(key, window);
+            return new Windowed<Bytes>(key, window);
         }
 
         private static Window ExtractStoreWindow(byte[] binaryKey, TimeSpan windowSize)

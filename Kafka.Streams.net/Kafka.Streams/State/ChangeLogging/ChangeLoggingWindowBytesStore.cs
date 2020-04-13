@@ -1,98 +1,132 @@
+using System;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.Windowed;
 
-//    public class ChangeLoggingWindowBytesStore
-//        : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>
-//    , IWindowStore<Bytes, byte[]>
-//    {
-//        private bool retainDuplicates;
-//        private IProcessorContext<Bytes, byte[]> context;
-//        private int seqnum = 0;
+namespace Kafka.Streams.State.ChangeLogging
+{
+    public class ChangeLoggingWindowBytesStore
+        : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>,
+        IWindowStore<Bytes, byte[]>
+    {
+        private bool retainDuplicates;
+        private IProcessorContext context;
+        private int seqnum = 0;
 
-//        StoreChangeLogger<Bytes, byte[]> changeLogger;
+        private StoreChangeLogger<Bytes, byte[]> changeLogger;
 
-//        public ChangeLoggingWindowBytesStore(IWindowStore<Bytes, byte[]> bytesStore,
-//                                      bool retainDuplicates)
-//            : base(bytesStore)
-//        {
-//            this.retainDuplicates = retainDuplicates;
-//        }
+        public ChangeLoggingWindowBytesStore(
+            KafkaStreamsContext context,
+            IWindowStore<Bytes, byte[]> bytesStore,
+            bool retainDuplicates)
+                : base(context, bytesStore)
+        {
+            this.retainDuplicates = retainDuplicates;
+        }
 
-//        public override void Init(IProcessorContext<Bytes, byte[]> context,
-//                         IStateStore root)
-//        {
-//            this.context = context;
-//            base.Init(context, root);
-//            string topic = ProcessorStateManager<Bytes, byte[]>.storeChangelogTopic(context.applicationId(), Name);
-//            changeLogger = new StoreChangeLogger<Bytes, byte[]>(
-//                Name,
-//                context,
-//                new StateSerdes<Bytes, byte[]>(topic, Serdes.Bytes(), Serdes.ByteArray()));
-//        }
+        public override void Init(IProcessorContext context, IStateStore root)
+        {
+            this.context = context;
+            base.Init(context, root);
+            string topic = ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, this.Name);
 
-//        public override byte[] Fetch(Bytes key,
-//                            long timestamp)
-//        {
-//            return wrapped.Fetch(key, timestamp);
-//        }
+            this.changeLogger = new StoreChangeLogger<Bytes, byte[]>(
+                this.Name,
+                context,
+                new StateSerdes<Bytes, byte[]>(topic, Serdes.Bytes(), Serdes.ByteArray()));
+        }
 
+        public byte[] Fetch(Bytes key, DateTime timestamp)
+        {
+            return this.Wrapped.Fetch(key, timestamp);
+        }
 
-//        public override IWindowStoreIterator<byte[]> Fetch(Bytes key,
-//                                                 long from,
-//                                                 long to)
-//        {
-//            return wrapped.Fetch(key, from, to);
-//        }
+        public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime from, DateTime to)
+        {
+            return this.Wrapped.Fetch(key, from, to);
+        }
 
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(
+            Bytes keyFrom,
+            Bytes keyTo,
+            DateTime from,
+            DateTime to)
+        {
+            return this.Wrapped.Fetch(keyFrom, keyTo, from, to);
+        }
 
-//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes keyFrom,
-//                                                               Bytes keyTo,
-//                                                               long from,
-//                                                               long to)
-//        {
-//            return wrapped.Fetch(keyFrom, keyTo, from, to);
-//        }
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
+        {
+            return this.Wrapped.All();
+        }
 
-//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
-//        {
-//            return wrapped.All();
-//        }
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(
+            DateTime timeFrom,
+            DateTime timeTo)
+        {
+            return this.Wrapped.FetchAll(timeFrom, timeTo);
+        }
 
+        public void Put(Bytes key, byte[] value)
+        {
+            // Note: It's incorrect to bypass the wrapped store here by delegating to another method,
+            // but we have no alternative. We must send a timestamped key to the changelog, which means
+            // we need to know what timestamp gets used for the record. Hopefully, we can deprecate this
+            // method in the future to resolve the situation.
+            this.Put(key, value, this.context.Timestamp);
+        }
 
-//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom,
-//                                                                  long timeTo)
-//        {
-//            return wrapped.FetchAll(timeFrom, timeTo);
-//        }
+        public void Put(Bytes key, byte[] value, DateTime windowStartTimestamp)
+        {
+            this.Wrapped.Put(key, value, windowStartTimestamp);
+            this.log(WindowKeySchema.ToStoreKeyBinary(
+                key,
+                windowStartTimestamp,
+                this.MaybeUpdateSeqnumForDups()),
+                value);
+        }
 
-//        public override void Put(Bytes key, byte[] value)
-//        {
-//            // Note: It's incorrect to bypass the wrapped store here by delegating to another method,
-//            // but we have no alternative. We must send a timestamped key to the changelog, which means
-//            // we need to know what timestamp gets used for the record. Hopefully, we can deprecate this
-//            // method in the future to resolve the situation.
-//            Put(key, value, context.timestamp());
-//        }
+        void log(Bytes key, byte[] value)
+        {
+            this.changeLogger.LogChange(key, value);
+        }
 
-//        public override void Put(Bytes key,
-//                        byte[] value,
-//                        long windowStartTimestamp)
-//        {
-//            wrapped.Add(key, value, windowStartTimestamp);
-//            log(WindowKeySchema.toStoreKeyBinary(key, windowStartTimestamp, maybeUpdateSeqnumForDups()), value);
-//        }
+        private int MaybeUpdateSeqnumForDups()
+        {
+            if (this.retainDuplicates)
+            {
+                this.seqnum = (this.seqnum + 1) & 0x7FFFFFFF;
+            }
 
-//        void log(Bytes key,
-//                 byte[] value)
-//        {
-//            changeLogger.logChange(key, value);
-//        }
+            return this.seqnum;
+        }
 
-//        private int maybeUpdateSeqnumForDups()
-//        {
-//            if (retainDuplicates)
-//            {
-//                seqnum = (seqnum + 1) & 0x7FFFFFFF;
-//            }
-//            return seqnum;
-//        }
-//    }
-//}
+        public void Add(Bytes key, byte[] value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] Fetch(Bytes key, long time)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, long timeFrom, long timeTo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

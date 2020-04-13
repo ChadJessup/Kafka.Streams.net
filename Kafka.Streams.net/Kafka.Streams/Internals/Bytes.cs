@@ -22,7 +22,7 @@ namespace Kafka.Streams
         // cache the hash code for the string, default to 0
         private int hashCode;
 
-        public static Bytes Wrap(byte[] bytes)
+        public static Bytes? Wrap(byte[] bytes)
         {
             if (bytes == null)
             {
@@ -119,6 +119,12 @@ namespace Kafka.Streams
             return Bytes.ToString(this.bytes, 0, this.bytes.Length);
         }
 
+        public static implicit operator byte[](Bytes bytes)
+            => bytes?.Get() ?? Array.Empty<byte>();
+
+        public static implicit operator Bytes(byte[] bytes)
+            => new Bytes(bytes);
+
         /**
          * Write a printable representation of a byte array. Non-printable
          * characters are hex escaped in the string.Format \\x%02X, eg:
@@ -136,14 +142,20 @@ namespace Kafka.Streams
             var result = new StringBuilder();
 
             if (b == null)
+            {
                 return result.ToString();
+            }
 
             // just in case we are passed a 'len' that is > buffer Length...
             if (off >= b.Length)
+            {
                 return result.ToString();
+            }
 
             if (off + len > b.Length)
+            {
                 len = b.Length - off;
+            }
 
             for (var i = off; i < off + len; ++i)
             {

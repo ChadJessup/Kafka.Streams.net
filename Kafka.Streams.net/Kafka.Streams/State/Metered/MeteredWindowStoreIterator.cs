@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Kafka.Streams.State.Windowed;
@@ -7,7 +8,7 @@ namespace Kafka.Streams.State.Metered
     public class MeteredWindowStoreIterator<V> : IWindowStoreIterator<V>
     {
         public KafkaStreamsContext Context { get; }
-        public KeyValuePair<long, V> Current { get; }
+        public KeyValuePair<DateTime, V> Current { get; }
         object IEnumerator.Current { get; }
 
         private IWindowStoreIterator<byte[]> iter;
@@ -32,9 +33,9 @@ namespace Kafka.Streams.State.Metered
             return true;//iter.HasNext();
         }
 
-        public KeyValuePair<long, V> next()
+        public KeyValuePair<DateTime, V> Next()
         {
-            KeyValuePair<long, byte[]> next = this.iter.Current;
+            KeyValuePair<DateTime, byte[]> next = this.iter.Current;
             return KeyValuePair.Create(next.Key, this.serdes.ValueFrom(next.Value));
         }
 
@@ -55,7 +56,7 @@ namespace Kafka.Streams.State.Metered
             }
         }
 
-        public long PeekNextKey()
+        public DateTime PeekNextKey()
         {
             return this.iter.PeekNextKey();
         }

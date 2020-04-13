@@ -49,7 +49,7 @@ namespace Kafka.Streams.State
          * @param topic         the topic Name
          * @param keySerde      the serde for keys; cannot be null
          * @param valueSerde    the serde for values; cannot be null
-         * @throws IllegalArgumentException if key or value serde is null
+         * @throws ArgumentException if key or value serde is null
          */
         public StateSerdes(string topic, ISerde<K> keySerde, ISerde<V> valueSerde)
         {

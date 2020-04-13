@@ -218,10 +218,10 @@
 //            DBOptions dbOptions = new DBOptions();
 //            ColumnFamilyOptions columnFamilyOptions = new ColumnFamilyOptions();
 
-//            List<ColumnFamilyDescriptor> columnFamilyDescriptors = asList(
+//            List<ColumnFamilyDescriptor> columnFamilyDescriptors = Arrays.asList(
 //                new ColumnFamilyDescriptor(RocksDB.DEFAULT_COLUMN_FAMILY, columnFamilyOptions),
 //                new ColumnFamilyDescriptor("keyValueWithTimestamp".getBytes(StandardCharsets.UTF_8), columnFamilyOptions));
-//            List<ColumnFamilyHandle> columnFamilies = new ArrayList<>(columnFamilyDescriptors.Count);
+//            List<ColumnFamilyHandle> columnFamilies = new List<>(columnFamilyDescriptors.Count);
 
 //            RocksDB db = RocksDB.open(
 //                dbOptions,

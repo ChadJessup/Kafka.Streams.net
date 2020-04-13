@@ -47,7 +47,7 @@
 //                        {
 //                            string[] topics = copartitionGroup.ToArray(new string[0]);
 //                            Arrays.sort(topics);
-//                            throw new org.apache.kafka.streams.errors.TopologyException(string.Format("%sTopics not co-partitioned: [%s]", logPrefix, Utils.join(Arrays.asList(topics), ",")));
+//                            throw new org.apache.kafka.streams.errors.TopologyException(string.Format("%sTopics not co-partitioned: [%s]", logPrefix, Utils.Join(Arrays.asList(topics), ",")));
 //                        }
 //                    }
 //                }

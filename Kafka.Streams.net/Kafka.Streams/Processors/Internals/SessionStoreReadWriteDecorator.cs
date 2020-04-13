@@ -1,6 +1,7 @@
 ﻿using Kafka.Streams.KStream;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.KeyValues;
+using System;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -17,19 +18,26 @@ namespace Kafka.Streams.Processors.Internals
 
         public IKeyValueIterator<IWindowed<K>, AGG> FindSessions(
             K key,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
-            return this.Wrapped.FindSessions(key, earliestSessionEndTime, latestSessionStartTime);
+            return this.Wrapped.FindSessions(
+                key,
+                earliestSessionEndTime,
+                latestSessionStartTime);
         }
 
         public IKeyValueIterator<IWindowed<K>, AGG> FindSessions(
             K keyFrom,
             K keyTo,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
-            return this.Wrapped.FindSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
+            return this.Wrapped.FindSessions(
+                keyFrom,
+                keyTo,
+                earliestSessionEndTime,
+                latestSessionStartTime);
         }
 
         public void Remove(IWindowed<K> sessionKey)
@@ -42,7 +50,7 @@ namespace Kafka.Streams.Processors.Internals
             this.Wrapped.Put(sessionKey, aggregate);
         }
 
-        public AGG FetchSession(K key, long startTime, long endTime)
+        public AGG FetchSession(K key, DateTime startTime, DateTime endTime)
         {
             return this.Wrapped.FetchSession(key, startTime, endTime);
         }

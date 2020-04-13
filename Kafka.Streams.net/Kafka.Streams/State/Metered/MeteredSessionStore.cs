@@ -107,7 +107,7 @@ namespace Kafka.Streams.State.Metered
             try
             {
                 Bytes key = this.KeyBytes(sessionKey.Key);
-                this.Wrapped.Put(new Windowed2<Bytes>(key, sessionKey.window), this.serdes.RawValue(aggregate));
+                this.Wrapped.Put(new Windowed<Bytes>(key, sessionKey.Window), this.serdes.RawValue(aggregate));
             }
             catch (ProcessorStateException e)
             {
@@ -127,7 +127,7 @@ namespace Kafka.Streams.State.Metered
             try
             {
                 Bytes key = this.KeyBytes(sessionKey.Key);
-                this.Wrapped.Remove(new Windowed2<Bytes>(key, sessionKey.window));
+                this.Wrapped.Remove(new Windowed<Bytes>(key, sessionKey.Window));
             }
             catch (ProcessorStateException e)
             {
@@ -140,14 +140,18 @@ namespace Kafka.Streams.State.Metered
             }
         }
 
-        public V FetchSession(K key, long startTime, long endTime)
+        public V FetchSession(K key, DateTime startTime, DateTime endTime)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
             Bytes bytesKey = this.KeyBytes(key);
             long startNs = this.Context.Clock.NowAsEpochNanoseconds;
             try
             {
-                byte[] result = this.Wrapped.FetchSession(bytesKey, startTime, endTime);
+                byte[] result = this.Wrapped.FetchSession(
+                    bytesKey,
+                    startTime,
+                    endTime);
+
                 if (result == null)
                 {
                     return default;
@@ -182,8 +186,8 @@ namespace Kafka.Streams.State.Metered
 
         public IKeyValueIterator<IWindowed<K>, V> FindSessions(
             K key,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
             Bytes bytesKey = this.KeyBytes(key);
@@ -199,8 +203,8 @@ namespace Kafka.Streams.State.Metered
         public IKeyValueIterator<IWindowed<K>, V> FindSessions(
             K keyFrom,
             K keyTo,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
             keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));

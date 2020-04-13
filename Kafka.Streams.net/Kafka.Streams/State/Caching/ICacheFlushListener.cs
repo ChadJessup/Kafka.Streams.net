@@ -1,4 +1,6 @@
 
+using System;
+
 namespace Kafka.Streams.State.Internals
 {
     /**
@@ -15,6 +17,6 @@ namespace Kafka.Streams.State.Internals
          * @param oldValue    previous value
          * @param timestamp   timestamp of new value
          */
-        void Apply(K key, V newValue, V oldValue, long timestamp);
+        void Apply(K key, V newValue, V oldValue, DateTime timestamp);
     }
 }

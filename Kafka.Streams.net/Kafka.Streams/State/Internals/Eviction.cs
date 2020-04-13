@@ -25,8 +25,15 @@ namespace Kafka.Streams.State.Internals
 
         public override bool Equals(object o)
         {
-            if (this == o) return true;
-            if (o == null || this.GetType() != o.GetType()) return false;
+            if (this == o)
+            {
+                return true;
+            }
+
+            if (o == null || this.GetType() != o.GetType())
+            {
+                return false;
+            }
 
             var eviction = (Eviction<object, object>)o;
 

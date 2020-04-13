@@ -24,7 +24,7 @@
 //            underlyingStore = new InMemoryKeyValueStore(storeName);
 //            cacheFlushListener = new CacheFlushListenerStub<>(new Serdes.String().Deserializer(), new Serdes.String().Deserializer());
 //            store = new CachingKeyValueStore(underlyingStore);
-//            store.setFlushListener(cacheFlushListener, false);
+//            store.SetFlushListener(cacheFlushListener, false);
 //            cache = new ThreadCache(new LogContext("testCache "), maxCacheSizeBytes, new MockStreamsMetrics(new Metrics()));
 //            context = new InternalMockProcessorContext(null, null, null, null, cache);
 //            topic = "topic";
@@ -56,8 +56,8 @@
 //        [Fact]
 //        public void ShouldSetFlushListener()
 //        {
-//            Assert.True(store.setFlushListener(null, true));
-//            Assert.True(store.setFlushListener(null, false));
+//            Assert.True(store.SetFlushListener(null, true));
+//            Assert.True(store.SetFlushListener(null, false));
 //        }
 
 //        [Fact]
@@ -149,7 +149,7 @@
 //        [Fact]
 //        public void ShouldForwardOldValuesWhenEnabled()
 //        {
-//            store.setFlushListener(cacheFlushListener, true);
+//            store.SetFlushListener(cacheFlushListener, true);
 //            store.Put(BytesKey("1"), BytesValue("a"));
 //            store.Flush();
 //            Assert.Equal("a", cacheFlushListener.forwarded.Get("1").newValue);
@@ -201,10 +201,10 @@
 //        {
 //            int items = AddItemsToCache();
 //            IKeyValueIterator<Bytes, byte[]> All = store.All();
-//            List<Bytes> results = new ArrayList<>();
+//            List<Bytes> results = new List<Bytes>();
 //            while (All.HasNext())
 //            {
-//                results.Add(All.MoveNext().key);
+//                results.Add(All.MoveNext().Key);
 //            }
 //            Assert.Equal(items, results.Count);
 //        }
@@ -214,10 +214,10 @@
 //        {
 //            int items = AddItemsToCache();
 //            IKeyValueIterator<Bytes, byte[]> range = store.Range(bytesKey(string.valueOf(0)), bytesKey(string.valueOf(items)));
-//            List<Bytes> results = new ArrayList<>();
+//            List<Bytes> results = new List<Bytes>();
 //            while (range.HasNext())
 //            {
-//                results.Add(range.MoveNext().key);
+//                results.Add(range.MoveNext().Key);
 //            }
 //            Assert.Equal(items, results.Count);
 //        }
@@ -226,7 +226,7 @@
 //        public void ShouldDeleteItemsFromCache()
 //        {
 //            store.Put(BytesKey("a"), BytesValue("a"));
-//            store.delete(BytesKey("a"));
+//            store.Delete(BytesKey("a"));
 //            Assert.Null(store.Get(BytesKey("a")));
 //            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).HasNext());
 //            Assert.False(store.All().HasNext());
@@ -237,7 +237,7 @@
 //        {
 //            store.Put(BytesKey("a"), BytesValue("a"));
 //            store.Flush();
-//            store.delete(BytesKey("a"));
+//            store.Delete(BytesKey("a"));
 //            Assert.Null(store.Get(BytesKey("a")));
 //            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).HasNext());
 //            Assert.False(store.All().HasNext());
@@ -291,14 +291,14 @@
 //        public void ShouldThrowIfTryingToDoPutAllClosedCachingStore()
 //        {
 //            store.Close();
-//            store.putAll(Collections.singletonList(KeyValuePair.Create(BytesKey("a"), BytesValue("a"))));
+//            store.PutAll(Collections.singletonList(KeyValuePair.Create(BytesKey("a"), BytesValue("a"))));
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToDoPutIfAbsentClosedCachingStore()
 //        {
 //            store.Close();
-//            store.putIfAbsent(BytesKey("b"), BytesValue("c"));
+//            store.PutIfAbsent(BytesKey("b"), BytesValue("c"));
 //        }
 
 //        [Fact]// (expected = NullPointerException)
@@ -310,7 +310,7 @@
 //        [Fact]// (expected = NullPointerException)
 //        public void ShouldThrowNullPointerExceptionOnPutIfAbsentWithNullKey()
 //        {
-//            store.putIfAbsent(null, BytesValue("c"));
+//            store.PutIfAbsent(null, BytesValue("c"));
 //        }
 
 //        [Fact]
@@ -320,7 +320,7 @@
 //            entries.Add(new KeyValuePair<Bytes, byte[]> (null, BytesValue("a")));
 //            try
 //            {
-//                store.putAll(entries);
+//                store.PutAll(entries);
 //                Assert.True(false, "Should have thrown NullPointerException while putAll null key");
 //            }
 //            catch (NullReferenceException expected)
@@ -331,20 +331,20 @@
 //        [Fact]
 //        public void ShouldPutIfAbsent()
 //        {
-//            store.putIfAbsent(BytesKey("b"), BytesValue("2"));
+//            store.PutIfAbsent(BytesKey("b"), BytesValue("2"));
 //            Assert.Equal(store.Get(BytesKey("b")), (BytesValue("2")));
 
-//            store.putIfAbsent(BytesKey("b"), BytesValue("3"));
+//            store.PutIfAbsent(BytesKey("b"), BytesValue("3"));
 //            Assert.Equal(store.Get(BytesKey("b")), (BytesValue("2")));
 //        }
 
 //        [Fact]
 //        public void ShouldPutAll()
 //        {
-//            List<KeyValuePair<Bytes, byte[]>> entries = new ArrayList<>();
+//            List<KeyValuePair<Bytes, byte[]>> entries = new List<KeyValuePair<Bytes, byte[]>>();
 //            entries.Add(new KeyValuePair<Bytes, byte[]>(BytesKey("a"), BytesValue("1")));
 //            entries.Add(new KeyValuePair<Bytes, byte[]>(BytesKey("b"), BytesValue("2")));
-//            store.putAll(entries);
+//            store.PutAll(entries);
 //            Assert.Equal(store.Get(BytesKey("a")), (BytesValue("1")));
 //            Assert.Equal(store.Get(BytesKey("b")), (BytesValue("2")));
 //        }
@@ -359,7 +359,7 @@
 //        public void ShouldThrowIfTryingToDeleteFromClosedCachingStore()
 //        {
 //            store.Close();
-//            store.delete(BytesKey("key"));
+//            store.Delete(BytesKey("key"));
 //        }
 
 //        private int AddItemsToCache()
@@ -395,10 +395,10 @@
 //                              long timestamp)
 //            {
 //                forwarded.Put(
-//                    keyDeserializer.deserialize(null, key),
+//                    keyDeserializer.Deserialize(null, key),
 //                    new Change<>(
-//                        valueDesializer.deserialize(null, newValue),
-//                        valueDesializer.deserialize(null, oldValue)));
+//                        valueDesializer.Deserialize(null, newValue),
+//                        valueDesializer.Deserialize(null, oldValue)));
 //            }
 //        }
 //    }

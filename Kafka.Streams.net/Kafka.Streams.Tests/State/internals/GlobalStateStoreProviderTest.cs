@@ -115,10 +115,10 @@
 //        public void ShouldReturnTimestampedKeyValueStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-//            List<IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
+//            List<IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>>> stores =
 //                provider.Stores("ts-kv-store", QueryableStoreTypes.TimestampedKeyValueStore<string, string>());
 //            Assert.Single(stores);
-//            foreach (IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>> store in stores)
+//            foreach (IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>> store in stores)
 //            {
 //                Assert.IsAssignableFrom<IReadOnlyKeyValueStore>(store);
 //                Assert.IsAssignableFrom<ITimestampedKeyValueStore>(store);
@@ -129,7 +129,7 @@
 //        public void ShouldNotReturnKeyValueStoreAsTimestampedStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-//            List<IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
+//            List<IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>>> stores =
 //                provider.Stores("kv-store", QueryableStoreTypes.TimestampedKeyValueStore<string, string>());
 //            Assert.Empty(stores);
 //        }
@@ -138,10 +138,10 @@
 //        public void ShouldReturnTimestampedKeyValueStoreAsKeyValueStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-//            List<IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
-//                provider.Stores("ts-kv-store", QueryableStoreTypes.KeyValueStore<string, ValueAndTimestamp<string>>());
+//            List<IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>>> stores =
+//                provider.Stores("ts-kv-store", QueryableStoreTypes.KeyValueStore<string, IValueAndTimestamp<string>>());
 //            Assert.Single(stores);
-//            foreach (IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>> store in stores)
+//            foreach (IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>> store in stores)
 //            {
 //                Assert.IsAssignableFrom<IReadOnlyKeyValueStore>(store);
 //                Assert.False(store.GetType().IsAssignableFrom(typeof(ITimestampedKeyValueStore)));
@@ -152,11 +152,11 @@
 //        public void ShouldReturnTimestampedWindowStoreAsWindowStore()
 //        {
 //            GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-//            List<IReadOnlyWindowStore<string, ValueAndTimestamp<string>>> stores =
-//                provider.Stores("ts-w-store", QueryableStoreTypes.WindowStore<string, ValueAndTimestamp<string>>());
+//            List<IReadOnlyWindowStore<string, IValueAndTimestamp<string>>> stores =
+//                provider.Stores("ts-w-store", QueryableStoreTypes.WindowStore<string, IValueAndTimestamp<string>>());
 //            Assert.Single(stores);
 
-//            foreach (IReadOnlyWindowStore<string, ValueAndTimestamp<string>> store in stores)
+//            foreach (IReadOnlyWindowStore<string, IValueAndTimestamp<string>> store in stores)
 //            {
 //                Assert.IsAssignableFrom<IReadOnlyWindowStore>(store);
 //                Assert.False(store.GetType().IsAssignableFrom(typeof(ITimestampedWindowStore)));

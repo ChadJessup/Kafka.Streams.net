@@ -1,5 +1,7 @@
 using Confluent.Kafka;
+using Kafka.Common.Extensions;
 using Kafka.Streams.KStream.Internals;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -7,24 +9,24 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class ProcessorRecordContext : IRecordContext
     {
-        public long timestamp { get; }
-        public long offset { get; }
+        public DateTime Timestamp { get; }
+        public long Offset { get; }
         public string Topic { get; }
-        public int partition { get; }
-        public Headers headers { get; }
+        public int Partition { get; }
+        public Headers Headers { get; }
 
         public ProcessorRecordContext(
-            long timestamp,
+            DateTime timestamp,
             long offset,
             int partition,
             string topic,
             Headers headers)
         {
-            this.timestamp = timestamp;
-            this.offset = offset;
+            this.Timestamp = timestamp;
+            this.Offset = offset;
             this.Topic = topic;
-            this.partition = partition;
-            this.headers = headers;
+            this.Partition = partition;
+            this.Headers = headers;
         }
 
         public long ResidentMemorySizeEstimate()
@@ -36,10 +38,11 @@ namespace Kafka.Streams.Processors.Internals
             {
                 size += this.Topic.ToCharArray().Length;
             }
+
             size += sizeof(int); // partition
-            if (this.headers != null)
+            if (this.Headers != null)
             {
-                foreach (Header header in this.headers)
+                foreach (Header header in this.Headers)
                 {
                     size += header.Key.ToCharArray().Length;
                     var value = header.GetValueBytes();
@@ -58,7 +61,6 @@ namespace Kafka.Streams.Processors.Internals
             byte[][] headerKeysBytes;
             byte[][] headerValuesBytes;
 
-
             var size = 0;
             size += sizeof(long); // value.context.timestamp
             size += sizeof(long); // value.context.offset
@@ -67,13 +69,13 @@ namespace Kafka.Streams.Processors.Internals
             size += sizeof(int); // partition
             size += sizeof(int); // number of headers
 
-            if (this.headers == null)
+            if (this.Headers == null)
             {
                 headerKeysBytes = headerValuesBytes = null;
             }
             else
             {
-                IHeader[] headers = this.headers.ToArray();
+                IHeader[] headers = this.Headers.ToArray();
                 headerKeysBytes = new byte[headers.Length][];
                 headerValuesBytes = new byte[headers.Length][];
 
@@ -95,15 +97,15 @@ namespace Kafka.Streams.Processors.Internals
             }
 
             ByteBuffer buffer = new ByteBuffer().Allocate(size);
-            buffer.PutLong(this.timestamp);
-            buffer.PutLong(this.offset);
+            buffer.PutLong(this.Timestamp.ToEpochMilliseconds());
+            buffer.PutLong(this.Offset);
 
             // not handling the null condition because we believe topic will never be null in cases where we serialize
             buffer.PutInt(topicBytes.Length);
             buffer.Add(topicBytes);
 
-            buffer.PutInt(this.partition);
-            if (this.headers == null)
+            buffer.PutInt(this.Partition);
+            if (this.Headers == null)
             {
                 buffer.PutInt(-1);
             }
@@ -134,16 +136,20 @@ namespace Kafka.Streams.Processors.Internals
 
         public static ProcessorRecordContext Deserialize(ByteBuffer buffer)
         {
-            var timestamp = buffer.GetLong();
+            var timestamp = Confluent.Kafka.Timestamp.UnixTimestampMsToDateTime(buffer.GetLong());
+
             var offset = buffer.GetLong();
             var topicSize = buffer.GetInt();
+
             string topic;
+
             {
                 // not handling the null topic condition, because we believe the topic will never be null when we serialize
                 var topicBytes = new byte[topicSize];
                 buffer.Get(topicBytes);
                 topic = new string(topicBytes.Cast<char>().ToArray());
             }
+
             var partition = buffer.GetInt();
             var headerCount = buffer.GetInt();
             Headers headers;
@@ -201,21 +207,21 @@ namespace Kafka.Streams.Processors.Internals
 
             var that = (ProcessorRecordContext)o;
 
-            return this.timestamp == that.timestamp &&
-                this.offset == that.offset &&
-                this.partition == that.partition &&
+            return this.Timestamp == that.Timestamp &&
+                this.Offset == that.Offset &&
+                this.Partition == that.Partition &&
                 this.Topic.Equals(that.Topic) &&
-                this.headers.Equals(that.headers);
+                this.Headers.Equals(that.Headers);
         }
 
         public override string ToString()
         {
             return "ProcessorRecordContext{" +
                 "topic='" + this.Topic + '\'' +
-                ", partition=" + this.partition +
-                ", offset=" + this.offset +
-                ", timestamp=" + this.timestamp +
-                ", headers=" + this.headers +
+                ", partition=" + this.Partition +
+                ", offset=" + this.Offset +
+                ", timestamp=" + this.Timestamp +
+                ", headers=" + this.Headers +
                 '}';
         }
 

@@ -65,7 +65,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
 
-        public override long Timestamp
+        public override DateTime Timestamp
             => throw new InvalidOperationException("this should not happen: timestamp() not supported in standby tasks.");
 
         /**

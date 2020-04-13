@@ -5,9 +5,9 @@ namespace Kafka.Streams.Processors.Internals
     public class Stamped<V> : IComparable
     {
         public V value { get; }
-        public long timestamp { get; }
+        public DateTime timestamp { get; }
 
-        public Stamped(V value, long timestamp)
+        public Stamped(V value, DateTime timestamp)
         {
             this.value = value;
             this.timestamp = timestamp;

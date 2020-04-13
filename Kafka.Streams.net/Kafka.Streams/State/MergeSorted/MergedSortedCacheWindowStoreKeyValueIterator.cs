@@ -1,67 +1,67 @@
+using System;
+using System.Collections.Generic;
+using Kafka.Streams.KStream;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.Windowed;
+
+namespace Kafka.Streams.State.Internals
+{
+    public class MergedSortedCacheWindowStoreKeyValueIterator
+        : AbstractMergedSortedCacheStoreIterator<IWindowed<Bytes>, IWindowed<Bytes>, byte[], byte[]>
+    {
+        private IStateSerdes<Bytes, byte[]> serdes;
+        private TimeSpan windowSize;
+        private SegmentedCacheFunction cacheFunction;
+
+        public MergedSortedCacheWindowStoreKeyValueIterator(
+            KafkaStreamsContext context,
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator,
+            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator,
+            IStateSerdes<Bytes, byte[]> serdes,
+            TimeSpan windowSize,
+            SegmentedCacheFunction cacheFunction)
+            : base(context, filteredCacheIterator, underlyingIterator)
+        {
+            this.serdes = serdes;
+            this.windowSize = windowSize;
+            this.cacheFunction = cacheFunction;
+        }
+
+        public override IWindowed<Bytes> DeserializeStoreKey(IWindowed<Bytes> key)
+        {
+            return key;
+        }
+
+        public override KeyValuePair<IWindowed<Bytes>, byte[]> DeserializeStorePair(KeyValuePair<IWindowed<Bytes>, byte[]> pair)
+        {
+            return pair;
+        }
 
 
-//namespace Kafka.Streams.State.Internals
-//{
+        public override IWindowed<Bytes> DeserializeCacheKey(Bytes cacheKey)
+        {
+            byte[] binaryKey = this.cacheFunction.Key(cacheKey).Get();
 
+            return WindowKeySchema.FromStoreKey(
+                binaryKey,
+                this.windowSize,
+                this.serdes.KeyDeserializer(),
+                this.serdes.Topic);
+        }
 
-//    using Kafka.Common.Utils.Bytes;
-//    using Kafka.Streams.KeyValuePair;
-//    using Kafka.Streams.KStream.Windowed;
-//    using Kafka.Streams.State.IKeyValueIterator;
-//    using Kafka.Streams.State.StateSerdes;
+        public override byte[] DeserializeCacheValue(LRUCacheEntry cacheEntry)
+        {
+            return cacheEntry.Value();
+        }
 
-//    class MergedSortedCacheWindowStoreKeyValueIterator
-//        : AbstractMergedSortedCacheStoreIterator<IWindowed<Bytes>, IWindowed<Bytes>, byte[], byte[]>
-//    {
+        public override int Compare(Bytes cacheKey, IWindowed<Bytes> storeKey)
+        {
+            Bytes storeKeyBytes = WindowKeySchema.ToStoreKeyBinary(
+                storeKey.Key,
+                storeKey.Window.StartTime,
+                0);
 
-//        private StateSerdes<Bytes, byte[]> serdes;
-//        private long windowSize;
-//        private SegmentedCacheFunction cacheFunction;
-
-//        MergedSortedCacheWindowStoreKeyValueIterator(
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator,
-//            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator,
-//            StateSerdes<Bytes, byte[]> serdes,
-//            long windowSize,
-//            SegmentedCacheFunction cacheFunction
-//        )
-//        {
-//            base(filteredCacheIterator, underlyingIterator);
-//            this.serdes = serdes;
-//            this.windowSize = windowSize;
-//            this.cacheFunction = cacheFunction;
-//        }
-
-
-//        IWindowed<Bytes> deserializeStoreKey(IWindowed<Bytes> key)
-//        {
-//            return key;
-//        }
-
-
-//        KeyValuePair<IWindowed<Bytes>, byte[]> deserializeStorePair(KeyValuePair<IWindowed<Bytes>, byte[]> pair)
-//        {
-//            return pair;
-//        }
-
-
-//        IWindowed<Bytes> deserializeCacheKey(Bytes cacheKey)
-//        {
-//            byte[] binaryKey = cacheFunction.key(cacheKey)[];
-//            return WindowKeySchema.fromStoreKey(binaryKey, windowSize, serdes.keyDeserializer(), serdes.Topic);
-//        }
-
-
-//        byte[] deserializeCacheValue(LRUCacheEntry cacheEntry)
-//        {
-//            return cacheEntry.value();
-//        }
-
-
-//        int compare(Bytes cacheKey, IWindowed<Bytes> storeKey)
-//        {
-//            Bytes storeKeyBytes = WindowKeySchema.toStoreKeyBinary(storeKey.key(), storeKey.window().start(), 0);
-//            return cacheFunction.compareSegmentedKeys(cacheKey, storeKeyBytes);
-//        }
-//    }
-//}
+            return this.cacheFunction.CompareSegmentedKeys(cacheKey, storeKeyBytes);
+        }
+    }
+}

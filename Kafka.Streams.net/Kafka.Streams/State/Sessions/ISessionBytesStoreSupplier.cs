@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.Sessions
          *
          * @return segmentInterval in milliseconds
          */
-        long SegmentIntervalMs();
+        TimeSpan SegmentInterval { get; }
 
         /**
          * The time period for which the {@link ISessionStore} will retain historic data.

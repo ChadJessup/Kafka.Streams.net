@@ -149,10 +149,10 @@ namespace Kafka.Streams.Processors.Internals
                 {
                     this.RecordContext = new ProcessorRecordContext(
                         this.toInternal.Timestamp,
-                        this.RecordContext.offset,
-                        this.RecordContext.partition,
+                        this.RecordContext.Offset,
+                        this.RecordContext.Partition,
                         this.RecordContext.Topic,
-                        this.RecordContext.headers);
+                        this.RecordContext.Headers);
                 }
 
                 var sendTo = this.toInternal.Child();

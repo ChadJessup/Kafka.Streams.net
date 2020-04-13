@@ -18,7 +18,6 @@ namespace Kafka.Streams.State.Windowed {
             {
                 throw new ArgumentException("Provided store must be a Persistent store, but it is not.");
             }
-
         }
 
         public void Put(Bytes key, byte[] valueWithTimestamp)
@@ -28,53 +27,35 @@ namespace Kafka.Streams.State.Windowed {
                 : RawValue(valueWithTimestamp));
         }
 
-        public void Put(Bytes key, byte[] valueWithTimestamp, long windowStartTimestamp)
+        public void Put(Bytes key, byte[] valueWithTimestamp, DateTime windowStartTimestamp)
         {
             this.store.Put(key, valueWithTimestamp == null
                 ? null
                 : RawValue(valueWithTimestamp), windowStartTimestamp);
         }
 
-        public byte[] Fetch(Bytes key, long time)
+        public byte[] Fetch(Bytes key, DateTime time)
         {
             return ConvertToTimestampedFormat(this.store.Fetch(key, time));
         }
 
         public IWindowStoreIterator<byte[]> Fetch(
             Bytes key,
-            long timeFrom,
-            long timeTo)
+            DateTime timeFrom,
+            DateTime timeTo)
         {
             return new WindowToTimestampedWindowIteratorAdapter(
                 this.store.Fetch(key, timeFrom, timeTo));
         }
 
-        public IWindowStoreIterator<byte[]> Fetch(
-            Bytes key,
-            DateTime from,
-            DateTime to)
-        {
-            return new WindowToTimestampedWindowIteratorAdapter(this.store.Fetch(key, from, to));
-        }
-
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(
             Bytes from,
             Bytes to,
-            long timeFrom,
-            long timeTo)
+            DateTime timeFrom,
+            DateTime timeTo)
         {
             return new KeyValueToTimestampedKeyValueIteratorAdapter<IWindowed<Bytes>>(
                 this.store.Fetch(from, to, timeFrom, timeTo));
-        }
-
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(
-            Bytes from,
-            Bytes to,
-            DateTime fromTime,
-            DateTime toTime)
-        {
-            return new KeyValueToTimestampedKeyValueIteratorAdapter<IWindowed<Bytes>>(
-                this.store.Fetch(from, to, fromTime, toTime));
         }
 
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
@@ -82,14 +63,9 @@ namespace Kafka.Streams.State.Windowed {
             return new KeyValueToTimestampedKeyValueIteratorAdapter<IWindowed<Bytes>>(this.store.All());
         }
 
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime timeFrom, DateTime timeTo)
         {
             return new KeyValueToTimestampedKeyValueIteratorAdapter<IWindowed<Bytes>>(this.store.FetchAll(timeFrom, timeTo));
-        }
-
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime from, DateTime to)
-        {
-            return new KeyValueToTimestampedKeyValueIteratorAdapter<IWindowed<Bytes>>(this.store.FetchAll(from, to));
         }
 
         public string Name => this.store.Name;

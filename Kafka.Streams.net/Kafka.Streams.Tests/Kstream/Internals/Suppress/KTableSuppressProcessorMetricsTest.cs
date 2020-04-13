@@ -152,7 +152,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            KTable mock = EasyMock.mock< string, ?, long>(KTable));
 //            Processor<string, Change<long>> processor =
 //                new KTableSuppressProcessorSupplier<>(
-//                    (SuppressedInternal<string>)Suppressed.< string > untilTimeLimit(TimeSpan.ofDays(100), maxRecords(1)),
+//                    (SuppressedInternal<string>)Suppressed.< string > untilTimeLimit(TimeSpan.FromDays(100), maxRecords(1)),
 //                    storeName,
 //                    mock
 //                ).Get();
@@ -167,7 +167,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            context.setRecordMetadata("", 0, 0L, null, timestamp);
 //            var key = "longKey";
 //            Change<long> value = new Change<>(null, ARBITRARY_LONG);
-//            processor.process(key, value);
+//            processor.Process(key, value);
 
 //            {
 //                Dictionary metrics = context.metrics().metrics< MetricName, ? : Metric >();
@@ -183,7 +183,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            }
 
 //            context.setRecordMetadata("", 0, 1L, null, timestamp + 1);
-//            processor.process("key", value);
+//            processor.Process("key", value);
 
 //            {
 //                Dictionary metrics = context.metrics().metrics< MetricName, ? : Metric >();

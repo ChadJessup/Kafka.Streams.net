@@ -18,8 +18,8 @@ namespace Kafka.Streams.Processors.Internals
 
         public IKeyValueIterator<IWindowed<K>, AGG> FindSessions(
             K key,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             return this.Wrapped.FindSessions(
                 key,
@@ -30,8 +30,8 @@ namespace Kafka.Streams.Processors.Internals
         public IKeyValueIterator<IWindowed<K>, AGG> FindSessions(
             K keyFrom,
             K keyTo,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             return this.Wrapped.FindSessions(
                 keyFrom,
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Processors.Internals
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public AGG FetchSession(K key, long startTime, long endTime)
+        public AGG FetchSession(K key, DateTime startTime, DateTime endTime)
         {
             return this.Wrapped.FetchSession(key, startTime, endTime);
         }

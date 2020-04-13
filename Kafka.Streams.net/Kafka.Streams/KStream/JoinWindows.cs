@@ -48,50 +48,50 @@ namespace Kafka.Streams.KStream
      */
     public class JoinWindows : Windows<Window>
     {
-        private readonly TimeSpan maintainDurationMs;
+        private readonly TimeSpan maintainDuration;
 
         /** Maximum time difference for tuples that are before the join tuple. */
-        public TimeSpan beforeMs;
+        public TimeSpan before { get; }
         /** Maximum time difference for tuples that are after the join tuple. */
-        public TimeSpan afterMs;
+        public TimeSpan after { get; }
 
-        private readonly TimeSpan graceMs;
+        private readonly TimeSpan grace;
 
         private JoinWindows(
-            TimeSpan beforeMs,
-            TimeSpan afterMs,
-            TimeSpan graceMs,
-            TimeSpan maintainDurationMs)
+            TimeSpan before,
+            TimeSpan after,
+            TimeSpan grace,
+            TimeSpan maintainDuration)
         {
-            if ((beforeMs + afterMs) < TimeSpan.Zero)
+            if ((before + after) < TimeSpan.Zero)
             {
                 throw new ArgumentException("Window interval (ie, beforeMs+afterMs) must not be negative.");
             }
 
-            this.afterMs = afterMs;
-            this.beforeMs = beforeMs;
-            this.graceMs = graceMs;
-            this.maintainDurationMs = maintainDurationMs;
+            this.after = after;
+            this.before = before;
+            this.grace = grace;
+            this.maintainDuration = maintainDuration;
         }
 
         [Obsolete] // removing segments from Windows will fix this
         private JoinWindows(
-            TimeSpan beforeMs,
-            TimeSpan afterMs,
-            TimeSpan graceMs,
-            TimeSpan maintainDurationMs,
+            TimeSpan before,
+            TimeSpan after,
+            TimeSpan grace,
+            TimeSpan maintainDuration,
             int segments)
             : base(segments)
         {
-            if ((beforeMs + afterMs) < TimeSpan.Zero)
+            if ((before + after) < TimeSpan.Zero)
             {
                 throw new ArgumentException("Window interval (ie, beforeMs+afterMs) must not be negative.");
             }
 
-            this.afterMs = afterMs;
-            this.beforeMs = beforeMs;
-            this.graceMs = graceMs;
-            this.maintainDurationMs = maintainDurationMs;
+            this.after = after;
+            this.before = before;
+            this.grace = grace;
+            this.maintainDuration = maintainDuration;
         }
 
         /**
@@ -101,15 +101,13 @@ namespace Kafka.Streams.KStream
          *
          * @param timeDifferenceMs join window interval in milliseconds
          * @throws ArgumentException if {@code timeDifferenceMs} is negative
-         * @deprecated Use {@link #of(TimeSpan)} instead.
          */
-        [Obsolete]
-        public static JoinWindows Of(TimeSpan timeDifferenceMs)
+        public static JoinWindows Of(TimeSpan timeDifference)
         {
             // This is a static factory method, so we initialize grace and retention to the defaults.
             return new JoinWindows(
-                timeDifferenceMs,
-                timeDifferenceMs,
+                timeDifference,
+                timeDifference,
                 TimeSpan.FromMilliseconds(-1L),
                 WindowingDefaults.DefaultRetention);
         }
@@ -126,9 +124,9 @@ namespace Kafka.Streams.KStream
          * @deprecated Use {@link #before(TimeSpan)} instead.
          */
         [Obsolete]
-        public JoinWindows Before(TimeSpan timeDifferenceMs)
+        public JoinWindows Before(TimeSpan timeDifference)
         {
-            return new JoinWindows(timeDifferenceMs, this.afterMs, this.graceMs, this.maintainDurationMs, this.segments);
+            return new JoinWindows(timeDifference, this.after, this.grace, this.maintainDuration, this.segments);
         }
 
         /**
@@ -143,13 +141,13 @@ namespace Kafka.Streams.KStream
          * @deprecated Use {@link #after(TimeSpan)} instead
          */
         [Obsolete]
-        public JoinWindows After(TimeSpan timeDifferenceMs)
+        public JoinWindows After(TimeSpan timeDifference)
         {
             return new JoinWindows(
-                this.beforeMs,
-                timeDifferenceMs,
-                this.graceMs,
-                this.maintainDurationMs,
+                this.before,
+                timeDifference,
+                this.grace,
+                this.maintainDuration,
                 this.segments);
         }
 
@@ -159,14 +157,14 @@ namespace Kafka.Streams.KStream
          *
          * @throws InvalidOperationException at every invocation
          */
-        public override Dictionary<long, Window> WindowsFor(TimeSpan timestamp)
+        public override Dictionary<DateTime, Window> WindowsFor(DateTime timestamp)
         {
-            throw new InvalidOperationException("windowsFor() is not supported by JoinWindows.");
+            throw new InvalidOperationException("WindowsFor() is not supported by JoinWindows.");
         }
 
         public override TimeSpan Size()
         {
-            return this.beforeMs + this.afterMs;
+            return this.before + this.after;
         }
 
         /**
@@ -182,18 +180,18 @@ namespace Kafka.Streams.KStream
         public JoinWindows Grace(TimeSpan afterWindowEnd)
         {
             var msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
-            var afterWindowEndMs = ApiUtils.ValidateMillisecondDuration(afterWindowEnd, msgPrefix);
+            var validatedAfterWindowEnd = ApiUtils.ValidateMillisecondDuration(afterWindowEnd, msgPrefix);
 
-            if (afterWindowEndMs < TimeSpan.Zero)
+            if (validatedAfterWindowEnd < TimeSpan.Zero)
             {
                 throw new ArgumentException("Grace period must not be negative.");
             }
 
             return new JoinWindows(
-                this.beforeMs,
-                this.afterMs,
-                afterWindowEndMs,
-                this.maintainDurationMs,
+                this.before,
+                this.after,
+                validatedAfterWindowEnd,
+                this.maintainDuration,
                 this.segments);
         }
 
@@ -203,8 +201,8 @@ namespace Kafka.Streams.KStream
             // NOTE: in the future, when we Remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,
             // or we can default to (24h - size) if you want to be base.accurate.
-            return this.graceMs != TimeSpan.FromMilliseconds(-1)
-                ? this.graceMs
+            return this.grace != TimeSpan.FromMilliseconds(-1)
+                ? this.grace
                 : this.MaintainDuration() - this.Size();
         }
 
@@ -215,18 +213,18 @@ namespace Kafka.Streams.KStream
          * @deprecated since 2.1. Use {@link JoinWindows#grace(TimeSpan)} instead.
          */
         [Obsolete]
-        public new JoinWindows Until(TimeSpan durationMs)
+        public new JoinWindows Until(TimeSpan duration)
         {
-            if (durationMs < this.Size())
+            if (duration < this.Size())
             {
                 throw new ArgumentException("Window retention time (durationMs) cannot be smaller than the window size.");
             }
 
             return new JoinWindows(
-                this.beforeMs,
-                this.afterMs,
-                this.graceMs,
-                durationMs,
+                this.before,
+                this.after,
+                this.grace,
+                duration,
                 this.segments);
         }
 
@@ -243,7 +241,7 @@ namespace Kafka.Streams.KStream
         [Obsolete]
         public override TimeSpan MaintainDuration()
         {
-            return TimeSpan.FromMilliseconds(Math.Max(this.maintainDurationMs.TotalMilliseconds, this.Size().TotalMilliseconds));
+            return TimeSpan.FromMilliseconds(Math.Max(this.maintainDuration.TotalMilliseconds, this.Size().TotalMilliseconds));
         }
 
         public override bool Equals(object o)
@@ -259,25 +257,30 @@ namespace Kafka.Streams.KStream
 
             var that = (JoinWindows)o;
 
-            return this.beforeMs == that.beforeMs &&
-                this.afterMs == that.afterMs &&
-                this.maintainDurationMs == that.maintainDurationMs &&
+            return this.before == that.before &&
+                this.after == that.after &&
+                this.maintainDuration == that.maintainDuration &&
                 this.segments == that.segments &&
-                this.graceMs == that.graceMs;
+                this.grace == that.grace;
         }
 
         public override int GetHashCode()
         {
-            return (this.beforeMs, this.afterMs, this.graceMs, this.maintainDurationMs, this.segments).GetHashCode();
+            return HashCode.Combine(
+                this.before,
+                this.after,
+                this.grace,
+                this.maintainDuration,
+                this.segments);
         }
 
         public override string ToString()
         {
             return "JoinWindows{" +
-                   $"beforeMs={this.beforeMs}" +
-                   $", afterMs={this.afterMs}" +
-                   $", graceMs={this.graceMs}" +
-                   $", maintainDurationMs={this.maintainDurationMs}" +
+                   $"beforeMs={this.before}" +
+                   $", afterMs={this.after}" +
+                   $", graceMs={this.grace}" +
+                   $", maintainDurationMs={this.maintainDuration}" +
                    $", segments={this.segments}" +
                    "}";
         }

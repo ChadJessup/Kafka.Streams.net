@@ -25,9 +25,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        private static ISerde<string> STRING_SERDE = Serdes.String();
 //        private static LongDeserializer LONG_DESERIALIZER = new LongDeserializer();
 //        private StreamsConfig config = Utils.mkProperties(Utils.mkMap(
-//            Utils.mkEntry(StreamsConfigPropertyNames.ApplicationId, typeof(SuppressScenarioTest).FullName.ToLower()),
-//            Utils.mkEntry(StreamsConfigPropertyNames.STATE_DIR_CONFIG, TestUtils.GetTempDirectory()),
-//            Utils.mkEntry(StreamsConfigPropertyNames.BootstrapServers, "bogus")
+//            Utils.mkEntry(StreamsConfig.ApplicationId, typeof(SuppressScenarioTest).FullName.ToLower()),
+//            Utils.mkEntry(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory()),
+//            Utils.mkEntry(StreamsConfig.BootstrapServers, "bogus")
 //        ));
 
 //        [Fact]
@@ -43,16 +43,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                        .withCachingDisabled()
 //                        .withLoggingDisabled()
 //                )
-//                .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
-//                .count();
+//                .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
+//                .Count();
 
 //            valueCounts
 //                .suppress(untilTimeLimit(TimeSpan.Zero, unbounded()))
-//                .toStream()
+//                .ToStream()
 //                .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 
 //            valueCounts
-//                .toStream()
+//                .ToStream()
 //                .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 
 //            Topology topology = builder.Build();
@@ -67,7 +67,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create("input", "k2", "v1", 2L));
 //            verify(
 //            drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//           asList(
+//           Arrays.asList(
 //                new KeyValueTimestamp<>("v1", 1L, 0L),
 //                new KeyValueTimestamp<>("v1", 0L, 1L),
 //                new KeyValueTimestamp<>("v2", 1L, 1L),
@@ -76,7 +76,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            );
 //            verify(
 //            drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//           asList(
+//           Arrays.asList(
 //                new KeyValueTimestamp<>("v1", 1L, 0L),
 //                new KeyValueTimestamp<>("v1", 0L, 1L),
 //                new KeyValueTimestamp<>("v2", 1L, 1L),
@@ -86,27 +86,27 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create("input", "x", "x", 3L));
 //            verify(
 //            drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//            singletonList(
+//            Collections.singletonList(
 //                new KeyValueTimestamp<>("x", 1L, 3L)
 //            )
 //            );
 //            verify(
 //            drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//            singletonList(
+//            Collections.singletonList(
 //                new KeyValueTimestamp<>("x", 1L, 3L)
 //            )
 //            );
 //            driver.PipeInput(recordFactory.Create("input", "x", "x", 4L));
 //            verify(
 //            drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//           asList(
+//           Arrays.asList(
 //                new KeyValueTimestamp<>("x", 0L, 4L),
 //                new KeyValueTimestamp<>("x", 1L, 4L)
 //            )
 //            );
 //            verify(
 //            drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//           asList(
+//           Arrays.asList(
 //                new KeyValueTimestamp<>("x", 0L, 4L),
 //                new KeyValueTimestamp<>("x", 1L, 4L)
 //            )
@@ -126,14 +126,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    .withCachingDisabled()
 //                    .withLoggingDisabled()
 //            )
-//            .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
-//            .count();
+//            .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
+//            .Count();
 //        valueCounts
 //            .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(2L), unbounded()))
-//            .toStream()
+//            .ToStream()
 //            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //        valueCounts
-//            .toStream()
+//            .ToStream()
 //            .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //        Topology topology = builder.Build();
 //        ConsumerRecordFactory<string, string> recordFactory =
@@ -146,7 +146,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        verify(
 //        drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//       asList(
+//       Arrays.asList(
 //            new KeyValueTimestamp<>("v1", 1L, 0L),
 //            new KeyValueTimestamp<>("v1", 0L, 1L),
 //            new KeyValueTimestamp<>("v2", 1L, 1L),
@@ -156,27 +156,27 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //        verify(
 //        drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//        singletonList(new KeyValueTimestamp<>("v1", 1L, 2L))
+//        Collections.singletonList(new KeyValueTimestamp<>("v1", 1L, 2L))
 //        );
 //        // inserting a dummy "tick" record just to advance stream time
 //        driver.PipeInput(recordFactory.Create("input", "tick", "tick", 3L));
 
 //        verify(
 //        drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//        singletonList(new KeyValueTimestamp<>("tick", 1L, 3L))
+//        Collections.singletonList(new KeyValueTimestamp<>("tick", 1L, 3L))
 //        );
 
 //        // the stream time is now 3, so it's time to emit this record
 //        verify(
 //        drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//        singletonList(new KeyValueTimestamp<>("v2", 1L, 1L))
+//        Collections.singletonList(new KeyValueTimestamp<>("v2", 1L, 1L))
 //        );
 
 
 //        driver.PipeInput(recordFactory.Create("input", "tick", "tick", 4L));
 //        verify(
 //        drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//       asList(
+//       Arrays.asList(
 //            new KeyValueTimestamp<>("tick", 0L, 4L),
 //            new KeyValueTimestamp<>("tick", 1L, 4L)
 //        )
@@ -201,14 +201,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .withCachingDisabled()
 //                .withLoggingDisabled()
 //        )
-//        .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
-//        .count(Materialized.with(STRING_SERDE, Serdes.Long()));
+//        .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
+//        .Count(Materialized.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(long.MaxValue), maxRecords(1L).emitEarlyWhenFull()))
-//        .toStream()
+//        .ToStream()
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
-//        .toStream()
+//        .ToStream()
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
@@ -221,7 +221,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    driver.PipeInput(recordFactory.Create("input", "k2", "v1", 2L));
 //    verify(
 //      drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//     asList(
+//     Arrays.asList(
 //          new KeyValueTimestamp<>("v1", 1L, 0L),
 //          new KeyValueTimestamp<>("v1", 0L, 1L),
 //          new KeyValueTimestamp<>("v2", 1L, 1L),
@@ -231,7 +231,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    verify(
 //    drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//   asList(
+//   Arrays.asList(
 //        // consecutive updates to v1 get suppressed into only the latter.
 //        new KeyValueTimestamp<>("v1", 0L, 1L),
 //        new KeyValueTimestamp<>("v2", 1L, 1L)
@@ -242,13 +242,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//    singletonList(
+//    Collections.singletonList(
 //        new KeyValueTimestamp<>("x", 1L, 3L)
 //    )
 //    );
 //    verify(
 //    drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//    singletonList(
+//    Collections.singletonList(
 //        // now we see that .Ast update to v1, but we won't see the update to x until it gets evicted
 //        new KeyValueTimestamp<>("v1", 1L, 2L)
 //    )
@@ -268,15 +268,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .withCachingDisabled()
 //                .withLoggingDisabled()
 //        )
-//        .groupBy((k, v) => KeyValuePair.Create(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
-//        .count();
+//        .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
+//        .Count();
 //    valueCounts
 //        // this is a bit brittle, but I happen to know that the entries are a little over 100 bytes in size.
 //        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(long.MaxValue), maxBytes(200L).emitEarlyWhenFull()))
-//        .toStream()
+//        .ToStream()
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
-//        .toStream()
+//        .ToStream()
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
@@ -290,7 +290,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//   asList(
+//   Arrays.asList(
 //        new KeyValueTimestamp<>("v1", 1L, 0L),
 //        new KeyValueTimestamp<>("v1", 0L, 1L),
 //        new KeyValueTimestamp<>("v2", 1L, 1L),
@@ -299,7 +299,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    );
 //    verify(
 //    drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//   asList(
+//   Arrays.asList(
 //        // consecutive updates to v1 get suppressed into only the latter.
 //        new KeyValueTimestamp<>("v1", 0L, 1L),
 //        new KeyValueTimestamp<>("v2", 1L, 1L)
@@ -309,14 +309,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    driver.PipeInput(recordFactory.Create("input", "x", "x", 3L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//    singletonList(
+//    Collections.singletonList(
 //        new KeyValueTimestamp<>("x", 1L, 3L)
 //    )
 //    );
 
 //    verify(
 //    drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//    singletonList(
+//    Collections.singletonList(
 //        // now we see that .Ast update to v1, but we won't see the update to x until it gets evicted
 //        new KeyValueTimestamp<>("v1", 1L, 2L)
 //    )
@@ -330,16 +330,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    var builder = new StreamsBuilder();
 //    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
-//        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
-//        .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(1L)))
-//        .count(Materialize.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled());
+//        .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
+//        .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(1L)))
+//        .Count(Materialized.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled());
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
-//        .toStream()
+//        .ToStream()
 //        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
-//        .toStream()
+//        .ToStream()
 //        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
@@ -358,7 +358,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 0L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//               asList(
+//               Arrays.asList(
 //                    new KeyValueTimestamp<>("[k1@0/2]", 1L, 0L),
 //                    new KeyValueTimestamp<>("[k1@0/2]", 2L, 1L),
 //                    new KeyValueTimestamp<>("[k1@2/4]", 1L, 2L),
@@ -369,7 +369,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                );
 //    verify(
 //    drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//   asList(
+//   Arrays.asList(
 //        new KeyValueTimestamp<>("[k1@0/2]", 4L, 1L),
 //        new KeyValueTimestamp<>("[k1@2/4]", 1L, 2L)
 //    )
@@ -383,16 +383,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    var builder = new StreamsBuilder();
 //    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
-//        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
-//        .windowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(2L)))
-//        .count(Materialize.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled().WithKeySerde(STRING_SERDE));
+//        .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
+//        .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(2L)))
+//        .Count(Materialized.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled().WithKeySerde(STRING_SERDE));
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
-//        .toStream()
+//        .ToStream()
 //        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
-//        .toStream()
+//        .ToStream()
 //        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
@@ -413,7 +413,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 30L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//   asList(
+//   Arrays.asList(
 //        new KeyValueTimestamp<>("[k1@0/2]", 1L, 0L),
 //        new KeyValueTimestamp<>("[k1@0/2]", 2L, 1L),
 //        new KeyValueTimestamp<>("[k1@2/4]", 1L, 2L),
@@ -426,7 +426,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    );
 //    verify(
 //    drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//               asList(
+//               Arrays.asList(
 //                    new KeyValueTimestamp<>("[k1@0/2]", 4L, 1L),
 //                    new KeyValueTimestamp<>("[k1@2/4]", 2L, 3L),
 //                    new KeyValueTimestamp<>("[k1@4/6]", 1L, 4L)
@@ -440,16 +440,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    var builder = new StreamsBuilder();
 //    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
-//        .groupBy((string k, string v) => k, Grouped.with(STRING_SERDE, STRING_SERDE))
-//        .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(0L)))
-//        .count(Materialize.As < string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled());
+//        .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
+//        .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(0L)))
+//        .Count(Materialized.As < string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled());
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
-//        .toStream()
+//        .ToStream()
 //        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
-//        .toStream()
+//        .ToStream()
 //        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
@@ -471,7 +471,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    driver.PipeInput(recordFactory.Create("input", "k1", "v1", 30L));
 //    verify(
 //    drainProducerRecords(driver, "output-raw", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//               asList(
+//               Arrays.asList(
 //                    new KeyValueTimestamp<>("[k1@0/0]", 1L, 0L),
 //                    new KeyValueTimestamp<>("[k1@0/0]", null, 0L),
 //                    new KeyValueTimestamp<>("[k1@0/5]", 2L, 5L),
@@ -483,7 +483,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                );
 //    verify(
 //    drainProducerRecords(driver, "output-suppressed", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//               asList(
+//               Arrays.asList(
 //                    new KeyValueTimestamp<>("[k1@0/5]", 3L, 5L),
 //                    new KeyValueTimestamp<>("[k2@6/6]", 1L, 6L)
 //                )
@@ -498,9 +498,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    builder
 //        .Table("topic", Consumed.With(Serdes.String(), Serdes.String()))
 //        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(10), unbounded()))
-//        .groupBy(KeyValuePair.Create, Grouped.with(Serdes.String(), Serdes.String()))
-//        .count()
-//        .toStream()
+//        .GroupBy(KeyValuePair.Create, Grouped.With(Serdes.String(), Serdes.String()))
+//        .Count()
+//        .ToStream()
 //        .To("output", Produced.With(Serdes.String(), Serdes.Long()));
 
 //    var driver = new TopologyTestDriver(builder.Build(), config);
@@ -512,7 +512,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, LONG_DESERIALIZER),
-//        singletonList(new KeyValueTimestamp<>("A", 1L, 0L))
+//        Collections.singletonList(new KeyValueTimestamp<>("A", 1L, 0L))
 //        );
 //}
 
@@ -529,8 +529,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(10), unbounded()));
 
 //    left
-//        .outerJoin(right, (l, r) => string.Format("(%s,%s)", l, r))
-//        .toStream()
+//        .OuterJoin(right, (l, r) => string.Format("(%s,%s)", l, r))
+//        .ToStream()
 //        .To("output", Produced.With(Serdes.String(), Serdes.String()));
 
 //    var driver = new TopologyTestDriver(builder.Build(), config);
@@ -550,7 +550,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    // Flush buffer
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//               asList(
+//               Arrays.asList(
 //                    new KeyValueTimestamp<>("A", "(null,1)", 0L),
 //                    new KeyValueTimestamp<>("B", "(null,1)", 0L)
 //                )
@@ -569,7 +569,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    // should join with previously emitted right side
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//                singletonList(new KeyValueTimestamp<>("A", "(a,1)", 12L))
+//                Collections.singletonList(new KeyValueTimestamp<>("A", "(a,1)", 12L))
 //                        );
 
 
@@ -577,7 +577,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    // should view through to the parent IKTable, since B is no longer buffered
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//                singletonList(new KeyValueTimestamp<>("B", "(b,1)", 12L))
+//                Collections.singletonList(new KeyValueTimestamp<>("B", "(b,1)", 12L))
 //                        );
 
 
@@ -585,14 +585,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    // should join with previously emitted right side
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//                singletonList(new KeyValueTimestamp<>("A", "(b,1)", 13L))
+//                Collections.singletonList(new KeyValueTimestamp<>("A", "(b,1)", 13L))
 //                        );
 
 
 //    driver.PipeInput(recordFactory.Create("right", "tick", "tick", 21L));
 //    verify(
 //    drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//               asList(
+//               Arrays.asList(
 //                    new KeyValueTimestamp<>("tick", "(null,tick)", 21), // just a testing artifact
 //                    new KeyValueTimestamp<>("A", "(b,2)", 13L)
 //                )
@@ -619,8 +619,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        .Table("right", Consumed.With(Serdes.String(), Serdes.String()));
 
 //    left
-//        .outerJoin(right, (l, r) => string.Format("(%s,%s)", l, r))
-//        .toStream()
+//        .OuterJoin(right, (l, r) => string.Format("(%s,%s)", l, r))
+//        .ToStream()
 //        .To("output", Produced.With(Serdes.String(), Serdes.String()));
 
 //    Topology topology = builder.Build();
@@ -644,7 +644,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        // Flush buffer
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//               asList(
+//               Arrays.asList(
 //                    new KeyValueTimestamp<>("A", "(1,null)", 0L),
 //                    new KeyValueTimestamp<>("B", "(1,null)", 0L)
 //                )
@@ -663,7 +663,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        // should join with previously emitted left side
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//                singletonList(new KeyValueTimestamp<>("A", "(1,a)", 12L))
+//                Collections.singletonList(new KeyValueTimestamp<>("A", "(1,a)", 12L))
 //                    );
 
 
@@ -671,7 +671,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        // should view through to the parent IKTable, since B is no longer buffered
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//                singletonList(new KeyValueTimestamp<>("B", "(1,b)", 12L))
+//                Collections.singletonList(new KeyValueTimestamp<>("B", "(1,b)", 12L))
 //                    );
 
 
@@ -679,14 +679,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        // should join with previously emitted left side
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//                singletonList(new KeyValueTimestamp<>("A", "(1,b)", 13L))
+//                Collections.singletonList(new KeyValueTimestamp<>("A", "(1,b)", 13L))
 //                    );
 
 
 //        driver.PipeInput(recordFactory.Create("left", "tick", "tick", 21L));
 //        verify(
 //        drainProducerRecords(driver, "output", STRING_DESERIALIZER, STRING_DESERIALIZER),
-//               asList(
+//               Arrays.asList(
 //                    new KeyValueTimestamp<>("tick", "(tick,null)", 21), // just a testing artifact
 //                    new KeyValueTimestamp<>("A", "(2,b)", 13L)
 //                )

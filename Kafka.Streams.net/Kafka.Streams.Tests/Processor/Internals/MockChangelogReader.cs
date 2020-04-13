@@ -1,4 +1,3 @@
-
 using Confluent.Kafka;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Tasks;
@@ -30,7 +29,7 @@ namespace Kafka.Streams.Tests.Internal
         {
             this.restoredOffsets = restoredOffsets;
         }
-        
+
         public void Reset()
         {
             this.registered.Clear();

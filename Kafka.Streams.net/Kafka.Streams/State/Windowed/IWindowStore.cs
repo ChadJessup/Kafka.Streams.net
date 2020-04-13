@@ -1,3 +1,4 @@
+using System;
 using Kafka.Streams.KStream;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.ReadOnly;
@@ -35,7 +36,7 @@ namespace Kafka.Streams.State.Windowed
          * @param windowStartTimestamp The timestamp of the beginning of the window to Put the key/value into
          * @throws ArgumentNullException if the given key is {@code null}
          */
-        void Put(K key, V value, long windowStartTimestamp);
+        void Put(K key, V value, DateTime windowStartTimestamp);
 
         /**
          * Get All the key-value pairs with the given key and the time range from All the existing windows.
@@ -72,15 +73,15 @@ namespace Kafka.Streams.State.Windowed
          */
         new IWindowStoreIterator<V> Fetch(
             K key,
-            long timeFrom,
-            long timeTo);
+            DateTime timeFrom,
+            DateTime timeTo);
 
         //public IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to)
         //{
         //    return Fetch(
         //        key,
-        //        ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
-        //        ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
+        //        ApiUtils.validateMillisecondInstant(from, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(from, "from")),
+        //        ApiUtils.validateMillisecondInstant(to, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(to, "to")));
         //}
 
         /**
@@ -96,7 +97,7 @@ namespace Kafka.Streams.State.Windowed
          * @throws InvalidStateStoreException if the store is not initialized
          * @throws ArgumentNullException if one of the given keys is {@code null}
          */
-        new IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo);
+        new IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, DateTime timeFrom, DateTime timeTo);
 
         //public IKeyValueIterator<IWindowed<K>, V> Fetch(
         //    K from,
@@ -107,8 +108,8 @@ namespace Kafka.Streams.State.Windowed
         //    return Fetch(
         //        from,
         //        to,
-        //        ApiUtils.validateMillisecondInstant(fromTime, ApiUtils.prepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
-        //        ApiUtils.validateMillisecondInstant(toTime, ApiUtils.prepareMillisCheckFailMsgPrefix(toTime, "toTime")));
+        //        ApiUtils.validateMillisecondInstant(fromTime, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
+        //        ApiUtils.validateMillisecondInstant(toTime, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(toTime, "toTime")));
         //}
 
         /**
@@ -119,7 +120,7 @@ namespace Kafka.Streams.State.Windowed
          * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
          */
-        new IKeyValueIterator<IWindowed<K>, V> FetchAll(long timeFrom, long timeTo);
+        new IKeyValueIterator<IWindowed<K>, V> FetchAll(DateTime timeFrom, DateTime timeTo);
 
         void Add(K key, V value);
 
@@ -128,8 +129,8 @@ namespace Kafka.Streams.State.Windowed
         //    DateTime to)
         //{
         //    return FetchAll(
-        //        ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
-        //        ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
+        //        ApiUtils.validateMillisecondInstant(from, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(from, "from")),
+        //        ApiUtils.validateMillisecondInstant(to, ApiUtils.ApiUtils.PrepareMillisCheckFailMsgPrefix(to, "to")));
         //}
     }
 

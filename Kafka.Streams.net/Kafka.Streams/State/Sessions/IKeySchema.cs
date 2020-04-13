@@ -1,5 +1,6 @@
 ﻿using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Internals
@@ -15,7 +16,7 @@ namespace Kafka.Streams.Internals
          * @param to
          * @return      The key that represents the upper range to search for in the store
          */
-        Bytes UpperRange(Bytes key, long to);
+        Bytes UpperRange(Bytes key, DateTime to);
 
         /**
          * Given a range of record keys and a time, construct a Segmented key that represents
@@ -26,7 +27,7 @@ namespace Kafka.Streams.Internals
          * @param from
          * @return      The key that represents the lower range to search for in the store
          */
-        Bytes LowerRange(Bytes key, long from);
+        Bytes LowerRange(Bytes key, DateTime from);
 
         /**
          * Given a range of fixed size record keys and a time, construct a Segmented key that represents
@@ -37,7 +38,7 @@ namespace Kafka.Streams.Internals
          * @param to the last timestamp in the range
          * @return The key that represents the upper range to search for in the store
          */
-        Bytes UpperRangeFixedSize(Bytes key, long to);
+        Bytes UpperRangeFixedSize(Bytes key, DateTime to);
 
         /**
          * Given a range of fixed size record keys and a time, construct a Segmented key that represents
@@ -48,7 +49,7 @@ namespace Kafka.Streams.Internals
          * @param from the first timestamp in the range
          * @return      The key that represents the lower range to search for in the store
          */
-        Bytes LowerRangeFixedSize(Bytes key, long from);
+        Bytes LowerRangeFixedSize(Bytes key, DateTime from);
 
         /**
          * Extract the timestamp of the segment from the key. The key is a composite of
@@ -58,7 +59,7 @@ namespace Kafka.Streams.Internals
          * @param key
          * @return
          */
-        long SegmentTimestamp(Bytes key);
+        DateTime SegmentTimestamp(Bytes key);
 
         /**
          * Create an implementation of {@link HasNextCondition} that knows when
@@ -69,7 +70,7 @@ namespace Kafka.Streams.Internals
          * @param to            ending time range
          * @return
          */
-        bool HasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to);
+        bool HasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, DateTime from, DateTime to);
 
         /**
          * Used during {@link SegmentedBytesStore#Fetch(Bytes, long, long)} operations to determine
@@ -79,7 +80,7 @@ namespace Kafka.Streams.Internals
          * @param to
          * @return  List of segments to search
          */
-        List<S> SegmentsToSearch<S>(ISegments<S> segments, long from, long to)
+        List<S> SegmentsToSearch<S>(ISegments<S> segments, DateTime from, DateTime to)
             where S : ISegment;
     }
 }

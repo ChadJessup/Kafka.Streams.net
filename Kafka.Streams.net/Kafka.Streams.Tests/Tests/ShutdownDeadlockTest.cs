@@ -20,10 +20,10 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            string topic = "source";
 //            StreamsConfig props = new StreamsConfig();
-//            props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "shouldNotDeadlock");
-//            props.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//            props.Set(StreamsConfig.APPLICATION_ID_CONFIG, "shouldNotDeadlock");
+//            props.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
 //            StreamsBuilder builder = new StreamsBuilder();
-//            KStream<string, string> source = builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()));
+//            IKStream<K, V> source = builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()));
 
 //            source.ForEach (new ForeachAction<string, string>()
 //            {
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        public void run()
 //        {
-//            streams.Close(TimeSpan.ofSeconds(5));
+//            streams.Close(TimeSpan.FromSeconds(5));
 //        }
 //    }));
 

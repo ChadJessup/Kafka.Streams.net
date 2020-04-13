@@ -1,3 +1,5 @@
+using System;
+
 namespace Kafka.Streams.Processors
 {
     /**
@@ -12,6 +14,6 @@ namespace Kafka.Streams.Processors
          *
          * @param timestamp when the operation is being called, depending on {@link PunctuationType}
          */
-        void Punctuate(long timestamp);
+        void Punctuate(DateTime timestamp);
     }
 }

@@ -1,9 +1,12 @@
 using System;
-using Kafka.Streams.KStream;
 
 namespace Kafka.Streams.State.Internals
 {
-    public delegate void FlushListener<in TKey, in TValue>(TKey key, TValue oldValue, TValue newValue, long timeStamp);
+    public delegate void FlushListener<in TKey, in TValue>(
+        TKey key,
+        TValue oldValue,
+        TValue newValue,
+        DateTime timeStamp);
 
     public interface ICachedStateStore
     {

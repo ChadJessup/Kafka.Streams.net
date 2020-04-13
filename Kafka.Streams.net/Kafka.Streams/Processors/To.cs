@@ -9,9 +9,9 @@ namespace Kafka.Streams.Processors
     public class To
     {
         protected string childName;
-        public long Timestamp { get; private set; }
+        public DateTime Timestamp { get; private set; }
 
-        private To(string childName, long timestamp)
+        private To(string childName, DateTime timestamp)
         {
             this.childName = childName;
             this.Timestamp = timestamp;
@@ -35,7 +35,7 @@ namespace Kafka.Streams.Processors
          */
         public static To Child(string childName)
         {
-            return new To(childName, -1);
+            return new To(childName, DateTime.MinValue);
         }
 
         /**
@@ -44,7 +44,7 @@ namespace Kafka.Streams.Processors
          */
         public static To All()
         {
-            return new To(null, -1);
+            return new To(null, DateTime.MinValue);
         }
 
         /**
@@ -52,7 +52,7 @@ namespace Kafka.Streams.Processors
          * @param timestamp the output record timestamp
          * @return itself (i.e., {@code this})
          */
-        public To WithTimestamp(long timestamp)
+        public To WithTimestamp(DateTime timestamp)
         {
             this.Timestamp = timestamp;
             return this;
@@ -65,13 +65,15 @@ namespace Kafka.Streams.Processors
             {
                 return true;
             }
+
             if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
+
             var to = (To)o;
-            return this.Timestamp == to.Timestamp &&
-                this.childName.Equals(to.childName);
+            return this.Timestamp == to.Timestamp
+                && this.childName.Equals(to.childName);
         }
 
         /**

@@ -10,7 +10,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //    public static void main(string[] args){ //throws IOException
 //        if (args.Length < 2) {
-//            System.Console.Error.println("StreamsStandByReplicaTest are expecting two parameters: " +
+//            System.Console.Error.WriteLine("StreamsStandByReplicaTest are expecting two parameters: " +
 //                "propFile, additionalConfigs; but only see " + args.Length + " parameter");
 //            System.exit(1);
 //        }
@@ -24,7 +24,7 @@ namespace Kafka.Streams.Tests.Tests
 //        string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 
 //        if (kafka == null) {
-//            System.Console.Error.println("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 //            System.exit(1);
 //        }
 
@@ -32,12 +32,12 @@ namespace Kafka.Streams.Tests.Tests
 //        streamsProperties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
 //        streamsProperties.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
 //        streamsProperties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//        streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-//        streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+//        streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType());
+//        streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType());
 //        streamsProperties.Put(StreamsConfig.producerPrefix(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG), true);
 
 //        if (additionalConfigs == null) {
-//            System.Console.Error.println("additional configs are not provided");
+//            System.Console.Error.WriteLine("additional configs are not provided");
 //            System.Console.Error.Flush();
 //            System.exit(1);
 //        }
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tests.Tests
 //        string sinkTopic2 = updated.remove("sinkTopic2");
 
 //        if (sourceTopic == null || sinkTopic1 == null || sinkTopic2 == null) {
-//            System.Console.Error.println(string.format(
+//            System.Console.Error.WriteLine(string.format(
 //                "one or more required topics null sourceTopic[%s], sinkTopic1[%s], sinkTopic2[%s]",
 //                sourceTopic,
 //                sinkTopic1,
@@ -59,10 +59,10 @@ namespace Kafka.Streams.Tests.Tests
 //            System.exit(1);
 //        }
 
-//        streamsProperties.putAll(updated);
+//        streamsProperties.PutAll(updated);
 
 //        if (!confirmCorrectConfigs(streamsProperties)) {
-//            System.Console.Error.println(string.format("ERROR: Did not have All required configs expected  to contain %s, %s,  %s,  %s",
+//            System.Console.Error.WriteLine(string.format("ERROR: Did not have All required configs expected  to contain %s, %s,  %s,  %s",
 //                                             StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG),
 //                                             StreamsConfig.producerPrefix(ProducerConfig.RETRIES_CONFIG),
 //                                             StreamsConfig.producerPrefix(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG),
@@ -80,23 +80,23 @@ namespace Kafka.Streams.Tests.Tests
 //        IKeyValueBytesStoreSupplier persistentStoreSupplier = Stores.PersistentKeyValueStore(persistentMemoryStoreName);
 
 //        Serde<string> stringSerde = Serdes.String();
-//        ValueMapper<long, string> countMapper = object::toString;
+//        ValueMapper<long, string> countMapper = object::ToString;
 
-//        KStream<string, string> inputStream = builder.Stream(sourceTopic, Consumed.With(stringSerde, stringSerde));
+//        IKStream<K, V> inputStream = builder.Stream(sourceTopic, Consumed.With(stringSerde, stringSerde));
 
-//        inputStream.groupByKey().count(Materialized.As(inMemoryStoreSupplier)).toStream().mapValues(countMapper)
+//        inputStream.GroupByKey().Count(Materialized.As(inMemoryStoreSupplier)).ToStream().MapValues(countMapper)
 //            .To(sinkTopic1, Produced.With(stringSerde, stringSerde));
 
-//        inputStream.groupByKey().count(Materialized.As(persistentStoreSupplier)).toStream().mapValues(countMapper)
+//        inputStream.GroupByKey().Count(Materialized.As(persistentStoreSupplier)).ToStream().MapValues(countMapper)
 //            .To(sinkTopic2, Produced.With(stringSerde, stringSerde));
 
 //        KafkaStreams streams = new KafkaStreams(builder.Build(), streamsProperties);
 
 //        streams.setUncaughtExceptionHandler((t, e) => {
-//            System.Console.Error.println("FATAL: An unexpected exception " + e);
+//            System.Console.Error.WriteLine("FATAL: An unexpected exception " + e);
 //            e.printStackTrace(System.Console.Error);
 //            System.Console.Error.Flush();
-//            shutdown(streams);
+//            Shutdown(streams);
 //        });
 
 //        streams.setStateListener((newState, oldState) => {
@@ -114,20 +114,20 @@ namespace Kafka.Streams.Tests.Tests
 //        streams.start();
 
 //        Runtime.getRuntime().addShutdownHook(new Thread(() => {
-//            shutdown(streams);
+//            Shutdown(streams);
 //            System.Console.Out.WriteLine("Shut down streams now");
 //        }));
 //    }
 
-//    private static void shutdown(KafkaStreams streams) {
-//        streams.Close(TimeSpan.ofSeconds(10));
+//    private static void Shutdown(KafkaStreams streams) {
+//        streams.Close(TimeSpan.FromSeconds(10));
 //    }
 
 //    private static bool confirmCorrectConfigs(StreamsConfig properties) {
-//        return properties.containsKey(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG)) &&
-//               properties.containsKey(StreamsConfig.producerPrefix(ProducerConfig.RETRIES_CONFIG)) &&
-//               properties.containsKey(StreamsConfig.producerPrefix(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG)) &&
-//               properties.containsKey(StreamsConfig.producerPrefix(ProducerConfig.MAX_BLOCK_MS_CONFIG));
+//        return properties.ContainsKey(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG)) &&
+//               properties.ContainsKey(StreamsConfig.producerPrefix(ProducerConfig.RETRIES_CONFIG)) &&
+//               properties.ContainsKey(StreamsConfig.producerPrefix(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG)) &&
+//               properties.ContainsKey(StreamsConfig.producerPrefix(ProducerConfig.MAX_BLOCK_MS_CONFIG));
 //    }
 
 //}

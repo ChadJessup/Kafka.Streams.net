@@ -31,10 +31,10 @@
 //        private static readonly string MULTI_PARTITION_OUTPUT_TOPIC = "multiPartitionOutputTopic";
 //        private readonly string storeName = "store";
 
-//        private AtomicBoolean errorInjected;
-//        private AtomicBoolean gcInjected;
+//        private bool errorInjected;
+//        private bool gcInjected;
 //        private readonly bool doGC = true;
-//        private AtomicInteger commitRequested;
+//        private int commitRequested;
 //        private Throwable uncaughtException;
 
 //        private int testNumber = 0;
@@ -96,8 +96,8 @@
 //                                       string outputTopic)
 //        {// throws Exception
 //            StreamsBuilder builder = new StreamsBuilder();
-//            IKStream<long, long> input = builder.Stream(inputTopic);
-//            IKStream<long, long> output = input;
+//            IIIKStream<K, V> input = builder.Stream(inputTopic);
+//            IIIKStream<K, V> output = input;
 //            if (throughTopic != null)
 //            {
 //                output = input.through(throughTopic);
@@ -126,7 +126,7 @@
 
 //                List<KeyValuePair<long, long>> inputData = prepareData(i * 100, i * 100 + 10L, 0L, 1L);
 
-//                IntegrationTestUtils.produceKeyValuesSynchronously(
+//                IntegrationTestUtils.ProduceKeyValuesSynchronously(
 //                    inputTopic,
 //                    inputData,
 //                    TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
@@ -161,7 +161,7 @@
 
 //            foreach (long key in allKeys)
 //            {
-//                Assert.Equal(getAllRecordPerKey(key, result), (getAllRecordPerKey(key, expectedResult)));
+//                Assert.Equal(getAllRecordPerKey(key, result), getAllRecordPerKey(key, expectedResult));
 //            }
 
 //        }
@@ -178,11 +178,11 @@
 //        private List<KeyValuePair<long, long>> GetAllRecordPerKey(long key,
 //                                                              List<KeyValuePair<long, long>> records)
 //        {
-//            List<KeyValuePair<long, long>> recordsPerKey = new ArrayList<>(records.Count);
+//            List<KeyValuePair<long, long>> recordsPerKey = new List<>(records.Count);
 
 //            foreach (KeyValuePair<long, long> record in records)
 //            {
-//                if (record.key.equals(key))
+//                if (record.Key.Equals(key))
 //                {
 //                    recordsPerKey.Add(record);
 //                }
@@ -217,7 +217,7 @@
 //            List<KeyValuePair<long, long>> firstBurstOfData = prepareData(0L, 5L, 0L);
 //            List<KeyValuePair<long, long>> secondBurstOfData = prepareData(5L, 8L, 0L);
 
-//            IntegrationTestUtils.produceKeyValuesSynchronously(
+//            IntegrationTestUtils.ProduceKeyValuesSynchronously(
 //                SINGLE_PARTITION_INPUT_TOPIC,
 //                firstBurstOfData,
 //                TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
@@ -239,9 +239,9 @@
 //                    firstBurstOfData.Count
 //                );
 
-//            Assert.Equal(firstCommittedRecords, (firstBurstOfData));
+//            Assert.Equal(firstCommittedRecords, firstBurstOfData);
 
-//            IntegrationTestUtils.produceKeyValuesSynchronously(
+//            IntegrationTestUtils.ProduceKeyValuesSynchronously(
 //                SINGLE_PARTITION_INPUT_TOPIC,
 //                secondBurstOfData,
 //                TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
@@ -263,7 +263,7 @@
 //                    secondBurstOfData.Count
 //                );
 
-//            Assert.Equal(secondCommittedRecords, (secondBurstOfData));
+//            Assert.Equal(secondCommittedRecords, secondBurstOfData);
 //        }
 
 //        [Fact]
@@ -283,7 +283,7 @@
 //            List<KeyValuePair<long, long>> committedDataBeforeFailure = prepareData(0L, 10L, 0L, 1L);
 //            List<KeyValuePair<long, long>> uncommittedDataBeforeFailure = prepareData(10L, 15L, 0L, 1L);
 
-//            List<KeyValuePair<long, long>> dataBeforeFailure = new ArrayList<>();
+//            List<KeyValuePair<long, long>> dataBeforeFailure = new List<KeyValuePair<long, long>>();
 //            dataBeforeFailure.addAll(committedDataBeforeFailure);
 //            dataBeforeFailure.addAll(uncommittedDataBeforeFailure);
 
@@ -318,12 +318,12 @@
 //                uncommittedDataBeforeFailure.Count + dataAfterFailure.Count,
 //                CONSUMER_GROUP_ID);
 
-//            List<KeyValuePair<long, long>> allExpectedCommittedRecordsAfterRecovery = new ArrayList<>();
+//            List<KeyValuePair<long, long>> allExpectedCommittedRecordsAfterRecovery = new List<KeyValuePair<long, long>>();
 //            allExpectedCommittedRecordsAfterRecovery.addAll(committedDataBeforeFailure);
 //            allExpectedCommittedRecordsAfterRecovery.addAll(uncommittedDataBeforeFailure);
 //            allExpectedCommittedRecordsAfterRecovery.addAll(dataAfterFailure);
 
-//            List<KeyValuePair<long, long>> expectedCommittedRecordsAfterRecovery = new ArrayList<>();
+//            List<KeyValuePair<long, long>> expectedCommittedRecordsAfterRecovery = new List<KeyValuePair<long, long>>();
 //            expectedCommittedRecordsAfterRecovery.addAll(uncommittedDataBeforeFailure);
 //            expectedCommittedRecordsAfterRecovery.addAll(dataAfterFailure);
 
@@ -352,7 +352,7 @@
 //        List<KeyValuePair<long, long>> committedDataBeforeFailure = prepareData(0L, 10L, 0L, 1L);
 //        List<KeyValuePair<long, long>> uncommittedDataBeforeFailure = prepareData(10L, 15L, 0L, 1L, 2L, 3L);
 
-//        List<KeyValuePair<long, long>> dataBeforeFailure = new ArrayList<>();
+//        List<KeyValuePair<long, long>> dataBeforeFailure = new List<KeyValuePair<long, long>>();
 //        dataBeforeFailure.addAll(committedDataBeforeFailure);
 //        dataBeforeFailure.addAll(uncommittedDataBeforeFailure);
 
@@ -389,7 +389,7 @@
 //            uncommittedDataBeforeFailure.Count + dataAfterFailure.Count,
 //            CONSUMER_GROUP_ID);
 
-//        List<KeyValuePair<long, long>> allExpectedCommittedRecordsAfterRecovery = new ArrayList<>();
+//        List<KeyValuePair<long, long>> allExpectedCommittedRecordsAfterRecovery = new List<KeyValuePair<long, long>>();
 //        allExpectedCommittedRecordsAfterRecovery.addAll(committedDataBeforeFailure);
 //        allExpectedCommittedRecordsAfterRecovery.addAll(uncommittedDataBeforeFailure);
 //        allExpectedCommittedRecordsAfterRecovery.addAll(dataAfterFailure);
@@ -427,7 +427,7 @@
 //    List<KeyValuePair<long, long>> committedDataBeforeGC = prepareData(0L, 10L, 0L, 1L);
 //    List<KeyValuePair<long, long>> uncommittedDataBeforeGC = prepareData(10L, 15L, 0L, 1L);
 
-//    List<KeyValuePair<long, long>> dataBeforeGC = new ArrayList<>();
+//    List<KeyValuePair<long, long>> dataBeforeGC = new List<KeyValuePair<long, long>>();
 //    dataBeforeGC.addAll(committedDataBeforeGC);
 //    dataBeforeGC.addAll(uncommittedDataBeforeGC);
 
@@ -463,7 +463,7 @@
 //        uncommittedDataBeforeGC.Count + dataToTriggerFirstRebalance.Count,
 //        CONSUMER_GROUP_ID);
 
-//    List<KeyValuePair<long, long>> expectedCommittedRecordsAfterRebalance = new ArrayList<>();
+//    List<KeyValuePair<long, long>> expectedCommittedRecordsAfterRebalance = new List<KeyValuePair<long, long>>();
 //    expectedCommittedRecordsAfterRebalance.addAll(uncommittedDataBeforeGC);
 //    expectedCommittedRecordsAfterRebalance.addAll(dataToTriggerFirstRebalance);
 
@@ -485,7 +485,7 @@
 //        + dataToTriggerFirstRebalance.Count + dataAfterSecondRebalance.Count,
 //        CONSUMER_GROUP_ID + "_ALL");
 
-//    List<KeyValuePair<long, long>> allExpectedCommittedRecordsAfterRecovery = new ArrayList<>();
+//    List<KeyValuePair<long, long>> allExpectedCommittedRecordsAfterRecovery = new List<KeyValuePair<long, long>>();
 //    allExpectedCommittedRecordsAfterRecovery.addAll(committedDataBeforeGC);
 //    allExpectedCommittedRecordsAfterRecovery.addAll(uncommittedDataBeforeGC);
 //    allExpectedCommittedRecordsAfterRecovery.addAll(dataToTriggerFirstRebalance);
@@ -498,7 +498,7 @@
 //                                               long toExclusive,
 //                                               params long[] keys)
 //{
-//    List<KeyValuePair<long, long>> data = new ArrayList<>();
+//    List<KeyValuePair<long, long>> data = new List<KeyValuePair<long, long>>();
 
 //    foreach (long k in keys)
 //    {
@@ -515,9 +515,9 @@
 //                                     string appDir,
 //                                     int numberOfStreamsThreads)
 //{
-//    commitRequested = new AtomicInteger(0);
-//    errorInjected = new AtomicBoolean(false);
-//    gcInjected = new AtomicBoolean(false);
+//    commitRequested = new int(0);
+//    errorInjected = new bool(false);
+//    gcInjected = new bool(false);
 //    StreamsBuilder builder = new StreamsBuilder();
 
 //    string[] storeNames = null;
@@ -528,10 +528,10 @@
 //            .KeyValueStoreBuilder(Stores.PersistentKeyValueStore(storeName), Serdes.Long(), Serdes.Long())
 //            .withCachingEnabled();
 
-//        builder.addStateStore(storeBuilder);
+//        builder.AddStateStore(storeBuilder);
 //    }
 
-//    IKStream<long, long> input = builder.Stream(MULTI_PARTITION_INPUT_TOPIC);
+//    IIIKStream<K, V> input = builder.Stream(MULTI_PARTITION_INPUT_TOPIC);
 //    input.transform(new TransformerSupplier<long, long, KeyValuePair<long, long>>()
 //    {
 
@@ -544,7 +544,7 @@
 //        IKeyValueStore<long, long> state = null;
 
 
-//        public void Init(ProcessorContext context)
+//        public void Init(IProcessorContext context)
 //        {
 //            this.context = context;
 
@@ -564,7 +564,7 @@
 //                {
 //                    try
 //                    {
-//                        Thread.sleep(100);
+//                        Thread.Sleep(100);
 //                    }
 //                    catch (InterruptedException e)
 //                    {
@@ -575,7 +575,7 @@
 
 //            if ((value + 1) % 10 == 0)
 //            {
-//                context.commit();
+//                context.Commit();
 //                commitRequested.incrementAndGet();
 //            }
 
@@ -656,7 +656,7 @@
 
 //private void WriteInputData(List<KeyValuePair<long, long>> records)
 //{// throws Exception
-//    IntegrationTestUtils.produceKeyValuesSynchronously(
+//    IntegrationTestUtils.ProduceKeyValuesSynchronously(
 //        MULTI_PARTITION_INPUT_TOPIC,
 //        records,
 //        TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
@@ -693,23 +693,23 @@
 
 //private List<KeyValuePair<long, long>> ComputeExpectedResult(List<KeyValuePair<long, long>> input)
 //{
-//    List<KeyValuePair<long, long>> expectedResult = new ArrayList<>(input.Count);
+//    List<KeyValuePair<long, long>> expectedResult = new List<>(input.Count);
 
 //    HashDictionary<long, long> sums = new HashMap<>();
 
 //    foreach (KeyValuePair<long, long> record in input)
 //    {
-//        long sum = sums.Get(record.key);
+//        long sum = sums.Get(record.Key);
 //        if (sum == null)
 //        {
-//            sum = record.value;
+//            sum = record.Value;
 //        }
 //        else
 //        {
-//            sum += record.value;
+//            sum += record.Value;
 //        }
-//        sums.Put(record.key, sum);
-//        expectedResult.Add(KeyValuePair.Create(record.key, sum));
+//        sums.Put(record.Key, sum);
+//        expectedResult.Add(KeyValuePair.Create(record.Key, sum));
 //    }
 
 //    return expectedResult;
@@ -723,17 +723,17 @@
 
 //    foreach (KeyValuePair<long, long> record in input)
 //    {
-//        long max = maxPerKey.Get(record.key);
-//        if (max == null || record.value > max)
+//        long max = maxPerKey.Get(record.Key);
+//        if (max == null || record.Value > max)
 //        {
-//            maxPerKey.Put(record.key, record.value);
+//            maxPerKey.Put(record.Key, record.Value);
 //        }
 
 //    }
 
-//    foreach (Map.Entry<long, long> max in maxPerKey.entrySet())
+//    foreach (Map.Entry<long, long> max in maxPerKey)
 //    {
-//        expectedResult.Add(KeyValuePair.Create(max.getKey(), max.getValue()));
+//        expectedResult.Add(KeyValuePair.Create(max.Key, max.Value));
 //    }
 
 //    return expectedResult;
@@ -749,14 +749,14 @@
 //    {
 //        try
 //        {
-//            store = streams.store(storeName, QueryableStoreTypes.KeyValueStore());
+//            store = streams.store(storeName, QueryableStoreTypes.KeyValueStore);
 //            break;
 //        }
 //        catch (InvalidStateStoreException okJustRetry)
 //        {
 //            try
 //            {
-//                Thread.sleep(5000L);
+//                Thread.Sleep(5000L);
 //            }
 //            catch (Exception ignore) { }
 //        }
@@ -770,7 +770,7 @@
 //        Assert.True(expectedStoreContent.remove(it.MoveNext()));
 //    }
 
-//    Assert.True(expectedStoreContent.isEmpty());
+//    Assert.True(expectedStoreContent.IsEmpty());
 //}
 
 //}

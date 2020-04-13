@@ -173,7 +173,7 @@ namespace Kafka.Streams.Tests.Mocks
         //         uncommittedOffsets = new HashMap<>();
         //         this.uncommittedConsumerGroupOffsets.Put(consumerGroupId, uncommittedOffsets);
         //     }
-        //     uncommittedOffsets.putAll(offsets);
+        //     uncommittedOffsets.PutAll(offsets);
         //     this.sentOffsets = true;
         //     }
         // 
@@ -187,7 +187,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     Flush();
         // 
         //     this.sent.addAll(this.uncommittedSends);
-        //     if (!this.uncommittedConsumerGroupOffsets.isEmpty())
+        //     if (!this.uncommittedConsumerGroupOffsets.IsEmpty())
         //         this.consumerGroupOffsets.Add(this.uncommittedConsumerGroupOffsets);
         // 
         //     this.uncommittedSends.Clear();
@@ -267,7 +267,7 @@ namespace Kafka.Streams.Tests.Mocks
         //         throw new KafkaException("MockProducer is fenced.", new ProducerFencedException("Fenced"));
         //     }
         //     int partition = 0;
-        //     if (!this.cluster.partitionsForTopic(record.Topic).isEmpty())
+        //     if (!this.cluster.partitionsForTopic(record.Topic).IsEmpty())
         //         partition = partition(record, this.cluster);
         //     TopicPartition topicPartition = new TopicPartition(record.Topic, partition);
         //     ProduceRequestResult result = new ProduceRequestResult(topicPartition);
@@ -312,7 +312,7 @@ namespace Kafka.Streams.Tests.Mocks
         // public void Flush()
         // {
         //     verifyProducerState();
-        //     while (!this.completions.isEmpty())
+        //     while (!this.completions.IsEmpty())
         //         completeNext();
         // }
         // 
@@ -391,7 +391,7 @@ namespace Kafka.Streams.Tests.Mocks
         // 
         // public bool flushed()
         // {
-        //     return this.completions.isEmpty();
+        //     return this.completions.IsEmpty();
         // }
         // 
         // public bool sentOffsets()
@@ -408,14 +408,14 @@ namespace Kafka.Streams.Tests.Mocks
         //  * Get the list of sent records since the last call to {@link #clear()}
         //  */
         // public List<Message<K, V>> history() {
-        //     return new ArrayList<>(this.sent);
+        //     return new List<>(this.sent);
         // }
         // 
         // /**
         //  * Get the list of committed consumer group offsets since the last call to {@link #clear()}
         //  */
         // public List<Dictionary<string, Map<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsetsHistory() {
-        //     return new ArrayList<>(this.consumerGroupOffsets);
+        //     return new List<>(this.consumerGroupOffsets);
         // }
         // /**
         //  *

@@ -1,3 +1,4 @@
+using System;
 using Kafka.Streams.KStream;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.ReadOnly;
@@ -30,7 +31,7 @@ namespace Kafka.Streams.State.Sessions
          * @return iterator of sessions with the matching key and aggregated values
          * @throws ArgumentNullException If null is used for key.
          */
-        IKeyValueIterator<IWindowed<K>, AGG> FindSessions(K key, long earliestSessionEndTime, long latestSessionStartTime);
+        IKeyValueIterator<IWindowed<K>, AGG> FindSessions(K key, DateTime earliestSessionEndTime, DateTime latestSessionStartTime);
 
         /**
          * Fetch any sessions in the given range of keys and the sessions end is &ge; earliestSessionEndTime and the sessions
@@ -45,7 +46,7 @@ namespace Kafka.Streams.State.Sessions
          * @return iterator of sessions with the matching keys and aggregated values
          * @throws ArgumentNullException If null is used for any key.
          */
-        IKeyValueIterator<IWindowed<K>, AGG> FindSessions(K keyFrom, K keyTo, long earliestSessionEndTime, long latestSessionStartTime);
+        IKeyValueIterator<IWindowed<K>, AGG> FindSessions(K keyFrom, K keyTo, DateTime earliestSessionEndTime, DateTime latestSessionStartTime);
 
         /**
          * Get the value of key from a single session.
@@ -56,7 +57,7 @@ namespace Kafka.Streams.State.Sessions
          * @return The value or {@code null} if no session associated with the key can be found
          * @throws ArgumentNullException If {@code null} is used for any key.
          */
-        AGG FetchSession(K key, long startTime, long endTime);
+        AGG FetchSession(K key, DateTime startTime, DateTime endTime);
 
         /**
          * Remove the session aggregated with provided {@link Windowed} key from the store

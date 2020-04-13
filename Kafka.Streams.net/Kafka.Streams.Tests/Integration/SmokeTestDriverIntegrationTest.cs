@@ -29,7 +29,7 @@
 //                try
 //                {
 //                    Dictionary<string, HashSet<int>> allData =
-//                        generate(bootstrapServers, numKeys, maxRecordsPerKey, TimeSpan.ofSeconds(20));
+//                        generate(bootstrapServers, numKeys, maxRecordsPerKey, TimeSpan.FromSeconds(20));
 //                    result = verify(bootstrapServers, allData, maxRecordsPerKey);
 
 //                }
@@ -55,7 +55,7 @@
 //        public void ShouldWorkWithRebalance()
 //        {// throws InterruptedException
 //            int numClientsCreated = 0;
-//            ArrayList<SmokeTestClient> clients = new ArrayList<>();
+//            ArrayList<SmokeTestClient> clients = new List<SmokeTestClient>();
 
 //            IntegrationTestUtils.cleanStateBeforeTest(CLUSTER, SmokeTestDriver.topics());
 
@@ -72,7 +72,7 @@
 //            while (driver.isAlive())
 //            {
 //                // take a nap
-//                Thread.sleep(1000);
+//                Thread.Sleep(1000);
 
 //                // add a new client
 //                SmokeTestClient smokeTestClient = new SmokeTestClient("streams-" + numClientsCreated++);
@@ -81,7 +81,7 @@
 
 //                while (!clients.Get(clients.Count - 1).started())
 //                {
-//                    Thread.sleep(100);
+//                    Thread.Sleep(100);
 //                }
 
 //                // let the oldest client die of "natural causes"
@@ -93,7 +93,7 @@
 //            try
 //            {
 //                // wait for verification to finish
-//                driver.join();
+//                driver.Join();
 
 
 //            }

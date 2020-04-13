@@ -58,7 +58,7 @@
 //        [Fact]
 //        public void ShouldGetThreadLevelSensor()
 //        {
-//            Metrics metrics = mock(Metrics);
+//            Metrics metrics = Mock.Of<Metrics);
 //            string threadName = "thread1";
 //            string sensorName = "sensor1";
 //            string expectedFullSensorName =
@@ -243,7 +243,7 @@
 //        //
 //        //    for (int i = 0; i < 10; i++)
 //        //    {
-//        //        Assert.Equal(i, Math.Round(totalMetric.measurable().measure(config, time.NowAsEpochMilliseconds;)));
+//        //        Assert.Equal(i, Math.Round(totalMetric.measurable().measure(config, time.NowAsEpochMilliseconds)));
 //        //        sensor.record(latency, time.NowAsEpochMilliseconds);
 //        //    }
 //        //

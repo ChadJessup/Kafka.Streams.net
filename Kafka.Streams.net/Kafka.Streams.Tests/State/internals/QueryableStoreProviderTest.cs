@@ -50,13 +50,13 @@
 //            globalStateStores = new HashMap<>();
 //            storeProvider =
 //                new QueryableStoreProvider(
-//                        Collections.< StateStoreProvider > singletonList(theStoreProvider), new GlobalStateStoreProvider(globalStateStores));
+//                        Collections.< StateStoreProvider > Collections.singletonList(theStoreProvider), new GlobalStateStoreProvider(globalStateStores));
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowExceptionIfKVStoreDoesntExist()
 //        {
-//            storeProvider.getStore("not-a-store", QueryableStoreTypes.KeyValueStore());
+//            storeProvider.getStore("not-a-store", QueryableStoreTypes.KeyValueStore);
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
@@ -68,7 +68,7 @@
 //        [Fact]
 //        public void ShouldReturnKVStoreWhenItExists()
 //        {
-//            Assert.NotNull(storeProvider.getStore(KeyValueStore, QueryableStoreTypes.KeyValueStore()));
+//            Assert.NotNull(storeProvider.getStore(KeyValueStore, QueryableStoreTypes.KeyValueStore));
 //        }
 
 //        [Fact]
@@ -80,7 +80,7 @@
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowExceptionWhenLookingForWindowStoreWithDifferentType()
 //        {
-//            storeProvider.getStore(windowStore, QueryableStoreTypes.KeyValueStore());
+//            storeProvider.getStore(windowStore, QueryableStoreTypes.KeyValueStore);
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
@@ -93,7 +93,7 @@
 //        public void ShouldFindGlobalStores()
 //        {
 //            globalStateStores.Put("global", new NoOpReadOnlyStore<>());
-//            Assert.NotNull(storeProvider.getStore("global", QueryableStoreTypes.KeyValueStore()));
+//            Assert.NotNull(storeProvider.getStore("global", QueryableStoreTypes.KeyValueStore));
 //        }
 
 

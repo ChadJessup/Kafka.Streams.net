@@ -14,7 +14,7 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            if (args.Length < 1)
 //            {
-//                System.Console.Error.println("StreamsUpgradeTest requires one argument (properties-file) but no provided: ");
+//                System.Console.Error.WriteLine("StreamsUpgradeTest requires one argument (properties-file) but no provided: ");
 //            }
 //            string propFileName = args.Length > 0 ? args[0] : null;
 
@@ -25,15 +25,15 @@ namespace Kafka.Streams.Tests.Tests
 
 //            StreamsBuilder builder = new StreamsBuilder();
 //            KStream dataStream = builder.Stream("data");
-//            dataStream.process(SmokeTestUtil.printProcessorSupplier("data"));
+//            dataStream.Process(SmokeTestUtil.printProcessorSupplier("data"));
 //            dataStream.To("echo");
 
 //            StreamsConfig config = new StreamsConfig();
-//            config.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsUpgradeTest");
+//            config.Set(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsUpgradeTest");
 //            config.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
 
 //            KafkaClientSupplier kafkaClientSupplier;
-//            if (streamsProperties.containsKey("test.future.metadata"))
+//            if (streamsProperties.ContainsKey("test.future.metadata"))
 //            {
 //                streamsProperties.remove("test.future.metadata");
 //                kafkaClientSupplier = new FutureKafkaClientSupplier();
@@ -42,7 +42,7 @@ namespace Kafka.Streams.Tests.Tests
 //            {
 //                kafkaClientSupplier = new DefaultKafkaClientSupplier();
 //            }
-//            config.putAll(streamsProperties);
+//            config.PutAll(streamsProperties);
 
 //            KafkaStreams streams = new KafkaStreams(builder.Build(), config, kafkaClientSupplier);
 //            streams.start();
@@ -62,7 +62,7 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 
 
-//            public Consumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
+//            public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
 //            {
 //                config.Put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, FutureStreamsPartitionAssignor.getName());
 //            return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
@@ -97,7 +97,7 @@ namespace Kafka.Streams.Tests.Tests
 //                standbyTasks,
 //                userEndPoint());
 
-//            taskManager.updateSubscriptionsFromMetadata(topics);
+//            taskManager.UpdateSubscriptionsFromMetadata(topics);
 
 //            return data.encode();
 //        }
@@ -138,7 +138,7 @@ namespace Kafka.Streams.Tests.Tests
 //            AssignmentInfo info = AssignmentInfo.decode(
 //                assignment.userData().putInt(0, AssignmentInfo.LATEST_SUPPORTED_VERSION));
 
-//            List<TopicPartition> partitions = new ArrayList<>(assignment.partitions());
+//            List<TopicPartition> partitions = new List<>(assignment.partitions());
 //            partitions.sort(PARTITION_COMPARATOR);
 
 //            // version 1 field
@@ -153,8 +153,8 @@ namespace Kafka.Streams.Tests.Tests
 //            TaskManager taskManager = taskManger();
 //            taskManager.setClusterMetadata(Cluster.empty().withPartitions(topicToPartitionInfo));
 //            taskManager.setPartitionsByHostState(partitionsByHost);
-//            taskManager.setAssignmentMetadata(activeTasks, info.standbyTasks());
-//            taskManager.updateSubscriptionsFromAssignment(partitions);
+//            taskManager.SetAssignmentMetadata(activeTasks, info.standbyTasks());
+//            taskManager.UpdateSubscriptionsFromAssignment(partitions);
 //        }
 
 
@@ -169,7 +169,7 @@ namespace Kafka.Streams.Tests.Tests
 //                SubscriptionInfo info = SubscriptionInfo.decode(subscription.userData());
 //                if (info.version() < SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1)
 //                {
-//                    assignment = base.assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
+//                    assignment = base.Assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
 //                    break;
 //                }
 //            }
@@ -182,16 +182,16 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //            else
 //            {
-//                foreach (Map.Entry<string, Subscription> entry in subscriptions.entrySet())
+//                foreach (Map.Entry<string, Subscription> entry in subscriptions)
 //                {
-//                    Subscription subscription = entry.getValue();
+//                    Subscription subscription = entry.Value;
 
 //                    SubscriptionInfo info = SubscriptionInfo.decode(subscription.userData()
 //                        .putInt(0, SubscriptionInfo.LATEST_SUPPORTED_VERSION)
 //                        .putInt(4, SubscriptionInfo.LATEST_SUPPORTED_VERSION));
 
 //                    downgradedSubscriptions.Put(
-//                        entry.getKey(),
+//                        entry.Key,
 //                        new Subscription(
 //                            subscription.topics(),
 //                            new SubscriptionInfo(
@@ -201,17 +201,17 @@ namespace Kafka.Streams.Tests.Tests
 //                                info.userEndPoint())
 //                                .encode()));
 //                }
-//                assignment = base.assign(metadata, new GroupSubscription(downgradedSubscriptions)).groupAssignment();
+//                assignment = base.Assign(metadata, new GroupSubscription(downgradedSubscriptions)).groupAssignment();
 //                bumpUsedVersion = true;
 //                bumpSupportedVersion = true;
 //            }
 
 //            Dictionary<string, Assignment> newAssignment = new HashMap<>();
-//            foreach (Map.Entry<string, Assignment> entry in assignment.entrySet())
+//            foreach (Map.Entry<string, Assignment> entry in assignment)
 //            {
-//                Assignment singleAssignment = entry.getValue();
+//                Assignment singleAssignment = entry.Value;
 //                newAssignment.Put(
-//                    entry.getKey(),
+//                    entry.Key,
 //                    new Assignment(
 //                        singleAssignment.partitions(),
 //                        new FutureAssignmentInfo(

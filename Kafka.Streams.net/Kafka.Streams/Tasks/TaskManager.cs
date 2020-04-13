@@ -477,7 +477,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public int Process(long now)
+        public int Process(DateTime now)
         {
             return this.active.Process(now);
         }

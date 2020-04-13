@@ -1,3 +1,4 @@
+using System;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
@@ -27,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             this.context = context;
             this.sendOldValues = sendOldValues;
-            this.cachingEnabled = ((WrappedStateStore<K, IValueAndTimestamp<V>>)store).SetFlushListener(//
+            this.cachingEnabled = ((WrappedStateStore<K, IValueAndTimestamp<V>>)store).SetFlushListener(
                 (key, oldV, newV, ts) => flushListener.Apply(key, oldV, newV, ts), sendOldValues);
         }
 
@@ -48,7 +49,7 @@ namespace Kafka.Streams.KStream.Internals
             K key,
             V newValue,
             V oldValue,
-            long timestamp)
+            DateTime timestamp)
         {
             if (!this.cachingEnabled)
             {

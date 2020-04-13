@@ -47,7 +47,7 @@
 //    {
 
 //        private TaskId taskId = new TaskId(0, 0);
-//        private Dictionary<object, ValueAndTimestamp<object>> sent = new HashMap<>();
+//        private Dictionary<object, IValueAndTimestamp<object>> sent = new HashMap<>();
 //        private NoOpRecordCollector collector = new NoOpRecordCollector()
 //        {
 

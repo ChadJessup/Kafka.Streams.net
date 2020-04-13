@@ -59,7 +59,7 @@
 //    private IKeyValueStore<Bytes, LRUCacheEntry> store = new GenericInMemoryKeyValueStore<>("my-store");
 //    private KeyValuePair<Bytes, LRUCacheEntry> firstEntry = KeyValuePair.Create(Bytes.Wrap("a".getBytes()),
 //                                                                            new LRUCacheEntry("1".getBytes()));
-//    private List<KeyValuePair<Bytes, LRUCacheEntry>> entries = asList(
+//    private List<KeyValuePair<Bytes, LRUCacheEntry>> entries = Arrays.asList(
 //            firstEntry,
 //            KeyValuePair.Create(Bytes.Wrap("b".getBytes()),
 //                          new LRUCacheEntry("2".getBytes())),
@@ -72,7 +72,7 @@
 
 //    public void Before()
 //    {
-//        store.putAll(entries);
+//        store.PutAll(entries);
 //        HasNextCondition allCondition = new HasNextCondition()
 //        {
 
@@ -92,7 +92,7 @@
 
 //            public bool HasNext(IKeyValueIterator<Bytes, ?> iterator)
 //    {
-//        return iterator.HasNext() && iterator.PeekNextKey().equals(firstEntry.key);
+//        return iterator.HasNext() && iterator.PeekNextKey().Equals(firstEntry.Key);
 //    }
 //        };
 //        firstEntryIterator = new FilteredCacheIterator(
@@ -115,7 +115,7 @@
 //        {
 //            Bytes nextKey = allIterator.PeekNextKey();
 //            KeyValuePair<Bytes, LRUCacheEntry> next = allIterator.MoveNext();
-//            Assert.Equal(next.key, (nextKey));
+//            Assert.Equal(next.Key, (nextKey));
 //        }
 //    }
 

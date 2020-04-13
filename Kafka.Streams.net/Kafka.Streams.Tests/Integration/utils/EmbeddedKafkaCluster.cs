@@ -92,12 +92,12 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //        brokerConfig.Put(KafkaConfig$.MODULE$.ZkConnectProp(), zKConnectString());
 //        brokerConfig.Put(KafkaConfig$.MODULE$.PortProp(), DEFAULT_BROKER_PORT);
-//        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.DeleteTopicEnableProp(), true);
-//        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.LogCleanerDedupeBufferSizeProp(), 2 * 1024 * 1024L);
-//        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.GroupMinSessionTimeoutMsProp(), 0);
-//        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.GroupInitialRebalanceDelayMsProp(), 0);
-//        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.OffsetsTopicReplicationFactorProp(), (short) 1);
-//        putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
+//        PutIfAbsent(brokerConfig, KafkaConfig$.MODULE$.DeleteTopicEnableProp(), true);
+//        PutIfAbsent(brokerConfig, KafkaConfig$.MODULE$.LogCleanerDedupeBufferSizeProp(), 2 * 1024 * 1024L);
+//        PutIfAbsent(brokerConfig, KafkaConfig$.MODULE$.GroupMinSessionTimeoutMsProp(), 0);
+//        PutIfAbsent(brokerConfig, KafkaConfig$.MODULE$.GroupInitialRebalanceDelayMsProp(), 0);
+//        PutIfAbsent(brokerConfig, KafkaConfig$.MODULE$.OffsetsTopicReplicationFactorProp(), (short) 1);
+//        PutIfAbsent(brokerConfig, KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
 
 //        for (int i = 0; i < brokers.Length; i++) {
 //            brokerConfig.Put(KafkaConfig$.MODULE$.BrokerIdProp(), i);
@@ -109,8 +109,8 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        }
 //    }
 
-//    private void putIfAbsent(StreamsConfig props, string propertyKey, object propertyValue) {
-//        if (!props.containsKey(propertyKey)) {
+//    private void PutIfAbsent(StreamsConfig props, string propertyKey, object propertyValue) {
+//        if (!props.ContainsKey(propertyKey)) {
 //            brokerConfig.Put(propertyKey, propertyValue);
 //        }
 //    }
@@ -122,7 +122,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        foreach (KafkaEmbedded broker in brokers) {
 //            broker.stop();
 //        }
-//        zookeeper.shutdown();
+//        zookeeper.Shutdown();
 //    }
 
 //    /**
@@ -198,7 +198,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                            int replication,
 //                            Dictionary<string, string> topicConfig) {// throws InterruptedException
 //        brokers[0].createTopic(topic, partitions, replication, topicConfig);
-//        List<TopicPartition> topicPartitions = new ArrayList<>();
+//        List<TopicPartition> topicPartitions = new List<TopicPartition>();
 //        for (int partition = 0; partition < partitions; partition++) {
 //            topicPartitions.Add(new TopicPartition(topic, partition));
 //        }
@@ -330,12 +330,12 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //        public bool conditionMet() {
 //            HashSet<string> allTopics = JavaConverters.setAsJavaSetConverter(brokers[0].kafkaServer().zkClient().getAllTopicsInCluster()).asJava();
-//            return allTopics.equals(remainingTopics);
+//            return allTopics.Equals(remainingTopics);
 //        }
 //    }
 
 //    private List<KafkaServer> brokers() {
-//        List<KafkaServer> servers = new ArrayList<>();
+//        List<KafkaServer> servers = new List<KafkaServer>();
 //        foreach (KafkaEmbedded broker in brokers) {
 //            servers.Add(broker.kafkaServer());
 //        }

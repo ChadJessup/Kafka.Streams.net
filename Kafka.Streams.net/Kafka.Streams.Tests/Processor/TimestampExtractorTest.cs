@@ -1,32 +1,31 @@
-//using Confluent.Kafka;
-//using Kafka.Streams.Interfaces;
-//using Xunit;
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+using Xunit;
 
-//namespace Kafka.Streams.Tests.Processor
-//{
-//    public class TimestampExtractorTest
-//    {
+namespace Kafka.Streams.Tests.Processor
+{
+    public class TimestampExtractorTest
+    {
+        protected void TestExtractMetadataTimestamp(ITimestampExtractor extractor)
+        {
+            long metadataTimestamp = 42;
 
-//        void TestExtractMetadataTimestamp(ITimestampExtractor extractor)
-//        {
-//            long metadataTimestamp = 42;
+            long timestamp = extractor.Extract(
+                new ConsumeResult<long, long>
+                {
+                    Topic = "anyTopic",
+                    Offset = 0,
+                    Partition = 0,
+                    Message = new Message<long, long>
+                    {
+                        Timestamp = new Timestamp(metadataTimestamp, TimestampType.NotAvailable),
+                        Key = 0,
+                        Value = 0,
+                    }
+                },
+                0);
 
-//            long timestamp = extractor.Extract(
-//                new ConsumeResult<long, long>(
-//                    "anyTopic",
-//                    0,
-//                    0,
-//                    metadataTimestamp,
-//                    TimestampType.NotAvailable,
-//                    0,
-//                    0,
-//                    0,
-//                    null,
-//                    null),
-//                0
-//            );
-
-//            Assert.Equal(timestamp, metadataTimestamp);
-//        }
-//    }
-//}
+            Assert.Equal(timestamp, metadataTimestamp);
+        }
+    }
+}

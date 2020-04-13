@@ -111,7 +111,7 @@ namespace Kafka.Streams.State.Internals
          * @param @namespace
          * @param listener
          */
-        public void AddDirtyEntryFlushListener(string @namespace, IDirtyEntryFlushListener listener)
+        public void AddDirtyEntryFlushListener(string @namespace, Action<IEnumerable<DirtyEntry>> listener)
         {
             NamedCache cache = this.GetOrCreateCache(@namespace);
             cache.SetListener(listener);

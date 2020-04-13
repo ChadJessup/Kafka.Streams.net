@@ -29,8 +29,8 @@ namespace WordCountProcessorDemo
                 ApplicationId = "streams-wordcount",
                 GroupId = "streams-wordcount",
                 BootstrapServers = "localhost:9092",
-                DefaultKeySerde = Serdes.String().GetType(),
-                DefaultValueSerde = Serdes.String().GetType(),
+                DefaultKeySerdeType = Serdes.String().GetType(),
+                DefaultValueSerdeType = Serdes.String().GetType(),
                 NumberOfStreamThreads = 1,
                 CacheMaxBytesBuffering = 10485760L,
                 // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data
@@ -303,7 +303,7 @@ namespace WordCountProcessorDemo
             //// Construct a `KStream` from the input topic "streams-plaintext-input", where message values
             //// represent lines of text (for the sake of this example, we ignore whatever may be stored
             //// in the message keys).
-            //IKStream<string, string> textLines = builder.stream(
+            //IIIKStream<K, V> textLines = builder.stream(
             //      "streams-plaintext-input",
             //      Consumed.With(stringSerde, stringSerde)
             //    );
@@ -313,7 +313,7 @@ namespace WordCountProcessorDemo
             //    .flatMapValues(value=>Arrays.asList(value.toLowerCase().Split("\\W+")))
 
             //    // Group the text words as message keys
-            //    .groupBy((key, value)=>value)
+            //    .GroupBy((key, value)=>value)
 
             //    // Count the occurrences of each word (message key).
             //    .count();

@@ -6,5 +6,10 @@
             => dateTime.Ticks >= other.Ticks
                 ? dateTime
                 : other;
+
+        public static DateTime GetOldest(this DateTime dateTime, DateTime other)
+            => dateTime <= other
+                ? dateTime
+                : other;
     }
 }

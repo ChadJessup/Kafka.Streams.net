@@ -1,31 +1,33 @@
 ﻿namespace Kafka.Streams.Interfaces
 {
     /**
- * The {@code KeyValueMapper} interface for mapping a {@link KeyValuePair key-value pair} to a new value of arbitrary type.
- * For example, it can be used to
- * <ul>
- * <li>map from an input {@link KeyValuePair} pair to an output {@link KeyValuePair} pair with different key and/or value type
- *     (for this case output type {@code VR == }{@link KeyValuePair KeyValuePair&lt;NewKeyType,NewValueType&gt;})</li>
- * <li>map from an input record to a new key (with arbitrary key type as specified by {@code VR})</li>
- * </ul>
- * This is a stateless record-by-record operation, i.e, {@link #apply(object, object)} is invoked individually for each
- * record of a stream (cf. {@link Transformer} for stateful record transformation).
- * {@code KeyValueMapper} is a generalization of {@link ValueMapper}.
- *
- * @param  key type
- * @param  value type
- * @param mapped value type
- * @see ValueMapper
- * @see Transformer
- * @see KStream#map(KeyValueMapper)
- * @see KStream#flatMap(KeyValueMapper)
- * @see KStream#selectKey(KeyValueMapper)
- * @see KStream#groupBy(KeyValueMapper)
- * @see KStream#groupBy(KeyValueMapper, Grouped)
- * @see KTable#groupBy(KeyValueMapper)
- * @see KTable#groupBy(KeyValueMapper, Grouped)
- * @see KTable#toStream(KeyValueMapper)
- */
+    * The {@code KeyValueMapper} interface for mapping a {@link KeyValuePair key-value pair} to a new value of arbitrary type.
+    * For example, it can be used to
+    * <ul>
+    * <li>map from an input {@link KeyValuePair} pair to an output {@link KeyValuePair} pair with different key and/or value type
+    *     (for this case output type {@code VR == }{@link KeyValuePair KeyValuePair&lt;NewKeyType,NewValueType&gt;})</li>
+    * <li>map from an input record to a new key (with arbitrary key type as specified by {@code VR})</li>
+    * </ul>
+    * This is a stateless record-by-record operation, i.e, {@link #apply(object, object)} is invoked individually for each
+    * record of a stream (cf. {@link Transformer} for stateful record transformation).
+    * {@code KeyValueMapper} is a generalization of {@link ValueMapper}.
+    *
+    * @param  key type
+    * @param  value type
+    * @param mapped value type
+    * @see ValueMapper
+    * @see Transformer
+    * @see KStream#map(KeyValueMapper)
+    * @see KStream#flatMap(KeyValueMapper)
+    * @see KStream#selectKey(KeyValueMapper)
+    * @see KStream#groupBy(KeyValueMapper)
+    * @see KStream#groupBy(KeyValueMapper, Grouped)
+    * @see KTable#groupBy(KeyValueMapper)
+    * @see KTable#groupBy(KeyValueMapper, Grouped)
+    * @see KTable#toStream(KeyValueMapper)
+    */
+    public delegate TMappedValue KeyValueMapper<TKey, TValue, TMappedValue>();
+
     public interface IKeyValueMapper<K, V, VR>
     {
         /**

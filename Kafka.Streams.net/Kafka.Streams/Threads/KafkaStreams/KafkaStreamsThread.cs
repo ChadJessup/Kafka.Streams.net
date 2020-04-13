@@ -52,7 +52,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
      * props.Add(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.string().getClass());
      *
      * StreamsBuilder builder = new StreamsBuilder();
-     * builder.<string, string>stream("my-input-topic").mapValues(value => string.valueOf(value.Length())).to("my-output-topic");
+     * builder.<string, string>stream("my-input-topic").MapValues(value => string.valueOf(value.Length())).to("my-output-topic");
      *
      * KafkaStreams streams = new KafkaStreams(builder.build(), props);
      * streams.start();

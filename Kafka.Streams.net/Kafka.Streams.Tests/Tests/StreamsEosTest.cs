@@ -14,7 +14,7 @@
 //        {// throws IOException
 //            if (args.Length < 2)
 //            {
-//                System.Console.Error.println("StreamsEosTest are expecting two parameters: propFile, command; but only see " + args.Length + " parameter");
+//                System.Console.Error.WriteLine("StreamsEosTest are expecting two parameters: propFile, command; but only see " + args.Length + " parameter");
 //                System.exit(1);
 //            }
 
@@ -26,7 +26,7 @@
 
 //            if (kafka == null)
 //            {
-//                System.Console.Error.println("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//                System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 //                System.exit(1);
 //            }
 

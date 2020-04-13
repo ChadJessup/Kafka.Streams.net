@@ -15,7 +15,7 @@
 
 //        public void SetUp()
 //        {
-//            consumer.assign(Collections.singletonList(topicPartition));
+//            consumer.Assign(Collections.singletonList(topicPartition));
 
 //            consumer.AddRecord(new ConsumeResult<>(TOPIC, 0, 0L, System.Array.Empty<byte>(), System.Array.Empty<byte>()));
 //            consumer.AddRecord(new ConsumeResult<>(TOPIC, 0, 1L, System.Array.Empty<byte>(), System.Array.Empty<byte>()));
@@ -33,12 +33,12 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 0L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 2L);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(3, records.count());
+//            Assert.Equal(3, records.Count());
 //        }
 
 //        [Fact]
@@ -50,12 +50,12 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 3L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 2L);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(2, records.count());
+//            Assert.Equal(2, records.Count());
 //        }
 
 //        [Fact]
@@ -67,12 +67,12 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 0L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.resetOffsetsTo(consumer, inputTopicPartitions, 4L);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(2, records.count());
+//            Assert.Equal(2, records.Count());
 //        }
 
 //        [Fact]
@@ -84,12 +84,12 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 0L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, 3L);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(2, records.count());
+//            Assert.Equal(2, records.Count());
 //        }
 
 //        [Fact]
@@ -101,12 +101,12 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 0L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, -3L);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(5, records.count());
+//            Assert.Equal(5, records.Count());
 //        }
 
 //        [Fact]
@@ -118,12 +118,12 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 0L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            streamsResetter.shiftOffsetsBy(consumer, inputTopicPartitions, 5L);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(2, records.count());
+//            Assert.Equal(2, records.Count());
 //        }
 
 //        [Fact]
@@ -135,14 +135,14 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 0L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            Dictionary<TopicPartition, long> topicPartitionsAndOffset = new HashMap<>();
 //            topicPartitionsAndOffset.Put(topicPartition, 3L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(2, records.count());
+//            Assert.Equal(2, records.Count());
 //        }
 
 //        [Fact]
@@ -154,14 +154,14 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 3L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            Dictionary<TopicPartition, long> topicPartitionsAndOffset = new HashMap<>();
 //            topicPartitionsAndOffset.Put(topicPartition, 1L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(2, records.count());
+//            Assert.Equal(2, records.Count());
 //        }
 
 //        [Fact]
@@ -173,14 +173,14 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 0L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            Dictionary<TopicPartition, long> topicPartitionsAndOffset = new HashMap<>();
 //            topicPartitionsAndOffset.Put(topicPartition, 5L);
 //            streamsResetter.resetOffsetsFromResetPlan(consumer, inputTopicPartitions, topicPartitionsAndOffset);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(2, records.count());
+//            Assert.Equal(2, records.Count());
 //        }
 
 //        [Fact]
@@ -192,14 +192,14 @@
 
 //            Dictionary<TopicPartition, long> beginningOffsets = new HashMap<>();
 //            beginningOffsets.Put(topicPartition, 0L);
-//            consumer.updateBeginningOffsets(beginningOffsets);
+//            consumer.UpdateBeginningOffsets(beginningOffsets);
 
 //            HashSet<TopicPartition> intermediateTopicPartitions = new HashSet<>();
 //            intermediateTopicPartitions.Add(topicPartition);
 //            streamsResetter.maybeSeekToEnd("g1", consumer, intermediateTopicPartitions);
 
 //            ConsumeResult<byte[], byte[]> records = consumer.poll(TimeSpan.FromMilliseconds(500));
-//            Assert.Equal(2, records.count());
+//            Assert.Equal(2, records.Count());
 //        }
 
 //        [Fact]//  throws InterruptedException, ExecutionException

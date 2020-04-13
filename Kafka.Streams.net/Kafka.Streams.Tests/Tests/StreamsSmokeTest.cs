@@ -16,7 +16,7 @@ namespace Kafka.Streams.Tests.Tests
 //     */
 //    public static void main(string[] args) {// throws InterruptedException, IOException
 //        if (args.Length < 2) {
-//            System.Console.Error.println("StreamsSmokeTest are expecting two parameters: propFile, command; but only see " + args.Length + " parameter");
+//            System.Console.Error.WriteLine("StreamsSmokeTest are expecting two parameters: propFile, command; but only see " + args.Length + " parameter");
 //            System.exit(1);
 //        }
 
@@ -28,7 +28,7 @@ namespace Kafka.Streams.Tests.Tests
 //        string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 
 //        if (kafka == null) {
-//            System.Console.Error.println("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 //            System.exit(1);
 //        }
 
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    // slow down data production to span 30 seconds so that system tests have time to
 //                    // do their bounces, etc.
 //                    Dictionary<string, HashSet<int>> allData =
-//                        generate(kafka, numKeys, maxRecordsPerKey, TimeSpan.ofSeconds(30));
+//                        generate(kafka, numKeys, maxRecordsPerKey, TimeSpan.FromSeconds(30));
 //                    SmokeTestDriver.verify(kafka, allData, maxRecordsPerKey);
 //                }
 //                break;
@@ -58,7 +58,7 @@ namespace Kafka.Streams.Tests.Tests
 //                break;
 //            case "process-eos":
 //                // this starts the stream processing app with EOS
-//                streamsProperties.setProperty(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//                streamsProperties.Set(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
 //                new SmokeTestClient(UUID.randomUUID().ToString()).start(streamsProperties);
 //                break;
 //            case "Close-deadlock-test":

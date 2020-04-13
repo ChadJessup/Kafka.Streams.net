@@ -17,8 +17,8 @@ namespace Kafka.Streams.Tests
 
         public TimeWindowedSerializerTest()
         {
-            this.props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
-            this.props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
+            this.props.Add(StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
+            this.props.Add(StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
 
             var streamsBuilder = TestUtils.GetStreamsBuilder(new StreamsConfig(this.props));
             this.timeWindowedKeySerializer = new TimeWindowedSerializer<string>(streamsBuilder.Context.Services);

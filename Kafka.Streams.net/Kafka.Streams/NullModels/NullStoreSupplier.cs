@@ -12,7 +12,7 @@ namespace Kafka.Streams.NullModels
         ISessionBytesStoreSupplier
     {
         public string Name { get; private set; } = nameof(NullStoreSupplier);
-        public TimeSpan SegmentInterval { get; }
+        public TimeSpan SegmentInterval { get; } = TimeSpan.Zero;
         public TimeSpan WindowSize { get; }
         public bool RetainDuplicates { get; }
         public TimeSpan RetentionPeriod { get; }
@@ -22,7 +22,6 @@ namespace Kafka.Streams.NullModels
             return new NullKeyValueStore();
         }
 
-        public long SegmentIntervalMs() => 0;
         public int Segments() => 0;
         public void SetName(string Name) => this.Name = Name;
 

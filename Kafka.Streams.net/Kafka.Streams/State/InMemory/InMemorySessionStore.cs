@@ -18,11 +18,11 @@ namespace Kafka.Streams.State.Internals
 
         private string metricScope;
         //private Sensor expiredRecordSensor;
-        private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
+        private DateTime observedStreamTime = DateTime.MinValue; // ConsumerRecord.NO_TIMESTAMP;
 
         private TimeSpan retentionPeriod;
 
-        private ConcurrentDictionary<long, ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>>> endTimeMap = new ConcurrentDictionary<long, ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>>>();
+        private ConcurrentDictionary<DateTime, ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>>> endTimeMap = new ConcurrentDictionary<DateTime, ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>>>();
         private HashSet<InMemorySessionStoreIterator> openIterators = new HashSet<InMemorySessionStoreIterator>();
 
         private volatile bool open = false;
@@ -67,10 +67,10 @@ namespace Kafka.Streams.State.Internals
         {
             this.RemoveExpiredSegments();
 
-            long windowEndTimestamp = sessionKey.window.End();
-            this.observedStreamTime = Math.Max(this.observedStreamTime, windowEndTimestamp);
+            var windowEndTimestamp = sessionKey.Window.EndTime;
+            this.observedStreamTime = this.observedStreamTime.GetNewest(windowEndTimestamp);
 
-            if (windowEndTimestamp <= this.observedStreamTime - this.retentionPeriod.TotalMilliseconds)
+            if (windowEndTimestamp <= this.observedStreamTime - this.retentionPeriod)
             {
                 //expiredRecordSensor.record();
                 //LOG.LogDebug("Skipping record for expired segment.");
@@ -93,43 +93,43 @@ namespace Kafka.Streams.State.Internals
 
         public void Remove(IWindowed<Bytes> sessionKey)
         {
-            ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = this.endTimeMap[sessionKey.window.End()];
+            ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>> keyMap = this.endTimeMap[sessionKey.Window.EndTime];
             if (keyMap == null)
             {
                 return;
             }
 
-            ConcurrentDictionary<long, byte[]> startTimeMap = keyMap[sessionKey.Key];
+            ConcurrentDictionary<DateTime, byte[]> startTimeMap = keyMap[sessionKey.Key];
             if (startTimeMap == null)
             {
                 return;
             }
 
-            startTimeMap.Remove(sessionKey.window.Start(), out var _);
+            startTimeMap.Remove(sessionKey.Window.StartTime, out var _);
 
             if (!startTimeMap.Any())
             {
                 keyMap.Remove(sessionKey.Key, out var _);
                 if (!keyMap.Any())
                 {
-                    this.endTimeMap.Remove(sessionKey.window.End(), out var _);
+                    this.endTimeMap.Remove(sessionKey.Window.EndTime, out var _);
                 }
             }
         }
 
-        public byte[]? FetchSession(Bytes key, long startTime, long endTime)
+        public byte[]? FetchSession(Bytes key, DateTime startTime, DateTime endTime)
         {
             this.RemoveExpiredSegments();
 
             key = key ?? throw new ArgumentNullException(nameof(key));
 
             // Only need to search if the record hasn't expired yet
-            if (endTime > this.observedStreamTime - this.retentionPeriod.TotalMilliseconds)
+            if (endTime > this.observedStreamTime - this.retentionPeriod)
             {
-                ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>> keyMap = this.endTimeMap[endTime];
+                ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>> keyMap = this.endTimeMap[endTime];
                 if (keyMap != null)
                 {
-                    ConcurrentDictionary<long, byte[]> startTimeMap = keyMap[key];
+                    ConcurrentDictionary<DateTime, byte[]> startTimeMap = keyMap[key];
                     if (startTimeMap != null)
                     {
                         return startTimeMap[startTime];
@@ -143,8 +143,8 @@ namespace Kafka.Streams.State.Internals
         [Obsolete]
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes key,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
 
@@ -161,8 +161,8 @@ namespace Kafka.Streams.State.Internals
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(
             Bytes keyFrom,
             Bytes keyTo,
-            long earliestSessionEndTime,
-            long latestSessionStartTime)
+            DateTime earliestSessionEndTime,
+            DateTime latestSessionStartTime)
         {
             keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
             keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
@@ -193,7 +193,7 @@ namespace Kafka.Streams.State.Internals
             return this.RegisterNewIterator(
                 key,
                 key,
-                long.MaxValue,
+                DateTime.MaxValue,
                 this.endTimeMap.GetEnumerator());
         }
 
@@ -207,7 +207,7 @@ namespace Kafka.Streams.State.Internals
             return this.RegisterNewIterator(
                 from,
                 to,
-                long.MaxValue,
+                DateTime.MaxValue,
                 this.endTimeMap.GetEnumerator());
         }
 
@@ -244,11 +244,11 @@ namespace Kafka.Streams.State.Internals
 
         private void RemoveExpiredSegments()
         {
-            long minLiveTime = Math.Max(0L, this.observedStreamTime - (long)this.retentionPeriod.TotalMilliseconds + 1);
+            var minLiveTime = this.observedStreamTime - (this.retentionPeriod + TimeSpan.FromMilliseconds(1));
 
             foreach (var it in this.openIterators)
             {
-                minLiveTime = Math.Min(minLiveTime, it.MinTime());
+                minLiveTime = minLiveTime.GetOldest(it.MinTime());
             }
 
             //endTimeMap.headMap(minLiveTime, false).clear();
@@ -257,8 +257,8 @@ namespace Kafka.Streams.State.Internals
         private InMemorySessionStoreIterator RegisterNewIterator(
             Bytes keyFrom,
             Bytes keyTo,
-            long latestSessionStartTime,
-            IEnumerator<KeyValuePair<long, ConcurrentDictionary<Bytes, ConcurrentDictionary<long, byte[]>>>> endTimeIterator)
+            DateTime latestSessionStartTime,
+            IEnumerator<KeyValuePair<DateTime, ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>>>> endTimeIterator)
         {
             InMemorySessionStoreIterator iterator = null;// new InMemorySessionStoreIterator(keyFrom, keyTo, latestSessionStartTime, endTimeIterator, it => openIterators.Remove(it));
             this.openIterators.Add(iterator);

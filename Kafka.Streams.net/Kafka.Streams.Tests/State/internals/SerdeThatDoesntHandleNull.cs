@@ -37,7 +37,7 @@ namespace Kafka.Streams.Tests.State.Internals
         //                {
         //                    throw new NullPointerException();
         //                }
-        //                return base.deserialize(topic, data);
+        //                return base.Deserialize(topic, data);
         //            }
         //        };
     }

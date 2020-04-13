@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals
                  NamedInternal.With(Name).SuffixWithOrElseGet(TEST_SUFFIX, provider, TEST_PREFIX)
              );
 
-            // 1, not 0, indicates that the named call still burned an index number.
+            1, not 0, indicates that the named call still burned an index number.
             Assert.Equal(
                  "prefix-PROCESSOR-1",
                  NamedInternal.With(null).SuffixWithOrElseGet(TEST_SUFFIX, provider, TEST_PREFIX)

@@ -73,7 +73,7 @@
 //    private ChangeLoggingSessionBytesStore store;
 //    private byte[] value1 = { 0 };
 //    private Bytes bytesKey = Bytes.Wrap(value1);
-//    private IWindowed<Bytes> key1 = new IWindowed<>(bytesKey, new SessionWindow(0, 0));
+//    private IWindowed<Bytes> key1 = new Windowed2<>(bytesKey, new SessionWindow(0, 0));
 
 
 //    public void SetUp()
@@ -116,7 +116,7 @@
 //        store.remove(key1);
 
 //        Bytes binaryKey = SessionKeySchema.toBinary(key1);
-//        Assert.True(sent.containsKey(binaryKey));
+//        Assert.True(sent.ContainsKey(binaryKey));
 //        Assert.Null(sent.Get(binaryKey));
 //        EasyMock.verify(inner);
 //    }

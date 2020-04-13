@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Kafka.Common.Extensions;
 using Kafka.Common.Utils;
 using Kafka.Streams.Internals;
 using Kafka.Streams.KStream;
@@ -16,35 +17,38 @@ namespace Kafka.Streams.State.Sessions
         private static int SUFFIX_SIZE = 2 * TIMESTAMP_SIZE;
         private static byte[] MIN_SUFFIX = new byte[SUFFIX_SIZE];
 
-        public Bytes UpperRangeFixedSize(Bytes key, long to)
+        public Bytes UpperRangeFixedSize(Bytes key, DateTime to)
         {
-            IWindowed<Bytes> sessionKey = new Windowed2<Bytes>(key, new SessionWindow(to, long.MaxValue));
+            IWindowed<Bytes> sessionKey = new Windowed<Bytes>(key, new SessionWindow(to, DateTime.MaxValue));
+
             return SessionKeySchema.ToBinary(sessionKey);
         }
 
-        public Bytes LowerRangeFixedSize(Bytes key, long from)
+        public Bytes LowerRangeFixedSize(Bytes key, DateTime from)
         {
-            IWindowed<Bytes> sessionKey = new Windowed2<Bytes>(key, new SessionWindow(0, Math.Max(0, from)));
+            IWindowed<Bytes> sessionKey = new Windowed<Bytes>(key, new SessionWindow(DateTime.MinValue, from.GetNewest(DateTime.MinValue)));
+
             return SessionKeySchema.ToBinary(sessionKey);
         }
 
-        public Bytes UpperRange(Bytes key, long to)
+        public Bytes UpperRange(Bytes key, DateTime to)
         {
             byte[] maxSuffix = new ByteBuffer().Allocate(SUFFIX_SIZE)
                 // the end timestamp can be as large as possible as long as it's larger than start time
                 .PutLong(long.MaxValue)
                 // this is the start timestamp
-                .PutLong(to)
+                .PutLong(to.ToEpochMilliseconds())
                 .Array();
+
             return OrderedBytes.UpperRange(key, maxSuffix);
         }
 
-        public Bytes LowerRange(Bytes key, long from)
+        public Bytes LowerRange(Bytes key, DateTime from)
         {
             return OrderedBytes.LowerRange(key, MIN_SUFFIX);
         }
 
-        public long SegmentTimestamp(Bytes key)
+        public DateTime SegmentTimestamp(Bytes key)
         {
             return SessionKeySchema.ExtractEndTimestamp(key.Get());
         }
@@ -70,7 +74,7 @@ namespace Kafka.Streams.State.Sessions
         //    //        };
         //}
 
-        public List<S> SegmentsToSearch<S>(ISegments<S> segments, long from, long to)
+        public List<S> SegmentsToSearch<S>(ISegments<S> segments, DateTime from, DateTime to)
              where S : ISegment
         {
             if (segments is null)
@@ -78,7 +82,7 @@ namespace Kafka.Streams.State.Sessions
                 throw new ArgumentNullException(nameof(segments));
             }
 
-            return segments.GetSegments(from, long.MaxValue);
+            return segments.GetSegments(from, DateTime.MaxValue);
         }
 
         private static K ExtractKey<K>(
@@ -97,11 +101,13 @@ namespace Kafka.Streams.State.Sessions
             return bytes;
         }
 
-        private static long ExtractEndTimestamp(byte[] binaryKey)
+        private static DateTime ExtractEndTimestamp(byte[] binaryKey)
         {
-            return new ByteBuffer()
+            var ts = new ByteBuffer()
                 .Wrap(binaryKey)
                 .GetLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
+
+            return Timestamp.UnixTimestampMsToDateTime(ts);
         }
 
         private static long ExtractStartTimestamp(byte[] binaryKey)
@@ -139,14 +145,14 @@ namespace Kafka.Streams.State.Sessions
             K key = ExtractKey(binaryKey, keyDeserializer, topic);
             Window window = ExtractWindow(binaryKey);
 
-            return new Windowed2<K>(key, window);
+            return new Windowed<K>(key, window);
         }
 
         public static IWindowed<Bytes> From(Bytes bytesKey)
         {
             byte[] binaryKey = Array.Empty<byte>();
             Window window = ExtractWindow(binaryKey);
-            return new Windowed2<Bytes>(Bytes.Wrap(ExtractKeyBytes(binaryKey)), window);
+            return new Windowed<Bytes>(Bytes.Wrap(ExtractKeyBytes(binaryKey)), window);
         }
 
         public static IWindowed<K> From<K>(
@@ -154,8 +160,8 @@ namespace Kafka.Streams.State.Sessions
             IDeserializer<K> keyDeserializer,
             string topic)
         {
-            K key = keyDeserializer.Deserialize(topic, keyBytes.Key, isKey: true);
-            return new Windowed2<K>(key, keyBytes.window);
+            K key = keyDeserializer.Deserialize(topic, new ReadOnlySpan<byte>(keyBytes.Key), isKey: true);
+            return new Windowed<K>(key, keyBytes.Window);
         }
 
         public static byte[] ToBinary<K>(
@@ -166,32 +172,33 @@ namespace Kafka.Streams.State.Sessions
             byte[] bytes = serializer.Serialize(topic, sessionKey.Key, isKey: true);
             return ToBinary(
                     Bytes.Wrap(bytes),
-                    sessionKey.window.Start(),
-                    sessionKey.window.End())
+                    sessionKey.Window.StartTime,
+                    sessionKey.Window.EndTime)
                 .Get();
         }
 
         public static Bytes ToBinary(IWindowed<Bytes> sessionKey)
         {
-            return ToBinary(sessionKey.Key, sessionKey.window.Start(), sessionKey.window.End());
+            return ToBinary(sessionKey.Key, sessionKey.Window.StartTime, sessionKey.Window.EndTime);
         }
 
         public static Bytes ToBinary(
             Bytes key,
-            long startTime,
-            long endTime)
+            DateTime startTime,
+            DateTime endTime)
         {
             byte[] bytes = key.Get();
             ByteBuffer buf = new ByteBuffer()
                 .Allocate(bytes.Length + 2 * TIMESTAMP_SIZE);
 
             buf.Add(bytes);
-            buf.PutLong(endTime);
-            buf.PutLong(startTime);
+            buf.PutLong(endTime.ToEpochMilliseconds());
+            buf.PutLong(startTime.ToEpochMilliseconds());
+
             return Bytes.Wrap(buf.Array());
         }
 
-        public bool HasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to)
+        public bool HasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, DateTime from, DateTime to)
         {
             throw new NotImplementedException();
         }

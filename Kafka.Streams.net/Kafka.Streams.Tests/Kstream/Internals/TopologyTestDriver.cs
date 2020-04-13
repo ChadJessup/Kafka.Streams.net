@@ -56,10 +56,10 @@ namespace Kafka.Streams.Tests
     *
     * <pre>{@code
     * StreamsConfig props = new StreamsConfig();
-    * props.setProperty(StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG, "localhost:9091");
-    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, CustomTimestampExtractor.getName());
-    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+    * props.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9091");
+    * props.Set(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, CustomTimestampExtractor.getName());
+    * props.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+    * props.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
     * Topology topology = ...
     * TopologyTestDriver driver = new TopologyTestDriver(topology, props);
     * }</pre>
@@ -201,7 +201,7 @@ namespace Kafka.Streams.Tests
 
             //new LogContext("topology-test-driver ");
             this.mockWallClockTime = new MockTime(initialWallClockTimeMs.GetValueOrDefault());
-            this.eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfigPropertyNames.ProcessingGuarantee));
+            this.eosEnabled = StreamsConfig.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuarantee));
 
             //StreamsMetricsImpl streamsMetrics = setupMetrics(streamsConfig);
             this.SetupTopology(builder, streamsConfig);
@@ -224,9 +224,13 @@ namespace Kafka.Streams.Tests
             this.SetupTask(streamsConfig, cache);
         }
 
+        public TopologyTestDriver(Topology topology, StreamsConfig props)
+        {
+        }
+
         private void LogIfTaskIdleEnabled(StreamsConfig streamsConfig)
         {
-            var taskIdleTime = streamsConfig.GetLong(StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG);
+            var taskIdleTime = streamsConfig.GetLong(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG);
             if (taskIdleTime > 0)
             {
                 //  this.logger.Information("Detected {} config in use with TopologyTestDriver (set to {}ms)." +
@@ -234,9 +238,9 @@ namespace Kafka.Streams.Tests
                 //               " or enqueue records on All partitions to allow Steams to make progress." +
                 //               " TopologyTestDriver will this.logger a message each time it cannot process enqueued" +
                 //               " records due to {}.",
-                //           StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG,
+                //           StreamsConfig.MAX_TASK_IDLE_MS_CONFIG,
                 //           taskIdleTime,
-                //           StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG);
+                //           StreamsConfig.MAX_TASK_IDLE_MS_CONFIG);
             }
         }
 
@@ -245,15 +249,15 @@ namespace Kafka.Streams.Tests
         //     string threadId = Thread.currentThread().getName();
         // 
         //     //MetricConfig metricConfig = new MetricConfig()
-        //     //    .samples(streamsConfig.GetInt(StreamsConfigPropertyNames.METRICS_NUM_SAMPLES_CONFIG))
-        //     //    .recordLevel(Sensor.RecordingLevel.forName(streamsConfig.getString(StreamsConfigPropertyNames.METRICS_RECORDING_LEVEL_CONFIG)))
-        //     //    .timeWindow(streamsConfig.GetLong(StreamsConfigPropertyNames.METRICS_SAMPLE_WINDOW_MS_CONFIG), TimeUnit.MILLISECONDS);
+        //     //    .samples(streamsConfig.GetInt(StreamsConfig.METRICS_NUM_SAMPLES_CONFIG))
+        //     //    .recordLevel(Sensor.RecordingLevel.forName(streamsConfig.getString(StreamsConfig.METRICS_RECORDING_LEVEL_CONFIG)))
+        //     //    .timeWindow(streamsConfig.GetLong(StreamsConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG), TimeUnit.MILLISECONDS);
         //     //metrics = new Metrics(metricConfig, mockWallClockTime);
         // 
         //     var streamsMetrics = new StreamsMetricsImpl(
         //         metrics,
         //         "test-client",
-        //         streamsConfig.getString(StreamsConfigPropertyNames.BUILT_IN_METRICS_VERSION_CONFIG)
+        //         streamsConfig.getString(StreamsConfig.BUILT_IN_METRICS_VERSION_CONFIG)
         //     );
         //     streamsMetrics.setRocksDBMetricsRecordingTrigger(new RocksDBMetricsRecordingTrigger());
         //     TaskMetrics.droppedRecordsSensorOrSkippedRecordsSensor(threadId, TASK_ID.ToString(), streamsMetrics);
@@ -332,7 +336,7 @@ namespace Kafka.Streams.Tests
 
                 this.globalStateTask.Initialize();
                 globalProcessorContext.SetRecordContext(new ProcessorRecordContext(
-                    0L,
+                    DateTime.MinValue,
                     -1L,
                     -1,
                     ProcessorContext.NONEXIST_TOPIC,
@@ -378,12 +382,12 @@ namespace Kafka.Streams.Tests
                     this.stateDirectory,
                     this.processorTopology.StoreToChangelogTopic,
                     storeChangelogReader,
-                    StreamsConfigPropertyNames.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfigPropertyNames.ProcessingGuarantee)));
+                    StreamsConfig.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuarantee)));
 
                 var recordCollector = new RecordCollectorImpl(
                     TASK_ID.ToString(),
                     //consumer,
-                    //new StreamsProducer(producer, eosEnabled, logContext, streamsConfig.getString(StreamsConfigPropertyNames.APPLICATION_ID_CONFIG)),
+                    //new StreamsProducer(producer, eosEnabled, logContext, streamsConfig.getString(StreamsConfig.APPLICATION_ID_CONFIG)),
                     streamsConfig.DefaultProductionExceptionHandler(this.context.Services));
                 //eosEnabled);
 
@@ -406,7 +410,7 @@ namespace Kafka.Streams.Tests
                 this.task.CompleteRestoration();
 
                 ((IInternalProcessorContext)this.task.context).SetRecordContext(new ProcessorRecordContext(
-                    0L,
+                    DateTime.MinValue,
                     -1L,
                     -1,
                     ProcessorContext.NONEXIST_TOPIC,
@@ -519,7 +523,7 @@ namespace Kafka.Streams.Tests
                 //while (task.hasRecordsQueued() && task.isProcessable(mockWallClockTime.NowAsEpochMilliseconds))
                 {
                     // Process the record ...
-                    //  task.process(mockWallClockTime.NowAsEpochMilliseconds);
+                    //  task.Process(mockWallClockTime.NowAsEpochMilliseconds);
                     this.task.MaybePunctuateStreamTime();
                     this.task.Commit();
                     this.CaptureOutputsAndReEnqueueInternalResults();
@@ -531,7 +535,7 @@ namespace Kafka.Streams.Tests
                 //                 " that cannot be processed. Advancing wall-clock time or" +
                 //                 " enqueuing records on the empty topics will allow" +
                 //                 " Streams to process more.",
-                //             StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG);
+                //             StreamsConfig.MAX_TASK_IDLE_MS_CONFIG);
                 //}
             }
         }
@@ -542,7 +546,7 @@ namespace Kafka.Streams.Tests
                                          byte[] value,
                                          Headers headers)
         {
-            //globalStateTask.update(new ConsumeResult<byte[], byte[]>(
+            //globalStateTask.Update(new ConsumeResult<byte[], byte[]>(
             //    globalInputTopicPartition.Topic,
             //    globalInputTopicPartition.Partition,
             //    ++offsetsByTopicOrPatternPartition[globalInputTopicPartition] - 1,
@@ -671,7 +675,7 @@ namespace Kafka.Streams.Tests
          */
         public void AdvanceWallClockTime(TimeSpan advance)
         {
-            //mockWallClockTime.sleep(advance);
+            //mockWallClockTime.Sleep(advance);
             if (this.task != null)
             {
                 this.task.MaybePunctuateSystemTime();
@@ -889,11 +893,11 @@ namespace Kafka.Streams.Tests
          * <p>
          * <strong>Caution:</strong> Using this method to access stores that are added by the DSL is unsafe as the store
          * types may change. Stores added by the DSL should only be accessed via the corresponding typed methods
-         * like {@link #getKeyValueStore(string)} etc.
+         * like {@link #GetKeyValueStore(string)} etc.
          *
          * @return All stores my Name
          * @see #getStateStore(string)
-         * @see #getKeyValueStore(string)
+         * @see #GetKeyValueStore(string)
          * @see #getTimestampedKeyValueStore(string)
          * @see #getWindowStore(string)
          * @see #getTimestampedWindowStore(string)
@@ -915,7 +919,7 @@ namespace Kafka.Streams.Tests
          * The store can be a "regular" or global store.
          * <p>
          * Should be used for custom stores only.
-         * For built-in stores, the corresponding typed methods like {@link #getKeyValueStore(string)} should be used.
+         * For built-in stores, the corresponding typed methods like {@link #GetKeyValueStore(string)} should be used.
          * <p>
          * This is often useful in test cases to pre-populate the store before the test case instructs the topology to
          * {@link #PipeInput(ConsumeResult) process an input message}, and/or to check the store afterward.
@@ -926,7 +930,7 @@ namespace Kafka.Streams.Tests
          * {@link IWindowStore}, or {@link ISessionStore}
          *
          * @see #getAllStateStores()
-         * @see #getKeyValueStore(string)
+         * @see #GetKeyValueStore(string)
          * @see #getTimestampedKeyValueStore(string)
          * @see #getWindowStore(string)
          * @see #getTimestampedWindowStore(string)
@@ -979,7 +983,7 @@ namespace Kafka.Streams.Tests
             if (stateStore is IReadOnlyKeyValueStore)
             {
                 throw new ArgumentException("Store " + stateStore.Name
-                                                       + " is a key-value store and should be accessed via `getKeyValueStore()`");
+                                                       + " is a key-value store and should be accessed via `GetKeyValueStore()`");
             }
             if (stateStore is ITimestampedWindowStore)
             {
@@ -1044,7 +1048,7 @@ namespace Kafka.Streams.Tests
          * @return the key value store, or {@code null} if no {@link ITimestampedKeyValueStore} has been registered with the given Name
          * @see #getAllStateStores()
          * @see #getStateStore(string)
-         * @see #getKeyValueStore(string)
+         * @see #GetKeyValueStore(string)
          * @see #getWindowStore(string)
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
@@ -1073,7 +1077,7 @@ namespace Kafka.Streams.Tests
          * has been registered with the given Name
          * @see #getAllStateStores()
          * @see #getStateStore(string)
-         * @see #getKeyValueStore(string)
+         * @see #GetKeyValueStore(string)
          * @see #getTimestampedKeyValueStore(string)
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
@@ -1102,7 +1106,7 @@ namespace Kafka.Streams.Tests
          * @return the key value store, or {@code null} if no {@link ITimestampedWindowStore} has been registered with the given Name
          * @see #getAllStateStores()
          * @see #getStateStore(string)
-         * @see #getKeyValueStore(string)
+         * @see #GetKeyValueStore(string)
          * @see #getTimestampedKeyValueStore(string)
          * @see #getWindowStore(string)
          * @see #getSessionStore(string)
@@ -1126,7 +1130,7 @@ namespace Kafka.Streams.Tests
          * @return the key value store, or {@code null} if no {@link ISessionStore} has been registered with the given Name
          * @see #getAllStateStores()
          * @see #getStateStore(string)
-         * @see #getKeyValueStore(string)
+         * @see #GetKeyValueStore(string)
          * @see #getTimestampedKeyValueStore(string)
          * @see #getWindowStore(string)
          * @see #getTimestampedWindowStore(string)
@@ -1167,7 +1171,7 @@ namespace Kafka.Streams.Tests
             //{
             //    this.logger.Warning("Found some records that cannot be processed due to the" +
             //                 " {} configuration during TopologyTestDriver#Close().",
-            //             StreamsConfigPropertyNames.MAX_TASK_IDLE_MS_CONFIG);
+            //             StreamsConfig.MAX_TASK_IDLE_MS_CONFIG);
             //}
             if (!this.eosEnabled)
             {

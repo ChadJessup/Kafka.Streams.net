@@ -1,4 +1,5 @@
-﻿using Kafka.Streams.KStream.Internals.Suppress;
+﻿using System;
+using Kafka.Streams.KStream.Internals.Suppress;
 using Kafka.Streams.Processors.Interfaces;
 
 namespace Kafka.Streams.KStream.Interfaces
@@ -8,7 +9,7 @@ namespace Kafka.Streams.KStream.Interfaces
      */
     public interface ITimeDefinition<K>
     {
-        long Time(IProcessorContext context, K key);
+        DateTime Time(IProcessorContext context, K key);
 
         TimeDefinitionType Type();
     }

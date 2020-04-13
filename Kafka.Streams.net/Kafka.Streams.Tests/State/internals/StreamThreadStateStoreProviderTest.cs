@@ -86,19 +86,19 @@
 //            TopologyWrapper topology = new TopologyWrapper();
 //            topology.AddSource("the-source", topicName);
 //            topology.AddProcessor("the-processor", new MockProcessorSupplier(), "the-source");
-//            topology.addStateStore(
+//            topology.AddStateStore(
 //                Stores.KeyValueStoreBuilder(
 //                    Stores.InMemoryKeyValueStore("kv-store"),
 //                    Serdes.String(),
 //                    Serdes.String()),
 //                "the-processor");
-//            topology.addStateStore(
+//            topology.AddStateStore(
 //                Stores.TimestampedKeyValueStoreBuilder(
 //                    Stores.InMemoryKeyValueStore("timestamped-kv-store"),
 //                    Serdes.String(),
 //                    Serdes.String()),
 //                "the-processor");
-//            topology.addStateStore(
+//            topology.AddStateStore(
 //                Stores.windowStoreBuilder(
 //                    Stores.inMemoryWindowStore(
 //                        "window-store",
@@ -108,7 +108,7 @@
 //                    Serdes.String(),
 //                    Serdes.String()),
 //                "the-processor");
-//            topology.addStateStore(
+//            topology.AddStateStore(
 //                Stores.timestampedWindowStoreBuilder(
 //                    Stores.inMemoryWindowStore(
 //                        "timestamped-window-store",
@@ -141,7 +141,7 @@
 //                clientSupplier,
 //                processorTopology,
 //                new TaskId(0, 0));
-//            taskOne.initializeStateStores();
+//            taskOne.InitializeStateStores();
 //            tasks.Put(new TaskId(0, 0), taskOne);
 
 //            StreamTask taskTwo = CreateStreamsTask(
@@ -149,10 +149,10 @@
 //                clientSupplier,
 //                processorTopology,
 //                new TaskId(0, 1));
-//            taskTwo.initializeStateStores();
+//            taskTwo.InitializeStateStores();
 //            tasks.Put(new TaskId(0, 1), taskTwo);
 
-//            threadMock = EasyMock.createNiceMock(StreamThread);
+//            threadMock = Mock.Of<StreamThread);
 //            provider = new StreamThreadStateStoreProvider(threadMock);
 
 //        }
@@ -160,7 +160,7 @@
 
 //        public void CleanUp()
 //        { //throws IOException
-//            Utils.delete(stateDir);
+//            Utils.Delete(stateDir);
 //        }
 
 //        [Fact]
@@ -168,7 +168,7 @@
 //        {
 //            mockThread(true);
 //            List<IReadOnlyKeyValueStore<string, string>> kvStores =
-//                provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore());
+//                provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore);
 //            Assert.Equal(2, kvStores.Count);
 //            foreach (IReadOnlyKeyValueStore<string, string> store in kvStores)
 //            {
@@ -181,10 +181,10 @@
 //        public void ShouldFindTimestampedKeyValueStores()
 //        {
 //            mockThread(true);
-//            List<IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> tkvStores =
+//            List<IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>>> tkvStores =
 //                provider.Stores("timestamped-kv-store", QueryableStoreTypes.TimestampedKeyValueStore());
 //            Assert.Equal(2, tkvStores.Count);
-//            foreach (IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>> store in tkvStores)
+//            foreach (IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>> store in tkvStores)
 //            {
 //                Assert.Equal(store, instanceOf(IReadOnlyKeyValueStore));
 //                Assert.Equal(store, instanceOf(ITimestampedKeyValueStore));
@@ -195,7 +195,7 @@
 //        public void ShouldNotFindKeyValueStoresAsTimestampedStore()
 //        {
 //            mockThread(true);
-//            List<IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> tkvStores =
+//            List<IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>>> tkvStores =
 //                provider.Stores("kv-store", QueryableStoreTypes.TimestampedKeyValueStore());
 //            Assert.Equal(0, tkvStores.Count);
 //        }
@@ -204,10 +204,10 @@
 //        public void ShouldFindTimestampedKeyValueStoresAsKeyValueStores()
 //        {
 //            mockThread(true);
-//            List<IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> tkvStores =
-//                provider.Stores("timestamped-kv-store", QueryableStoreTypes.KeyValueStore());
+//            List<IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>>> tkvStores =
+//                provider.Stores("timestamped-kv-store", QueryableStoreTypes.KeyValueStore);
 //            Assert.Equal(2, tkvStores.Count);
-//            foreach (IReadOnlyKeyValueStore<string, ValueAndTimestamp<string>> store in tkvStores)
+//            foreach (IReadOnlyKeyValueStore<string, IValueAndTimestamp<string>> store in tkvStores)
 //            {
 //                Assert.Equal(store, instanceOf(IReadOnlyKeyValueStore));
 //                Assert.Equal(store, not(instanceOf(ITimestampedKeyValueStore)));
@@ -232,10 +232,10 @@
 //        public void ShouldFindTimestampedWindowStores()
 //        {
 //            mockThread(true);
-//            List<IReadOnlyWindowStore<string, ValueAndTimestamp<string>>> windowStores =
+//            List<IReadOnlyWindowStore<string, IValueAndTimestamp<string>>> windowStores =
 //                provider.Stores("timestamped-window-store", timestampedWindowStore());
 //            Assert.Equal(2, windowStores.Count);
-//            foreach (IReadOnlyWindowStore<string, ValueAndTimestamp<string>> store in windowStores)
+//            foreach (IReadOnlyWindowStore<string, IValueAndTimestamp<string>> store in windowStores)
 //            {
 //                Assert.Equal(store, instanceOf(IReadOnlyWindowStore));
 //                Assert.Equal(store, instanceOf(ITimestampedWindowStore));
@@ -246,7 +246,7 @@
 //        public void ShouldNotFindWindowStoresAsTimestampedStore()
 //        {
 //            mockThread(true);
-//            List<IReadOnlyWindowStore<string, ValueAndTimestamp<string>>> windowStores =
+//            List<IReadOnlyWindowStore<string, IValueAndTimestamp<string>>> windowStores =
 //                provider.Stores("window-store", timestampedWindowStore());
 //            Assert.Equal(0, windowStores.Count);
 //        }
@@ -255,10 +255,10 @@
 //        public void ShouldFindTimestampedWindowStoresAsWindowStore()
 //        {
 //            mockThread(true);
-//            List<IReadOnlyWindowStore<string, ValueAndTimestamp<string>>> windowStores =
+//            List<IReadOnlyWindowStore<string, IValueAndTimestamp<string>>> windowStores =
 //                provider.Stores("timestamped-window-store", windowStore());
 //            Assert.Equal(2, windowStores.Count);
-//            foreach (IReadOnlyWindowStore<string, ValueAndTimestamp<string>> store in windowStores)
+//            foreach (IReadOnlyWindowStore<string, IValueAndTimestamp<string>> store in windowStores)
 //            {
 //                Assert.Equal(store, instanceOf(IReadOnlyWindowStore));
 //                Assert.Equal(store, not(instanceOf(ITimestampedWindowStore)));
@@ -270,7 +270,7 @@
 //        {
 //            mockThread(true);
 //            taskOne.getStore("kv-store").Close();
-//            provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore());
+//            provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore);
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
@@ -303,7 +303,7 @@
 //            mockThread(true);
 //            Assert.Equal(
 //                Collections.emptyList(),
-//                provider.Stores("not-a-store", QueryableStoreTypes.KeyValueStore()));
+//                provider.Stores("not-a-store", QueryableStoreTypes.KeyValueStore));
 //        }
 
 //        [Fact]
@@ -312,7 +312,7 @@
 //            mockThread(true);
 //            Assert.Equal(
 //                Collections.emptyList(),
-//                provider.Stores("window-store", QueryableStoreTypes.KeyValueStore())
+//                provider.Stores("window-store", QueryableStoreTypes.KeyValueStore)
 //            );
 //        }
 
@@ -320,7 +320,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfNotAllStoresAvailable()
 //        {
 //            mockThread(false);
-//            provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore());
+//            provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore);
 //        }
 
 //        private StreamTask CreateStreamsTask(StreamsConfig streamsConfig,
@@ -355,14 +355,14 @@
 //    private void MockThread(bool initialized)
 //    {
 //        EasyMock.expect(threadMock.isRunningAndNotRebalancing()).andReturn(initialized);
-//        EasyMock.expect(threadMock.tasks()).andStubReturn(tasks);
+//        EasyMock.expect(threadMock.Tasks()).andStubReturn(tasks);
 //        EasyMock.replay(threadMock);
 //    }
 
 //    private void ConfigureRestoreConsumer(MockClientSupplier clientSupplier,
 //                                          string topic)
 //    {
-//        List<PartitionInfo> partitions = Array.asList(
+//        List<PartitionInfo> partitions = Arrays.asList(
 //            new PartitionInfo(topic, 0, null, null, null),
 //            new PartitionInfo(topic, 1, null, null, null)
 //        );
@@ -370,13 +370,13 @@
 //        TopicPartition tp1 = new TopicPartition(topic, 0);
 //        TopicPartition tp2 = new TopicPartition(topic, 1);
 
-//        clientSupplier.restoreConsumer.assign(Array.asList(tp1, tp2));
+//        clientSupplier.restoreConsumer.Assign(Arrays.asList(tp1, tp2));
 
 //        Dictionary<TopicPartition, long> offsets = new HashMap<>();
 //        offsets.Put(tp1, 0L);
 //        offsets.Put(tp2, 0L);
 
-//        clientSupplier.restoreConsumer.updateBeginningOffsets(offsets);
+//        clientSupplier.restoreConsumer.UpdateBeginningOffsets(offsets);
 //        clientSupplier.restoreConsumer.updateEndOffsets(offsets);
 //    }
 //}

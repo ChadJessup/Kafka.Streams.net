@@ -1,10 +1,11 @@
+using System;
 using Kafka.Streams.Nodes;
 
 namespace Kafka.Streams.Processors.Internals
 {
     public class PunctuationSchedule : Stamped<IProcessorNode>
     {
-        private readonly long interval;
+        private readonly TimeSpan interval;
         public IPunctuator punctuator { get; }
         public bool isCancelled { get; private set; } = false;
 
@@ -13,8 +14,8 @@ namespace Kafka.Streams.Processors.Internals
 
         public PunctuationSchedule(
             IProcessorNode node,
-            long time,
-            long interval,
+            DateTime time,
+            TimeSpan interval,
             IPunctuator punctuator)
             : this(node, time, interval, punctuator, new RepointableCancellable())
         {
@@ -23,8 +24,8 @@ namespace Kafka.Streams.Processors.Internals
 
         public PunctuationSchedule(
             IProcessorNode node,
-            long time,
-            long interval,
+            DateTime time,
+            TimeSpan interval,
             IPunctuator punctuator,
             RepointableCancellable cancellable)
             : base(node, time)
@@ -44,7 +45,7 @@ namespace Kafka.Streams.Processors.Internals
             this.isCancelled = true;
         }
 
-        public PunctuationSchedule Next(long currTimestamp)
+        public PunctuationSchedule Next(DateTime currTimestamp)
         {
             var nextPunctuationTime = this.timestamp + this.interval;
             if (currTimestamp >= nextPunctuationTime)

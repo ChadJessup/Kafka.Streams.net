@@ -29,9 +29,9 @@ namespace Kafka.Streams.Processors
      */
     public class FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp
     {
-        private readonly ILogger? logger;
+        private readonly ILogger<FailOnInvalidTimestamp>? logger;
 
-        public FailOnInvalidTimestamp(ILogger<FailOnInvalidTimestamp>? logger)
+        public FailOnInvalidTimestamp(ILogger<FailOnInvalidTimestamp>? logger = null)
             => this.logger = logger;
 
         /**
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Processors
                 "a timestamp, or because the input topic was created before upgrading the Kafka cluster to 0.10+. " +
                 "Use a different ITimestampExtractor to process this data.";
 
-            this.logger.LogError(message);
+            this.logger?.LogError(message);
 
             throw new StreamsException(message);
         }

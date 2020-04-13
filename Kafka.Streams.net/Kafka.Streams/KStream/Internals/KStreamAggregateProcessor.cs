@@ -63,7 +63,7 @@ namespace Kafka.Streams.KStream.Internals
             T oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);
 
             T newAgg;
-            long newTimestamp;
+            DateTime newTimestamp;
 
             if (oldAgg == null)
             {
@@ -73,7 +73,7 @@ namespace Kafka.Streams.KStream.Internals
             else
             {
                 oldAgg = oldAggAndTimestamp.Value;
-                newTimestamp = Math.Max(this.Context.Timestamp, oldAggAndTimestamp.Timestamp);
+                newTimestamp = this.Context.Timestamp.GetNewest(oldAggAndTimestamp.Timestamp);
             }
 
             newAgg = this.aggregator.Apply(key, value, oldAgg);

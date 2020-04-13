@@ -1,3 +1,5 @@
+using System;
+
 namespace Kafka.Streams.Processors.Internals
 {
     public class ToInternal : To
@@ -15,7 +17,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public bool HasTimestamp()
         {
-            return this.Timestamp != -1;
+            return this.Timestamp != DateTime.MinValue;
         }
 
         public string Child()

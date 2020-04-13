@@ -32,7 +32,7 @@ namespace Kafka.Streams.Processors.Internals
         private readonly Dictionary<TopicPartition, RecordQueue> partitionQueues;
         private readonly SimplePriorityQueue<RecordQueue> nonEmptyQueuesByTime;
 
-        public long streamTime { get; set; }
+        public DateTime streamTime { get; set; }
         private int totalBuffered;
         private bool allBuffered;
         private readonly ProcessorContext<object, object> processorContextImpl;
@@ -74,8 +74,7 @@ namespace Kafka.Streams.Processors.Internals
                     }
                     else
                     {
-
-                        this.nonEmptyQueuesByTime.Enqueue(queue, queue.headRecordTimestamp);
+                        this.nonEmptyQueuesByTime.Enqueue(queue, queue.headRecordTimestamp.Ticks);
                     }
 
                     // always update the stream-time to the record's timestamp yet to be processed if it is larger
@@ -109,7 +108,7 @@ namespace Kafka.Streams.Processors.Internals
             // add this record queue to be considered for processing in the future if it was empty before
             if (oldSize == 0 && newSize > 0)
             {
-                this.nonEmptyQueuesByTime.Enqueue(recordQueue, recordQueue.headRecordTimestamp);
+                this.nonEmptyQueuesByTime.Enqueue(recordQueue, recordQueue.headRecordTimestamp.Ticks);
 
                 // if All partitions now are non-empty, set the flag
                 // we do not need to update the stream-time here since this task will definitely be

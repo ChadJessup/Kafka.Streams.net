@@ -1,3 +1,4 @@
+using System;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
 using Priority_Queue;
@@ -12,7 +13,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             lock (this.pq)
             {
-                this.pq.Enqueue(sched, sched.timestamp);
+                this.pq.Enqueue(sched, sched.timestamp.Ticks);
             }
 
             return sched.cancellable;
@@ -29,7 +30,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool MayPunctuate<K, V>(long timestamp, PunctuationType type, IProcessorNodePunctuator<K, V> processorNodePunctuator)
+        public bool MayPunctuate<K, V>(DateTime timestamp, PunctuationType type, IProcessorNodePunctuator<K, V> processorNodePunctuator)
         {
             lock (this.pq)
             {
@@ -46,7 +47,7 @@ namespace Kafka.Streams.Processors.Internals
                         // sched can be cancelled from within the punctuator
                         if (!sched.isCancelled)
                         {
-                            this.pq.Enqueue(sched.Next(timestamp), sched.timestamp);
+                            this.pq.Enqueue(sched.Next(timestamp), sched.timestamp.Ticks);
                         }
 
                         punctuated = true;

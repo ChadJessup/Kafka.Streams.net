@@ -44,7 +44,7 @@ namespace Kafka.Streams.KStream.Internals
                 {
                     return ValueAndTimestamp.Make(
                         this.joiner.Apply(value1, value2),
-                        Math.Max(valueAndTimestamp1?.Timestamp ?? 0, valueAndTimestamp2.Timestamp));
+                        valueAndTimestamp1?.Timestamp.GetNewest(valueAndTimestamp2.Timestamp) ?? valueAndTimestamp2.Timestamp);
                 }
                 else
                 {

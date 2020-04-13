@@ -81,7 +81,7 @@
 
 //        private readonly string key = "a";
 //        private readonly byte[] keyBytes = key.getBytes();
-//        private IWindowed<Bytes> windowedKeyBytes = new IWindowed<>(Bytes.Wrap(keyBytes), new SessionWindow(0, 0));
+//        private IWindowed<Bytes> windowedKeyBytes = new Windowed2<>(Bytes.Wrap(keyBytes), new SessionWindow(0, 0));
 
 
 //        public void Before()
@@ -123,7 +123,7 @@
 //            expectLastCall();
 //            Init();
 
-//            metered.Put(new IWindowed<>(key, new SessionWindow(0, 0)), key);
+//            metered.Put(new Windowed2<>(key, new SessionWindow(0, 0)), key);
 
 //            KafkaMetric metric = metric("Put-rate");
 //            Assert.True(((Double)metric.metricValue()) > 0);
@@ -139,7 +139,7 @@
 //            Init();
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator = metered.findSessions(key, 0, 0);
-//            Assert.Equal(iterator.MoveNext().value, (key));
+//            Assert.Equal(iterator.MoveNext().Value, (key));
 //            Assert.False(iterator.HasNext());
 //            iterator.Close();
 
@@ -157,7 +157,7 @@
 //            Init();
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator = metered.findSessions(key, key, 0, 0);
-//            Assert.Equal(iterator.MoveNext().value, (key));
+//            Assert.Equal(iterator.MoveNext().Value, (key));
 //            Assert.False(iterator.HasNext());
 //            iterator.Close();
 
@@ -174,7 +174,7 @@
 
 //            Init();
 
-//            metered.remove(new IWindowed<>(key, new SessionWindow(0, 0)));
+//            metered.remove(new Windowed2<>(key, new SessionWindow(0, 0)));
 
 //            KafkaMetric metric = metric("remove-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
@@ -190,7 +190,7 @@
 //            Init();
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator = metered.Fetch(key);
-//            Assert.Equal(iterator.MoveNext().value, (key));
+//            Assert.Equal(iterator.MoveNext().Value, (key));
 //            Assert.False(iterator.HasNext());
 //            iterator.Close();
 
@@ -208,7 +208,7 @@
 //            Init();
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator = metered.Fetch(key, key);
-//            Assert.Equal(iterator.MoveNext().value, (key));
+//            Assert.Equal(iterator.MoveNext().Value, (key));
 //            Assert.False(iterator.HasNext());
 //            iterator.Close();
 
@@ -288,9 +288,9 @@
 //        [Fact]
 //        public void ShouldSetFlushListenerOnWrappedCachingStore()
 //        {
-//            CachedSessionStore cachedSessionStore = mock(CachedSessionStore);
+//            CachedSessionStore cachedSessionStore = Mock.Of<CachedSessionStore);
 
-//            expect(cachedSessionStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
+//            expect(cachedSessionStore.SetFlushListener(default(CacheFlushListener), eq(false))).andReturn(true);
 //            replay(cachedSessionStore);
 
 //            metered = new MeteredSessionStore<>(
@@ -299,7 +299,7 @@
 //                Serdes.String(),
 //                Serdes.String(),
 //                new MockTime());
-//            Assert.True(metered.setFlushListener(null, false));
+//            Assert.True(metered.SetFlushListener(null, false));
 
 //            verify(cachedSessionStore);
 //        }
@@ -307,7 +307,7 @@
 //        [Fact]
 //        public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore()
 //        {
-//            Assert.False(metered.setFlushListener(null, false));
+//            Assert.False(metered.SetFlushListener(null, false));
 //        }
 
 //        private KafkaMetric Metric(string Name)

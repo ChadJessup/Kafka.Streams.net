@@ -1,7 +1,10 @@
-using Kafka.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Extensions;
 using Kafka.Streams.KStream.Graph;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
@@ -12,13 +15,7 @@ using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
 using Priority_Queue;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -348,7 +345,7 @@ namespace Kafka.Streams.KStream.Internals
         private void MaybePerformOptimizations(StreamsConfig? config)
         {
             if (config != null
-                && StreamsConfigPropertyNames.OPTIMIZE.Equals(config.Get(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION)))
+                && StreamsConfig.OPTIMIZEConfig.Equals(config.Get(config.Get(StreamsConfig.TOPOLOGY_OPTIMIZATIONConfig))))
             {
                 this.logger.LogDebug("Optimizing the Kafka Streams graph for repartition nodes");
 

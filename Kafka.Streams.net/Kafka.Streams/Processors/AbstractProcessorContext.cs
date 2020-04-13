@@ -114,7 +114,7 @@ namespace Kafka.Streams.Processors
                     throw new InvalidOperationException("This should not happen as Partition should only be called while a record is processed");
                 }
 
-                return this.RecordContext.partition;
+                return this.RecordContext.Partition;
             }
         }
 
@@ -130,7 +130,7 @@ namespace Kafka.Streams.Processors
                     throw new InvalidOperationException("This should not happen as offset() should only be called while a record is processed");
                 }
 
-                return this.RecordContext.offset;
+                return this.RecordContext.Offset;
             }
         }
 
@@ -143,14 +143,14 @@ namespace Kafka.Streams.Processors
                     throw new InvalidOperationException("This should not happen as Headers should only be called while a record is processed");
                 }
 
-                return this.RecordContext.headers;
+                return this.RecordContext.Headers;
             }
         }
 
         /**
          * @throws InvalidOperationException if timestamp is null
          */
-        public virtual long Timestamp
+        public virtual DateTime Timestamp
         {
             get
             {
@@ -159,7 +159,7 @@ namespace Kafka.Streams.Processors
                     throw new InvalidOperationException("This should not happen as timestamp() should only be called while a record is processed");
                 }
 
-                return this.RecordContext.timestamp;
+                return this.RecordContext.Timestamp;
             }
         }
 
@@ -232,7 +232,7 @@ namespace Kafka.Streams.Processors
             throw new NotImplementedException();
         }
 
-        public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
+        public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<DateTime> callback)
         {
             throw new NotImplementedException();
         }

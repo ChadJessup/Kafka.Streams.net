@@ -1,12 +1,19 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.Extensions
+namespace System.Collections.Generic
 {
-    public static class CollectionExtensions
+    public static class DictionaryExtensions
     {
+        public static void Put<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
+            => dictionary.Add(key, value);
+    }
+
+    public static class EnumerableExtensions
+    {
+        public static bool IsEmpty<TSource>(this IEnumerable<TSource> collection)
+            => !collection.Any();
+
         public static string ToJoinedString<T>(this IEnumerable<T> collection, char separator = ',')
            => string.Join(separator, collection ?? Enumerable.Empty<T>());
     }

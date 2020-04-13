@@ -112,7 +112,7 @@ namespace Kafka.Streams.KStream.Internals
         private string CreateRepartitionSource(
             string repartitionTopicNamePrefix,
             OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder)
-            => KStream<K, V>.CreateRepartitionedSource(
+            => KStream.CreateRepartitionedSource(
                 this.builder,
                 this.keySerde,
                 this.valueSerde,

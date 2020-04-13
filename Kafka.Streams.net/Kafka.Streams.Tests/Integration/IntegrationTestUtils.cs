@@ -20,5 +20,10 @@ namespace Kafka.Streams.Tests
         {
             throw new NotImplementedException();
         }
+
+        internal static void ProduceKeyValuesSynchronouslyWithTimestamp(string iNPUT_TOPIC, object p, StreamsConfig producerConfig, long nowAsEpochMilliseconds)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

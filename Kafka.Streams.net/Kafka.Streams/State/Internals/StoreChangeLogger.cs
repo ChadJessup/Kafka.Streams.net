@@ -1,3 +1,4 @@
+using System;
 using Confluent.Kafka;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
@@ -40,7 +41,7 @@ namespace Kafka.Streams.State.Internals
             this.LogChange(key, value, this.context.Timestamp);
         }
 
-        private void LogChange(K key, V value, long timestamp)
+        private void LogChange(K key, V value, DateTime timestamp)
         {
             // Sending null headers to changelog topics (KIP-244)
             this.collector.Send(this.topic, key, value, null, this.partition, timestamp, this.keySerializer, this.valueSerializer);

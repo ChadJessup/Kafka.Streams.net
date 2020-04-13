@@ -10,17 +10,17 @@ namespace Kafka.Streams.State.Internals
 {
     public class InMemorySessionStoreIterator : IKeyValueIterator<IWindowed<Bytes>, byte[]>
     {
-        private IEnumerator<KeyValuePair<long, Dictionary<Bytes, Dictionary<long, byte[]>>>> endTimeIterator;
-        private IEnumerator<KeyValuePair<Bytes, Dictionary<long, byte[]>>> keyIterator;
-        private IEnumerator<KeyValuePair<long, byte[]>>? recordIterator;
+        private IEnumerator<KeyValuePair<DateTime, Dictionary<Bytes, Dictionary<DateTime, byte[]>>>> endTimeIterator;
+        private IEnumerator<KeyValuePair<Bytes, Dictionary<DateTime, byte[]>>> keyIterator;
+        private IEnumerator<KeyValuePair<DateTime, byte[]>>? recordIterator;
 
         private KeyValuePair<IWindowed<Bytes>, byte[]>? next;
         private Bytes currentKey;
-        private long currentEndTime;
+        private DateTime currentEndTime;
 
         private Bytes keyFrom;
         private Bytes keyTo;
-        private long latestSessionStartTime;
+        private DateTime latestSessionStartTime;
 
         private IClosingCallback callback;
 
@@ -30,8 +30,8 @@ namespace Kafka.Streams.State.Internals
         public InMemorySessionStoreIterator(
             Bytes keyFrom,
             Bytes keyTo,
-            long latestSessionStartTime,
-            IEnumerator<KeyValuePair<long, Dictionary<Bytes, Dictionary<long, byte[]>>>> endTimeIterator,
+            DateTime latestSessionStartTime,
+            IEnumerator<KeyValuePair<DateTime, Dictionary<Bytes, Dictionary<DateTime, byte[]>>>> endTimeIterator,
             IClosingCallback callback)
         {
             this.keyFrom = keyFrom;
@@ -91,7 +91,7 @@ namespace Kafka.Streams.State.Internals
             this.callback.DeregisterIterator(this);
         }
 
-        public long MinTime()
+        public DateTime MinTime()
         {
             return this.currentEndTime;
         }
@@ -110,9 +110,9 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            KeyValuePair<long, byte[]> nextRecord = this.recordIterator.Current;
+            KeyValuePair<DateTime, byte[]> nextRecord = this.recordIterator.Current;
             SessionWindow sessionWindow = new SessionWindow(nextRecord.Key, this.currentEndTime);
-            IWindowed<Bytes> windowedKey = new Windowed2<Bytes>(this.currentKey, sessionWindow);
+            IWindowed<Bytes> windowedKey = new Windowed<Bytes>(this.currentKey, sessionWindow);
 
             return KeyValuePair.Create(windowedKey, nextRecord.Value);
         }
@@ -143,10 +143,10 @@ namespace Kafka.Streams.State.Internals
         {
             while (this.keyIterator.MoveNext())
             {
-                KeyValuePair<Bytes, Dictionary<long, byte[]>> nextKeyEntry = this.keyIterator.Current;
+                KeyValuePair<Bytes, Dictionary<DateTime, byte[]>> nextKeyEntry = this.keyIterator.Current;
                 this.currentKey = nextKeyEntry.Key;
 
-                if (this.latestSessionStartTime == long.MaxValue)
+                if (this.latestSessionStartTime == DateTime.MaxValue)
                 {
                     this.recordIterator = nextKeyEntry.Value.GetEnumerator();
                 }
@@ -178,12 +178,10 @@ namespace Kafka.Streams.State.Internals
 
         public void Reset()
         {
-            throw new NotImplementedException();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
     }
 }

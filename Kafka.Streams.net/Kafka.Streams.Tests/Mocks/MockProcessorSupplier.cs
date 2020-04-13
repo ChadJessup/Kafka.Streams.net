@@ -1,4 +1,5 @@
 ﻿using Kafka.Streams.Processors;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -6,21 +7,21 @@ namespace Kafka.Streams.Tests.Mocks
 {
     public class MockProcessorSupplier<K, V> : IProcessorSupplier<K, V>
     {
-        private readonly long scheduleInterval;
+        private readonly TimeSpan scheduleInterval;
         private readonly PunctuationType punctuationType;
         private readonly List<MockProcessor<K, V>> processors = new List<MockProcessor<K, V>>();
 
         public MockProcessorSupplier()
-            : this(-1L)
+            : this(TimeSpan.FromMilliseconds(-1L))
         {
         }
 
-        public MockProcessorSupplier(long scheduleInterval)
+        public MockProcessorSupplier(TimeSpan scheduleInterval)
             : this(scheduleInterval, PunctuationType.STREAM_TIME)
         {
         }
 
-        public MockProcessorSupplier(long scheduleInterval, PunctuationType punctuationType)
+        public MockProcessorSupplier(TimeSpan scheduleInterval, PunctuationType punctuationType)
         {
             this.scheduleInterval = scheduleInterval;
             this.punctuationType = punctuationType;

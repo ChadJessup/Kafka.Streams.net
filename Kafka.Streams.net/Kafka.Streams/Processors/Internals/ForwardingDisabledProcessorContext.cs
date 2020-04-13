@@ -38,9 +38,6 @@ namespace Kafka.Streams.Processors.Internals
         public DirectoryInfo StateDir
             => this.del.StateDir;
 
-        //public IStreamsMetrics metrics
-        //    => del.metrics;
-
         public void Register(IStateStore store, IStateRestoreCallback stateRestoreCallback)
         {
             this.del.Register(store, stateRestoreCallback);
@@ -51,15 +48,6 @@ namespace Kafka.Streams.Processors.Internals
             return this.del.GetStateStore(Name);
         }
 
-        [Obsolete]
-        public ICancellable Schedule(
-            long intervalMs,
-            PunctuationType type,
-            IPunctuator callback)
-        {
-            return this.del.Schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
-        }
-
         public ICancellable Schedule(
             TimeSpan interval,
             PunctuationType type,
@@ -67,7 +55,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             return this.del.Schedule(interval, type, callback);
         }
-        public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
+        public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<DateTime> callback)
         {
             throw new NotImplementedException();
         }
@@ -111,7 +99,7 @@ namespace Kafka.Streams.Processors.Internals
         public Headers Headers
             => this.del.Headers;
 
-        public long Timestamp
+        public DateTime Timestamp
             => this.del.Timestamp;
 
         public Dictionary<string, object> AppConfigs()

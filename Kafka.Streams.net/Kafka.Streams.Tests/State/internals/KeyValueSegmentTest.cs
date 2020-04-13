@@ -17,7 +17,7 @@
 //            string directoryPath = TestUtils.GetTempDirectory().FullName;
 //            var directory = new DirectoryInfo(directoryPath);
 
-//            IProcessorContext mockContext = mock(ProcessorContext);
+//            IProcessorContext mockContext = Mock.Of<ProcessorContext);
 //            expect(mockContext.AppConfigs).andReturn(emptyMap());
 //            expect(mockContext.stateDir).andReturn(directory);
 //            replay(mockContext);

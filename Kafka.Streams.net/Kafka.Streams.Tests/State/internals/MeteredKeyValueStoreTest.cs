@@ -147,10 +147,10 @@
 //        [Fact]
 //        public void ShouldPutIfAbsentAndRecordPutIfAbsentMetric()
 //        {
-//            expect(inner.putIfAbsent(eq(keyBytes), aryEq(valueBytes))).andReturn(null);
+//            expect(inner.PutIfAbsent(eq(keyBytes), aryEq(valueBytes))).andReturn(null);
 //            Init();
 
-//            metered.putIfAbsent(key, value);
+//            metered.PutIfAbsent(key, value);
 
 //            KafkaMetric metric = metric("Put-if-absent-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
@@ -166,11 +166,11 @@
 //        [Fact]
 //        public void ShouldPutAllToInnerStoreAndRecordPutAllMetric()
 //        {
-//            inner.putAll(anyObject(List));
+//            inner.PutAll(default(List));
 //            expectLastCall();
 //            Init();
 
-//            metered.putAll(Collections.singletonList(KeyValuePair.Create(key, value)));
+//            metered.PutAll(Collections.singletonList(KeyValuePair.Create(key, value)));
 
 //            KafkaMetric metric = metric("Put-All-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
@@ -180,10 +180,10 @@
 //        [Fact]
 //        public void ShouldDeleteFromInnerStoreAndRecordDeleteMetric()
 //        {
-//            expect(inner.delete(keyBytes)).andReturn(valueBytes);
+//            expect(inner.Delete(keyBytes)).andReturn(valueBytes);
 //            Init();
 
-//            metered.delete(key);
+//            metered.Delete(key);
 
 //            KafkaMetric metric = metric("delete-rate");
 //            Assert.True((Double)metric.metricValue() > 0);
@@ -198,7 +198,7 @@
 //            Init();
 
 //            IKeyValueIterator<string, string> iterator = metered.Range(key, key);
-//            Assert.Equal(iterator.MoveNext().value, (value));
+//            Assert.Equal(iterator.MoveNext().Value, (value));
 //            Assert.False(iterator.HasNext());
 //            iterator.Close();
 
@@ -214,7 +214,7 @@
 //            Init();
 
 //            IKeyValueIterator<string, string> iterator = metered.All();
-//            Assert.Equal(iterator.MoveNext().value, (value));
+//            Assert.Equal(iterator.MoveNext().Value, (value));
 //            Assert.False(iterator.HasNext());
 //            iterator.Close();
 
@@ -243,9 +243,9 @@
 //        [Fact]
 //        public void ShouldSetFlushListenerOnWrappedCachingStore()
 //        {
-//            CachedKeyValueStore cachedKeyValueStore = mock(CachedKeyValueStore);
+//            CachedKeyValueStore cachedKeyValueStore = Mock.Of<CachedKeyValueStore);
 
-//            expect(cachedKeyValueStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
+//            expect(cachedKeyValueStore.SetFlushListener(default(CacheFlushListener), eq(false))).andReturn(true);
 //            replay(cachedKeyValueStore);
 
 //            metered = new MeteredKeyValueStore<>(
@@ -255,7 +255,7 @@
 //                Serdes.String(),
 //                Serdes.String()
 //            );
-//            Assert.True(metered.setFlushListener(null, false));
+//            Assert.True(metered.SetFlushListener(null, false));
 
 //            verify(cachedKeyValueStore);
 //        }
@@ -272,7 +272,7 @@
 //        [Fact]
 //        public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore()
 //        {
-//            Assert.False(metered.setFlushListener(null, false));
+//            Assert.False(metered.SetFlushListener(null, false));
 //        }
 
 //        private KafkaMetric Metric(MetricName metricName)

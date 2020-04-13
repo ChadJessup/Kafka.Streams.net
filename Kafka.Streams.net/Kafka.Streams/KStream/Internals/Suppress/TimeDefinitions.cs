@@ -1,5 +1,6 @@
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
+using System;
 
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
@@ -15,7 +16,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             return RecordTimeDefintion<K>.INSTANCE;
         }
 
-        public long Time(IProcessorContext context, K key)
+        public DateTime Time(IProcessorContext context, K key)
         {
             return context.Timestamp;
         }

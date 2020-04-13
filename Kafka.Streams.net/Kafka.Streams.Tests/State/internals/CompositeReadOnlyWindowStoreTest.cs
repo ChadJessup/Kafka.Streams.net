@@ -33,7 +33,7 @@
 
 
 //            windowStore = new CompositeReadOnlyWindowStore<>(
-//                new WrappingStoreProvider(Array.< StateStoreProvider > asList(stubProviderOne, stubProviderTwo)),
+//                new WrappingStoreProvider(Array.< StateStoreProvider > Arrays.asList(stubProviderOne, stubProviderTwo)),
 //                    QueryableStoreTypes.< string, string > windowStore(),
 //                    storeName);
 //        }
@@ -149,9 +149,9 @@
 //            underlyingWindowStore.Put("a", "a", 0L);
 //            secondUnderlying.Put("b", "b", 10L);
 //            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.Fetch("a", "b", ofEpochMilli(0), ofEpochMilli(10)));
-//            Assert.Equal(results, (Array.asList(
-//                    KeyValuePair.Create(new IWindowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new IWindowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//            Assert.Equal(results, (Arrays.asList(
+//                    KeyValuePair.Create(new Windowed2<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new Windowed2<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]
@@ -177,9 +177,9 @@
 //            underlyingWindowStore.Put("a", "a", 0L);
 //            secondUnderlying.Put("b", "b", 10L);
 //            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.All());
-//            Assert.Equal(results, (Array.asList(
-//                    KeyValuePair.Create(new IWindowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new IWindowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//            Assert.Equal(results, (Arrays.asList(
+//                    KeyValuePair.Create(new Windowed2<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new Windowed2<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]
@@ -191,9 +191,9 @@
 //            underlyingWindowStore.Put("a", "a", 0L);
 //            secondUnderlying.Put("b", "b", 10L);
 //            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.FetchAll(ofEpochMilli(0), ofEpochMilli(10)));
-//            Assert.Equal(results, (Array.asList(
-//                    KeyValuePair.Create(new IWindowed<string>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new IWindowed<string>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//            Assert.Equal(results, (Arrays.asList(
+//                    KeyValuePair.Create(new Windowed2<string>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new Windowed2<string>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]// (expected = NullPointerException)

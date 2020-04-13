@@ -176,7 +176,7 @@
 //                        }
 //                        if (bufferKey.time == minTimestamp)
 //                        {
-//                            minTimestamp = sortedMap.isEmpty() ? long.MaxValue : sortedMap.firstKey().time();
+//                            minTimestamp = sortedMap.IsEmpty() ? long.MaxValue : sortedMap.firstKey().time();
 //                        }
 //                    }
 

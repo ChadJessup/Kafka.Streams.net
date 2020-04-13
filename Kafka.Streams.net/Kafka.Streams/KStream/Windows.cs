@@ -9,7 +9,7 @@ namespace Kafka.Streams.KStream
      * Grace period defines how long to wait on late events, where lateness is defined as (stream_time - record_timestamp).
      *
      * Warning: It may be unsafe to use objects of this class in set- or map-like collections,
-     * since the equals and hashCode methods depend on mutable fields.
+     * since the Equals and hashCode methods depend on mutable fields.
      *
      * @param <W> type of the window instance
      * @see TimeWindows
@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream
          *
          * @param durationMs the window retention time in milliseconds
          * @return itself
-         * @throws IllegalArgumentException if {@code durationMs} is negative
+         * @throws ArgumentException if {@code durationMs} is negative
          * @deprecated since 2.1. Use {@link Materialized#withRetention(TimeSpan)}
          *             or directly configure the retention in a store supplier and use {@link Materialized#as(WindowBytesStoreSupplier)}.
          */
@@ -76,7 +76,7 @@ namespace Kafka.Streams.KStream
          *
          * @param segments the number of segments to be used
          * @return itself
-         * @throws IllegalArgumentException if specified segments is small than 2
+         * @throws ArgumentException if specified segments is small than 2
          * @deprecated since 2.1 Override segmentInterval() instead.
          */
         [Obsolete]
@@ -98,7 +98,7 @@ namespace Kafka.Streams.KStream
          * @param timestamp the timestamp window should get created for
          * @return a map of {@code windowStartTimestamp -> Window} entries
          */
-        public abstract Dictionary<long, W>? WindowsFor(TimeSpan timestamp);
+        public abstract Dictionary<DateTime, W>? WindowsFor(DateTime timestamp);
 
         /**
          * Return the size of the specified windows in milliseconds.

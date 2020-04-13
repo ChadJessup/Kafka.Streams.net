@@ -1,4 +1,5 @@
 using System;
+using Confluent.Kafka;
 
 namespace Kafka.Streams.State
 {
@@ -31,11 +32,18 @@ namespace Kafka.Streams.State
          * @return a new {@link ValueAndTimestamp} instance if the provide {@code value} is not {@code null};
          *         otherwise {@code null} is returned
          */
+        public static IValueAndTimestamp<V>? Make<V>(V value, DateTime timestamp)
+        {
+            return value == null
+                ? null
+                : new ValueAndTimestamp<V>(value, timestamp);
+        }
+
         public static IValueAndTimestamp<V>? Make<V>(V value, long timestamp)
         {
             return value == null
                 ? null
-                : new ValueAndTimestamp2<V>(value, timestamp);
+                : new ValueAndTimestamp<V>(value, Timestamp.UnixTimestampMsToDateTime(timestamp));
         }
     }
 
@@ -47,7 +55,7 @@ namespace Kafka.Streams.State
 
     public interface IValueAndTimestamp
     {
-        long Timestamp { get; }
+        DateTime Timestamp { get; }
     }
 
     public interface IValueAndTimestamp<out V> : IValueAndTimestamp
@@ -55,11 +63,11 @@ namespace Kafka.Streams.State
         V Value { get; }
     }
 
-    public class ValueAndTimestamp2<V> : IValueAndTimestamp<V>
+    public class ValueAndTimestamp<V> : IValueAndTimestamp<V>
     {
         public V Value { get; }
-        public long Timestamp { get; }
-        public ValueAndTimestamp2(V value, long timestamp)
+        public DateTime Timestamp { get; }
+        public ValueAndTimestamp(V value, DateTime timestamp)
         {
             value = value ?? throw new ArgumentNullException(nameof(value));
 

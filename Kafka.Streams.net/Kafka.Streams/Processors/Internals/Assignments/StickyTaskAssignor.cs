@@ -36,7 +36,7 @@
 //                for (int i = 0; i < numStandbyReplicas; i++)
 //                {
 //                    HashSet<ID> ids = findClientsWithoutAssignedTask(taskId);
-//                    if (ids.isEmpty())
+//                    if (ids.IsEmpty())
 //                    {
 //                        log.LogWarning("Unable to assign {} of {} standby tasks for task [{}]. " +
 //                                         "There is not enough available capacity. You should " +

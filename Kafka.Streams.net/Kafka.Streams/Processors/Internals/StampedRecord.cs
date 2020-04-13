@@ -1,3 +1,4 @@
+using System;
 using Confluent.Kafka;
 
 namespace Kafka.Streams.Processors.Internals
@@ -6,7 +7,7 @@ namespace Kafka.Streams.Processors.Internals
     {
         private readonly ConsumeResult<object, object> record;
 
-        public StampedRecord(ConsumeResult<object, object> record, long timestamp)
+        public StampedRecord(ConsumeResult<object, object> record, DateTime timestamp)
             : base(record, timestamp)
         {
             this.record = record;

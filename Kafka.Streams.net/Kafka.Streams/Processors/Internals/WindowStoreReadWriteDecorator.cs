@@ -22,20 +22,20 @@ namespace Kafka.Streams.Processors.Internals
         public void Put(
             K key,
             V value,
-            long windowStartTimestamp)
+            DateTime windowStartTimestamp)
         {
             this.Wrapped.Put(key, value, windowStartTimestamp);
         }
 
-        public V Fetch(K key, long time)
+        public V Fetch(K key, DateTime time)
         {
             return this.Wrapped.Fetch(key, time);
         }
 
         public IWindowStoreIterator<V> Fetch(
             K key,
-            long timeFrom,
-            long timeTo)
+            DateTime timeFrom,
+            DateTime timeTo)
         {
             return this.Wrapped.Fetch(key, timeFrom, timeTo);
         }
@@ -43,13 +43,15 @@ namespace Kafka.Streams.Processors.Internals
         public IKeyValueIterator<IWindowed<K>, V> Fetch(
             K from,
             K to,
-            long timeFrom,
-            long timeTo)
+            DateTime timeFrom,
+            DateTime timeTo)
         {
             return this.Wrapped.Fetch(from, to, timeFrom, timeTo);
         }
 
-        public IKeyValueIterator<IWindowed<K>, V> FetchAll(long timeFrom, long timeTo)
+        public IKeyValueIterator<IWindowed<K>, V> FetchAll(
+            DateTime timeFrom, 
+            DateTime timeTo)
         {
             return this.Wrapped.FetchAll(timeFrom, timeTo);
         }
@@ -57,21 +59,6 @@ namespace Kafka.Streams.Processors.Internals
         public IKeyValueIterator<IWindowed<K>, V> All()
         {
             return this.Wrapped.All();
-        }
-
-        public IWindowStoreIterator<V> Fetch(K key, DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKeyValueIterator<IWindowed<K>, V> Fetch(K from, K to, DateTime fromTime, DateTime toTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKeyValueIterator<IWindowed<K>, V> FetchAll(DateTime from, DateTime to)
-        {
-            throw new NotImplementedException();
         }
 
         public void Add(K key, V value)

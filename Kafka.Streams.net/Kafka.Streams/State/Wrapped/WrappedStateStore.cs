@@ -27,13 +27,12 @@ namespace Kafka.Streams.State.Internals
         }
 
         public abstract IStateStore GetWrappedStateStore();
-        public abstract string Name { get; }
+        public abstract string Name { get; protected set; }
         public abstract void Close();
         public abstract void Flush();
         public abstract void Init(IProcessorContext context, IStateStore root);
         public abstract bool IsOpen();
         public abstract bool Persistent();
-
         public abstract bool IsPresent();
     }
 
@@ -52,12 +51,13 @@ namespace Kafka.Streams.State.Internals
         {
             this.Context = context;
             this.Wrapped = wrapped;
+            this.Name = this.Wrapped.Name;
         }
 
-        public override void Init(IProcessorContext context, IStateStore root) => this.Wrapped.Init(context, root);
+        public override void Init(IProcessorContext context, IStateStore root)
+            => this.Wrapped.Init(context, root);
 
-        public override string Name => this.Wrapped.Name;
-
+        public override string Name { get; protected set; }
         public override IStateStore GetWrappedStateStore() => this.Wrapped;
         public override bool Persistent() => this.Wrapped.Persistent();
         public override bool IsOpen() => this.Wrapped.IsOpen();

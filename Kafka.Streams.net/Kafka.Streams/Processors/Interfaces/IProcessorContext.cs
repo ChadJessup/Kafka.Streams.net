@@ -114,7 +114,7 @@ namespace Kafka.Streams.Processors.Interfaces
         ICancellable Schedule(
             TimeSpan interval,
             PunctuationType type,
-            Action<long> callback);
+            Action<DateTime> callback);
 
         /**
          * Forwards a key/value pair to All downstream processors.
@@ -191,7 +191,7 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * @return the timestamp
          */
-        long Timestamp { get; }
+        DateTime Timestamp { get; }
 
         /**
          * Returns All the application config properties as key/value pairs.
@@ -202,7 +202,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * The type of the values is dependent on the {@link org.apache.kafka.common.config.ConfigDef.Type type} of the property
          * (e.g. the value of {@link org.apache.kafka.streams.StreamsConfig#DEFAULT_KEY_SERDE_CLASS_CONFIG DEFAULT_KEY_SERDE_CLASS_CONFIG}
          * will be of type {@link Class}, even if it was specified as a string to
-         * {@link org.apache.kafka.streams.StreamsConfig#StreamsConfig(Map) StreamsConfig(Map)}).
+         * {@link org.apache.kafka.streams.StreamsConfig#StreamsConfig(Dictionary) StreamsConfig(Dictionary)}).
          *
          * @return All the key/values from the StreamsConfig properties
          */

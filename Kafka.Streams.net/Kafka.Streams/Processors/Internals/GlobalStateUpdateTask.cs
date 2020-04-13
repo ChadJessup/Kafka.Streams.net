@@ -58,7 +58,8 @@ namespace Kafka.Streams.Processors.Internals
             if (deserialized != null)
             {
                 var recordContext =
-                    new ProcessorRecordContext(deserialized.Timestamp.UnixTimestampMs,
+                    new ProcessorRecordContext(
+                        deserialized.Timestamp.UtcDateTime,
                         deserialized.Offset,
                         deserialized.Partition,
                         deserialized.Topic,

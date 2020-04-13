@@ -21,20 +21,20 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            new ConsumerRecordFactory<>(Serdes.String(), Serdes.String());
 //        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
 //        private Merger<string, string> sessionMerger = (aggKey, aggOne, aggTwo) => aggOne + "+" + aggTwo;
-//        private SessionWindowedKStream<string, string> stream;
+//        private SessionWindowedIIKStream<K, V> stream;
 
 
 //        public void before()
 //        {
-//            IKStream<string, string> stream = builder.Stream(TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
-//            this.Stream = stream.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
-//                    .windowedBy(SessionWindows.with(TimeSpan.FromMilliseconds(500)));
+//            IIIKStream<K, V> stream = builder.Stream(TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
+//            this.Stream = stream.GroupByKey(Grouped.With(Serdes.String(), Serdes.String()))
+//                    .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(500)));
 //        }
 
 //        [Fact]
 //        public void shouldCountSessionWindowedWithCachingDisabled()
 //        {
-//            props.Set(StreamsConfigPropertyNames.CacheMaxBytesBuffering, 0);
+//            props.Set(StreamsConfig.CacheMaxBytesBuffering, 0);
 //            shouldCountSessionWindowed();
 //        }
 
@@ -47,27 +47,27 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        private void shouldCountSessionWindowed()
 //        {
 //            MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<>();
-//            stream.count()
-//                .toStream()
-//                .process(supplier);
+//            stream.Count()
+//                .ToStream()
+//                .Process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 
-//            Dictionary<IWindowed<string>, ValueAndTimestamp<long>> result =
-//                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
+//            Dictionary<IWindowed<string>, IValueAndTimestamp<long>> result =
+//                supplier.TheCapturedProcessor().lastValueAndTimestampPerKey;
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("1", new SessionWindow(10L, 15L))),
+//                result.Get(new Windowed2<>("1", new SessionWindow(10L, 15L))),
 //                equalTo(ValueAndTimestamp.Make(2L, 15L)));
 
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("2", new SessionWindow(599L, 600L))),
+//                result.Get(new Windowed2<>("2", new SessionWindow(599L, 600L))),
 //                equalTo(ValueAndTimestamp.Make(2L, 600L)));
 
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("1", new SessionWindow(600L, 600L))),
+//                result.Get(new Windowed2<>("1", new SessionWindow(600L, 600L))),
 //                equalTo(ValueAndTimestamp.Make(1L, 600L)));
 //        }
 
@@ -75,25 +75,25 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldReduceWindowed()
 //        {
 //            MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<>();
-//            stream.reduce(MockReducer.STRING_ADDER)
-//                .toStream()
-//                .process(supplier);
+//            stream.Reduce(MockReducer.STRING_ADDER)
+//                .ToStream()
+//                .Process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 
-//            Dictionary<IWindowed<string>, ValueAndTimestamp<string>> result =
-//                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
+//            Dictionary<IWindowed<string>, IValueAndTimestamp<string>> result =
+//                supplier.TheCapturedProcessor().lastValueAndTimestampPerKey;
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("1", new SessionWindow(10, 15))),
+//                result.Get(new Windowed2<>("1", new SessionWindow(10, 15))),
 //                equalTo(ValueAndTimestamp.Make("1+2", 15L)));
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("2", new SessionWindow(599L, 600))),
+//                result.Get(new Windowed2<>("2", new SessionWindow(599L, 600))),
 //                equalTo(ValueAndTimestamp.Make("1+2", 600L)));
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("1", new SessionWindow(600, 600))),
+//                result.Get(new Windowed2<>("1", new SessionWindow(600, 600))),
 //                equalTo(ValueAndTimestamp.Make("3", 600L)));
 //        }
 
@@ -101,34 +101,34 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        public void shouldAggregateSessionWindowed()
 //        {
 //            MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<>();
-//            stream.aggregate(MockInitializer.STRING_INIT,
+//            stream.Aggregate(MockInitializer.STRING_INIT,
 //                             MockAggregator.TOSTRING_ADDER,
 //                             sessionMerger,
-//                             Materialized.with(Serdes.String(), Serdes.String()))
-//                .toStream()
-//                .process(supplier);
+//                             Materialized.With(Serdes.String(), Serdes.String()))
+//                .ToStream()
+//                .Process(supplier);
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 
-//            Dictionary<IWindowed<string>, ValueAndTimestamp<string>> result =
-//                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
+//            Dictionary<IWindowed<string>, IValueAndTimestamp<string>> result =
+//                supplier.TheCapturedProcessor().lastValueAndTimestampPerKey;
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("1", new SessionWindow(10, 15))),
+//                result.Get(new Windowed2<>("1", new SessionWindow(10, 15))),
 //                equalTo(ValueAndTimestamp.Make("0+0+1+2", 15L)));
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("2", new SessionWindow(599, 600))),
+//                result.Get(new Windowed2<>("2", new SessionWindow(599, 600))),
 //                equalTo(ValueAndTimestamp.Make("0+0+1+2", 600L)));
 //            Assert.Equal(
-//                result.Get(new IWindowed<>("1", new SessionWindow(600, 600))),
+//                result.Get(new Windowed2<>("1", new SessionWindow(600, 600))),
 //                equalTo(ValueAndTimestamp.Make("0+3", 600L)));
 //        }
 
 //        [Fact]
 //        public void shouldMaterializeCount()
 //        {
-//            stream.count(Materialized.As("count-store"));
+//            stream.Count(Materialized.As("count-store"));
 
 //            try
 //            {
@@ -139,16 +139,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                Assert.Equal(
 //                    data,
 //                    equalTo(Array.AsReadOnly(
-//                        KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(10, 15)), 2L),
-//                        KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(600, 600)), 1L),
-//                        KeyValuePair.Create(new IWindowed<>("2", new SessionWindow(599, 600)), 2L))));
+//                        KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(10, 15)), 2L),
+//                        KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(600, 600)), 1L),
+//                        KeyValuePair.Create(new Windowed2<>("2", new SessionWindow(599, 600)), 2L))));
 //            }
 //    }
 
 //        [Fact]
 //        public void shouldMaterializeReduced()
 //        {
-//            stream.reduce(MockReducer.STRING_ADDER, Materialized.As("reduced"));
+//            stream.Reduce(MockReducer.STRING_ADDER, Materialized.As("reduced"));
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
@@ -158,20 +158,20 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Assert.Equal(
 //                data,
 //                equalTo(Array.AsReadOnly(
-//                    KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(10, 15)), "1+2"),
-//                    KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(600, 600)), "3"),
-//                    KeyValuePair.Create(new IWindowed<>("2", new SessionWindow(599, 600)), "1+2"))));
+//                    KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(10, 15)), "1+2"),
+//                    KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(600, 600)), "3"),
+//                    KeyValuePair.Create(new Windowed2<>("2", new SessionWindow(599, 600)), "1+2"))));
 //        }
 //    }
 
 //    [Fact]
 //    public void shouldMaterializeAggregated()
 //    {
-//        stream.aggregate(
+//        stream.Aggregate(
 //            MockInitializer.STRING_INIT,
 //            MockAggregator.TOSTRING_ADDER,
 //            sessionMerger,
-//            Materialize.As < string, string, ISessionStore<Bytes, byte[]>("aggregated").withValueSerde(Serdes.String()));
+//            Materialized.As < string, string, ISessionStore<Bytes, byte[]>("aggregated").withValueSerde(Serdes.String()));
 
 //        var driver = new TopologyTestDriver(builder.Build(), props);
 //        processData(driver);
@@ -180,40 +180,40 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        Assert.Equal(
 //            data,
 //            Array.AsReadOnly(
-//                KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(10, 15)), "0+0+1+2"),
-//                KeyValuePair.Create(new IWindowed<>("1", new SessionWindow(600, 600)), "0+3"),
-//                KeyValuePair.Create(new IWindowed<>("2", new SessionWindow(599, 600)), "0+0+1+2")));
+//                KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(10, 15)), "0+0+1+2"),
+//                KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(600, 600)), "0+3"),
+//                KeyValuePair.Create(new Windowed2<>("2", new SessionWindow(599, 600)), "0+0+1+2")));
 //    }
 //}
 
 //[Fact]
 //public void shouldThrowNullPointerOnAggregateIfInitializerIsNull()
 //{
-//    stream.aggregate(null, MockAggregator.TOSTRING_ADDER, sessionMerger);
+//    stream.Aggregate(null, MockAggregator.TOSTRING_ADDER, sessionMerger);
 //}
 
 //[Fact]
 //public void shouldThrowNullPointerOnAggregateIfAggregatorIsNull()
 //{
-//    stream.aggregate(MockInitializer.STRING_INIT, null, sessionMerger);
+//    stream.Aggregate(MockInitializer.STRING_INIT, null, sessionMerger);
 //}
 
 //[Fact]
 //public void shouldThrowNullPointerOnAggregateIfMergerIsNull()
 //{
-//    stream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, null);
+//    stream.Aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, null);
 //}
 
 //[Fact]
 //public void shouldThrowNullPointerOnReduceIfReducerIsNull()
 //{
-//    stream.reduce(null);
+//    stream.Reduce(null);
 //}
 
 //[Fact]
 //public void shouldThrowNullPointerOnMaterializedAggregateIfInitializerIsNull()
 //{
-//    stream.aggregate(
+//    stream.Aggregate(
 //        null,
 //        MockAggregator.TOSTRING_ADDER,
 //        sessionMerger,
@@ -223,7 +223,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //[Fact]
 //public void shouldThrowNullPointerOnMaterializedAggregateIfAggregatorIsNull()
 //{
-//    stream.aggregate(
+//    stream.Aggregate(
 //        MockInitializer.STRING_INIT,
 //        null,
 //        sessionMerger,
@@ -233,7 +233,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //[Fact]
 //public void shouldThrowNullPointerOnMaterializedAggregateIfMergerIsNull()
 //{
-//    stream.aggregate(
+//    stream.Aggregate(
 //        MockInitializer.STRING_INIT,
 //        MockAggregator.TOSTRING_ADDER,
 //        null,
@@ -244,7 +244,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //[Fact]
 //public void shouldThrowNullPointerOnMaterializedAggregateIfMaterializedIsNull()
 //{
-//    stream.aggregate(
+//    stream.Aggregate(
 //        MockInitializer.STRING_INIT,
 //        MockAggregator.TOSTRING_ADDER,
 //        sessionMerger,
@@ -254,20 +254,20 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //[Fact]
 //public void shouldThrowNullPointerOnMaterializedReduceIfReducerIsNull()
 //{
-//    stream.reduce(null, Materialized.As("store"));
+//    stream.Reduce(null, Materialized.As("store"));
 //}
 
 //[Fact]
 //public void shouldThrowNullPointerOnMaterializedReduceIfMaterializedIsNull()
 //{
-//    stream.reduce(MockReducer.STRING_ADDER,
+//    stream.Reduce(MockReducer.STRING_ADDER,
 //                  null);
 //}
 
 //[Fact]
 //public void shouldThrowNullPointerOnCountIfMaterializedIsNull()
 //{
-//    stream.count(null);
+//    stream.Count(null);
 //}
 
 //private void processData(var driver)

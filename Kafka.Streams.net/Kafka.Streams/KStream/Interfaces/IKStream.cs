@@ -245,7 +245,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of token of the value string.
          * <pre>{@code
          * KStream<string, string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapper<string, int> {
+         * KStream<string, int> outputStream = inputStream.MapValues(new ValueMapper<string, int> {
          *     int apply(string value)
 {
          *         return value.Split(" ").Length;
@@ -282,7 +282,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of token of the value string.
          * <pre>{@code
          * KStream<string, string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapper<string, int> {
+         * KStream<string, int> outputStream = inputStream.MapValues(new ValueMapper<string, int> {
          *     int apply(string value)
 {
          *         return value.Split(" ").Length;
@@ -320,7 +320,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of tokens of key and value strings.
          * <pre>{@code
          * KStream<string, string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, int> {
+         * KStream<string, int> outputStream = inputStream.MapValues(new ValueMapperWithKey<string, string, int> {
          *     int apply(string readOnlyKey, string value)
 {
          *         return readOnlyKey.Split(" ").Length + value.Split(" ").Length;
@@ -356,7 +356,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of tokens of key and value strings.
          * <pre>{@code
          * KStream<string, string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, int> {
+         * KStream<string, int> outputStream = inputStream.MapValues(new ValueMapperWithKey<string, string, int> {
          *     int apply(string readOnlyKey, string value)
 {
          *         return readOnlyKey.Split(" ").Length + value.Split(" ").Length;
@@ -770,7 +770,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param predicates the ordered list of {@link Predicate} instances
          * @return multiple distinct substreams of this {@code KStream}
          */
-        IKStream<K, V>[] Branch(Func<K, V, bool>[] predicates);
+        IKStream<K, V>[] Branch(params Func<K, V, bool>[] predicates);
 
         /**
          * Creates an array of {@code KStream} from this stream by branching the records in the original stream based on
@@ -791,7 +791,7 @@ namespace Kafka.Streams.KStream.Interfaces
 
         IKStream<K, VR> DoStreamTableJoin<VR, VO>(
             IKTable<K, VO> other,
-            IValueJoiner<V, VO, VR> joiner,
+            Func<V, VO, VR> joiner,
             Joined<K, V, VO> joined,
             bool leftJoin);
 
@@ -2376,7 +2376,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> Join<VO, VR>(
             IKStream<K, VO> otherStream,
-            IValueJoiner<V, VO, VR> joiner,
+            Func<V, VO, VR> joiner,
             JoinWindows windows);
 
         /**
@@ -2456,7 +2456,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> Join<VO, VR>(
             IKStream<K, VO> otherStream,
-            IValueJoiner<V, VO, VR> joiner,
+            Func<V, VO, VR> joiner,
             JoinWindows windows,
             Joined<K, V, VO> joined);
 
@@ -2538,7 +2538,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> LeftJoin<VO, VR>(
             IKStream<K, VO> otherStream,
-            IValueJoiner<V, VO, VR> joiner,
+            Func<V, VO, VR> joiner,
             JoinWindows windows);
 
         /**
@@ -2622,7 +2622,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> LeftJoin<VO, VR>(
             IKStream<K, VO> otherStream,
-            IValueJoiner<V, VO, VR> joiner,
+            Func<V, VO, VR> joiner,
             JoinWindows windows,
             Joined<K, V, VO> joined);
 
@@ -2703,9 +2703,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows)
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows)
          */
-        //IKStream<K, VR> outerJoin<VR, VO>(IKStream<K, VO> otherStream,
-        //                                   IValueJoiner<V, VO, VR> joiner,
-        //                                   JoinWindows windows);
+        IKStream<K, VR> OuterJoin<VR, VO>(
+            IKStream<K, VO> otherStream,
+            Func<V, VO, VR> joiner,
+            JoinWindows windows);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed outer equi join using the
@@ -2787,11 +2788,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows, Joined)
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows, Joined)
          */
-        //IKStream<K, VR> outerJoin<VR, VO>(
-        //    IKStream<K, VO> otherStream,
-        //    IValueJoiner<V, VO, VR> joiner,
-        //    JoinWindows windows,
-        //    Joined<K, V, VO> joined);
+        IKStream<K, VR> OuterJoin<VR, VO>(
+            IKStream<K, VO> otherStream,
+            Func<V, VO, VR> joiner,
+            JoinWindows windows,
+            Joined<K, V, VO> joined);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed inner equi join with default
@@ -2867,7 +2868,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> Join<VT, VR>(
             IKTable<K, VT> table,
-            IValueJoiner<V, VT, VR> joiner);
+            Func<V, VT, VR> joiner);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed inner equi join with default
@@ -2945,7 +2946,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> Join<VT, VR>(
             IKTable<K, VT> table,
-            IValueJoiner<V, VT, VR> joiner,
+            Func<V, VT, VR> joiner,
             Joined<K, V, VT> joined);
 
         /**
@@ -3025,7 +3026,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> LeftJoin<VT, VR>(
             IKTable<K, VT> table,
-            IValueJoiner<V, VT, VR> joiner);
+            Func<V, VT, VR> joiner);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed left equi join with default
@@ -3106,7 +3107,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> LeftJoin<VT, VR>(
             IKTable<K, VT> table,
-            IValueJoiner<V, VT, VR> joiner,
+            Func<V, VT, VR> joiner,
             Joined<K, V, VT> joined);
 
         /**
@@ -3141,7 +3142,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K, RV> Join<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
             IKeyValueMapper<K, V, GK> keyValueMapper,
-            IValueJoiner<V, GV, RV> joiner);
+            Func<V, GV, RV> joiner);
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed inner equi join.
@@ -3176,7 +3177,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K, RV> Join<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
             IKeyValueMapper<K, V, GK> keyValueMapper,
-            IValueJoiner<V, GV, RV> joiner,
+            Func<V, GV, RV> joiner,
             Named named);
 
         /**
@@ -3215,7 +3216,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K, RV> LeftJoin<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
             IKeyValueMapper<K, V, GK> keyValueMapper,
-            IValueJoiner<V, GV, RV> valueJoiner);
+            Func<V, GV, RV> valueJoiner);
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed left equi join.
@@ -3254,7 +3255,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K, RV> LeftJoin<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
             IKeyValueMapper<K, V, GK> keyValueMapper,
-            IValueJoiner<V, GV, RV> valueJoiner,
+            Func<V, GV, RV> valueJoiner,
             Named named);
     }
 }

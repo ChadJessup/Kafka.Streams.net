@@ -76,7 +76,7 @@
 //            try (IKeyValueIterator<IWindowed<string>, long> iterator =
 //                sessionStore.findSessions("a", "b", 0L, long.MaxValue)
 //            ) {
-//                Assert.Equal(valuesToSet(iterator), new HashSet<>(Array.asList(2L, 3L, 4L)));
+//                Assert.Equal(valuesToSet(iterator), new HashSet<>(Arrays.asList(2L, 3L, 4L)));
 //            }
 //            }
 //}}

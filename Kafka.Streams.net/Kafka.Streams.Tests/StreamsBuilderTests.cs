@@ -69,7 +69,7 @@ namespace Kafka.Streams.Tests
                          .filter(MockPredicate.allGoodPredicate(), Materialized.As("store"));
                     builder
                         .< Bytes, string > stream(STREAM_TOPIC)
-                         .join(filteredKTable, MockValueJoiner.TOSTRING_JOINER);
+                         .Join(filteredKTable, MockValueJoiner.TOSTRING_JOINER);
                     builder.Build();
 
                     ProcessorTopology topology =
@@ -91,10 +91,10 @@ namespace Kafka.Streams.Tests
                 {
                     IKTable<Bytes, string> mappedKTable = builder
                         .< Bytes, string> table(TABLE_TOPIC)
-                         .mapValues(MockMapper.noOpValueMapper());
+                         .MapValues(MockMapper.noOpValueMapper());
                     builder
                         .< Bytes, string > stream(STREAM_TOPIC)
-                         .join(mappedKTable, MockValueJoiner.TOSTRING_JOINER);
+                         .Join(mappedKTable, MockValueJoiner.TOSTRING_JOINER);
                     builder.Build();
 
                     ProcessorTopology topology =
@@ -107,7 +107,7 @@ namespace Kafka.Streams.Tests
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000005"),
                         Collections.singleton(topology.StateStores.Get(0).Name()));
                     Assert.True(
-                        topology.processorConnectedStateStores("KTABLE-MAPVALUES-0000000003").isEmpty());
+                        topology.processorConnectedStateStores("KTABLE-MAPVALUES-0000000003").IsEmpty());
                 }
 
                 [Fact]
@@ -115,10 +115,10 @@ namespace Kafka.Streams.Tests
                 {
                     IKTable<Bytes, string> mappedKTable = builder
                         .< Bytes, string> table(TABLE_TOPIC)
-                         .mapValues(MockMapper.noOpValueMapper(), Materialized.As("store"));
+                         .MapValues(MockMapper.noOpValueMapper(), Materialized.As("store"));
                     builder
                         .< Bytes, string > stream(STREAM_TOPIC)
-                         .join(mappedKTable, MockValueJoiner.TOSTRING_JOINER);
+                         .Join(mappedKTable, MockValueJoiner.TOSTRING_JOINER);
                     builder.Build();
 
                     ProcessorTopology topology =
@@ -142,7 +142,7 @@ namespace Kafka.Streams.Tests
                     IKTable<Bytes, string> table2 = builder.Table("table-topic2");
                     builder
                         .< Bytes, string > stream(STREAM_TOPIC)
-                         .join(table1.join(table2, MockValueJoiner.TOSTRING_JOINER), MockValueJoiner.TOSTRING_JOINER);
+                         .Join(table1.Join(table2, MockValueJoiner.TOSTRING_JOINER), MockValueJoiner.TOSTRING_JOINER);
                     builder.Build();
 
                     ProcessorTopology topology =
@@ -155,7 +155,7 @@ namespace Kafka.Streams.Tests
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000010"),
                         Utils.mkSet(topology.StateStores.Get(0).Name(), topology.StateStores.Get(1).Name()));
                     Assert.True(
-                        topology.processorConnectedStateStores("KTABLE-MERGE-0000000007").isEmpty());
+                        topology.processorConnectedStateStores("KTABLE-MERGE-0000000007").IsEmpty());
                 }
 
                 [Fact]
@@ -165,8 +165,8 @@ namespace Kafka.Streams.Tests
                     IKTable<Bytes, string> table2 = builder.Table("table-topic2");
                     builder
                         .< Bytes, string > stream(STREAM_TOPIC)
-                         .join(
-                             table1.join(table2, MockValueJoiner.TOSTRING_JOINER, Materialized.As("store")),
+                         .Join(
+                             table1.Join(table2, MockValueJoiner.TOSTRING_JOINER, Materialized.As("store")),
                         MockValueJoiner.TOSTRING_JOINER);
                     builder.Build();
 
@@ -188,7 +188,7 @@ namespace Kafka.Streams.Tests
                 public void shouldAllowJoinMaterializedSourceKTable()
                 {
                     IKTable<Bytes, string> table = builder.Table(TABLE_TOPIC);
-                    builder.< Bytes, string > stream(STREAM_TOPIC).join(table, MockValueJoiner.TOSTRING_JOINER);
+                    builder.< Bytes, string > stream(STREAM_TOPIC).Join(table, MockValueJoiner.TOSTRING_JOINER);
                     builder.Build();
 
                     ProcessorTopology topology =
@@ -208,11 +208,11 @@ namespace Kafka.Streams.Tests
                 [Fact]
                 public void shouldProcessingFromSinkTopic()
                 {
-                    IKStream<string, string> source = builder.Stream("topic-source");
+                    IIIKStream<K, V> source = builder.Stream("topic-source");
                     source.To("topic-sink");
 
                     MockProcessorSupplier<string, string> processorSupplier = new MockProcessorSupplier<>();
-                    source.process(processorSupplier);
+                    source.Process(processorSupplier);
 
                     ConsumerRecordFactory<string, string> recordFactory =
                         new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L);
@@ -225,20 +225,20 @@ namespace Kafka.Streams.Tests
 
                         // no exception .As thrown
                         Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)),
-                                 processorSupplier.theCapturedProcessor().processed);
+                                 processorSupplier.TheCapturedProcessor().processed);
                     }
 
             [Fact]
                 public void shouldProcessViaThroughTopic()
                 {
-                    IKStream<string, string> source = builder.Stream("topic-source");
-                    IKStream<string, string> through = source.through("topic-sink");
+                    IIIKStream<K, V> source = builder.Stream("topic-source");
+                    IIIKStream<K, V> through = source.through("topic-sink");
 
                     MockProcessorSupplier<string, string> sourceProcessorSupplier = new MockProcessorSupplier<>();
-                    source.process(sourceProcessorSupplier);
+                    source.Process(sourceProcessorSupplier);
 
                     MockProcessorSupplier<string, string> throughProcessorSupplier = new MockProcessorSupplier<>();
-                    through.process(throughProcessorSupplier);
+                    through.Process(throughProcessorSupplier);
 
                     ConsumerRecordFactory<string, string> recordFactory =
                         new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L);
@@ -248,8 +248,8 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         driver.PipeInput(recordFactory.Create("topic-source", "A", "aa"));
                     }
 
-                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), sourceProcessorSupplier.theCapturedProcessor().processed);
-                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), throughProcessorSupplier.theCapturedProcessor().processed);
+                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), sourceProcessorSupplier.TheCapturedProcessor().processed);
+                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), throughProcessorSupplier.TheCapturedProcessor().processed);
                     }
 
                 [Fact]
@@ -258,12 +258,12 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     string topic1 = "topic-1";
                     string topic2 = "topic-2";
 
-                    IKStream<string, string> source1 = builder.Stream(topic1);
-                    IKStream<string, string> source2 = builder.Stream(topic2);
-                    IKStream<string, string> merged = source1.merge(source2);
+                    IIIKStream<K, V> source1 = builder.Stream(topic1);
+                    IIIKStream<K, V> source2 = builder.Stream(topic2);
+                    IIIKStream<K, V> merged = source1.merge(source2);
 
                     MockProcessorSupplier<string, string> processorSupplier = new MockProcessorSupplier<>();
-                    merged.process(processorSupplier);
+                    merged.Process(processorSupplier);
 
                     ConsumerRecordFactory<string, string> recordFactory =
                         new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L);
@@ -279,7 +279,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     Assert.EqualsasList(new KeyValueTimestamp<>("A", "aa", 0),
                             new KeyValueTimestamp<>("B", "bb", 0),
                             new KeyValueTimestamp<>("C", "cc", 0),
-                            new KeyValueTimestamp<>("D", "dd", 0)), processorSupplier.theCapturedProcessor().processed);
+                            new KeyValueTimestamp<>("D", "dd", 0)), processorSupplier.TheCapturedProcessor().processed);
                     }
 
             [Fact]
@@ -291,7 +291,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     builder.Table(topic, Materialized.< long, string, IKeyValueStore<Bytes, byte[]> > As("store")
                             .WithKeySerde(Serdes.Long())
                             .withValueSerde(Serdes.String()))
-                    .toStream().ForEach (action) ;
+                    .ToStream().ForEach (action) ;
 
                     ConsumerRecordFactory<long, string> recordFactory =
                         new ConsumerRecordFactory<>(new Serdes.Long().Serializer(), Serdes.String());
@@ -301,7 +301,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         driver.PipeInput(recordFactory.Create(topic, 1L, "value1"));
                         driver.PipeInput(recordFactory.Create(topic, 2L, "value2"));
 
-                        IKeyValueStore<long, string> store = driver.getKeyValueStore("store");
+                        IKeyValueStore<long, string> store = driver.GetKeyValueStore("store");
                         Assert.Equal("value1", store.Get(1L));
                         Assert.Equal("value2", store.Get(2L));
                         Assert.Equal("value1", results.Get(1L));
@@ -325,7 +325,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         var driver = new TopologyTestDriver(builder.Build(), props);
                         driver.PipeInput(recordFactory.Create(topic, 1L, "value1"));
                         driver.PipeInput(recordFactory.Create(topic, 2L, "value2"));
-                        IKeyValueStore<long, string> store = driver.getKeyValueStore("store");
+                        IKeyValueStore<long, string> store = driver.GetKeyValueStore("store");
 
                         Assert.Equal("value1", store.Get(1L));
                         Assert.Equal("value2", store.Get(2L));
@@ -336,7 +336,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 public void shouldNotMaterializeStoresIfNotRequired()
                 {
                     string topic = "topic";
-                    builder.Table(topic, Materialized.with(Serdes.Long(), Serdes.String()));
+                    builder.Table(topic, Materialized.With(Serdes.Long(), Serdes.String()));
 
                     ProcessorTopology topology =
                         builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -350,7 +350,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     string topic = "topic";
                     builder.Table(topic, Materialized.< long, string, IKeyValueStore<Bytes, byte[]> > As("store"));
                     StreamsConfig props = StreamsTestConfigs.GetStandardConfig();
-                    props.Add(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION, StreamsConfigPropertyNames.OPTIMIZE);
+                    props.Add(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
                     Topology topology = builder.Build(props);
 
                     InternalTopologyBuilder InternalTopologyBuilder = TopologyWrapper.getInternalTopologyBuilder(topology);
@@ -366,7 +366,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         InternalTopologyBuilder.getStateStores().Get("store").loggingEnabled(),
                         false);
                     Assert.Equal(
-                        InternalTopologyBuilder.topicGroups().Get(0).stateChangelogTopics.isEmpty(),
+                        InternalTopologyBuilder.topicGroups().Get(0).stateChangelogTopics.IsEmpty(),
                         true);
                 }
 
@@ -456,7 +456,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 public void shouldUseSpecifiedNameForSinkProcessor()
                 {
                     string expected = "sink-processor";
-                    IKStream<object, object> stream = builder.Stream(STREAM_TOPIC);
+                    IIIKStream<K, V> stream = builder.Stream(STREAM_TOPIC);
                     stream.To(STREAM_TOPIC_TWO, Produced.As(expected));
                     stream.To(STREAM_TOPIC_TWO);
                     builder.Build();
@@ -476,7 +476,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForMapValuesOperation()
                 {
-                    builder.Stream(STREAM_TOPIC).mapValues(v => v, Named.As(STREAM_OPERATION_NAME));
+                    builder.Stream(STREAM_TOPIC).MapValues(v => v, Named.As(STREAM_OPERATION_NAME));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForOperation(topology, "KSTREAM-SOURCE-0000000000", STREAM_OPERATION_NAME);
@@ -485,7 +485,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForMapValuesWithKeyOperation()
                 {
-                    builder.Stream(STREAM_TOPIC).mapValues((k, v) => v, Named.As(STREAM_OPERATION_NAME));
+                    builder.Stream(STREAM_TOPIC).MapValues((k, v) => v, Named.As(STREAM_OPERATION_NAME));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForOperation(topology, "KSTREAM-SOURCE-0000000000", STREAM_OPERATION_NAME);
@@ -557,9 +557,9 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForJoinOperationBetweenKStreamAndKTable()
                 {
-                    IKStream<string, string> streamOne = builder.Stream(STREAM_TOPIC);
+                    IIIKStream<K, V> streamOne = builder.Stream(STREAM_TOPIC);
                     IKTable<string, string> streamTwo = builder.Table("table-topic");
-                    streamOne.join(streamTwo, (value1, value2) => value1, Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.Join(streamTwo, (value1, value2) => value1, Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
 
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -573,9 +573,9 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForLeftJoinOperationBetweenKStreamAndKTable()
                 {
-                    IKStream<string, string> streamOne = builder.Stream(STREAM_TOPIC);
+                    IIIKStream<K, V> streamOne = builder.Stream(STREAM_TOPIC);
                     IKTable<string, string> streamTwo = builder.Table(STREAM_TOPIC_TWO);
-                    streamOne.leftJoin(streamTwo, (value1, value2) => value1, Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.LeftJoin(streamTwo, (value1, value2) => value1, Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
 
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -589,10 +589,10 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForLeftJoinOperationBetweenKStreamAndKStream()
                 {
-                    IKStream<string, string> streamOne = builder.Stream(STREAM_TOPIC);
-                    IKStream<string, string> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
+                    IIIKStream<K, V> streamOne = builder.Stream(STREAM_TOPIC);
+                    IIIKStream<K, V> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.leftJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.LeftJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
 
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -612,10 +612,10 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForJoinOperationBetweenKStreamAndKStream()
                 {
-                    IKStream<string, string> streamOne = builder.Stream(STREAM_TOPIC);
-                    IKStream<string, string> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
+                    IIIKStream<K, V> streamOne = builder.Stream(STREAM_TOPIC);
+                    IIIKStream<K, V> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.join(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.Join(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
 
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -636,10 +636,10 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForOuterJoinOperationBetweenKStreamAndKStream()
                 {
-                    IKStream<string, string> streamOne = builder.Stream(STREAM_TOPIC);
-                    IKStream<string, string> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
+                    IIIKStream<K, V> streamOne = builder.Stream(STREAM_TOPIC);
+                    IIIKStream<K, V> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.outerJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.OuterJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForStateStore(topology.StateStores,
@@ -662,8 +662,8 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     string topic1 = "topic-1";
                     string topic2 = "topic-2";
 
-                    IKStream<string, string> source1 = builder.Stream(topic1);
-                    IKStream<string, string> source2 = builder.Stream(topic2);
+                    IIIKStream<K, V> source1 = builder.Stream(topic1);
+                    IIIKStream<K, V> source2 = builder.Stream(topic2);
                     source1.merge(source2, Named.As("merge-processor"));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -674,7 +674,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 public void shouldUseSpecifiedNameForProcessOperation()
                 {
                     builder.Stream(STREAM_TOPIC)
-                            .process(() => null, Named.As("test-processor"));
+                            .Process(() => null, Named.As("test-processor"));
 
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();

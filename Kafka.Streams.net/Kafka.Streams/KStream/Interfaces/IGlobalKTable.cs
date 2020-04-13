@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Interfaces
      *  KafkaStreams streams = ...;
      * streams.start()
      * ...
-     * IReadOnlyKeyValueStore view = streams.store("g1-store", QueryableStoreTypes.KeyValueStore());
+     * IReadOnlyKeyValueStore view = streams.store("g1-store", QueryableStoreTypes.KeyValueStore);
      * view[key]; // can be done on any key, as All keys are present
      *}</pre>
      * Note that in contrast to {@link KTable} a {@code GlobalKTable}'s state holds a full copy of the underlying topic,

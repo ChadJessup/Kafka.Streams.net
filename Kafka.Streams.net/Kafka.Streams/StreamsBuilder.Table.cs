@@ -42,9 +42,9 @@ namespace Kafka.Streams
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * IReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>KeyValueStore());
+             * IReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
              * String key = "some-key";
-             * Long valueForKey = localStore.Get(key); // key must be local (application state is shared over All running Kafka Streams instances)
+             * long valueForKey = localStore.Get(key); // key must be local (application state is shared over All running Kafka Streams instances)
              * }</pre>
              * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
              * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -284,9 +284,9 @@ namespace Kafka.Streams
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * IReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>KeyValueStore());
+             * IReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
              * String key = "some-key";
-             * Long valueForKey = localStore.Get(key);
+             * long valueForKey = localStore.Get(key);
              * }</pre>
              * Note that {@link GlobalKTable} always applies {@code "auto.offset.reset"} strategy {@code "earliest"}
              * regardless of the specified value in {@link StreamsConfig} or {@link Consumed}.
@@ -343,9 +343,9 @@ namespace Kafka.Streams
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * IReadOnlyKeyValueStore<String, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>KeyValueStore());
+             * IReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
              * String key = "some-key";
-             * Long valueForKey = localStore.Get(key);
+             * long valueForKey = localStore.Get(key);
              * }</pre>
              * Note that {@link GlobalKTable} always applies {@code "auto.offset.reset"} strategy {@code "earliest"}
              * regardless of the specified value in {@link StreamsConfig}.

@@ -10,11 +10,11 @@ namespace Kafka.Streams.State
         where T : IStateStore
     {
         /**
-         * Returns a Map containing any log configs that will be used when creating the changelog for the {@link IStateStore}.
+         * Returns a Dictionary containing any log configs that will be used when creating the changelog for the {@link IStateStore}.
          * <p>
          * Note: any unrecognized configs will be ignored by the Kafka brokers.
          *
-         * @return Map containing any log configs to be used when creating the changelog for the {@link IStateStore}
+         * @return Dictionary containing any log configs to be used when creating the changelog for the {@link IStateStore}
          * If {@code loggingEnabled} returns false, this function will always return an empty map
          */
         Dictionary<string, string> logConfig { get; }

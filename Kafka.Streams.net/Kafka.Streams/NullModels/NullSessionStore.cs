@@ -21,13 +21,13 @@ namespace Kafka.Streams.NullModels
         public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to)
             => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
-        public byte[] FetchSession(Bytes key, long startTime, long endTime)
+        public byte[] FetchSession(Bytes key, DateTime startTime, DateTime endTime)
             => Array.Empty<byte>();
 
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(Bytes key, long earliestSessionEndTime, long latestSessionStartTime)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(Bytes key, DateTime earliestSessionEndTime, DateTime latestSessionStartTime)
             => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
-        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(Bytes keyFrom, Bytes keyTo, long earliestSessionEndTime, long latestSessionStartTime)
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FindSessions(Bytes keyFrom, Bytes keyTo, DateTime earliestSessionEndTime, DateTime latestSessionStartTime)
             => new NullKeyValueIterator<IWindowed<Bytes>, byte[]>();
 
         public void Flush()

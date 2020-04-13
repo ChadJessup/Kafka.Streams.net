@@ -79,7 +79,7 @@ namespace Kafka.Streams.Tests.Tests
 //                while (true)
 //                {
 //                    int index = rand.nextInt(numKeys);
-//                    string key = data[index].key;
+//                    string key = data[index].Key;
 //                    int value = data[index].MoveNext();
 
 //                    ProducerRecord<byte[], byte[]> record =
@@ -96,7 +96,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    {
 //                        System.Console.Out.WriteLine(Instant.now() + " " + numRecordsProduced + " records produced");
 //                    }
-//                    Utils.sleep(2);
+//                    Utils.Sleep(2);
 //                }
 //            }
 //    }
@@ -116,7 +116,7 @@ namespace Kafka.Streams.Tests.Tests
 //            for (int i = 0; i < numKeys; i++)
 //            {
 //                data[i] = new ValueList(i, i + maxRecordsPerKey - 1);
-//                allData.Put(data[i].key, new HashSet<>());
+//                allData.Put(data[i].Key, new HashSet<>());
 //            }
 //            Random rand = new Random();
 
@@ -124,7 +124,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //            long recordPauseTime = timeToSpend.TotalMilliseconds / numKeys / maxRecordsPerKey;
 
-//            List<ProducerRecord<byte[], byte[]>> needRetry = new ArrayList<>();
+//            List<ProducerRecord<byte[], byte[]>> needRetry = new List<ProducerRecord<byte[], byte[]>>();
 
 //            try
 //            {
@@ -132,7 +132,7 @@ namespace Kafka.Streams.Tests.Tests
 //                while (remaining > 0)
 //                {
 //                    int index = rand.nextInt(remaining);
-//                    string key = data[index].key;
+//                    string key = data[index].Key;
 //                    int value = data[index].MoveNext();
 
 //                    if (value < 0)
@@ -158,26 +158,26 @@ namespace Kafka.Streams.Tests.Tests
 //                        {
 //                            System.Console.Out.WriteLine(Instant.now() + " " + numRecordsProduced + " records produced");
 //                        }
-//                        Utils.sleep(Math.max(recordPauseTime, 2));
+//                        Utils.Sleep(Math.Max(recordPauseTime, 2));
 //                    }
 //                }
 //                producer.Flush();
 
 //                int remainingRetries = 5;
-//                while (!needRetry.isEmpty())
+//                while (!needRetry.IsEmpty())
 //                {
-//                    List<ProducerRecord<byte[], byte[]>> needRetry2 = new ArrayList<>();
+//                    List<ProducerRecord<byte[], byte[]>> needRetry2 = new List<ProducerRecord<byte[], byte[]>>();
 //                    foreach (ProducerRecord<byte[], byte[]> record in needRetry)
 //                    {
-//                        System.Console.Out.WriteLine("retry producing " + stringSerde.deserializer().deserialize("", record.Key));
+//                        System.Console.Out.WriteLine("retry producing " + stringSerde.deserializer().Deserialize("", record.Key));
 //                        producer.send(record, new TestCallback(record, needRetry2));
 //                    }
 //                    producer.Flush();
 //                    needRetry = needRetry2;
 
-//                    if (--remainingRetries == 0 && !needRetry.isEmpty())
+//                    if (--remainingRetries == 0 && !needRetry.IsEmpty())
 //                    {
-//                        System.Console.Error.println("Failed to produce All records after multiple retries");
+//                        System.Console.Error.WriteLine("Failed to produce All records after multiple retries");
 //                        Exit.exit(1);
 //                    }
 //                }
@@ -190,7 +190,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    producer.send(new ProducerRecord<>(
 //                        partition.Topic,
 //                        partition.Partition,
-//                        System.currentTimeMillis() + TimeSpan.ofDays(2).TotalMilliseconds,
+//                        System.currentTimeMillis() + TimeSpan.FromDays(2).TotalMilliseconds,
 //                        stringSerde.Serializer.Serialize("", "Flush"),
 //                        intSerde.Serializer.Serialize("", 0)
 //                    ));
@@ -271,15 +271,15 @@ namespace Kafka.Streams.Tests.Tests
 //        case "sws-suppressed":
 //        case "max":
 //        case "dif":
-//            value = intSerde.deserializer().deserialize(topic, data);
+//            value = intSerde.deserializer().Deserialize(topic, data);
 //            break;
 //        case "sum":
 //        case "cnt":
 //        case "tagg":
-//            value = longSerde.deserializer().deserialize(topic, data);
+//            value = longSerde.deserializer().Deserialize(topic, data);
 //            break;
 //        case "avg":
-//            value = doubleSerde.deserializer().deserialize(topic, data);
+//            value = doubleSerde.deserializer().Deserialize(topic, data);
 //            break;
 //        default:
 //            throw new RuntimeException("unknown topic: " + topic);
@@ -301,14 +301,14 @@ namespace Kafka.Streams.Tests.Tests
 
 //        KafkaConsumer<string, Number> consumer = new KafkaConsumer<>(props);
 //List<TopicPartition> partitions = getAllPartitions(consumer, TOPICS);
-//consumer.assign(partitions);
+//consumer.Assign(partitions);
 //        consumer.seekToBeginning(partitions);
 
 //        int recordsGenerated = inputs.Count * maxRecordsPerKey;
 //int recordsProcessed = 0;
-//Dictionary<string, AtomicInteger> processed =
+//Dictionary<string, int> processed =
 //    Stream.of(TOPICS)
-//          .collect(Collectors.toMap(t => t, t => new AtomicInteger(0)));
+//          .collect(Collectors.toMap(t => t, t => new int(0)));
 
 //Dictionary<string, Map<string, LinkedList<ConsumeResult<string, Number>>>> events = new HashMap<>();
 
@@ -316,8 +316,8 @@ namespace Kafka.Streams.Tests.Tests
 //int retry = 0;
 //long start = System.currentTimeMillis();
 //        while (System.currentTimeMillis() - start<TimeUnit.MINUTES.toMillis(6)) {
-//            ConsumeResult<string, Number> records = consumer.poll(TimeSpan.ofSeconds(1));
-//            if (records.isEmpty() && recordsProcessed >= recordsGenerated) {
+//            ConsumeResult<string, Number> records = consumer.poll(TimeSpan.FromSeconds(1));
+//            if (records.IsEmpty() && recordsProcessed >= recordsGenerated) {
 //                verificationResult = verifyAll(inputs, events);
 //                if (verificationResult.passed()) {
 //                    break;
@@ -335,7 +335,7 @@ namespace Kafka.Streams.Tests.Tests
 //string topic = record.Topic;
 //processed.Get(topic).incrementAndGet();
 
-//                    if (topic.equals("echo")) {
+//                    if (topic.Equals("echo")) {
 //                        recordsProcessed++;
 //                        if (recordsProcessed % 100 == 0) {
 //                            System.Console.Out.WriteLine("Echo records processed = " + recordsProcessed);
@@ -369,22 +369,22 @@ namespace Kafka.Streams.Tests.Tests
 
 //Dictionary<string, HashSet<Number>> received =
 //    events.Get("echo")
-//          .entrySet()
+//          
 //          .Stream()
 //          .map(entry => mkEntry(
-//              entry.getKey(),
-//              entry.getValue().Stream().map(ConsumeResult::value).collect(Collectors.toSet()))
+//              entry.Key,
+//              entry.Value.Stream().map(ConsumeResult::value).collect(Collectors.toSet()))
 //          )
 //          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-//success = inputs.equals(received);
+//success = inputs.Equals(received);
 
 //        if (success) {
 //            System.Console.Out.WriteLine("ALL-RECORDS-DELIVERED");
 //        } else {
 //            int missedCount = 0;
-//            foreach (Map.Entry<string, HashSet<int>> entry in inputs.entrySet()) {
-//                missedCount += received.Get(entry.getKey()).Count;
+//            foreach (Map.Entry<string, HashSet<int>> entry in inputs) {
+//                missedCount += received.Get(entry.Key).Count;
 //            }
 //            System.Console.Out.WriteLine("missedRecords=" + missedCount);
 //        }
@@ -457,9 +457,9 @@ namespace Kafka.Streams.Tests.Tests
 //{
 //    Dictionary<string, LinkedList<ConsumeResult<string, Number>>> observedInputEvents = events.Get("data");
 //    Dictionary<string, LinkedList<ConsumeResult<string, Number>>> outputEvents = events.getOrDefault(topic, emptyMap());
-//    if (outputEvents.isEmpty())
+//    if (outputEvents.IsEmpty())
 //    {
-//        resultStream.println(topic + " is empty");
+//        resultStream.WriteLine(topic + " is empty");
 //        return false;
 //    }
 //    else
@@ -472,12 +472,12 @@ namespace Kafka.Streams.Tests.Tests
 //                                outputEvents.Count, inputData.Count, outputEvents.keySet(), inputData.keySet());
 //            return false;
 //        }
-//        foreach (Map.Entry<string, LinkedList<ConsumeResult<string, Number>>> entry in outputEvents.entrySet())
+//        foreach (Map.Entry<string, LinkedList<ConsumeResult<string, Number>>> entry in outputEvents)
 //        {
-//            string key = entry.getKey();
+//            string key = entry.Key;
 //            Number expected = keyToExpectation.apply(key);
-//            Number actual = entry.getValue().getLast().Value;
-//            if (!expected.equals(actual))
+//            Number actual = entry.Value.getLast().Value;
+//            if (!expected.Equals(actual))
 //            {
 //                resultStream.printf("%s fail: key=%s actual=%s expected=%s%n\t inputEvents=%n%s%n\toutputEvents=%n%s%n",
 //                                    topic,
@@ -485,7 +485,7 @@ namespace Kafka.Streams.Tests.Tests
 //                                    actual,
 //                                    expected,
 //                                    indent("\t\t", observedInputEvents.Get(key)),
-//                                    indent("\t\t", entry.getValue()));
+//                                    indent("\t\t", entry.Value));
 //                return false;
 //            }
 //        }
@@ -498,18 +498,18 @@ namespace Kafka.Streams.Tests.Tests
 //                                         string topic,
 //                                        Dictionary<string, Map<string, LinkedList<ConsumeResult<string, Number>>>> events)
 //{
-//    resultStream.println("verifying suppressed " + topic);
+//    resultStream.WriteLine("verifying suppressed " + topic);
 //    Dictionary<string, LinkedList<ConsumeResult<string, Number>>> topicEvents = events.getOrDefault(topic, emptyMap());
-//    foreach (Map.Entry<string, LinkedList<ConsumeResult<string, Number>>> entry in topicEvents.entrySet())
+//    foreach (Map.Entry<string, LinkedList<ConsumeResult<string, Number>>> entry in topicEvents)
 //    {
-//        if (entry.getValue().Count != 1)
+//        if (entry.Value.Count != 1)
 //        {
 //            string unsuppressedTopic = topic.replace("-suppressed", "-raw");
-//            string key = entry.getKey();
+//            string key = entry.Key;
 //            string unwindowedKey = key.substring(1, key.Length() - 1).replaceAll("@.*", "");
 //            resultStream.printf("fail: key=%s%n\tnon-unique result:%n%s%n\traw results:%n%s%n\tinput data:%n%s%n",
 //                                key,
-//                                indent("\t\t", entry.getValue()),
+//                                indent("\t\t", entry.Value),
 //                                indent("\t\t", events.Get(unsuppressedTopic).Get(key)),
 //                                indent("\t\t", events.Get("data").Get(unwindowedKey))
 //            );
@@ -551,17 +551,17 @@ namespace Kafka.Streams.Tests.Tests
 //{
 //    if (taggEvents == null)
 //    {
-//        resultStream.println("tagg is missing");
+//        resultStream.WriteLine("tagg is missing");
 //        return false;
 //    }
-//    else if (taggEvents.isEmpty())
+//    else if (taggEvents.IsEmpty())
 //    {
-//        resultStream.println("tagg is empty");
+//        resultStream.WriteLine("tagg is empty");
 //        return false;
 //    }
 //    else
 //    {
-//        resultStream.println("verifying tagg");
+//        resultStream.WriteLine("verifying tagg");
 
 //        // generate expected answer
 //        Dictionary<string, long> expected = new HashMap<>();
@@ -569,25 +569,25 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            int min = getMin(key).intValue();
 //            int max = getMax(key).intValue();
-//            string cnt = long.toString(max - min + 1L);
+//            string cnt = long.ToString(max - min + 1L);
 
 //            expected.Put(cnt, expected.getOrDefault(cnt, 0L) + 1);
 //        }
 
 //        // check the result
-//        foreach (Map.Entry<string, LinkedList<ConsumeResult<string, Number>>> entry in taggEvents.entrySet())
+//        foreach (Map.Entry<string, LinkedList<ConsumeResult<string, Number>>> entry in taggEvents)
 //        {
-//            string key = entry.getKey();
+//            string key = entry.Key;
 //            long expectedCount = expected.remove(key);
 //            if (expectedCount == null)
 //            {
 //                expectedCount = 0L;
 //            }
 
-//            if (entry.getValue().getLast().Value.longValue() != expectedCount)
+//            if (entry.Value.getLast().Value.longValue() != expectedCount)
 //            {
-//                resultStream.println("fail: key=" + key + " tagg=" + entry.getValue() + " expected=" + expected.Get(key));
-//                resultStream.println("\t outputEvents: " + entry.getValue());
+//                resultStream.WriteLine("fail: key=" + key + " tagg=" + entry.Value + " expected=" + expected.Get(key));
+//                resultStream.WriteLine("\t outputEvents: " + entry.Value);
 //                return false;
 //            }
 //        }
@@ -608,7 +608,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //private static List<TopicPartition> getAllPartitions(KafkaConsumer<?, ?> consumer, string... topics)
 //{
-//    List<TopicPartition> partitions = new ArrayList<>();
+//    List<TopicPartition> partitions = new List<TopicPartition>();
 
 //    foreach (string topic in topics)
 //    {

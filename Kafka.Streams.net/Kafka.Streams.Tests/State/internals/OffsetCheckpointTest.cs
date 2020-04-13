@@ -52,7 +52,7 @@
 //                checkpoint.write(offsets);
 //                Assert.Equal(offsets, checkpoint.read());
 
-//                checkpoint.delete();
+//                checkpoint.Delete();
 //                Assert.False(f.Exists);
 
 //                offsets.Put(new TopicPartition(topic, 3), 3L);
@@ -61,7 +61,7 @@
 //            }
 //            finally
 //            {
-//                checkpoint.delete();
+//                checkpoint.Delete();
 //            }
 //        }
 
@@ -69,7 +69,7 @@
 //        public void ShouldNotWriteCheckpointWhenNoOffsets()
 //        { //throws IOException
 //          // we do not need to worry about file Name uniqueness since this file should not be created
-//            File f = new File(TestUtils.GetTempDirectory().FullName, "kafka.tmp");
+//            File f = new FileInfo(TestUtils.GetTempDirectory().FullName, "kafka.tmp");
 //            OffsetCheckpoint checkpoint = new OffsetCheckpoint(f);
 
 //            checkpoint.write(Collections.< TopicPartition, long > emptyMap());
@@ -79,7 +79,7 @@
 //            Assert.Equal(Collections.< TopicPartition, long > emptyMap(), checkpoint.read());
 
 //            // deleting a non-exist checkpoint file should be fine
-//            checkpoint.delete();
+//            checkpoint.Delete();
 //        }
 //    }
 //}

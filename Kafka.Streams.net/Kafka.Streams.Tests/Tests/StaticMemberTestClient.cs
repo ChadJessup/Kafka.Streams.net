@@ -13,7 +13,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //    public static void main(string[] args) {// throws Exception
 //        if (args.Length < 1) {
-//            System.Console.Error.println(testName + " requires one argument (properties-file) but none provided: ");
+//            System.Console.Error.WriteLine(testName + " requires one argument (properties-file) but none provided: ");
 //        }
 
 //        System.Console.Out.WriteLine("StreamsTest instance started");
@@ -35,10 +35,10 @@ namespace Kafka.Streams.Tests.Tests
 //        dataStream.peek((k, v) =>  System.Console.Out.WriteLine(string.format("PROCESSED key=%s value=%s", k, v)));
 
 //        StreamsConfig config = new StreamsConfig();
-//        config.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, testName);
+//        config.Set(StreamsConfig.APPLICATION_ID_CONFIG, testName);
 //        config.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
 
-//        config.putAll(streamsProperties);
+//        config.PutAll(streamsProperties);
 
 //        KafkaStreams streams = new KafkaStreams(builder.Build(), config);
 //        streams.setStateListener((newState, oldState) => {

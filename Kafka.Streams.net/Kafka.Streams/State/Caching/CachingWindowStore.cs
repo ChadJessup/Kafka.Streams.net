@@ -1,299 +1,336 @@
+using Kafka.Common.Extensions;
+using Kafka.Common.Utils;
+using Kafka.Streams.Internals;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Serialization;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.MergeSorted;
+using Kafka.Streams.State.ReadOnly;
+using Kafka.Streams.State.Windowed;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Runtime.CompilerServices;
 
-//using Kafka.Common.Utils;
-//using Kafka.Streams.KStream;
-//using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Streams.Processors.Internals;
-//using Kafka.Streams.State.Interfaces;
-//using Microsoft.Extensions.Logging;
-//using System;
-//using System.Runtime.CompilerServices;
+namespace Kafka.Streams.State.Internals
+{
+    public class CachingWindowStore
+        : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>,
+        IWindowStore<Bytes, byte[]>, ICachedStateStore<byte[], byte[]>
+    {
+        private readonly ILogger<CachingWindowStore> logger;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class CachingWindowStore
-//        : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>
-//    , IWindowStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
-//    {
-//        private static ILogger LOG = new LoggerFactory().CreateLogger<CachingWindowStore>();
+        private TimeSpan windowSize;
+        private IKeySchema keySchema;
 
-//        private long windowSize;
-//        private ISegmentedBytesStore.KeySchema keySchema = new WindowKeySchema();
+        private ThreadCache cache;
+        private bool sendOldValues;
+        private IInternalProcessorContext context;
+        private IStateSerdes<Bytes, byte[]> bytesSerdes;
+        private FlushListener<byte[], byte[]> flushListener;
 
-//        private string Name;
-//        private ThreadCache cache;
-//        private bool sendOldValues;
-//        private IInternalProcessorContext<K, V> context;
-//        private StateSerdes<Bytes, byte[]> bytesSerdes;
-//        private ICacheFlushListener<byte[], byte[]> flushListener;
+        private DateTime maxObservedTimestamp;
 
-//        private long maxObservedTimestamp;
+        private SegmentedCacheFunction cacheFunction;
 
-//        private SegmentedCacheFunction cacheFunction;
+        public CachingWindowStore(
+            KafkaStreamsContext context,
+            IWindowStore<Bytes, byte[]> underlying,
+            TimeSpan windowSize,
+            TimeSpan segmentInterval)
+            : base(context, underlying)
+        {
+            this.windowSize = windowSize;
+            this.cacheFunction = new SegmentedCacheFunction(this.keySchema, segmentInterval);
+            this.maxObservedTimestamp = RecordQueue.UNKNOWN;
+        }
 
-//        public CachingWindowStore(
-//            IWindowStore<Bytes, byte[]> underlying,
-//            long windowSize,
-//            long segmentInterval)
-//        {
-//            base(underlying);
-//            this.windowSize = windowSize;
-//            this.cacheFunction = new SegmentedCacheFunction(keySchema, segmentInterval);
-//            this.maxObservedTimestamp = RecordQueue.UNKNOWN;
-//        }
+        public override void Init(IProcessorContext context, IStateStore root)
+        {
+            this.InitInternal((IInternalProcessorContext)context);
+            base.Init(context, root);
+        }
 
-//        public override void Init(IProcessorContext context, IStateStore root)
-//        {
-//            initInternal((IInternalProcessorContext)context);
-//            base.Init(context, root);
-//        }
+        private void InitInternal(IInternalProcessorContext context)
+        {
+            this.context = context;
+            string topic = ProcessorStateManager.StoreChangelogTopic(context.ApplicationId, this.Name);
 
+            this.bytesSerdes = new StateSerdes<Bytes, byte[]>(
+                topic,
+                new BytesSerdes(),
+                Serdes.ByteArray());
 
-//        private void initInternal(IInternalProcessorContext<K, V> context)
-//        {
-//            this.context = context;
-//            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), Name);
+            this.Name = context.TaskId + "-" + this.Name;
+            this.cache = this.context.GetCache();
 
-//            bytesSerdes = new StateSerdes<>(
-//                topic,
-//                Serdes.Bytes(),
-//                Serdes.ByteArray());
-//            Name = context.taskId + "-" + Name;
-//            cache = this.context.getCache();
+            cache.AddDirtyEntryFlushListener(Name, entries =>
+            {
+                foreach (var entry in entries)
+                {
+                    PutAndMaybeForward(entry, context);
+                }
+            });
+        }
 
-//            cache.AddDirtyEntryFlushListener(Name, entries =>
-//    {
-//        foreach (DirtyEntry entry in entries)
-//        {
-//            putAndMaybeForward(entry, context);
-//        }
-//    });
-//        }
+        private void PutAndMaybeForward(DirtyEntry entry, IInternalProcessorContext context)
+        {
+            byte[] binaryWindowKey = this.cacheFunction.Key(entry.Key).Get();
+            IWindowed<Bytes> windowedKeyBytes = WindowKeySchema.FromStoreBytesKey(binaryWindowKey, this.windowSize);
+            var windowStartTimestamp = windowedKeyBytes.Window.StartTime;
+            Bytes binaryKey = windowedKeyBytes.Key;
 
-//        private void putAndMaybeForward(DirtyEntry entry,
-//                                        IInternalProcessorContext<K, V> context)
-//        {
-//            byte[] binaryWindowKey = cacheFunction.key(entry.key()).Get();
-//            IWindowed<Bytes> windowedKeyBytes = WindowKeySchema.fromStoreBytesKey(binaryWindowKey, windowSize);
-//            long windowStartTimestamp = windowedKeyBytes.window.start();
-//            Bytes binaryKey = windowedKeyBytes.key;
-//            if (flushListener != null)
-//            {
-//                byte[] rawNewValue = entry.newValue();
-//                byte[] rawOldValue = rawNewValue == null || sendOldValues ?
-//                    wrapped.Fetch(binaryKey, windowStartTimestamp) : null;
+            if (this.flushListener != null)
+            {
+                byte[] rawNewValue = entry.NewValue;
+                byte[]? rawOldValue = rawNewValue == null || this.sendOldValues
+                    ? this.Wrapped.Fetch(binaryKey, windowStartTimestamp)
+                    : null;
 
-//                // this is an optimization: if this key did not exist in underlying store and also not in the cache,
-//                // we can skip flushing to downstream as well as writing to underlying store
-//                if (rawNewValue != null || rawOldValue != null)
-//                {
-//                    // we need to get the old values if needed, and then Put to store, and then Flush
-//                    wrapped.Add(binaryKey, entry.newValue(), windowStartTimestamp);
+                // this is an optimization: if this key did not exist in underlying store and also not in the cache,
+                // we can skip flushing to downstream as well as writing to underlying store
+                if (rawNewValue != null || rawOldValue != null)
+                {
+                    // we need to get the old values if needed, and then Put to store, and then Flush
+                    this.Wrapped.Put(binaryKey, entry.NewValue, windowStartTimestamp);
 
-//                    ProcessorRecordContext current = context.recordContext();
-//                    context.setRecordContext(entry.entry().context);
-//                    try
-//                    {
-//                        flushListener.apply(
-//                            binaryWindowKey,
-//                            rawNewValue,
-//                            sendOldValues ? rawOldValue : null,
-//                            entry.entry().context.timestamp());
-//                    }
-//                    finally
-//                    {
-//                        context.setRecordContext(current);
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                wrapped.Add(binaryKey, entry.newValue(), windowStartTimestamp);
-//            }
-//        }
+                    ProcessorRecordContext current = context.RecordContext;
+                    context.SetRecordContext(entry.Entry().context);
+                    try
+                    {
+                        this.flushListener?.Invoke(
+                            binaryWindowKey,
+                            rawNewValue,
+                            this.sendOldValues
+                                ? rawOldValue
+                                : null,
+                            entry.Entry().context.Timestamp);
+                    }
+                    finally
+                    {
+                        context.SetRecordContext(current);
+                    }
+                }
+            }
+            else
+            {
+                this.Wrapped.Put(binaryKey, entry.NewValue, windowStartTimestamp);
+            }
+        }
 
-//        public override bool setFlushListener(ICacheFlushListener<byte[], byte[]> flushListener,
-//                                        bool sendOldValues)
-//        {
-//            this.flushListener = flushListener;
-//            this.sendOldValues = sendOldValues;
+        public override bool SetFlushListener(
+            FlushListener<byte[], byte[]> flushListener,
+            bool sendOldValues)
+        {
+            this.flushListener = flushListener;
+            this.sendOldValues = sendOldValues;
 
-//            return true;
-//        }
+            return true;
+        }
 
-//        [MethodImpl(MethodImplOptions.Synchronized)]
-//        public override void Put(Bytes key,
-//                                     byte[] value)
-//        {
-//            Put(key, value, context.timestamp());
-//        }
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void Put(Bytes key, byte[] value)
+        {
+            this.Put(key, value, this.context.Timestamp);
+        }
 
-//        [MethodImpl(MethodImplOptions.Synchronized)]
-//        public override void Put(Bytes key,
-//                                     byte[] value,
-//                                     long windowStartTimestamp)
-//        {
-//            // since this function may not access the underlying inner store, we need to validate
-//            // if store is open outside as well.
-//            validateStoreOpen();
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void Put(Bytes key, byte[] value, DateTime windowStartTimestamp)
+        {
+            // since this function may not access the underlying inner store, we need to validate
+            // if store is open outside as well.
+            this.ValidateStoreOpen();
 
-//            Bytes keyBytes = WindowKeySchema.toStoreKeyBinary(key, windowStartTimestamp, 0);
-//            LRUCacheEntry entry =
-//                new LRUCacheEntry(
-//                    value,
-//                    context.Headers,
-//                    true,
-//                    context.offset(),
-//                    context.timestamp(),
-//                    context.Partition,
-//                    context.Topic);
-//            cache.Add(Name, cacheFunction.cacheKey(keyBytes), entry);
+            Bytes keyBytes = WindowKeySchema.ToStoreKeyBinary(key, windowStartTimestamp, 0);
+            LRUCacheEntry entry =
+                new LRUCacheEntry(
+                    value,
+                    this.context.Headers,
+                    true,
+                    this.context.Offset,
+                    this.context.Timestamp,
+                    this.context.Partition,
+                    this.context.Topic);
 
-//            maxObservedTimestamp = Math.Max(keySchema.segmentTimestamp(keyBytes), maxObservedTimestamp);
-//        }
+            this.cache.Put(this.Name, this.cacheFunction.CacheKey(keyBytes), entry);
 
-//        public override byte[] Fetch(Bytes key,
-//                            long timestamp)
-//        {
-//            validateStoreOpen();
-//            Bytes bytesKey = WindowKeySchema.toStoreKeyBinary(key, timestamp, 0);
-//            Bytes cacheKey = cacheFunction.cacheKey(bytesKey);
-//            if (cache == null)
-//            {
-//                return wrapped.Fetch(key, timestamp);
-//            }
-//            LRUCacheEntry entry = cache[Name, cacheKey];
-//            if (entry == null)
-//            {
-//                return wrapped.Fetch(key, timestamp);
-//            }
-//            else
-//            {
-//                return entry.value();
-//            }
-//        }
+            this.maxObservedTimestamp = this.keySchema.SegmentTimestamp(keyBytes).GetNewest(this.maxObservedTimestamp);
+        }
 
-//        [MethodImpl(MethodImplOptions.Synchronized)]
-//        public override IWindowStoreIterator<byte[]> Fetch(Bytes key,
-//                                                              long timeFrom,
-//                                                              long timeTo)
-//        {
-//            // since this function may not access the underlying inner store, we need to validate
-//            // if store is open outside as well.
-//            validateStoreOpen();
+        public byte[] Fetch(Bytes key, DateTime timestamp)
+        {
+            this.ValidateStoreOpen();
+            Bytes bytesKey = WindowKeySchema.ToStoreKeyBinary(key, timestamp, 0);
+            Bytes cacheKey = this.cacheFunction.CacheKey(bytesKey);
+            if (this.cache == null)
+            {
+                return this.Wrapped.Fetch(key, timestamp);
+            }
 
-//            IWindowStoreIterator<byte[]> underlyingIterator = wrapped.Fetch(key, timeFrom, timeTo);
-//            if (cache == null)
-//            {
-//                return underlyingIterator;
-//            }
+            LRUCacheEntry entry = this.cache.Get(this.Name, cacheKey);
 
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.Persistent() ?
-//                new CacheIteratorWrapper(key, timeFrom, timeTo) :
-//                cache.Range(Name,
-//                            cacheFunction.cacheKey(keySchema.lowerRangeFixedSize(key, timeFrom)),
-//                            cacheFunction.cacheKey(keySchema.upperRangeFixedSize(key, timeTo))
-//                );
+            if (entry == null)
+            {
+                return this.Wrapped.Fetch(key, timestamp);
+            }
+            else
+            {
+                return entry.Value();
+            }
+        }
 
-//            HasNextCondition hasNextCondition = keySchema.hasNextCondition(key, key, timeFrom, timeTo);
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator = new FilteredCacheIterator(
-//                cacheIterator, hasNextCondition, cacheFunction
-//            );
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public IWindowStoreIterator<byte[]> Fetch(Bytes key, DateTime timeFrom, DateTime timeTo)
+        {
+            // since this function may not access the underlying inner store, we need to validate
+            // if store is open outside as well.
+            this.ValidateStoreOpen();
 
-//            return new MergedSortedCacheWindowStoreIterator(filteredCacheIterator, underlyingIterator);
-//        }
+            var underlyingIterator = this.Wrapped.Fetch(key, timeFrom, timeTo);
+            if (this.cache == null)
+            {
+                return underlyingIterator;
+            }
 
+            var cacheIterator = this.Wrapped.Persistent()
+                ? (IPeekingKeyValueIterator<Bytes, LRUCacheEntry>)new CacheIteratorWrapper(key, timeFrom, timeTo)
+                : this.cache.Range(
+                    this.Name,
+                    this.cacheFunction.CacheKey(this.keySchema.LowerRangeFixedSize(key, timeFrom)),
+                    this.cacheFunction.CacheKey(this.keySchema.UpperRangeFixedSize(key, timeTo)));
 
-//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from,
-//                                                               Bytes to,
-//                                                               long timeFrom,
-//                                                               long timeTo)
-//        {
-//            if (from.CompareTo(to) > 0)
-//            {
-//                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
-//                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
-//                    "Note that the built-in numerical serdes do not follow this for negative numbers");
-//                return KeyValueIterators.emptyIterator();
-//            }
+            var HasNextCondition = this.keySchema.HasNextCondition(key, key, timeFrom, timeTo);
 
-//            // since this function may not access the underlying inner store, we need to validate
-//            // if store is open outside as well.
-//            validateStoreOpen();
+            var filteredCacheIterator = new FilteredCacheIterator(
+                cacheIterator, HasNextCondition, this.cacheFunction);
 
-//            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator =
-//                wrapped.Fetch(from, to, timeFrom, timeTo);
-//            if (cache == null)
-//            {
-//                return underlyingIterator;
-//            }
+            return new MergedSortedCacheWindowStoreIterator(
+                this.Context,
+                filteredCacheIterator,
+                underlyingIterator);
+        }
 
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.Persistent() ?
-//                new CacheIteratorWrapper(from, to, timeFrom, timeTo) :
-//                cache.Range(Name,
-//                            cacheFunction.cacheKey(keySchema.lowerRange(from, timeFrom)),
-//                            cacheFunction.cacheKey(keySchema.upperRange(to, timeTo))
-//                );
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(
+            Bytes from,
+            Bytes to,
+            DateTime timeFrom,
+            DateTime timeTo)
+        {
+            if (from.CompareTo(to) > 0)
+            {
+                this.logger.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
+                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
+                    "Note that the built-in numerical serdes do not follow this for negative numbers");
 
-//            HasNextCondition hasNextCondition = keySchema.hasNextCondition(from, to, timeFrom, timeTo);
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator = new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
+                return null; // KeyValueIterators<IWindowed<Bytes>, byte[]>.EMPTY_ITERATOR;
+            }
 
-//            return new MergedSortedCacheWindowStoreKeyValueIterator(
-//                filteredCacheIterator,
-//                underlyingIterator,
-//                bytesSerdes,
-//                windowSize,
-//                cacheFunction
-//            );
-//        }
+            // since this function may not access the underlying inner store, we need to validate
+            // if store is open outside as well.
+            this.ValidateStoreOpen();
 
+            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator =
+                this.Wrapped.Fetch(from, to, timeFrom, timeTo);
 
-//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom,
-//                                                                  long timeTo)
-//        {
-//            validateStoreOpen();
+            if (this.cache == null)
+            {
+                return underlyingIterator;
+            }
 
-//            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator = wrapped.FetchAll(timeFrom, timeTo);
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.All(Name);
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = this.Wrapped.Persistent()
+                ? new CacheIteratorWrapper(from, to, timeFrom, timeTo)
+                : (IPeekingKeyValueIterator<Bytes, LRUCacheEntry>)this.cache.Range(
+                    this.Name,
+                    this.cacheFunction.CacheKey(this.keySchema.LowerRange(from, timeFrom)),
+                    this.cacheFunction.CacheKey(this.keySchema.UpperRange(to, timeTo)));
 
-//            HasNextCondition hasNextCondition = keySchema.hasNextCondition(null, null, timeFrom, timeTo);
-//            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
-//                new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
-//            return new MergedSortedCacheWindowStoreKeyValueIterator(
-//                    filteredCacheIterator,
-//                    underlyingIterator,
-//                    bytesSerdes,
-//                    windowSize,
-//                    cacheFunction
-//            );
-//        }
+            var HasNextCondition = this.keySchema.HasNextCondition(from, to, timeFrom, timeTo);
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator = new FilteredCacheIterator(cacheIterator, HasNextCondition, this.cacheFunction);
 
-//        public override IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
-//        {
-//            validateStoreOpen();
+            return new MergedSortedCacheWindowStoreKeyValueIterator(
+                this.Context,
+                filteredCacheIterator,
+                underlyingIterator,
+                this.bytesSerdes,
+                this.windowSize,
+                this.cacheFunction
+            );
+        }
 
-//            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator = wrapped.All();
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.All(Name);
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(DateTime timeFrom, DateTime timeTo)
+        {
+            this.ValidateStoreOpen();
 
-//            return new MergedSortedCacheWindowStoreKeyValueIterator(
-//                cacheIterator,
-//                underlyingIterator,
-//                bytesSerdes,
-//                windowSize,
-//                cacheFunction);
-//        }
+            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator = this.Wrapped.FetchAll(timeFrom, timeTo);
+            MemoryLRUCacheBytesIterator cacheIterator = this.cache.All(this.Name);
 
-//        [MethodImpl(MethodImplOptions.Synchronized)]
-//        public override void Flush()
-//        {
-//            cache.Flush(Name);
-//            wrapped.Flush();
-//        }
+            var hasNextCondition = this.keySchema.HasNextCondition(null, null, timeFrom, timeTo);
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
+                new FilteredCacheIterator(cacheIterator, hasNextCondition, this.cacheFunction);
 
-//        public override void Close()
-//        {
-//            Flush();
-//            cache.Close(Name);
-//            wrapped.Close();
-//        }
-//    }
-//}
+            return new MergedSortedCacheWindowStoreKeyValueIterator(
+                this.Context,
+                filteredCacheIterator,
+                underlyingIterator,
+                this.bytesSerdes,
+                this.windowSize,
+                this.cacheFunction);
+        }
+
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> All()
+        {
+            this.ValidateStoreOpen();
+
+            IKeyValueIterator<IWindowed<Bytes>, byte[]> underlyingIterator = this.Wrapped.All();
+            MemoryLRUCacheBytesIterator cacheIterator = this.cache.All(this.Name);
+
+            return new MergedSortedCacheWindowStoreKeyValueIterator(
+                this.Context,
+                cacheIterator,
+                underlyingIterator,
+                this.bytesSerdes,
+                this.windowSize,
+                this.cacheFunction);
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public override void Flush()
+        {
+            this.cache.Flush(this.Name);
+            this.Wrapped.Flush();
+        }
+
+        public override void Close()
+        {
+            this.Flush();
+            this.cache.Close(this.Name);
+            this.Wrapped.Close();
+        }
+
+        public void Add(Bytes key, byte[] value)
+        {
+        }
+
+        public byte[] Fetch(Bytes key, long time)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IWindowStoreIterator<byte[]> Fetch(Bytes key, long timeFrom, long timeTo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> Fetch(Bytes from, Bytes to, long timeFrom, long timeTo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IKeyValueIterator<IWindowed<Bytes>, byte[]> FetchAll(long timeFrom, long timeTo)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

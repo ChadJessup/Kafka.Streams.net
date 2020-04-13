@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        public void Close()
 //        {
-//            streams.Close(TimeSpan.ofSeconds(5));
+//            streams.Close(TimeSpan.FromSeconds(5));
 //            // do not remove these printouts since they are needed for health scripts
 //            if (!uncaughtException)
 //            {
@@ -58,7 +58,7 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //            try
 //            {
-//                thread.join();
+//                thread.Join();
 //            }
 //            catch (Exception ex)
 //            {
@@ -81,7 +81,7 @@ namespace Kafka.Streams.Tests.Tests
 //            fullProps.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 //            fullProps.Put(ProducerConfig.ACKS_CONFIG, "All");
 //            fullProps.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
-//            fullProps.putAll(props);
+//            fullProps.PutAll(props);
 //            return fullProps;
 //        }
 
@@ -100,7 +100,7 @@ namespace Kafka.Streams.Tests.Tests
 //            streamsClient.setUncaughtExceptionHandler((t, e) =>
 //            {
 //                System.Console.Out.WriteLine(Name + ": FATAL: An unexpected exception is encountered on thread " + t + ": " + e);
-//                streamsClient.Close(TimeSpan.ofSeconds(30));
+//                streamsClient.Close(TimeSpan.FromSeconds(30));
 //            });
 
 //            return streamsClient;
@@ -110,18 +110,18 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            StreamsBuilder builder = new StreamsBuilder();
 //            Consumed<string, int> stringIntConsumed = Consumed.With(stringSerde, intSerde);
-//            KStream<string, int> source = builder.Stream("data", stringIntConsumed);
-//            source.filterNot((k, v) => k.equals("Flush"))
+//            IKStream<K, V> source = builder.Stream("data", stringIntConsumed);
+//            source.filterNot((k, v) => k.Equals("Flush"))
 //                  .To("echo", Produced.With(stringSerde, intSerde));
-//            KStream<string, int> data = source.filter((key, value) => value == null || value != END);
-//            data.process(SmokeTestUtil.printProcessorSupplier("data", Name));
+//            IKStream<K, V> value == null || value != END);
+//            data.Process(SmokeTestUtil.printProcessorSupplier("data", Name));
 
 //            // min
-//            KGroupedStream<string, int> groupedData = data.groupByKey(Grouped.with(stringSerde, intSerde));
+//            KGroupedStream<string, int> groupedData = data.GroupByKey(Grouped.With(stringSerde, intSerde));
 
 //            KTable<IWindowed<string>, int> minAggregation = groupedData
-//                .windowedBy(TimeWindows.of(TimeSpan.ofDays(1)).grace(TimeSpan.ofMinutes(1)))
-//                .aggregate(
+//                .WindowedBy(TimeWindows.of(TimeSpan.FromDays(1)).grace(TimeSpan.ofMinutes(1)))
+//                .Aggregate(
 //                    () => int.MaxValue,
 //                    (aggKey, value, aggregate) => (value < aggregate) ? value : aggregate,
 //                    Materialized
@@ -136,12 +136,12 @@ namespace Kafka.Streams.Tests.Tests
 
 //            minAggregation
 //                .toStream(new Unwindow<>())
-//                .filterNot((k, v) => k.equals("Flush"))
+//                .filterNot((k, v) => k.Equals("Flush"))
 //                .To("min", Produced.With(stringSerde, intSerde));
 
 //            KTable<IWindowed<string>, int> smallWindowSum = groupedData
-//                .windowedBy(TimeWindows.of(TimeSpan.ofSeconds(2)).advanceBy(TimeSpan.ofSeconds(1)).grace(TimeSpan.ofSeconds(30)))
-//                .reduce((l, r) => l + r);
+//                .WindowedBy(TimeWindows.of(TimeSpan.FromSeconds(2)).advanceBy(TimeSpan.FromSeconds(1)).grace(TimeSpan.FromSeconds(30)))
+//                .Reduce((l, r) => l + r);
 
 //            streamify(smallWindowSum, "sws-raw");
 //            streamify(smallWindowSum.suppress(untilWindowCloses(BufferConfig.unbounded())), "sws-suppressed");
@@ -151,80 +151,80 @@ namespace Kafka.Streams.Tests.Tests
 //                Consumed.With(stringSerde, intSerde),
 //                Materialized.As ("minStoreName"));
 
-//            minTable.toStream().process(SmokeTestUtil.printProcessorSupplier("min", Name));
+//            minTable.ToStream().Process(SmokeTestUtil.printProcessorSupplier("min", Name));
 
 //            // max
 //            groupedData
-//                .windowedBy(TimeWindows.of(TimeSpan.ofDays(2)))
-//                .aggregate(
+//                .WindowedBy(TimeWindows.of(TimeSpan.FromDays(2)))
+//                .Aggregate(
 //                    () => int.MIN_VALUE,
 //                    (aggKey, value, aggregate) => (value > aggregate) ? value : aggregate,
 //                    Materialized< string, int, IWindowStore<Bytes, byte[]> >.As ("uwin-max").withValueSerde(intSerde))
 //            .toStream(new Unwindow<>())
-//            .filterNot((k, v) => k.equals("Flush"))
+//            .filterNot((k, v) => k.Equals("Flush"))
 //            .To("max", Produced.With(stringSerde, intSerde));
 
 //            KTable<string, int> maxTable = builder.table(
 //                "max",
 //                Consumed.With(stringSerde, intSerde),
 //                Materialized.As ("maxStoreName"));
-//            maxTable.toStream().process(SmokeTestUtil.printProcessorSupplier("max", Name));
+//            maxTable.ToStream().Process(SmokeTestUtil.printProcessorSupplier("max", Name));
 
 //            // sum
 //            groupedData
-//                .windowedBy(TimeWindows.of(TimeSpan.ofDays(2)))
-//                .aggregate(
+//                .WindowedBy(TimeWindows.of(TimeSpan.FromDays(2)))
+//                .Aggregate(
 //                    () => 0L,
 //                    (aggKey, value, aggregate) => (long)value + aggregate,
 //                    Materialized< string, long, IWindowStore<Bytes, byte[]> >.As ("win-sum").withValueSerde(longSerde))
 //            .toStream(new Unwindow<>())
-//            .filterNot((k, v) => k.equals("Flush"))
+//            .filterNot((k, v) => k.Equals("Flush"))
 //            .To("sum", Produced.With(stringSerde, longSerde));
 
 //            Consumed<string, long> stringLongConsumed = Consumed.With(stringSerde, longSerde);
 //            KTable<string, long> sumTable = builder.table("sum", stringLongConsumed);
-//            sumTable.toStream().process(SmokeTestUtil.printProcessorSupplier("sum", Name));
+//            sumTable.ToStream().Process(SmokeTestUtil.printProcessorSupplier("sum", Name));
 
 //            // cnt
 //            groupedData
-//                .windowedBy(TimeWindows.of(TimeSpan.ofDays(2)))
-//                .count(Materialized.As ("uwin-cnt"))
+//                .WindowedBy(TimeWindows.of(TimeSpan.FromDays(2)))
+//                .Count(Materialized.As ("uwin-cnt"))
 //            .toStream(new Unwindow<>())
-//            .filterNot((k, v) => k.equals("Flush"))
+//            .filterNot((k, v) => k.Equals("Flush"))
 //            .To("cnt", Produced.With(stringSerde, longSerde));
 
 //            KTable<string, long> cntTable = builder.table(
 //                "cnt",
 //                Consumed.With(stringSerde, longSerde),
 //                Materialized.As ("cntStoreName"));
-//            cntTable.toStream().process(SmokeTestUtil.printProcessorSupplier("cnt", Name));
+//            cntTable.ToStream().Process(SmokeTestUtil.printProcessorSupplier("cnt", Name));
 
 //            // dif
 //            maxTable
-//                .join(
+//                .Join(
 //                    minTable,
 //                    (value1, value2) => value1 - value2)
-//                .toStream()
-//                .filterNot((k, v) => k.equals("Flush"))
+//                .ToStream()
+//                .filterNot((k, v) => k.Equals("Flush"))
 //                .To("dif", Produced.With(stringSerde, intSerde));
 
 //            // avg
 //            sumTable
-//                .join(
+//                .Join(
 //                    cntTable,
 //                    (value1, value2) => (double)value1 / (double)value2)
-//                .toStream()
-//                .filterNot((k, v) => k.equals("Flush"))
+//                .ToStream()
+//                .filterNot((k, v) => k.Equals("Flush"))
 //                .To("avg", Produced.With(stringSerde, doubleSerde));
 
 //            // test repartition
 //            Agg agg = new Agg();
-//            cntTable.groupBy(agg.selector(), Grouped.with(stringSerde, longSerde))
-//                    .aggregate(agg.Init(), agg.adder(), agg.remover(),
+//            cntTable.GroupBy(agg.selector(), Grouped.With(stringSerde, longSerde))
+//                    .Aggregate(agg.Init(), agg.adder(), agg.remover(),
 //                               Materialized< string, long >.As (Stores.InMemoryKeyValueStore("cntByCnt"))
 //                                   .WithKeySerde(Serdes.String())
 //                                   .withValueSerde(Serdes.Long()))
-//                .toStream()
+//                .ToStream()
 //                .To("tagg", Produced.With(stringSerde, longSerde));
 
 //            return builder.Build();
@@ -233,8 +233,8 @@ namespace Kafka.Streams.Tests.Tests
 //        private static void streamify(KTable<IWindowed<string>, int> windowedTable, string topic)
 //        {
 //            windowedTable
-//                .toStream()
-//                .filterNot((k, v) => k.Key.equals("Flush"))
+//                .ToStream()
+//                .filterNot((k, v) => k.Key.Equals("Flush"))
 //                .map((key, value) => KeyValuePair.Create(key.ToString(), value))
 //                .To(topic, Produced.With(stringSerde, intSerde));
 //        }
