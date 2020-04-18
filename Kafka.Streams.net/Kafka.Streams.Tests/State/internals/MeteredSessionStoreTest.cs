@@ -81,7 +81,7 @@
 
 //        private readonly string key = "a";
 //        private readonly byte[] keyBytes = key.getBytes();
-//        private IWindowed<Bytes> windowedKeyBytes = new Windowed2<>(Bytes.Wrap(keyBytes), new SessionWindow(0, 0));
+//        private IWindowed<Bytes> windowedKeyBytes = new Windowed<>(Bytes.Wrap(keyBytes), new SessionWindow(0, 0));
 
 
 //        public void Before()
@@ -123,7 +123,7 @@
 //            expectLastCall();
 //            Init();
 
-//            metered.Put(new Windowed2<>(key, new SessionWindow(0, 0)), key);
+//            metered.Put(new Windowed<>(key, new SessionWindow(0, 0)), key);
 
 //            KafkaMetric metric = metric("Put-rate");
 //            Assert.True(((Double)metric.metricValue()) > 0);
@@ -174,7 +174,7 @@
 
 //            Init();
 
-//            metered.remove(new Windowed2<>(key, new SessionWindow(0, 0)));
+//            metered.remove(new Windowed<>(key, new SessionWindow(0, 0)));
 
 //            KafkaMetric metric = metric("remove-rate");
 //            Assert.True((Double)metric.metricValue() > 0);

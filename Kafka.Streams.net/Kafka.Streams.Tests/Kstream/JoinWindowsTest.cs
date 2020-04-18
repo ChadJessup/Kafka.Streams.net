@@ -1,3 +1,7 @@
+using Kafka.Streams.KStream;
+using System;
+using Xunit;
+
 namespace Kafka.Streams.Tests.Kstream
 {
     public class JoinWindowsTest
@@ -9,32 +13,32 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void validWindows()
         {
-            JoinWindows.of(TimeSpan.FromMilliseconds(ANY_OTHER_SIZE))   // [ -anyOtherSize ; anyOtherSize ]
-                       .before(TimeSpan.FromMilliseconds(ANY_SIZE))                    // [ -anySize ; anyOtherSize ]
-                       .before(TimeSpan.FromMilliseconds(0))                          // [ 0 ; anyOtherSize ]
-                       .before(TimeSpan.FromMilliseconds(-ANY_SIZE))                   // [ anySize ; anyOtherSize ]
-                       .before(TimeSpan.FromMilliseconds(-ANY_OTHER_SIZE));             // [ anyOtherSize ; anyOtherSize ]
+            JoinWindows.Of(TimeSpan.FromMilliseconds(ANY_OTHER_SIZE))   // [ -anyOtherSize ; anyOtherSize ]
+                       .Before(TimeSpan.FromMilliseconds(ANY_SIZE))                    // [ -anySize ; anyOtherSize ]
+                       .Before(TimeSpan.FromMilliseconds(0))                          // [ 0 ; anyOtherSize ]
+                       .Before(TimeSpan.FromMilliseconds(-ANY_SIZE))                   // [ anySize ; anyOtherSize ]
+                       .Before(TimeSpan.FromMilliseconds(-ANY_OTHER_SIZE));             // [ anyOtherSize ; anyOtherSize ]
 
-            JoinWindows.of(TimeSpan.FromMilliseconds(ANY_OTHER_SIZE))   // [ -anyOtherSize ; anyOtherSize ]
-                       .after(TimeSpan.FromMilliseconds(ANY_SIZE))                     // [ -anyOtherSize ; anySize ]
-                       .after(TimeSpan.FromMilliseconds(0))                           // [ -anyOtherSize ; 0 ]
-                       .after(TimeSpan.FromMilliseconds(-ANY_SIZE))                    // [ -anyOtherSize ; -anySize ]
-                       .after(TimeSpan.FromMilliseconds(-ANY_OTHER_SIZE));              // [ -anyOtherSize ; -anyOtherSize ]
+            JoinWindows.Of(TimeSpan.FromMilliseconds(ANY_OTHER_SIZE))   // [ -anyOtherSize ; anyOtherSize ]
+                       .After(TimeSpan.FromMilliseconds(ANY_SIZE))                     // [ -anyOtherSize ; anySize ]
+                       .After(TimeSpan.FromMilliseconds(0))                           // [ -anyOtherSize ; 0 ]
+                       .After(TimeSpan.FromMilliseconds(-ANY_SIZE))                    // [ -anyOtherSize ; -anySize ]
+                       .After(TimeSpan.FromMilliseconds(-ANY_OTHER_SIZE));              // [ -anyOtherSize ; -anyOtherSize ]
         }
 
         [Fact]
         public void timeDifferenceMustNotBeNegative()
         {
-            JoinWindows.of(TimeSpan.FromMilliseconds(-1));
+            JoinWindows.Of(TimeSpan.FromMilliseconds(-1));
         }
 
         [Fact]
         public void endTimeShouldNotBeBeforeStart()
         {
-            JoinWindows windowSpec = JoinWindows.of(TimeSpan.FromMilliseconds(ANY_SIZE));
+            JoinWindows windowSpec = JoinWindows.Of(TimeSpan.FromMilliseconds(ANY_SIZE));
             try
             {
-                windowSpec.after(TimeSpan.FromMilliseconds(-ANY_SIZE - 1));
+                windowSpec.After(TimeSpan.FromMilliseconds(-ANY_SIZE - 1));
                 Assert.False(true, "window end time should not be before window start time");
             }
             catch (ArgumentException e)
@@ -46,10 +50,10 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void startTimeShouldNotBeAfterEnd()
         {
-            JoinWindows windowSpec = JoinWindows.of(TimeSpan.FromMilliseconds(ANY_SIZE));
+            JoinWindows windowSpec = JoinWindows.Of(TimeSpan.FromMilliseconds(ANY_SIZE));
             try
             {
-                windowSpec.before(TimeSpan.FromMilliseconds(-ANY_SIZE - 1));
+                windowSpec.Before(TimeSpan.FromMilliseconds(-ANY_SIZE - 1));
                 Assert.False(true, "window start time should not be after window end time");
             }
             catch (ArgumentException e)
@@ -61,20 +65,20 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void untilShouldSetGraceDuration()
         {
-            JoinWindows windowSpec = JoinWindows.of(TimeSpan.FromMilliseconds(ANY_SIZE));
-            long windowSize = windowSpec.Count;
-            Assert.Equal(windowSize, windowSpec.grace(TimeSpan.FromMilliseconds(windowSize)).gracePeriodMs());
+            JoinWindows windowSpec = JoinWindows.Of(TimeSpan.FromMilliseconds(ANY_SIZE));
+            var windowSize = windowSpec.Count;
+            Assert.Equal(windowSize, windowSpec.Grace(TimeSpan.FromMilliseconds(windowSize)).GracePeriod());
         }
 
 
         [Fact]
-        public void retentionTimeMustNoBeSmallerThanWindowSize()
+        public void RetentionTimeMustNoBeSmallerThanWindowSize()
         {
-            JoinWindows windowSpec = JoinWindows.of(TimeSpan.FromMilliseconds(ANY_SIZE));
-            long windowSize = windowSpec.Count;
+            JoinWindows windowSpec = JoinWindows.Of(TimeSpan.FromMilliseconds(ANY_SIZE));
+            var windowSize = windowSpec.Count;
             try
             {
-                windowSpec.until(windowSize - 1);
+                windowSpec.Until(windowSize - 1);
                 Assert.False(true, "should not accept retention time smaller than window size");
             }
             catch (ArgumentException e)
@@ -86,11 +90,11 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void gracePeriodShouldEnforceBoundaries()
         {
-            JoinWindows.of(TimeSpan.FromMilliseconds(3L)).grace(TimeSpan.FromMilliseconds(0L));
+            JoinWindows.Of(TimeSpan.FromMilliseconds(3L)).Grace(TimeSpan.FromMilliseconds(0L));
 
             try
             {
-                JoinWindows.of(TimeSpan.FromMilliseconds(3L)).grace(TimeSpan.FromMilliseconds(-1L));
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3L)).Grace(TimeSpan.FromMilliseconds(-1L));
                 Assert.False(true, "should not accept negatives");
             }
             catch (ArgumentException e)
@@ -100,56 +104,57 @@ namespace Kafka.Streams.Tests.Kstream
         }
 
         [Fact]
-        public void.EqualsAndHashcodeShouldBeValidForPositiveCases()
+        public void EqualsAndHashcodeShouldBeValidForPositiveCases()
         {
-            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)), JoinWindows.of(TimeSpan.FromMilliseconds(3)));
+            EqualityCheck.VerifyEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)));
 
-            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).after(TimeSpan.FromMilliseconds(2)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).after(TimeSpan.FromMilliseconds(2)));
+            EqualityCheck.VerifyEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)).After(TimeSpan.FromMilliseconds(2)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)).After(TimeSpan.FromMilliseconds(2)));
 
-            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(2)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(2)));
+            EqualityCheck.VerifyEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(2)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(2)));
 
-            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(2)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(2)));
+            EqualityCheck.VerifyEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(2)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(2)));
 
-            VerifyEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)));
+            EqualityCheck.VerifyEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(60)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(60)));
 
-            VerifyEquality(
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)),
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60))
+            EqualityCheck.VerifyEquality(
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(60)),
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(60))
             );
+
             // JoinWindows is a little weird in that before and after set the same fields.As of.
-            VerifyEquality(
-                JoinWindows.of(TimeSpan.FromMilliseconds(9)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)),
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60))
+            EqualityCheck.VerifyEquality(
+                JoinWindows.Of(TimeSpan.FromMilliseconds(9)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(60)),
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(60))
             );
         }
 
         [Fact]
-        public void.EqualsAndHashcodeShouldBeValidForNegativeCases()
+        public void EqualsAndHashcodeShouldBeValidForNegativeCases()
         {
-            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(9)), JoinWindows.of(TimeSpan.FromMilliseconds(3)));
+            EqualityCheck.VerifyInEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(9)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)));
 
-            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).after(TimeSpan.FromMilliseconds(9)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).after(TimeSpan.FromMilliseconds(2)));
+            EqualityCheck.VerifyInEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)).After(TimeSpan.FromMilliseconds(9)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)).After(TimeSpan.FromMilliseconds(2)));
 
-            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(9)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(2)));
+            EqualityCheck.VerifyInEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(9)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(2)));
 
-            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(9)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(2)));
+            EqualityCheck.VerifyInEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(9)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(2)));
 
-            EqualityCheck.VerifyInEquality(JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(90)), JoinWindows.of(TimeSpan.FromMilliseconds(3)).grace(TimeSpan.FromMilliseconds(60)));
+            EqualityCheck.VerifyInEquality(JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(90)), JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Grace(TimeSpan.FromMilliseconds(60)));
 
 
             EqualityCheck.VerifyInEquality(
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(9)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3)),
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3))
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(9)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(3)),
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(3))
             );
 
             EqualityCheck.VerifyInEquality(
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(9)).grace(TimeSpan.FromMilliseconds(3)),
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3))
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(9)).Grace(TimeSpan.FromMilliseconds(3)),
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(3))
             );
 
             EqualityCheck.VerifyInEquality(
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(9)),
-                JoinWindows.of(TimeSpan.FromMilliseconds(3)).before(TimeSpan.FromMilliseconds(1)).after(TimeSpan.FromMilliseconds(2)).grace(TimeSpan.FromMilliseconds(3))
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(9)),
+                JoinWindows.Of(TimeSpan.FromMilliseconds(3)).Before(TimeSpan.FromMilliseconds(1)).After(TimeSpan.FromMilliseconds(2)).Grace(TimeSpan.FromMilliseconds(3))
             );
         }
     }

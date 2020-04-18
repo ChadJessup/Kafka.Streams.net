@@ -68,7 +68,7 @@ namespace Kafka.Streams.Configs
      *
      * Kafka Streams requires at least the following properties to be set:
      * <ul>
-     *  <li>{@link #APPLICATION_ID_CONFIG "application.id"}</li>
+     *  <li>{@link #ApplicationIdConfig "application.id"}</li>
      *  <li>{@link #BootstrapServers "bootstrap.servers"}</li>
      * </ul>
      *
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Configs
      *   <li>{@link ConsumerConfig#ENABLE_AUTO_COMMIT_CONFIG "enable.auto.commit"} (false) - Streams client will always disable/turn off auto committing</li>
      * </ul>
      *
-     * If {@link #PROCESSING_GUARANTEE_CONFIG "processing.guarantee"} is set to {@link #EXACTLY_ONCE "exactly_once"}, Kafka Streams does not allow users to overwrite the following properties (Streams setting shown in parentheses):
+     * If {@link #PROCESSING_GUARANTEE_CONFIG "processing.guarantee"} is set to {@link #StreamsConfig.ExactlyOnceConfig "exactly_once"}, Kafka Streams does not allow users to overwrite the following properties (Streams setting shown in parentheses):
      * <ul>
      *   <li>{@link ConsumerConfig#ISOLATION_LEVEL_CONFIG "isolation.level"} (read_committed) - Consumers will always read committed data only</li>
      *   <li>{@link ProducerConfig#ENABLE_IDEMPOTENCE_CONFIG "enable.idempotence"} (true) - Producer will always have idempotency enabled</li>
@@ -360,7 +360,7 @@ namespace Kafka.Streams.Configs
         public StreamsConfig(IDictionary<string, string?> config)
             : base(config)
         {
-            //   eosEnabled = EXACTLY_ONCE.Equals(getString(PROCESSING_GUARANTEE_CONFIG));
+            //   eosEnabled = StreamsConfig.ExactlyOnceConfig.Equals(getString(PROCESSING_GUARANTEE_CONFIG));
         }
 
         protected Dictionary<string, object> PostProcessParsedConfig(Dictionary<string, object> parsedValues)
@@ -368,7 +368,7 @@ namespace Kafka.Streams.Configs
             var configUpdates = new Dictionary<string, object>();
             //   CommonClientConfigs.postProcessReconnectBackoffConfigs(this, parsedValues);
 
-            //bool eosEnabled = EXACTLY_ONCE.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG]);
+            //bool eosEnabled = StreamsConfig.ExactlyOnceConfig.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG]);
             //if (eosEnabled && !originals().ContainsKey(COMMIT_INTERVAL_MS_CONFIG))
             //{
             //    log.LogDebug("Using {} default value of {} as exactly once is enabled.",
@@ -466,7 +466,7 @@ namespace Kafka.Streams.Configs
             //{
             //    if (clientProvidedProps.ContainsKey(config))
             //    {
-            //        string eosMessage = PROCESSING_GUARANTEE_CONFIG + " is set to " + EXACTLY_ONCE + ". Hence, ";
+            //        string eosMessage = PROCESSING_GUARANTEE_CONFIG + " is set to " + StreamsConfig.ExactlyOnceConfig + ". Hence, ";
             //        string nonConfigurableConfigMessage = "Unexpected user-specified %s config: %s found. %sUser setting (%s) will be ignored and the Streams default setting (%s) will be used ";
 
             //        if (CONSUMER_DEFAULT_OVERRIDES.ContainsKey(config))
@@ -797,7 +797,7 @@ namespace Kafka.Streams.Configs
         }
 
         /**
-         * Return an {@link Serde#configure(Dictionary, bool) configured} instance of {@link #DEFAULT_KEY_SERDE_CLASS_CONFIG key Serde }
+         * Return an {@link Serde#configure(Dictionary, bool) configured} instance of {@link #DefaultKeySerdeClassConfig key Serde }
          *
          * @return an configured instance of key Serde
          */
@@ -822,7 +822,7 @@ namespace Kafka.Streams.Configs
         }
 
         /**
-         * Return an {@link Serde#configure(Dictionary, bool) configured} instance of {@link #DEFAULT_VALUE_SERDE_CLASS_CONFIG value
+         * Return an {@link Serde#configure(Dictionary, bool) configured} instance of {@link #DefaultValueSerdeClassConfig value
          * Serde}.
          *
          * @return an configured instance of value Serde

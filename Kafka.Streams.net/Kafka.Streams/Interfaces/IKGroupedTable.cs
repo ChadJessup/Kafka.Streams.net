@@ -52,7 +52,7 @@ namespace Kafka.Streams.Interfaces
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          *
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
@@ -80,7 +80,7 @@ namespace Kafka.Streams.Interfaces
          * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-${internalStoreName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "internalStoreName" is an internal name
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "internalStoreName" is an internal name
          * and "-changelog" is a fixed suffix.
          * Note that the internal store name may not be queriable through Interactive Queries.
          *
@@ -148,7 +148,7 @@ namespace Kafka.Streams.Interfaces
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          *
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
@@ -206,7 +206,7 @@ namespace Kafka.Streams.Interfaces
          * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-${internalStoreName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "internalStoreName" is an internal name
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "internalStoreName" is an internal name
          * and "-changelog" is a fixed suffix.
          * Note that the internal store name may not be queriable through Interactive Queries.
          *
@@ -284,7 +284,7 @@ namespace Kafka.Streams.Interfaces
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          *
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
@@ -303,13 +303,24 @@ namespace Kafka.Streams.Interfaces
             IAggregator<K, V, VR> subtractor,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
+        IKTable<K, VR> Aggregate<VR>(
+            Initializer<VR> initializer,
+            Aggregator<K, V, VR> adder,
+            Aggregator<K, V, VR> subtractor,
+            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
+            => this.Aggregate(
+                new WrappedInitializer<VR>(initializer),
+                new WrappedAggregator<K, V, VR>(adder),
+                new WrappedAggregator<K, V, VR>(subtractor),
+                materialized);
+
         /**
          * Aggregate the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
          * mapped} to the same key into a new instance of {@link KTable} using default serializers and deserializers.
          * Records with {@code null} key are ignored.
          * Aggregating is a generalization of {@link #reduce(Reducer, Reducer) combining via reduce(...)} as it,
          * for example, allows the result to have a different type than the input values.
-         * If the result value type does not match the {@link StreamsConfig#DEFAULT_VALUE_SERDE_CLASS_CONFIG default value
+         * If the result value type does not match the {@link StreamsConfig#DefaultValueSerdeClassConfig default value
          * serde} you should use {@link #aggregate(Initializer, Aggregator, Aggregator, Materialized)}.
          * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
          * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
@@ -355,7 +366,7 @@ namespace Kafka.Streams.Interfaces
          * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-${internalStoreName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "internalStoreName" is an internal name
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "internalStoreName" is an internal name
          * and "-changelog" is a fixed suffix.
          * Note that the internal store name may not be queriable through Interactive Queries.
          *

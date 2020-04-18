@@ -16,4 +16,6 @@ namespace Kafka.Streams.Processors.Interfaces
         /// <returns>The topic Name this record should be sent to.</returns>
         string Extract<K, V>(K key, V value, IRecordContext recordContext);
     }
+
+    public delegate string TopicNameExtractor<in TKey, in TValue>(TKey key, TValue value, IRecordContext recordContext);
 }

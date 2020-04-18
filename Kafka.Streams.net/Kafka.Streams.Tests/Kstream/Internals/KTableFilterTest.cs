@@ -48,13 +48,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             List<MockProcessor<string, int>> processors = supplier.capturedProcessors(2);
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", null, 10),
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", null, 10),
                 new KeyValueTimestamp<>("B", 2, 5),
                 new KeyValueTimestamp<>("C", null, 8),
                 new KeyValueTimestamp<>("D", 4, 14),
                 new KeyValueTimestamp<>("A", null, 18),
                 new KeyValueTimestamp<>("B", null, 15));
-            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp<>("A", 1, 10),
+            processors.Get(1).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", 1, 10),
                 new KeyValueTimestamp<>("B", null, 5),
                 new KeyValueTimestamp<>("C", 3, 8),
                 new KeyValueTimestamp<>("D", null, 14),
@@ -69,8 +69,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var topic1 = "topic1";
 
             IKTable<string, int> table1 = builder.Table(topic1, consumed);
-            IKTable<string, int> table2 = table1.filter(predicate);
-            IKTable<string, int> table3 = table1.filterNot(predicate);
+            IKTable<string, int> table2 = table1.Filter(predicate);
+            IKTable<string, int> table3 = table1.FilterNot(predicate);
 
             Assert.Null(table1.QueryableStoreName);
             Assert.Null(table2.QueryableStoreName);
@@ -86,8 +86,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var topic1 = "topic1";
 
             IKTable<string, int> table1 = builder.Table(topic1, consumed);
-            IKTable<string, int> table2 = table1.filter(predicate, Materialized.As("store2"));
-            IKTable<string, int> table3 = table1.filterNot(predicate);
+            IKTable<string, int> table2 = table1.Filter(predicate, Materialized.As("store2"));
+            IKTable<string, int> table3 = table1.FilterNot(predicate);
 
             Assert.Null(table1.QueryableStoreName);
             Assert.Equal("store2", table2.QueryableStoreName);
@@ -169,10 +169,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var builder = new StreamsBuilder();
             var topic1 = "topic1";
 
-            var table1 = (IKTable<string, int>)builder.Table(topic1, consumed);
-            var table2 = (IKTable<string, int>)table1.filter(predicate, Materialized.As("store2"));
-            var table3 = (IKTable<string, int>)table1.filterNot(predicate, Materialized.As("store3"));
-            var table4 = (IKTable<string, int>)table1.filterNot(predicate);
+            var table1 = builder.Table(topic1, consumed);
+            var table2 = (IKTable<string, int>)table1.Filter(predicate, Materialized.As("store2"));
+            var table3 = (IKTable<string, int>)table1.FilterNot(predicate, Materialized.As("store3"));
+            var table4 = (IKTable<string, int>)table1.FilterNot(predicate);
 
             Assert.Null(table1.QueryableStoreName);
             Assert.Equal("store2", table2.QueryableStoreName);
@@ -200,31 +200,31 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             List<MockProcessor<string, int>> processors = supplier.capturedProcessors(2);
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(1, null), 5),
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(1, null), 5),
                 new KeyValueTimestamp<>("B", new Change<>(1, null), 10),
                 new KeyValueTimestamp<>("C", new Change<>(1, null), 15));
-            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 5),
+            processors.Get(1).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 5),
                 new KeyValueTimestamp<>("B", new Change<>(null, null), 10),
                 new KeyValueTimestamp<>("C", new Change<>(null, null), 15));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", 2, 15L));
             driver.PipeInput(recordFactory.Create(topic1, "B", 2, 8L));
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, null), 15),
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, null), 15),
                 new KeyValueTimestamp<>("B", new Change<>(2, null), 8));
-            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, null), 15),
+            processors.Get(1).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, null), 15),
                 new KeyValueTimestamp<>("B", new Change<>(2, null), 8));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", 3, 20L));
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(3, null), 20));
-            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 20));
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(3, null), 20));
+            processors.Get(1).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 20));
             driver.PipeInput(recordFactory.Create(topic1, "A", null, 10L));
             driver.PipeInput(recordFactory.Create(topic1, "B", null, 20L));
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 10),
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 10),
                 new KeyValueTimestamp<>("B", new Change<>(null, null), 20));
-            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 10),
+            processors.Get(1).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 10),
                 new KeyValueTimestamp<>("B", new Change<>(null, null), 20));
         }
 
@@ -235,8 +235,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var builder = new StreamsBuilder();
             var topic1 = "topic1";
 
-            var table1 = (IKTable<string, int>)builder.Table(topic1, consumed);
-            var table2 = (IKTable<string, int>)table1.filter(predicate);
+            var table1 = builder.Table(topic1, consumed);
+            var table2 = (IKTable<string, int>)table1.Filter(predicate);
 
             doTestNotSendingOldValue(builder, table1, table2, topic1);
         }
@@ -248,9 +248,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var topic1 = "topic1";
 
             var table1 =
-                (IKTable<string, int>)builder.Table(topic1, consumed);
+                builder.Table(topic1, consumed);
             var table2 =
-                (IKTable<string, int>)table1.filter(predicate, Materialized.As("store2"));
+                (IKTable<string, int>)table1.Filter(predicate, Materialized.As("store2"));
 
             doTestNotSendingOldValue(builder, table1, table2, topic1);
         }
@@ -260,7 +260,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                                            IKTable<string, int> table2,
                                            string topic1)
         {
-            table2.enableSendingOldValues();
+            table2.EnableSendingOldValues();
 
             MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
             Topology topology = builder.Build();
@@ -275,7 +275,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             List<MockProcessor<string, int>> processors = supplier.capturedProcessors(2);
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(1, null), 5),
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(1, null), 5),
                 new KeyValueTimestamp<>("B", new Change<>(1, null), 10),
                 new KeyValueTimestamp<>("C", new Change<>(1, null), 15));
             processors.Get(1).checkEmptyAndClearProcessResult();
@@ -283,22 +283,22 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(topic1, "A", 2, 15L));
             driver.PipeInput(recordFactory.Create(topic1, "B", 2, 8L));
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, 1), 15),
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, 1), 15),
                 new KeyValueTimestamp<>("B", new Change<>(2, 1), 8));
-            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, null), 15),
+            processors.Get(1).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, null), 15),
                 new KeyValueTimestamp<>("B", new Change<>(2, null), 8));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", 3, 20L));
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(3, 2), 20));
-            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, 2), 20));
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(3, 2), 20));
+            processors.Get(1).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, 2), 20));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", null, 10L));
             driver.PipeInput(recordFactory.Create(topic1, "B", null, 20L));
 
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, 3), 10),
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, 3), 10),
                 new KeyValueTimestamp<>("B", new Change<>(null, 2), 20));
-            processors.Get(1).checkAndClearProcessResult(new KeyValueTimestamp<>("B", new Change<>(null, 2), 20));
+            processors.Get(1).CheckAndClearProcessResult(new KeyValueTimestamp<>("B", new Change<>(null, 2), 20));
         }
 
         [Fact]
@@ -310,7 +310,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var table1 =
                 (IKTable<string, int, int>)builder.Table(topic1, consumed);
             var table2 =
-                (IKTable<string, int, int>)table1.filter(predicate);
+                (IKTable<string, int, int>)table1.Filter(predicate);
 
             doTestSendingOldValue(builder, table1, table2, topic1);
         }
@@ -324,7 +324,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var table1 =
                 (IKTable<string, int, int>)builder.Table(topic1, consumed);
             var table2 =
-                (IKTable<string, int, int>)table1.filter(predicate, Materialized.As("store2"));
+                (IKTable<string, int, int>)table1.Filter(predicate, Materialized.As("store2"));
 
             doTestSendingOldValue(builder, table1, table2, topic1);
         }
@@ -349,7 +349,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(stringRecordFactory.Create(topic1, "C", "reject", 20L));
 
             List<MockProcessor<string, string>> processors = supplier.capturedProcessors(2);
-            processors.Get(0).checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("reject", null), 5),
+            processors.Get(0).CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("reject", null), 5),
                 new KeyValueTimestamp<>("B", new Change<>("reject", null), 10),
                 new KeyValueTimestamp<>("C", new Change<>("reject", null), 20));
             processors.Get(1).checkEmptyAndClearProcessResult();
@@ -358,7 +358,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldSkipNullToRepartitionWithoutMaterialization()
         {
-            // Do not explicitly set enableSendingOldValues. Let a further downstream stateful operator trigger it instead.
+            // Do not explicitly set EnableSendingOldValues. Let a further downstream stateful operator trigger it instead.
             var builder = new StreamsBuilder();
 
             var topic1 = "topic1";
@@ -367,7 +367,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var table1 =
                 (KTable<string, string, string>)builder.Table(topic1, consumed);
             var table2 =
-                (KTable<string, string, string>)table1.filter((key, value) => value.EqualsIgnorecase("accept"))
+                (KTable<string, string, string>)table1.Filter((key, value) => value.EqualsIgnorecase("accept"))
                     .GroupBy(MockMapper.noOpKeyValueMapper())
                     .Reduce(MockReducer.STRING_ADDER, MockReducer.STRING_REMOVER);
 
@@ -377,7 +377,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldSkipNullToRepartitionOnMaterialization()
         {
-            // Do not explicitly set enableSendingOldValues. Let a further downstream stateful operator trigger it instead.
+            // Do not explicitly set EnableSendingOldValues. Let a further downstream stateful operator trigger it instead.
             var builder = new StreamsBuilder();
 
             var topic1 = "topic1";
@@ -386,7 +386,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var table1 =
                 (KTable<string, string, string>)builder.Table(topic1, consumed);
             var table2 =
-                (KTable<string, string, string>)table1.filter((key, value) => value.EqualsIgnorecase("accept"), Materialized.As("store2"))
+                (KTable<string, string, string>)table1.Filter((key, value) => value.EqualsIgnorecase("accept"), Materialized.As("store2"))
                     .GroupBy(MockMapper.noOpKeyValueMapper())
                     .Reduce(MockReducer.STRING_ADDER, MockReducer.STRING_REMOVER, Materialized.As("mock-result"));
 

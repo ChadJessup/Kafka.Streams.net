@@ -11,16 +11,16 @@ namespace Kafka.Streams.KStream.Internals
         private readonly string storeName;
 
         private readonly IKTableValueGetter<K2, V2> valueGetter;
-        private readonly IKeyValueMapper<K1, V1, K2> keyMapper;
-        private readonly IValueJoiner<V1, V2, R> joiner;
+        private readonly KeyValueMapper<K1, V1, K2> keyMapper;
+        private readonly ValueJoiner<V1, V2, R> joiner;
         private readonly bool leftJoin;
 
         public KStreamKTableJoinProcessor(
             ILogger<KStreamKTableJoinProcessor<K1, K2, V1, V2, R>> logger,
             string storeName,
             IKTableValueGetter<K2, V2> valueGetter,
-            IKeyValueMapper<K1, V1, K2> keyMapper,
-            IValueJoiner<V1, V2, R> joiner,
+            KeyValueMapper<K1, V1, K2> keyMapper,
+            ValueJoiner<V1, V2, R> joiner,
             bool leftJoin)
         {
             this.logger = logger;
@@ -63,7 +63,7 @@ namespace Kafka.Streams.KStream.Internals
 
                 if (this.leftJoin || value2 != null)
                 {
-                    this.Context.Forward(key, this.joiner.Apply(value, value2));
+                    this.Context.Forward(key, this.joiner.Invoke(value, value2));
                 }
             }
         }

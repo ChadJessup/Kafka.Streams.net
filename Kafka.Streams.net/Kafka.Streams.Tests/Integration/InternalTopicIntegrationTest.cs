@@ -1,4 +1,10 @@
 using Kafka.Streams.Configs;
+using Kafka.Streams.KStream;
+using Kafka.Streams.State.Windowed;
+using Kafka.Streams.Temporary;
+using Kafka.Streams.Tests.Mocks;
+using Kafka.Streams.Threads.KafkaStreams;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -30,9 +36,9 @@ namespace Kafka.Streams.Tests.Integration
         public void Before()
         {
             streamsProp = new StreamsConfig();
-            streamsProp.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-            streamsProp.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-            streamsProp.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+            streamsProp.Put(StreamsConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
+            streamsProp.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType().FullName);
+            streamsProp.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType().FullName);
             streamsProp.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
             streamsProp.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
             streamsProp.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
@@ -49,7 +55,7 @@ namespace Kafka.Streams.Tests.Integration
         private void ProduceData(List<string> inputValues)
         {// throws Exception
             StreamsConfig producerProp = new StreamsConfig();
-            producerProp.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            producerProp.Put(ProducerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             producerProp.Put(ProducerConfig.ACKS_CONFIG, "All");
             producerProp.Put(ProducerConfig.RETRIES_CONFIG, 0);
             producerProp.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
@@ -86,7 +92,7 @@ namespace Kafka.Streams.Tests.Integration
         private Admin createAdminClient()
         {
             StreamsConfig adminClientConfig = new StreamsConfig();
-            adminClientConfig.Put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            adminClientConfig.Put(AdminClientConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             return Admin.Create(adminClientConfig);
         }
 
@@ -94,7 +100,7 @@ namespace Kafka.Streams.Tests.Integration
         public void ShouldCompactTopicsForKeyValueStoreChangelogs()
         {// throws Exception
             string appID = APP_ID + "-compact";
-            streamsProp.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+            streamsProp.Put(StreamsConfig.ApplicationIdConfig, appID);
 
             //
             // Step 1: Configure and start a simple word count topology
@@ -106,8 +112,8 @@ namespace Kafka.Streams.Tests.Integration
                 .GroupBy(MockMapper.selectValueMapper())
                 .Count(Materialized.As("Counts"));
 
-            KafkaStreams streams = new KafkaStreams(builder.Build(), streamsProp);
-            streams.start();
+            KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), streamsProp);
+            streams.Start();
 
             //
             // Step 2: Produce some input data to the input topic.
@@ -132,7 +138,7 @@ namespace Kafka.Streams.Tests.Integration
         public void ShouldCompactAndDeleteTopicsForWindowStoreChangelogs()
         {// throws Exception
             string appID = APP_ID + "-compact-delete";
-            streamsProp.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+            streamsProp.Put(StreamsConfig.ApplicationIdConfig, appID);
 
             //
             // Step 1: Configure and start a simple word count topology
@@ -143,12 +149,12 @@ namespace Kafka.Streams.Tests.Integration
             int durationMs = 2000;
 
             textLines.flatMapValues(value => Arrays.asList(value.toLowerCase(Locale.getDefault()).Split("\\W+")))
-                .GroupBy(MockMapper.selectValueMapper())
-                .WindowedBy(TimeWindows.of(FromSeconds(1L)).grace(TimeSpan.FromMilliseconds(0L)))
-                .Count(Materialized<string, long, IWindowStore<Bytes, byte[]>>.As("CountWindows").withRetention(FromSeconds(2L)));
+                .GroupBy(MockMapper.GetSelectValueMapper())
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromSeconds(1L)).Grace(TimeSpan.FromMilliseconds(0L)))
+                .Count(Materialized.As<string, long, IWindowStore<Bytes, byte[]>>("CountWindows").withRetention(TimeSpan.FromSeconds(2L)));
 
-            KafkaStreams streams = new KafkaStreams(builder.Build(), streamsProp);
-            streams.start();
+            KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), streamsProp);
+            streams.Start();
 
             //
             // Step 2: Produce some input data to the input topic.

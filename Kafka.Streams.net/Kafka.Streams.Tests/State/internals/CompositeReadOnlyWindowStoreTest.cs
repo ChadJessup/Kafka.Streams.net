@@ -150,8 +150,8 @@
 //            secondUnderlying.Put("b", "b", 10L);
 //            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.Fetch("a", "b", ofEpochMilli(0), ofEpochMilli(10)));
 //            Assert.Equal(results, (Arrays.asList(
-//                    KeyValuePair.Create(new Windowed2<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new Windowed2<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//                    KeyValuePair.Create(new Windowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new Windowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]
@@ -178,8 +178,8 @@
 //            secondUnderlying.Put("b", "b", 10L);
 //            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.All());
 //            Assert.Equal(results, (Arrays.asList(
-//                    KeyValuePair.Create(new Windowed2<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new Windowed2<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//                    KeyValuePair.Create(new Windowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new Windowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]
@@ -192,8 +192,8 @@
 //            secondUnderlying.Put("b", "b", 10L);
 //            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.FetchAll(ofEpochMilli(0), ofEpochMilli(10)));
 //            Assert.Equal(results, (Arrays.asList(
-//                    KeyValuePair.Create(new Windowed2<string>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
-//                    KeyValuePair.Create(new Windowed2<string>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
+//                    KeyValuePair.Create(new Windowed<string>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
+//                    KeyValuePair.Create(new Windowed<string>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
 //        [Fact]// (expected = NullPointerException)

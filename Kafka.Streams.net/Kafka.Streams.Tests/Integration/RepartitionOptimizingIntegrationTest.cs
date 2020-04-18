@@ -123,7 +123,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronously(INPUT_TOPIC, GetKeyValues(), producerConfig, mockTime);
 
             StreamsConfig consumerConfig1 = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, LongDeserializer);
-            StreamsConfig consumerConfig2 = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, IntegerDeserializer);
+            StreamsConfig consumerConfig2 = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.Int().Deserializer);
             StreamsConfig consumerConfig3 = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String());
 
             Topology topology = builder.Build(streamsConfiguration);
@@ -143,8 +143,8 @@ namespace Kafka.Streams.Tests.Integration
              */
             Assert.Equal(expectedNumberRepartitionTopics, GetCountOfRepartitionTopicsFound(topologyString));
 
-            KafkaStreams streams = new KafkaStreams(topology, streamsConfiguration);
-            streams.start();
+            KafkaStreamsThread streams = new KafkaStreamsThread(topology, streamsConfiguration);
+            streams.Start();
 
             var expectedCountKeyValues = new List<KeyValuePair<string, long>> { KeyValuePair.Create("A", 3L), KeyValuePair.Create("B", 3L), KeyValuePair.Create("C", 3L) };
             IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(consumerConfig1, COUNT_TOPIC, expectedCountKeyValues);
@@ -164,7 +164,7 @@ namespace Kafka.Streams.Tests.Integration
             Assert.Equal(3, processorValueCollector.Count);
             Assert.Equal(processorValueCollector, expectedCollectedProcessorValues);
 
-            streams.Close(FromSeconds(5));
+            streams.Close(TimeSpan.FromSeconds(5));
         }
 
         private int GetCountOfRepartitionTopicsFound(string topologyString)

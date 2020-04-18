@@ -1,11 +1,9 @@
-using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.KStream.Mappers;
-using Kafka.Streams.Topologies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -19,12 +17,12 @@ namespace Kafka.Streams.KStream.Internals
      */
     public abstract class AbstractStream<K, V>
     {
-        protected string Name { get; }
-        protected ISerde<K>? keySerde { get; }
-        protected ISerde<V>? valSerde { get; }
-        public HashSet<string> sourceNodes { get; }
-        public StreamsGraphNode streamsGraphNode { get; set; }
-        protected InternalStreamsBuilder builder { get; private set; }
+        public string Name { get; }
+        public ISerde<K>? KeySerde { get; }
+        public ISerde<V>? ValueSerde { get; }
+        public HashSet<string> SourceNodes { get; }
+        public StreamsGraphNode StreamsGraphNode { get; set; }
+        protected InternalStreamsBuilder Builder { get; private set; }
 
         // This copy-constructor will allow to extend KStream
         // and KTable APIs with new methods without impacting the public interface.
@@ -36,11 +34,11 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             this.Name = stream.Name;
-            this.builder = stream.builder;
-            this.keySerde = stream.keySerde;
-            this.valSerde = stream.valSerde;
-            this.sourceNodes = stream.sourceNodes;
-            this.streamsGraphNode = stream.streamsGraphNode;
+            this.Builder = stream.Builder;
+            this.KeySerde = stream.KeySerde;
+            this.ValueSerde = stream.ValueSerde;
+            this.SourceNodes = stream.SourceNodes;
+            this.StreamsGraphNode = stream.StreamsGraphNode;
         }
 
         public AbstractStream(
@@ -57,17 +55,17 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             this.Name = Name;
-            this.builder = builder;
-            this.keySerde = keySerde;
-            this.valSerde = valSerde;
-            this.sourceNodes = sourceNodes;
-            this.streamsGraphNode = streamsGraphNode;
+            this.Builder = builder;
+            this.KeySerde = keySerde;
+            this.ValueSerde = valSerde;
+            this.SourceNodes = sourceNodes;
+            this.StreamsGraphNode = streamsGraphNode;
         }
 
         // This method allows to expose the InternalTopologyBuilder instance
         // to uses that extend AbstractStream.
         protected InternalTopologyBuilder InternalTopologyBuilder()
-            => this.builder.InternalTopologyBuilder;
+            => this.Builder.InternalTopologyBuilder;
 
         public HashSet<string> EnsureJoinableWith<VO>(AbstractStream<K, VO> other)
         {
@@ -77,31 +75,24 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             var allSourceNodes = new HashSet<string>();
-            allSourceNodes.UnionWith(this.sourceNodes);
-            allSourceNodes.UnionWith(other.sourceNodes);
+            allSourceNodes.UnionWith(this.SourceNodes);
+            allSourceNodes.UnionWith(other.SourceNodes);
 
-            this.builder.InternalTopologyBuilder.CopartitionSources(allSourceNodes);
+            this.Builder.InternalTopologyBuilder.CopartitionSources(allSourceNodes);
 
             return allSourceNodes;
         }
 
-        public static IValueJoiner<T2, T1, R> ReverseJoiner<T1, T2, R>(IValueJoiner<T1, T2, R> joiner)
+        public static ValueJoiner<T2, T1, R> ReverseJoiner<T1, T2, R>(ValueJoiner<T1, T2, R> joiner)
         {
-            return null;// (value2, value1)=>joiner.apply(value1, value2);
+            return (value2, value1) => joiner(value1, value2);
         }
 
-        protected static IValueMapperWithKey<K, V, VR> WithKey<VR>(Func<V, VR> valueMapper)
+        protected static ValueMapperWithKey<K, V, VR> WithKey<VR>(ValueMapper<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
 
             return new ValueMapperWithKey<K, V, VR>((readOnlyKey, value) => valueMapper(value));
-        }
-
-        protected static IValueMapperWithKey<K, V, VR> WithKey<VR>(IValueMapper<V, VR> valueMapper)
-        {
-            valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
-
-            return new ValueMapperWithKey<K, V, VR>((readOnlyKey, value) => valueMapper.Apply(value));
         }
 
         public static IValueTransformerWithKeySupplier<K, V, VR> ToValueTransformerWithKeySupplier<VR>(

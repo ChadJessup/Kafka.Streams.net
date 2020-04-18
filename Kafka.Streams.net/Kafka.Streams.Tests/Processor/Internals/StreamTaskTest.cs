@@ -134,12 +134,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 throw new RuntimeException(e);
             }
             return new StreamsConfig(mkProperties(mkMap(
-                mkEntry(StreamsConfig.APPLICATION_ID_CONFIG, "stream-task-test"),
-                mkEntry(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:2171"),
+                mkEntry(StreamsConfig.ApplicationIdConfig, "stream-task-test"),
+                mkEntry(StreamsConfig.BootstrapServersConfig, "localhost:2171"),
                 mkEntry(StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIG, "3"),
                 mkEntry(StreamsConfig.STATE_DIR_CONFIG, canonicalPath),
                 mkEntry(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor.getName()),
-                mkEntry(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, enableEoS ? StreamsConfig.EXACTLY_ONCE : StreamsConfig.AT_LEAST_ONCE),
+                mkEntry(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, enableEoS ? StreamsConfig.StreamsConfig.ExactlyOnceConfig : StreamsConfig.AT_LEAST_ONCE),
                 mkEntry(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG, "100")
             )));
         }
@@ -313,8 +313,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //        appender
             //            .getEvents()
             //            .Stream()
-            //            .filter(@event => @event.getMessage().Equals(expectedErrorLogMessage))
-            //            .map(LogCaptureAppender.Event::getLevel)
+            //            .Filter(@event => @event.getMessage().Equals(expectedErrorLogMessage))
+            //            .Map(LogCaptureAppender.Event::getLevel)
             //            .collect(Collectors.toList());
             Assert.Equal(expectedError, Collections.singletonList("ERROR"));
         }
@@ -1579,7 +1579,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //            public void punctuate(long timestamp)
             //            {
             //                recordCollector.send("result-topic1", 3, 5, null, 0, time.NowAsEpochMilliseconds;,
-            //                    new IntegerSerializer(), new IntegerSerializer());
+            //                    new Serdes.Int().Serializer(), new Serdes.Int().Serializer());
             //        }
             //    });
             task.Commit();

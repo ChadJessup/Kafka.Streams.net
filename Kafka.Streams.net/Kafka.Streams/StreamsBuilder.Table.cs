@@ -77,8 +77,8 @@ namespace Kafka.Streams
 
                 var consumedInternal = new ConsumedInternal<K, V>(consumed);
                 materialized
-                    .WithKeySerde(consumedInternal.keySerde)
-                    .WithValueSerde(consumedInternal.valueSerde);
+                    .WithKeySerde(consumedInternal.KeySerde)
+                    .WithValueSerde(consumedInternal.ValueSerde);
 
                 var materializedInternal =
                      new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.Context.InternalStreamsBuilder, topic + "-");
@@ -148,7 +148,7 @@ namespace Kafka.Streams
 
                 var materializedInternal =
                      new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-                             Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(consumedInternal.keySerde, consumedInternal.valueSerde),
+                             Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(consumedInternal.KeySerde, consumedInternal.ValueSerde),
                              this.Context.InternalStreamsBuilder, topic + "-");
 
                 return this.Context.InternalStreamsBuilder.Table(topic, consumedInternal, materializedInternal);
@@ -231,7 +231,7 @@ namespace Kafka.Streams
 
                 var materializedInternal =
                      new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-                         Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(consumedInternal.keySerde, consumedInternal.valueSerde),
+                         Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(consumedInternal.KeySerde, consumedInternal.ValueSerde),
                          this.Context.InternalStreamsBuilder, topic + "-");
 
                 return this.Context.InternalStreamsBuilder.GlobalTable(
@@ -320,8 +320,8 @@ namespace Kafka.Streams
                 ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
                 // always use the serdes from consumed
                 materialized
-                    .WithKeySerde(consumedInternal.keySerde)
-                    .WithValueSerde(consumedInternal.valueSerde);
+                    .WithKeySerde(consumedInternal.KeySerde)
+                    .WithValueSerde(consumedInternal.ValueSerde);
 
                 MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                      new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.Context.InternalStreamsBuilder, topic + "-");

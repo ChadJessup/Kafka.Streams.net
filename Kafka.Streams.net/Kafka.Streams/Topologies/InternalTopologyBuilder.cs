@@ -302,7 +302,7 @@ namespace Kafka.Streams.Topologies
             ISerializer<K>? keySerializer,
             ISerializer<V>? valSerializer,
             IStreamPartitioner<K, V>? partitioner,
-            string[] predecessorNames)
+            params string[] predecessorNames)
         {
             Name = Name ?? throw new ArgumentNullException(nameof(Name));
             topic = topic ?? throw new ArgumentNullException(nameof(topic));
@@ -315,7 +315,7 @@ namespace Kafka.Streams.Topologies
 
             this.AddSink(
                 Name,
-                new StaticTopicNameExtractor(topic),
+                (k, v, c) => topic,
                 keySerializer,
                 valSerializer,
                 partitioner,
@@ -327,11 +327,11 @@ namespace Kafka.Streams.Topologies
 
         public void AddSink<K, V>(
             string Name,
-            ITopicNameExtractor topicExtractor,
-            ISerializer<K> keySerializer,
-            ISerializer<V> valSerializer,
-            IStreamPartitioner<K, V> partitioner,
-            string[] predecessorNames)
+            TopicNameExtractor<K, V> topicExtractor,
+            ISerializer<K>? keySerializer,
+            ISerializer<V>? valSerializer,
+            IStreamPartitioner<K, V>? partitioner,
+            params string[] predecessorNames)
         {
             Name = Name ?? throw new ArgumentNullException(nameof(Name));
             topicExtractor = topicExtractor ?? throw new ArgumentNullException(nameof(topicExtractor));

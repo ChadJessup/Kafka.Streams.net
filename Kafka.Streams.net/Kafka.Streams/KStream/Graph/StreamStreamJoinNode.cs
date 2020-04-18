@@ -1,3 +1,4 @@
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Topologies;
@@ -26,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public StreamStreamJoinNode(
             string nodeName,
-            IValueJoiner<V1, V2, VR> valueJoiner,
+            ValueJoiner<V1, V2, VR> valueJoiner,
             ProcessorParameters<K, V1> joinThisProcessorParameters,
             ProcessorParameters<K, V2> joinOtherProcessParameters,
             ProcessorParameters<K, VR> joinMergeProcessorParameters,

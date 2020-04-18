@@ -1,4 +1,3 @@
-using Kafka.Streams.Extensions;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using System;

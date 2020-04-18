@@ -1,3 +1,5 @@
+using Kafka.Streams.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
     /**
@@ -9,13 +11,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private readonly ProcessorParameters<K, V1> joinThisProcessorParameters;
         private readonly ProcessorParameters<K, V2> joinOtherProcessorParameters;
         private readonly ProcessorParameters<K, VR> joinMergeProcessorParameters;
-        private readonly IValueJoiner<V1, V2, VR> valueJoiner;
+        private readonly ValueJoiner<V1, V2, VR> valueJoiner;
         public string thisJoinSideNodeName { get; }
         public string otherJoinSideNodeName { get; }
 
         public BaseJoinProcessorNode(
             string nodeName,
-            IValueJoiner<V1, V2, VR> valueJoiner,
+            ValueJoiner<V1, V2, VR> valueJoiner,
             ProcessorParameters<K, V1> joinThisProcessorParameters,
             ProcessorParameters<K, V2> joinOtherProcessorParameters,
             ProcessorParameters<K, VR> joinMergeProcessorParameters,

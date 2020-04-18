@@ -17,7 +17,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void testToInternalValueTransformerSupplierSuppliesNewTransformers()
         {
-            ValueTransformerSupplier<object, object> valueTransformerSupplier = createMock(ValueTransformerSupplier));
+            IValueTransformerSupplier<object, object> valueTransformerSupplier = createMock(IValueTransformerSupplier));
             expect(valueTransformerSupplier.Get()).andReturn(null).times(3);
             ValueTransformerWithKeySupplier<object, object, object> valueTransformerWithKeySupplier =
                  AbstractStream.toValueTransformerWithKeySupplier(valueTransformerSupplier);

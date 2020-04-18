@@ -7,7 +7,6 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Clients.Consumers;
-using Kafka.Streams.Extensions;
 using Kafka.Streams.Configs;
 
 namespace Kafka.Streams.Processors.Internals

@@ -25,7 +25,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             builder = new StreamsBuilder();
             IKStream<K, V> stream;
             IGlobalKTable<string, string> table; // value of stream optionally.Contains key of table
-            IKeyValueMapper<int, string, string> keyMapper;
+            KeyValueMapper<int, string, string> keyMapper;
 
             MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
             Consumed<int, string> streamConsumed = Consumed.With(Serdes.Int(), Serdes.String());
@@ -104,7 +104,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // push two items to the primary stream. the globalTable is empty
 
             pushToStream(2, "X", true);
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
         }
 
         [Fact]
@@ -114,28 +114,28 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // push two items to the primary stream. the globalTable is empty
 
             pushToStream(2, "X", true);
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
 
             // push two items to the globalTable. this should not produce any item.
 
             pushToGlobalTable(2, "Y");
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
 
             // push All four items to the primary stream. this should produce two items.
 
             pushToStream(4, "X", true);
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
                     new KeyValueTimestamp<>(1, "X1,FKey1+Y1", 1));
 
             // push All items to the globalTable. this should not produce any item
 
             pushToGlobalTable(4, "YY");
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
 
             // push All four items to the primary stream. this should produce four items.
 
             pushToStream(4, "X", true);
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+YY0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+YY0", 0),
                     new KeyValueTimestamp<>(1, "X1,FKey1+YY1", 1),
                     new KeyValueTimestamp<>(2, "X2,FKey2+YY2", 2),
                     new KeyValueTimestamp<>(3, "X3,FKey3+YY3", 3));
@@ -143,7 +143,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // push All items to the globalTable. this should not produce any item
 
             pushToGlobalTable(4, "YYY");
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
         }
 
         [Fact]
@@ -153,12 +153,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // push two items to the globalTable. this should not produce any item.
 
             pushToGlobalTable(2, "Y");
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
 
             // push All four items to the primary stream. this should produce two items.
 
             pushToStream(4, "X", true);
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
                     new KeyValueTimestamp<>(1, "X1,FKey1+Y1", 1));
 
         }
@@ -170,12 +170,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // push All four items to the globalTable. this should not produce any item.
 
             pushToGlobalTable(4, "Y");
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
 
             // push All four items to the primary stream. this should produce four items.
 
             pushToStream(4, "X", true);
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0,FKey0+Y0", 0),
                     new KeyValueTimestamp<>(1, "X1,FKey1+Y1", 1),
                     new KeyValueTimestamp<>(2, "X2,FKey2+Y2", 2),
                     new KeyValueTimestamp<>(3, "X3,FKey3+Y3", 3));
@@ -183,12 +183,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // push two items with null to the globalTable.As deletes. this should not produce any item.
 
             pushNullValueToGlobalTable(2);
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
 
             // push All four items to the primary stream. this should produce two items.
 
             pushToStream(4, "XX", true);
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(2, "XX2,FKey2+Y2", 2),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(2, "XX2,FKey2+Y2", 2),
                     new KeyValueTimestamp<>(3, "XX3,FKey3+Y3", 3));
         }
 
@@ -199,13 +199,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // push All items to the globalTable. this should not produce any item
 
             pushToGlobalTable(4, "Y");
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
 
             // push All four items to the primary stream with no foreign key, resulting in null keyMapper values.
             // this should not produce any item.
 
             pushToStream(4, "XXX", false);
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
         }
     }
 }

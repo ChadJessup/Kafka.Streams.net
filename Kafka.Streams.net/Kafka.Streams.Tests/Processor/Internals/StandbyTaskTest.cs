@@ -23,7 +23,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         private TaskId taskId = new TaskId(0, 1);
         private StandbyTask task;
-        private ISerializer<int> intSerializer = new IntegerSerializer();
+        private ISerializer<int> intSerializer = new Serdes.Int().Serializer();
 
         private string applicationId = "test-application";
         private string storeName1 = "store1";
@@ -49,7 +49,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private HashSet<TopicPartition> ktablePartitions = Utils.mkSet(globalTopicPartition);
         private ProcessorTopology ktableTopology = ProcessorTopologyFactories.withLocalStores(
             Collections.singletonList(new MockKeyValueStoreBuilder(globalTopicPartition.Topic, true)
-                              .withLoggingDisabled().Build()),
+                              .WithLoggingDisabled().Build()),
             mkMap(
                 mkEntry(globalStoreName, globalTopicPartition.Topic)
             )
@@ -71,8 +71,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         private MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
         private MockRestoreConsumer<int, int> restoreStateConsumer = new MockRestoreConsumer<>(
-            new IntegerSerializer(),
-            new IntegerSerializer()
+            new Serdes.Int().Serializer(),
+            new Serdes.Int().Serializer()
         );
         private StoreChangelogReader changelogReader = new StoreChangelogReader(
             restoreStateConsumer,
@@ -252,8 +252,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             builder
                 .Stream(Collections.singleton("topic"), new ConsumedInternal<>())
                 .GroupByKey()
-                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(60_000)).grace(TimeSpan.FromMilliseconds(0L)))
-                .Count(Materialized<object, long, IWindowStore<Bytes, byte[]>>.As(storeName).withRetention(TimeSpan.FromMilliseconds(120_000L)));
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(60_000)).Grace(TimeSpan.FromMilliseconds(0L)))
+                .Count(Materialized.As<object, long, IWindowStore<Bytes, byte[]>>(storeName).withRetention(TimeSpan.FromMilliseconds(120_000L)));
 
             builder.BuildAndOptimizeTopology();
 
@@ -322,7 +322,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             long end)
         {
             IWindowed<int> data = new Windowed<string>(key, new TimeWindow(start, end));
-            Bytes wrap = Bytes.Wrap(new IntegerSerializer().Serialize(null, data.Key));
+            Bytes wrap = Bytes.Wrap(new Serdes.Int().Serializer().Serialize(null, data.Key));
             byte[] keyBytes = WindowKeySchema.toStoreKeyBinary(new Windowed<string>(wrap, data.window()), 1).Get();
             return new ConsumeResult<>(
                 changelogName,
@@ -484,7 +484,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             long offset,
             int key)
         {
-            var integerSerializer = new IntegerSerializer();
+            var integerSerializer = new Serdes.Int().Serializer();
             return new ConsumeResult<>(
                 topicPartition.Topic,
                 topicPartition.Partition,
@@ -513,7 +513,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         { //throws IOException
             InternalStreamsBuilder builder = new InternalStreamsBuilder(new InternalTopologyBuilder());
             builder.Stream(Collections.singleton("topic"),
-                           new ConsumedInternal<>()).GroupByKey().WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(100))).Count();
+                           new ConsumedInternal<>()).GroupByKey().WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(100))).Count();
 
             initializeStandbyStores(builder);
         }

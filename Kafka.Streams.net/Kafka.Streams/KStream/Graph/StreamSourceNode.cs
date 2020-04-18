@@ -1,4 +1,3 @@
-using Kafka.Streams.Extensions;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Topologies;
@@ -59,7 +58,7 @@ namespace Kafka.Streams.KStream.Graph
                 topologyBuilder.AddSource(
                     this.consumedInternal.OffsetResetPolicy(),
                     this.NodeName,
-                    this.consumedInternal.timestampExtractor,
+                    this.consumedInternal.TimestampExtractor,
                     this.consumedInternal.KeyDeserializer(),
                     this.consumedInternal.ValueDeserializer(),
                     this.topicPattern.ToString());
@@ -69,7 +68,7 @@ namespace Kafka.Streams.KStream.Graph
                 topologyBuilder.AddSource(
                     this.consumedInternal.OffsetResetPolicy(),
                     this.NodeName,
-                    this.consumedInternal.timestampExtractor,
+                    this.consumedInternal.TimestampExtractor,
                     this.consumedInternal.KeyDeserializer(),
                     this.consumedInternal.ValueDeserializer(),
                     this.topicNames.ToArray());

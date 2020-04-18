@@ -26,7 +26,7 @@ namespace Kafka.Streams.Tests.Integration
         private static volatile int testNo = new int(0);
         private StreamsBuilder builder;
         private StreamsConfig streamsConfiguration;
-        private KafkaStreams kafkaStreams;
+        private KafkaStreamsThread kafkaStreams;
         private string streamOneInput;
         private string outputTopic;
         private KGroupedStream<string, string> groupedStream;
@@ -40,8 +40,8 @@ namespace Kafka.Streams.Tests.Integration
             CreateTopics();
             streamsConfiguration = new StreamsConfig();
             string applicationId = "kgrouped-stream-test-" + testNo.incrementAndGet();
-            streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-            streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            streamsConfiguration.Put(StreamsConfig.ApplicationIdConfig, applicationId);
+            streamsConfiguration.Put(StreamsConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
             streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
             streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL_MS);
@@ -100,9 +100,9 @@ namespace Kafka.Streams.Tests.Integration
             ProduceMessages(secondBatchTimestamp);
 
             groupedStream
-                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(500L)))
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(500L)))
                 .Reduce(reducer, Materialized.As("reduce-time-windows"))
-                    .toStream((windowedKey, value) => windowedKey.Key + "@" + windowedKey.window().start())
+                    .toStream((windowedKey, value) => windowedKey.Key + "@" + windowedKey.window().Start())
                     .To(outputTopic, Produced.With(Serdes.String(), Serdes.String()));
 
             StartStreams();
@@ -136,9 +136,9 @@ namespace Kafka.Streams.Tests.Integration
             ProduceMessages(timestamp);
 
             stream.GroupByKey(Grouped.With(Serdes.Int(), Serdes.String()))
-                .WindowedBy(TimeWindow.of(TimeSpan.FromMilliseconds(500L)))
+                .WindowedBy(TimeWindow.Of(TimeSpan.FromMilliseconds(500L)))
                 .Count(Materialized.As("count-windows"))
-                    .toStream((windowedKey, value) => windowedKey.Key + "@" + windowedKey.window().start())
+                    .toStream((windowedKey, value) => windowedKey.Key + "@" + windowedKey.window().Start())
                     .To(outputTopic, Produced.With(Serdes.String(), Serdes.Long()));
 
             StartStreams();
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Tests.Integration
                     KeyValuePair.Create(5, "E")),
                 TestUtils.producerConfig(
                     CLUSTER.bootstrapServers(),
-                    IntegerSerializer,
+                    Serdes.Int().Serializer,
                     Serdes.String().Serializer,
                     new StreamsConfig()),
                 timestamp);
@@ -182,14 +182,14 @@ namespace Kafka.Streams.Tests.Integration
         {// throws InterruptedException
             streamOneInput = "stream-one-" + testNo;
             outputTopic = "output-" + testNo;
-            CLUSTER.createTopic(streamOneInput, 3, 1);
-            CLUSTER.createTopic(outputTopic);
+            CLUSTER.CreateTopic(streamOneInput, 3, 1);
+            CLUSTER.CreateTopic(outputTopic);
         }
 
         private void StartStreams()
         {
-            kafkaStreams = new KafkaStreams(builder.Build(), streamsConfiguration);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
+            kafkaStreams.Start();
         }
 
 
@@ -199,7 +199,7 @@ namespace Kafka.Streams.Tests.Integration
         // throws InterruptedException
         {
             StreamsConfig consumerProperties = new StreamsConfig();
-            consumerProperties.Set(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            consumerProperties.Set(ConsumerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             consumerProperties.Set(ConsumerConfig.GROUP_ID_CONFIG, "kgroupedstream-test-" + testNo);
             consumerProperties.Set(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
             consumerProperties.Set(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer.GetType().FullName);

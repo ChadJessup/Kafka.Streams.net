@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -135,6 +136,11 @@ namespace Kafka.Common
             //this.invalidTopics = Collections.unmodifiableSet(invalidTopics);
             //this.internalTopics = Collections.unmodifiableSet(internalTopics);
             //this.controller = controller;
+        }
+
+        public static void createTopics(string v1, string v2)
+        {
+            throw new NotImplementedException();
         }
 
         /**

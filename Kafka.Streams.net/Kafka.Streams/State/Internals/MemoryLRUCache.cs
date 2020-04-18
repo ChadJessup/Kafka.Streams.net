@@ -24,7 +24,7 @@
 //            //        this.Name = Name;
 
 //            //            // leave room for one extra entry to handle.Adding an entry before the oldest can be removed
-//            //            this.map = new Dictionary<Bytes, byte[]>(maxCacheSize + 1, 1.01f, true);
+//            //            this.Map = new Dictionary<Bytes, byte[]>(maxCacheSize + 1, 1.01f, true);
 //            //{
 //            //            private static long serialVersionUID = 1L;
 
@@ -80,7 +80,7 @@
 //            //{
 //            //        Objects.requireNonNull(key);
 
-//            //        return this.map[key];
+//            //        return this.Map[key];
 //            //    }
 //            //[MethodImpl(MethodImplOptions.Synchronized)]
 //            //    public override void Put(Bytes key, byte[] value)
@@ -91,7 +91,7 @@
 //            //            delete(key);
 //            //        } else
 //            //{
-//            //            this.map.Add(key, value);
+//            //            this.Map.Add(key, value);
 //            //        }
 //            //    }
 //            //  [MethodImpl(MethodImplOptions.Synchronized)]
@@ -117,7 +117,7 @@
 //            //    public override byte[] delete(Bytes key)
 //            //{
 //            //        Objects.requireNonNull(key);
-//            //        return this.map.Remove(key);
+//            //        return this.Map.Remove(key);
 //            //    }
 
 //            ///**
@@ -138,7 +138,7 @@
 
 //            //    public override long approximateNumEntries
 //            //{
-//            //        return this.map.size();
+//            //        return this.Map.size();
 //            //    }
 
 //            //public override void Flush()
@@ -153,7 +153,7 @@
 
 //            //public int size()
 //            //{
-//            //    return this.map.size();
+//            //    return this.Map.size();
 //            //}
 //        }
 

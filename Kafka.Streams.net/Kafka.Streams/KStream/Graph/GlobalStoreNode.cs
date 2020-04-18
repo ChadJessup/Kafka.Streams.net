@@ -31,12 +31,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            // storeBuilder.withLoggingDisabled();
+            // storeBuilder.WithLoggingDisabled();
 
             topologyBuilder.AddGlobalStore<K, V, T>(
                 this.storeBuilder,
                 this.sourceName,
-                this.consumed.timestampExtractor,
+                this.consumed.TimestampExtractor,
                 this.consumed.KeyDeserializer(),
                 this.consumed.ValueDeserializer(),
                 this.topic,

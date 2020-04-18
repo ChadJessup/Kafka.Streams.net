@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Interfaces
      *  GlobalKTable globalTwo = builder.globalTable("g2", "g2-store");
      * ...
      *  KafkaStreams streams = ...;
-     * streams.start()
+     * streams.Start()
      * ...
      * IReadOnlyKeyValueStore view = streams.store("g1-store", QueryableStoreTypes.KeyValueStore);
      * view[key]; // can be done on any key, as All keys are present

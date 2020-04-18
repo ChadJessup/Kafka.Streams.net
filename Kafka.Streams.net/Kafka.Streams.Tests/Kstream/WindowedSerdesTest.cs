@@ -56,7 +56,7 @@ namespace Kafka.Streams.Tests.Kstream
         //            TimeWindowedSerializer<byte[]> serializer = new TimeWindowedSerializer<>();
         //            NullPointerException exception =Assert.Throws(
         //        NullPointerException),
-        //                () => serializer.Serialize("topic", new Windowed2<>(new byte[0], new TimeWindow(0, 1))));
+        //                () => serializer.Serialize("topic", new Windowed<>(new byte[0], new TimeWindow(0, 1))));
         //            Assert.Equal(
         //                exception.getMessage(),
         //                equalTo("Inner serializer is `null`. User code must use constructor " +

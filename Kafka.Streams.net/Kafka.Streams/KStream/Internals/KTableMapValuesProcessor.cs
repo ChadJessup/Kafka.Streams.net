@@ -1,4 +1,4 @@
-﻿using Kafka.Streams.KStream.Interfaces;
+﻿using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
@@ -11,13 +11,13 @@ namespace Kafka.Streams.KStream.Internals
         private ITimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
         private readonly KafkaStreamsContext context;
-        private readonly IValueMapperWithKey<K, V, V1> mapper;
+        private readonly ValueMapperWithKey<K, V, V1> mapper;
         private readonly string queryableName;
         private readonly bool sendOldValues;
 
         public KTableMapValuesProcessor(
             KafkaStreamsContext context,
-            IValueMapperWithKey<K, V, V1> mapper)
+            ValueMapperWithKey<K, V, V1> mapper)
         {
             this.context = context;
             this.mapper = mapper;
@@ -72,7 +72,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (value != null)
             {
-                newValue = this.mapper.Apply(key, value);
+                newValue = this.mapper(key, value);
             }
 
             return newValue;

@@ -20,8 +20,8 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            string topic = "source";
 //            StreamsConfig props = new StreamsConfig();
-//            props.Set(StreamsConfig.APPLICATION_ID_CONFIG, "shouldNotDeadlock");
-//            props.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//            props.Set(StreamsConfig.ApplicationIdConfig, "shouldNotDeadlock");
+//            props.Set(StreamsConfig.BootstrapServersConfig, kafka);
 //            StreamsBuilder builder = new StreamsBuilder();
 //            IKStream<K, V> source = builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()));
 
@@ -34,7 +34,7 @@ namespace Kafka.Streams.Tests.Tests
 //                        throw new RuntimeException("KABOOM!");
 //                    }
 //        });
-//        KafkaStreams streams = new KafkaStreams(builder.Build(), props);
+//        KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), props);
 //        streams.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
 //            public void uncaughtException(Thread t, Throwable e)
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        StreamsConfig producerProps = new StreamsConfig();
 //    producerProps.Put(ProducerConfig.CLIENT_ID_CONFIG, "SmokeTest");
-//        producerProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//        producerProps.Put(ProducerConfig.BootstrapServersConfig, kafka);
 //        producerProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
@@ -62,7 +62,7 @@ namespace Kafka.Streams.Tests.Tests
 //    producer.send(new ProducerRecord<>(topic, "a", "a"));
 //        producer.Flush();
 
-//        streams.start();
+//        streams.Start();
 
 //        synchronized(this)
 //    {

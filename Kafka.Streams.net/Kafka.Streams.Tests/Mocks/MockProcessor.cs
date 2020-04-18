@@ -11,7 +11,7 @@ namespace Kafka.Streams.Tests.Mocks
     public class MockProcessor<K, V> : AbstractProcessor<K, V>
     {
         public List<KeyValueTimestamp<K, V>> processed = new List<KeyValueTimestamp<K, V>>();
-        public Dictionary<K, IValueAndTimestamp<V>> lastValueAndTimestampPerKey = new Dictionary<K, IValueAndTimestamp<V>>();
+        public Dictionary<K, IValueAndTimestamp<V>> LastValueAndTimestampPerKey = new Dictionary<K, IValueAndTimestamp<V>>();
 
         public List<DateTime> punctuatedStreamTime = new List<DateTime>();
         public List<DateTime> punctuatedSystemTime = new List<DateTime>();
@@ -68,11 +68,11 @@ namespace Kafka.Streams.Tests.Mocks
 
             if (value != null)
             {
-                this.lastValueAndTimestampPerKey.Add(key, ValueAndTimestamp.Make(value, this.Context.Timestamp));
+                this.LastValueAndTimestampPerKey.Add(key, ValueAndTimestamp.Make(value, this.Context.Timestamp));
             }
             else
             {
-                this.lastValueAndTimestampPerKey.Remove(key);
+                this.LastValueAndTimestampPerKey.Remove(key);
             }
 
             this.processed.Add(keyValueTimestamp);

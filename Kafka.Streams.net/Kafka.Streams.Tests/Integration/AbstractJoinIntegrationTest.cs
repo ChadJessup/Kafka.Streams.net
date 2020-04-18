@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tests.Integration
         private static StreamsConfig RESULT_CONSUMER_CONFIG = new StreamsConfig();
 
         private IProducer<long, string> producer;
-        private KafkaStreams streams;
+        private KafkaStreamsThread streams;
 
         StreamsBuilder builder;
         readonly int numRecordsExpected = 0;
@@ -70,7 +70,7 @@ namespace Kafka.Streams.Tests.Integration
                 new Input<string>(INPUT_TOPIC_RIGHT, "d"),
                 new Input<string>(INPUT_TOPIC_LEFT, "D")
         );
-        readonly IValueJoiner<string, string, string> valueJoiner = (value1, value2) => value1 + "-" + value2;
+        readonly ValueJoiner<string, string, string> valueJoiner = (value1, value2) => value1 + "-" + value2;
         readonly bool cacheEnabled;
 
         AbstractJoinIntegrationTest(bool cacheEnabled)
@@ -81,13 +81,13 @@ namespace Kafka.Streams.Tests.Integration
 
         public static void SetupConfigsAndUtils()
         {
-            PRODUCER_CONFIG.Set(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            PRODUCER_CONFIG.Set(ProducerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             PRODUCER_CONFIG.Set(ProducerConfig.ACKS_CONFIG, "All");
             PRODUCER_CONFIG.Set(ProducerConfig.RETRIES_CONFIG, 0);
             PRODUCER_CONFIG.Set(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.Long().Serializer);
             PRODUCER_CONFIG.Set(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 
-            RESULT_CONSUMER_CONFIG.Set(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            RESULT_CONSUMER_CONFIG.Set(ConsumerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             RESULT_CONSUMER_CONFIG.Set(ConsumerConfig.GROUP_ID_CONFIG, appID + "-result-consumer");
             RESULT_CONSUMER_CONFIG.Set(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
             RESULT_CONSUMER_CONFIG.Set(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer);
@@ -152,13 +152,13 @@ namespace Kafka.Streams.Tests.Integration
             Assert.True(expectedResult.Count == input.Count);
 
             IntegrationTestUtils.PurgeLocalStreamsState(STREAMS_CONFIG);
-            streams = new KafkaStreams(builder.Build(), STREAMS_CONFIG);
+            streams = new KafkaStreamsThread(builder.Build(), STREAMS_CONFIG);
 
             KeyValueTimestamp<long, string> expectedFinalResult = null;
 
             try
             {
-                streams.start();
+                streams.Start();
 
                 long firstTimestamp = System.currentTimeMillis();
                 long ts = firstTimestamp;
@@ -208,11 +208,11 @@ namespace Kafka.Streams.Tests.Integration
         void RunTest(KeyValueTimestamp<long, string> expectedFinalResult, string storeName)
         {// throws Exception
             IntegrationTestUtils.PurgeLocalStreamsState(STREAMS_CONFIG);
-            streams = new KafkaStreams(builder.Build(), STREAMS_CONFIG);
+            streams = new KafkaStreamsThread(builder.Build(), STREAMS_CONFIG);
 
             try
             {
-                streams.start();
+                streams.Start();
 
                 long firstTimestamp = System.currentTimeMillis();
                 long ts = firstTimestamp;

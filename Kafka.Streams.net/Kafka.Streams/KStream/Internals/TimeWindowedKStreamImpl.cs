@@ -94,7 +94,7 @@
 //            }
 //            if (materializedInternal.valueSerde == null)
 //            {
-//                materializedInternal.withValueSerde(Serdes.Long());
+//                materializedInternal.WithValueSerde(Serdes.Long());
 //            }
 
 //            return aggregateBuilder.build(
@@ -157,7 +157,7 @@
 //            }
 //            if (materializedInternal.valueSerde == null)
 //            {
-//                materializedInternal.withValueSerde(valSerde);
+//                materializedInternal.WithValueSerde(valSerde);
 //            }
 
 //            return aggregateBuilder.build(
@@ -236,7 +236,7 @@
 //            else
 //            {
 
-//                builder.withLoggingDisabled();
+//                builder.WithLoggingDisabled();
 //            }
 
 //            if (materialized.cachingEnabled)

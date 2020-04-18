@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Integration
         private const string REPARTITION_TOPIC = APPLICATION_ID + "-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition";
 
         private static Admin adminClient;
-        private static KafkaStreams kafkaStreams;
+        private static KafkaStreamsThread kafkaStreams;
         private const int PURGE_INTERVAL_MS = 10;
         private const int PURGE_SEGMENT_BYTES = 2000;
 
@@ -117,7 +117,7 @@ namespace Kafka.Streams.Tests.Integration
 
         public static void CreateTopics()
         {// throws Exception
-            CLUSTER.createTopic(INPUT_TOPIC, 1, 1);
+            CLUSTER.CreateTopic(INPUT_TOPIC, 1, 1);
         }
 
 
@@ -144,7 +144,7 @@ namespace Kafka.Streams.Tests.Integration
                    .GroupBy(MockMapper.selectKeyKeyValueMapper())
                    .Count();
 
-            kafkaStreams = new KafkaStreams(builder.Build(), streamsConfiguration, time);
+            kafkaStreams = new KafkaStreamsThread(builder.Build(), streamsConfiguration, time);
         }
 
         public void Shutdown()
@@ -168,11 +168,11 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(INPUT_TOPIC,
                     messages,
                     TestUtils.producerConfig(CLUSTER.bootstrapServers(),
-                            IntegerSerializer,
-                            IntegerSerializer),
+                            Serdes.Int().Serializer,
+                            Serdes.Int().Serializer),
                     time.NowAsEpochMilliseconds);
 
-            kafkaStreams.start();
+            kafkaStreams.Start();
 
             TestUtils.WaitForCondition(new RepartitionTopicCreatedWithExpectedConfigs(), 60000,
                     "Repartition topic " + REPARTITION_TOPIC + " not created with the expected configs after 60000 ms.");

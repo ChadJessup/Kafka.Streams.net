@@ -4,7 +4,6 @@ using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Extensions;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
@@ -425,7 +424,7 @@ namespace Kafka.Streams.Threads.Stream
             }
 
             // Shutdown hook could potentially be triggered and transit the thread state to PENDING_SHUTDOWN during #pollRequests().
-            // The task manager internal states could be uninitialized if the state transition happens during #onPartitionsAssigned().
+            // The task manager internal states could be uninitialized if the state transition happens during #OnPartitionsAssigned().
             // Should only proceed when the thread is still running after #pollRequests(), because no external state mutation
             // could affect the task manager state beyond this point within #runOnce().
             if (!this.IsRunning())

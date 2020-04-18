@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
             this.context = context;
             this.parent = parent;
             this.predicate = predicate;
-            this.filterNot = filterNot;
+            this.FilterNot = filterNot;
             this.queryableName = queryableName;
         }
 
@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream.Internals
                 this.context,
                 this.queryableName,
                 this.sendOldValues,
-                this.filterNot,
+                this.FilterNot,
                 this.predicate);
         }
 

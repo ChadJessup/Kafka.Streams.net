@@ -1,16 +1,15 @@
-using Confluent.Kafka;
-using Kafka.Common;
-using Kafka.Streams.Configs;
-using Kafka.Streams.Extensions;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State;
-using Kafka.Streams.Topologies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using Confluent.Kafka;
+using Kafka.Common;
+using Kafka.Streams.Configs;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.Processors.Internals
 {

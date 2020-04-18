@@ -1,11 +1,21 @@
 using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.Tasks;
+using Kafka.Streams.Temporary;
+using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Threads.KafkaStreams;
+using Kafka.Streams.Topologies;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using Xunit;
 
@@ -99,27 +109,30 @@ namespace Kafka.Streams.Tests.Integration
         private const string INPUT_STREAM = "input-stream";
         private const string INPUT_STREAM_2 = "input-stream-2";
         private readonly int numberOfKeys = 10000;
-        private KafkaStreams kafkaStreams;
+        private KafkaStreamsThread kafkaStreams;
 
 
-        public static void CreateTopics()
+        internal static void CreateTopics()
         {// throws InterruptedException
-            CLUSTER.createTopic(INPUT_STREAM, 2, 1);
-            CLUSTER.createTopic(INPUT_STREAM_2, 2, 1);
-            CLUSTER.createTopic(APPID + "-store-changelog", 2, 1);
+            CLUSTER.CreateTopic(INPUT_STREAM, 2, 1);
+            CLUSTER.CreateTopic(INPUT_STREAM_2, 2, 1);
+            CLUSTER.CreateTopic(APPID + "-store-changelog", 2, 1);
         }
 
         private StreamsConfig Props(string applicationId)
         {
-            StreamsConfig streamsConfiguration = new StreamsConfig();
-            streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-            streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-            streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-            streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory(applicationId).getPath());
-            streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
-            streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
-            streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
-            streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+            StreamsConfig streamsConfiguration = new StreamsConfig
+            {
+                ApplicationId = applicationId,
+                BootstrapServers = CLUSTER.bootstrapServers(),
+                CacheMaxBytesBuffering = 0,
+                StateStoreDirectory = TestUtils.GetTempDirectory(applicationId),
+                DefaultKeySerdeType = Serdes.Int().GetType(),
+                DefaultValueSerdeType = Serdes.Int().GetType(),
+                CommitIntervalMs = 1000,
+                AutoOffsetReset = AutoOffsetReset.Earliest
+            };
+
             return streamsConfiguration;
         }
 
@@ -135,301 +148,306 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void ShouldRestoreStateFromSourceTopic()
         {// throws Exception
-            int numReceived = new int(0);
+            int numReceived = 0;
             StreamsBuilder builder = new StreamsBuilder();
 
             StreamsConfig props = props(APPID);
-            props.Put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
+            props.Set(StreamsConfig.TOPOLOGY_OPTIMIZATIONConfig, StreamsConfig.OPTIMIZEConfig);
 
             // restoring from 1000 to 4000 (committed), and then process from 4000 to 5000 on each of the two partitions
             int offsetLimitDelta = 1000;
             int offsetCheckpointed = 1000;
-            createStateForRestoration(INPUT_STREAM);
-            setCommittedOffset(INPUT_STREAM, offsetLimitDelta);
+            CreateStateForRestoration(INPUT_STREAM);
+            SetCommittedOffset(INPUT_STREAM, offsetLimitDelta);
 
             StateDirectory stateDirectory = new StateDirectory(new StreamsConfig(props), new MockTime(), true);
-            new OffsetCheckpoint(new FileInfo(stateDirectory.directoryForTask(new TaskId(0, 0)), ".checkpoint"))
-                    .write(Collections.singletonMap(new TopicPartition(INPUT_STREAM, 0), (long)offsetCheckpointed));
-            new OffsetCheckpoint(new FileInfo(stateDirectory.directoryForTask(new TaskId(0, 1)), ".checkpoint"))
-                    .write(Collections.singletonMap(new TopicPartition(INPUT_STREAM, 1), (long)offsetCheckpointed));
+            new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 0)).FullName, ".checkpoint"))
+                    .Write(Collections.singletonMap(new TopicPartition(INPUT_STREAM, 0), offsetCheckpointed));
+            new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 1)).FullName, ".checkpoint"))
+                    .Write(Collections.singletonMap(new TopicPartition(INPUT_STREAM, 1), offsetCheckpointed));
+
+            //CountDownLatch startupLatch = new CountDownLatch(1);
+            //CountDownLatch shutdownLatch = new CountDownLatch(1);
+
+            builder.Table(INPUT_STREAM, Materialized.As<int, int, IKeyValueStore<Bytes, byte[]>>("store").WithKeySerde(Serdes.Int()).WithValueSerde(Serdes.Int()))
+                    .ToStream();
+            //                    .ForEach((key, value) =>
+            //                    {
+            //                        if (numReceived.incrementAndGet() == 2 * offsetLimitDelta)
+            //                        {
+            //                            shutdownLatch.countDown();
+            //                        }
+            //                    });
+            //
+            //            kafkaStreams = new KafkaStreamsThread(builder.Build(props), props);
+            //            kafkaStreams.SetStateListener((newState, oldState) =>
+            //            {
+            //                if (newState == KafkaStreamsThreadStates.RUNNING && oldState == KafkaStreamsThreadStates.REBALANCING)
+            //                {
+            //                    startupLatch.countDown();
+            //                }
+            //            });
+            //
+            //            AtomicLong restored = new AtomicLong(0);
+            //            kafkaStreams.setGlobalStateRestoreListener(new StateRestoreListener()
+            //            {
+            //
+            //
+            //            public void onRestoreStart(TopicPartition topicPartition, string storeName, long startingOffset, long endingOffset)
+            //            {
+            //
+            //            }
+            //
+            //
+            //            public void onBatchRestored(TopicPartition topicPartition, string storeName, long batchEndOffset, long numRestored)
+            //            {
+            //
+            //            }
+            //
+            //
+            //            public void onRestoreEnd(TopicPartition topicPartition, string storeName, long totalRestored)
+            //            {
+            //                restored.addAndGet(totalRestored);
+            //            }
+            //        });
+            kafkaStreams.Start();
+
+            // Assert.True(startupLatch.wait(30, TimeUnit.SECONDS));
+            Assert.Equal(restored, ((long)numberOfKeys - offsetLimitDelta * 2 - offsetCheckpointed * 2));
+
+            //Assert.True(shutdownLatch.wait(30, TimeUnit.SECONDS));
+            Assert.Equal(numReceived, (offsetLimitDelta * 2));
+        }
+
+        [Fact]
+        public void ShouldRestoreStateFromChangelogTopic()
+        {// throws Exception
+            int numReceived = 0;
+            StreamsBuilder builder = new StreamsBuilder();
+
+            StreamsConfig props = props(APPID);
+
+            // restoring from 1000 to 5000, and then process from 5000 to 10000 on each of the two partitions
+            int offsetCheckpointed = 1000;
+            CreateStateForRestoration(APPID + "-store-changelog");
+            CreateStateForRestoration(INPUT_STREAM);
+
+            StateDirectory stateDirectory = new StateDirectory(new StreamsConfig(props), new MockTime(), true);
+            new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 0)).FullName, ".checkpoint")))
+                    .write(Collections.singletonMap(new TopicPartition(APPID + "-store-changelog", 0), offsetCheckpointed));
+            new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 1)).FullName, ".checkpoint")))
+                    .write(Collections.singletonMap(new TopicPartition(APPID + "-store-changelog", 1), offsetCheckpointed));
 
             CountDownLatch startupLatch = new CountDownLatch(1);
             CountDownLatch shutdownLatch = new CountDownLatch(1);
 
-            builder.Table(INPUT_STREAM, Materialized<int, int, IKeyValueStore<Bytes, byte[]>>.As("store").WithKeySerde(Serdes.Int()).withValueSerde(Serdes.Int()))
-                    .ToStream();
-//                    .ForEach((key, value) =>
-//                    {
-//                        if (numReceived.incrementAndGet() == 2 * offsetLimitDelta)
-//                        {
-//                            shutdownLatch.countDown();
-//                        }
-//                    });
-//
-//            kafkaStreams = new KafkaStreams(builder.Build(props), props);
-//            kafkaStreams.setStateListener((newState, oldState) =>
-//            {
-//                if (newState == KafkaStreams.State.RUNNING && oldState == KafkaStreams.State.REBALANCING)
-//                {
-//                    startupLatch.countDown();
-//                }
-//            });
-//
-//            AtomicLong restored = new AtomicLong(0);
-//            kafkaStreams.setGlobalStateRestoreListener(new StateRestoreListener()
-//            {
-//
-//
-//            public void onRestoreStart(TopicPartition topicPartition, string storeName, long startingOffset, long endingOffset)
-//            {
-//
-//            }
-//
-//
-//            public void onBatchRestored(TopicPartition topicPartition, string storeName, long batchEndOffset, long numRestored)
-//            {
-//
-//            }
-//
-//
-//            public void onRestoreEnd(TopicPartition topicPartition, string storeName, long totalRestored)
-//            {
-//                restored.addAndGet(totalRestored);
-//            }
-//        });
-        kafkaStreams.start();
-
-        Assert.True(startupLatch.wait(30, TimeUnit.SECONDS));
-        Assert.Equal(restored.Get(), ((long) numberOfKeys - offsetLimitDelta* 2 - offsetCheckpointed* 2));
-
-        Assert.True(shutdownLatch.wait(30, TimeUnit.SECONDS));
-        Assert.Equal(numReceived.Get(), (offsetLimitDelta* 2));
-    }
-
-    [Fact]
-    public void ShouldRestoreStateFromChangelogTopic()
-    {// throws Exception
-        int numReceived = 0;
-        StreamsBuilder builder = new StreamsBuilder();
-
-        StreamsConfig props = props(APPID);
-
-        // restoring from 1000 to 5000, and then process from 5000 to 10000 on each of the two partitions
-        int offsetCheckpointed = 1000;
-        createStateForRestoration(APPID + "-store-changelog");
-        createStateForRestoration(INPUT_STREAM);
-
-        StateDirectory stateDirectory = new StateDirectory(new StreamsConfig(props), new MockTime(), true);
-        new OffsetCheckpoint(new FileInfo(stateDirectory.DirectoryForTask(new TaskId(0, 0)), ".checkpoint"))
-                .write(Collections.singletonMap(new TopicPartition(APPID + "-store-changelog", 0), (long)offsetCheckpointed));
-        new OffsetCheckpoint(new FileInfo(stateDirectory.DirectoryForTask(new TaskId(0, 1)), ".checkpoint"))
-                .write(Collections.singletonMap(new TopicPartition(APPID + "-store-changelog", 1), (long)offsetCheckpointed));
-
-        CountDownLatch startupLatch = new CountDownLatch(1);
-        CountDownLatch shutdownLatch = new CountDownLatch(1);
-
-        builder.Table(INPUT_STREAM, Consumed.With(Serdes.Int(), Serdes.Int()), Materialized.As("store"))
+            builder.Table(INPUT_STREAM, Consumed.With(Serdes.Int(), Serdes.Int()), Materialized.As<int, int, IKeyValueStore<Bytes, byte[]>>("store"))
                 .ToStream()
                 .ForEach((key, value) =>
                 {
-                    if (numReceived.incrementAndGet() == numberOfKeys)
+                    if (++numReceived == numberOfKeys)
                     {
                         shutdownLatch.countDown();
                     }
                 });
 
-        kafkaStreams = new KafkaStreams(builder.Build(), props);
-        kafkaStreams.setStateListener((newState, oldState) =>
-        {
-            if (newState == KafkaStreams.State.RUNNING && oldState == KafkaStreams.State.REBALANCING)
+            kafkaStreams = new KafkaStreamsThread(builder.Build(), props);
+            kafkaStreams.SetStateListener((newState, oldState) =>
             {
-                startupLatch.countDown();
-            }
-        });
+                if (newState == KafkaStreamsThreadStates.RUNNING
+                    && oldState == KafkaStreamsThreadStates.REBALANCING)
+                {
+                    startupLatch.countDown();
+                }
+            });
 
-        long restored = 0;
-        kafkaStreams.setGlobalStateRestoreListener(new StateRestoreListener());
-        //        {
-        //
-        //
-        //            public void onRestoreStart(TopicPartition topicPartition, string storeName, long startingOffset, long endingOffset)
-        //        {
-        //
-        //        }
-        //
-        //
-        //        public void onBatchRestored(TopicPartition topicPartition, string storeName, long batchEndOffset, long numRestored)
-        //        {
-        //
-        //        }
-        //
-        //
-        //        public void onRestoreEnd(TopicPartition topicPartition, string storeName, long totalRestored)
-        //        {
-        //            restored.addAndGet(totalRestored);
-        //        }
-        //    });
-        kafkaStreams.start();
+            long restored = 0;
+            kafkaStreams.SetGlobalStateRestoreListener(new StateRestoreListener());
+            //        {
+            //
+            //
+            //            public void onRestoreStart(TopicPartition topicPartition, string storeName, long startingOffset, long endingOffset)
+            //        {
+            //
+            //        }
+            //
+            //
+            //        public void onBatchRestored(TopicPartition topicPartition, string storeName, long batchEndOffset, long numRestored)
+            //        {
+            //
+            //        }
+            //
+            //
+            //        public void onRestoreEnd(TopicPartition topicPartition, string storeName, long totalRestored)
+            //        {
+            //            restored.addAndGet(totalRestored);
+            //        }
+            //    });
+            kafkaStreams.Start();
 
-        Assert.True(startupLatch.wait(30, TimeUnit.SECONDS));
-        Assert.Equal(restored.Get(), ((long)numberOfKeys - 2 * offsetCheckpointed));
+            Assert.True(startupLatch.wait(30, TimeUnit.SECONDS));
+            Assert.Equal(restored, ((long)numberOfKeys - 2 * offsetCheckpointed));
 
-        Assert.True(shutdownLatch.wait(30, TimeUnit.SECONDS));
-        Assert.Equal(numReceived.Get(), (numberOfKeys));
-    }
+            Assert.True(shutdownLatch.wait(30, TimeUnit.SECONDS));
+            Assert.Equal(numReceived, (numberOfKeys));
+        }
 
 
-    [Fact]
-    public void ShouldSuccessfullyStartWhenLoggingDisabled()
-    {// throws InterruptedException
-        StreamsBuilder builder = new StreamsBuilder();
+        [Fact]
+        public void ShouldSuccessfullyStartWhenLoggingDisabled()
+        {// throws InterruptedException
+            StreamsBuilder builder = new StreamsBuilder();
 
-        IKStream<K, V> stream = builder.Stream(INPUT_STREAM);
-        stream.GroupByKey()
-                .Reduce(
-                    (value1, value2) => value1 + value2,
-                    Materialized<int, int, IKeyValueStore<Bytes, byte[]>>.As("reduce-store").withLoggingDisabled());
+            IKStream<int, int> stream = builder.Stream<int, int>(INPUT_STREAM);
+            stream.GroupByKey()
+                    .Reduce((value1, value2) => value1 + value2,
+                        Materialized.As<int, int, IKeyValueStore<Bytes, byte[]>>("reduce-store").WithLoggingDisabled());
 
-        CountDownLatch startupLatch = new CountDownLatch(1);
-        kafkaStreams = new KafkaStreams(builder.Build(), props(APPID));
-        kafkaStreams.setStateListener((newState, oldState) =>
-        {
-            if (newState == KafkaStreams.State.RUNNING && oldState == KafkaStreams.State.REBALANCING)
+            CountDownLatch startupLatch = new CountDownLatch(1);
+            kafkaStreams = new KafkaStreamsThread(builder.Build(), props(APPID));
+            kafkaStreams.SetStateListener((newState, oldState) =>
             {
-                startupLatch.countDown();
-            }
-        });
+                if (newState == KafkaStreamsThreadStates.RUNNING && oldState == KafkaStreamsThreadStates.REBALANCING)
+                {
+                    startupLatch.countDown();
+                }
+            });
 
-        kafkaStreams.start();
+            kafkaStreams.Start();
 
-        Assert.True(startupLatch.await(30, TimeUnit.SECONDS));
-    }
+            Assert.True(startupLatch.wait(30, TimeUnit.SECONDS));
+        }
 
-    [Fact]
-    public void ShouldProcessDataFromStoresWithLoggingDisabled()
-    {// throws InterruptedException, ExecutionException
+        [Fact]
+        public void ShouldProcessDataFromStoresWithLoggingDisabled()
+        {// throws InterruptedException, ExecutionException
 
-        IntegrationTestUtils.ProduceKeyValuesSynchronously(
-            INPUT_STREAM_2,
-            Arrays.asList(KeyValuePair.Create(1, 1),
-                          KeyValuePair.Create(2, 2),
-                          KeyValuePair.Create(3, 3)),
-            TestUtils.producerConfig(CLUSTER.bootstrapServers(),
-            IntegerSerializer,
-            IntegerSerializer),
-            CLUSTER.time);
+            IntegrationTestUtils.ProduceKeyValuesSynchronously(
+                INPUT_STREAM_2,
+                Arrays.asList(KeyValuePair.Create(1, 1),
+                              KeyValuePair.Create(2, 2),
+                              KeyValuePair.Create(3, 3)),
+                TestUtils.ProducerConfig(CLUSTER.bootstrapServers(),
+                Serdes.Int().Serializer,
+                Serdes.Int().Serializer),
+                CLUSTER.time);
 
-        IKeyValueBytesStoreSupplier lruMapSupplier = Stores.lruMap(INPUT_STREAM_2, 10);
+            IKeyValueBytesStoreSupplier lruMapSupplier = Stores.lruMap(INPUT_STREAM_2, 10);
 
-        IStoreBuilder<IKeyValueStore<int, int>> storeBuilder = new KeyValueStoreBuilder<>(lruMapSupplier,
-                                                                                                      Serdes.Int(),
-                                                                                                      Serdes.Int(),
-                                                                                                      CLUSTER.time)
-                .withLoggingDisabled();
+            IStoreBuilder<IKeyValueStore<int, int>> storeBuilder = new KeyValueStoreBuilder<int, int>(
+                null,
+                lruMapSupplier,
+                Serdes.Int(),
+                Serdes.Int())
+                    .WithLoggingDisabled();
 
-        StreamsBuilder streamsBuilder = new StreamsBuilder();
+            StreamsBuilder streamsBuilder = new StreamsBuilder();
 
-        streamsBuilder.AddStateStore(storeBuilder);
+            streamsBuilder.AddStateStore<string, string, IKeyValueStore<int, int>>(storeBuilder);
 
-        IKStream<K, V> stream = streamsBuilder.Stream(INPUT_STREAM_2);
-        CountDownLatch processorLatch = new CountDownLatch(3);
-        stream.Process(() => new KeyValueStoreProcessor(INPUT_STREAM_2, processorLatch), INPUT_STREAM_2);
+            IKStream<string, string> stream = streamsBuilder.Stream<string, string>(INPUT_STREAM_2);
+            //CountDownLatch processorLatch = new CountDownLatch(3);
+            stream.Process(() => new KeyValueStoreProcessor(INPUT_STREAM_2/*, processorLatch*/), INPUT_STREAM_2);
 
-        Topology topology = streamsBuilder.Build();
+            Topology topology = streamsBuilder.Build();
 
-        kafkaStreams = new KafkaStreams(topology, props(APPID + "-logging-disabled"));
+            kafkaStreams = new KafkaStreamsThread(topology, props(APPID + "-logging-disabled"));
 
-        CountDownLatch latch = new CountDownLatch(1);
-        kafkaStreams.setStateListener((newState, oldState) =>
-        {
-            if (newState == KafkaStreams.State.RUNNING && oldState == KafkaStreams.State.REBALANCING)
+            // CountDownLatch latch = new CountDownLatch(1);
+
+            kafkaStreams.SetStateListener((newState, oldState) =>
             {
-                latch.countDown();
-            }
-        });
-        kafkaStreams.start();
+                if (newState == KafkaStreamsThreadStates.RUNNING && oldState == KafkaStreamsThreadStates.REBALANCING)
+                {
+                    //latch.countDown();
+                }
+            });
 
-        latch.await(30, TimeUnit.SECONDS);
+            kafkaStreams.Start();
 
-        Assert.True(processorLatch.await(30, TimeUnit.SECONDS));
+            //latch.await(30, TimeUnit.SECONDS);
 
-    }
+            Assert.True(processorLatch.await(30, TimeUnit.SECONDS));
 
-
-    public static class KeyValueStoreProcessor : Processor<int, int>
-    {
-
-        private readonly string topic;
-        private CountDownLatch processorLatch;
-
-        private IKeyValueStore<int, int> store;
-
-        KeyValueStoreProcessor(string topic, CountDownLatch processorLatch)
-        {
-            this.topic = topic;
-            this.processorLatch = processorLatch;
         }
 
 
-
-        public void Init(IProcessorContext context)
+        public class KeyValueStoreProcessor : IKeyValueProcessor<int, int>
         {
-            this.store = (IKeyValueStore<int, int>)context.getStateStore(topic);
-        }
 
+            private readonly string topic;
+            //private CountDownLatch processorLatch;
 
-        public void Process(int key, int value)
-        {
-            if (key != null)
+            private IKeyValueStore<int, int> store;
+
+            public KeyValueStoreProcessor(string topic)//, CountDownLatch processorLatch)
             {
-                store.Put(key, value);
-                processorLatch.countDown();
+                this.topic = topic;
+                // this.processorLatch = processorLatch;
+            }
+
+            public void Init(IProcessorContext context)
+            {
+                this.store = (IKeyValueStore<int, int>)context.GetStateStore(topic);
+            }
+
+            public void Process(int? key, int value)
+            {
+                if (key == null)
+                {
+                    return;
+                    // processorLatch.countDown();
+                }
+
+                store.Add(key.Value, value);
+            }
+
+            public void Close()
+            {
             }
         }
 
-
-        public void Close() { }
-    }
-
-    private void CreateStateForRestoration(string changelogTopic)
-    {
-        StreamsConfig producerConfig = new StreamsConfig();
-        producerConfig.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-
-        KafkaProducer<int, int> producer =
-                     new KafkaProducer<>(producerConfig, new IntegerSerializer(), new IntegerSerializer());
-
-        for (int i = 0; i < numberOfKeys; i++)
+        private void CreateStateForRestoration(string changelogTopic)
         {
-            producer.send(new ProducerRecord<>(changelogTopic, i, i));
-        }
-    }
+            StreamsConfig producerConfig = new StreamsConfig
+            {
+                BootstrapServers = CLUSTER.bootstrapServers()
+            };
 
-    private void setCommittedOffset(string topic, int limitDelta)
-    {
-        StreamsConfig consumerConfig = new StreamsConfig();
-        consumerConfig.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-        consumerConfig.Put(ConsumerConfig.GROUP_ID_CONFIG, APPID);
-        consumerConfig.Put(ConsumerConfig.CLIENT_ID_CONFIG, "commit-consumer");
-        consumerConfig.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
-        consumerConfig.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
+            KafkaProducer<int, int> producer =
+                         new KafkaProducer<>(producerConfig, Serdes.Int().Serializer, Serdes.Int().Serializer);
 
-        IConsumer<int, int> consumer = new KafkaConsumer<>(consumerConfig);
-        List<TopicPartition> partitions = Arrays.asList(
-            new TopicPartition(topic, 0),
-            new TopicPartition(topic, 1));
-
-        consumer.Assign(partitions);
-        consumer.seekToEnd(partitions);
-
-        foreach (TopicPartition partition in partitions)
-        {
-            long position = consumer.position(partition);
-            consumer.seek(partition, position - limitDelta);
+            for (int i = 0; i < numberOfKeys; i++)
+            {
+                producer.send(new ProducerRecord<>(changelogTopic, i, i));
+            }
         }
 
-        consumer.CommitSync();
-        consumer.Close();
-    }
+        private void SetCommittedOffset(string topic, int limitDelta)
+        {
+            StreamsConfig consumerConfig = new StreamsConfig();
+            consumerConfig.Put(ConsumerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
+            consumerConfig.Put(ConsumerConfig.GROUP_ID_CONFIG, APPID);
+            consumerConfig.Put(ConsumerConfig.CLIENT_ID_CONFIG, "commit-consumer");
+            consumerConfig.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.Int().Deserializer);
+            consumerConfig.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.Int().Deserializer);
 
+            IConsumer<int, int> consumer = new KafkaConsumer<int, int>(consumerConfig);
+            List<TopicPartition> partitions = Arrays.asList(
+                new TopicPartition(topic, 0),
+                new TopicPartition(topic, 1));
+
+            consumer.Assign(partitions);
+            consumer.SeekToEnd(partitions);
+
+            foreach (TopicPartition partition in partitions)
+            {
+                long position = consumer.Position(partition);
+                consumer.Seek(new TopicPartitionOffset(partition, position - limitDelta));
+            }
+
+            consumer.Commit();
+            consumer.Close();
+        }
+    }
 }

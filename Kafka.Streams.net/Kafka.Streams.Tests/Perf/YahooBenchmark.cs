@@ -107,7 +107,7 @@
 //            System.Console.Out.WriteLine("Initializing topic " + topic);
 
 //            StreamsConfig props = new StreamsConfig();
-//            props.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, parent.props.Get(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
+//            props.Put(ProducerConfig.BootstrapServersConfig, parent.props.Get(StreamsConfig.BootstrapServersConfig));
 //            props.Put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
 //            props.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //            props.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
@@ -144,7 +144,7 @@
 //            System.Console.Out.WriteLine("Initializing topic " + topic);
 
 //            StreamsConfig props = new StreamsConfig();
-//            props.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, parent.props.Get(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
+//            props.Put(ProducerConfig.BootstrapServersConfig, parent.props.Get(StreamsConfig.BootstrapServersConfig));
 //            props.Put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
 //            props.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //            props.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
@@ -189,7 +189,7 @@
 //        CountDownLatch latch = new CountDownLatch(1);
 //        parent.setStreamProperties("simple-benchmark-yahoo" + new Random().nextInt());
 
-//        KafkaStreams streams = createYahooBenchmarkStreams(parent.props, campaignsTopic, eventsTopic, latch, parent.numRecords);
+//        KafkaStreamsThread streams = createYahooBenchmarkStreams(parent.props, campaignsTopic, eventsTopic, latch, parent.numRecords);
 //        parent.runGenericBenchmark(streams, "Streams Yahoo Performance [records/latency/rec-sec/MB-sec counted]: ", latch);
 
 //    }
@@ -265,7 +265,7 @@
 //        }
 //    }
 
-//    private KafkaStreams CreateYahooBenchmarkStreams(StreamsConfig streamConfig, string campaignsTopic, string eventsTopic,
+//    private KafkaStreamsThread CreateYahooBenchmarkStreams(StreamsConfig streamConfig, string campaignsTopic, string eventsTopic,
 //                                                     CountDownLatch latch, int numRecords)
 //    {
 //        Dictionary<string, object> serdeProps = new HashMap<>();
@@ -297,7 +297,7 @@
 //                }
 //            })
 //            // only keep "view" events
-//            .filter((key, value) => value.eventType.Equals("view"))
+//            .Filter((key, value) => value.eventType.Equals("view"))
 //            // select just a few of the columns
 //            .MapValues(value =>
 //            {
@@ -332,10 +332,10 @@
 //        // calculate windowed counts
 //        keyedByCampaign
 //            .GroupByKey(Grouped.With(Serdes.String(), Serdes.String()))
-//            .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10 * 1000)))
+//            .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10 * 1000)))
 //            .Count(Materialized.As("time-windows"));
 
-//        return new KafkaStreams(builder.Build(), streamConfig);
+//        return new KafkaStreamsThread(builder.Build(), streamConfig);
 //    }
 //}
 //}

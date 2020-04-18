@@ -135,21 +135,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(topic1, "A", "01", 10L));
 //            driver.PipeInput(recordFactory.Create(topic1, "B", "01", 20L));
 //            driver.PipeInput(recordFactory.Create(topic1, "C", "01", 15L));
-//            proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("01", null), 10),
+//            proc1.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("01", null), 10),
 //                new KeyValueTimestamp<>("B", new Change<>("01", null), 20),
 //                new KeyValueTimestamp<>("C", new Change<>("01", null), 15));
 
 //            driver.PipeInput(recordFactory.Create(topic1, "A", "02", 8L));
 //            driver.PipeInput(recordFactory.Create(topic1, "B", "02", 22L));
-//            proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("02", null), 8),
+//            proc1.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("02", null), 8),
 //                new KeyValueTimestamp<>("B", new Change<>("02", null), 22));
 
 //            driver.PipeInput(recordFactory.Create(topic1, "A", "03", 12L));
-//            proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("03", null), 12));
+//            proc1.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("03", null), 12));
 
 //            driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 15L));
 //            driver.PipeInput(recordFactory.Create(topic1, "B", (string)null, 20L));
-//            proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 15),
+//            proc1.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 15),
 //                new KeyValueTimestamp<>("B", new Change<>(null, null), 20));
 //        }
 
@@ -161,7 +161,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 
 //            var table1 = (IKTable<string, string, string>)builder.Table(topic1, stringConsumed);
-//            table1.enableSendingOldValues();
+//            table1.EnableSendingOldValues();
 //            Assert.True(table1.sendingOldValueEnabled());
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
@@ -175,21 +175,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                driver.PipeInput(recordFactory.Create(topic1, "A", "01", 10L));
 //                driver.PipeInput(recordFactory.Create(topic1, "B", "01", 20L));
 //                driver.PipeInput(recordFactory.Create(topic1, "C", "01", 15L));
-//                proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("01", null), 10),
+//                proc1.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("01", null), 10),
 //                    new KeyValueTimestamp<>("B", new Change<>("01", null), 20),
 //                    new KeyValueTimestamp<>("C", new Change<>("01", null), 15));
 
 //                driver.PipeInput(recordFactory.Create(topic1, "A", "02", 8L));
 //                driver.PipeInput(recordFactory.Create(topic1, "B", "02", 22L));
-//                proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("02", "01"), 8),
+//                proc1.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("02", "01"), 8),
 //                    new KeyValueTimestamp<>("B", new Change<>("02", "01"), 22));
 
 //                driver.PipeInput(recordFactory.Create(topic1, "A", "03", 12L));
-//                proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("03", "02"), 12));
+//                proc1.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>("03", "02"), 12));
 
 //                driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 15L));
 //                driver.PipeInput(recordFactory.Create(topic1, "B", (string)null, 20L));
-//                proc1.checkAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, "03"), 15),
+//                proc1.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, "03"), 15),
 //                    new KeyValueTimestamp<>("B", new Change<>(null, "02"), 20));
 //            }
 //    }

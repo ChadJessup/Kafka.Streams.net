@@ -83,7 +83,7 @@
 //        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
-//            ITimestampedWindowStore<string, string> store = builder.withLoggingDisabled().Build();
+//            ITimestampedWindowStore<string, string> store = builder.WithLoggingDisabled().Build();
 //            IStateStore next = ((WrappedStateStore)store).wrapped();
 //            Assert.Equal(next, CoreMatchers.equalTo(inner));
 //        }
@@ -141,8 +141,8 @@
 //            replay(supplier);
 
 //            ITimestampedWindowStore<string, string> store = builder
-//                .withLoggingDisabled()
-//                .withCachingDisabled()
+//                .WithLoggingDisabled()
+//                .WithCachingDisabled()
 //                .Build();
 //            Assert.Equal(((WrappedStateStore)store).wrapped(), instanceOf(RocksDBTimestampedWindowStore));
 //        }
@@ -164,8 +164,8 @@
 //            replay(supplier);
 
 //            ITimestampedWindowStore<string, string> store = builder
-//                .withLoggingDisabled()
-//                .withCachingDisabled()
+//                .WithLoggingDisabled()
+//                .WithCachingDisabled()
 //                .Build();
 //            Assert.Equal(((WrappedStateStore)store).wrapped(), instanceOf(WindowToTimestampedWindowByteStoreAdapter));
 //        }

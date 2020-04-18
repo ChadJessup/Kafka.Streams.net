@@ -1,4 +1,5 @@
 ﻿using Kafka.Common;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.State;
@@ -29,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKStream<K1, R> Join<K1, V1, V2, R>(
             IKStream<K1, V1> lhs,
             IKStream<K1, V2> other,
-            IValueJoiner<V1, V2, R> joiner,
+            ValueJoiner<V1, V2, R> joiner,
             JoinWindows windows,
             Joined<K1, V1, V2> joined)
         {
@@ -53,8 +54,8 @@ namespace Kafka.Streams.KStream.Internals
             var joinMergeName = renamed.SuffixWithOrElseGet(
                    "-merge", this.builder, KStream.MERGE_NAME);
 
-            StreamsGraphNode thisStreamsGraphNode = ((AbstractStream<K1, V1>)lhs).streamsGraphNode;
-            StreamsGraphNode otherStreamsGraphNode = ((AbstractStream<K1, V2>)other).streamsGraphNode;
+            StreamsGraphNode thisStreamsGraphNode = ((AbstractStream<K1, V1>)lhs).StreamsGraphNode;
+            StreamsGraphNode otherStreamsGraphNode = ((AbstractStream<K1, V2>)other).StreamsGraphNode;
 
             IStoreBuilder<IWindowStore<K1, V1>> thisWindowStore =
                KStream.JoinWindowStoreBuilder(this.context, joinThisName, windows, joined.KeySerde, joined.ValueSerde);
@@ -113,10 +114,10 @@ namespace Kafka.Streams.KStream.Internals
 
             this.builder.AddGraphNode<K1, V1>(new HashSet<StreamsGraphNode> { thisStreamsGraphNode, otherStreamsGraphNode }, joinGraphNode);
 
-            var allSourceNodes = new HashSet<string>(((KStream<K1, V1>)lhs).sourceNodes);
+            var allSourceNodes = new HashSet<string>(((KStream<K1, V1>)lhs).SourceNodes);
 
             allSourceNodes.UnionWith(((KStream<K1, V2>)other)
-                .sourceNodes);
+                .SourceNodes);
 
             // do not have serde for joined result;
             // also for key serde we do not inherit from either since we cannot tell if these two serdes are different

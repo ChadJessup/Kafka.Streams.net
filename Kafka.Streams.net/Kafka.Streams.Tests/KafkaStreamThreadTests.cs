@@ -935,7 +935,7 @@ namespace Kafka.Streams.Tests
                 public void shouldReturnStandbyTaskMetadataWhileRunningState()
                 {
                     internalStreamsBuilder.Stream(new[] { topic1 }, consumed)
-                        .GroupByKey().Count(Materialized<object, long, IKeyValueStore<Bytes, byte[]>>.As("count-one"));
+                        .GroupByKey().Count(Materialized.As<object, long, IKeyValueStore<Bytes, byte[]>>("count-one"));
 
                     internalStreamsBuilder.BuildAndOptimizeTopology();
                     KafkaStreamThread thread = CreateStreamThread(clientId, config, false);
@@ -990,10 +990,10 @@ namespace Kafka.Streams.Tests
                     internalStreamsBuilder
                         .Stream(new[] { topic1 }, consumed)
                         .GroupByKey()
-                        .Count(Materialized<object, long, IKeyValueStore<Bytes, byte[]>>.As(storeName1));
+                        .Count(Materialized.As<object, long, IKeyValueStore<Bytes, byte[]>>(storeName1));
 
                     MaterializedInternal<object, object, IKeyValueStore<Bytes, byte[]>> materialized
-                        = new MaterializedInternal<object, object, IKeyValueStore<Bytes, byte[]>>(Materialized<object, object, IKeyValueStore<Bytes, byte[]>>.As(storeName2), internalStreamsBuilder, "");
+                        = new MaterializedInternal<object, object, IKeyValueStore<Bytes, byte[]>>(Materialized.As<object, object, IKeyValueStore<Bytes, byte[]>>(storeName2), internalStreamsBuilder, "");
                     internalStreamsBuilder.Table(topic2, new ConsumedInternal<>(), materialized);
 
                     internalStreamsBuilder.BuildAndOptimizeTopology();
@@ -1222,7 +1222,7 @@ namespace Kafka.Streams.Tests
                 public void shouldAlwaysReturnEmptyTasksMetadataWhileRebalancingStateAndTasksNotRunning()
                 {
                     internalStreamsBuilder.Stream(new[] { topic1 }, consumed)
-                        .GroupByKey().Count(Materialized<object, long>.As("count-one"));
+                        .GroupByKey().Count(Materialized.As<object, long>("count-one"));
                     internalStreamsBuilder.BuildAndOptimizeTopology();
 
                     KafkaStreamThread thread = CreateStreamThread(clientId, config, false);
@@ -1277,7 +1277,7 @@ namespace Kafka.Streams.Tests
                 public void shouldRecoverFromInvalidOffsetExceptionOnRestoreAndFinishRestore()
                 {
                     internalStreamsBuilder.Stream(new[] { "topic" }, consumed)
-                            .GroupByKey().Count(Materialized<object, long, IKeyValueStore<Bytes, byte[]>>.As("count"));
+                            .GroupByKey().Count(Materialized.As<object, long, IKeyValueStore<Bytes, byte[]>>("count"));
 
                     internalStreamsBuilder.BuildAndOptimizeTopology();
 
@@ -1397,7 +1397,7 @@ namespace Kafka.Streams.Tests
                     config.Set(
                         StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG,
                         LogAndContinueExceptionHandler.getName());
-                    config.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType().FullName);
+                    config.Set(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.Int().GetType().FullName);
                     KafkaStreamThread thread = CreateStreamThread(clientId, new StreamsConfig(config), false);
 
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);

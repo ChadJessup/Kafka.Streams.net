@@ -1,11 +1,9 @@
-using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.KStream.Mappers;
-using Kafka.Streams.Processors;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Topologies;
 using System;
 using System.Collections.Generic;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
 
 namespace Kafka.Streams.KStream.Interfaces
 {
@@ -43,7 +41,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKStream<K, V> Filter(Func<K, V, bool> predicate);
+        IKStream<K, V> Filter(FilterPredicate<K, V> predicate);
 
         /**
          * Create a new {@code KStream} that consists of All records of this stream which satisfy the given predicate.
@@ -55,7 +53,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKStream<K, V> Filter(Func<K, V, bool> predicate, Named named);
+        IKStream<K, V> Filter(FilterPredicate<K, V> predicate, Named named);
 
         /**
          * Create a new {@code KStream} that consists All records of this stream which do <em>not</em> satisfy the given
@@ -67,7 +65,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKStream<K, V> FilterNot(Func<K, V, bool> predicate);
+        IKStream<K, V> FilterNot(FilterPredicate<K, V> predicate);
 
         /**
          * Create a new {@code KStream} that consists All records of this stream which do <em>not</em> satisfy the given
@@ -80,7 +78,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKStream<K, V> FilterNot(Func<K, V, bool> predicate, Named named);
+        IKStream<K, V> FilterNot(FilterPredicate<K, V> predicate, Named named);
 
         /**
          * Set a new key (with possibly new type) for each input record.
@@ -113,7 +111,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatMapValues(ValueMapper)
          * @see #flatMapValues(ValueMapperWithKey)
          */
-        IKStream<KR, V> SelectKey<KR>(IKeyValueMapper<K, V, KR> mapper);
+        IKStream<KR, V> SelectKey<KR>(KeyValueMapper<K, V, KR> mapper);
 
         /**
          * Set a new key (with possibly new type) for each input record.
@@ -139,7 +137,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param mapper a {@link KeyValueMapper} that computes a new key for each record
          * @param named  a {@link Named} config used to Name the processor in the topology
          * @param   the new key type of the result stream
-         * @return a {@code KStream} that contains records with new key (possibly of different type) and unmodified value
+         * @return a {@code KStream} that contains records with new key (posssibly of different type) and unmodified value
          * @see #map(KeyValueMapper)
          * @see #flatMap(KeyValueMapper)
          * @see #mapValues(ValueMapper)
@@ -148,7 +146,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatMapValues(ValueMapperWithKey)
          */
         IKStream<KR, V> SelectKey<KR>(
-            IKeyValueMapper<K, V, KR> mapper,
+            KeyValueMapper<K, V, KR> mapper,
             Named named);
 
         /**
@@ -162,7 +160,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below normalizes the string key to upper-case letters and counts the number of token of the value string.
          * <pre>{@code
          * KStream<string, string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValuePair<string, int>> {
+         * KStream<string, int> outputStream = inputStream.Map(new KeyValueMapper<string, string, KeyValuePair<string, int>> {
          *     KeyValuePair<string, int> apply(string key, string value)
 {
          *         return KeyValuePair.Create(key.toUpperCase(), value.Split(" ").Length);
@@ -188,10 +186,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> Map<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
-
-        IKStream<KR, VR> Map<KR, VR>(Func<K, V, KeyValuePair<KR, VR>> mapper)
-            => this.Map(new KeyValueMapper<K, V, KeyValuePair<KR, VR>>(mapper));
+        IKStream<KR, VR> Map<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
 
         /**
          * Transform each record of the input stream into a new record in the output stream (both key and value type can be
@@ -204,7 +199,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below normalizes the string key to upper-case letters and counts the number of token of the value string.
          * <pre>{@code
          * KStream<string, string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValuePair<string, int>> {
+         * KStream<string, int> outputStream = inputStream.Map(new KeyValueMapper<string, string, KeyValuePair<string, int>> {
          *     KeyValuePair<string, int> apply(string key, string value)
 {
          *         return KeyValuePair.Create(key.toUpperCase(), value.Split(" ").Length);
@@ -232,7 +227,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
         IKStream<KR, VR> Map<KR, VR>(
-            IKeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper,
+            KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper,
             Named named);
 
         /**
@@ -268,9 +263,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> MapValues<VR>(IValueMapper<V, VR> mapper);
-
-        IKStream<K, VR> MapValues<VR>(Func<V, VR> mapper);
+        IKStream<K, VR> MapValues<VR>(ValueMapper<V, VR> mapper);
 
         /**
          * Transform the value of each input record into a new value (with possible new type) of the output record.
@@ -306,9 +299,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> MapValues<VR>(
-            IValueMapper<V, VR> mapper,
-            Named named);
+        IKStream<K, VR> MapValues<VR>(ValueMapper<V, VR> mapper, Named named);
 
         /**
          * Transform the value of each input record into a new value (with possible new type) of the output record.
@@ -344,7 +335,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> MapValues<VR>(IValueMapperWithKey<K, V, VR> mapper);
+        IKStream<K, VR> MapValues<VR>(ValueMapperWithKey<K, V, VR> mapper);
 
         /**
          * Transform the value of each input record into a new value (with possible new type) of the output record.
@@ -381,9 +372,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> MapValues<VR>(
-            IValueMapperWithKey<K, V, VR> mapper,
-            Named named);
+        IKStream<K, VR> MapValues<VR>(ValueMapperWithKey<K, V, VR> mapper, Named named);
 
         /**
          * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -397,7 +386,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * and emit a record {@code <word:1>} for each word.
          * <pre>{@code
          * KStream<byte[], string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.flatMap(
+         * KStream<string, int> outputStream = inputStream.FlatMap(
          *     new KeyValueMapper<byte[], string, IEnumerable<KeyValuePair<string, int>>> {
          *         IEnumerable<KeyValuePair<string, int>> apply(byte[] key, string value)
 {
@@ -436,7 +425,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> FlatMap<KR, VR>(IKeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper);
+        IKStream<KR, VR> FlatMap<KR, VR>(KeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper);
 
         /**
          * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -450,7 +439,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * and emit a record {@code <word:1>} for each word.
          * <pre>{@code
          * KStream<byte[], string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.flatMap(
+         * KStream<string, int> outputStream = inputStream.FlatMap(
          *     new KeyValueMapper<byte[], string, IEnumerable<KeyValuePair<string, int>>> {
          *         IEnumerable<KeyValuePair<string, int>> apply(byte[] key, string value)
 {
@@ -491,7 +480,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
         IKStream<KR, VR> FlatMap<KR, VR>(
-            IKeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper,
+            KeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper,
             Named named);
 
         /**
@@ -536,8 +525,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> FlatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper);
-        IKStream<K, VR> FlatMapValues<VR>(Func<V, IEnumerable<VR>> mapper);
+        IKStream<K, VR> FlatMapValues<VR>(ValueMapper<V, IEnumerable<VR>> mapper);
 
         //IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
         //    where VR : IEnumerable<VR>;
@@ -585,7 +573,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> FlatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper, Named named);
+        IKStream<K, VR> FlatMapValues<VR>(ValueMapper<V, IEnumerable<VR>> mapper, Named named);
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -638,8 +626,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        //IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
-        //    where VR : IEnumerable<VR>;
+        IKStream<K, VR> FlatMapValues<VR>(ValueMapperWithKey<K, V, IEnumerable<VR>> mapper);
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -693,8 +680,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        //IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper, Named named)
-        //    where VR : IEnumerable<VR>;
+        IKStream<K, VR> FlatMapValues<VR>(ValueMapperWithKey<K, V, IEnumerable<VR>> mapper, Named named);
 
         /**
          * Print the records of this KStream using the options provided by {@link Printed}
@@ -791,7 +777,7 @@ namespace Kafka.Streams.KStream.Interfaces
 
         IKStream<K, VR> DoStreamTableJoin<VR, VO>(
             IKTable<K, VO> other,
-            Func<V, VO, VR> joiner,
+            ValueJoiner<V, VO, VR> joiner,
             Joined<K, V, VO> joined,
             bool leftJoin);
 
@@ -885,7 +871,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param topicExtractor    the extractor to determine the Name of the Kafka topic to write to for each record
          */
-        void To(ITopicNameExtractor topicExtractor);
+        void To(TopicNameExtractor<K, V> topicExtractor);
 
         /**
          * Dynamically materialize this stream to topics using the provided {@link Produced} instance.
@@ -894,7 +880,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param topicExtractor    the extractor to determine the Name of the Kafka topic to write to for each record
          * @param produced          the options to use when producing to the topic
          */
-        void To(ITopicNameExtractor topicExtractor, Produced<K, V> produced);
+        void To(TopicNameExtractor<K, V> topicExtractor, Produced<K, V> produced);
 
         /**
          * Transform each record of the input stream into zero or one record in the output stream (both key and value type
@@ -992,7 +978,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K1, V1> Transform<K1, V1>(
             ITransformerSupplier<K, V, KeyValuePair<K1, V1>> transformerSupplier,
-            string[] stateStoreNames);
+            params string[] stateStoreNames);
 
         /**
          * Transform each record of the input stream into zero or one record in the output stream (both key and value type
@@ -1192,7 +1178,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K1, V1> FlatTransform<K1, V1>(
             ITransformerSupplier<K, V, IEnumerable<KeyValuePair<K1, V1>>> transformerSupplier,
-            string[] stateStoreNames);
+            params string[] stateStoreNames);
 
         /**
          * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -1294,7 +1280,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K1, V1> FlatTransform<K1, V1>(
             ITransformerSupplier<K, V, IEnumerable<KeyValuePair<K1, V1>>> transformerSupplier,
             Named named,
-            string[] stateStoreNames);
+            params string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1375,9 +1361,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapperWithKey)
          * @see #transform(TransformerSupplier, string...)
          */
-        //IKStream<K, VR> transformValues<VR>(
-        //    IValueTransformerSupplier<V, VR> valueTransformerSupplier,
-        //    string[] stateStoreNames);
+        IKStream<K, VR> TransformValues<VR>(
+            IValueTransformerSupplier<V, VR> valueTransformerSupplier,
+            params string[] stateStoreNames);
+
         /**
          * Transform the value of each input record into a new value (with possibly a new type) of the output record.
          * A {@link ValueTransformer} (provided by the given {@link ValueTransformerSupplier}) is applied to each input
@@ -1458,10 +1445,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapperWithKey)
          * @see #transform(TransformerSupplier, string...)
          */
-        //IKStream<K, VR> transformValues<VR>(
-        //    IValueTransformerSupplier<V, VR> valueTransformerSupplier,
-        //    Named named,
-        //    string[] stateStoreNames);
+        IKStream<K, VR> TransformValues<VR>(
+            IValueTransformerSupplier<V, VR> valueTransformerSupplier,
+            Named named,
+            params string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1547,7 +1534,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> TransformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
-            string[] stateStoreNames);
+            params string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1635,7 +1622,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K, VR> TransformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
             Named named,
-            string[] stateStoreNames);
+            params string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1727,8 +1714,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #flatTransform(TransformerSupplier, string...)
          */
-        //IKStream<K, VR> flatTransformValues<VR>(IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
-        //                                         string[] stateStoreNames);
+        IKStream<K, VR> FlatTransformValues<VR>(
+            IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
+            params string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1821,9 +1809,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #flatTransform(TransformerSupplier, string...)
          */
-        //IKStream<K, VR> flatTransformValues<VR>(IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
-        //                                         Named named,
-        //                                         string[] stateStoreNames);
+        IKStream<K, VR> FlatTransformValues<VR>(
+            IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
+            Named named,
+            params string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1918,7 +1907,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> FlatTransformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
-            string[] stateStoreNames);
+            params string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into zero or more new values (with possibly a new
@@ -2015,7 +2004,7 @@ namespace Kafka.Streams.KStream.Interfaces
         IKStream<K, VR> FlatTransformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
             Named named,
-            string[] stateStoreNames);
+            params string[] stateStoreNames);
 
         /**
          * Process All records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
@@ -2079,8 +2068,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #foreach(Action)
          * @see #transform(TransformerSupplier, string...)
          */
+
         void Process(IProcessorSupplier<K, V> IProcessorSupplier, params string[] stateStoreNames);
         void Process(Func<IKeyValueProcessor<K, V>> processor);
+
         /**
          * Process All records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
          * {@link IProcessorSupplier}).
@@ -2147,7 +2138,7 @@ namespace Kafka.Streams.KStream.Interfaces
         void Process(
             IProcessorSupplier<K, V> IProcessorSupplier,
             Named named,
-            string[] stateStoreNames);
+            params string[] stateStoreNames);
 
         /**
          * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2162,7 +2153,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link #through(string)}) an internal repartitioning topic may need to be created in Kafka if a later
          * operator depends on the newly selected key.
          * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * {@link StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * "&lt;Name&gt;" is an internally generated Name, and "-repartition" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2191,7 +2182,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link #through(string)}) an internal repartitioning topic may need to be created in Kafka
          * if a later operator depends on the newly selected key.
          * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * {@link StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * "&lt;Name&gt;" is an internally generated Name, and "-repartition" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2221,7 +2212,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link #through(string)}) an internal repartitioning topic may need to be created in Kafka if a later operator
          * depends on the newly selected key.
          * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * {@link StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * &lt;Name&gt; is either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an internally
          * generated Name, and "-repartition" is a fixed suffix.
          * <p>
@@ -2250,7 +2241,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Because a new key is selected, an internal repartitioning topic may need to be created in Kafka if a
          * later operator depends on the newly selected key.
          * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * {@link  StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * "&lt;Name&gt;" is an internally generated Name, and "-repartition" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2265,9 +2256,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the key type of the result {@link KGroupedStream}
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
-        IKGroupedStream<KR, V> GroupBy<KR>(IKeyValueMapper<K, V, KR> selector);
-
-        IKGroupedStream<KR, V> GroupBy<KR>(Func<K, V, KR> selector);
+        IKGroupedStream<KR, V> GroupBy<KR>(KeyValueMapper<K, V, KR> selector);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2281,7 +2270,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Because a new key is selected, an internal repartitioning topic may need to be created in Kafka if a later
          * operator depends on the newly selected key.
          * This topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * {@link  StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * "&lt;Name&gt;" is either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an
          * internally generated Name.
          * <p>
@@ -2299,7 +2288,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
         IKGroupedStream<KR, V> GroupBy<KR>(
-            IKeyValueMapper<K, V, KR> selector,
+            KeyValueMapper<K, V, KR> selector,
             Grouped<KR, V> grouped);
 
         /**
@@ -2347,7 +2336,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link  StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
@@ -2359,7 +2348,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
          * in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is an
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is an
          * internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2376,7 +2365,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> Join<VO, VR>(
             IKStream<K, VO> otherStream,
-            Func<V, VO, VR> joiner,
+            ValueJoiner<V, VO, VR> joiner,
             JoinWindows windows);
 
         /**
@@ -2425,7 +2414,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link  StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
@@ -2437,7 +2426,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
          * in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is an
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is an
          * internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2456,7 +2445,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> Join<VO, VR>(
             IKStream<K, VO> otherStream,
-            Func<V, VO, VR> joiner,
+            ValueJoiner<V, VO, VR> joiner,
             JoinWindows windows,
             Joined<K, V, VO> joined);
 
@@ -2509,7 +2498,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
@@ -2520,7 +2509,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
-         * in {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * in {@link StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * "storeName" is an internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2538,7 +2527,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> LeftJoin<VO, VR>(
             IKStream<K, VO> otherStream,
-            Func<V, VO, VR> joiner,
+            ValueJoiner<V, VO, VR> joiner,
             JoinWindows windows);
 
         /**
@@ -2591,7 +2580,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
@@ -2602,7 +2591,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
-         * in {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * in {@link StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * "storeName" is an internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2622,7 +2611,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> LeftJoin<VO, VR>(
             IKStream<K, VO> otherStream,
-            Func<V, VO, VR> joiner,
+            ValueJoiner<V, VO, VR> joiner,
             JoinWindows windows,
             Joined<K, V, VO> joined);
 
@@ -2676,7 +2665,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
@@ -2687,7 +2676,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
-         * in {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * in {@link StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * "storeName" is an internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2703,9 +2692,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows)
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows)
          */
-        IKStream<K, VR> OuterJoin<VR, VO>(
+        IKStream<K, VR> OuterJoin<VO, VR>(
             IKStream<K, VO> otherStream,
-            Func<V, VO, VR> joiner,
+            ValueJoiner<V, VO, VR> joiner,
             JoinWindows windows);
 
         /**
@@ -2759,7 +2748,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * Repartitioning can happen for one or both of the joining {@code KStream}s.
@@ -2770,7 +2759,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Both of the joining {@code KStream}s will be materialized in local state stores with auto-generated store names.
          * For failure and recovery each store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-storeName-changelog", where "applicationId" is user-specified
-         * in {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
+         * in {@link StreamsConfig} via parameter {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig},
          * "storeName" is an internally generated Name, and "-changelog" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2788,9 +2777,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows, Joined)
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows, Joined)
          */
-        IKStream<K, VR> OuterJoin<VR, VO>(
+        IKStream<K, VR> OuterJoin<VO, VR>(
             IKStream<K, VO> otherStream,
-            Func<V, VO, VR> joiner,
+            ValueJoiner<V, VO, VR> joiner,
             JoinWindows windows,
             Joined<K, V, VO> joined);
 
@@ -2847,7 +2836,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2868,7 +2857,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> Join<VT, VR>(
             IKTable<K, VT> table,
-            Func<V, VT, VR> joiner);
+            ValueJoiner<V, VT, VR> joiner);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed inner equi join with default
@@ -2923,7 +2912,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -2946,7 +2935,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> Join<VT, VR>(
             IKTable<K, VT> table,
-            Func<V, VT, VR> joiner,
+            ValueJoiner<V, VT, VR> joiner,
             Joined<K, V, VT> joined);
 
         /**
@@ -3005,7 +2994,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -3026,7 +3015,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> LeftJoin<VT, VR>(
             IKTable<K, VT> table,
-            Func<V, VT, VR> joiner);
+            ValueJoiner<V, VT, VR> joiner);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed left equi join with default
@@ -3084,7 +3073,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * internal repartitioning topic in Kafka and write and re-read the data via this topic before the actual join.
          * The repartitioning topic will be named "${applicationId}-&lt;Name&gt;-repartition", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "&lt;Name&gt;" is an internally generated
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "&lt;Name&gt;" is an internally generated
          * Name, and "-repartition" is a fixed suffix.
          * <p>
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -3107,13 +3096,13 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, VR> LeftJoin<VT, VR>(
             IKTable<K, VT> table,
-            Func<V, VT, VR> joiner,
+            ValueJoiner<V, VT, VR> joiner,
             Joined<K, V, VT> joined);
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed inner equi join.
          * The join is a primary key table lookup join with join attribute
-         * {@code keyValueMapper.map(stream.keyValue) == table.key}.
+         * {@code keyValueMapper.Map(stream.keyValue) == table.key}.
          * "Table lookup join" means, that results are only computed if {@code KStream} records are processed.
          * This is done by performing a lookup for matching records in the <em>current</em> internal {@link GlobalKTable}
          * state.
@@ -3141,13 +3130,13 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, RV> Join<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
-            IKeyValueMapper<K, V, GK> keyValueMapper,
-            Func<V, GV, RV> joiner);
+            KeyValueMapper<K, V, GK> keyValueMapper,
+            ValueJoiner<V, GV, RV> joiner);
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed inner equi join.
          * The join is a primary key table lookup join with join attribute
-         * {@code keyValueMapper.map(stream.keyValue) == table.key}.
+         * {@code keyValueMapper.Map(stream.keyValue) == table.key}.
          * "Table lookup join" means, that results are only computed if {@code KStream} records are processed.
          * This is done by performing a lookup for matching records in the <em>current</em> internal {@link GlobalKTable}
          * state.
@@ -3176,8 +3165,8 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, RV> Join<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
-            IKeyValueMapper<K, V, GK> keyValueMapper,
-            Func<V, GV, RV> joiner,
+            KeyValueMapper<K, V, GK> keyValueMapper,
+            ValueJoiner<V, GV, RV> joiner,
             Named named);
 
         /**
@@ -3185,7 +3174,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * In contrast to {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner) inner-join}, All records from this stream
          * will produce an output record (cf. below).
          * The join is a primary key table lookup join with join attribute
-         * {@code keyValueMapper.map(stream.keyValue) == table.key}.
+         * {@code keyValueMapper.Map(stream.keyValue) == table.key}.
          * "Table lookup join" means, that results are only computed if {@code KStream} records are processed.
          * This is done by performing a lookup for matching records in the <em>current</em> internal {@link GlobalKTable}
          * state.
@@ -3215,15 +3204,15 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, RV> LeftJoin<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
-            IKeyValueMapper<K, V, GK> keyValueMapper,
-            Func<V, GV, RV> valueJoiner);
+            KeyValueMapper<K, V, GK> keyValueMapper,
+            ValueJoiner<V, GV, RV> valueJoiner);
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed left equi join.
          * In contrast to {@link #join(GlobalKTable, KeyValueMapper, ValueJoiner) inner-join}, All records from this stream
          * will produce an output record (cf. below).
          * The join is a primary key table lookup join with join attribute
-         * {@code keyValueMapper.map(stream.keyValue) == table.key}.
+         * {@code keyValueMapper.Map(stream.keyValue) == table.key}.
          * "Table lookup join" means, that results are only computed if {@code KStream} records are processed.
          * This is done by performing a lookup for matching records in the <em>current</em> internal {@link GlobalKTable}
          * state.
@@ -3254,8 +3243,8 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, RV> LeftJoin<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
-            IKeyValueMapper<K, V, GK> keyValueMapper,
-            Func<V, GV, RV> valueJoiner,
+            KeyValueMapper<K, V, GK> keyValueMapper,
+            ValueJoiner<V, GV, RV> valueJoiner,
             Named named);
     }
 }

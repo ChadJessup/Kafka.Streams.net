@@ -55,7 +55,7 @@ namespace Kafka.Streams.KStream
             if (this.inner == null)
             {
                 string propertyName = isKey
-                    ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
+                    ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASSConfig
                     : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
 
                 string value = configs[propertyName] ?? throw new ArgumentNullException(nameof(configs));

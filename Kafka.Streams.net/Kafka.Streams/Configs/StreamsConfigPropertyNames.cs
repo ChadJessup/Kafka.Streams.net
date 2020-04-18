@@ -213,7 +213,7 @@
         public static readonly string DefaultKeySerdeClassConfig = "default.key.serde";
         //private static string DEFAULT_KEY_SERDE_CLASS_DOCConfig = " Default serializer / deserializer for key that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
         //        + "Note when windowed serde is used, one needs to set the inner serde that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
-        //        + DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS + "' or '" + DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS + "' as well";
+        //        + DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASSConfig + "' or '" + DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS + "' as well";
 
         /// <summary>
         /// {@code default value.serde}
@@ -221,7 +221,7 @@
         public static readonly string DefaultValueSerdeClassConfig = "default.value.serde";
         //private static string DEFAULT_VALUE_SERDE_CLASS_DOCConfig = "Default serializer / deserializer for value that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
         //        + "Note when windowed serde is used, one needs to set the inner serde that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
-        //        + DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS + "' or '" + DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS + "' as well";
+        //        + DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASSConfig + "' or '" + DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS + "' as well";
 
         /// <summary>
         /// {@code default.timestamp.extractor}

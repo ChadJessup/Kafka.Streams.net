@@ -66,10 +66,10 @@
 //        }
 
 
-//        public void enableSendingOldValues()
+//        public void EnableSendingOldValues()
 //        {
-//            parent1.enableSendingOldValues();
-//            parent2.enableSendingOldValues();
+//            parent1.EnableSendingOldValues();
+//            parent2.EnableSendingOldValues();
 //            sendOldValues = true;
 //        }
 

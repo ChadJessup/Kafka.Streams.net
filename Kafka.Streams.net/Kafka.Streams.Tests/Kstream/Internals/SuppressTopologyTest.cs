@@ -155,11 +155,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        anonymousNodeBuilder
 //            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
-//            .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(5L)))
-//            .Count(Materialized.As<string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled())
+//            .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).Grace(TimeSpan.FromMilliseconds(5L)))
+//            .Count(Materialized.As<string, long, ISessionStore<Bytes, byte[]>("counts").WithCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()))
 //            .ToStream()
-//            .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//            .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //        string anonymousNodeTopology = anonymousNodeBuilder.Build().describe().ToString();
 
@@ -173,11 +173,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        namedNodeBuilder
 //            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
-//            .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(5L)))
-//            .Count(Materialized.As<string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled())
+//            .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).Grace(TimeSpan.FromMilliseconds(5L)))
+//            .Count(Materialized.As<string, long, ISessionStore<Bytes, byte[]>("counts").WithCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()).withName("myname"))
 //            .ToStream()
-//            .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//            .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //        string namedNodeTopology = namedNodeBuilder.Build().describe().ToString();
 

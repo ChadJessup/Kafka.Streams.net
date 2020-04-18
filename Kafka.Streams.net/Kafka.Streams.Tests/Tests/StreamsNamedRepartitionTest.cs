@@ -45,7 +45,7 @@
 
 //            if (addOperators)
 //            {
-//                maybeUpdatedStream = mappedStream.filter((k, v) => true).MapValues(v => int.ToString(int.parseInt(v) + 1));
+//                maybeUpdatedStream = mappedStream.Filter((k, v) => true).MapValues(v => int.ToString(int.parseInt(v) + 1));
 //            }
 //            else
 //            {
@@ -53,26 +53,26 @@
 //            }
 
 //            maybeUpdatedStream.GroupByKey(Grouped.With("grouped-stream", Serdes.String(), Serdes.String()))
-//                .Aggregate(initializer, aggregator, Materialized<string, int, IKeyValueStore<Bytes, byte[]>>.As("count-store").WithKeySerde(Serdes.String()).withValueSerde(Serdes.Int()))
+//                .Aggregate(initializer, aggregator, Materialized.As<string, int, IKeyValueStore<Bytes, byte[]>>("count-store").WithKeySerde(Serdes.String()).WithValueSerde(Serdes.Int()))
 //            .ToStream()
 //            .peek((k, v) => System.Console.Out.WriteLine(string.format("AGGREGATED key=%s value=%s", k, v)))
 //            .To(aggregationTopic, Produced.With(Serdes.String(), Serdes.Int()));
 
 //            StreamsConfig config = new StreamsConfig();
 
-//            config.Set(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsNamedRepartitionTest");
+//            config.Set(StreamsConfig.ApplicationIdConfig, "StreamsNamedRepartitionTest");
 //            config.Set(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
-//            config.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            config.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            config.Set(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType().FullName);
+//            config.Set(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType().FullName);
 
 
 //            config.PutAll(streamsProperties);
 
 //            Topology topology = builder.Build(config);
-//            KafkaStreams streams = new KafkaStreams(topology, config);
+//            KafkaStreamsThread streams = new KafkaStreamsThread(topology, config);
 
 
-//            streams.setStateListener((newState, oldState) =>
+//            streams.SetStateListener((newState, oldState) =>
 //            {
 //                if (oldState == State.REBALANCING && newState == State.RUNNING)
 //                {
@@ -88,7 +88,7 @@
 //                }
 //            });
 
-//            streams.start();
+//            streams.Start();
 
 //            Runtime.getRuntime().addShutdownHook(new Thread(() =>
 //            {

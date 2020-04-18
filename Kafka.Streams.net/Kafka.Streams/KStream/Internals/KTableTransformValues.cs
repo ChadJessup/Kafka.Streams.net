@@ -54,9 +54,9 @@
 //            //    }
 
 
-//            //    public void enableSendingOldValues()
+//            //    public void EnableSendingOldValues()
 //            //    {
-//            //        parent.enableSendingOldValues();
+//            //        parent.EnableSendingOldValues();
 //            //        sendOldValues = true;
 //            //    }
 //        }

@@ -94,8 +94,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         { //throws IOException
             StreamsConfig streamsConfig = new StreamsConfig(new StreamsConfig()
             {
-                { Put(StreamsConfig.APPLICATION_ID_CONFIG, "app-id") },
-                { Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092") },
+                { Put(StreamsConfig.ApplicationIdConfig, "app-id") },
+                { Put(StreamsConfig.BootstrapServersConfig, "localhost:9092") },
                 { Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName) },
             });
 
@@ -190,8 +190,8 @@ private AbstractTask CreateTask(
     StateDirectory stateDirectory)
 {
     StreamsConfig properties = new StreamsConfig();
-    properties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "app");
-    properties.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummyhost:9092");
+    properties.Put(StreamsConfig.ApplicationIdConfig, "app");
+    properties.Put(StreamsConfig.BootstrapServersConfig, "dummyhost:9092");
     StreamsConfig config = new StreamsConfig(properties);
 
     var storeNamesToChangelogTopics = new Dictionary<string, string>(stateStoresToChangelogTopics.Count);

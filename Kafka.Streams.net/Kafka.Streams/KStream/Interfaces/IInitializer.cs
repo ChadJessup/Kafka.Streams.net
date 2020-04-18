@@ -14,6 +14,8 @@ namespace Kafka.Streams.KStream.Interfaces
      * @see SessionWindowedKStream#aggregate(Initializer, IAggregator, Merger)
      * @see SessionWindowedKStream#aggregate(Initializer, IAggregator, Merger, Materialized)
      */
+    public delegate VA Initializer<out VA>();
+
     public interface IInitializer<VA>
     {
         /**

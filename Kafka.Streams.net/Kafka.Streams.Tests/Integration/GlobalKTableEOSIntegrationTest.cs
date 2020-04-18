@@ -30,13 +30,13 @@ namespace Kafka.Streams.Tests.Integration
 
         private static volatile int testNo = 0;
         private MockTime mockTime = CLUSTER.time;
-        private IKeyValueMapper<string, long, long> keyMapper = (key, value) => value;
-        private IValueJoiner<long, string, string> joiner = (value1, value2) => value1 + "+" + value2;
+        private KeyValueMapper<string, long, long> keyMapper = (key, value) => value;
+        private ValueJoiner<long, string, string> joiner = (value1, value2) => value1 + "+" + value2;
         private string globalStore = "globalStore";
         private Dictionary<string, string> results = new Dictionary<string, string>();
         private StreamsBuilder builder;
         private StreamsConfig streamsConfiguration;
-        private KafkaStreams kafkaStreams;
+        private KafkaStreamsThread kafkaStreams;
         private string globalTableTopic;
         private string streamTopic;
         private IGlobalKTable<long, string> globalTable;
@@ -50,17 +50,17 @@ namespace Kafka.Streams.Tests.Integration
             createTopics();
             streamsConfiguration = new StreamsConfig();
             string applicationId = "globalTableTopic-table-eos-test-" + testNo.incrementAndGet();
-            streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-            streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            streamsConfiguration.Put(StreamsConfig.ApplicationIdConfig, applicationId);
+            streamsConfiguration.Put(StreamsConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
             streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
             streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
             streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
             streamsConfiguration.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, "exactly_once");
             globalTable = builder.globalTable(globalTableTopic, Consumed.With(Serdes.Long(), Serdes.String()),
-                                              Materialized<long, string, IKeyValueStore<Bytes, byte[]>>.As(globalStore)
+                                              Materialized.As<long, string, IKeyValueStore<Bytes, byte[]>>(globalStore)
                                                       .WithKeySerde(Serdes.Long())
-                                                      .withValueSerde(Serdes.String()));
+                                                      .WithValueSerde(Serdes.String()));
             Consumed<string, long> stringLongConsumed = Consumed.With(Serdes.String(), Serdes.Long());
             stream = builder.Stream(streamTopic, stringLongConsumed);
             foreachAction = results.Put;
@@ -250,13 +250,13 @@ namespace Kafka.Streams.Tests.Integration
             streamTopic = "stream-" + testNo;
             globalTableTopic = "globalTable-" + testNo;
             CLUSTER.createTopics(streamTopic);
-            CLUSTER.createTopic(globalTableTopic, 2, 1);
+            CLUSTER.CreateTopic(globalTableTopic, 2, 1);
         }
 
         private void StartStreams()
         {
-            kafkaStreams = new KafkaStreams(builder.Build(), streamsConfiguration);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
+            kafkaStreams.Start();
         }
 
         private void ProduceTopicValues(string topic)

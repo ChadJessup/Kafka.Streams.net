@@ -42,8 +42,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             //            stateDirectory = new StateDirectory(new StreamsConfig(new StreamsConfig() {
             //            {
-            //                Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId),
-            //        Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+            //                Put(StreamsConfig.ApplicationIdConfig, applicationId),
+            //        Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
             //            Put(StreamsConfig.STATE_DIR_CONFIG, baseDir.getPath());
             //        }
             //    }), new MockTime(), true);

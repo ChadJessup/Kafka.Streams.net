@@ -56,10 +56,10 @@ namespace Kafka.Streams.Tests
     *
     * <pre>{@code
     * StreamsConfig props = new StreamsConfig();
-    * props.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9091");
+    * props.Set(StreamsConfig.BootstrapServersConfig, "localhost:9091");
     * props.Set(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, CustomTimestampExtractor.getName());
-    * props.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-    * props.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+    * props.Set(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType().FullName);
+    * props.Set(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType().FullName);
     * Topology topology = ...
     * TopologyTestDriver driver = new TopologyTestDriver(topology, props);
     * }</pre>
@@ -387,7 +387,7 @@ namespace Kafka.Streams.Tests
                 var recordCollector = new RecordCollectorImpl(
                     TASK_ID.ToString(),
                     //consumer,
-                    //new StreamsProducer(producer, eosEnabled, logContext, streamsConfig.getString(StreamsConfig.APPLICATION_ID_CONFIG)),
+                    //new StreamsProducer(producer, eosEnabled, logContext, streamsConfig.getString(StreamsConfig.ApplicationIdConfig)),
                     streamsConfig.DefaultProductionExceptionHandler(this.context.Services));
                 //eosEnabled);
 

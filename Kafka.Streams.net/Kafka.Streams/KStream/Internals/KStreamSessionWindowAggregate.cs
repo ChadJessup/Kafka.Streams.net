@@ -41,14 +41,14 @@
 //        }
 
 
-//        public void enableSendingOldValues()
+//        public void EnableSendingOldValues()
 //        {
 //            sendOldValues = true;
 //        }
 
 //        private SessionWindow mergeSessionWindow(SessionWindow one, SessionWindow two)
 //        {
-//            long start = one.start() < two.start() ? one.start() : two.start();
+//            long start = one.Start() < two.Start() ? one.Start() : two.Start();
 //            long end = one.end() > two.end() ? one.end() : two.end();
 //            return new SessionWindow(start, end);
 //        }

@@ -35,7 +35,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void TestInner()
         {// throws Exception
-            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
+            STREAMS_CONFIG.Put(StreamsConfig.ApplicationIdConfig, appID + "-inner");
 
             List<List<KeyValueTimestamp<long, string>>> expectedResult = Arrays.asList(
                 null,
@@ -69,7 +69,7 @@ namespace Kafka.Streams.Tests.Integration
                     new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d", 15L))
             );
 
-            leftStream.Join(rightStream, valueJoiner, JoinWindows.of(FromSeconds(10))).To(OUTPUT_TOPIC);
+            leftStream.Join(rightStream, valueJoiner, JoinWindows.Of(TimeSpan.FromSeconds(10))).To(OUTPUT_TOPIC);
 
             runTest(expectedResult);
         }
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void TestInnerRepartitioned()
         {// throws Exception
-            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-repartitioned");
+            STREAMS_CONFIG.Put(StreamsConfig.ApplicationIdConfig, appID + "-inner-repartitioned");
 
             List<List<KeyValueTimestamp<long, string>>> expectedResult = Arrays.asList(
                 null,
@@ -111,10 +111,10 @@ namespace Kafka.Streams.Tests.Integration
                     new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d", 15L))
             );
 
-            leftStream.map(MockMapper.noOpKeyValueMapper())
-                    .Join(rightStream.flatMap(MockMapper.noOpFlatKeyValueMapper())
+            leftStream.Map(MockMapper.noOpKeyValueMapper())
+                    .Join(rightStream.FlatMap(MockMapper.noOpFlatKeyValueMapper())
                                      .selectKey(MockMapper.selectKeyKeyValueMapper()),
-                           valueJoiner, JoinWindows.of(FromSeconds(10))).To(OUTPUT_TOPIC);
+                           valueJoiner, JoinWindows.Of(TimeSpan.FromSeconds(10))).To(OUTPUT_TOPIC);
 
             runTest(expectedResult);
         }
@@ -122,7 +122,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void TestLeft()
         {// throws Exception
-            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
+            STREAMS_CONFIG.Put(StreamsConfig.ApplicationIdConfig, appID + "-left");
 
             List<List<KeyValueTimestamp<long, string>>> expectedResult = Arrays.asList(
                 null,
@@ -156,7 +156,7 @@ namespace Kafka.Streams.Tests.Integration
                     new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d", 15L))
             );
 
-            leftStream.LeftJoin(rightStream, valueJoiner, JoinWindows.of(FromSeconds(10))).To(OUTPUT_TOPIC);
+            leftStream.LeftJoin(rightStream, valueJoiner, JoinWindows.Of(TimeSpan.FromSeconds(10))).To(OUTPUT_TOPIC);
 
             runTest(expectedResult);
         }
@@ -164,7 +164,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void TestLeftRepartitioned()
         {// throws Exception
-            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left-repartitioned");
+            STREAMS_CONFIG.Put(StreamsConfig.ApplicationIdConfig, appID + "-left-repartitioned");
 
             List<List<KeyValueTimestamp<long, string>>> expectedResult = Arrays.asList(
                 null,
@@ -198,10 +198,10 @@ namespace Kafka.Streams.Tests.Integration
                     new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d", 15L))
             );
 
-            leftStream.map(MockMapper.noOpKeyValueMapper())
-                    .LeftJoin(rightStream.flatMap(MockMapper.noOpFlatKeyValueMapper())
+            leftStream.Map(MockMapper.noOpKeyValueMapper())
+                    .LeftJoin(rightStream.FlatMap(MockMapper.noOpFlatKeyValueMapper())
                                          .selectKey(MockMapper.selectKeyKeyValueMapper()),
-                            valueJoiner, JoinWindows.of(FromSeconds(10))).To(OUTPUT_TOPIC);
+                            valueJoiner, JoinWindows.Of(TimeSpan.FromSeconds(10))).To(OUTPUT_TOPIC);
 
             runTest(expectedResult);
         }
@@ -209,7 +209,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void TestOuter()
         {// throws Exception
-            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
+            STREAMS_CONFIG.Put(StreamsConfig.ApplicationIdConfig, appID + "-outer");
 
             List<List<KeyValueTimestamp<long, string>>> expectedResult = Arrays.asList(
                 null,
@@ -243,7 +243,7 @@ namespace Kafka.Streams.Tests.Integration
                     new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d", 15L))
             );
 
-            leftStream.OuterJoin(rightStream, valueJoiner, JoinWindows.of(FromSeconds(10))).To(OUTPUT_TOPIC);
+            leftStream.OuterJoin(rightStream, valueJoiner, JoinWindows.Of(TimeSpan.FromSeconds(10))).To(OUTPUT_TOPIC);
 
             runTest(expectedResult);
         }
@@ -251,7 +251,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void TestOuterRepartitioned()
         {// throws Exception
-            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
+            STREAMS_CONFIG.Put(StreamsConfig.ApplicationIdConfig, appID + "-outer");
 
             List<List<KeyValueTimestamp<long, string>>> expectedResult = Arrays.asList(
                 null,
@@ -285,10 +285,10 @@ namespace Kafka.Streams.Tests.Integration
                     new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d", 15L))
             );
 
-            leftStream.map(MockMapper.noOpKeyValueMapper())
-                    .OuterJoin(rightStream.flatMap(MockMapper.noOpFlatKeyValueMapper())
+            leftStream.Map(MockMapper.noOpKeyValueMapper())
+                    .OuterJoin(rightStream.FlatMap(MockMapper.noOpFlatKeyValueMapper())
                                     .selectKey(MockMapper.selectKeyKeyValueMapper()),
-                            valueJoiner, JoinWindows.of(FromSeconds(10))).To(OUTPUT_TOPIC);
+                            valueJoiner, JoinWindows.Of(TimeSpan.FromSeconds(10))).To(OUTPUT_TOPIC);
 
             runTest(expectedResult);
         }
@@ -296,7 +296,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void TestMultiInner()
         {// throws Exception
-            STREAMS_CONFIG.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-multi-inner");
+            STREAMS_CONFIG.Put(StreamsConfig.ApplicationIdConfig, appID + "-multi-inner");
 
             List<List<KeyValueTimestamp<long, string>>> expectedResult = Arrays.asList(
                 null,
@@ -378,8 +378,8 @@ namespace Kafka.Streams.Tests.Integration
                     new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d-d", 15L))
             );
 
-            leftStream.Join(rightStream, valueJoiner, JoinWindows.of(FromSeconds(10)))
-                    .Join(rightStream, valueJoiner, JoinWindows.of(FromSeconds(10))).To(OUTPUT_TOPIC);
+            leftStream.Join(rightStream, valueJoiner, JoinWindows.Of(TimeSpan.FromSeconds(10)))
+                    .Join(rightStream, valueJoiner, JoinWindows.Of(TimeSpan.FromSeconds(10))).To(OUTPUT_TOPIC);
 
             runTest(expectedResult);
         }

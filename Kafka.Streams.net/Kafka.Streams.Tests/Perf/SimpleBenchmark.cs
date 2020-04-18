@@ -244,11 +244,11 @@
 //        int valueSize = int.parseInt(args[4]);
 
 //        StreamsConfig props = Utils.loadProps(propFileName);
-//        string kafka = props.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//        string kafka = props.getProperty(StreamsConfig.BootstrapServersConfig);
 
 //        if (kafka == null)
 //        {
-//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BootstrapServersConfig);
 //            System.exit(1);
 //        }
 
@@ -268,12 +268,12 @@
 
 //    public void SetStreamProperties(string applicationId)
 //    {
-//        props.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+//        props.Put(StreamsConfig.ApplicationIdConfig, applicationId);
 //        props.Put(StreamsConfig.CLIENT_ID_CONFIG, "simple-benchmark");
-//        props.Put(StreamsConfig.POLL_MS_CONFIG, POLL_MS);
+//        props.Put(StreamsConfig.PollMsConfig, POLL_MS);
 //        props.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL_MS);
-//        props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
-//        props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().GetType());
+//        props.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.Int().GetType());
+//        props.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.ByteArray().GetType());
 //        // the socket buffer needs to be large, especially when running in AWS with
 //        // high latency. if running locally the default is fine.
 //        props.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -288,16 +288,16 @@
 //    private StreamsConfig SetProduceConsumeProperties(string clientId)
 //    {
 //        StreamsConfig clientProps = new StreamsConfig();
-//        clientProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, props.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
+//        clientProps.Put(ProducerConfig.BootstrapServersConfig, props.getProperty(StreamsConfig.BootstrapServersConfig));
 //        clientProps.Put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
 //        // the socket buffer needs to be large, especially when running in AWS with
 //        // high latency. if running locally the default is fine.
 //        clientProps.Put(ProducerConfig.LINGER_MS_CONFIG, 5000);
 //        clientProps.Put(ProducerConfig.BATCH_SIZE_CONFIG, 128 * 1024);
 //        clientProps.Put(ProducerConfig.SEND_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
-//        clientProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer);
+//        clientProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.Int().Serializer);
 //        clientProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
-//        clientProps.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
+//        clientProps.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.Int().Deserializer);
 //        clientProps.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
 //        clientProps.Put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
 //        // the socket buffer needs to be large, especially when running in AWS with
@@ -452,7 +452,7 @@
 
 //        builder.Stream(topic, Consumed.With(INTEGER_SERDE, BYTE_SERDE)).peek(new CountDownAction(latch));
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 //        runGenericBenchmark(streams, "Streams Source Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
 //    }
 
@@ -467,7 +467,7 @@
 //        IKStream<K, V> source = builder.Stream(topic);
 //        source.peek(new CountDownAction(latch)).To(SINK_TOPIC);
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 //        runGenericBenchmark(streams, "Streams SourceSink Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
 //    }
 
@@ -511,7 +511,7 @@
 //    }
 //        }, "store");
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 //    runGenericBenchmark(streams, "Streams Stateful Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
 //    }
 
@@ -571,7 +571,7 @@
 //    }
 //        }, "store");
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 //    runGenericBenchmark(streams, "Streams Stateful Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
 //    }
 
@@ -593,7 +593,7 @@
 //                .GroupByKey()
 //                .Count();
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 //        runGenericBenchmark(streams, "Streams Count Performance [records/latency/rec-sec/MB-sec counted]: ", latch);
 //    }
 
@@ -613,10 +613,10 @@
 
 //        input.peek(new CountDownAction(latch))
 //                .GroupByKey()
-//                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(AGGREGATE_WINDOW_SIZE)).advanceBy(TimeSpan.FromMilliseconds(AGGREGATE_WINDOW_ADVANCE)))
+//                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(AGGREGATE_WINDOW_SIZE)).advanceBy(TimeSpan.FromMilliseconds(AGGREGATE_WINDOW_ADVANCE)))
 //                .Count();
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 //        runGenericBenchmark(streams, "Streams Count Windowed Performance [records/latency/rec-sec/MB-sec counted]: ", latch);
 //    }
 
@@ -637,7 +637,7 @@
 
 //        input1.LeftJoin(input2, VALUE_JOINER).ForEach(new CountDownAction(latch));
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
 //        // run benchmark
 //        runGenericBenchmark(streams, "Streams KStreamKTable LeftJoin Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
@@ -658,9 +658,9 @@
 //        IKStream<K, V> input1 = builder.Stream(kStreamTopic1);
 //        IKStream<K, V> input2 = builder.Stream(kStreamTopic2);
 
-//        input1.LeftJoin(input2, VALUE_JOINER, JoinWindows.of(TimeSpan.FromMilliseconds(STREAM_STREAM_JOIN_WINDOW))).ForEach(new CountDownAction(latch));
+//        input1.LeftJoin(input2, VALUE_JOINER, JoinWindows.Of(TimeSpan.FromMilliseconds(STREAM_STREAM_JOIN_WINDOW))).ForEach(new CountDownAction(latch));
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
 //        // run benchmark
 //        runGenericBenchmark(streams, "Streams KStreamKStream LeftJoin Performance [records/latency/rec-sec/MB-sec  joined]: ", latch);
@@ -684,7 +684,7 @@
 
 //        input1.LeftJoin(input2, VALUE_JOINER).ToStream().ForEach(new CountDownAction(latch));
 
-//        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+//        KafkaStreamsThread streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
 //        // run benchmark
 //        runGenericBenchmark(streams, "Streams KTableKTable LeftJoin Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
@@ -699,9 +699,9 @@
 //            megabytesPerSec(latency, processedBytes));
 //    }
 
-//    void RunGenericBenchmark(KafkaStreams streams, string nameOfBenchmark, CountDownLatch latch)
+//    void RunGenericBenchmark(KafkaStreamsThread streams, string nameOfBenchmark, CountDownLatch latch)
 //    {
-//        streams.start();
+//        streams.Start();
 
 //        long startTime = System.currentTimeMillis();
 //        long endTime = startTime;
@@ -746,9 +746,9 @@
 //        }
 //    }
 
-//    private KafkaStreams CreateKafkaStreamsWithExceptionHandler(StreamsBuilder builder, StreamsConfig props)
+//    private KafkaStreamsThread CreateKafkaStreamsWithExceptionHandler(StreamsBuilder builder, StreamsConfig props)
 //    {
-//        KafkaStreams streamsClient = new KafkaStreams(builder.Build(), props);
+//        KafkaStreamsThread streamsClient = new KafkaStreamsThread(builder.Build(), props);
 //        streamsClient.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler()
 //        {
 
@@ -757,7 +757,7 @@
 //        {
 //            System.Console.Out.WriteLine("FATAL: An unexpected exception is encountered on thread " + t + ": " + e);
 
-//            streamsClient.Close(FromSeconds(30));
+//            streamsClient.Close(TimeSpan.FromSeconds(30));
 //        }
 //    });
 

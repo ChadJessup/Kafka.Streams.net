@@ -28,16 +28,16 @@ namespace Kafka.Streams.Tests.Tests
 //    string additionalConfigs = args[1];
 
 //    StreamsConfig streamsProperties = Utils.loadProps(propFileName);
-//    string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//    string kafka = streamsProperties.getProperty(StreamsConfig.BootstrapServersConfig);
 
 //        if (kafka == null) {
-//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BootstrapServersConfig);
 //            System.exit(1);
 //        }
 
-//streamsProperties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-resilience");
-//        streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType());
-//        streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType());
+//streamsProperties.Put(StreamsConfig.ApplicationIdConfig, "kafka-streams-resilience");
+//        streamsProperties.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType());
+//        streamsProperties.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType());
 //        streamsProperties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
 
 
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Tests
 //}
 //            }).To(SINK_TOPIC);
 
-//KafkaStreams streams = new KafkaStreams(builder.Build(), streamsProperties);
+//KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), streamsProperties);
 
 //streams.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
@@ -87,7 +87,7 @@ namespace Kafka.Streams.Tests.Tests
 //}
 //        });
 //        System.Console.Out.WriteLine("Start Kafka Streams");
-//        streams.start();
+//        streams.Start();
 
 //        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
 //{

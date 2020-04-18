@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Integration
                     .WithCachingDisabled()).ToStream().To(OUTPUT_TOPIC);
 
             StreamsConfig producerConfig = TestUtils.producerConfig(
-                    CLUSTER.bootstrapServers(), IntegerSerializer, BytesSerializer);
+                    CLUSTER.bootstrapServers(), Serdes.Int().Serializer, BytesSerializer);
 
             var initialKeyValues = new List<KeyValuePair<int, byte[]>>
             {
@@ -60,8 +60,8 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                     INPUT_TOPIC, initialKeyValues, producerConfig, mockTime);
 
-            KafkaStreams streams = new KafkaStreams(builder.Build(streamsConfiguration), streamsConfiguration);
-            streams.start();
+            KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(streamsConfiguration), streamsConfiguration);
+            streams.Start();
 
             StreamsConfig consumerConfig = TestUtils.consumerConfig(
                     CLUSTER.bootstrapServers(), Serdes.Int().Deserializer, Serdes.ByteArray().Deserializer);
@@ -78,8 +78,8 @@ namespace Kafka.Streams.Tests.Integration
                     Collections.singletonList(KeyValuePair.Create(2, new Bytes(new byte[3])));
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                     INPUT_TOPIC, newKeyValues, producerConfig, mockTime);
-            streams = new KafkaStreams(builder.Build(streamsConfiguration), streamsConfiguration);
-            streams.start();
+            streams = new KafkaStreamsThread(builder.Build(streamsConfiguration), streamsConfiguration);
+            streams.Start();
             IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(
                     consumerConfig, OUTPUT_TOPIC, newKeyValues);
             streams.Close();

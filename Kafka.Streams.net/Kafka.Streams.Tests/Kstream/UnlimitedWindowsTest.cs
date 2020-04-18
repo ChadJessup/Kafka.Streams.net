@@ -14,20 +14,20 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void shouldSetWindowStartTime()
         {
-            Assert.Equal(anyStartTime, UnlimitedWindows.of().startOn(ofEpochMilli(anyStartTime)).startMs);
+            Assert.Equal(anyStartTime, UnlimitedWindows.Of().startOn(ofEpochMilli(anyStartTime)).startMs);
         }
 
         [Fact]
         public void startTimeMustNotBeNegative()
         {
-            UnlimitedWindows.of().startOn(ofEpochMilli(-1));
+            UnlimitedWindows.Of().startOn(ofEpochMilli(-1));
         }
 
 
         [Fact]
         public void shouldThrowOnUntil()
         {
-            UnlimitedWindows windowSpec = UnlimitedWindows.of();
+            UnlimitedWindows windowSpec = UnlimitedWindows.Of();
             try
             {
                 windowSpec.until(42);
@@ -42,7 +42,7 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void shouldIncludeRecordsThatHappenedOnWindowStart()
         {
-            UnlimitedWindows w = UnlimitedWindows.of().startOn(ofEpochMilli(anyStartTime));
+            UnlimitedWindows w = UnlimitedWindows.Of().startOn(ofEpochMilli(anyStartTime));
             Dictionary<long, UnlimitedWindow> matchedWindows = w.windowsFor(w.startMs);
             Assert.Single(matchedWindows);
             Assert.Equal(new UnlimitedWindow(anyStartTime), matchedWindows[anyStartTime]);
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void shouldIncludeRecordsThatHappenedAfterWindowStart()
         {
-            UnlimitedWindows w = UnlimitedWindows.of().startOn(ofEpochMilli(anyStartTime));
+            UnlimitedWindows w = UnlimitedWindows.Of().startOn(ofEpochMilli(anyStartTime));
             long timestamp = w.startMs + 1;
             Dictionary<long, UnlimitedWindow> matchedWindows = w.windowsFor(timestamp);
             Assert.Single(matchedWindows);
@@ -61,7 +61,7 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void shouldExcludeRecordsThatHappenedBeforeWindowStart()
         {
-            UnlimitedWindows w = UnlimitedWindows.of().startOn(ofEpochMilli(anyStartTime));
+            UnlimitedWindows w = UnlimitedWindows.Of().startOn(ofEpochMilli(anyStartTime));
             long timestamp = w.startMs - 1;
             Dictionary<long, UnlimitedWindow> matchedWindows = w.windowsFor(timestamp);
             Assert.False(matchedWindows.Any());
@@ -70,16 +70,16 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void.EqualsAndHashcodeShouldBeValidForPositiveCases()
         {
-            VerifyEquality(UnlimitedWindows.of(), UnlimitedWindows.of());
+            VerifyEquality(UnlimitedWindows.Of(), UnlimitedWindows.Of());
 
-            VerifyEquality(UnlimitedWindows.of().startOn(ofEpochMilli(1)), UnlimitedWindows.of().startOn(ofEpochMilli(1)));
+            VerifyEquality(UnlimitedWindows.Of().startOn(ofEpochMilli(1)), UnlimitedWindows.Of().startOn(ofEpochMilli(1)));
 
         }
 
         [Fact]
         public void.EqualsAndHashcodeShouldBeValidForNegativeCases()
         {
-            EqualityCheck.VerifyInEquality(UnlimitedWindows.of().startOn(ofEpochMilli(9)), UnlimitedWindows.of().startOn(ofEpochMilli(1)));
+            EqualityCheck.VerifyInEquality(UnlimitedWindows.Of().startOn(ofEpochMilli(9)), UnlimitedWindows.Of().startOn(ofEpochMilli(1)));
         }
 
     }

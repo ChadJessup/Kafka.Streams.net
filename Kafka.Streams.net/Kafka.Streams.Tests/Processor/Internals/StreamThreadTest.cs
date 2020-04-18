@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             StreamThread thread = CreateStreamThread(clientId, config, false);
 
             StateListenerStub stateListener = new StateListenerStub();
-            thread.setStateListener(stateListener);
+            thread.SetStateListener(stateListener);
             Assert.Equal(thread.state(), StreamThreadStates.CREATED);
 
             ConsumerRebalanceListener RebalanceListener = thread.RebalanceListener;
@@ -128,9 +128,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
             StreamThread thread = CreateStreamThread(clientId, config, false);
 
             StateListenerStub stateListener = new StateListenerStub();
-            thread.setStateListener(stateListener);
+            thread.SetStateListener(stateListener);
 
-            thread.start();
+            thread.Start();
             TestUtils.WaitForCondition(
                 () => thread.state() == StreamThreadStates.STARTING,
                 10 * 1000,
@@ -1140,7 +1140,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             setupInternalTopologyWithoutState();
             IStoreBuilder storeBuilder = new MockKeyValueStoreBuilder("myStore", true);
-            storeBuilder.withLoggingDisabled();
+            storeBuilder.WithLoggingDisabled();
             internalTopologyBuilder.AddStateStore(storeBuilder, "processor1");
 
             StandbyTask standbyTask = createStandbyTask();

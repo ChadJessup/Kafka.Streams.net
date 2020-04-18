@@ -34,7 +34,7 @@ namespace Kafka.Streams.Tests.Integration
         private string globalStore = "globalStore";
         private StreamsBuilder builder;
         private StreamsConfig streamsConfiguration;
-        private KafkaStreams kafkaStreams;
+        private KafkaStreamsThread kafkaStreams;
         private string globalStoreTopic;
         private string streamTopic;
         private List<long> retrievedValuesList = new List<long>();
@@ -86,11 +86,11 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void ShouldFinishGlobalStoreOperationOnShutDown()
         {// throws Exception
-            kafkaStreams = new KafkaStreams(builder.Build(), streamsConfiguration);
+            kafkaStreams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
             populateTopics(globalStoreTopic);
             populateTopics(streamTopic);
 
-            kafkaStreams.start();
+            kafkaStreams.Start();
 
             TestUtils.WaitForCondition(
                 () => firstRecordProcessed,
@@ -109,7 +109,7 @@ namespace Kafka.Streams.Tests.Integration
             streamTopic = "stream-topic";
             globalStoreTopic = "global-store-topic";
             CLUSTER.createTopics(streamTopic);
-            CLUSTER.createTopic(globalStoreTopic);
+            CLUSTER.CreateTopic(globalStoreTopic);
         }
 
 

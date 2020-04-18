@@ -3,11 +3,11 @@ using System;
 
 namespace Kafka.Streams.KStream
 {
-    public class Initializer<VA> : IInitializer<VA>
+    public class WrappedInitializer<VA> : IInitializer<VA>
     {
-        private readonly Func<VA> initializer;
+        private readonly Initializer<VA> initializer;
 
-        public Initializer(Func<VA> initializer)
+        public WrappedInitializer(Initializer<VA> initializer)
             => this.initializer = initializer;
 
         public VA Apply()

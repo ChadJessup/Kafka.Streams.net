@@ -243,7 +243,7 @@ namespace Kafka.Streams.Tests.State
         //         this.storesFactory.InMemoryKeyValueStore("Name"),
         //         Serdes.String(),
         //         Serdes.String()
-        //     ).withLoggingDisabled().withCachingDisabled().Build();
+        //     ).WithLoggingDisabled().WithCachingDisabled().Build();
         //     Assert.NotNull(store);
         // 
         //     Assert.IsAssignableFrom<ITimestampedBytesStore>(((WrappedStateStore)store).GetWrappedStateStore());
@@ -294,8 +294,8 @@ namespace Kafka.Streams.Tests.State
         //        this.storesFactory.InMemoryWindowStore("store", TimeSpan.FromMilliseconds(3L), TimeSpan.FromMilliseconds(3L), true),
         //        Serdes.String(),
         //        Serdes.String())
-        //        .withLoggingDisabled()
-        //        .withCachingDisabled()
+        //        .WithLoggingDisabled()
+        //        .WithCachingDisabled()
         //        .Build();
         //
         //    Assert.NotNull(store);

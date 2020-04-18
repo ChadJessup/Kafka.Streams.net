@@ -124,7 +124,7 @@
 //         */
 //        public void CreateTopic(string topic)
 //        {
-//            createTopic(topic, 1, 1, Collections.emptyMap());
+//            CreateTopic(topic, 1, 1, Collections.emptyMap());
 //        }
 
 //        /**
@@ -136,7 +136,7 @@
 //         */
 //        public void CreateTopic(string topic, int partitions, int replication)
 //        {
-//            createTopic(topic, partitions, replication, Collections.emptyMap());
+//            CreateTopic(topic, partitions, replication, Collections.emptyMap());
 //        }
 
 //        /**
@@ -165,7 +165,7 @@
 //        public Admin createAdminClient()
 //        {
 //            StreamsConfig adminClientConfig = new StreamsConfig();
-//            adminClientConfig.Put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, BrokerList());
+//            adminClientConfig.Put(AdminClientConfig.BootstrapServersConfig, BrokerList());
 //            //object listeners = effectiveConfig.Get(KafkaConfig$.MODULE$.ListenersProp());
 //            //if (listeners != null && listeners.ToString().Contains("SSL"))
 //            //{

@@ -7,7 +7,7 @@ namespace Kafka.Streams.Errors
 
 
     /**
-     * Indicates that none of the specified {@link org.apache.kafka.streams.StreamsConfig#BOOTSTRAP_SERVERS_CONFIG brokers}
+     * Indicates that none of the specified {@link org.apache.kafka.streams.StreamsConfig#BootstrapServersConfig brokers}
      * could be found.
      *
      * @see org.apache.kafka.streams.StreamsConfig

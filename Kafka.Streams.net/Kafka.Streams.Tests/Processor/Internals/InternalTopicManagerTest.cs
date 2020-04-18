@@ -25,8 +25,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private Dictionary<string, object> config = new HashMap<string, object>();
         //        {
         //        {
-        //            Put(StreamsConfig.APPLICATION_ID_CONFIG, "app-id");
-        //        Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, broker1.host() + ":" + broker1.port());
+        //            Put(StreamsConfig.ApplicationIdConfig, "app-id");
+        //        Put(StreamsConfig.BootstrapServersConfig, broker1.host() + ":" + broker1.port());
         //        Put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 1);
         //        Put(StreamsConfig.adminClientPrefix(StreamsConfig.RETRIES_CONFIG), 1);
         //        Put(StreamsConfig.producerPrefix(ProducerConfig.BATCH_SIZE_CONFIG), 16384);

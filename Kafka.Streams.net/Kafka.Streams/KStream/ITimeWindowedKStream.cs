@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
          * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-${internalStoreName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "internalStoreName" is an internal name
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "internalStoreName" is an internal name
          * and "-changelog" is a fixed suffix.
          * Note that the internal store name may not be queriable through Interactive Queries.
          *
@@ -54,7 +54,7 @@ namespace Kafka.Streams.KStream.Internals
          * @return a {@link KTable} that contains "update" records with unmodified keys and {@link Long} values that
          * represent the latest (rolling) count (i.e., number of records) for each key
          */
-        IKTable<Windowed<K>, long> Count();
+        IKTable<IWindowed<K>, long> Count();
 
         /**
          * Count the number of records in this stream by the grouped key and the defined windows.
@@ -89,7 +89,7 @@ namespace Kafka.Streams.KStream.Internals
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          *
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
@@ -100,7 +100,7 @@ namespace Kafka.Streams.KStream.Internals
          * @return a {@link KTable} that contains "update" records with unmodified keys and {@link Long} values that
          * represent the latest (rolling) count (i.e., number of records) for each key
          */
-        IKTable<Windowed<K>, long> Count(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized);
+        IKTable<IWindowed<K>, long> Count(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized);
 
         /**
          * Aggregate the values of records in this stream by the grouped key.
@@ -132,7 +132,7 @@ namespace Kafka.Streams.KStream.Internals
          * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-${internalStoreName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "internalStoreName" is an internal name
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "internalStoreName" is an internal name
          * and "-changelog" is a fixed suffix.
          * Note that the internal store name may not be queriable through Interactive Queries.
          *
@@ -145,9 +145,9 @@ namespace Kafka.Streams.KStream.Internals
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
          * latest (rolling) aggregate for each key
          */
-        IKTable<Windowed<K>, VR> Aggregate<VR>(
-            IInitializer<VR> initializer,
-            IAggregator<K, V, VR> aggregator);
+        IKTable<IWindowed<K>, VR> Aggregate<VR>(
+            Initializer<VR> initializer,
+            Aggregator<K, V, VR> aggregator);
 
         /**
          * Aggregate the values of records in this stream by the grouped key.
@@ -192,7 +192,7 @@ namespace Kafka.Streams.KStream.Internals
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          *
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
@@ -204,9 +204,9 @@ namespace Kafka.Streams.KStream.Internals
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
          * latest (rolling) aggregate for each key
          */
-        IKTable<Windowed<K>, VR> Aggregate<VR>(
-            IInitializer<VR> initializer,
-            IAggregator<K, V, VR> aggregator,
+        IKTable<IWindowed<K>, VR> Aggregate<VR>(
+            Initializer<VR> initializer,
+            Aggregator<K, V, VR> aggregator,
             Materialized<K, VR, IWindowStore<Bytes, byte[]>> materialized);
 
         /**
@@ -233,7 +233,7 @@ namespace Kafka.Streams.KStream.Internals
          * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
          * The changelog topic will be named "${applicationId}-${internalStoreName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "internalStoreName" is an internal name
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "internalStoreName" is an internal name
          * and "-changelog" is a fixed suffix.
          *
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
@@ -242,7 +242,7 @@ namespace Kafka.Streams.KStream.Internals
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
          * latest (rolling) aggregate for each key
          */
-        IKTable<Windowed<K>, V> Reduce(IReducer<V> reducer);
+        IKTable<IWindowed<K>, V> Reduce(IReducer<V> reducer);
 
         /**
          * Combine the values of records in this stream by the grouped key.
@@ -284,7 +284,7 @@ namespace Kafka.Streams.KStream.Internals
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          *
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.

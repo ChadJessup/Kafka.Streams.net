@@ -42,7 +42,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
 
             stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
-            stream.filter(isMultipleOfThree).Process(supplier);
+            stream.Filter(isMultipleOfThree).Process(supplier);
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             foreach (var expectedKey in expectedKeys)
@@ -63,7 +63,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
 
             stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
-            stream.filterNot(isMultipleOfThree).Process(supplier);
+            stream.FilterNot(isMultipleOfThree).Process(supplier);
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             foreach (var expectedKey in expectedKeys)
@@ -81,8 +81,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             new StreamsBuilder()
                 .Stream<int, string>("empty")
-                .filter(numberKeyPredicate)
-                .filterNot(numberKeyPredicate)
+                .Filter(numberKeyPredicate)
+                .FilterNot(numberKeyPredicate)
                 .To("nirvana");
 
         }

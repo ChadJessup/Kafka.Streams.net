@@ -127,8 +127,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private Dictionary<string, object> ConfigProps()
         {
             Dictionary<string, object> configurationMap = new HashMap<>();
-            configurationMap.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-            configurationMap.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, userEndPoint);
+            configurationMap.Put(StreamsConfig.ApplicationIdConfig, applicationId);
+            configurationMap.Put(StreamsConfig.BootstrapServersConfig, userEndPoint);
             configurationMap.Put(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, taskManager);
             configurationMap.Put(StreamsConfig.InternalConfig.ASSIGNMENT_ERROR_CODE, new int());
             return configurationMap;
@@ -787,7 +787,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             IKStream<K, V> stream1 = builder
                 .Stream("topic1")
                 // force creation of internal repartition topic
-                .map((KeyValueMapper<object, object, KeyValuePair<object, object>>)KeyValuePair);
+                .Map((KeyValueMapper<object, object, KeyValuePair<object, object>>)KeyValuePair);
 
             // KTable with 4 partitions
             KTable<object, long> table1 = builder
@@ -798,7 +798,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             // joining the stream and the table
             // this triggers the enforceCopartitioning() routine in the StreamsPartitionAssignor,
-            // forcing the stream.map to get repartitioned to a topic with four partitions.
+            // forcing the stream.Map to get repartitioned to a topic with four partitions.
             stream1.Join(
                 table1,
                 (ValueJoiner)(value1, value2) => null);
@@ -967,7 +967,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 // force repartitioning for join, but second join input topic unknown
                 // => internal repartitioning topic should not get created
                 .ToStream()
-                .map((KeyValueMapper<object, long, KeyValuePair<object, object>>)(key, value) => null);
+                .Map((KeyValueMapper<object, long, KeyValuePair<object, object>>)(key, value) => null);
 
             builder
                 // Task 3 (should not get created because input topic unknown)
@@ -982,7 +982,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 .Join(
                     stream1,
                     (ValueJoiner)(value1, value2) => null,
-                    JoinWindows.of(TimeSpan.FromMilliseconds(0))
+                    JoinWindows.Of(TimeSpan.FromMilliseconds(0))
                 );
 
             UUID uuid = UUID.randomUUID();

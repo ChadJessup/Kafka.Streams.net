@@ -131,14 +131,14 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        try {
 //            cluster.deleteAllTopicsAndWait(DEFAULT_TIMEOUT);
 //            foreach (string topic in topics) {
-//                cluster.createTopic(topic, partitionCount, 1);
+//                cluster.CreateTopic(topic, partitionCount, 1);
 //            }
 //        } catch (InterruptedException e) {
 //            throw new RuntimeException(e);
 //        }
 //    }
 
-//    public static void cleanStateAfterTest(EmbeddedKafkaCluster cluster, KafkaStreams driver) {
+//    public static void cleanStateAfterTest(EmbeddedKafkaCluster cluster, KafkaStreamsThread driver) {
 //        driver.cleanUp();
 //        try {
 //            cluster.deleteAllTopicsAndWait(DEFAULT_TIMEOUT);
@@ -403,7 +403,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     *   It's somewhat ok to get this wrong, as the main failure case would be an immediate return due to the clients
 //     *   not being initialized, which you can avoid with any non-zero value. But it's probably better to get it right ;)
 //     */
-//    public static void waitForCompletion(KafkaStreams streams,
+//    public static void waitForCompletion(KafkaStreamsThread streams,
 //                                         int expectedPartitions,
 //                                         int timeoutMilliseconds) {
 //        long start = System.currentTimeMillis();
@@ -486,10 +486,10 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param <V>                 Value type of the data records
 //     * @return All the records consumed, or null if no records are consumed
 //     */
-//    public static List<KeyValuePair<K, V>> waitUntilMinKeyValueRecordsReceived<K, V>(StreamsConfig consumerConfig,
+//    public static List<KeyValuePair<K, V>> WaitUntilMinKeyValueRecordsReceived<K, V>(StreamsConfig consumerConfig,
 //                                                                                  string topic,
 //                                                                                  int expectedNumRecords) {// throws InterruptedException
-//        return waitUntilMinKeyValueRecordsReceived(consumerConfig, topic, expectedNumRecords, DEFAULT_TIMEOUT);
+//        return WaitUntilMinKeyValueRecordsReceived(consumerConfig, topic, expectedNumRecords, DEFAULT_TIMEOUT);
 //    }
 
 //    /**
@@ -504,7 +504,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @return All the records consumed, or null if no records are consumed
 //     * @throws AssertionError    if the given wait time elapses
 //     */
-//    public static List<KeyValuePair<K, V>> waitUntilMinKeyValueRecordsReceived<K, V>(StreamsConfig consumerConfig,
+//    public static List<KeyValuePair<K, V>> WaitUntilMinKeyValueRecordsReceived<K, V>(StreamsConfig consumerConfig,
 //                                                                                  string topic,
 //                                                                                  int expectedNumRecords,
 //                                                                                  long waitTime) {// throws InterruptedException
@@ -630,7 +630,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //                accumData.addAll(readData);
 
 //                // filter out All intermediate records we don't want
-//                List<T> accumulatedActual = accumData.Stream().filter(expectedRecords::contains).collect(Collectors.toList());
+//                List<T> accumulatedActual = accumData.Stream().Filter(expectedRecords::contains).collect(Collectors.toList());
 
 //                // still need to check that for each key, the ordering is expected
 //                Dictionary<K, List<T>> finalAccumData = new HashMap<>();
@@ -779,7 +779,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //        HashSet<KeyValueTimestamp<string, long>> actual =
 //            results.Stream()
-//                   .map(result => new KeyValueTimestamp<>(result.Key, result.Value, result.Timestamp))
+//                   .Map(result => new KeyValueTimestamp<>(result.Key, result.Value, result.Timestamp))
 //                   .collect(Collectors.toSet());
 
 //        Assert.Equal(actual, (expected));
@@ -863,12 +863,12 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        return consumedValues;
 //    }
 
-//    public static KafkaStreams getStartedStreams(StreamsConfig streamsConfig, StreamsBuilder builder, bool clean) {
-//        KafkaStreams driver = new KafkaStreams(builder.Build(), streamsConfig);
+//    public static KafkaStreamsThread getStartedStreams(StreamsConfig streamsConfig, StreamsBuilder builder, bool clean) {
+//        KafkaStreamsThread driver = new KafkaStreamsThread(builder.Build(), streamsConfig);
 //        if (clean) {
 //            driver.cleanUp();
 //        }
-//        driver.start();
+//        driver.Start();
 //        return driver;
 //    }
 

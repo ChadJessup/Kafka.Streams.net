@@ -35,7 +35,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             joined = stream1.LeftJoin(
                 stream2,
                 MockValueJoiner.TOSTRING_JOINER,
-                JoinWindows.of(TimeSpan.FromMilliseconds(100)),
+                JoinWindows.Of(TimeSpan.FromMilliseconds(100)),
                 Joined.With(Serdes.Int(), Serdes.String(), Serdes.String()));
             joined.Process(supplier);
 
@@ -57,7 +57,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "A" + expectedKeys[i]));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+null", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+null", 0),
                 new KeyValueTimestamp<>(1, "A1+null", 0));
             // push two items to the other stream; this should produce two items
             // w1 = { 0:A0, 1:A1 }
@@ -68,7 +68,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic2, expectedKeys[i], "a" + expectedKeys[i]));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+a0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+a0", 0),
                 new KeyValueTimestamp<>(1, "A1+a1", 0));
             // push three items to the primary stream; this should produce four items
             // w1 = { 0:A0, 1:A1 }
@@ -79,7 +79,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "B" + expectedKeys[i]));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "B0+a0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "B0+a0", 0),
                 new KeyValueTimestamp<>(1, "B1+a1", 0),
                 new KeyValueTimestamp<>(2, "B2+null", 0));
             // push All items to the other stream; this should produce five items
@@ -91,7 +91,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic2, expectedKey, "b" + expectedKey));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+b0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+b0", 0),
                 new KeyValueTimestamp<>(0, "B0+b0", 0),
                 new KeyValueTimestamp<>(1, "A1+b1", 0),
                 new KeyValueTimestamp<>(1, "B1+b1", 0),
@@ -105,7 +105,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "C" + expectedKey));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "C0+a0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "C0+a0", 0),
                 new KeyValueTimestamp<>(0, "C0+b0", 0),
                 new KeyValueTimestamp<>(1, "C1+a1", 0),
                 new KeyValueTimestamp<>(1, "C1+b1", 0),
@@ -129,7 +129,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             joined = stream1.LeftJoin(
                 stream2,
                 MockValueJoiner.TOSTRING_JOINER,
-                JoinWindows.of(TimeSpan.FromMilliseconds(100)),
+                JoinWindows.Of(TimeSpan.FromMilliseconds(100)),
                 Joined.With(Serdes.Int(), Serdes.String(), Serdes.String()));
             joined.Process(supplier);
 
@@ -152,7 +152,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKeys[i], "A" + expectedKeys[i], time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+null", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+null", 0),
                 new KeyValueTimestamp<>(1, "A1+null", 0));
             // push four items to the other stream; this should produce two full-join items
             // w1 = { 0:A0 (ts: 0), 1:A1 (ts: 0) }
@@ -163,7 +163,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic2, expectedKey, "a" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+a0", 0),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "A0+a0", 0),
                 new KeyValueTimestamp<>(1, "A1+a1", 0));
             testUpperWindowBound(expectedKeys, driver, processor);
             testLowerWindowBound(expectedKeys, driver, processor);
@@ -186,7 +186,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic2, expectedKeys[i], "b" + expectedKeys[i], time + i));
             }
-            processor.checkAndClearProcessResult(EMPTY);
+            processor.CheckAndClearProcessResult(EMPTY);
 
             // push four items with larger timestamp to the primary stream; this should produce four full-join items
             // w1 = { 0:A0 (ts: 0), 1:A1 (ts: 0) }
@@ -201,7 +201,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "B" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "B0+b0", 1100),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "B0+b0", 1100),
                 new KeyValueTimestamp<>(1, "B1+b1", 1100),
                 new KeyValueTimestamp<>(2, "B2+b2", 1100),
                 new KeyValueTimestamp<>(3, "B3+b3", 1100));
@@ -220,7 +220,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "C" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "C0+null", 1101),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "C0+null", 1101),
                 new KeyValueTimestamp<>(1, "C1+b1", 1101),
                 new KeyValueTimestamp<>(2, "C2+b2", 1101),
                 new KeyValueTimestamp<>(3, "C3+b3", 1101));
@@ -241,7 +241,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "D" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "D0+null", 1102),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "D0+null", 1102),
                 new KeyValueTimestamp<>(1, "D1+null", 1102),
                 new KeyValueTimestamp<>(2, "D2+b2", 1102),
                 new KeyValueTimestamp<>(3, "D3+b3", 1102));
@@ -264,7 +264,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "E" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "E0+null", 1103),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "E0+null", 1103),
                 new KeyValueTimestamp<>(1, "E1+null", 1103),
                 new KeyValueTimestamp<>(2, "E2+null", 1103),
                 new KeyValueTimestamp<>(3, "E3+b3", 1103));
@@ -289,7 +289,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "F" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "F0+null", 1104),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "F0+null", 1104),
                 new KeyValueTimestamp<>(1, "F1+null", 1104),
                 new KeyValueTimestamp<>(2, "F2+null", 1104),
                 new KeyValueTimestamp<>(3, "F3+null", 1104));
@@ -323,7 +323,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "G" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "G0+null", 899),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "G0+null", 899),
                 new KeyValueTimestamp<>(1, "G1+null", 899), new KeyValueTimestamp<>(2, "G2+null", 899),
                 new KeyValueTimestamp<>(3, "G3+null", 899));
             // push four items with incrcase timestamp to the primary stream; this should produce three left-join and one full-join items
@@ -351,7 +351,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "H" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "H0+b0", 1000),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "H0+b0", 1000),
                 new KeyValueTimestamp<>(1, "H1+null", 900), new KeyValueTimestamp<>(2, "H2+null", 900),
                 new KeyValueTimestamp<>(3, "H3+null", 900));
             // push four items with incrcase timestamp to the primary stream; this should produce two left-join and two full-join items
@@ -381,7 +381,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "I" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "I0+b0", 1000),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "I0+b0", 1000),
                 new KeyValueTimestamp<>(1, "I1+b1", 1001), new KeyValueTimestamp<>(2, "I2+null", 901),
                 new KeyValueTimestamp<>(3, "I3+null", 901));
             // push four items with incrcase timestamp to the primary stream; this should produce one left-join and three full-join items
@@ -413,7 +413,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "J" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "J0+b0", 1000),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "J0+b0", 1000),
                 new KeyValueTimestamp<>(1, "J1+b1", 1001), new KeyValueTimestamp<>(2, "J2+b2", 1002),
                 new KeyValueTimestamp<>(3, "J3+null", 902));
             // push four items with incrcase timestamp to the primary stream; this should produce one left-join and three full-join items
@@ -447,7 +447,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 driver.PipeInput(recordFactory.Create(topic1, expectedKey, "K" + expectedKey, time));
             }
-            processor.checkAndClearProcessResult(new KeyValueTimestamp<>(0, "K0+b0", 1000),
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "K0+b0", 1000),
                 new KeyValueTimestamp<>(1, "K1+b1", 1001), new KeyValueTimestamp<>(2, "K2+b2", 1002),
                 new KeyValueTimestamp<>(3, "K3+b3", 1003));
         }

@@ -1,3 +1,4 @@
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,7 +13,7 @@ namespace Kafka.Streams.KStream.Internals
         private readonly TimeSpan joinBeforeMs;
         private readonly TimeSpan joinAfterMs;
 
-        private readonly IValueJoiner<V1, V2, R> joiner;
+        private readonly ValueJoiner<V1, V2, R> joiner;
         private readonly bool outer;
 
         public KStreamKStreamJoin(
@@ -20,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
             string otherWindowName,
             TimeSpan joinBeforeMs,
             TimeSpan joinAfterMs,
-            IValueJoiner<V1, V2, R> joiner,
+            ValueJoiner<V1, V2, R> joiner,
             bool outer)
         {
             this.context = context;

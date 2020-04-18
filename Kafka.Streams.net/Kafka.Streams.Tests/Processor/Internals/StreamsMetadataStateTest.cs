@@ -77,16 +77,16 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             builder = new StreamsBuilder();
             IKStream<K, V> one = builder.Stream("topic-one");
-            one.GroupByKey().Count(Materialized<object, long, IKeyValueStore<Bytes, byte[]>>.As("table-one"));
+            one.GroupByKey().Count(Materialized.As<object, long, IKeyValueStore<Bytes, byte[]>>("table-one"));
 
             IKStream<K, V> two = builder.Stream("topic-two");
-            two.GroupByKey().Count(Materialized<object, long, IKeyValueStore<Bytes, byte[]>>.As("table-two"));
+            two.GroupByKey().Count(Materialized.As<object, long, IKeyValueStore<Bytes, byte[]>>("table-two"));
 
             builder.Stream("topic-three")
                     .GroupByKey()
-                    .Count(Materialized<object, long, IKeyValueStore<Bytes, byte[]>>.As("table-three"));
+                    .Count(Materialized.As<object, long, IKeyValueStore<Bytes, byte[]>>("table-three"));
 
-            one.merge(two).GroupByKey().Count(Materialized<object, long, IKeyValueStore<Bytes, byte[]>>.As("merged-table"));
+            one.merge(two).GroupByKey().Count(Materialized.As<object, long, IKeyValueStore<Bytes, byte[]>>("merged-table"));
 
             builder.Stream("topic-four").MapValues(new ValueMapper<object, object>()
             {
@@ -100,7 +100,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         builder.globalTable("global-topic",
                             Consumed.With(null, null),
-                            Materialized<object, object, IKeyValueStore<Bytes, byte[]>>.As(globalTable));
+                            Materialized.As<object, object, IKeyValueStore<Bytes, byte[]>>(globalTable));
 
         TopologyWrapper.getInternalTopologyBuilder(builder.Build()).SetApplicationId("appId");
 
@@ -165,7 +165,7 @@ public void ShouldGetAllStreamInstances()
 [Fact]
 public void ShouldGetAllStreamsInstancesWithNoStores()
 {
-    builder.Stream("topic-five").filter(new Predicate<object, object>()
+    builder.Stream("topic-five").Filter(new Predicate<object, object>()
     {
 
 

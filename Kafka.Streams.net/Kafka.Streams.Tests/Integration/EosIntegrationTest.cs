@@ -49,9 +49,9 @@
 //                SINGLE_PARTITION_OUTPUT_TOPIC, MULTI_PARTITION_OUTPUT_TOPIC);
 
 //            CLUSTER.createTopics(SINGLE_PARTITION_INPUT_TOPIC, SINGLE_PARTITION_THROUGH_TOPIC, SINGLE_PARTITION_OUTPUT_TOPIC);
-//            CLUSTER.createTopic(MULTI_PARTITION_INPUT_TOPIC, NUM_TOPIC_PARTITIONS, 1);
-//            CLUSTER.createTopic(MULTI_PARTITION_THROUGH_TOPIC, NUM_TOPIC_PARTITIONS, 1);
-//            CLUSTER.createTopic(MULTI_PARTITION_OUTPUT_TOPIC, NUM_TOPIC_PARTITIONS, 1);
+//            CLUSTER.CreateTopic(MULTI_PARTITION_INPUT_TOPIC, NUM_TOPIC_PARTITIONS, 1);
+//            CLUSTER.CreateTopic(MULTI_PARTITION_THROUGH_TOPIC, NUM_TOPIC_PARTITIONS, 1);
+//            CLUSTER.CreateTopic(MULTI_PARTITION_OUTPUT_TOPIC, NUM_TOPIC_PARTITIONS, 1);
 //        }
 
 //        [Fact]
@@ -105,7 +105,7 @@
 //            output.To(outputTopic);
 
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//            properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.StreamsConfig.ExactlyOnceConfig);
 //            properties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
 //            properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
 //            properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.MAX_POLL_RECORDS_CONFIG), 1);
@@ -121,8 +121,8 @@
 //                    Serdes.LongSerde.getName(),
 //                    properties);
 
-//                KafkaStreams streams = new KafkaStreams(builder.Build(), config);
-//                streams.start();
+//                KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), config);
+//                streams.Start();
 
 //                List<KeyValuePair<long, long>> inputData = prepareData(i * 100, i * 100 + 10L, 0L, 1L);
 
@@ -134,7 +134,7 @@
 //                );
 
 //                List<KeyValuePair<long, long>> committedRecords =
-//                    IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(
+//                    IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(
 //                        TestUtils.consumerConfig(
 //                            CLUSTER.bootstrapServers(),
 //                            CONSUMER_GROUP_ID,
@@ -198,7 +198,7 @@
 //            builder.Stream(SINGLE_PARTITION_INPUT_TOPIC).To(SINGLE_PARTITION_OUTPUT_TOPIC);
 
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//            properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.StreamsConfig.ExactlyOnceConfig);
 //            properties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
 //            properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
 //            properties.Put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "1000");
@@ -211,8 +211,8 @@
 //                Serdes.LongSerde.getName(),
 //                properties);
 
-//            KafkaStreams streams = new KafkaStreams(builder.Build(), config);
-//            streams.start();
+//            KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), config);
+//            streams.Start();
 
 //            List<KeyValuePair<long, long>> firstBurstOfData = prepareData(0L, 5L, 0L);
 //            List<KeyValuePair<long, long>> secondBurstOfData = prepareData(5L, 8L, 0L);
@@ -225,7 +225,7 @@
 //            );
 
 //            List<KeyValuePair<long, long>> firstCommittedRecords =
-//                IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(
+//                IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(
 //                    TestUtils.consumerConfig(
 //                        CLUSTER.bootstrapServers(),
 //                        CONSUMER_GROUP_ID,
@@ -249,7 +249,7 @@
 //            );
 
 //            List<KeyValuePair<long, long>> secondCommittedRecords =
-//                IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(
+//                IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(
 //                    TestUtils.consumerConfig(
 //                        CLUSTER.bootstrapServers(),
 //                        CONSUMER_GROUP_ID,
@@ -277,8 +277,8 @@
 //         // => the failure only kills one thread
 //         // after fail over, we should read 40 committed records (even if 50 record got written)
 
-//            KafkaStreams streams = getKafkaStreams(false, "appDir", 2);
-//            streams.start();
+//            KafkaStreamsThread streams = getKafkaStreams(false, "appDir", 2);
+//            streams.Start();
 
 //            List<KeyValuePair<long, long>> committedDataBeforeFailure = prepareData(0L, 10L, 0L, 1L);
 //            List<KeyValuePair<long, long>> uncommittedDataBeforeFailure = prepareData(10L, 15L, 0L, 1L);
@@ -346,8 +346,8 @@
 //     // after fail over, we should read 40 committed records and the state stores should contain the correct sums
 //     // per key (even if some records got processed twice)
 
-//        KafkaStreams streams = getKafkaStreams(true, "appDir", 2);
-//        streams.start();
+//        KafkaStreamsThread streams = getKafkaStreams(true, "appDir", 2);
+//        streams.Start();
 
 //        List<KeyValuePair<long, long>> committedDataBeforeFailure = prepareData(0L, 10L, 0L, 1L);
 //        List<KeyValuePair<long, long>> uncommittedDataBeforeFailure = prepareData(10L, 15L, 0L, 1L, 2L, 3L);
@@ -419,10 +419,10 @@
 // // afterwards, the "stalling" thread resumes, and another rebalance should get triggered
 // // we write the remaining 20 records and verify to read 60 result records
 
-//    KafkaStreams streams1 = getKafkaStreams(false, "appDir1", 1);
-//    KafkaStreams streams2 = getKafkaStreams(false, "appDir2", 1);
-//    streams1.start();
-//    streams2.start();
+//    KafkaStreamsThread streams1 = getKafkaStreams(false, "appDir1", 1);
+//    KafkaStreamsThread streams2 = getKafkaStreams(false, "appDir2", 1);
+//    streams1.Start();
+//    streams2.Start();
 
 //    List<KeyValuePair<long, long>> committedDataBeforeGC = prepareData(0L, 10L, 0L, 1L);
 //    List<KeyValuePair<long, long>> uncommittedDataBeforeGC = prepareData(10L, 15L, 0L, 1L);
@@ -511,7 +511,7 @@
 //    return data;
 //}
 
-//private KafkaStreams getKafkaStreams(bool withState,
+//private KafkaStreamsThread getKafkaStreams(bool withState,
 //                                     string appDir,
 //                                     int numberOfStreamsThreads)
 //{
@@ -620,7 +620,7 @@
 //            .To(SINGLE_PARTITION_OUTPUT_TOPIC);
 
 //StreamsConfig properties = new StreamsConfig();
-//properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//properties.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.StreamsConfig.ExactlyOnceConfig);
 //    properties.Put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, numberOfStreamsThreads);
 //    properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, long.MaxValue);
 //    properties.Put(StreamsConfig.consumerPrefix(ConsumerConfig.METADATA_MAX_AGE_CONFIG), "1000");
@@ -639,7 +639,7 @@
 //        Serdes.LongSerde.getName(),
 //        properties);
 
-//KafkaStreams streams = new KafkaStreams(builder.Build(), config);
+//KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), config);
 
 //streams.setUncaughtExceptionHandler((t, e) =>
 //    {
@@ -669,7 +669,7 @@
 //{// throws Exception
 //    if (groupId != null)
 //    {
-//        return IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(
+//        return IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(
 //            TestUtils.consumerConfig(
 //                CLUSTER.bootstrapServers(),
 //                groupId,
@@ -684,7 +684,7 @@
 //    }
 
 //    // read uncommitted
-//    return IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(
+//    return IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(
 //        TestUtils.consumerConfig(CLUSTER.bootstrapServers(), LongDeserializer, LongDeserializer),
 //        SINGLE_PARTITION_OUTPUT_TOPIC,
 //        numberOfRecords
@@ -739,7 +739,7 @@
 //    return expectedResult;
 //}
 
-//private void VerifyStateStore(KafkaStreams streams,
+//private void VerifyStateStore(KafkaStreamsThread streams,
 //                              HashSet<KeyValuePair<long, long>> expectedStoreContent)
 //{
 //    IReadOnlyKeyValueStore<long, long> store = null;

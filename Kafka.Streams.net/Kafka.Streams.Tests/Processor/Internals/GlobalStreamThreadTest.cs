@@ -51,7 +51,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //        builder.addGlobalStore(
             //
             //
-            //                new TimestampedKeyValueStoreMaterializer<>(materialized).materialize().withLoggingDisabled(),
+            //                new TimestampedKeyValueStoreMaterializer<>(materialized).materialize().WithLoggingDisabled(),
             //            "sourceName",
             //            null,
             //            null,
@@ -61,8 +61,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //            new KTableSource<>(GLOBAL_STORE_NAME, GLOBAL_STORE_NAME));
             //
             //        HashDictionary<string, object> properties = new HashMap<>();
-            //        properties.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "blah");
-            //        properties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "blah");
+            //        properties.Put(StreamsConfig.BootstrapServersConfig, "blah");
+            //        properties.Put(StreamsConfig.ApplicationIdConfig, "blah");
             //        properties.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
             //        config = new StreamsConfig(properties);
             //        globalStreamThread = new GlobalStreamThread(builder.rewriteTopology(config).buildGlobalStateTopology(),
@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             // partitions available
             try
             {
-                globalStreamThread.start();
+                globalStreamThread.Start();
                 Assert.True(false, "Should have thrown StreamsException if start up failed");
             }
             catch (StreamsException e)
@@ -117,7 +117,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //                                                    stateRestoreListener);
             //
             //        try {
-            //            globalStreamThread.start();
+            //            globalStreamThread.Start();
             //            Assert.True(false, "Should have thrown StreamsException if start up failed");
             //} catch (StreamsException e) {
             //            Assert.Equal(e.getCause(), instanceOf(RuntimeException));
@@ -130,7 +130,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldBeRunningAfterSuccessfulStart()
         {
             initializeConsumer();
-            globalStreamThread.start();
+            globalStreamThread.Start();
             Assert.True(globalStreamThread.stillRunning());
         }
 
@@ -138,7 +138,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             public void ShouldStopRunningWhenClosedByUser()
         {// throws Exception
             initializeConsumer();
-            globalStreamThread.start();
+            globalStreamThread.Start();
             globalStreamThread.Shutdown();
             globalStreamThread.Join();
             Assert.Equal(GlobalStreamThread.State.DEAD, globalStreamThread.state());
@@ -148,7 +148,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldCloseStateStoresOnClose()
         {// throws Exception
             initializeConsumer();
-            globalStreamThread.start();
+            globalStreamThread.Start();
             IStateStore globalStore = builder.globalStateStores().Get(GLOBAL_STORE_NAME);
             Assert.True(globalStore.IsOpen());
             globalStreamThread.Shutdown();
@@ -161,7 +161,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldTransitionToDeadOnClose()
         {// throws Exception
             initializeConsumer();
-            globalStreamThread.start();
+            globalStreamThread.Start();
             globalStreamThread.Shutdown();
             globalStreamThread.Join();
 
@@ -173,7 +173,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldStayDeadAfterTwoCloses()
         {// throws Exception
             initializeConsumer();
-            globalStreamThread.start();
+            globalStreamThread.Start();
             globalStreamThread.Shutdown();
             globalStreamThread.Join();
             globalStreamThread.Shutdown();
@@ -186,7 +186,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldTransitionToRunningOnStart()
         {// throws Exception
             initializeConsumer();
-            globalStreamThread.start();
+            globalStreamThread.Start();
 
             TestUtils.WaitForCondition(
                 () => globalStreamThread.state() == RUNNING,
@@ -200,7 +200,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldDieOnInvalidOffsetException()
         {// throws Exception
             initializeConsumer();
-            globalStreamThread.start();
+            globalStreamThread.Start();
 
             TestUtils.WaitForCondition(
                 () => globalStreamThread.state() == RUNNING,

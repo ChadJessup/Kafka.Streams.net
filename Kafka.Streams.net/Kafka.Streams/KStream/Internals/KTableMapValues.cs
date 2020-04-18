@@ -1,3 +1,4 @@
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
 
@@ -7,14 +8,14 @@ namespace Kafka.Streams.KStream.Internals
     {
         private readonly KafkaStreamsContext context;
         private readonly IKTable<K, V> parent;
-        private readonly IValueMapperWithKey<K, V, V1> mapper;
+        private readonly ValueMapperWithKey<K, V, V1> mapper;
         private readonly string queryableName;
         private bool sendOldValues = false;
 
         public KTableMapValues(
             KafkaStreamsContext context,
             IKTable<K, V> parent,
-            IValueMapperWithKey<K, V, V1> mapper,
+            ValueMapperWithKey<K, V, V1> mapper,
             string queryableName)
         {
             this.context = context;

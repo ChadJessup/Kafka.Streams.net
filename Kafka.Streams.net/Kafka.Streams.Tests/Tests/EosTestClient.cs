@@ -14,7 +14,7 @@ namespace Kafka.Streams.Tests.Tests
 //        private bool withRepartitioning;
 //        private bool notRunningCallbackReceived = new bool(false);
 
-//        private KafkaStreams streams;
+//        private KafkaStreamsThread streams;
 //        private bool uncaughtException;
 
 //        EosTestClient(StreamsConfig properties, bool withRepartitioning)
@@ -68,21 +68,21 @@ namespace Kafka.Streams.Tests.Tests
 //            uncaughtException = true;
 //        }
 //    });
-//                streams.setStateListener(new KafkaStreams.StateListener() {
+//                streams.SetStateListener(new KafkaStreamsThread.StateListener() {
 
-//                    public void onChange(KafkaStreams.State newState, KafkaStreams.State oldState)
+//                    public void onChange(KafkaStreamsThreadStates newState, KafkaStreamsThreadStates oldState)
 //    {
 //        // don't remove this -- it's required test output
 //        System.Console.Out.WriteLine(System.currentTimeMillis());
 //        System.Console.Out.WriteLine("StateChange: " + oldState + " => " + newState);
 //        System.Console.Out.Flush();
-//        if (newState == KafkaStreams.State.NOT_RUNNING)
+//        if (newState == KafkaStreamsThreadStates.NOT_RUNNING)
 //        {
 //            notRunningCallbackReceived.set(true);
 //        }
 //    }
 //});
-//                streams.start();
+//                streams.Start();
 //            }
 //            if (uncaughtException) {
 //                streams.Close(TimeSpan.FromSeconds(60_000L));
@@ -92,16 +92,16 @@ namespace Kafka.Streams.Tests.Tests
 //        }
 //    }
 
-//    private KafkaStreams createKafkaStreams(StreamsConfig props)
+//    private KafkaStreamsThread createKafkaStreams(StreamsConfig props)
 //{
-//    props.Put(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
+//    props.Put(StreamsConfig.ApplicationIdConfig, APP_ID);
 //    props.Put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 1);
 //    props.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 2);
 //    props.Put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 3);
-//    props.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//    props.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.StreamsConfig.ExactlyOnceConfig);
 //    props.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//    props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType());
-//    props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
+//    props.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType());
+//    props.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.Int().GetType());
 
 //    StreamsBuilder builder = new StreamsBuilder();
 //    IKStream<K, V> data = builder.Stream("data");
@@ -192,7 +192,7 @@ namespace Kafka.Streams.Tests.Tests
 //                .To("cnt", Produced.With(stringSerde, longSerde));
 //        }
 
-//        return new KafkaStreams(builder.Build(), props);
+//        return new KafkaStreamsThread(builder.Build(), props);
 //    }
 
 //    private void waitForStateTransitionCallback()

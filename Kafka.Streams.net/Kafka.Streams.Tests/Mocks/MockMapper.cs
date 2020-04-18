@@ -1,87 +1,26 @@
 ﻿using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Tests.Mocks
 {
-    public class MockMapper
+    public static class MockMapper
     {
-        private class NoOpKeyValueMapper<K, V> : IKeyValueMapper<K, V, KeyValuePair<K, V>>
-        {
-            public KeyValuePair<K, V> Apply(K key, V value)
-            {
-                return KeyValuePair.Create(key, value);
-            }
-        }
+        public static KeyValueMapper<K, V, K> GetSelectKeyKeyValueMapper<K, V>()
+            => (k, v) => k;
 
-        private class NoOpFlatKeyValueMapper<K, V> : IKeyValueMapper<K, V, IEnumerable<KeyValuePair<K, V>>>
-        {
-            public IEnumerable<KeyValuePair<K, V>> Apply(K key, V value)
-            {
-                return new[] { KeyValuePair.Create(key, value) };
-            }
-        }
+        public static KeyValueMapper<K, V, IEnumerable<KeyValuePair<K, V>>> GetNoOpFlatKeyValueMapper<K, V>()
+            => (k, v) => new[] { KeyValuePair.Create(k, v) };
 
-        internal class SelectValueKeyValueMapper<K, V> : IKeyValueMapper<K, V, KeyValuePair<V, V>>
-        {
-            public KeyValuePair<V, V> Apply(K key, V value)
-            {
-                return KeyValuePair.Create(value, value);
-            }
-        }
+        public static KeyValueMapper<K, V, KeyValuePair<K, V>> GetNoOpKeyValueMapper<K, V>()
+            => (k, v) => KeyValuePair.Create(k, v);
 
-        private class SelectValueMapper<K, V> : IKeyValueMapper<K, V, V>
-        {
-            public V Apply(K key, V value)
-            {
-                return value;
-            }
-        }
+        public static KeyValueMapper<K, V, KeyValuePair<V, V>> GetSelectValueKeyValueMapper<K, V>()
+            => (k, v) => KeyValuePair.Create(v, v);
 
-        private class SelectKeyMapper<K, V> : IKeyValueMapper<K, V, K>
-        {
-            public K Apply(K key, V value)
-            {
-                return key;
-            }
-        }
+        public static KeyValueMapper<K, V, V> GetSelectValueMapper<K, V>()
+            => (k, v) => v;
 
-        private class NoOpValueMapper<V> : IValueMapper<V, V>
-        {
-            public V Apply(V value)
-            {
-                return value;
-            }
-        }
-
-        public static IKeyValueMapper<K, V, K> GetSelectKeyKeyValueMapper<K, V>()
-        {
-            return new SelectKeyMapper<K, V>();
-        }
-
-        public static IKeyValueMapper<K, V, IEnumerable<KeyValuePair<K, V>>> GetNoOpFlatKeyValueMapper<K, V>()
-        {
-            return new NoOpFlatKeyValueMapper<K, V>();
-        }
-
-        public static IKeyValueMapper<K, V, KeyValuePair<K, V>> GetNoOpKeyValueMapper<K, V>()
-        {
-            return new NoOpKeyValueMapper<K, V>();
-        }
-
-        public static IKeyValueMapper<K, V, KeyValuePair<V, V>> GetSelectValueKeyValueMapper<K, V>()
-        {
-            return new SelectValueKeyValueMapper<K, V>();
-        }
-
-        public static IKeyValueMapper<K, V, V> GetSelectValueMapper<K, V>()
-        {
-            return new SelectValueMapper<K, V>();
-        }
-
-        public static IValueMapper<V, V> GetNoOpValueMapper<K, V>()
-        {
-            return new NoOpValueMapper<V>();
-        }
+        public static ValueMapper<V, V> GetNoOpValueMapper<K, V>()
+            => v => v;
     }
 }

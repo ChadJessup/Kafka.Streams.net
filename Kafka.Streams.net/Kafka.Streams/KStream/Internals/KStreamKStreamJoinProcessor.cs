@@ -1,4 +1,5 @@
-﻿using Kafka.Streams.Processors;
+﻿using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Windowed;
 using System;
@@ -10,7 +11,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         private IWindowStore<K, V2> otherWindow;
         private readonly KafkaStreamsContext context;
-        private readonly IValueJoiner<V1, V2, R> joiner;
+        private readonly ValueJoiner<V1, V2, R> joiner;
         private readonly TimeSpan joinBefore;
         private readonly TimeSpan joinAfter;
         private readonly bool outer;
@@ -18,7 +19,7 @@ namespace Kafka.Streams.KStream.Internals
         public KStreamKStreamJoinProcessor(
             KafkaStreamsContext context,
             bool outer,
-            IValueJoiner<V1, V2, R> joiner,
+            ValueJoiner<V1, V2, R> joiner,
             TimeSpan joinBeforeMs,
             TimeSpan joinAfterMs)
         {
@@ -66,13 +67,13 @@ namespace Kafka.Streams.KStream.Internals
                     KeyValuePair<DateTime, V2> otherRecord = iter.Current;
                     this.Context.Forward(
                         key,
-                        this.joiner.Apply(value, otherRecord.Value),
+                        this.joiner(value, otherRecord.Value),
                         To.All().WithTimestamp(inputRecordTimestamp.GetNewest(otherRecord.Key)));
                 }
 
                 if (needOuterJoin)
                 {
-                    this.Context.Forward(key, this.joiner.Apply(value, default));
+                    this.Context.Forward(key, this.joiner(value, default));
                 }
             }
         }

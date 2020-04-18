@@ -33,24 +33,43 @@ namespace Kafka.Streams.KStream
      */
     public class TimeWindows : Windows<TimeWindow>
     {
-        private long maintainDurationMs;
+        private TimeSpan maintainDuration;
 
         /** The size of the windows in milliseconds. */
-        public long sizeMs;
+        public TimeSpan size { get; }
 
         /**
          * The size of the window's advance interval in milliseconds, i.e., by how much a window moves forward relative to
          * the previous one.
          */
-        public long advanceMs;
-        private long graceMs;
+        public TimeSpan Advance { get; }
 
-        private TimeWindows(long sizeMs, long advanceMs, long graceMs, long maintainDurationMs)
+        public TimeWindows(
+            TimeSpan size,
+            TimeSpan advance,
+            TimeSpan grace,
+            TimeSpan maintainDuration,
+            int segments)
+            : base(segments)
         {
-            this.sizeMs = sizeMs;
-            this.advanceMs = advanceMs;
-            this.graceMs = graceMs;
-            this.maintainDurationMs = maintainDurationMs;
+            this.size = size;
+            this.Advance = advance;
+            this.Grace = grace;
+            this.maintainDuration = maintainDuration;
+        }
+
+        public TimeWindows(
+            TimeSpan size,
+            TimeSpan advance,
+            TimeSpan grace,
+            TimeSpan maintainDuration)
+            : this(
+                  size,
+                  advance,
+                  grace,
+                  maintainDuration,
+                  0)
+        {
         }
 
         /**
@@ -65,10 +84,10 @@ namespace Kafka.Streams.KStream
          * @return a new window definition with default maintain duration of 1 day
          * @throws ArgumentException if the specified window size is zero or negative or can't be represented as {@code long milliseconds}
          */
-        public static TimeWindows of(TimeSpan size)// throws ArgumentException
+        public static TimeWindows Of(TimeSpan size)// throws ArgumentException
         {
-            String msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(size, "size");
-            return of(ApiUtils.ValidateMillisecondDuration(size, msgPrefix));
+            string msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(size, "size");
+            return Of(ApiUtils.ValidateMillisecondDuration(size, msgPrefix));
         }
 
         /**
@@ -82,28 +101,34 @@ namespace Kafka.Streams.KStream
          * @return a new window definition with default maintain duration of 1 day
          * @throws ArgumentException if the advance interval is negative, zero, or larger than the window size
          */
-        public TimeWindows advanceBy(TimeSpan advance)
+        public TimeWindows AdvanceBy(TimeSpan advance)
         {
-            String msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(advance, "advance");
-            return advanceBy(ApiUtils.ValidateMillisecondDuration(advance, msgPrefix));
+            string msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(advance, "advance");
+
+            return AdvanceBy(ApiUtils.ValidateMillisecondDuration(advance, msgPrefix));
         }
 
-        public Dictionary<long, TimeWindow> WindowsFor(long timestamp)
+        public override Dictionary<DateTime, TimeWindow> WindowsFor(DateTime timestamp)
         {
-            long windowStart = (Math.Max(0, timestamp - sizeMs + advanceMs) / advanceMs) * advanceMs;
-            Dictionary<long, TimeWindow> windows = new Dictionary<long, TimeWindow>();
+            var calculatedStart = timestamp - size + Advance;
+
+            DateTime windowStart = new DateTime((calculatedStart.Ticks / Advance.Ticks) * Advance.Ticks, DateTimeKind.Utc);
+
+            Dictionary<DateTime, TimeWindow> windows = new Dictionary<DateTime, TimeWindow>();
+
             while (windowStart <= timestamp)
             {
-                TimeWindow window = new TimeWindow(windowStart, windowStart + sizeMs);
+                TimeWindow window = new TimeWindow(windowStart, windowStart + size);
                 windows.Put(windowStart, window);
-                windowStart += advanceMs;
+                windowStart += Advance;
             }
+
             return windows;
         }
 
-        public long Size()
+        public override TimeSpan Size()
         {
-            return sizeMs;
+            return size;
         }
 
         /**
@@ -116,24 +141,31 @@ namespace Kafka.Streams.KStream
          * @return this updated builder
          * @throws ArgumentException if {@code afterWindowEnd} is negative or can't be represented as {@code long milliseconds}
          */
-        public TimeWindows grace(TimeSpan afterWindowEnd) // throws ArgumentException
+        public TimeWindows Grace(TimeSpan afterWindowEnd) // throws ArgumentException
         {
-            String msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
-            var afterWindowEndMs = ApiUtils.ValidateMillisecondDuration(afterWindowEnd, msgPrefix);
-            if (afterWindowEndMs < 0)
+            string msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
+            var validatedAfterWindowEnd = ApiUtils.ValidateMillisecondDuration(afterWindowEnd, msgPrefix);
+            if (validatedAfterWindowEnd < TimeSpan.FromMilliseconds(0))
             {
                 throw new ArgumentException("Grace period must not be negative.");
             }
 
-            return new TimeWindows(sizeMs, advanceMs, afterWindowEndMs, maintainDurationMs, segments);
+            return new TimeWindows(
+                size,
+                Advance,
+                validatedAfterWindowEnd,
+                maintainDuration,
+                segments);
         }
 
-        public long gracePeriodMs()
+        public TimeSpan GracePeriod()
         {
             // NOTE: in the future, when we remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,
             // or we can default to (24h - size) if you want to be super accurate.
-            return graceMs != -1 ? graceMs : maintainMs() - size();
+            return Grace != -1
+                ? Grace
+                : maintainMs() - size();
         }
 
         /**
@@ -146,44 +178,44 @@ namespace Kafka.Streams.KStream
          */
         public long maintainMs()
         {
-            return Math.Max(maintainDurationMs, sizeMs);
+            return Math.Max(maintainDuration, size);
         }
 
-        public bool Equals(Object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
             TimeWindows that = (TimeWindows)o;
-            return maintainDurationMs == that.maintainDurationMs &&
+            return maintainDuration == that.maintainDuration &&
                 segments == that.segments &&
-                sizeMs == that.sizeMs &&
-                advanceMs == that.advanceMs &&
-                graceMs == that.graceMs;
+                size == that.size &&
+                Advance == that.Advance &&
+                Grace == that.Grace;
         }
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             return HashCode.Combine(
-                maintainDurationMs,
+                maintainDuration,
                 segments,
-                sizeMs,
-                advanceMs,
-                graceMs);
+                size,
+                Advance,
+                Grace);
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return "TimeWindows{" +
-                "maintainDurationMs=" + maintainDurationMs +
-                ", sizeMs=" + sizeMs +
-                ", advanceMs=" + advanceMs +
-                ", graceMs=" + graceMs +
+                "maintainDurationMs=" + maintainDuration +
+                ", sizeMs=" + size +
+                ", advanceMs=" + Advance +
+                ", graceMs=" + Grace +
                 ", segments=" + segments +
                 '}';
         }

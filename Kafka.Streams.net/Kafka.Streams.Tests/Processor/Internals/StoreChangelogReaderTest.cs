@@ -216,8 +216,8 @@ public void ShouldRecoverFromOffsetOutOfRangeExceptionAndRestoreFromStart()
     int startOffset = 5;
     long expiredCheckpoint = 1L;
     assignPartition(messages, topicPartition);
-    consumer.UpdateBeginningOffsets(Collections.singletonMap(topicPartition, (long)startOffset));
-    consumer.updateEndOffsets(Collections.singletonMap(topicPartition, (long)(messages + startOffset)));
+    consumer.UpdateBeginningOffsets(Collections.singletonMap(topicPartition, startOffset));
+    consumer.updateEndOffsets(Collections.singletonMap(topicPartition, messages + startOffset));
 
     addRecords(messages, topicPartition, startOffset);
     consumer.Assign(Collections.emptyList());

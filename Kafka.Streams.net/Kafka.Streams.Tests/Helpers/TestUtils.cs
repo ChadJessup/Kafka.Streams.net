@@ -80,6 +80,11 @@ namespace Kafka.Streams.Tests.Helpers
             return thread;
         }
 
+        internal static DirectoryInfo GetTempDirectory(string applicationId)
+        {
+            throw new NotImplementedException();
+        }
+
         public static DirectoryInfo GetTempDirectory()
         {
             return new DirectoryInfo(Path.GetTempPath());
@@ -127,6 +132,16 @@ namespace Kafka.Streams.Tests.Helpers
             mockClientSupplier.SetupAllProperties();
 
             return mockClientSupplier;
+        }
+
+        internal static StreamsConfig producerConfig(object p, ISerializer<string> serializer1, ISerializer<string> serializer2, StreamsConfig streamsConfig)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static object ProducerConfig(string v, ISerializer<int> serializer1, ISerializer<int> serializer2)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -72,8 +72,8 @@ namespace Kafka.Streams.KStream.Internals
             return new KStream<K, V>(
                 this.context,
                 Name,
-                consumed.keySerde,
-                consumed.valueSerde,
+                consumed.KeySerde,
+                consumed.ValueSerde,
                 new HashSet<string> { Name },
                 false,
                 streamSourceNode,
@@ -92,8 +92,8 @@ namespace Kafka.Streams.KStream.Internals
             return new KStream<K, V>(
                 this.context,
                 Name,
-                consumed.keySerde,
-                consumed.valueSerde,
+                consumed.KeySerde,
+                consumed.ValueSerde,
                 new HashSet<string> { Name },
                 repartitionRequired: false,
                 streamPatternSourceNode,
@@ -133,8 +133,8 @@ namespace Kafka.Streams.KStream.Internals
             return new KTable<K, IKeyValueStore<Bytes, byte[]>, V>(
                 this.context,
                 tableSourceName,
-                consumed.keySerde,
-                consumed.valueSerde,
+                consumed.KeySerde,
+                consumed.ValueSerde,
                 new HashSet<string> { sourceName },
                 materialized.QueryableStoreName(),
                 tableSource,

@@ -29,8 +29,8 @@ namespace Kafka.Streams.State
      *   "topicName",
      *   Materialized.<long,string>As(storeSupplier)
      *               .withKeySerde(Serdes.Long())
-     *               .withValueSerde(Serdes.string())
-     *               .withCachingDisabled());
+     *               .WithValueSerde(Serdes.string())
+     *               .WithCachingDisabled());
      * }</pre>
      * When using the IProcessor API, i.e., {@link org.apache.kafka.streams.Topology Topology}, users create
      * {@link StoreBuilder}s that can be attached to {@link org.apache.kafka.streams.processor.IProcessor IProcessor}s.

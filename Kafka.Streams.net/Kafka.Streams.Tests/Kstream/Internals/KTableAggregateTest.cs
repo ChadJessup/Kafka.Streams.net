@@ -34,7 +34,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                     MockAggregator.TOSTRING_ADDER,
                     MockAggregator.TOSTRING_REMOVER,
                     Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("topic1-Canonized")
-                        .withValueSerde(stringSerde));
+                        .WithValueSerde(stringSerde));
 
             table2.ToStream().Process(supplier);
 
@@ -103,7 +103,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 MockAggregator.TOSTRING_ADDER,
                 MockAggregator.TOSTRING_REMOVER,
                 Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("topic1-Canonized")
-                    .withValueSerde(stringSerde));
+                    .WithValueSerde(stringSerde));
 
             table2.ToStream().Process(supplier);
 
@@ -224,7 +224,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                     (aggKey, value, aggregate) => aggregate + value,
                     (key, value, aggregate) => aggregate.replaceAll(value, ""),
                     Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("someStore")
-                        .withValueSerde(Serdes.String()))
+                        .WithValueSerde(Serdes.String()))
                 .ToStream()
                 .Process(supplier);
 

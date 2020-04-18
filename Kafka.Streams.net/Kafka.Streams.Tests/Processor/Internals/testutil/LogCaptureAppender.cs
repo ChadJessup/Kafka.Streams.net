@@ -117,7 +117,7 @@
 //                        throwableStringBuilder.append(s);
 //                    }
 
-//                    throwableString = Optional.of(throwableStringBuilder.ToString());
+//                    throwableString = Optional.Of(throwableStringBuilder.ToString());
 //                }
 
 //                result.Add(new Event(event.getLevel().ToString(), event.getRenderedMessage(), throwableString));

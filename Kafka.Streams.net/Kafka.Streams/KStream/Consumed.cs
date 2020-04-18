@@ -112,11 +112,11 @@ namespace Kafka.Streams.KStream
      */
     public class Consumed<K, V> : INamedOperation<Consumed<K, V>>
     {
-        public ISerde<K>? keySerde { get; private set; }
-        public ISerde<V>? valueSerde { get; private set; }
-        public ITimestampExtractor? timestampExtractor { get; private set; }
-        protected AutoOffsetReset? resetPolicy { get; private set; }
-        protected string? processorName { get; private set; }
+        public ISerde<K>? KeySerde { get; private set; }
+        public ISerde<V>? ValueSerde { get; private set; }
+        public ITimestampExtractor? TimestampExtractor { get; private set; }
+        protected AutoOffsetReset? ResetPolicy { get; private set; }
+        protected string? ProcessorName { get; private set; }
 
         public Consumed(
             ISerde<K>? keySerde,
@@ -125,11 +125,11 @@ namespace Kafka.Streams.KStream
             AutoOffsetReset? resetPolicy,
             string? processorName)
         {
-            this.keySerde = keySerde;
-            this.valueSerde = valueSerde;
-            this.timestampExtractor = timestampExtractor;
-            this.resetPolicy = resetPolicy;
-            this.processorName = processorName;
+            this.KeySerde = keySerde;
+            this.ValueSerde = valueSerde;
+            this.TimestampExtractor = timestampExtractor;
+            this.ResetPolicy = resetPolicy;
+            this.ProcessorName = processorName;
         }
 
         /**
@@ -137,11 +137,11 @@ namespace Kafka.Streams.KStream
          * @param consumed  the instance of {@link Consumed} to copy
          */
         protected Consumed(Consumed<K, V> consumed)
-            : this(consumed?.keySerde,
-                 consumed?.valueSerde,
-                 consumed?.timestampExtractor,
-                 consumed?.resetPolicy,
-                 consumed?.processorName)
+            : this(consumed?.KeySerde,
+                 consumed?.ValueSerde,
+                 consumed?.TimestampExtractor,
+                 consumed?.ResetPolicy,
+                 consumed?.ProcessorName)
         {
         }
 
@@ -153,7 +153,7 @@ namespace Kafka.Streams.KStream
          */
         public Consumed<K, V> WithKeySerde(ISerde<K> keySerde)
         {
-            this.keySerde = keySerde;
+            this.KeySerde = keySerde;
 
             return this;
         }
@@ -166,7 +166,7 @@ namespace Kafka.Streams.KStream
          */
         public Consumed<K, V> WithValueSerde(ISerde<V> valueSerde)
         {
-            this.valueSerde = valueSerde;
+            this.ValueSerde = valueSerde;
 
             return this;
         }
@@ -179,7 +179,7 @@ namespace Kafka.Streams.KStream
          */
         public Consumed<K, V> WithTimestampExtractor(ITimestampExtractor timestampExtractor)
         {
-            this.timestampExtractor = timestampExtractor;
+            this.TimestampExtractor = timestampExtractor;
 
             return this;
         }
@@ -192,7 +192,7 @@ namespace Kafka.Streams.KStream
          */
         public Consumed<K, V> WithOffsetResetPolicy(AutoOffsetReset resetPolicy)
         {
-            this.resetPolicy = resetPolicy;
+            this.ResetPolicy = resetPolicy;
 
             return this;
         }
@@ -205,7 +205,7 @@ namespace Kafka.Streams.KStream
          */
         public Consumed<K, V> WithName(string processorName)
         {
-            this.processorName = processorName;
+            this.ProcessorName = processorName;
             return this;
         }
 
@@ -223,15 +223,15 @@ namespace Kafka.Streams.KStream
 
             var consumed = (Consumed<K, V>)o;
 
-            return object.Equals(this.keySerde, consumed.keySerde)
-                && object.Equals(this.valueSerde, consumed.valueSerde)
-                && object.Equals(this.timestampExtractor, consumed.timestampExtractor)
-                && this.resetPolicy == consumed.resetPolicy;
+            return object.Equals(this.KeySerde, consumed.KeySerde)
+                && object.Equals(this.ValueSerde, consumed.ValueSerde)
+                && object.Equals(this.TimestampExtractor, consumed.TimestampExtractor)
+                && this.ResetPolicy == consumed.ResetPolicy;
         }
 
         public override int GetHashCode()
         {
-            return (this.keySerde, this.valueSerde, this.timestampExtractor, this.resetPolicy).GetHashCode();
+            return (this.KeySerde, this.ValueSerde, this.TimestampExtractor, this.ResetPolicy).GetHashCode();
         }
     }
 }

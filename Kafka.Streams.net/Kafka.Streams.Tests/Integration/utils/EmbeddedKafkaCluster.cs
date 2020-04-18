@@ -161,7 +161,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     */
 //    public void createTopics(string... topics) {// throws InterruptedException
 //        foreach (string topic in topics) {
-//            createTopic(topic, 1, 1, Collections.emptyMap());
+//            CreateTopic(topic, 1, 1, Collections.emptyMap());
 //        }
 //    }
 
@@ -170,8 +170,8 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     *
 //     * @param topic The Name of the topic.
 //     */
-//    public void createTopic(string topic) {// throws InterruptedException
-//        createTopic(topic, 1, 1, Collections.emptyMap());
+//    public void CreateTopic(string topic) {// throws InterruptedException
+//        CreateTopic(topic, 1, 1, Collections.emptyMap());
 //    }
 
 //    /**
@@ -181,8 +181,8 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param partitions  The number of partitions for this topic.
 //     * @param replication The replication factor for (the partitions of) this topic.
 //     */
-//    public void createTopic(string topic, int partitions, int replication) {// throws InterruptedException
-//        createTopic(topic, partitions, replication, Collections.emptyMap());
+//    public void CreateTopic(string topic, int partitions, int replication) {// throws InterruptedException
+//        CreateTopic(topic, partitions, replication, Collections.emptyMap());
 //    }
 
 //    /**
@@ -193,11 +193,11 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     * @param replication The replication factor for (partitions of) this topic.
 //     * @param topicConfig Additional topic-level configuration settings.
 //     */
-//    public void createTopic(string topic,
+//    public void CreateTopic(string topic,
 //                            int partitions,
 //                            int replication,
 //                            Dictionary<string, string> topicConfig) {// throws InterruptedException
-//        brokers[0].createTopic(topic, partitions, replication, topicConfig);
+//        brokers[0].CreateTopic(topic, partitions, replication, topicConfig);
 //        List<TopicPartition> topicPartitions = new List<TopicPartition>();
 //        for (int partition = 0; partition < partitions; partition++) {
 //            topicPartitions.Add(new TopicPartition(topic, partition));

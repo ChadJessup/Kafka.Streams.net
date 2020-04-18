@@ -60,7 +60,7 @@
 //                .To(reduceTopic, Produced.With(Serdes.String(), Serdes.String()));
 
 //            mappedStream.Join(countStream, (v1, v2) => v1 + ":" + v2.ToString(),
-//                JoinWindows.of(TimeSpan.FromMilliseconds(500)),
+//                JoinWindows.Of(TimeSpan.FromMilliseconds(500)),
 //                Joined.With(Serdes.String(), Serdes.String(), Serdes.Long()))
 //                .peek((k, v) => System.Console.Out.WriteLine(string.format("JOINED key=%s value=%s", k, v)))
 //                .To(joinTopic, Produced.With(Serdes.String(), Serdes.String()));
@@ -68,20 +68,20 @@
 //            StreamsConfig config = new StreamsConfig();
 
 
-//            config.Set(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsOptimizedTest");
+//            config.Set(StreamsConfig.ApplicationIdConfig, "StreamsOptimizedTest");
 //            config.Set(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
-//            config.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//            config.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//            config.Set(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType().FullName);
+//            config.Set(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType().FullName);
 //            config.Set(StreamsConfig.adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), "100");
 
 
 //            config.PutAll(streamsProperties);
 
 //            Topology topology = builder.Build(config);
-//            KafkaStreams streams = new KafkaStreams(topology, config);
+//            KafkaStreamsThread streams = new KafkaStreamsThread(topology, config);
 
 
-//            streams.setStateListener((newState, oldState) =>
+//            streams.SetStateListener((newState, oldState) =>
 //            {
 //                if (oldState == State.REBALANCING && newState == State.RUNNING)
 //                {
@@ -91,7 +91,7 @@
 //                }
 //            });
 
-//            streams.start();
+//            streams.Start();
 
 //            Runtime.getRuntime().addShutdownHook(new Thread()
 //            {

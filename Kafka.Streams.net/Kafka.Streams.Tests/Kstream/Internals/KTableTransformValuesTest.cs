@@ -138,7 +138,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            KTableTransformValues<string, string, string> transformValues =
 //                new KTableTransformValues<>(parent, new ExclamationValueTransformerSupplier(), null);
 
-//            transformValues.enableSendingOldValues();
+//            transformValues.EnableSendingOldValues();
 //            Processor<string, Change<string>> processor = transformValues.Get();
 //            processor.Init(context);
 
@@ -154,11 +154,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        [Fact]
 //        public void shouldSetSendOldValuesOnParent()
 //        {
-//            parent.enableSendingOldValues();
+//            parent.EnableSendingOldValues();
 //            expect.AstCall();
 //            replay(parent);
 
-//            new KTableTransformValues<>(parent, new SingletonNoOpValueTransformer<>(), QUERYABLE_NAME).enableSendingOldValues();
+//            new KTableTransformValues<>(parent, new SingletonNoOpValueTransformer<>(), QUERYABLE_NAME).EnableSendingOldValues();
 
 //            verify(parent);
 //        }
@@ -321,9 +321,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .Table(INPUT_TOPIC, CONSUMED)
 //                .transformValues(
 //                    new ExclamationValueTransformerSupplier(STORE_NAME, QUERYABLE_NAME),
-//                    Materialized.As < string, string, IKeyValueStore<Bytes, byte[]>(QUERYABLE_NAME)
+//                    Materialized.As < string, string, IKeyValueStore<Bytes, byte[]>>(QUERYABLE_NAME)
 //                        .WithKeySerde(Serdes.String())
-//                        .withValueSerde(Serdes.String()),
+//                        .WithValueSerde(Serdes.String()),
 //                    STORE_NAME)
 //                .ToStream()
 //                .Process(capture);
@@ -359,9 +359,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                .Table(INPUT_TOPIC, CONSUMED)
 //                .transformValues(
 //                    new StatefulTransformerSupplier(),
-//                    Materialized.As < string, int, IKeyValueStore<Bytes, byte[]>(QUERYABLE_NAME)
+//                    Materialized.As < string, int, IKeyValueStore<Bytes, byte[]>>(QUERYABLE_NAME)
 //                        .WithKeySerde(Serdes.String())
-//                        .withValueSerde(Serdes.Int()))
+//                        .WithValueSerde(Serdes.Int()))
 //                .GroupBy(toForceSendingOfOldValues(), Grouped.With(Serdes.String(), Serdes.Int()))
 //                .Reduce(MockReducer.INTEGER_ADDER, MockReducer.INTEGER_SUBTRACTOR)
 //                .MapValues(mapBackToStrings())
@@ -414,7 +414,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            return capture.capturedProcessors(1).Get(0).processed;
 //        }
 
-//        private IKeyValueMapper<string, int, KeyValuePair<string, int>> toForceSendingOfOldValues()
+//        private KeyValueMapper<string, int, KeyValuePair<string, int>> toForceSendingOfOldValues()
 //        {
 //            return null; // KeyValuePair::new;
 //        }

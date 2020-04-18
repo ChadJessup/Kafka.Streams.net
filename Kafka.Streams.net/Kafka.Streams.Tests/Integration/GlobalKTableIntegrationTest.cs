@@ -24,12 +24,12 @@ namespace Kafka.Streams.Tests.Integration
 
         private static volatile int testNo = 0;
         private MockTime mockTime = CLUSTER.time;
-        private IKeyValueMapper<string, long, long> keyMapper = new KeyValueMapper<string, long, long>((key, value) => value);
-        private IValueJoiner<long, string, string> joiner = (value1, value2) => value1 + "+" + value2;
+        private KeyValueMapper<string, long, long> keyMapper = new KeyValueMapper<string, long, long>((key, value) => value);
+        private ValueJoiner<long, string, string> joiner = (value1, value2) => value1 + "+" + value2;
         private readonly string globalStore = "globalStore";
         private StreamsBuilder builder;
         private StreamsConfig streamsConfiguration;
-        private KafkaStreams kafkaStreams;
+        private KafkaStreamsThread kafkaStreams;
         private string globalTableTopic;
         private string streamTopic;
         private IGlobalKTable<long, string> globalTable;
@@ -98,8 +98,8 @@ namespace Kafka.Streams.Tests.Integration
                     }
 
                     var result = new Dictionary<string, IValueAndTimestamp<string>>();
-                    result.AddRange(supplier.CapturedProcessors(2)[0].lastValueAndTimestampPerKey);
-                    result.AddRange(supplier.CapturedProcessors(2)[1].lastValueAndTimestampPerKey);
+                    result.AddRange(supplier.CapturedProcessors(2)[0].LastValueAndTimestampPerKey);
+                    result.AddRange(supplier.CapturedProcessors(2)[1].LastValueAndTimestampPerKey);
                     return result.Equals(expected);
                 },
                 30000L,
@@ -139,8 +139,8 @@ namespace Kafka.Streams.Tests.Integration
                     }
 
                     var result = new Dictionary<string, IValueAndTimestamp<string>>();
-                    result.AddRange(supplier.CapturedProcessors(2)[0].lastValueAndTimestampPerKey);
-                    result.AddRange(supplier.CapturedProcessors(2)[1].lastValueAndTimestampPerKey);
+                    result.AddRange(supplier.CapturedProcessors(2)[0].LastValueAndTimestampPerKey);
+                    result.AddRange(supplier.CapturedProcessors(2)[1].LastValueAndTimestampPerKey);
                     return result.Equals(expected);
                 },
                 30000L,
@@ -174,8 +174,8 @@ namespace Kafka.Streams.Tests.Integration
                     }
 
                     var result = new Dictionary<string, IValueAndTimestamp<string>?>();
-                    result.AddRange(supplier.CapturedProcessors(2)[0].lastValueAndTimestampPerKey);
-                    result.AddRange(supplier.CapturedProcessors(2)[1].lastValueAndTimestampPerKey);
+                    result.AddRange(supplier.CapturedProcessors(2)[0].LastValueAndTimestampPerKey);
+                    result.AddRange(supplier.CapturedProcessors(2)[1].LastValueAndTimestampPerKey);
 
                     return result.Equals(expected);
                 },
@@ -216,8 +216,8 @@ namespace Kafka.Streams.Tests.Integration
                     }
 
                     var result = new Dictionary<string, IValueAndTimestamp<string>>();
-                    result.AddRange(supplier.CapturedProcessors(2)[0].lastValueAndTimestampPerKey);
-                    result.AddRange(supplier.CapturedProcessors(2)[1].lastValueAndTimestampPerKey);
+                    result.AddRange(supplier.CapturedProcessors(2)[0].LastValueAndTimestampPerKey);
+                    result.AddRange(supplier.CapturedProcessors(2)[1].LastValueAndTimestampPerKey);
 
                     return result.Equals(expected);
                 },
@@ -257,13 +257,13 @@ namespace Kafka.Streams.Tests.Integration
             streamTopic = "stream-" + testNo;
             globalTableTopic = "globalTable-" + testNo;
             CLUSTER.createTopics(streamTopic);
-            CLUSTER.createTopic(globalTableTopic, 2, 1);
+            CLUSTER.CreateTopic(globalTableTopic, 2, 1);
         }
 
         private void StartStreams()
         {
-            kafkaStreams = new KafkaStreams(builder.Build(), streamsConfiguration);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
+            kafkaStreams.Start();
         }
 
         private void ProduceTopicValues(string topic)

@@ -33,9 +33,9 @@ namespace Kafka.Streams.Tests.Tests
 
 //            StreamsConfig producerProps = new StreamsConfig();
 //            producerProps.Put(ProducerConfig.CLIENT_ID_CONFIG, "EosTest");
-//            producerProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//            producerProps.Put(ProducerConfig.BootstrapServersConfig, kafka);
 //            producerProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-//        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, IntegerSerializer);
+//        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.Int().Serializer);
 //        producerProps.Put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
 //        KafkaProducer<string, int> producer = new KafkaProducer<>(producerProps);
@@ -74,7 +74,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        StreamsConfig props = new StreamsConfig();
 //props.Put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
-//        props.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//        props.Put(ConsumerConfig.BootstrapServersConfig, kafka);
 //        props.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
 //        props.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
 //        props.Put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.ToString().toLowerCase(Locale.ROOT));
@@ -97,7 +97,7 @@ namespace Kafka.Streams.Tests.Tests
 //{
 //    StreamsConfig props = new StreamsConfig();
 //    props.Put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
-//    props.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//    props.Put(ConsumerConfig.BootstrapServersConfig, kafka);
 //    props.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
 //        props.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
 //        props.Put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, IsolationLevel.READ_COMMITTED.ToString().toLowerCase(Locale.ROOT));
@@ -331,7 +331,7 @@ namespace Kafka.Streams.Tests.Tests
 //        }
 
 //        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
-//        IntegerDeserializer integerDeserializer = Serializers.Int32;
+//        Serdes.Int().Deserializer integerDeserializer = Serializers.Int32;
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in receivedRecords)
 //        {
 //            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.Key.Partition);
@@ -358,7 +358,7 @@ namespace Kafka.Streams.Tests.Tests
 //                                  Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> minPerTopicPerPartition)
 //    {
 //        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
-//        IntegerDeserializer integerDeserializer = Serializers.Int32;
+//        Serdes.Int().Deserializer integerDeserializer = Serializers.Int32;
 
 //        HashDictionary<string, int> currentMinPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in minPerTopicPerPartition)
@@ -407,7 +407,7 @@ namespace Kafka.Streams.Tests.Tests
 //                                  Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> minPerTopicPerPartition)
 //    {
 //        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
-//        IntegerDeserializer integerDeserializer = Serializers.Int32;
+//        Serdes.Int().Deserializer integerDeserializer = Serializers.Int32;
 //        LongDeserializer longDeserializer = new LongDeserializer();
 
 //        HashDictionary<string, long> currentSumPerKey = new HashMap<>();
@@ -457,7 +457,7 @@ namespace Kafka.Streams.Tests.Tests
 //                                  Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> maxPerTopicPerPartition)
 //    {
 //        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
-//        IntegerDeserializer integerDeserializer = Serializers.Int32;
+//        Serdes.Int().Deserializer integerDeserializer = Serializers.Int32;
 
 //        HashDictionary<string, int> currentMinPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in maxPerTopicPerPartition)
@@ -568,7 +568,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        StreamsConfig producerProps = new StreamsConfig();
 //        producerProps.Put(ProducerConfig.CLIENT_ID_CONFIG, "VerifyProducer");
-//        producerProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//        producerProps.Put(ProducerConfig.BootstrapServersConfig, kafka);
 //        producerProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
 //        producerProps.Put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);

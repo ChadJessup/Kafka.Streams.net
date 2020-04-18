@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream
         private TimeSpan maintainRetentionDuration = WindowingDefaults.DefaultRetention;
 
         [Obsolete]
-        public int segments = 3;
+        public int segments { get; protected set; } = 3;
 
         protected Windows()
         { }
@@ -106,13 +106,5 @@ namespace Kafka.Streams.KStream
          * @return the size of the specified windows
          */
         public abstract TimeSpan Size();
-
-        /**
-         * Return the window grace period (the time to admit
-         * late-arriving events after the end of the window.)
-         *
-         * Lateness is defined as (stream_time - record_timestamp).
-         */
-        public abstract TimeSpan GracePeriod();
     }
 }

@@ -45,10 +45,5 @@ namespace Kafka.Streams.KStream.Internals
             //    }
             //};
         }
-
-        public IProcessorSupplier<K, V> GetSwappedProcessorSupplier()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

@@ -33,7 +33,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void Setup()
         {
             StreamsConfig streamsConfig = Mock.Of<StreamsConfig);
-            expect(streamsConfig.getString(StreamsConfig.APPLICATION_ID_CONFIG)).andReturn("dummy-id");
+            expect(streamsConfig.getString(StreamsConfig.ApplicationIdConfig)).andReturn("dummy-id");
             expect(streamsConfig.GetDefaultValueSerde()).andReturn(Serdes.ByteArray());
             expect(streamsConfig.GetDefaultKeySerde()).andReturn(Serdes.ByteArray());
             replay(streamsConfig);

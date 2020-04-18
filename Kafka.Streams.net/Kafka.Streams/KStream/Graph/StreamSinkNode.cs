@@ -7,12 +7,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public class StreamSinkNode<K, V> : StreamsGraphNode
     {
-        private readonly ITopicNameExtractor topicNameExtractor;
+        private readonly TopicNameExtractor<K, V> topicNameExtractor;
         private readonly ProducedInternal<K, V> producedInternal;
 
         public StreamSinkNode(
             string nodeName,
-            ITopicNameExtractor topicNameExtractor,
+            TopicNameExtractor<K, V> topicNameExtractor,
             ProducedInternal<K, V> producedInternal)
             : base(nodeName)
         {

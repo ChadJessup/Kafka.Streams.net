@@ -92,7 +92,7 @@
 //                    context.Partition,
 //                    context.offset(),
 //                    timestamp,
-//                    mergedWindow.start(),
+//                    mergedWindow.Start(),
 //                    mergedWindow.end(),
 //                    closeTime,
 //                    observedStreamTime

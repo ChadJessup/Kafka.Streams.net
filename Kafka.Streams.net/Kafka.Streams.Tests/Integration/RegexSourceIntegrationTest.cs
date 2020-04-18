@@ -1,4 +1,6 @@
+using Confluent.Kafka;
 using Kafka.Common;
+using Kafka.Streams.Clients;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
@@ -6,10 +8,14 @@ using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.Temporary;
 using Kafka.Streams.Tests;
 using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Tests.Mocks;
+using Kafka.Streams.Threads.KafkaStreams;
+using Kafka.Streams.Threads.KafkaStreamsThread;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -42,15 +48,13 @@ namespace Kafka.Streams.Tests.Integration
         private static readonly string STRING_SERDE_CLASSNAME = Serdes.String().GetType().FullName;
         private StreamsConfig streamsConfiguration;
         private static readonly string STREAM_TASKS_NOT_UPDATED = "Stream tasks not updated";
-        private KafkaStreams streams;
+        private IKafkaStreamsThread streams;
         private static volatile int topicSuffixGenerator = 0;
         private string outputTopic;
 
-
-
         public static void StartKafkaCluster()
         {// throws InterruptedException
-            CLUSTER.createTopics(
+            CLUSTER.CreateTopics(
                 TOPIC_1,
                 TOPIC_2,
                 TOPIC_A,
@@ -59,25 +63,26 @@ namespace Kafka.Streams.Tests.Integration
                 TOPIC_Z,
                 FA_TOPIC,
                 FOO_TOPIC);
-            CLUSTER.createTopic(PARTITIONED_TOPIC_1, 2, 1);
-            CLUSTER.createTopic(PARTITIONED_TOPIC_2, 2, 1);
+            CLUSTER.CreateTopic(PARTITIONED_TOPIC_1, 2, 1);
+            CLUSTER.CreateTopic(PARTITIONED_TOPIC_2, 2, 1);
         }
 
 
-        public void SetUp()
+        public RegexSourceIntegrationTest()
         {// throws InterruptedException
-            outputTopic = createTopic(++topicSuffixGenerator);
+            outputTopic = CreateTopic(++topicSuffixGenerator);
             StreamsConfig properties = new StreamsConfig();
             properties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
             properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
             properties.Put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "1000");
             properties.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-            streamsConfiguration = StreamsTestUtils.getStreamsConfig("regex-source-integration-test",
-                                                                     CLUSTER.bootstrapServers(),
-                                                                     STRING_SERDE_CLASSNAME,
-                                                                     STRING_SERDE_CLASSNAME,
-                                                                     properties);
+            streamsConfiguration = StreamsTestUtils.getStreamsConfig(
+                "regex-source-integration-test",
+                CLUSTER.bootstrapServers(),
+                STRING_SERDE_CLASSNAME,
+                STRING_SERDE_CLASSNAME,
+                properties);
         }
 
 
@@ -99,15 +104,15 @@ namespace Kafka.Streams.Tests.Integration
             List<string> expectedFirstAssignment = Collections.singletonList("TEST-TOPIC-1");
             List<string> expectedSecondAssignment = Arrays.asList("TEST-TOPIC-1", "TEST-TOPIC-2");
 
-            CLUSTER.createTopic("TEST-TOPIC-1");
+            CLUSTER.CreateTopic("TEST-TOPIC-1");
 
             StreamsBuilder builder = new StreamsBuilder();
 
-            KStream<string, string> pattern1Stream = builder.Stream(new Regex("TEST-TOPIC-\\d", RegexOptions.Compiled));
+            IKStream<string, string> pattern1Stream = builder.Stream<string, string>(new Regex("TEST-TOPIC-\\d", RegexOptions.Compiled));
 
             pattern1Stream.To(outputTopic, Produced.With(stringSerde, stringSerde));
             List<string> assignedTopics = new CopyOnWriteArrayList<>();
-            streams = new KafkaStreams(builder.Build(), streamsConfiguration, new DefaultKafkaClientSupplier());
+            streams = new KafkaStreamsThread(builder.Build(), streamsConfiguration, new DefaultKafkaClientSupplier());
             //            {
             //
             //
@@ -126,10 +131,10 @@ namespace Kafka.Streams.Tests.Integration
             //    }
             //});
 
-            streams.start();
+            streams.Start();
             TestUtils.WaitForCondition(() => assignedTopics.Equals(expectedFirstAssignment), STREAM_TASKS_NOT_UPDATED);
 
-            CLUSTER.createTopic("TEST-TOPIC-2");
+            CLUSTER.CreateTopic("TEST-TOPIC-2");
 
             TestUtils.WaitForCondition(() => assignedTopics.Equals(expectedSecondAssignment), STREAM_TASKS_NOT_UPDATED);
 
@@ -138,7 +143,7 @@ namespace Kafka.Streams.Tests.Integration
         private string CreateTopic(int suffix)
         {// throws InterruptedException
             string outputTopic = "outputTopic_" + suffix;
-            CLUSTER.createTopic(outputTopic);
+            CLUSTER.CreateTopic(outputTopic);
             return outputTopic;
         }
 
@@ -154,12 +159,15 @@ namespace Kafka.Streams.Tests.Integration
 
             StreamsBuilder builder = new StreamsBuilder();
 
-            KStream<string, string> pattern1Stream = builder.Stream(new Regex("TEST-TOPIC-[A-Z]", RegexOptions.Compiled));
+            IKStream<string, string> pattern1Stream = builder.Stream<string, string>(new Regex("TEST-TOPIC-[A-Z]", RegexOptions.Compiled));
 
             pattern1Stream.To(outputTopic, Produced.With(stringSerde, stringSerde));
 
-            List<string> assignedTopics = new CopyOnWriteArrayList<>();
-            streams = new KafkaStreams(builder.Build(), streamsConfiguration, new DefaultKafkaClientSupplier();
+            List<string> assignedTopics = null; // new CopyOnWriteArrayList<>();
+            streams = new KafkaStreamsThread(
+                builder.Build(),
+                streamsConfiguration,
+                new DefaultKafkaClientSupplier();
             //    {
             //
             //
@@ -179,7 +187,7 @@ namespace Kafka.Streams.Tests.Integration
             //        });
 
 
-            streams.start();
+            streams.Start();
             TestUtils.WaitForCondition(() => assignedTopics.Equals(expectedFirstAssignment), STREAM_TASKS_NOT_UPDATED);
 
             CLUSTER.deleteTopic("TEST-TOPIC-A");
@@ -191,7 +199,7 @@ namespace Kafka.Streams.Tests.Integration
         public void ShouldAddStateStoreToRegexDefinedSource()
         {// throws InterruptedException
 
-            IProcessorSupplier<string, string> processorSupplier = new MockProcessorSupplier<>();
+            IProcessorSupplier<string, string> processorSupplier = new MockProcessorSupplier<string, string>();
             var storeBuilder = new MockKeyValueStoreBuilder("testStateStore", false);
             long thirtySecondTimeout = 30 * 1000;
 
@@ -200,11 +208,11 @@ namespace Kafka.Streams.Tests.Integration
             topology.AddProcessor("my-processor", processorSupplier, "ingest");
             topology.AddStateStore(storeBuilder, "my-processor");
 
-            streams = new KafkaStreams(topology, streamsConfiguration);
+            streams = new KafkaStreamsThread(topology, streamsConfiguration);
 
             try
             {
-                streams.start();
+                streams.Start();
 
                 TestCondition stateStoreNameBoundToSourceTopic = () =>
                 {
@@ -246,8 +254,8 @@ namespace Kafka.Streams.Tests.Integration
             pattern2Stream.To(outputTopic, Produced.With(stringSerde, stringSerde));
             namedTopicsStream.To(outputTopic, Produced.With(stringSerde, stringSerde));
 
-            streams = new KafkaStreams(builder.Build(), streamsConfiguration);
-            streams.start();
+            streams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
+            streams.Start();
 
             StreamsConfig producerConfig = TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
 
@@ -258,10 +266,10 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_Y, Collections.singleton(topicYTestMessage), producerConfig, mockTime);
             IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_Z, Collections.singleton(topicZTestMessage), producerConfig, mockTime);
 
-            StreamsConfig consumerConfig = TestUtils.consumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
+            StreamsConfig consumerConfig = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
 
             List<string> expectedReceivedValues = Arrays.asList(topicATestMessage, topic1TestMessage, topic2TestMessage, topicCTestMessage, topicYTestMessage, topicZTestMessage);
-            List<KeyValuePair<string, string>> receivedKeyValues = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(consumerConfig, outputTopic, 6);
+            List<KeyValuePair<string, string>> receivedKeyValues = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(consumerConfig, outputTopic, 6);
             List<string> actualValues = new List<string>(6);
 
             foreach (KeyValuePair<string, string> receivedKeyValue in receivedKeyValues)
@@ -278,15 +286,15 @@ namespace Kafka.Streams.Tests.Integration
         public void TestMultipleConsumersCanReadFromPartitionedTopic()
         {// throws Exception
 
-            KafkaStreams partitionedStreamsLeader = null;
-            KafkaStreams partitionedStreamsFollower = null;
+            IKafkaStreamsThread partitionedStreamsLeader = null;
+            IKafkaStreamsThread partitionedStreamsFollower = null;
             ISerde<string> stringSerde = Serdes.String();
             StreamsBuilder builderLeader = new StreamsBuilder();
             StreamsBuilder builderFollower = new StreamsBuilder();
             List<string> expectedAssignment = Arrays.asList(PARTITIONED_TOPIC_1, PARTITIONED_TOPIC_2);
 
-            KStream<string, string> partitionedStreamLeader = builderLeader.Stream<string, string>(new Regex("partitioned-\\d", RegexOptions.Compiled));
-            KStream<string, string> partitionedStreamFollower = builderFollower.Stream<string, string>(new Regex("partitioned-\\d", RegexOptions.Compiled));
+            IKStream<string, string> partitionedStreamLeader = builderLeader.Stream<string, string>(new Regex("partitioned-\\d", RegexOptions.Compiled));
+            IKStream<string, string> partitionedStreamFollower = builderFollower.Stream<string, string>(new Regex("partitioned-\\d", RegexOptions.Compiled));
 
             partitionedStreamLeader.To(outputTopic, Produced.With(stringSerde, stringSerde));
             partitionedStreamFollower.To(outputTopic, Produced.With(stringSerde, stringSerde));
@@ -294,7 +302,7 @@ namespace Kafka.Streams.Tests.Integration
             List<string> leaderAssignment = new List<string>();
             List<string> followerAssignment = new List<string>();
 
-            partitionedStreamsLeader = new KafkaStreams(builderLeader.Build(), streamsConfiguration, new DefaultKafkaClientSupplier();
+            partitionedStreamsLeader = new KafkaStreamsThread(builderLeader.Build(), streamsConfiguration, new DefaultKafkaClientSupplier();
             //        {
             //
             //
@@ -310,7 +318,7 @@ namespace Kafka.Streams.Tests.Integration
             //            }
             //        };
             //            });
-            partitionedStreamsFollower = new KafkaStreams(builderFollower.Build(), streamsConfiguration, new DefaultKafkaClientSupplier();
+            partitionedStreamsFollower = new KafkaStreamsThread(builderFollower.Build(), streamsConfiguration, new DefaultKafkaClientSupplier();
             //{
             //
             //    public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
@@ -328,8 +336,8 @@ namespace Kafka.Streams.Tests.Integration
             //}
             //            });
 
-            partitionedStreamsLeader.start();
-            partitionedStreamsFollower.start();
+            partitionedStreamsLeader.Start();
+            partitionedStreamsFollower.Start();
             TestUtils.WaitForCondition(() => followerAssignment.Equals(expectedAssignment) && leaderAssignment.Equals(expectedAssignment), "topic assignment not completed");
 
             if (partitionedStreamsLeader != null)
@@ -341,7 +349,6 @@ namespace Kafka.Streams.Tests.Integration
             {
                 partitionedStreamsFollower.Close();
             }
-
         }
 
         [Fact]
@@ -355,71 +362,81 @@ namespace Kafka.Streams.Tests.Integration
 
             // overlapping patterns here, no messages should be sent as TopologyException
             // will be thrown when the processor topology is built.
-            KStream<string, string> pattern1Stream = builder.Stream<string, string>(new Regex("foo.*", RegexOptions.Compiled));
-            KStream<string, string> pattern2Stream = builder.Stream<string, string>(new Regex("f.*", RegexOptions.Compiled));
+            IKStream<string, string> pattern1Stream = builder.Stream<string, string>(new Regex("foo.*", RegexOptions.Compiled));
+            IKStream<string, string> pattern2Stream = builder.Stream<string, string>(new Regex("f.*", RegexOptions.Compiled));
 
             pattern1Stream.To(outputTopic, Produced.With(stringSerde, stringSerde));
             pattern2Stream.To(outputTopic, Produced.With(stringSerde, stringSerde));
 
             bool expectError = false;
 
-            streams = new KafkaStreams(builder.Build(), streamsConfiguration);
-            streams.setStateListener((newState, oldState) =>
+            streams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
+            streams.SetStateListener((newState, oldState) =>
             {
-                if (newState == KafkaStreams.State.ERROR)
+                if (newState == KafkaStreamsThreadStates.ERROR)
                 {
                     expectError.set(true);
                 }
             });
 
-            streams.start();
+            streams.Start();
 
             StreamsConfig producerConfig = TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
 
-            IntegrationTestUtils.produceValuesSynchronously(FA_TOPIC, Collections.singleton(fMessage), producerConfig, mockTime);
-            IntegrationTestUtils.produceValuesSynchronously(FOO_TOPIC, Collections.singleton(fooMessage), producerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(FA_TOPIC, Collections.singleton(fMessage), producerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(FOO_TOPIC, Collections.singleton(fooMessage), producerConfig, mockTime);
 
-            StreamsConfig consumerConfig = TestUtils.consumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
+            StreamsConfig consumerConfig = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
             try
             {
-                IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(consumerConfig, outputTopic, 2, 5000);
-                throw new IllegalStateException("This should not happen: an assertion error should have been thrown before this.");
+                IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(consumerConfig, outputTopic, 2, 5000);
+                throw new Exception("This should not happen: an assertion error should have been thrown before this.");
             }
-            catch (AssertionError e)
+            catch (Exception e)
             {
                 // this is fine
             }
 
-            Assert.True(expectError.Get());
+            Assert.True(expectError);
         }
 
-        private class TheConsumerRebalanceListener : ConsumerRebalanceListener
+        private class TheConsumerRebalanceListener : IConsumerRebalanceListener
         {
             private readonly List<string> assignedTopics;
-            private ConsumerRebalanceListener listener;
+            private IConsumerRebalanceListener listener;
 
-            TheConsumerRebalanceListener(List<string> assignedTopics, ConsumerRebalanceListener listener)
+            TheConsumerRebalanceListener(List<string> assignedTopics, IConsumerRebalanceListener listener)
             {
                 this.assignedTopics = assignedTopics;
                 this.listener = listener;
             }
 
 
-            public void OnPartitionsRevoked(Collection<TopicPartition> partitions)
+            public void OnPartitionsRevoked(List<TopicPartition> partitions)
             {
                 assignedTopics.Clear();
                 listener.OnPartitionsRevoked(partitions);
             }
 
 
-            public void OnPartitionsAssigned(Collection<TopicPartition> partitions)
+            public void OnPartitionsAssigned(List<TopicPartition> partitions)
             {
                 foreach (TopicPartition partition in partitions)
                 {
                     assignedTopics.Add(partition.Topic);
                 }
                 Collections.sort(assignedTopics);
-                listener.onPartitionsAssigned(partitions);
+                listener.OnPartitionsAssigned(partitions);
+            }
+
+            public void OnPartitionsRevoked(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> revokedPartitions)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions)
+            {
+                throw new NotImplementedException();
             }
         }
 

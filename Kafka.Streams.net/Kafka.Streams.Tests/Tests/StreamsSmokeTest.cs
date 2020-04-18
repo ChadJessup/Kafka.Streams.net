@@ -25,10 +25,10 @@ namespace Kafka.Streams.Tests.Tests
 //        bool disableAutoTerminate = args.Length > 2;
 
 //        StreamsConfig streamsProperties = Utils.loadProps(propFileName);
-//        string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//        string kafka = streamsProperties.getProperty(StreamsConfig.BootstrapServersConfig);
 
 //        if (kafka == null) {
-//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BootstrapServersConfig);
 //            System.exit(1);
 //        }
 
@@ -58,12 +58,12 @@ namespace Kafka.Streams.Tests.Tests
 //                break;
 //            case "process-eos":
 //                // this starts the stream processing app with EOS
-//                streamsProperties.Set(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+//                streamsProperties.Set(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.StreamsConfig.ExactlyOnceConfig);
 //                new SmokeTestClient(UUID.randomUUID().ToString()).start(streamsProperties);
 //                break;
 //            case "Close-deadlock-test":
 //                ShutdownDeadlockTest test = new ShutdownDeadlockTest(kafka);
-//                test.start();
+//                test.Start();
 //                break;
 //            default:
 //                System.Console.Out.WriteLine("unknown command: " + command);

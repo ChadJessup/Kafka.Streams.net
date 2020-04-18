@@ -76,7 +76,7 @@
 //            //     .withSinkName(sinkName)
 //            //     .withSourceName(sourceName)
 //            //     .withKeySerde(keySerde)
-//            //     .withValueSerde(valSerde)
+//            //     .WithValueSerde(valSerde)
 //            //     .withNodeName(sourceName).build();
 //        }
 
@@ -97,7 +97,7 @@
 //            }
 //            if (materializedInternal.valueSerde == null)
 //            {
-//                materializedInternal.withValueSerde(valSerde);
+//                materializedInternal.WithValueSerde(valSerde);
 //            }
 
 //            IProcessorSupplier<K, Change<V>> aggregateSupplier = 
@@ -130,7 +130,7 @@
 //            //}
 //            //if (materializedInternal.valueSerde == null)
 //            //{
-//            //    materializedInternal.withValueSerde(Serdes.Long());
+//            //    materializedInternal.WithValueSerde(Serdes.Long());
 //            //}
 
 //            //IProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableAggregate<>(materializedInternal.storeName(),

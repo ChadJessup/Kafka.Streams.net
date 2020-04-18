@@ -32,7 +32,7 @@ namespace Kafka.Streams.Tests.State.Internals
         //[Fact]
         //public void BufferShouldAllowCacheDisablement()
         //{
-        //    new InMemoryTimeOrderedKeyValueBuffer.Builder<>(null, null, null).withCachingDisabled();
+        //    new InMemoryTimeOrderedKeyValueBuffer.Builder<>(null, null, null).WithCachingDisabled();
         //}
     }
 }

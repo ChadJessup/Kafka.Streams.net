@@ -1,6 +1,5 @@
 ﻿using Confluent.Kafka;
 using Kafka.Common;
-using Kafka.Streams.Extensions;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads.Stream;

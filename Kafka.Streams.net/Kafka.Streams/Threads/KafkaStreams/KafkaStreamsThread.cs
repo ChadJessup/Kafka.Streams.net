@@ -33,7 +33,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
      * One {@code KafkaStreams} instance can contain one or more threads specified in the configs for the processing work.
      * <p>
      * A {@code KafkaStreams} instance can co-ordinate with any other instances with the same
-     * {@link StreamsConfig#APPLICATION_ID_CONFIG application ID} (whether in the same process, on other processes on this
+     * {@link StreamsConfig#ApplicationIdConfig application ID} (whether in the same process, on other processes on this
      * machine, or on remote machines) as a single (possibly distributed) stream processing application.
      * These instances will divide up the work based on the assignment of the input topic partitions so that All partitions
      * are being consumed.
@@ -46,16 +46,16 @@ namespace Kafka.Streams.Threads.KafkaStreams
      * A simple example might look like this:
      * <pre>{@code
      * Properties props = new Properties();
-     * props.Add(StreamsConfig.APPLICATION_ID_CONFIG, "my-stream-processing-application");
+     * props.Add(StreamsConfig.ApplicationIdConfig, "my-stream-processing-application");
      * props.Add(StreamsConfig.BootstrapServers, "localhost:9092");
-     * props.Add(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.string().getClass());
-     * props.Add(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.string().getClass());
+     * props.Add(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.string().getClass());
+     * props.Add(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.string().getClass());
      *
      * StreamsBuilder builder = new StreamsBuilder();
      * builder.<string, string>stream("my-input-topic").MapValues(value => string.valueOf(value.Length())).to("my-output-topic");
      *
-     * KafkaStreams streams = new KafkaStreams(builder.build(), props);
-     * streams.start();
+     * KafkaStreams streams = new KafkaStreamsThread(builder.build(), props);
+     * streams.Start();
      * }</pre>
      *
      * @see org.apache.kafka.streams.StreamsBuilder
@@ -204,6 +204,15 @@ namespace Kafka.Streams.Threads.KafkaStreams
             //});
         }
 
+        public void SetStateListener(Action<IThread<KafkaStreamsThreadStates>, KafkaStreamsThreadStates, KafkaStreamsThreadStates> OnChange)
+        {
+            this.SetStateListener(new WrappedStateListener<KafkaStreamsThreadStates>(OnChange));
+        }
+        public void SetStateListener(Action<KafkaStreamsThreadStates, KafkaStreamsThreadStates> OnChange)
+        {
+            this.SetStateListener(new WrappedStateListener<KafkaStreamsThreadStates>(OnChange));
+        }
+
         public string ThreadClientId { get; }
         public Thread Thread { get; }
         public void Join() => this.Thread?.Join();
@@ -259,7 +268,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
             return streamStateListener;
         }
-
 
         public bool IsRunning()
         {
@@ -337,6 +345,9 @@ namespace Kafka.Streams.Threads.KafkaStreams
          * @param globalStateRestoreListener The listener triggered when {@link StateStore} is being restored.
          * @throws Exception if this {@code KafkaStreams} instance is not in state {@link State#CREATED CREATED}.
          */
+        public void SetGlobalStateRestoreListener(Action<IThread<KafkaStreamsThreadStates>, KafkaStreamsThreadStates, KafkaStreamsThreadStates> globalStateRestoreListener)
+           => this.SetGlobalStateRestoreListener(new WrappedStateRestoreListener<KafkaStreamsThreadStates>(globalStateRestoreListener);
+
         public void SetGlobalStateRestoreListener(IStateRestoreListener globalStateRestoreListener)
         {
             lock (this.stateLock)
@@ -530,7 +541,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         /**
          * Do a clean up of the local {@link StateStore} directory ({@link StreamsConfig#STATE_DIR_CONFIG}) by deleting All
-         * data with regard to the {@link StreamsConfig#APPLICATION_ID_CONFIG application ID}.
+         * data with regard to the {@link StreamsConfig#ApplicationIdConfig application ID}.
          * <p>
          * May only be called either before this {@code KafkaStreams} instance is {@link #start() started} or after the
          * instance is {@link #Close() closed}.
@@ -552,7 +563,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         /**
          * Find All currently running {@code KafkaStreams} instances (potentially remotely) that use the same
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG application ID} as this instance (i.e., All instances that belong to
+         * {@link StreamsConfig#ApplicationIdConfig application ID} as this instance (i.e., All instances that belong to
          * the same Kafka Streams application) and return {@link StreamsMetadata} for each discovered instance.
          * <p>
          * Note: this is a point in time view and it may change due to partition reassignment.
@@ -568,7 +579,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         /**
          * Find All currently running {@code KafkaStreams} instances (potentially remotely) that
          * <ul>
-         *   <li>use the same {@link StreamsConfig#APPLICATION_ID_CONFIG application ID} as this instance (i.e., All
+         *   <li>use the same {@link StreamsConfig#ApplicationIdConfig application ID} as this instance (i.e., All
          *       instances that belong to the same Kafka Streams application)</li>
          *   <li>and that contain a {@link StateStore} with the given {@code storeName}</li>
          * </ul>
@@ -589,7 +600,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         /**
          * Find the currently running {@code KafkaStreams} instance (potentially remotely) that
          * <ul>
-         *   <li>use the same {@link StreamsConfig#APPLICATION_ID_CONFIG application ID} as this instance (i.e., All
+         *   <li>use the same {@link StreamsConfig#ApplicationIdConfig application ID} as this instance (i.e., All
          *       instances that belong to the same Kafka Streams application)</li>
          *   <li>and that contain a {@link StateStore} with the given {@code storeName}</li>
          *   <li>and the {@link StateStore} Contains the given {@code key}</li>
@@ -631,7 +642,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         /**
          * Find the currently running {@code KafkaStreams} instance (potentially remotely) that
          * <ul>
-         *   <li>use the same {@link StreamsConfig#APPLICATION_ID_CONFIG application ID} as this instance (i.e., All
+         *   <li>use the same {@link StreamsConfig#ApplicationIdConfig application ID} as this instance (i.e., All
          *       instances that belong to the same Kafka Streams application)</li>
          *   <li>and that contain a {@link StateStore} with the given {@code storeName}</li>
          *   <li>and the {@link StateStore} Contains the given {@code key}</li>

@@ -112,7 +112,7 @@ namespace Kafka.Streams.RocksDbState
 
             Dictionary<string, object> configs = context.AppConfigs();
 
-            if (configs.TryGetValue(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, out var classString))
+            if (configs.TryGetValue(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIGConfig, out var classString))
             {
                 var configSetterClass = Type.GetType(classString.ToString());
                 if (configSetterClass != null)
@@ -426,7 +426,7 @@ namespace Kafka.Streams.RocksDbState
             this.DbAccessor = null;
             this.WOptions = null;
             this.Db = null;
-            this.filter = null;
+            this.Filter = null;
             this.cache = null;
         }
 

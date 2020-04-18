@@ -18,7 +18,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         private string globalTopic = "global";
         private IGlobalKTable<string, string> global;
         private IKStream<K, V> stream;
-        private IKeyValueMapper<string, string, string> keyValueMapper;
+        private KeyValueMapper<string, string, string> keyValueMapper;
 
 
         public void setUp()
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(streamTopic, "2", "b", 10L));
             driver.PipeInput(recordFactory.Create(streamTopic, "3", "c", 3L));
 
-            Assert.Equal(expected, supplier.TheCapturedProcessor().lastValueAndTimestampPerKey);
+            Assert.Equal(expected, supplier.TheCapturedProcessor().LastValueAndTimestampPerKey);
         }
     }
 }

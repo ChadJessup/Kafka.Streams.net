@@ -195,11 +195,11 @@
 //        stateSerdes = serdes;
 
 //        var props = new StreamsConfig();
-//        props.Put(StreamsConfig.APPLICATION_ID_CONFIG, "application-id");
-//        props.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+//        props.Put(StreamsConfig.ApplicationIdConfig, "application-id");
+//        props.Put(StreamsConfig.BootstrapServersConfig, "localhost:9092");
 //        props.Put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor);
-//        props.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, serdes.keySerde().GetType());
-//        props.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, ISerde.valueSerde().GetType());
+//        props.Put(StreamsConfig.DefaultKeySerdeClassConfig, serdes.keySerde().GetType());
+//        props.Put(StreamsConfig.DefaultValueSerdeClassConfig, ISerde.valueSerde().GetType());
 //        props.Put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBKeyValueStoreTest.TheRocksDbConfigSetter);
 
 //        // context = new InternalMockProcessorContext(stateDir, serdes.keySerde(), serdes.valueSerde(), recordCollector, null)

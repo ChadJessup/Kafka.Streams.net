@@ -9,7 +9,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     public class PartitionGroupTest
     {
         private LogContext logContext = new LogContext();
-        private ISerializer<int> intSerializer = new IntegerSerializer();
+        private ISerializer<int> intSerializer = new Serdes.Int().Serializer();
         private IDeserializer<int> intDeserializer = Serializers.Int32;
         private ITimestampExtractor timestampExtractor = new MockTimestampExtractor();
         private readonly string[] topics = { "topic" };

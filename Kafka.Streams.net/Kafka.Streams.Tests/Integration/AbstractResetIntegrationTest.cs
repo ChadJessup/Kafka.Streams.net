@@ -19,7 +19,7 @@ namespace Kafka.Streams.Tests.Integration
         static EmbeddedKafkaCluster cluster;
 
         private static MockTime mockTime;
-        private static KafkaStreams streams;
+        private static KafkaStreamsThread streams;
         private static Admin adminClient = null;
 
         public abstract Dictionary<string, object> GetClientSslConfig();
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Integration
         private void PrepareConfigs()
         {
             commonClientConfig = new StreamsConfig();
-            commonClientConfig.Set(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, cluster.bootstrapServers());
+            commonClientConfig.Set(CommonClientConfigs.BootstrapServersConfig, cluster.bootstrapServers());
 
             Dictionary<string, object> sslConfig = GetClientSslConfig();
             if (sslConfig != null)
@@ -101,8 +101,8 @@ namespace Kafka.Streams.Tests.Integration
 
             streamsConfig = new StreamsConfig();
             streamsConfig.Set(StreamsConfig.STATE_DIR_CONFIG, testFolder.getRoot().getPath());
-            streamsConfig.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Long().GetType());
-            streamsConfig.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType());
+            streamsConfig.Set(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.Long().GetType());
+            streamsConfig.Set(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType());
             streamsConfig.Set(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
             streamsConfig.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
             streamsConfig.Set(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
@@ -196,11 +196,11 @@ namespace Kafka.Streams.Tests.Integration
                 cleanUpConfig.Put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 100);
                 cleanUpConfig.Put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "" + CLEANUP_CONSUMER_TIMEOUT);
 
-                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+                streamsConfig.Put(StreamsConfig.ApplicationIdConfig, appID);
 
                 // RUN
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
-                streams.start();
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams.Start();
 
                 int exitCode = new StreamsResetter().run(parameters, cleanUpConfig);
                 Assert.Equal(1, exitCode);
@@ -245,19 +245,19 @@ namespace Kafka.Streams.Tests.Integration
             void TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic()
             {// throws Exception
                 appID = testId + "-from-scratch";
-                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+                streamsConfig.Put(StreamsConfig.ApplicationIdConfig, appID);
 
                 // RUN
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
-                streams.start();
-                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams.Start();
+                List<KeyValuePair<long, long>> result = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 
                 streams.Close();
                 TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
                     "Streams Application consumer group " + appID + " did not time out after " + (TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT) + " ms.");
 
                 // RESET
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
                 streams.cleanUp();
                 CleanGlobal(false, null, null);
                 TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * CLEANUP_CONSUMER_TIMEOUT,
@@ -266,8 +266,8 @@ namespace Kafka.Streams.Tests.Integration
                 AssertInternalTopicsGotDeleted(null);
 
                 // RE-RUN
-                streams.start();
-                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                streams.Start();
+                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
                 streams.Close();
 
                 Assert.Equal(resultRerun, result);
@@ -279,18 +279,18 @@ namespace Kafka.Streams.Tests.Integration
 
             void TestReprocessingFromScratchAfterResetWithIntermediateUserTopic()
             {// throws Exception
-                cluster.createTopic(INTERMEDIATE_USER_TOPIC);
+                cluster.CreateTopic(INTERMEDIATE_USER_TOPIC);
 
                 appID = testId + "-from-scratch-with-intermediate-topic";
-                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+                streamsConfig.Put(StreamsConfig.ApplicationIdConfig, appID);
 
                 // RUN
-                streams = new KafkaStreams(SetupTopologyWithIntermediateUserTopic(OUTPUT_TOPIC_2), streamsConfig);
-                streams.start();
-                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                streams = new KafkaStreamsThread(SetupTopologyWithIntermediateUserTopic(OUTPUT_TOPIC_2), streamsConfig);
+                streams.Start();
+                List<KeyValuePair<long, long>> result = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
                 // receive only first values to make sure intermediate user topic is not consumed completely
                 // => required to test "seekToEnd" for intermediate topics
-                List<KeyValuePair<long, long>> result2 = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC_2, 40);
+                List<KeyValuePair<long, long>> result2 = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC_2, 40);
 
                 streams.Close();
                 TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
@@ -306,7 +306,7 @@ namespace Kafka.Streams.Tests.Integration
                     mockTime.NowAsEpochMilliseconds);
 
                 // RESET
-                streams = new KafkaStreams(SetupTopologyWithIntermediateUserTopic(OUTPUT_TOPIC_2_RERUN), streamsConfig);
+                streams = new KafkaStreamsThread(SetupTopologyWithIntermediateUserTopic(OUTPUT_TOPIC_2_RERUN), streamsConfig);
                 streams.cleanUp();
                 CleanGlobal(true, null, null);
                 TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * CLEANUP_CONSUMER_TIMEOUT,
@@ -315,16 +315,16 @@ namespace Kafka.Streams.Tests.Integration
                 AssertInternalTopicsGotDeleted(INTERMEDIATE_USER_TOPIC);
 
                 // RE-RUN
-                streams.start();
-                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
-                List<KeyValuePair<long, long>> resultRerun2 = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC_2_RERUN, 40);
+                streams.Start();
+                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                List<KeyValuePair<long, long>> resultRerun2 = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC_2_RERUN, 40);
                 streams.Close();
 
                 Assert.Equal(resultRerun, result);
                 Assert.Equal(resultRerun2, result2);
 
                 StreamsConfig props = TestUtils.consumerConfig(cluster.bootstrapServers(), testId + "-result-consumer", LongDeserializer, Serdes.String().Deserializer, commonClientConfig);
-                List<KeyValuePair<long, string>> resultIntermediate = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(props, INTERMEDIATE_USER_TOPIC, 21);
+                List<KeyValuePair<long, string>> resultIntermediate = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(props, INTERMEDIATE_USER_TOPIC, 21);
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -342,12 +342,12 @@ namespace Kafka.Streams.Tests.Integration
             void TestReprocessingFromFileAfterResetWithoutIntermediateUserTopic()
             {// throws Exception
                 appID = testId + "-from-file";
-                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+                streamsConfig.Put(StreamsConfig.ApplicationIdConfig, appID);
 
                 // RUN
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
-                streams.start();
-                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams.Start();
+                List<KeyValuePair<long, long>> result = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 
                 streams.Close();
                 TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
@@ -358,7 +358,7 @@ namespace Kafka.Streams.Tests.Integration
                 BufferedWriter writer = new BufferedWriter(new FileWriter(resetFile));
                 writer.write(INPUT_TOPIC + ",0,1");
 
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
                 streams.cleanUp();
 
                 cleanGlobal(false, "--from-file", resetFile.FullName);
@@ -370,8 +370,8 @@ namespace Kafka.Streams.Tests.Integration
                 resetFile.deleteOnExit();
 
                 // RE-RUN
-                streams.start();
-                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 5);
+                streams.Start();
+                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 5);
                 streams.Close();
 
                 result.remove(0);
@@ -385,12 +385,12 @@ namespace Kafka.Streams.Tests.Integration
             void TestReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic()
             {// throws Exception
                 appID = testId + "-from-datetime";
-                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+                streamsConfig.Put(StreamsConfig.ApplicationIdConfig, appID);
 
                 // RUN
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
-                streams.start();
-                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams.Start();
+                List<KeyValuePair<long, long>> result = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 
                 streams.Close();
                 TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
@@ -401,7 +401,7 @@ namespace Kafka.Streams.Tests.Integration
                 BufferedWriter writer = new BufferedWriter(new FileWriter(resetFile));
                 writer.write(INPUT_TOPIC + ",0,1");
 
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
                 streams.cleanUp();
 
 
@@ -418,8 +418,8 @@ namespace Kafka.Streams.Tests.Integration
                 resetFile.deleteOnExit();
 
                 // RE-RUN
-                streams.start();
-                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                streams.Start();
+                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
                 streams.Close();
 
                 Assert.Equal(resultRerun, result);
@@ -432,12 +432,12 @@ namespace Kafka.Streams.Tests.Integration
             void TestReprocessingByDurationAfterResetWithoutIntermediateUserTopic()
             {// throws Exception
                 appID = testId + "-from-duration";
-                streamsConfig.Put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
+                streamsConfig.Put(StreamsConfig.ApplicationIdConfig, appID);
 
                 // RUN
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
-                streams.start();
-                List<KeyValuePair<long, long>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams.Start();
+                List<KeyValuePair<long, long>> result = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
 
                 streams.Close();
                 TestUtils.WaitForCondition(new ConsumerGroupInactiveCondition(), TIMEOUT_MULTIPLIER * STREAMS_CONSUMER_TIMEOUT,
@@ -448,7 +448,7 @@ namespace Kafka.Streams.Tests.Integration
                 BufferedWriter writer = new BufferedWriter(new FileWriter(resetFile));
                 writer.write(INPUT_TOPIC + ",0,1");
 
-                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams = new KafkaStreamsThread(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
                 streams.cleanUp();
                 CleanGlobal(false, "--by-duration", "PT1M");
 
@@ -460,8 +460,8 @@ namespace Kafka.Streams.Tests.Integration
                 resetFile.deleteOnExit();
 
                 // RE-RUN
-                streams.start();
-                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
+                streams.Start();
+                List<KeyValuePair<long, long>> resultRerun = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(resultConsumerConfig, OUTPUT_TOPIC, 10);
                 streams.Close();
 
                 Assert.Equal(resultRerun, result);
@@ -478,7 +478,7 @@ namespace Kafka.Streams.Tests.Integration
                 IKStream<K, V>(INPUT_TOPIC);
 
                 // use map to trigger internal re-partitioning before groupByKey
-                input.map(KeyValuePair)
+                input.Map(KeyValuePair)
                     .GroupByKey()
                     .Count()
                     .ToStream()
@@ -489,7 +489,7 @@ namespace Kafka.Streams.Tests.Integration
                     .WindowedBy(TimeWindow.Of(TimeSpan.FromMilliseconds(35)).advanceBy(TimeSpan.FromMilliseconds(10)))
                     .Count()
                     .ToStream()
-                    .map((key, value) => KeyValuePair.Create(key.window().start() + key.window().end(), value))
+                    .Map((key, value) => KeyValuePair.Create(key.window().Start() + key.window().end(), value))
                     .To(outputTopic2, Produced.With(Serdes.Long(), Serdes.Long()));
 
                 return builder.Build();
@@ -502,7 +502,7 @@ namespace Kafka.Streams.Tests.Integration
                 IKStream<K, V>(INPUT_TOPIC);
 
                 // use map to trigger internal re-partitioning before groupByKey
-                input.map((key, value) => KeyValuePair.Create(key, key))
+                input.Map((key, value) => KeyValuePair.Create(key, key))
                     .To(OUTPUT_TOPIC, Produced.With(Serdes.Long(), Serdes.Long()));
 
                 return builder.Build();

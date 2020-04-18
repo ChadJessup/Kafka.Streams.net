@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream
 {
     /**
      *  The inner serde can be specified by setting the property
-     *  {@link StreamsConfig#DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS} or
+     *  {@link StreamsConfig#DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASSConfig} or
      *  {@link StreamsConfig#DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS}
      *  if the no-arg constructor is called and hence it is not passed during initialization.
      */
@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream
             if (this.inner == null)
             {
                 string propertyName = isKey
-                    ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
+                    ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASSConfig
                     : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
 
                 string value = configs[propertyName] ?? throw new ArgumentNullException(nameof(configs));

@@ -116,10 +116,10 @@
 //        string bootstrapServers = "localhost:9092";
 //    StreamsConfig streamsConfiguration = new StreamsConfig();
 //    streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, "test-app");
-//        streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-//        streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-//        streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+//        streamsConfiguration.Put(StreamsConfig.ApplicationIdConfig, "test-app");
+//        streamsConfiguration.Put(StreamsConfig.BootstrapServersConfig, bootstrapServers);
+//        streamsConfiguration.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType().FullName);
+//        streamsConfiguration.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType().FullName);
 //        streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
 //        streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 10 * 1000);
 
@@ -204,11 +204,11 @@
 //        cachingStore.Fetch(bytesKey("a"), bytesKey("b"), ofEpochMilli(10), ofEpochMilli(10));
 //    verifyWindowedKeyValue(
 //        iterator.MoveNext(),
-//        new Windowed2<>(bytesKey("a"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
+//        new Windowed<>(bytesKey("a"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //        "a");
 //    verifyWindowedKeyValue(
 //        iterator.MoveNext(),
-//        new Windowed2<>(bytesKey("b"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
+//        new Windowed<>(bytesKey("b"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //        "b");
 //    Assert.False(iterator.HasNext());
 //    Assert.Equal(2, cache.Count);
@@ -232,7 +232,7 @@
 //    {
 //        verifyWindowedKeyValue(
 //            iterator.MoveNext(),
-//            new Windowed2<>(bytesKey(s), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
+//            new Windowed<>(bytesKey(s), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //            s);
 //    }
 //    Assert.False(iterator.HasNext());
@@ -255,7 +255,7 @@
 //        string str = array[i];
 //        verifyWindowedKeyValue(
 //            iterator.MoveNext(),
-//            new Windowed2<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
+//            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
 //    Assert.False(iterator.HasNext());
@@ -267,7 +267,7 @@
 //        string str = array[i];
 //        verifyWindowedKeyValue(
 //            iterator1.MoveNext(),
-//            new Windowed2<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
+//            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
 //    Assert.False(iterator1.HasNext());
@@ -279,7 +279,7 @@
 //        string str = array[i];
 //        verifyWindowedKeyValue(
 //            iterator2.MoveNext(),
-//            new Windowed2<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
+//            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
 //    Assert.False(iterator2.HasNext());
@@ -305,7 +305,7 @@
 //public void ShouldForwardDirtyItemsWhenFlushCalled()
 //{
 //    IWindowed<string> windowedKey =
-//        new Windowed2<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//        new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
 //    cachingStore.Put(bytesKey("1"), bytesValue("a"));
 //    cachingStore.Flush();
 //    Assert.Equal("a", cacheListener.forwarded.Get(windowedKey).newValue);
@@ -324,7 +324,7 @@
 //{
 //    cachingStore.SetFlushListener(cacheListener, true);
 //    IWindowed<string> windowedKey =
-//        new Windowed2<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//        new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
 //    cachingStore.Put(bytesKey("1"), bytesValue("a"));
 //    cachingStore.Put(bytesKey("1"), bytesValue("b"));
 //    cachingStore.Flush();
@@ -352,7 +352,7 @@
 //public void ShouldForwardOldValuesWhenDisabled()
 //{
 //    IWindowed<string> windowedKey =
-//        new Windowed2<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//        new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
 //    cachingStore.Put(bytesKey("1"), bytesValue("a"));
 //    cachingStore.Put(bytesKey("1"), bytesValue("b"));
 //    cachingStore.Flush();
@@ -432,11 +432,11 @@
 //        cachingStore.Fetch(key, bytesKey("2"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP + WINDOW_SIZE));
 //    verifyWindowedKeyValue(
 //        fetchRange.MoveNext(),
-//        new Windowed2<>(key, new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
+//        new Windowed<>(key, new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //        "a");
 //    verifyWindowedKeyValue(
 //        fetchRange.MoveNext(),
-//        new Windowed2<>(key, new TimeWindow(DEFAULT_TIMESTAMP + WINDOW_SIZE, DEFAULT_TIMESTAMP + WINDOW_SIZE + WINDOW_SIZE)),
+//        new Windowed<>(key, new TimeWindow(DEFAULT_TIMESTAMP + WINDOW_SIZE, DEFAULT_TIMESTAMP + WINDOW_SIZE + WINDOW_SIZE)),
 //        "b");
 //    Assert.False(fetchRange.HasNext());
 //}
@@ -595,7 +595,7 @@
 //private static KeyValuePair<IWindowed<Bytes>, byte[]> WindowedPair(string key, string value, long timestamp)
 //{
 //    return KeyValuePair.Create(
-//        new Windowed2<>(bytesKey(key), new TimeWindow(timestamp, timestamp + WINDOW_SIZE)),
+//        new Windowed<>(bytesKey(key), new TimeWindow(timestamp, timestamp + WINDOW_SIZE)),
 //        bytesValue(value));
 //}
 

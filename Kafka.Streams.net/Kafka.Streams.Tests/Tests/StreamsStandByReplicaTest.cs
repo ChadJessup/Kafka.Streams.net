@@ -21,19 +21,19 @@ namespace Kafka.Streams.Tests.Tests
 //        string additionalConfigs = args[1];
 
 //        StreamsConfig streamsProperties = Utils.loadProps(propFileName);
-//        string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//        string kafka = streamsProperties.getProperty(StreamsConfig.BootstrapServersConfig);
 
 //        if (kafka == null) {
-//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BootstrapServersConfig);
 //            System.exit(1);
 //        }
 
-//        streamsProperties.Put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams-standby-tasks");
+//        streamsProperties.Put(StreamsConfig.ApplicationIdConfig, "kafka-streams-standby-tasks");
 //        streamsProperties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
 //        streamsProperties.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
 //        streamsProperties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-//        streamsProperties.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType());
-//        streamsProperties.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType());
+//        streamsProperties.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType());
+//        streamsProperties.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType());
 //        streamsProperties.Put(StreamsConfig.producerPrefix(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG), true);
 
 //        if (additionalConfigs == null) {
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tests.Tests
 //        inputStream.GroupByKey().Count(Materialized.As(persistentStoreSupplier)).ToStream().MapValues(countMapper)
 //            .To(sinkTopic2, Produced.With(stringSerde, stringSerde));
 
-//        KafkaStreams streams = new KafkaStreams(builder.Build(), streamsProperties);
+//        KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), streamsProperties);
 
 //        streams.setUncaughtExceptionHandler((t, e) => {
 //            System.Console.Error.WriteLine("FATAL: An unexpected exception " + e);
@@ -99,8 +99,8 @@ namespace Kafka.Streams.Tests.Tests
 //            Shutdown(streams);
 //        });
 
-//        streams.setStateListener((newState, oldState) => {
-//            if (newState == KafkaStreams.State.RUNNING && oldState == KafkaStreams.State.REBALANCING) {
+//        streams.SetStateListener((newState, oldState) => {
+//            if (newState == KafkaStreamsThreadStates.RUNNING && oldState == KafkaStreamsThreadStates.REBALANCING) {
 //                HashSet<ThreadMetadata> threadMetadata = streams.localThreadsMetadata();
 //                foreach (ThreadMetadata threadMetadatum in threadMetadata) {
 //                    System.Console.Out.WriteLine(
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Tests.Tests
 //        });
 
 //        System.Console.Out.WriteLine("Start Kafka Streams");
-//        streams.start();
+//        streams.Start();
 
 //        Runtime.getRuntime().addShutdownHook(new Thread(() => {
 //            Shutdown(streams);
@@ -119,7 +119,7 @@ namespace Kafka.Streams.Tests.Tests
 //        }));
 //    }
 
-//    private static void Shutdown(KafkaStreams streams) {
+//    private static void Shutdown(KafkaStreamsThread streams) {
 //        streams.Close(TimeSpan.FromSeconds(10));
 //    }
 

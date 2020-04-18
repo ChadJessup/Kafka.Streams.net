@@ -203,7 +203,7 @@ namespace Kafka.Streams.Tests.Tests
 //        {
 //            StreamsConfig producerProps = new StreamsConfig();
 //            producerProps.Put(ProducerConfig.CLIENT_ID_CONFIG, "SmokeTest");
-//            producerProps.Put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//            producerProps.Put(ProducerConfig.BootstrapServersConfig, kafka);
 //            producerProps.Put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
 //        producerProps.Put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
 //        producerProps.Put(ProducerConfig.ACKS_CONFIG, "All");
@@ -294,7 +294,7 @@ namespace Kafka.Streams.Tests.Tests
 //{
 //    StreamsConfig props = new StreamsConfig();
 //    props.Put(ConsumerConfig.CLIENT_ID_CONFIG, "verifier");
-//    props.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka);
+//    props.Put(ConsumerConfig.BootstrapServersConfig, kafka);
 //    props.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
 //        props.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, NumberDeserializer);
 //        props.Put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
@@ -307,7 +307,7 @@ namespace Kafka.Streams.Tests.Tests
 //        int recordsGenerated = inputs.Count * maxRecordsPerKey;
 //int recordsProcessed = 0;
 //Dictionary<string, int> processed =
-//    Stream.of(TOPICS)
+//    Stream.Of(TOPICS)
 //          .collect(Collectors.toMap(t => t, t => new int(0)));
 
 //Dictionary<string, Map<string, LinkedList<ConsumeResult<string, Number>>>> events = new HashMap<>();
@@ -371,9 +371,9 @@ namespace Kafka.Streams.Tests.Tests
 //    events.Get("echo")
 //          
 //          .Stream()
-//          .map(entry => mkEntry(
+//          .Map(entry => mkEntry(
 //              entry.Key,
-//              entry.Value.Stream().map(ConsumeResult::value).collect(Collectors.toSet()))
+//              entry.Value.Stream().Map(ConsumeResult::value).collect(Collectors.toSet()))
 //          )
 //          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 

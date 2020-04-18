@@ -41,11 +41,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             // Create a new directory in which we'll Put All of the state for this test, enabling running tests in parallel ...
             File localState = TestUtils.GempDirectory();
-            props.Set(StreamsConfig.APPLICATION_ID_CONFIG, "processor-topology-test");
-            props.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9091");
+            props.Set(StreamsConfig.ApplicationIdConfig, "processor-topology-test");
+            props.Set(StreamsConfig.BootstrapServersConfig, "localhost:9091");
             props.Set(StreamsConfig.STATE_DIR_CONFIG, localState.FullName);
-            props.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
-            props.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().GetType().FullName);
+            props.Set(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType().FullName);
+            props.Set(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.String().GetType().FullName);
             props.Set(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, CustomTimestampExtractor.getName());
         }
 
@@ -181,7 +181,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             string global = "global";
             string topic = "topic";
 
-            topology.addGlobalStore(Stores.KeyValueStoreBuilder(Stores.InMemoryKeyValueStore(storeName), Serdes.String(), Serdes.String()).withLoggingDisabled(),
+            topology.addGlobalStore(Stores.KeyValueStoreBuilder(Stores.InMemoryKeyValueStore(storeName), Serdes.String(), Serdes.String()).WithLoggingDisabled(),
                     global, STRING_DESERIALIZER, STRING_DESERIALIZER, topic, "processor", define(new StatefulProcessor(storeName)));
 
             driver = new TopologyTestDriver(topology, props);
@@ -425,7 +425,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             TopologyWrapper topology = new TopologyWrapper();
             IStoreBuilder<IKeyValueStore<string, string>> storeBuilder =
-                    Stores.KeyValueStoreBuilder(storeSupplier, Serdes.String(), Serdes.String()).withLoggingDisabled();
+                    Stores.KeyValueStoreBuilder(storeSupplier, Serdes.String(), Serdes.String()).WithLoggingDisabled();
             topology.addGlobalStore(storeBuilder, "global", STRING_DESERIALIZER, STRING_DESERIALIZER, "topic", "processor",
                     define(new StatefulProcessor(storeSupplier.Name())));
             return topology.getInternalBuilder("anyAppId").Build();

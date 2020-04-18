@@ -89,7 +89,7 @@ namespace Kafka.Streams.Nodes
                 topologyBuilder.AddGlobalStore(
                     storeBuilder,
                     this.sourceName,
-                    this.consumedInternal.timestampExtractor,
+                    this.consumedInternal.TimestampExtractor,
                     this.consumedInternal.KeyDeserializer(),
                     this.consumedInternal.ValueDeserializer(),
                     topicName,
@@ -101,7 +101,7 @@ namespace Kafka.Streams.Nodes
                 topologyBuilder.AddSource(
                     this.consumedInternal.OffsetResetPolicy(),
                     this.sourceName,
-                    this.consumedInternal.timestampExtractor,
+                    this.consumedInternal.TimestampExtractor,
                     this.consumedInternal.KeyDeserializer(),
                     this.consumedInternal.ValueDeserializer(),
                     new[] { topicName });

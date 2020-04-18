@@ -29,7 +29,7 @@ namespace Kafka.Streams.Tests.Tests
 //            dataStream.To("echo");
 
 //            StreamsConfig config = new StreamsConfig();
-//            config.Set(StreamsConfig.APPLICATION_ID_CONFIG, "StreamsUpgradeTest");
+//            config.Set(StreamsConfig.ApplicationIdConfig, "StreamsUpgradeTest");
 //            config.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
 
 //            KafkaClientSupplier kafkaClientSupplier;
@@ -44,8 +44,8 @@ namespace Kafka.Streams.Tests.Tests
 //            }
 //            config.PutAll(streamsProperties);
 
-//            KafkaStreams streams = new KafkaStreams(builder.Build(), config, kafkaClientSupplier);
-//            streams.start();
+//            KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), config, kafkaClientSupplier);
+//            streams.Start();
 
 //            Runtime.getRuntime().addShutdownHook(new Thread(() =>
 //            {
@@ -81,7 +81,7 @@ namespace Kafka.Streams.Tests.Tests
 //        public ByteBuffer subscriptionUserData(HashSet<string> topics)
 //        {
 //            // Adds the following information to subscription
-//            // 1. Client UUID (a unique id assigned to an instance of KafkaStreams)
+//            // 1. Client UUID (a unique id assigned to an instance of KafkaStreamsThread)
 //            // 2. Task ids of previously running tasks
 //            // 3. Task ids of valid local states on the client's state directory.
 

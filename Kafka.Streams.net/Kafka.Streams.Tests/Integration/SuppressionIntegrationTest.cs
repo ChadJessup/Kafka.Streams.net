@@ -19,11 +19,11 @@ namespace Kafka.Streams.Tests.Integration
                     input,
                     Consumed.With(STRING_SERDE, STRING_SERDE),
                     Materialized.< string, string, IKeyValueStore<Bytes, byte[]> > with(STRING_SERDE, STRING_SERDE)
-                        .withCachingDisabled()
-                        .withLoggingDisabled()
+                        .WithCachingDisabled()
+                        .WithLoggingDisabled()
                 )
                 .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
-                .Count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("counts").withCachingDisabled());
+                .Count(Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("counts").WithCachingDisabled());
         }
 
         [Fact]
@@ -55,10 +55,10 @@ namespace Kafka.Streams.Tests.Integration
                 .To(outputRaw);
 
             StreamsConfig streamsConfig = GetStreamsConfig(appId);
-            streamsConfig.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde);
-            streamsConfig.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde);
+            streamsConfig.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.StringSerde);
+            streamsConfig.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.StringSerde);
 
-            KafkaStreams driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
+            KafkaStreamsThread driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
             try
             {
                 produceSynchronously(
@@ -112,10 +112,10 @@ namespace Kafka.Streams.Tests.Integration
                 .To(outputRaw);
 
             StreamsConfig streamsConfig = GetStreamsConfig(appId);
-            streamsConfig.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde);
-            streamsConfig.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde);
+            streamsConfig.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.StringSerde);
+            streamsConfig.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.StringSerde);
 
-            KafkaStreams driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
+            KafkaStreamsThread driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
             try
             {
                 produceSynchronously(
@@ -142,7 +142,7 @@ namespace Kafka.Streams.Tests.Integration
         private static bool WaitForAnyRecord(string topic)
         {
             StreamsConfig properties = new StreamsConfig();
-            properties.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            properties.Put(ConsumerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             properties.Put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
             properties.Put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.String().Deserializer);
             properties.Put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
@@ -151,7 +151,7 @@ namespace Kafka.Streams.Tests.Integration
             List<TopicPartition> partitions =
                 consumer.partitionsFor(topic)
                         .Stream()
-                        .map(pi => new TopicPartition(pi.Topic, pi.Partition))
+                        .Map(pi => new TopicPartition(pi.Topic, pi.Partition))
                         .collect(Collectors.toList());
             consumer.Assign(partitions);
             consumer.seekToBeginning(partitions);
@@ -193,7 +193,7 @@ namespace Kafka.Streams.Tests.Integration
                 .To(outputRaw, Produced.With(STRING_SERDE, Serdes.Long()));
 
             StreamsConfig streamsConfig = GetStreamsConfig(appId);
-            KafkaStreams driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
+            KafkaStreamsThread driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
             try
             {
                 produceSynchronously(
@@ -239,7 +239,7 @@ namespace Kafka.Streams.Tests.Integration
                 .To(outputRaw, Produced.With(STRING_SERDE, Serdes.Long()));
 
             StreamsConfig streamsConfig = GetStreamsConfig(appId);
-            KafkaStreams driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
+            KafkaStreamsThread driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
             try
             {
                 produceSynchronously(
@@ -263,9 +263,9 @@ namespace Kafka.Streams.Tests.Integration
         private static StreamsConfig GetStreamsConfig(string appId)
         {
             return mkProperties(mkMap(
-                mkEntry(StreamsConfig.APPLICATION_ID_CONFIG, appId),
-                mkEntry(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers()),
-                mkEntry(StreamsConfig.POLL_MS_CONFIG, int.ToString(COMMIT_INTERVAL)),
+                mkEntry(StreamsConfig.ApplicationIdConfig, appId),
+                mkEntry(StreamsConfig.BootstrapServersConfig, CLUSTER.bootstrapServers()),
+                mkEntry(StreamsConfig.PollMsConfig, int.ToString(COMMIT_INTERVAL)),
                 mkEntry(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, int.ToString(COMMIT_INTERVAL)),
                 mkEntry(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, AT_LEAST_ONCE),
                 mkEntry(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath())
@@ -287,15 +287,15 @@ namespace Kafka.Streams.Tests.Integration
                 mkEntry(ProducerConfig.CLIENT_ID_CONFIG, "anything"),
                 mkEntry(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ((Serializer<string>)STRING_SERIALIZER).GetType().FullName),
                 mkEntry(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ((Serializer<string>)STRING_SERIALIZER).GetType().FullName),
-                mkEntry(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers())
+                mkEntry(ProducerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers())
             ));
             IntegrationTestUtils.produceSynchronously(producerConfig, false, topic, Optional.empty(), toProduce);
         }
 
-        private static void VerifyErrorShutdown(KafkaStreams driver)
+        private static void VerifyErrorShutdown(KafkaStreamsThread driver)
         {// throws InterruptedException
             WaitForCondition(() => !driver.state().isRunning(), DEFAULT_TIMEOUT, "Streams didn't shut down.");
-            Assert.Equal(driver.state(), KafkaStreams.State.ERROR);
+            Assert.Equal(driver.state(), KafkaStreamsThreadStates.ERROR);
         }
     }
 }

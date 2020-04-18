@@ -66,7 +66,7 @@ namespace Kafka.Streams.Tests
                 {
                     IKTable<Bytes, string> filteredKTable = builder
                         .< Bytes, string> table(TABLE_TOPIC)
-                         .filter(MockPredicate.allGoodPredicate(), Materialized.As("store"));
+                         .Filter(MockPredicate.allGoodPredicate(), Materialized.As("store"));
                     builder
                         .< Bytes, string > stream(STREAM_TOPIC)
                          .Join(filteredKTable, MockValueJoiner.TOSTRING_JOINER);
@@ -290,7 +290,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     ForeachAction<long, string> action = results.Add;
                     builder.Table(topic, Materialized.< long, string, IKeyValueStore<Bytes, byte[]> > As("store")
                             .WithKeySerde(Serdes.Long())
-                            .withValueSerde(Serdes.String()))
+                            .WithValueSerde(Serdes.String()))
                     .ToStream().ForEach (action) ;
 
                     ConsumerRecordFactory<long, string> recordFactory =
@@ -315,7 +315,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     string topic = "topic";
                     builder.globalTable(topic, Materialized.< long, string, IKeyValueStore<Bytes, byte[]> > As("store")
                             .WithKeySerde(Serdes.Long())
-                            .withValueSerde(Serdes.String()));
+                            .WithValueSerde(Serdes.String()));
 
                     ConsumerRecordFactory<long, string> recordFactory =
                         new ConsumerRecordFactory<>(new Serdes.Long().Serializer(), Serdes.String());
@@ -374,7 +374,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 public void shouldNotReuseSourceTopicAsChangelogsByDefault()
                 {
                     string topic = "topic";
-                    builder.Table(topic, Materialized<long, string, IKeyValueStore<Bytes, byte[]>>.As("store"));
+                    builder.Table(topic, Materialized.As<long, string, IKeyValueStore<Bytes, byte[]>>("store"));
 
                     InternalTopologyBuilder InternalTopologyBuilder = TopologyWrapper.getInternalTopologyBuilder(builder.Build());
                     InternalTopologyBuilder.SetApplicationId("appId");
@@ -467,7 +467,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForMapOperation()
                 {
-                    builder.Stream(STREAM_TOPIC).map(KeyValuePair::pair, Named.As(STREAM_OPERATION_NAME));
+                    builder.Stream(STREAM_TOPIC).Map(KeyValuePair::pair, Named.As(STREAM_OPERATION_NAME));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForOperation(topology, "KSTREAM-SOURCE-0000000000", STREAM_OPERATION_NAME);
@@ -494,7 +494,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForFilterOperation()
                 {
-                    builder.Stream(STREAM_TOPIC).filter((k, v) => true, Named.As(STREAM_OPERATION_NAME));
+                    builder.Stream(STREAM_TOPIC).Filter((k, v) => true, Named.As(STREAM_OPERATION_NAME));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForOperation(topology, "KSTREAM-SOURCE-0000000000", STREAM_OPERATION_NAME);
@@ -592,7 +592,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     IIIKStream<K, V> streamOne = builder.Stream(STREAM_TOPIC);
                     IIIKStream<K, V> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.LeftJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.LeftJoin(streamTwo, (value1, value2) => value1, JoinWindows.Of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
 
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -615,7 +615,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     IIIKStream<K, V> streamOne = builder.Stream(STREAM_TOPIC);
                     IIIKStream<K, V> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.Join(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.Join(streamTwo, (value1, value2) => value1, JoinWindows.Of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
 
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
@@ -639,7 +639,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     IIIKStream<K, V> streamOne = builder.Stream(STREAM_TOPIC);
                     IIIKStream<K, V> streamTwo = builder.Stream(STREAM_TOPIC_TWO);
 
-                    streamOne.OuterJoin(streamTwo, (value1, value2) => value1, JoinWindows.of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
+                    streamOne.OuterJoin(streamTwo, (value1, value2) => value1, JoinWindows.Of(TimeSpan.ofHours(1)), Joined.As(STREAM_OPERATION_NAME));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForStateStore(topology.StateStores,

@@ -6,14 +6,14 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamGlobalKTableJoin<K1, K2, R, V1, V2> : IProcessorSupplier<K1, V1>
     {
         private readonly IKTableValueGetterSupplier<K2, V2> valueGetterSupplier;
-        private readonly IValueJoiner<V1, V2, R> joiner;
-        private readonly IKeyValueMapper<K1, V1, K2> mapper;
+        private readonly ValueJoiner<V1, V2, R> joiner;
+        private readonly KeyValueMapper<K1, V1, K2> mapper;
         private readonly bool leftJoin;
 
         public KStreamGlobalKTableJoin(
             IKTableValueGetterSupplier<K2, V2> valueGetterSupplier,
-            IValueJoiner<V1, V2, R> joiner,
-            IKeyValueMapper<K1, V1, K2> mapper,
+            ValueJoiner<V1, V2, R> joiner,
+            KeyValueMapper<K1, V1, K2> mapper,
             bool leftJoin)
         {
             this.valueGetterSupplier = valueGetterSupplier;

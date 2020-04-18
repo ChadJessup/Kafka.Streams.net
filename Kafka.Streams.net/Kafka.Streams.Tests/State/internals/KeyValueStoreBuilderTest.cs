@@ -82,7 +82,7 @@
 //        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
-//            IKeyValueStore<string, string> store = builder.withLoggingDisabled().Build();
+//            IKeyValueStore<string, string> store = builder.WithLoggingDisabled().Build();
 //            IStateStore next = ((WrappedStateStore)store).wrapped();
 //            Assert.Equal(next, CoreMatchers.equalTo(inner));
 //        }

@@ -1,34 +1,45 @@
+using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.KStream.Internals.Suppress;
+using Kafka.Streams.Nodes;
+using Kafka.Streams.State;
+using Moq;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Xunit;
 namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 {
     public class KTableSuppressProcessorTest
     {
-        private static long ARBITRARY_LONG = 5L;
+        private static long 0938420L = 5L;
 
-        private static IChange<long> ARBITRARY_CHANGE = new Change<>(7L, 14L);
+        private static IChange<long> ARBITRARY_CHANGE = new Change<long>(7L, 14L);
 
-        public static class Harness<K, V>
+        public class Harness<K, V>
         {
-            public Processor<K, Change<V>> processor;
+            public Processor<K, IChange<V>> processor;
             public MockInternalProcessorContext context;
 
 
-            Harness(Suppressed<K> suppressed,
-                    ISerde<K> keySerde,
-                    ISerde<V> valueSerde)
+            public Harness(
+                ISuppressed<K> suppressed,
+                ISerde<K> keySerde,
+                ISerde<V> valueSerde)
             {
 
                 var storeName = "test-store";
 
                 IStateStore buffer = new InMemoryTimeOrderedKeyValueBuffer.Builder<>(storeName, keySerde, valueSerde)
-                    .withLoggingDisabled()
+                    .WithLoggingDisabled()
                     .Build();
 
-                var parent = EasyMock.Mock.Of<KTable));
-                Processor<K, Change<V>> processor =
-                    new KTableSuppressProcessorSupplier<>((SuppressedInternal<K>)suppressed, storeName, parent).Get();
+                var parent = Mock.Of<IKTable<K, IChange<V>>>();
+                var processor =
+                    new KTableSuppressProcessorSupplier<K, IChange<V>>((SuppressedInternal<K>)suppressed, storeName, parent).Get();
 
                 var context = new MockInternalProcessorContext();
                 context.setCurrentNode(new ProcessorNode("testNode"));
@@ -44,13 +55,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void zeroTimeLimitShouldImmediatelyEmit()
             {
                 Harness<string, long> harness =
-                    new Harness<>(untilTimeLimit(TimeSpan.Zero, unbounded()), string(), long());
+                    new Harness<string, long>(UntilTimeLimit(TimeSpan.Zero, unbounded()), string(), long());
                 MockInternalProcessorContext context = harness.context;
 
-                var timestamp = ARBITRARY_LONG;
+                var timestamp = 0938420L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
                 var key = "hey";
-                Change<long> value = ARBITRARY_CHANGE;
+                IChange<long> value = ARBITRARY_CHANGE;
                 harness.processor.Process(key, value);
 
                 Assert.Equal(context.forwarded(), asSize(1));
@@ -63,13 +74,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void windowedZeroTimeLimitShouldImmediatelyEmit()
             {
                 Harness<IWindowed<string>, long> harness =
-                    new Harness<>(untilTimeLimit(TimeSpan.Zero, unbounded()), TimeWindowedSerdeFrom<string>(), 100L), long());
+                    new Harness<IWindowed<string>, long>(untilTimeLimit(TimeSpan.Zero, unbounded()), TimeWindowedSerdeFrom<string>(), 100L), long());
                 MockInternalProcessorContext context = harness.context;
 
-                var timestamp = ARBITRARY_LONG;
+                var timestamp = 0938420L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
-                IWindowed<string> key = new Windowed2<>("hey", new TimeWindow(0L, 100L));
-                Change<long> value = ARBITRARY_CHANGE;
+                IWindowed<string> key = new Windowed<string>("hey", new TimeWindow(0L, 100L));
+                IChange<long> value = ARBITRARY_CHANGE;
                 harness.processor.Process(key, value);
 
                 Assert.Equal(context.forwarded(), asSize(1));
@@ -79,21 +90,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             }
 
             [Fact]
-            public void intermediateSuppressionShouldBufferAndEmitLater()
+            public void IntermediateSuppressionShouldBufferAndEmitLater()
             {
                 Harness<string, long> harness =
-                    new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(1), unbounded()), string(), long());
+                    new Harness<string, long>(untilTimeLimit(TimeSpan.FromMilliseconds(1), unbounded()), string(), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 0L;
                 context.setRecordMetadata("topic", 0, 0, null, timestamp);
                 var key = "hey";
-                Change<long> value = new Change<>(null, 1L);
+                IChange<long> value = new Change<long>(default, 1L);
                 harness.processor.Process(key, value);
                 Assert.Equal(context.forwarded(), asSize(0));
 
                 context.setRecordMetadata("topic", 0, 1, null, 1L);
-                harness.processor.Process("tick", new Change<>(null, null));
+                harness.processor.Process("tick", new Change<long>(default, default));
 
                 Assert.Equal(context.forwarded(), asSize(1));
                 MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
@@ -105,15 +116,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void finalResultsSuppressionShouldBufferAndEmitAtGraceExpiration()
             {
                 Harness<IWindowed<string>, long> harness =
-                    new Harness<>(finalResults(TimeSpan.FromMilliseconds(1L)), TimeWindowedSerdeFrom<string>(), 1L), long());
+                    new Harness<IWindowed<string>, long>(finalResults(TimeSpan.FromMilliseconds(1L)), TimeWindowedSerdeFrom<string>(), 1L), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var windowStart = 99L;
                 var recordTime = 99L;
                 var windowEnd = 100L;
                 context.setRecordMetadata("topic", 0, 0, null, recordTime);
-                IWindowed<string> key = new Windowed2<>("hey", new TimeWindow(windowStart, windowEnd));
-                Change<long> value = ARBITRARY_CHANGE;
+                IWindowed<string> key = new Windowed<string>("hey", new TimeWindow(windowStart, windowEnd));
+                IChange<long> value = ARBITRARY_CHANGE;
                 harness.processor.Process(key, value);
                 Assert.Equal(context.forwarded(), asSize(0));
 
@@ -123,7 +134,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
                 var recordTime2 = 100L;
                 var windowEnd2 = 101L;
                 context.setRecordMetadata("topic", 0, 1, null, recordTime2);
-                harness.processor.Process(new Windowed2<>("dummyKey1", new TimeWindow(windowStart2, windowEnd2)), ARBITRARY_CHANGE);
+                harness.processor.Process(new Windowed<string>("dummyKey1", new TimeWindow(windowStart2, windowEnd2)), ARBITRARY_CHANGE);
                 Assert.Equal(context.forwarded(), asSize(0));
 
                 // ok, now it's time to emit "hey"
@@ -131,7 +142,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
                 var recordTime3 = 101L;
                 var windowEnd3 = 102L;
                 context.setRecordMetadata("topic", 0, 1, null, recordTime3);
-                harness.processor.Process(new Windowed2<>("dummyKey2", new TimeWindow(windowStart3, windowEnd3)), ARBITRARY_CHANGE);
+                harness.processor.Process(new Windowed<string>("dummyKey2", new TimeWindow(windowStart3, windowEnd3)), ARBITRARY_CHANGE);
 
                 Assert.Equal(context.forwarded(), asSize(1));
                 MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
@@ -148,7 +159,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void finalResultsWithZeroGraceShouldStillBufferUntilTheWindowEnd()
             {
                 Harness<IWindowed<string>, long> harness =
-                    new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), TimeWindowedSerdeFrom(string), 100L), long());
+                    new Harness<IWindowed<string>, long>(finalResults(TimeSpan.FromMilliseconds(0L)), TimeWindowedSerdeFrom(string), 100L), long());
                 MockInternalProcessorContext context = harness.context;
 
                 // note the record is in the .Ast, but the window end is in the future, so we still have to buffer,
@@ -156,13 +167,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
                 var timestamp = 5L;
                 var windowEnd = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
-                IWindowed<string> key = new Windowed2<>("hey", new TimeWindow(0, windowEnd));
-                Change<long> value = ARBITRARY_CHANGE;
+                IWindowed<string> key = new Windowed<string>("hey", new TimeWindow(0, windowEnd));
+                IChange<long> value = ARBITRARY_CHANGE;
                 harness.processor.Process(key, value);
                 Assert.Equal(context.forwarded(), asSize(0));
 
                 context.setRecordMetadata("", 0, 1L, null, windowEnd);
-                harness.processor.Process(new Windowed2<>("dummyKey", new TimeWindow(windowEnd, windowEnd + 100L)), ARBITRARY_CHANGE);
+                harness.processor.Process(new Windowed<string>("dummyKey", new TimeWindow(windowEnd, windowEnd + 100L)), ARBITRARY_CHANGE);
 
                 Assert.Equal(context.forwarded(), asSize(1));
                 MockProcessorContext.CapturedForward capturedForward = context.forwarded().Get(0);
@@ -174,13 +185,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void finalResultsWithZeroGraceAtWindowEndShouldImmediatelyEmit()
             {
                 Harness<IWindowed<string>, long> harness =
-        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), TimeWindowedSerdeFrom(string), 100L), long());
+                    new Harness<IWindowed<string>, long>(
+                        finalResults(TimeSpan.FromMilliseconds(0L)), TimeWindowedSerdeFrom<string>(), 100L), long());
+
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
-                IWindowed<string> key = new Windowed2<>("hey", new TimeWindow(0, 100L));
-                Change<long> value = ARBITRARY_CHANGE;
+                IWindowed<string> key = new Windowed<string>("hey", new TimeWindow(0, 100L));
+                IChange<long> value = ARBITRARY_CHANGE;
                 harness.processor.Process(key, value);
 
                 Assert.Equal(context.forwarded(), asSize(1));
@@ -197,34 +210,33 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void finalResultsShouldDropTombstonesForTimeWindows()
             {
                 Harness<IWindowed<string>, long> harness =
-        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), TimeWindowedSerdeFrom<string>(), 100L), long());
+                    new Harness<IWindowed<string>, long>(finalResults(TimeSpan.FromMilliseconds(0L)), TimeWindowedSerdeFrom<string>(), 100L), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
-                IWindowed<string> key = new Windowed2<>("hey", new TimeWindow(0, 100L));
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IWindowed<string> key = new Windowed<string>("hey", new TimeWindow(0, 100L));
+                IChange<long> value = new Change<long>(default, 1098L);
                 harness.processor.Process(key, value);
 
                 Assert.Equal(context.forwarded(), asSize(0));
             }
-
 
             /**
              * It's desirable to drop tombstones for final-results windowed streams, since .As described in the
              * {@link SuppressedInternal} javadoc), they are unnecessary to emit.
              */
             [Fact]
-            public void finalResultsShouldDropTombstonesForSessionWindows()
+            public void FinalResultsShouldDropTombstonesForSessionWindows()
             {
                 Harness<IWindowed<string>, long> harness =
-        new Harness<>(finalResults(TimeSpan.FromMilliseconds(0L)), sessionWindowedSerdeFrom(string)), long());
+                    new Harness<IWindowed<string>, long>(finalResults(TimeSpan.FromMilliseconds(0L)), sessionWindowedSerdeFrom(string)), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
-                IWindowed<string> key = new Windowed2<>("hey", new SessionWindow(0L, 0L));
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IWindowed<string> key = new Windowed<string>("hey", new SessionWindow(0L, 0L));
+                Change<long> value = new Change<long>(default, 02948L);
                 harness.processor.Process(key, value);
 
                 Assert.Equal(context.forwarded(), asSize(0));
@@ -238,13 +250,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void suppressShouldNotDropTombstonesForTimeWindows()
             {
                 Harness<IWindowed<string>, long> harness =
-        new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), TimeWindowedSerdeFrom(string), 100L), long());
+                    new Harness<IWindowed<string>, long>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), TimeWindowedSerdeFrom(string), 100L), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
-                IWindowed<string> key = new Windowed2<>("hey", new TimeWindow(0L, 100L));
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IWindowed<string> key = new Windowed<string>("hey", new TimeWindow(0L, 100L));
+                IChange<long> value = new Change<long>(null, 098098L);
                 harness.processor.Process(key, value);
 
                 Assert.Equal(context.forwarded(), asSize(1));
@@ -262,13 +274,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void suppressShouldNotDropTombstonesForSessionWindows()
             {
                 Harness<IWindowed<string>, long> harness =
-        new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), sessionWindowedSerdeFrom(string)), long());
+                    new Harness<IWindowed<string>, long>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), sessionWindowedSerdeFrom(string)), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
-                IWindowed<string> key = new Windowed2<>("hey", new SessionWindow(0L, 0L));
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IWindowed<string> key = new Windowed<string>("hey", new SessionWindow(0L, 0L));
+                IChange<long> value = new Change<long>(default, 0938420L);
                 harness.processor.Process(key, value);
 
                 Assert.Equal(context.forwarded(), asSize(1));
@@ -286,13 +298,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void suppressShouldNotDropTombstonesForKTable()
             {
                 Harness<string, long> harness =
-                    new Harness<>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), string(), long());
+                    new Harness<string, long>(untilTimeLimit(TimeSpan.FromMilliseconds(0), maxRecords(0)), string(), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
                 var key = "hey";
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IChange<long> value = new Change<long>(default, 0938420L);
                 harness.processor.Process(key, value);
 
                 Assert.Equal(context.forwarded(), asSize(1));
@@ -305,13 +317,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void suppressShouldEmitWhenOverRecordCapacity()
             {
                 Harness<string, long> harness =
-                    new Harness<>(untilTimeLimit(TimeSpan.FromDays(100), maxRecords(1)), string(), long());
+                    new Harness<string, long>(untilTimeLimit(TimeSpan.FromDays(100), maxRecords(1)), string(), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
                 var key = "hey";
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IChange<long> value = new Change<long>(default, 0938420L);
                 harness.processor.Process(key, value);
 
                 context.setRecordMetadata("", 0, 1L, null, timestamp + 1);
@@ -327,13 +339,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void suppressShouldEmitWhenOverByteCapacity()
             {
                 Harness<string, long> harness =
-                    new Harness<>(untilTimeLimit(TimeSpan.FromDays(100), maxBytes(60L)), string(), long());
+                    new Harness<string, long>(untilTimeLimit(TimeSpan.FromDays(100), maxBytes(60L)), string(), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
                 var key = "hey";
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IChange<long> value = new Change<long>(default, 0938420L);
                 harness.processor.Process(key, value);
 
                 context.setRecordMetadata("", 0, 1L, null, timestamp + 1);
@@ -346,17 +358,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             }
 
             [Fact]
-            public void suppressShouldShutDownWhenOverRecordCapacity()
+            public void SuppressShouldShutDownWhenOverRecordCapacity()
             {
                 Harness<string, long> harness =
-                    new Harness<>(untilTimeLimit(TimeSpan.FromDays(100), maxRecords(1).shutDownWhenFull()), string(), long());
+                    new Harness<string, long>(untilTimeLimit(TimeSpan.FromDays(100), maxRecords(1).shutDownWhenFull()), string(), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
                 context.setCurrentNode(new ProcessorNode("testNode"));
                 var key = "hey";
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IChange<long> value = new Change<long>(default, 0938420L);
                 harness.processor.Process(key, value);
 
                 context.setRecordMetadata("", 0, 1L, null, timestamp);
@@ -367,7 +379,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
                 }
                 catch (StreamsException e)
                 {
-                    Assert.Equal(e.ToString(),.ContainsString("buffer exceeded its max capacity"));
+                    Assert.Equal("buffer exceeded its max capacity", e.ToString());
                 }
             }
 
@@ -375,14 +387,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
             public void suppressShouldShutDownWhenOverByteCapacity()
             {
                 Harness<string, long> harness =
-                    new Harness<>(untilTimeLimit(TimeSpan.FromDays(100), maxBytes(60L).shutDownWhenFull()), string(), long());
+                    new Harness<string, long>(untilTimeLimit(TimeSpan.FromDays(100), maxBytes(60L).shutDownWhenFull()), string(), long());
                 MockInternalProcessorContext context = harness.context;
 
                 var timestamp = 100L;
                 context.setRecordMetadata("", 0, 0L, null, timestamp);
                 context.setCurrentNode(new ProcessorNode("testNode"));
                 var key = "hey";
-                Change<long> value = new Change<>(null, ARBITRARY_LONG);
+                IChange<long> value = new Change<long>(default, 0938420L);
                 harness.processor.Process(key, value);
 
                 context.setRecordMetadata("", 0, 1L, null, timestamp);
@@ -393,52 +405,53 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
                 }
                 catch (StreamsException e)
                 {
-                    Assert.Equal(e.ToString(),.ContainsString("buffer exceeded its max capacity"));
+                    Assert.Contains("buffer exceeded its max capacity", e.ToString());
                 }
             }
 
 
             private static SuppressedInternal<K> finalResults<K>(TimeSpan grace)
-                where K : Windowed
+                where K : Windowed<K>
             {
                 return ((FinalResultsSuppressionBuilder)untilWindowCloses(unbounded())).buildFinalResultsSuppression(grace);
             }
 
             private static Matcher<Collection<E>> asSize(int i)
             {
-                return new BaseMatcher<Collection<E>>()
-                {
+                //                return new BaseMatcher<Collection<E>>()
+                //                {
+                //
+                //
+                //            public void describeTo(Description description)
+                //                {
+                //                    description.appendText("a collection of size " + i);
+                //                }
+                //
+                //
+                //
+                //                public bool matches(object item)
+                //                {
+                //                    if (item == null)
+                //                    {
+                //                        return false;
+                //                    }
+                //                    else
+                //                    {
+                //                        return ((Collection<E>)item).Count == i;
+                //                    }
+                //                }
+                //
+                //            };
+            }
 
-
-            public void describeTo(Description description)
-                {
-                    description.appendText("a collection of size " + i);
-                }
-
-
-
-                public bool matches(object item)
-                {
-                    if (item == null)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return ((Collection<E>)item).Count == i;
-                    }
-                }
-
-            };
-        }
-
-        private static <K> ISerde<IWindowed<K>> TimeWindowedSerdeFrom(Class<K> rawType, long windowSize)
-        {
-            ISerde<K> kSerde = Serdes.SerdeFrom(rawType);
-            return new Serdes.WrapperSerde<>(
-                new TimeWindowedSerializer<>(kSerde.Serializer),
-                new TimeWindowedDeserializer<>(kSerde.deserializer(), windowSize)
-            );
+            private static ISerde<IWindowed<K>> TimeWindowedSerdeFrom<K>(Type rawType, long windowSize)
+            {
+                ISerde<K> kSerde = (ISerde<K>)Serdes.SerdeFrom(rawType);
+                return new Serdes.WrapperSerde<IWindowed<K>>(
+                    new TimeWindowedSerializer<>(kSerde.Serializer),
+                    new TimeWindowedDeserializer<>(kSerde.Deserializer, windowSize)
+                );
+            }
         }
     }
 }

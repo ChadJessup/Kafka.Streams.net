@@ -75,7 +75,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldCreateBuilderThatBuildsStoreWithCachingDisabled()
         {
             MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
-                Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("store").withCachingDisabled(), nameProvider, storePrefix
+                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("store").WithCachingDisabled(), nameProvider, storePrefix
             );
             TimestampedKeyValueStoreMaterializer<string, string> materializer = new TimestampedKeyValueStoreMaterializer<>(materialized);
             IStoreBuilder<ITimestampedKeyValueStore<string, string>> builder = materializer.materialize();
@@ -88,7 +88,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldCreateBuilderThatBuildsStoreWithLoggingDisabled()
         {
             MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
-                Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("store").withLoggingDisabled(), nameProvider, storePrefix
+                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("store").WithLoggingDisabled(), nameProvider, storePrefix
             );
             TimestampedKeyValueStoreMaterializer<string, string> materializer = new TimestampedKeyValueStoreMaterializer<>(materialized);
             IStoreBuilder<ITimestampedKeyValueStore<string, string>> builder = materializer.materialize();
@@ -102,7 +102,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldCreateBuilderThatBuildsStoreWithCachingAndLoggingDisabled()
         {
             MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
-                Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("store").withCachingDisabled().withLoggingDisabled(), nameProvider, storePrefix
+                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("store").WithCachingDisabled().WithLoggingDisabled(), nameProvider, storePrefix
             );
             TimestampedKeyValueStoreMaterializer<string, string> materializer = new TimestampedKeyValueStoreMaterializer<>(materialized);
             IStoreBuilder<ITimestampedKeyValueStore<string, string>> builder = materializer.materialize();

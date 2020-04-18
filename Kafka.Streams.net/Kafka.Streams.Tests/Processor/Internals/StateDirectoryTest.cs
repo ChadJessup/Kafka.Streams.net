@@ -28,8 +28,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //            directory = new StateDirectory(
             //                new StreamsConfig(new StreamsConfig() {
             //                {
-            //                    Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-            //            Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+            //                    Put(StreamsConfig.ApplicationIdConfig, applicationId);
+            //            Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
             //            Put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
             //        }
             //    }),
@@ -256,8 +256,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //            StateDirectory stateDirectory = new StateDirectory(
             //                new StreamsConfig(new StreamsConfig() {
             //                {
-            //                    Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-            //            Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+            //                    Put(StreamsConfig.ApplicationIdConfig, applicationId);
+            //            Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
             //            Put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
             //        }
             //    }),
@@ -325,7 +325,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 }
             });
 
-            thread.start();
+            thread.Start();
             thread.Join(30000);
             Assert.Null("should not have had an exception during locking on other thread", exceptionOnThread.Get());
             Assert.False(directory.Lock(taskId));
@@ -352,7 +352,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                     exceptionOnThread.set(e);
                 }
             });
-            thread.start();
+            thread.Start();
             lockLatch.await(5, TimeUnit.SECONDS);
 
             Assert.Null("should not have had an exception on other thread", exceptionOnThread.Get());

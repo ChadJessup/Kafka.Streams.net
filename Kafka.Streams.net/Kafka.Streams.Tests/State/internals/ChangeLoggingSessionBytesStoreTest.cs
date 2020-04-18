@@ -73,7 +73,7 @@
 //    private ChangeLoggingSessionBytesStore store;
 //    private byte[] value1 = { 0 };
 //    private Bytes bytesKey = Bytes.Wrap(value1);
-//    private IWindowed<Bytes> key1 = new Windowed2<>(bytesKey, new SessionWindow(0, 0));
+//    private IWindowed<Bytes> key1 = new Windowed<>(bytesKey, new SessionWindow(0, 0));
 
 
 //    public void SetUp()

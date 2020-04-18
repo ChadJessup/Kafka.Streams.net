@@ -64,7 +64,7 @@ namespace Kafka.Streams.State.Sessions
         //    //                if ((binaryKeyFrom == null || windowedKey.key().CompareTo(binaryKeyFrom) >= 0)
         //    //                    && (binaryKeyTo == null || windowedKey.key().CompareTo(binaryKeyTo) <= 0)
         //    //                    && windowedKey.window().end() >= from
-        //    //                    && windowedKey.window().start() <= to)
+        //    //                    && windowedKey.window().Start() <= to)
         //    //                {
         //    //                    return true;
         //    //                }

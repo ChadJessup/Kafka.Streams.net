@@ -22,11 +22,11 @@
 //            string command = args[1];
 
 //            StreamsConfig streamsProperties = Utils.loadProps(propFileName);
-//            string kafka = streamsProperties.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//            string kafka = streamsProperties.getProperty(StreamsConfig.BootstrapServersConfig);
 
 //            if (kafka == null)
 //            {
-//                System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+//                System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BootstrapServersConfig);
 //                System.exit(1);
 //            }
 
@@ -47,10 +47,10 @@
 //                    EosTestDriver.generate(kafka);
 //                    break;
 //                case "process":
-//                    new EosTestClient(streamsProperties, false).start();
+//                    new EosTestClient(streamsProperties, false).Start();
 //                    break;
 //                case "process-complex":
-//                    new EosTestClient(streamsProperties, true).start();
+//                    new EosTestClient(streamsProperties, true).Start();
 //                    break;
 //                case "verify":
 //                    EosTestDriver.verify(kafka, false);

@@ -27,19 +27,19 @@ namespace Kafka.Streams.KStream.Internals
 
         public IDeserializer<K> KeyDeserializer()
         {
-            return this.keySerde?.Deserializer;
+            return this.KeySerde?.Deserializer;
         }
 
         public IDeserializer<V> ValueDeserializer()
         {
-            return this.valueSerde?.Deserializer;
+            return this.ValueSerde?.Deserializer;
         }
 
         public AutoOffsetReset? OffsetResetPolicy()
         {
-            return this.resetPolicy;
+            return this.ResetPolicy;
         }
 
-        public string Name => this.processorName;
+        public string Name => this.ProcessorName;
     }
 }

@@ -17,6 +17,10 @@ namespace Kafka.Streams.Processors
          * @param value the value for the record
          */
         void Process(K key, V value);
+        new void Process<K1, V1>(K1 key, V1 value)
+            where K1 : K
+            where V1 : V
+            => this.Process(key, value);
     }
 
     public interface IKeyValueProcessor

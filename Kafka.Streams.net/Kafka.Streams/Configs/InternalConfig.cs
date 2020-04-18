@@ -19,7 +19,7 @@
 
     // HIGH
 
-    //            .define(APPLICATION_ID_CONFIG, // required with no default value
+    //            .define(ApplicationIdConfig, // required with no default value
     //                    Type.STRING,
     //                    Importance.HIGH,
     //                    APPLICATION_ID_DOC)
@@ -56,7 +56,7 @@
     //                    LogAndFailExceptionHandler.getName(),
     //                    Importance.MEDIUM,
     //                    DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_DOC)
-    //            .define(DEFAULT_KEY_SERDE_CLASS_CONFIG,
+    //            .define(DefaultKeySerdeClassConfig,
     //                    Type.CLASS,
     //                    Serdes.ByteArraySerde.getName(),
     //                    Importance.MEDIUM,
@@ -71,7 +71,7 @@
     //                    FailOnInvalidTimestamp.getName(),
     //                    Importance.MEDIUM,
     //                    DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_DOC)
-    //            .define(DEFAULT_VALUE_SERDE_CLASS_CONFIG,
+    //            .define(DefaultValueSerdeClassConfig,
     //                    Type.CLASS,
     //                    Serdes.ByteArraySerde.getName(),
     //                    Importance.MEDIUM,
@@ -94,7 +94,7 @@
     //            .define(PROCESSING_GUARANTEE_CONFIG,
     //                    Type.STRING,
     //                    AT_LEAST_ONCE,
-    //                    in (AT_LEAST_ONCE, EXACTLY_ONCE),
+    //                    in (AT_LEAST_ONCE, StreamsConfig.ExactlyOnceConfig),
     //                    Importance.MEDIUM,
     //                    PROCESSING_GUARANTEE_DOC)
     //            .define(SECURITY_PROTOCOL_CONFIG,
@@ -166,7 +166,7 @@
     //                    DefaultPartitionGrouper.getName(),
     //                    Importance.LOW,
     //                    PARTITION_GROUPER_CLASS_DOC)
-    //            .define(POLL_MS_CONFIG,
+    //            .define(PollMsConfig,
     //                    Type.LONG,
     //                    100L,
     //                    Importance.LOW,

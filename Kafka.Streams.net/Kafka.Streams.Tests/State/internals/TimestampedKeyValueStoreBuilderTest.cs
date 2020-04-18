@@ -85,7 +85,7 @@
 //        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
-//            ITimestampedKeyValueStore<string, string> store = builder.withLoggingDisabled().Build();
+//            ITimestampedKeyValueStore<string, string> store = builder.WithLoggingDisabled().Build();
 //            IStateStore next = ((WrappedStateStore)store).wrapped();
 //            Assert.Equal(next, CoreMatchers.equalTo(inner));
 //        }
@@ -135,8 +135,8 @@
 //            replay(supplier);
 
 //            ITimestampedKeyValueStore<string, string> store = builder
-//                .withLoggingDisabled()
-//                .withCachingDisabled()
+//                .WithLoggingDisabled()
+//                .WithCachingDisabled()
 //                .Build();
 //            Assert.Equal(((WrappedStateStore)store).wrapped(), instanceOf(RocksDBTimestampedStore));
 //        }
@@ -150,8 +150,8 @@
 //            replay(supplier);
 
 //            ITimestampedKeyValueStore<string, string> store = builder
-//                .withLoggingDisabled()
-//                .withCachingDisabled()
+//                .WithLoggingDisabled()
+//                .WithCachingDisabled()
 //                .Build();
 //            Assert.Equal(((WrappedStateStore)store).wrapped(), instanceOf(KeyValueToTimestampedKeyValueByteStoreAdapter));
 //        }

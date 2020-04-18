@@ -24,7 +24,7 @@ namespace Kafka.Streams.Factories
             IClock clock,
             string Name,
             string[] predecessors,
-            ITopicNameExtractor topicExtractor,
+            TopicNameExtractor<K, V> topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valSerializer,
             IStreamPartitioner<K, V> partitioner,
@@ -35,7 +35,7 @@ namespace Kafka.Streams.Factories
             this.partitioner = partitioner;
             this.keySerializer = keySerializer;
             this.valueSerializer = valSerializer;
-            this.TopicExtractor = topicExtractor;
+            this.TopicExtractor = new WrappedTopicExtractor<K, V>(topicExtractor);
             this.internalTopologyBuilder = internalTopologyBuilder;
         }
 

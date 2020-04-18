@@ -80,7 +80,7 @@
 //                    foreach (var entry in kvMap)
 //                    {
 //                        results.Add(new KeyValuePair<IWindowed<K>, V>(
-//                            new Windowed2<K>(
+//                            new Windowed<K>(
 //                                entry.Key,
 //                                new TimeWindow(now, now + windowSize)), entry.Value));
 //                    }
@@ -141,7 +141,7 @@
 //            {
 //                foreach (Entry<K, V> entry in kvMap)
 //                {
-//                    results.Add(KeyValuePair.Create(new Windowed2<>(entry.Key, new TimeWindow(now, now + windowSize)), entry.Value));
+//                    results.Add(KeyValuePair.Create(new Windowed<>(entry.Key, new TimeWindow(now, now + windowSize)), entry.Value));
 //                }
 //            }
 //        }
@@ -204,7 +204,7 @@
 //        {
 //            foreach (Entry<K, V> entry in kvMap.subMap(from, true, to, true))
 //            {
-//                results.Add(KeyValuePair.Create(new Windowed2<>(entry.Key, new TimeWindow(now, now + windowSize)), entry.Value));
+//                results.Add(KeyValuePair.Create(new Windowed<>(entry.Key, new TimeWindow(now, now + windowSize)), entry.Value));
 //            }
 //        }
 //    }

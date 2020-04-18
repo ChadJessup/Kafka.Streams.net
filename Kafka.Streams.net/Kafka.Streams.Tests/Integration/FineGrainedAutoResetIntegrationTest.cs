@@ -166,10 +166,10 @@ namespace Kafka.Streams.Tests.Integration
 
             StreamsConfig consumerConfig = TestUtils.consumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
 
-            KafkaStreams streams = new KafkaStreams(builder.Build(), streamsConfiguration);
-            streams.start();
+            KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
+            streams.Start();
 
-            List<KeyValuePair<string, string>> receivedKeyValues = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(consumerConfig, outputTopic, expectedReceivedValues.Count);
+            List<KeyValuePair<string, string>> receivedKeyValues = IntegrationTestUtils.WaitUntilMinKeyValueRecordsReceived(consumerConfig, outputTopic, expectedReceivedValues.Count);
             List<string> actualValues = new List<string>(expectedReceivedValues.Count);
 
             foreach (KeyValuePair<string, string> receivedKeyValue in receivedKeyValues)
@@ -263,12 +263,12 @@ namespace Kafka.Streams.Tests.Integration
 
             exceptionStream.To(DEFAULT_OUTPUT_TOPIC, Produced.With(stringSerde, stringSerde));
 
-            KafkaStreams streams = new KafkaStreams(builder.Build(), localConfig);
+            KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), localConfig);
 
             TestingUncaughtExceptionHandler uncaughtExceptionHandler = new TestingUncaughtExceptionHandler();
 
             streams.setUncaughtExceptionHandler(uncaughtExceptionHandler);
-            streams.start();
+            streams.Start();
             TestUtils.WaitForCondition(() => uncaughtExceptionHandler.correctExceptionThrown,
                     "The expected NoOffsetForPartitionException was never thrown");
             streams.Close();

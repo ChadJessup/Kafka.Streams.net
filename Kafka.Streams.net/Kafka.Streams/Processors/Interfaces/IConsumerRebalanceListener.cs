@@ -31,9 +31,9 @@ namespace Kafka.Streams.Processors.Interfaces
      * whenever partition assignment changes.
      * <p>
      * It is guaranteed that All consumer processes will invoke {@link #onPartitionsRevoked(Collection) onPartitionsRevoked} prior to
-     * any process invoking {@link #onPartitionsAssigned(Collection) onPartitionsAssigned}. So if offsets or other state is saved in the
+     * any process invoking {@link #OnPartitionsAssigned(Collection) OnPartitionsAssigned}. So if offsets or other state is saved in the
      * {@link #onPartitionsRevoked(Collection) onPartitionsRevoked} call it is guaranteed to be saved by the time the process taking over that
-     * partition has their {@link #onPartitionsAssigned(Collection) onPartitionsAssigned} callback called to load the state.
+     * partition has their {@link #OnPartitionsAssigned(Collection) OnPartitionsAssigned} callback called to load the state.
      * <p>
      * Here is pseudo-code for a callback implementation for saving offsets:
      * <pre>
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Processors.Interfaces
      *              saveOffsetInExternalStore(consumer.position(partition));
      *       }
      *
-     *       public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+     *       public void OnPartitionsAssigned(Collection<TopicPartition> partitions) {
      *           // read the offsets from an external store using some custom code not described here
      *           for(TopicPartition partition: partitions)
      *              consumer.seek(partition, readOffsetFromExternalStore(partition));

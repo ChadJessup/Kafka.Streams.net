@@ -17,15 +17,15 @@ namespace Kafka.Streams.Tests.Integration
 
         private const string INPUT_TOPIC = "input-topic";
 
-        private KafkaStreams client1;
-        private KafkaStreams client2;
+        private KafkaStreamsThread client1;
+        private KafkaStreamsThread client2;
         private readonly bool client1IsOk = false;
         private readonly bool client2IsOk = false;
 
 
         public static void CreateTopics()
         {// throws InterruptedException
-            CLUSTER.createTopic(INPUT_TOPIC, 2, 1);
+            CLUSTER.CreateTopic(INPUT_TOPIC, 2, 1);
         }
 
 
@@ -39,11 +39,11 @@ namespace Kafka.Streams.Tests.Integration
         {
             string applicationId = "testApp";
             StreamsConfig streamsConfiguration = new StreamsConfig();
-            streamsConfiguration.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-            streamsConfiguration.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            streamsConfiguration.Put(StreamsConfig.ApplicationIdConfig, applicationId);
+            streamsConfiguration.Put(StreamsConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory(applicationId).getPath());
-            streamsConfiguration.Put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
-            streamsConfiguration.Put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
+            streamsConfiguration.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.Int().GetType());
+            streamsConfiguration.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.Int().GetType());
             streamsConfiguration.Put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
             return streamsConfiguration;
         }
@@ -56,7 +56,7 @@ namespace Kafka.Streams.Tests.Integration
             IStoreBuilder<IKeyValueStore<int, int>> KeyValueStoreBuilder =
                 Stores.KeyValueStoreBuilder(Stores.PersistentKeyValueStore(stateStoreName),
                                             Serdes.Int(),
-                                            Serdes.Int()).withLoggingDisabled();
+                                            Serdes.Int()).WithLoggingDisabled();
             builder.AddStateStore(KeyValueStoreBuilder);
             builder.Stream(INPUT_TOPIC, Consumed.With(Serdes.Int(), Serdes.Int()))
                 .transform(() => new Transformer<int, int, KeyValuePair<int, int>>();
@@ -122,13 +122,13 @@ namespace Kafka.Streams.Tests.Integration
                                    StreamsConfig streamsConfiguration2)
         {
 
-            client1 = new KafkaStreams(topology1, streamsConfiguration1);
-            client2 = new KafkaStreams(topology2, streamsConfiguration2);
+            client1 = new KafkaStreamsThread(topology1, streamsConfiguration1);
+            client2 = new KafkaStreamsThread(topology2, streamsConfiguration2);
         }
 
         private void SetStateListenersForVerification(Predicate<ThreadMetadata> taskCondition)
         {
-            client1.setStateListener((newState, oldState) =>
+            client1.SetStateListener((newState, oldState) =>
             {
                 if (newState == State.RUNNING &&
                     client1.localThreadsMetadata().Stream().allMatch(taskCondition))
@@ -137,7 +137,7 @@ namespace Kafka.Streams.Tests.Integration
                     client1IsOk = true;
                 }
             });
-            client2.setStateListener((newState, oldState) =>
+            client2.SetStateListener((newState, oldState) =>
             {
                 if (newState == State.RUNNING &&
                     client2.localThreadsMetadata().Stream().allMatch(taskCondition))
@@ -150,8 +150,8 @@ namespace Kafka.Streams.Tests.Integration
 
         private void StartClients()
         {
-            client1.start();
-            client2.start();
+            client1.Start();
+            client2.Start();
         }
 
         private void WaitUntilBothClientAreOK(string message)

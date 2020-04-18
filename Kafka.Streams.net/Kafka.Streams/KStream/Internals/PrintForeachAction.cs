@@ -11,7 +11,7 @@ namespace Kafka.Streams.KStream.Internals
         private readonly string label;
         private readonly PrintWriter printWriter;
         private readonly bool closable;
-        private readonly IKeyValueMapper<K, V, string> mapper;
+        private readonly KeyValueMapper<K, V, string> mapper;
 
         /**
          * Print customized output with given writer. The {@link Stream} can be {@link System#out} or the others.
@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
          */
         public PrintForeachAction(
             Stream outputStream,
-            IKeyValueMapper<K, V, string> mapper,
+            KeyValueMapper<K, V, string> mapper,
             string label)
         {
             this.printWriter = new PrintWriter(new OutputStreamWriter(outputStream, System.Text.Encoding.UTF8));

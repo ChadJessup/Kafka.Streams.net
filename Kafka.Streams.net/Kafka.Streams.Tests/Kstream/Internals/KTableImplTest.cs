@@ -6,6 +6,7 @@ using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Nodes;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.Temporary;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
@@ -51,7 +52,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             IKTable<string, int> table2 = table1.MapValues();
             table2.ToStream().Process(supplier);
 
-            IKTable<string, int> table3 = table2.filter((key, value) => (value % 2) == 0);
+            IKTable<string, int> table3 = table2.Filter((key, value) => (value % 2) == 0);
             table3.ToStream().Process(supplier);
             table1.ToStream().To(topic2, produced);
 
@@ -68,44 +69,46 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             List<MockProcessor<string, object>> processors = supplier.CapturedProcessors(4);
 
-            Assert.Equal(
-                Arrays.asList(
-                    new KeyValueTimestamp<string, string>("A", "01", 5),
-                    new KeyValueTimestamp<string, string>("B", "02", 100),
-                    new KeyValueTimestamp<string, string>("C", "03", 0),
-                    new KeyValueTimestamp<string, string>("D", "04", 0),
-                    new KeyValueTimestamp<string, string>("A", "05", 10),
-                    new KeyValueTimestamp<string, string>("A", "06", 8)),
-                processors.ElementAt(0).processed);
+            var expected = new List<KeyValueTimestamp<string, object>>
+            {
+                new KeyValueTimestamp<string, object>("A", "01", 5),
+                new KeyValueTimestamp<string, object>("B", "02", 100),
+                new KeyValueTimestamp<string, object>("C", "03", 0),
+                new KeyValueTimestamp<string, object>("D", "04", 0),
+                new KeyValueTimestamp<string, object>("A", "05", 10),
+                new KeyValueTimestamp<string, object>("A", "06", 8),
+            };
+
+            Assert.Equal(expected, processors.ElementAt(0).processed);
 
             Assert.Equal(
                 Arrays.asList(
-                    new KeyValueTimestamp<string, long>("A", 1, 5),
-                    new KeyValueTimestamp<string, long>("B", 2, 100),
-                    new KeyValueTimestamp<string, long>("C", 3, 0),
-                    new KeyValueTimestamp<string, long>("D", 4, 0),
-                    new KeyValueTimestamp<string, long>("A", 5, 10),
-                    new KeyValueTimestamp<string, long>("A", 6, 8)),
+                    new KeyValueTimestamp<string, object>("A", 1, 5),
+                    new KeyValueTimestamp<string, object>("B", 2, 100),
+                    new KeyValueTimestamp<string, object>("C", 3, 0),
+                    new KeyValueTimestamp<string, object>("D", 4, 0),
+                    new KeyValueTimestamp<string, object>("A", 5, 10),
+                    new KeyValueTimestamp<string, object>("A", 6, 8)),
                 processors.ElementAt(1).processed);
 
             Assert.Equal(
                 Arrays.asList(
-                    new KeyValueTimestamp<string, string>("A", null, 5),
-                    new KeyValueTimestamp<string, string>("B", 2, 100),
-                    new KeyValueTimestamp<string, string>("C", null, 0),
-                    new KeyValueTimestamp<string, string>("D", 4, 0),
-                    new KeyValueTimestamp<string, string>("A", null, 10),
-                    new KeyValueTimestamp<string, string>("A", 6, 8)),
+                    new KeyValueTimestamp<string, object>("A", null, 5),
+                    new KeyValueTimestamp<string, object>("B", 2, 100),
+                    new KeyValueTimestamp<string, object>("C", null, 0),
+                    new KeyValueTimestamp<string, object>("D", 4, 0),
+                    new KeyValueTimestamp<string, object>("A", null, 10),
+                    new KeyValueTimestamp<string, object>("A", 6, 8)),
                 processors.ElementAt(2).processed);
 
             Assert.Equal(
                 Arrays.asList(
-                    new KeyValueTimestamp<string, string>("A", "01", 5),
-                    new KeyValueTimestamp<string, string>("B", "02", 100),
-                    new KeyValueTimestamp<string, string>("C", "03", 0),
-                    new KeyValueTimestamp<string, string>("D", "04", 0),
-                    new KeyValueTimestamp<string, string>("A", "05", 10),
-                    new KeyValueTimestamp<string, string>("A", "06", 8)),
+                    new KeyValueTimestamp<string, object>("A", "01", 5),
+                    new KeyValueTimestamp<string, object>("B", "02", 100),
+                    new KeyValueTimestamp<string, object>("C", "03", 0),
+                    new KeyValueTimestamp<string, object>("D", "04", 0),
+                    new KeyValueTimestamp<string, object>("A", "05", 10),
+                    new KeyValueTimestamp<string, object>("A", "06", 8)),
                 processors.ElementAt(3).processed);
         }
 
@@ -114,11 +117,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             StreamsBuilder builder = new StreamsBuilder();
             IKTable<string, string> table1 = builder.Table("topic-2", stringConsumed);
-            ConsumedInternal<string, string> consumedInternal = new ConsumedInternal<>(stringConsumed);
+            ConsumedInternal<string, string> consumedInternal = new ConsumedInternal<string, string>(stringConsumed);
 
-            IKeyValueMapper<string, string, string> selector = (key, value) => key;
-            IValueMapper<string, string> mapper = value => value;
-            IValueJoiner<string, string, string> joiner = (value1, value2) => value1;
+            KeyValueMapper<string, string, string> selector = (key, value) => key;
+            ValueMapper<string, string> mapper = value => value;
+            ValueJoiner<string, string, string> joiner = (value1, value2) => value1;
             //            IValueTransformerWithKeySupplier<string, string, string> valueTransformerWithKeySupplier =
             //                () => new ValueTransformerWithKey<string, string, string>()
             //                {
@@ -137,103 +140,103 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             //        };
 
             Assert.Equal(
-                 ((AbstractStream)table1.filter((key, value) => false)).keySerde(),
-                consumedInternal.keySerde());
+                 ((AbstractStream<string, string>)table1.Filter((key, value) => false)).KeySerde,
+                consumedInternal.KeySerde);
             Assert.Equal(
-                 ((AbstractStream)table1.filter((key, value) => false)).valueSerde(),
-                 consumedInternal.valueSerde());
+                 ((AbstractStream<string, string>)table1.Filter((key, value) => false)).ValueSerde,
+                 consumedInternal.ValueSerde);
             Assert.Equal(
-                 ((AbstractStream)table1.filter((key, value) => false, Materialized.With(mySerde, mySerde))).keySerde(),
+                 ((AbstractStream<string, string>)table1.Filter((key, value) => false, Materialized.With(mySerde, mySerde))).KeySerde,
                  mySerde);
             Assert.Equal(
-                 ((AbstractStream)table1.filter((key, value) => false, Materialized.With(mySerde, mySerde))).valueSerde(),
-                 mySerde);
-
-            Assert.Equal(
-                 ((AbstractStream)table1.filterNot((key, value) => false)).keySerde(),
-                 consumedInternal.keySerde());
-            Assert.Equal(
-                 ((AbstractStream)table1.filterNot((key, value) => false)).valueSerde(),
-                 consumedInternal.valueSerde());
-            Assert.Equal(
-                 ((AbstractStream)table1.filterNot((key, value) => false, Materialized.With(mySerde, mySerde))).keySerde(),
-                 mySerde);
-            Assert.Equal(
-                 ((AbstractStream)table1.filterNot((key, value) => false, Materialized.With(mySerde, mySerde))).valueSerde(),
+                 ((AbstractStream<string, string>)table1.Filter((key, value) => false, Materialized.With(mySerde, mySerde))).ValueSerde,
                  mySerde);
 
             Assert.Equal(
-                 ((AbstractStream)table1.MapValues(mapper)).keySerde(),
-                 consumedInternal.keySerde());
-            Assert.Null(((AbstractStream)table1.MapValues(mapper)).valueSerde());
+                 ((AbstractStream<string, string>)table1.FilterNot((key, value) => false)).KeySerde,
+                 consumedInternal.KeySerde);
             Assert.Equal(
-                 ((AbstractStream)table1.MapValues(mapper, Materialized.With(mySerde, mySerde))).keySerde(),
+                 ((AbstractStream<string, string>)table1.FilterNot((key, value) => false)).ValueSerde,
+                 consumedInternal.ValueSerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.FilterNot((key, value) => false, Materialized.With(mySerde, mySerde))).KeySerde,
                  mySerde);
             Assert.Equal(
-                 ((AbstractStream)table1.MapValues(mapper, Materialized.With(mySerde, mySerde))).valueSerde(),
-                 mySerde);
-
-            Assert.Equal(
-                 ((AbstractStream)table1.ToStream()).keySerde(),
-                 consumedInternal.keySerde());
-            Assert.Equal(
-                 ((AbstractStream)table1.ToStream()).valueSerde(),
-                 consumedInternal.valueSerde());
-            Assert.Null(((AbstractStream)table1.toStream(selector)).keySerde());
-            Assert.Equal(
-                 ((AbstractStream)table1.toStream(selector)).valueSerde(),
-                 consumedInternal.valueSerde());
-
-            Assert.Equal(
-                 ((AbstractStream)table1.transformValues(valueTransformerWithKeySupplier)).keySerde(),
-                 consumedInternal.keySerde());
-            Assert.Null(((AbstractStream)table1.transformValues(valueTransformerWithKeySupplier)).valueSerde());
-            Assert.Equal(
-                 ((AbstractStream)table1.transformValues(valueTransformerWithKeySupplier, Materialized.With(mySerde, mySerde))).keySerde(),
-                 mySerde);
-            Assert.Equal(((AbstractStream)table1.transformValues(valueTransformerWithKeySupplier, Materialized.With(mySerde, mySerde))).valueSerde(),
-                 mySerde);
-
-            Assert.Null(((AbstractStream)table1.GroupBy(KeyValuePair.Create)).keySerde());
-            Assert.Null(((AbstractStream)table1.GroupBy(KeyValuePair.Create)).valueSerde());
-            Assert.Equal(
-                 ((AbstractStream)table1.GroupBy(KeyValuePair.Create, Grouped.With(mySerde, mySerde))).keySerde(),
-                 mySerde);
-            Assert.Equal(
-                 ((AbstractStream)table1.GroupBy(KeyValuePair.Create, Grouped.With(mySerde, mySerde))).valueSerde(),
+                 ((AbstractStream<string, string>)table1.FilterNot((key, value) => false, Materialized.With(mySerde, mySerde))).ValueSerde,
                  mySerde);
 
             Assert.Equal(
-                 ((AbstractStream)table1.Join(table1, joiner)).keySerde(),
-                 consumedInternal.keySerde());
-            Assert.Null(((AbstractStream)table1.Join(table1, joiner)).valueSerde());
+                 ((AbstractStream<string, string>)table1.MapValues(mapper)).KeySerde,
+                 consumedInternal.KeySerde);
+            Assert.Null(((AbstractStream<string, string>)table1.MapValues(mapper)).ValueSerde);
             Assert.Equal(
-                 ((AbstractStream)table1.Join(table1, joiner, Materialized.With(mySerde, mySerde))).keySerde(),
+                 ((AbstractStream<string, string>)table1.MapValues(mapper, Materialized.With(mySerde, mySerde))).KeySerde,
                  mySerde);
             Assert.Equal(
-                 ((AbstractStream)table1.Join(table1, joiner, Materialized.With(mySerde, mySerde))).valueSerde(),
-                 mySerde);
-
-            Assert.Equal(
-                 ((AbstractStream)table1.LeftJoin(table1, joiner)).keySerde(),
-                 consumedInternal.keySerde());
-            Assert.Null(((AbstractStream)table1.LeftJoin(table1, joiner)).valueSerde());
-            Assert.Equal(
-                 ((AbstractStream)table1.LeftJoin(table1, joiner, Materialized.With(mySerde, mySerde))).keySerde(),
-                 mySerde);
-            Assert.Equal(
-                 ((AbstractStream)table1.LeftJoin(table1, joiner, Materialized.With(mySerde, mySerde))).valueSerde(),
+                 ((AbstractStream<string, string>)table1.MapValues(mapper, Materialized.With(mySerde, mySerde))).ValueSerde,
                  mySerde);
 
             Assert.Equal(
-                 ((AbstractStream)table1.OuterJoin(table1, joiner)).keySerde(),
-                 consumedInternal.keySerde());
-            Assert.Null(((AbstractStream)table1.OuterJoin(table1, joiner)).valueSerde());
+                 ((AbstractStream<string, string>)table1.ToStream()).KeySerde,
+                 consumedInternal.KeySerde);
             Assert.Equal(
-                 ((AbstractStream)table1.OuterJoin(table1, joiner, Materialized.With(mySerde, mySerde))).keySerde(),
+                 ((AbstractStream<string, string>)table1.ToStream()).ValueSerde,
+                 consumedInternal.ValueSerde);
+            Assert.Null(((AbstractStream<string, string>)table1.ToStream(selector)).KeySerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.ToStream(selector)).ValueSerde,
+                 consumedInternal.ValueSerde);
+
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.TransformValues(valueTransformerWithKeySupplier)).KeySerde,
+                 consumedInternal.KeySerde);
+            Assert.Null(((AbstractStream<string, string>)table1.TransformValues(valueTransformerWithKeySupplier)).ValueSerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.TransformValues(valueTransformerWithKeySupplier, Materialized.With(mySerde, mySerde))).KeySerde,
+                 mySerde);
+            Assert.Equal(((AbstractStream<string, string>)table1.TransformValues(valueTransformerWithKeySupplier, Materialized.With(mySerde, mySerde))).ValueSerde,
+                 mySerde);
+
+            Assert.Null(((AbstractStream<string, string>)table1.GroupBy(KeyValuePair.Create)).KeySerde);
+            Assert.Null(((AbstractStream<string, string>)table1.GroupBy(KeyValuePair.Create)).ValueSerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.GroupBy(KeyValuePair.Create, Grouped.With(mySerde, mySerde))).KeySerde,
                  mySerde);
             Assert.Equal(
-                 ((AbstractStream)table1.OuterJoin(table1, joiner, Materialized.With(mySerde, mySerde))).valueSerde(),
+                 ((AbstractStream<string, string>)table1.GroupBy(KeyValuePair.Create, Grouped.With(mySerde, mySerde))).ValueSerde,
+                 mySerde);
+
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.Join(table1, joiner)).KeySerde,
+                 consumedInternal.KeySerde);
+            Assert.Null(((AbstractStream<string, string>)table1.Join(table1, joiner)).ValueSerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.Join(table1, joiner, Materialized.With(mySerde, mySerde))).KeySerde,
+                 mySerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.Join(table1, joiner, Materialized.With(mySerde, mySerde))).ValueSerde,
+                 mySerde);
+
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.LeftJoin(table1, joiner)).KeySerde,
+                 consumedInternal.KeySerde);
+            Assert.Null(((AbstractStream<string, string>)table1.LeftJoin(table1, joiner)).ValueSerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.LeftJoin(table1, joiner, Materialized.With(mySerde, mySerde))).KeySerde,
+                 mySerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.LeftJoin(table1, joiner, Materialized.With(mySerde, mySerde))).ValueSerde,
+                 mySerde);
+
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.OuterJoin(table1, joiner)).KeySerde,
+                 consumedInternal.KeySerde);
+            Assert.Null(((AbstractStream<string, string>)table1.OuterJoin(table1, joiner)).ValueSerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.OuterJoin(table1, joiner, Materialized.With(mySerde, mySerde))).KeySerde,
+                 mySerde);
+            Assert.Equal(
+                 ((AbstractStream<string, string>)table1.OuterJoin(table1, joiner, Materialized.With(mySerde, mySerde))).ValueSerde,
                  mySerde);
         }
 
@@ -244,12 +247,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             string topic1 = "topic1";
             string topic2 = "topic2";
 
-            KTable<string, string, string> table1 =
-                (KTable<string, string, string>)builder.Table(topic1, consumed);
+            IKTable<string, string> table1 = builder.Table(topic1, consumed);
             builder.Table(topic2, consumed);
 
-            KTable<string, string, int> table1Mapped =
-                (KTable<string, string, int>)table1.MapValues();
+            IKTable<string, int> table1Mapped = table1.MapValues(v => int.Parse(v));
             table1Mapped.Filter((key, value) => (value % 2) == 0);
 
             Assert.Equal(0, driver.getAllStateStores().Count);
@@ -262,15 +263,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             string topic1 = "topic1";
             string topic2 = "topic2";
 
-            KTable<string, string, string> table1 =
-                (KTable<string, string, string>)builder.Table(topic1, consumed);
-            KTable<string, string, string> table2 =
-                (KTable<string, string, string>)builder.Table(topic2, consumed);
+            IKTable<string, string> table1 = builder.Table(topic1, consumed);
+            IKTable<string, string> table2 = builder.Table(topic2, consumed);
 
-            KTable<string, string, int> table1Mapped =
-                (KTable<string, string, int>)table1.MapValues();
-            KTable<string, int, int> table1MappedFiltered =
-                (KTable<string, int, int>)table1Mapped.filter((key, value) => (value % 2) == 0);
+            IKTable<string, int> table1Mapped = table1.MapValues(v => int.Parse(v));
+            IKTable<string, int> table1MappedFiltered = table1Mapped.Filter((key, value) => (value % 2) == 0);
             table2.Join(table1MappedFiltered, (v1, v2) => v1 + v2);
 
             Assert.Equal(2, driver.getAllStateStores().Count);
@@ -300,23 +297,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             string topic1 = "topic1";
             string storeName1 = "storeName1";
 
-            KTable<string, string, string> table1 =
-                (KTable<string, string, string>)builder.Table(
+            IKTable<string, string> table1 = builder.Table(
                     topic1,
                     consumed,
-                    Materialized.As < string, string, IKeyValueStore<Bytes, byte[]>(storeName1)
+                    Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(storeName1)
                         .WithKeySerde(Serdes.String())
-                        .withValueSerde(Serdes.String())
-                );
+                        .WithValueSerde(Serdes.String()));
 
-            table1.GroupBy(MockMapper.noOpKeyValueMapper())
-                .Aggregate(
+            table1.GroupBy(MockMapper.GetNoOpKeyValueMapper<string, string>())
+                .Aggregate<string>(
                     MockInitializer.STRING_INIT,
-                    MockAggregator.TOSTRING_ADDER,
-                    MockAggregator.TOSTRING_REMOVER,
-                    Materialized.As("mock-result1"));
+                    MockAggregator<string, string>.TOSTRING_ADDER,
+                    MockAggregator<string, string>.TOSTRING_REMOVER,
+                    Materialized.As<string, string>("mock-result1"));
 
-            table1.GroupBy(MockMapper.noOpKeyValueMapper())
+            table1.GroupBy(MockMapper.GetNoOpKeyValueMapper<string, string>())
                 .Reduce(
                     MockReducer.STRING_ADDER,
                     MockReducer.STRING_REMOVER,
@@ -350,7 +345,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]// (typeof(expected = NullPointerException))
         public void shouldNotAllowNullSelectorOnToStream()
         {
-            table.ToStream((IKeyValueMapper)null);
+            table.ToStream((KeyValueMapper)null);
         }
 
         [Fact]// (typeof(expected = NullPointerException))
@@ -386,43 +381,43 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]// (typeof(expected = NullPointerException))
         public void shouldNotAllowNullOtherTableOnJoin()
         {
-            table.Join(null, MockValueJoiner.TOSTRING_JOINER);
+            table.Join<string, string>(null, MockValueJoiner.TOSTRING_JOINER());
         }
 
         [Fact]
         public void shouldAllowNullStoreInJoin()
         {
-            table.Join(table, MockValueJoiner.TOSTRING_JOINER);
+            table.Join(table, MockValueJoiner.TOSTRING_JOINER());
         }
 
         [Fact] //(typeof(expected = NullPointerException))
         public void shouldNotAllowNullJoinerJoin()
         {
-            table.Join(table, null);
+            table.Join<string, string>(table, null);
         }
 
         [Fact] // (typeof(expected = NullPointerException))
         public void shouldNotAllowNullOtherTableOnOuterJoin()
         {
-            table.OuterJoin(null, MockValueJoiner.TOSTRING_JOINER);
+            table.OuterJoin<string, string>(null, MockValueJoiner.TOSTRING_JOINER());
         }
 
         [Fact] // (typeof(expected = NullPointerException))
         public void shouldNotAllowNullJoinerOnOuterJoin()
         {
-            table.OuterJoin(table, null);
+            table.OuterJoin<string, string>(table, null);
         }
 
         [Fact] // (typeof(expected = NullPointerException))
         public void shouldNotAllowNullJoinerOnLeftJoin()
         {
-            table.LeftJoin(table, null);
+            table.LeftJoin<string, string>(table, null);
         }
 
         [Fact] // (typeof(expected = NullPointerException))
         public void shouldNotAllowNullOtherTableOnLeftJoin()
         {
-            table.LeftJoin(null, MockValueJoiner.TOSTRING_JOINER);
+            table.LeftJoin(null, MockValueJoiner.TOSTRING_JOINER());
         }
 
         [Fact] // (typeof(expected = NullPointerException))
@@ -440,25 +435,25 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact] // (typeof(expected = NullPointerException))
         public void shouldThrowNullPointerOnJoinWhenMaterializedIsNull()
         {
-            table.Join(table, MockValueJoiner.TOSTRING_JOINER, (Materialized)null);
+            table.Join(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized)null);
         }
 
         [Fact] // (typeof(expected = NullPointerException))
         public void shouldThrowNullPointerOnLeftJoinWhenMaterializedIsNull()
         {
-            table.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER, (Materialized)null);
+            table.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized)null);
         }
 
         [Fact] // (typeof(expected = NullPointerException))
         public void shouldThrowNullPointerOnOuterJoinWhenMaterializedIsNull()
         {
-            table.OuterJoin(table, MockValueJoiner.TOSTRING_JOINER, (Materialized)null);
+            table.OuterJoin(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized)null);
         }
 
         [Fact] // (typeof(expected = NullPointerException))
         public void shouldThrowNullPointerOnTransformValuesWithKeyWhenTransformerSupplierIsNull()
         {
-            table.transformValues((ValueTransformerWithKeySupplier)null);
+            table.TransformValues((ValueTransformerWithKeySupplier)null);
         }
 
 
@@ -476,7 +471,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             IValueTransformerWithKeySupplier<string, string, string> valueTransformerSupplier =
                   Mock.Of<IValueTransformerWithKeySupplier<string, string, string>>();
-            table.TransformValues(valueTransformerSupplier, (string[])null);
+            table.TransformValues(valueTransformerSupplier, null);
         }
     }
 }

@@ -42,17 +42,17 @@
 //        [Fact]
 //        public void ShouldPutFetchFromCache()
 //        {
-//            cachingStore.Put(new Windowed2<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
 
 //            Assert.Equal(3, cache.Count);
 
 //            IKeyValueIterator<IWindowed<Bytes>, byte[]> a = cachingStore.findSessions(keyA, 0, 0);
 //            IKeyValueIterator<IWindowed<Bytes>, byte[]> b = cachingStore.findSessions(keyB, 0, 0);
 
-//            verifyWindowedKeyValue(a.MoveNext(), new Windowed2<>(keyA, new SessionWindow(0, 0)), "1");
-//            verifyWindowedKeyValue(b.MoveNext(), new Windowed2<>(keyB, new SessionWindow(0, 0)), "1");
+//            verifyWindowedKeyValue(a.MoveNext(), new Windowed<>(keyA, new SessionWindow(0, 0)), "1");
+//            verifyWindowedKeyValue(b.MoveNext(), new Windowed<>(keyB, new SessionWindow(0, 0)), "1");
 //            Assert.False(a.HasNext());
 //            Assert.False(b.HasNext());
 //        }
@@ -60,31 +60,31 @@
 //        [Fact]
 //        public void ShouldPutFetchAllKeysFromCache()
 //        {
-//            cachingStore.Put(new Windowed2<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
 
 //            Assert.Equal(3, cache.Count);
 
 //            IKeyValueIterator<IWindowed<Bytes>, byte[]> All = cachingStore.findSessions(keyA, keyB, 0, 0);
-//            verifyWindowedKeyValue(All.MoveNext(), new Windowed2<>(keyA, new SessionWindow(0, 0)), "1");
-//            verifyWindowedKeyValue(All.MoveNext(), new Windowed2<>(keyAA, new SessionWindow(0, 0)), "1");
-//            verifyWindowedKeyValue(All.MoveNext(), new Windowed2<>(keyB, new SessionWindow(0, 0)), "1");
+//            verifyWindowedKeyValue(All.MoveNext(), new Windowed<>(keyA, new SessionWindow(0, 0)), "1");
+//            verifyWindowedKeyValue(All.MoveNext(), new Windowed<>(keyAA, new SessionWindow(0, 0)), "1");
+//            verifyWindowedKeyValue(All.MoveNext(), new Windowed<>(keyB, new SessionWindow(0, 0)), "1");
 //            Assert.False(All.HasNext());
 //        }
 
 //        [Fact]
 //        public void ShouldPutFetchRangeFromCache()
 //        {
-//            cachingStore.Put(new Windowed2<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
 
 //            Assert.Equal(3, cache.Count);
 
 //            IKeyValueIterator<IWindowed<Bytes>, byte[]> some = cachingStore.findSessions(keyAA, keyB, 0, 0);
-//            verifyWindowedKeyValue(some.MoveNext(), new Windowed2<>(keyAA, new SessionWindow(0, 0)), "1");
-//            verifyWindowedKeyValue(some.MoveNext(), new Windowed2<>(keyB, new SessionWindow(0, 0)), "1");
+//            verifyWindowedKeyValue(some.MoveNext(), new Windowed<>(keyAA, new SessionWindow(0, 0)), "1");
+//            verifyWindowedKeyValue(some.MoveNext(), new Windowed<>(keyB, new SessionWindow(0, 0)), "1");
 //            Assert.False(some.HasNext());
 //        }
 
@@ -92,10 +92,10 @@
 //        public void ShouldFetchAllSessionsWithSameRecordKey()
 //        {
 //            List<KeyValuePair<IWindowed<Bytes>, byte[]>> expected = Arrays.asList(
-//                KeyValuePair.Create(new Windowed2<Bytes>(keyA, new SessionWindow(0, 0)), "1".getBytes()),
-//                KeyValuePair.Create(new Windowed2<Bytes>(keyA, new SessionWindow(10, 10)), "2".getBytes()),
-//                KeyValuePair.Create(new Windowed2<Bytes>(keyA, new SessionWindow(100, 100)), "3".getBytes()),
-//                KeyValuePair.Create(new Windowed2<Bytes>(keyA, new SessionWindow(1000, 1000)), "4".getBytes())
+//                KeyValuePair.Create(new Windowed<Bytes>(keyA, new SessionWindow(0, 0)), "1".getBytes()),
+//                KeyValuePair.Create(new Windowed<Bytes>(keyA, new SessionWindow(10, 10)), "2".getBytes()),
+//                KeyValuePair.Create(new Windowed<Bytes>(keyA, new SessionWindow(100, 100)), "3".getBytes()),
+//                KeyValuePair.Create(new Windowed<Bytes>(keyA, new SessionWindow(1000, 1000)), "4".getBytes())
 //            );
 
 //            foreach (KeyValuePair<IWindowed<Bytes>, byte[]> kv in expected)
@@ -104,7 +104,7 @@
 //            }
 
 //            // add one that shouldn't appear in the results
-//            cachingStore.Put(new Windowed2<>(keyAA, new SessionWindow(0, 0)), "5".getBytes());
+//            cachingStore.Put(new Windowed<>(keyAA, new SessionWindow(0, 0)), "5".getBytes());
 
 //            List<KeyValuePair<IWindowed<Bytes>, byte[]>> results = toList(cachingStore.Fetch(keyA));
 //            verifyKeyValueList(expected, results);
@@ -136,8 +136,8 @@
 //        [Fact]
 //        public void ShouldRemove()
 //        {
-//            IWindowed<Bytes> a = new Windowed2<>(keyA, new SessionWindow(0, 0));
-//            IWindowed<Bytes> b = new Windowed2<>(keyB, new SessionWindow(0, 0));
+//            IWindowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(0, 0));
+//            IWindowed<Bytes> b = new Windowed<>(keyB, new SessionWindow(0, 0));
 //            cachingStore.Put(a, "2".getBytes());
 //            cachingStore.Put(b, "2".getBytes());
 //            cachingStore.remove(a);
@@ -154,9 +154,9 @@
 //        [Fact]
 //        public void ShouldFetchCorrectlyAcrossSegments()
 //        {
-//            IWindowed<Bytes> a1 = new Windowed2<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
-//            IWindowed<Bytes> a2 = new Windowed2<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 1, SEGMENT_INTERVAL * 1));
-//            IWindowed<Bytes> a3 = new Windowed2<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 2, SEGMENT_INTERVAL * 2));
+//            IWindowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
+//            IWindowed<Bytes> a2 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 1, SEGMENT_INTERVAL * 1));
+//            IWindowed<Bytes> a3 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 2, SEGMENT_INTERVAL * 2));
 //            cachingStore.Put(a1, "1".getBytes());
 //            cachingStore.Put(a2, "2".getBytes());
 //            cachingStore.Put(a3, "3".getBytes());
@@ -172,11 +172,11 @@
 //        [Fact]
 //        public void ShouldFetchRangeCorrectlyAcrossSegments()
 //        {
-//            IWindowed<Bytes> a1 = new Windowed2<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
-//            IWindowed<Bytes> aa1 = new Windowed2<>(keyAA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
-//            IWindowed<Bytes> a2 = new Windowed2<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 1, SEGMENT_INTERVAL * 1));
-//            IWindowed<Bytes> a3 = new Windowed2<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 2, SEGMENT_INTERVAL * 2));
-//            IWindowed<Bytes> aa3 = new Windowed2<>(keyAA, new SessionWindow(SEGMENT_INTERVAL * 2, SEGMENT_INTERVAL * 2));
+//            IWindowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
+//            IWindowed<Bytes> aa1 = new Windowed<>(keyAA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
+//            IWindowed<Bytes> a2 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 1, SEGMENT_INTERVAL * 1));
+//            IWindowed<Bytes> a3 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 2, SEGMENT_INTERVAL * 2));
+//            IWindowed<Bytes> aa3 = new Windowed<>(keyAA, new SessionWindow(SEGMENT_INTERVAL * 2, SEGMENT_INTERVAL * 2));
 //            cachingStore.Put(a1, "1".getBytes());
 //            cachingStore.Put(aa1, "1".getBytes());
 //            cachingStore.Put(a2, "2".getBytes());
@@ -204,10 +204,10 @@
 //        [Fact]
 //        public void ShouldForwardChangedValuesDuringFlush()
 //        {
-//            IWindowed<Bytes> a = new Windowed2<>(keyA, new SessionWindow(2, 4));
-//            IWindowed<Bytes> b = new Windowed2<>(keyA, new SessionWindow(1, 2));
-//            IWindowed<string> aDeserialized = new Windowed2<>("a", new SessionWindow(2, 4));
-//            IWindowed<string> bDeserialized = new Windowed2<>("a", new SessionWindow(1, 2));
+//            IWindowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(2, 4));
+//            IWindowed<Bytes> b = new Windowed<>(keyA, new SessionWindow(1, 2));
+//            IWindowed<string> aDeserialized = new Windowed<>("a", new SessionWindow(2, 4));
+//            IWindowed<string> bDeserialized = new Windowed<>("a", new SessionWindow(1, 2));
 //            CacheFlushListenerStub<IWindowed<string>, string> flushListener =
 //                new CacheFlushListenerStub<>(
 //                    new SessionWindowedDeserializer<>(new Serdes.String().Deserializer()),
@@ -281,8 +281,8 @@
 //        [Fact]
 //        public void ShouldNotForwardChangedValuesDuringFlushWhenSendOldValuesDisabled()
 //        {
-//            IWindowed<Bytes> a = new Windowed2<>(keyA, new SessionWindow(0, 0));
-//            IWindowed<string> aDeserialized = new Windowed2<>("a", new SessionWindow(0, 0));
+//            IWindowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(0, 0));
+//            IWindowed<string> aDeserialized = new Windowed<>("a", new SessionWindow(0, 0));
 //            CacheFlushListenerStub<IWindowed<string>, string> flushListener =
 //                new CacheFlushListenerStub<>(
 //                    new SessionWindowedDeserializer<>(new Serdes.String().Deserializer()),
@@ -330,10 +330,10 @@
 //        [Fact]
 //        public void ShouldReturnSameResultsForSingleKeyFindSessionsAndEqualKeyRangeFindSessions()
 //        {
-//            cachingStore.Put(new Windowed2<>(keyA, new SessionWindow(0, 1)), "1".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyAA, new SessionWindow(2, 3)), "2".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyAA, new SessionWindow(4, 5)), "3".getBytes());
-//            cachingStore.Put(new Windowed2<>(keyB, new SessionWindow(6, 7)), "4".getBytes());
+//            cachingStore.Put(new Windowed<>(keyA, new SessionWindow(0, 1)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyAA, new SessionWindow(2, 3)), "2".getBytes());
+//            cachingStore.Put(new Windowed<>(keyAA, new SessionWindow(4, 5)), "3".getBytes());
+//            cachingStore.Put(new Windowed<>(keyB, new SessionWindow(6, 7)), "4".getBytes());
 
 //            IKeyValueIterator<IWindowed<Bytes>, byte[]> singleKeyIterator = cachingStore.findSessions(keyAA, 0L, 10L);
 //            IKeyValueIterator<IWindowed<Bytes>, byte[]> keyRangeIterator = cachingStore.findSessions(keyAA, keyAA, 0L, 10L);
@@ -347,7 +347,7 @@
 //        [Fact]
 //        public void ShouldClearNamespaceCacheOnClose()
 //        {
-//            IWindowed<Bytes> a1 = new Windowed2<>(keyA, new SessionWindow(0, 0));
+//            IWindowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(0, 0));
 //            cachingStore.Put(a1, "1".getBytes());
 //            Assert.Equal(1, cache.Count);
 //            cachingStore.Close();
@@ -372,14 +372,14 @@
 //        public void ShouldThrowIfTryingToRemoveFromClosedCachingStore()
 //        {
 //            cachingStore.Close();
-//            cachingStore.remove(new Windowed2<>(keyA, new SessionWindow(0, 0)));
+//            cachingStore.remove(new Windowed<>(keyA, new SessionWindow(0, 0)));
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
 //        public void ShouldThrowIfTryingToPutIntoClosedCachingStore()
 //        {
 //            cachingStore.Close();
-//            cachingStore.Put(new Windowed2<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
+//            cachingStore.Put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
 //        }
 
 //        [Fact]// (expected = NullPointerException)
@@ -463,7 +463,7 @@
 //        private void AddSingleSession(string sessionId, List<KeyValuePair<IWindowed<Bytes>, byte[]>> allSessions)
 //        {
 //            int timestamp = allSessions.Count * 10;
-//            IWindowed<Bytes> key = new Windowed2<Bytes>(Bytes.Wrap(sessionId.getBytes()), new SessionWindow(timestamp, timestamp));
+//            IWindowed<Bytes> key = new Windowed<Bytes>(Bytes.Wrap(sessionId.getBytes()), new SessionWindow(timestamp, timestamp));
 //            byte[] value = "1".getBytes();
 //            cachingStore.Put(key, value);
 //            allSessions.Add(KeyValuePair.Create(key, value));

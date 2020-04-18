@@ -495,7 +495,7 @@ namespace Kafka.Streams.Tests
         //            beginOffsets.Add(t1p1, 0L);
         //            beginOffsets.Add(t1p2, 0L);
         //            mockConsumer.UpdateBeginningOffsets(beginOffsets);
-        //            thread.RebalanceListener.onPartitionsAssigned(new HashSet<>assignedPartitions));
+        //            thread.RebalanceListener.OnPartitionsAssigned(new HashSet<>assignedPartitions));
 
         //            thread.RunOnce();
 
@@ -741,7 +741,7 @@ namespace Kafka.Streams.Tests
         //    thread.TaskManager.SetAssignmentMetadata(Collections.emptyMap(), standbyTasks);
         //    thread.TaskManager.CreateTasks(Collections.emptyList());
 
-        //    thread.RebalanceListener.onPartitionsAssigned(Collections.emptyList());
+        //    thread.RebalanceListener.OnPartitionsAssigned(Collections.emptyList());
         //}
 
         //[Fact]
@@ -974,7 +974,7 @@ namespace Kafka.Streams.Tests
 
         //    thread.TaskManager.SetAssignmentMetadata(Collections.emptyMap(), standbyTasks);
 
-        //    thread.RebalanceListener.onPartitionsAssigned(Collections.emptyList());
+        //    thread.RebalanceListener.OnPartitionsAssigned(Collections.emptyList());
 
         //    thread.RunOnce();
 
@@ -1055,7 +1055,7 @@ namespace Kafka.Streams.Tests
 
         //        thread.TaskManager.SetAssignmentMetadata(Collections.emptyMap(), standbyTasks);
 
-        //thread.RebalanceListener.onPartitionsAssigned(Collections.emptyList());
+        //thread.RebalanceListener.OnPartitionsAssigned(Collections.emptyList());
 
         //        thread.RunOnce();
 
@@ -1095,7 +1095,7 @@ namespace Kafka.Streams.Tests
         //{
         //    setupInternalTopologyWithoutState();
         //    IStoreBuilder storeBuilder = new MockKeyValueStoreBuilder("myStore", true);
-        //    storeBuilder.withLoggingDisabled();
+        //    storeBuilder.WithLoggingDisabled();
         //    internalTopologyBuilder.AddStateStore(storeBuilder, "processor1");
 
         //    StandbyTask standbyTask = createStandbyTask();
@@ -1325,11 +1325,11 @@ namespace Kafka.Streams.Tests
 
         //        mockConsumer.schedulePollTask(() => {
         //            thread.SetState(StreamThreadStates.PARTITIONS_REVOKED);
-        //            thread.RebalanceListener.onPartitionsAssigned(topicPartitionSet);
+        //            thread.RebalanceListener.OnPartitionsAssigned(topicPartitionSet);
         //        });
 
         //        try {
-        //            thread.start();
+        //            thread.Start();
 
         //            TestUtils.WaitForCondition(
         //                () => mockRestoreConsumer.Assignment().Count == 1,
@@ -1391,7 +1391,7 @@ namespace Kafka.Streams.Tests
         //    config.Set(
         //        StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG,
         //        LogAndContinueExceptionHandler.getName());
-        //    config.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType().FullName);
+        //    config.Set(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.Int().GetType().FullName);
         //    StreamThread thread = createStreamThread(clientId, new StreamsConfig(config), false);
 
         //    thread.SetState(StreamThreadStates.STARTING);

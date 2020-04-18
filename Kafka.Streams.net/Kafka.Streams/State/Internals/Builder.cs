@@ -1,6 +1,6 @@
 ﻿
 
-//            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingDisabled()
+//            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> WithCachingDisabled()
 //            {
 //                return this;
 //            }
@@ -12,7 +12,7 @@
 //            }
 
 
-//            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingDisabled()
+//            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> WithLoggingDisabled()
 //            {
 //                loggingEnabled = false;
 //                return this;

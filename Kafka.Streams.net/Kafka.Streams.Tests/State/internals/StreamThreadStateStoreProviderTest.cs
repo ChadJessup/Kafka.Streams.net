@@ -121,8 +121,8 @@
 
 //            StreamsConfig properties = new StreamsConfig();
 //            string applicationId = "applicationId";
-//            properties.Put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-//            properties.Put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+//            properties.Put(StreamsConfig.ApplicationIdConfig, applicationId);
+//            properties.Put(ConsumerConfig.BootstrapServersConfig, "localhost:9092");
 //            stateDir = TestUtils.GetTempDirectory();
 //            properties.Put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
 

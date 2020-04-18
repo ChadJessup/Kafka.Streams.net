@@ -9,14 +9,14 @@ namespace Kafka.Streams.KStream.Internals
     {
         private readonly IKTableValueGetter<K, V1> valueGetter1;
         private readonly IKTableValueGetter<K, V2> valueGetter2;
-        private readonly IKeyValueMapper<K, V1, K> keyValueMapper;
-        private readonly IValueJoiner<V1, V2, R> joiner;
+        private readonly KeyValueMapper<K, V1, K> keyValueMapper;
+        private readonly ValueJoiner<V1, V2, R> joiner;
 
         public KTableKTableInnerJoinValueGetter(
             IKTableValueGetter<K, V1> valueGetter1,
             IKTableValueGetter<K, V2> valueGetter2,
-            IKeyValueMapper<K, V1, K> keyValueMapper,
-            IValueJoiner<V1, V2, R> joiner)
+            KeyValueMapper<K, V1, K> keyValueMapper,
+            ValueJoiner<V1, V2, R> joiner)
         {
             this.valueGetter1 = valueGetter1;
             this.valueGetter2 = valueGetter2;
@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
                 if (value2 != null)
                 {
                     return ValueAndTimestamp.Make(
-                        this.joiner.Apply(value1, value2),
+                        this.joiner(value1, value2),
                         valueAndTimestamp1?.Timestamp.GetNewest(valueAndTimestamp2.Timestamp) ?? valueAndTimestamp2.Timestamp);
                 }
                 else

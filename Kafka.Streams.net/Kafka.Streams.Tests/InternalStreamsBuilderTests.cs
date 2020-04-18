@@ -1,10 +1,10 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
@@ -70,7 +70,7 @@ namespace Kafka.Streams.Tests
             var source3 = this.Builder.Stream(new List<string> { topic3 }, this.consumed);
 
             var processedSource1 = source1
-                .MapValues(new ValueMapper<string, string>((value) => value))
+                .MapValues((value) => value)
                 .Filter((k, v) => true);
 
             var processedSource2 = source2
@@ -196,12 +196,12 @@ namespace Kafka.Streams.Tests
                  new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("not-global"), this.Builder, this.storePrefix);
             this.Builder.Table("not-global", this.consumed, materializedInternalNotGlobal);
 
-            var kvMapper = new KeyValueMapper<string, string, string>((key, value) => value);
+            KeyValueMapper<string, string, string> kvMapper = (key, value) => value;
 
-            IKStream<K, V> stream = this.Builder.Stream(new[] { "t1" }, this.consumed);
-            stream.LeftJoin(globalTable, kvMapper, MockValueJoiner.TOSTRING_JOINER<string, string>());
-            IKStream<K, V> stream2 = this.Builder.Stream(new[] { "t2" }, this.consumed);
-            stream2.LeftJoin(globalTable2, kvMapper, MockValueJoiner.TOSTRING_JOINER<string, string>());
+            IKStream<string, string> stream = this.Builder.Stream(new[] { "t1" }, this.consumed);
+            stream.LeftJoin(globalTable, kvMapper, MockValueJoiner.TOSTRING_JOINER());
+            IKStream<string, string> stream2 = this.Builder.Stream(new[] { "t2" }, this.consumed);
+            stream2.LeftJoin(globalTable2, kvMapper, MockValueJoiner.TOSTRING_JOINER());
 
             var nodeGroups = this.Builder.InternalTopologyBuilder.GetNodeGroups();
             foreach (var groupId in nodeGroups.Keys)
@@ -223,7 +223,7 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void ShouldMapStateStoresToCorrectSourceTopics()
         {
-            IKStream<K, V> playEvents = this.Builder.Stream(new[] { "events" }, this.consumed);
+            IKStream<string, string> playEvents = this.Builder.Stream(new[] { "events" }, this.consumed);
 
             var materializedInternal = new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
                 Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("table-store"),
@@ -232,9 +232,9 @@ namespace Kafka.Streams.Tests
 
             IKTable<string, string> table = this.Builder.Table("table-topic", this.consumed, materializedInternal);
 
-            var mapper = new MockMapper.SelectValueKeyValueMapper<string, string>();
-            IKStream<K, V> mapped = playEvents.Map(mapper);
-            var leftJoined = mapped.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER<string, string>());
+            var mapper = MockMapper.GetSelectValueKeyValueMapper<string, string>();
+            IKStream<string, string> mapped = playEvents.Map<string, string>(mapper);
+            var leftJoined = mapped.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER());
             var groupedByKey = leftJoined.GroupByKey();
 
             var countMaterialized = Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("count");

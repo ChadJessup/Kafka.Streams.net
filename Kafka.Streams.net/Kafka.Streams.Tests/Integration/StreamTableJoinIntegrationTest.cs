@@ -49,7 +49,7 @@ namespace Kafka.Streams.Tests.Integration
             KafkaStreamsWrapper streams = new KafkaStreamsWrapper(builder.Build(), STREAMS_CONFIG);
             IntegrationTestUtils.StateListenerStub listener = new IntegrationTestUtils.StateListenerStub();
             streams.setStreamThreadStateListener(listener);
-            streams.start();
+            streams.Start();
 
             TestUtils.WaitForCondition(listener.revokedToPendingShutdownSeen, "Did not seen thread state transited to PENDING_SHUTDOWN");
 

@@ -64,8 +64,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             streamsConfig = new StreamsConfig
             {
-                Put(StreamsConfig.APPLICATION_ID_CONFIG, "appId"),
-                Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234"),
+                Put(StreamsConfig.ApplicationIdConfig, "appId"),
+                Put(StreamsConfig.BootstrapServersConfig, "dummy:1234"),
                 Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath()),
             };
 
@@ -624,8 +624,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             // streamsConfig = new StreamsConfig(new StreamsConfig()
             // {
             //     {
-            //         Put(StreamsConfig.APPLICATION_ID_CONFIG, "appId");
-            //         Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+            //         Put(StreamsConfig.ApplicationIdConfig, "appId");
+            //         Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
             //         Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
             //         Put(StreamsConfig.RETRIES_CONFIG, retries);
             //     }
@@ -661,8 +661,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             streamsConfig = new StreamsConfig(new StreamsConfig()
         {
             {
-                Put(StreamsConfig.APPLICATION_ID_CONFIG, "appId");
-            Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+                Put(StreamsConfig.ApplicationIdConfig, "appId");
+            Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
             Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
             Put(StreamsConfig.RETRIES_CONFIG, retries);
         }

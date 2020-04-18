@@ -78,7 +78,7 @@ namespace Kafka.Streams.Tests.Kstream
 
         {
             Processor<string, int> processor = new PrintedInternal<>(sysOutPrinter.withKeyValueMapper(
-                        new IKeyValueMapper<string, int, string>()));
+                        new KeyValueMapper<string, int, string>()));
             //{
 
 

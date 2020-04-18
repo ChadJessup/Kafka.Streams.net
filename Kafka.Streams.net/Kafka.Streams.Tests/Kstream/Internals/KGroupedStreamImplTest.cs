@@ -6,6 +6,7 @@ using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
+using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Integration;
 using Kafka.Streams.Tests.Mocks;
@@ -35,7 +36,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldNotHaveNullReducerOnReduce()
         {
-            groupedStream.Reduce(null);
+            groupedStream.Reduce((IReducer<string>)null);
         }
 
         [Fact]
@@ -48,8 +49,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         public void shouldNotHaveNullReducerWithWindowedReduce()
         {
             groupedStream
-                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
-                .Reduce(null, Materialized.As("store"));
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10)))
+                .Reduce(null, Materialized.As<string, string>("store"));
         }
 
         [Fact]
@@ -62,14 +63,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         public void shouldNotHaveInvalidStoreNameWithWindowedReduce()
         {
             groupedStream
-                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10)))
                 .Reduce(MockReducer.STRING_ADDER, Materialized.As(INVALID_STORE_NAME));
         }
 
         [Fact]
         public void shouldNotHaveNullInitializerOnAggregate()
         {
-            groupedStream.Aggregate(null, MockAggregator.TOSTRING_ADDER, Materialized.As("store"));
+            groupedStream.Aggregate((Initializer<string>)null, MockAggregator<string, string>.TOSTRING_ADDER, Materialized.As<string, string>("store"));
         }
 
         [Fact]
@@ -91,7 +92,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         public void ShouldNotHaveNullInitializerOnWindowedAggregate()
         {
             groupedStream
-                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10)))
                 .Aggregate(null, MockAggregator.TOSTRING_ADDER, Materialized.As("store"));
         }
 
@@ -99,21 +100,21 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         public void shouldNotHaveNullAdderOnWindowedAggregate()
         {
             groupedStream
-                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10)))
                 .Aggregate(MockInitializer.STRING_INIT, null, Materialized.As("store"));
         }
 
         [Fact]
         public void shouldNotHaveNullWindowsOnWindowedAggregate()
         {
-            groupedStream.WindowedBy((Windows)null);
+            groupedStream.WindowedBy((Windows<Window>)null);
         }
 
         [Fact]
         public void shouldNotHaveInvalidStoreNameOnWindowedAggregate()
         {
             groupedStream
-                .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(10)))
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10)))
                 .Aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Materialized.As(INVALID_STORE_NAME));
         }
 
@@ -128,7 +129,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 90));
 
             Dictionary<IWindowed<string>, IValueAndTimestamp<int>> result
-                = supplier.TheCapturedProcessor().lastValueAndTimestampPerKey;
+                = supplier.TheCapturedProcessor().LastValueAndTimestampPerKey;
             Assert.Equal(
                  ValueAndTimestamp.Make(2, 30L),
                  result[new Windowed<string>("1", new SessionWindow(10L, 30L))]);
@@ -147,8 +148,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             IKTable<IWindowed<string>, int> table = groupedStream
                 .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(30)))
                 .Aggregate(
-                    new Initializer<int>(() => 0),
-                    new Aggregator<string, string, int>((aggKey, value, aggregate) => aggregate + 1),
+                    () => 0,
+                    (aggKey, value, aggregate) => aggregate + 1,
                     (aggKey, aggOne, aggTwo) => aggOne + aggTwo,
                     Materialized.As<string, int, ISessionStore<Bytes, byte[]>>("session-store")
                     .WithValueSerde(Serdes.Int()));
@@ -166,7 +167,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             IKTable<IWindowed<string>, int> table = groupedStream
                 .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(30)))
                 .Aggregate(
-                    new Initializer<int>(() => 0),
+                    () => 0,
                     new Aggregator<string, string, int>((aggKey, value, aggregate) => aggregate + 1),
                     (aggKey, aggOne, aggTwo) => aggOne + aggTwo,
                     Materialized.With<string, int, ISessionStore<Bytes, byte[]>>(null, Serdes.Int()));
@@ -187,7 +188,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(TOPIC, "1", "1", 90));
 
             Dictionary<IWindowed<string>, IValueAndTimestamp<long>> result =
-                supplier.TheCapturedProcessor().lastValueAndTimestampPerKey;
+                supplier.TheCapturedProcessor().LastValueAndTimestampPerKey;
             Assert.Equal(
                  ValueAndTimestamp.Make(2L, 30L),
                  result[new Windowed<string>("1", new SessionWindow(10L, 30L))]);
@@ -234,7 +235,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(TOPIC, "1", "C", 90));
 
             Dictionary<IWindowed<string>, IValueAndTimestamp<string>> result =
-                supplier.TheCapturedProcessor().lastValueAndTimestampPerKey;
+                supplier.TheCapturedProcessor().LastValueAndTimestampPerKey;
             Assert.Equal(
                  ValueAndTimestamp.Make("A:B", 30L),
                  result[new Windowed<string>("1", new SessionWindow(10L, 30L))]);
@@ -282,7 +283,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldNotAcceptNullSessionWindowsReducingSessionWindows()
         {
-            groupedStream.WindowedBy((SessionWindows)null);
+            groupedStream.WindowedBy(null);
         }
 
         [Fact]
@@ -342,7 +343,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldNotAcceptNullSessionWindowsWhenAggregatingSessionWindows()
         {
-            groupedStream.WindowedBy((SessionWindows)null);
+            groupedStream.WindowedBy(null);
         }
 
         [Fact]
@@ -396,7 +397,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             groupedStream.Count(Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("count").WithKeySerde(Serdes.String()));
 
             var driver = new TopologyTestDriver(builder.Build(), props);
-            processData(driver);
+            ProcessData(driver);
 
             IKeyValueStore<string, long> count = driver.GetKeyValueStore<string, long>("count");
 
@@ -410,190 +411,193 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             Assert.Equal(count.Get("2"), ValueAndTimestamp.Make(1L, 1L).Value);
             Assert.Equal(count.Get("3"), ValueAndTimestamp.Make(2L, 9L).Value);
         }
-    }
 
-    //    [Fact]
-    //    public void shouldLogAndMeasureSkipsInAggregate()
-    //    {
-    //        groupedStream.Count(Materialized.As < string, long, IKeyValueStore<Bytes, byte[]>("count").WithKeySerde(Serdes.String()));
-    //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
-    //
-    //        var driver = new TopologyTestDriver(builder.Build(), props);
-    //        processData(driver);
-    //        LogCaptureAppender.unregister(appender);
-    //
-    //        var metrics = driver.metrics();
-    //        Assert.Equal(1.0, getMetricByName(metrics, "skipped-records-total", "stream-metrics").metricValue());
-    //        Assert.NotEqual(0.0, getMetricByName(metrics, "skipped-records-rate", "stream-metrics").metricValue());
-    //        Assert.Equal(appender.getMessages(), asItem("Skipping record due to null key or value. key=[3] value=[null] topic=[topic] partition=[0] offset=[6]"));
-    //    }
+        //    [Fact]
+        //    public void shouldLogAndMeasureSkipsInAggregate()
+        //    {
+        //        groupedStream.Count(Materialized.As < string, long, IKeyValueStore<Bytes, byte[]>>("count").WithKeySerde(Serdes.String()));
+        //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        //
+        //        var driver = new TopologyTestDriver(builder.Build(), props);
+        //        ProcessData(driver);
+        //        LogCaptureAppender.unregister(appender);
+        //
+        //        var metrics = driver.metrics();
+        //        Assert.Equal(1.0, getMetricByName(metrics, "skipped-records-total", "stream-metrics").metricValue());
+        //        Assert.NotEqual(0.0, getMetricByName(metrics, "skipped-records-rate", "stream-metrics").metricValue());
+        //        Assert.Equal(appender.getMessages(), asItem("Skipping record due to null key or value. key=[3] value=[null] topic=[topic] partition=[0] offset=[6]"));
+        //    }
 
-    [Fact]
-    public void shouldReduceAndMaterializeResults()
-    {
-        groupedStream.Reduce(
-            MockReducer.STRING_ADDER,
-            Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("reduce")
-                .WithKeySerde(Serdes.String())
-                .withValueSerde(Serdes.String()));
-
-        var driver = new TopologyTestDriver(builder.Build(), props);
-        processData(driver);
-
-        IKeyValueStore<string, string> reduced = driver.GetKeyValueStore<string, string>("reduce");
-
-        Assert.Equal(reduced.Get("1"), "A+C+D");
-        Assert.Equal(reduced.Get("2"), "B");
-        Assert.Equal(reduced.Get("3"), "E+F");
-        IKeyValueStore<string, IValueAndTimestamp<string>> reduced = driver.GetTimestampedKeyValueStore("reduce");
-
-        Assert.Equal(reduced.Get("1"), ValueAndTimestamp.Make("A+C+D", 10L).Value);
-        Assert.Equal(reduced.Get("2"), ValueAndTimestamp.Make("B", 1L).Value);
-        Assert.Equal(reduced.Get("3"), ValueAndTimestamp.Make("E+F", 9L).Value);
-
-    }
-
-    //    [Fact]
-    //    public void shouldLogAndMeasureSkipsInReduce()
-    //    {
-    //        groupedStream.Reduce(
-    //            MockReducer.STRING_ADDER,
-    //            Materialized.As < string, string, IKeyValueStore<Bytes, byte[]>("reduce")
-    //                .WithKeySerde(Serdes.String())
-    //                .withValueSerde(Serdes.String())
-    //        );
-    //
-    //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
-    //        var driver = new TopologyTestDriver(builder.Build(), props);
-    //        processData(driver);
-    //        LogCaptureAppender.unregister(appender);
-    //
-    //        Dictionary metrics = driver.metrics< MetricName, ? : Metric >();
-    //        Assert.Equal(1.0, getMetricByName(metrics, "skipped-records-total", "stream-metrics").metricValue());
-    //        Assert.NotEqual(0.0, getMetricByName(metrics, "skipped-records-rate", "stream-metrics").metricValue());
-    //        Assert.Equal(appender.getMessages(), asItem("Skipping record due to null key or value. key=[3] value=[null] topic=[topic] partition=[0] offset=[6]"));
-    //    }
-
-    [Fact]
-    public void shouldAggregateAndMaterializeResults()
-    {
-        groupedStream.Aggregate(
-            MockInitializer.STRING_INIT,
-            MockAggregator.TOSTRING_ADDER,
-            Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("aggregate")
-                .WithKeySerde(Serdes.String())
-                .withValueSerde(Serdes.String()));
-
-        var driver = new TopologyTestDriver(builder.Build(), props);
-        processData(driver);
-
+        [Fact]
+        public void shouldReduceAndMaterializeResults()
         {
-            IKeyValueStore<string, string> aggregate = driver.GetKeyValueStore("aggregate");
+            groupedStream.Reduce(
+                MockReducer.STRING_ADDER,
+                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("reduce")
+                    .WithKeySerde(Serdes.String())
+                    .WithValueSerde(Serdes.String()));
 
-            Assert.Equal(aggregate.Get("1"), "0+A+C+D");
-            Assert.Equal(aggregate.Get("2"), "0+B");
-            Assert.Equal(aggregate.Get("3"), "0+E+F");
+            var driver = new TopologyTestDriver(builder.Build(), props);
+            ProcessData(driver);
+
+            IKeyValueStore<string, string> reduced = driver.GetKeyValueStore<string, string>("reduce");
+
+            Assert.Equal(reduced.Get("1"), "A+C+D");
+            Assert.Equal(reduced.Get("2"), "B");
+            Assert.Equal(reduced.Get("3"), "E+F");
+            var reducedKVS = driver.GetTimestampedKeyValueStore<string, string>("reduce");
+
+            Assert.Equal(reduced.Get("1"), ValueAndTimestamp.Make("A+C+D", 10L).Value);
+            Assert.Equal(reduced.Get("2"), ValueAndTimestamp.Make("B", 1L).Value);
+            Assert.Equal(reduced.Get("3"), ValueAndTimestamp.Make("E+F", 9L).Value);
+
         }
+
+        //    [Fact]
+        //    public void shouldLogAndMeasureSkipsInReduce()
+        //    {
+        //        groupedStream.Reduce(
+        //            MockReducer.STRING_ADDER,
+        //            Materialized.As < string, string, IKeyValueStore<Bytes, byte[]>>("reduce")
+        //                .WithKeySerde(Serdes.String())
+        //                .WithValueSerde(Serdes.String())
+        //        );
+        //
+        //        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        //        var driver = new TopologyTestDriver(builder.Build(), props);
+        //        ProcessData(driver);
+        //        LogCaptureAppender.unregister(appender);
+        //
+        //        Dictionary metrics = driver.metrics< MetricName, ? : Metric >();
+        //        Assert.Equal(1.0, getMetricByName(metrics, "skipped-records-total", "stream-metrics").metricValue());
+        //        Assert.NotEqual(0.0, getMetricByName(metrics, "skipped-records-rate", "stream-metrics").metricValue());
+        //        Assert.Equal(appender.getMessages(), asItem("Skipping record due to null key or value. key=[3] value=[null] topic=[topic] partition=[0] offset=[6]"));
+        //    }
+
+        [Fact]
+        public void shouldAggregateAndMaterializeResults()
         {
-            IKeyValueStore<string, IValueAndTimestamp<string>> aggregate = driver.getTimestampedKeyValueStore("aggregate");
+            groupedStream.Aggregate(
+                MockInitializer.STRING_INIT,
+                MockAggregator<string, string>.TOSTRING_ADDER,
+                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("aggregate")
+                    .WithKeySerde(Serdes.String())
+                    .WithValueSerde(Serdes.String()));
 
-            Assert.Equal(aggregate.Get("1"), ValueAndTimestamp.Make("0+A+C+D", 10L));
-            Assert.Equal(aggregate.Get("2"), ValueAndTimestamp.Make("0+B", 1L));
-            Assert.Equal(aggregate.Get("3"), ValueAndTimestamp.Make("0+E+F", 9L));
+            var driver = new TopologyTestDriver(builder.Build(), props);
+            ProcessData(driver);
+
+            {
+                IKeyValueStore<string, string> aggregate = driver.GetKeyValueStore<string, string>("aggregate");
+
+                Assert.Equal("0+A+C+D", aggregate.Get("1"));
+                Assert.Equal("0+B", aggregate.Get("2"));
+                Assert.Equal("0+E+F", aggregate.Get("3"));
+            }
+            {
+                IKeyValueStore<string, IValueAndTimestamp<string>> aggregate = driver.GetTimestampedKeyValueStore<string, string>("aggregate");
+
+                Assert.Equal(aggregate.Get("1"), ValueAndTimestamp.Make("0+A+C+D", 10L));
+                Assert.Equal(aggregate.Get("2"), ValueAndTimestamp.Make("0+B", 1L));
+                Assert.Equal(aggregate.Get("3"), ValueAndTimestamp.Make("0+E+F", 9L));
+            }
         }
-    }
 
 
-    [Fact]
-    public void shouldAggregateWithDefaultSerdes()
-    {
-        MockProcessorSupplier<string, string> supplier = new MockProcessorSupplier<>();
-        groupedStream
-            .Aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER)
-            .ToStream()
-            .Process(supplier);
+        [Fact]
+        public void ShouldAggregateWithDefaultSerdes()
+        {
+            MockProcessorSupplier<string, string> supplier = new MockProcessorSupplier<string, string>();
+            groupedStream
+                .Aggregate(MockInitializer.STRING_INIT, MockAggregator<string, string>.TOSTRING_ADDER)
+                .ToStream()
+                .Process(supplier);
 
-        var driver = new TopologyTestDriver(builder.Build(), props);
-        processData(driver);
+            var driver = new TopologyTestDriver(builder.Build(), props);
+            ProcessData(driver);
 
-        Assert.Equal(
-            supplier.TheCapturedProcessor().lastValueAndTimestampPerKey["1"],
-            equalTo(ValueAndTimestamp.Make("0+A+C+D", 10L)));
-        Assert.Equal(
-            supplier.TheCapturedProcessor().lastValueAndTimestampPerKey["2"],
-            equalTo(ValueAndTimestamp.Make("0+B", 1L)));
-        Assert.Equal(
-            supplier.TheCapturedProcessor().lastValueAndTimestampPerKey["3"],
-            equalTo(ValueAndTimestamp.Make("0+E+F", 9L)));
-    }
+            Assert.Equal(
+                supplier.TheCapturedProcessor().LastValueAndTimestampPerKey["1"],
+                ValueAndTimestamp.Make("0+A+C+D", 10L));
+            Assert.Equal(
+                supplier.TheCapturedProcessor().LastValueAndTimestampPerKey["2"],
+                ValueAndTimestamp.Make("0+B", 1L));
+            Assert.Equal(
+                supplier.TheCapturedProcessor().LastValueAndTimestampPerKey["3"],
+                ValueAndTimestamp.Make("0+E+F", 9L));
+        }
 
-    private void processData(Top driver)
-    {
-        driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 5L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 1L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "1", "C", 3L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "1", "D", 10L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "3", "E", 8L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "3", "F", 9L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "3", (string)null));
-    }
+        private void ProcessData(TopologyTestDriver driver)
+        {
+            driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 5L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 1L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "1", "C", 3L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "1", "D", 10L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "3", "E", 8L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "3", "F", 9L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "3", (string)null));
+        }
 
-    private void DoCountWindowed(MockProcessorSupplier<IWindowed<string>, long> supplier)
-    {
-        var driver = new TopologyTestDriver(builder.Build(), props);
-        driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 0L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 499L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 100L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 0L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 100L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 200L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "3", "C", 1L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 500L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 500L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 500L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 500L));
-        driver.PipeInput(recordFactory.Create(TOPIC, "3", "B", 100L));
+        private void DoCountWindowed(MockProcessorSupplier<IWindowed<string>, long> supplier)
+        {
+            var driver = new TopologyTestDriver(builder.Build(), props);
+            driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 0L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 499L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 100L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 0L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 100L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 200L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "3", "C", 1L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 500L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "1", "A", 500L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 500L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "2", "B", 500L));
+            driver.PipeInput(recordFactory.Create(TOPIC, "3", "B", 100L));
 
-        Assert.Equal(supplier.TheCapturedProcessor().processed, Array.AsReadOnly(
-            new KeyValueTimestamp<>(new Windowed<string>("1", new TimeWindow(0L, 500L)), 1L, 0L),
-            new KeyValueTimestamp<>(new Windowed<string>("1", new TimeWindow(0L, 500L)), 2L, 499L),
-            new KeyValueTimestamp<>(new Windowed<string>("1", new TimeWindow(0L, 500L)), 3L, 499L),
-            new KeyValueTimestamp<>(new Windowed<string>("2", new TimeWindow(0L, 500L)), 1L, 0L),
-            new KeyValueTimestamp<>(new Windowed<string>("2", new TimeWindow(0L, 500L)), 2L, 100L),
-            new KeyValueTimestamp<>(new Windowed<string>("2", new TimeWindow(0L, 500L)), 3L, 200L),
-            new KeyValueTimestamp<>(new Windowed<string>("3", new TimeWindow(0L, 500L)), 1L, 1L),
-            new KeyValueTimestamp<>(new Windowed<string>("1", new TimeWindow(500L, 1000L)), 1L, 500L),
-            new KeyValueTimestamp<>(new Windowed<string>("1", new TimeWindow(500L, 1000L)), 2L, 500L),
-            new KeyValueTimestamp<>(new Windowed<string>("2", new TimeWindow(500L, 1000L)), 1L, 500L),
-            new KeyValueTimestamp<>(new Windowed<string>("2", new TimeWindow(500L, 1000L)), 2L, 500L),
-            new KeyValueTimestamp<>(new Windowed<string>("3", new TimeWindow(0L, 500L)), 2L, 100L)
-        ));
-    }
+            Assert.Equal(
+                supplier.TheCapturedProcessor().processed,
+                new List<KeyValueTimestamp<IWindowed<string>, long>>
+                {
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("1", new TimeWindow(0L, 500L)), 1L, 0L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("1", new TimeWindow(0L, 500L)), 2L, 499L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("1", new TimeWindow(0L, 500L)), 3L, 499L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("2", new TimeWindow(0L, 500L)), 1L, 0L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("2", new TimeWindow(0L, 500L)), 2L, 100L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("2", new TimeWindow(0L, 500L)), 3L, 200L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("3", new TimeWindow(0L, 500L)), 1L, 1L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("1", new TimeWindow(500L, 1000L)), 1L, 500L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("1", new TimeWindow(500L, 1000L)), 2L, 500L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("2", new TimeWindow(500L, 1000L)), 1L, 500L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("2", new TimeWindow(500L, 1000L)), 2L, 500L),
+                    new KeyValueTimestamp<IWindowed<string>, long>(new Windowed<string>("3", new TimeWindow(0L, 500L)), 2L, 100L)
+            });
+        }
 
-    [Fact]
-    public void shouldCountWindowed()
-    {
-        MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<>();
-        groupedStream
-            .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(500L)))
-            .Count(Materialized.As("aggregate-by-key-windowed"))
-            .ToStream()
-            .Process(supplier);
+        [Fact]
+        public void ShouldCountWindowed()
+        {
+            MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<IWindowed<string>, long>();
+            groupedStream
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(500L)))
+                .Count(Materialized.As<string, long, IWindowStore<Bytes, byte[]>>("aggregate-by-key-windowed"))
+                .ToStream()
+                .Process(supplier);
 
-        DoCountWindowed(supplier);
-    }
+            DoCountWindowed(supplier);
+        }
 
-    [Fact]
-    public void ShouldCountWindowedWithInternalStoreName()
-    {
-        MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<>();
-        List<KeyValuePair<IWindowed<string>, KeyValuePair<long, long>>> results = new List<>();
-        groupedStream
-            .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(500L)))
-            .Count()
-            .ToStream()
-            .Process(supplier);
+        [Fact]
+        public void ShouldCountWindowedWithInternalStoreName()
+        {
+            MockProcessorSupplier<IWindowed<string>, long> supplier = new MockProcessorSupplier<IWindowed<string>, long>();
+            List<KeyValuePair<IWindowed<string>, KeyValuePair<long, long>>> results = new List<KeyValuePair<IWindowed<string>, KeyValuePair<long, long>>>();
+            groupedStream
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(500L)))
+                .Count()
+                .ToStream()
+                .Process(supplier);
 
-        DoCountWindowed(supplier);
+            DoCountWindowed(supplier);
+        }
     }
 }

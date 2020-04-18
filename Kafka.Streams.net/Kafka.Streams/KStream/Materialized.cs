@@ -1,12 +1,11 @@
+using System;
+using System.Collections.Generic;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.Windowed;
-using System;
-using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream
 {
@@ -42,7 +41,7 @@ namespace Kafka.Streams.KStream
          * @param       type of the {@link IStateStore}
          * @return a new {@link Materialized} instance with the given storeName
          */
-        public static Materialized<K, V> As<K, V>(string storeName)
+        public static Materialized<K,V> As<K, V>(string storeName)
         {
             Named.Validate(storeName);
 
@@ -60,7 +59,7 @@ namespace Kafka.Streams.KStream
          * @param       type of the {@link IStateStore}
          * @return a new {@link Materialized} instance with the given storeName
          */
-        public static Materialized<K, V, S> As<K, V, S>(string storeName)
+        public static Materialized<K, V, S>  As<K, V, S>(string storeName)
             where S : IStateStore
         {
             Named.Validate(storeName);
@@ -137,7 +136,7 @@ namespace Kafka.Streams.KStream
          * @param      value type of the store
          * @return a new {@link Materialized} instance with the given supplier
          */
-        public static Materialized<K, V, IKeyValueStore<Bytes, byte[]>> As<K, V>(IKeyValueBytesStoreSupplier supplier)
+        public static Materialized.As<K, V, IKeyValueStore<Bytes, byte[]>><K, V>(IKeyValueBytesStoreSupplier supplier)
         {
             return new Materialized<K, V, IKeyValueStore<Bytes, byte[]>>(supplier);
         }

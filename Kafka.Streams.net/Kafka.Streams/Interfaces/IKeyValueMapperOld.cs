@@ -26,17 +26,25 @@
     * @see KTable#groupBy(KeyValueMapper, Grouped)
     * @see KTable#toStream(KeyValueMapper)
     */
-    public delegate TMappedValue KeyValueMapper<TKey, TValue, TMappedValue>();
+    public delegate TMappedValue KeyValueMapper<in TKey, in TValue, out TMappedValue>(TKey key, TValue value);
+    public delegate TMappedValue ValueMapperWithKey<in TKey, in TValue, out TMappedValue>(TKey key, TValue value);
 
-    public interface IKeyValueMapper<K, V, VR>
-    {
-        /**
-         * Map a record with the given key and value to a new value.
-         *
-         * @param key   the key of the record
-         * @param value the value of the record
-         * @return the new value
-         */
-        VR Apply(K key, V value);
-    }
+    public delegate bool FilterPredicate<in TKey, in TValue>(TKey key, TValue value);
+
+    public delegate TMappedValue ValueMapper<in TValue, out TMappedValue>(TValue value);
+
+    public delegate TJoinedValue ValueJoiner<in TValue1, in TValue2, out TJoinedValue>(TValue1 value1, TValue2 value2);
+    public delegate TJoinedValue ValueJoiner<in TValue, out TJoinedValue>(TValue value1);
+
+    //    public interface IKeyValueMapper<K, V, VR>
+    //    {
+    //        /**
+    //         * Map a record with the given key and value to a new value.
+    //         *
+    //         * @param key   the key of the record
+    //         * @param value the value of the record
+    //         * @return the new value
+    //         */
+    //        VR Apply(K key, V value);
+    //    }
 }

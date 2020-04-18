@@ -200,7 +200,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * object and associated to the IProcessorContext.
          * <p>
          * The type of the values is dependent on the {@link org.apache.kafka.common.config.ConfigDef.Type type} of the property
-         * (e.g. the value of {@link org.apache.kafka.streams.StreamsConfig#DEFAULT_KEY_SERDE_CLASS_CONFIG DEFAULT_KEY_SERDE_CLASS_CONFIG}
+         * (e.g. the value of {@link org.apache.kafka.streams.StreamsConfig#DefaultKeySerdeClassConfig DefaultKeySerdeClassConfig}
          * will be of type {@link Class}, even if it was specified as a string to
          * {@link org.apache.kafka.streams.StreamsConfig#StreamsConfig(Dictionary) StreamsConfig(Dictionary)}).
          *

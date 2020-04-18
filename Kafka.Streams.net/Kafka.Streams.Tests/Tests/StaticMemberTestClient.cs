@@ -35,20 +35,20 @@ namespace Kafka.Streams.Tests.Tests
 //        dataStream.peek((k, v) =>  System.Console.Out.WriteLine(string.format("PROCESSED key=%s value=%s", k, v)));
 
 //        StreamsConfig config = new StreamsConfig();
-//        config.Set(StreamsConfig.APPLICATION_ID_CONFIG, testName);
+//        config.Set(StreamsConfig.ApplicationIdConfig, testName);
 //        config.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
 
 //        config.PutAll(streamsProperties);
 
-//        KafkaStreams streams = new KafkaStreams(builder.Build(), config);
-//        streams.setStateListener((newState, oldState) => {
-//            if (oldState == KafkaStreams.State.REBALANCING && newState == KafkaStreams.State.RUNNING) {
+//        KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(), config);
+//        streams.SetStateListener((newState, oldState) => {
+//            if (oldState == KafkaStreamsThreadStates.REBALANCING && newState == KafkaStreamsThreadStates.RUNNING) {
 //                System.Console.Out.WriteLine("REBALANCING => RUNNING");
 //                System.Console.Out.Flush();
 //            }
 //        });
 
-//        streams.start();
+//        streams.Start();
 
 //        Runtime.getRuntime().addShutdownHook(new Thread() {
 

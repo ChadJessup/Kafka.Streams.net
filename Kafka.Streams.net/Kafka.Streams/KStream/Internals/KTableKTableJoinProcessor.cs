@@ -1,4 +1,5 @@
-﻿using Kafka.Streams.Processors;
+﻿using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
@@ -11,11 +12,11 @@ namespace Kafka.Streams.KStream.Internals
         private readonly IKTableValueGetter<K, V2> valueGetter;
         private readonly string storeName;
         private readonly bool sendOldValues;
-        private readonly IValueJoiner<V1, V2, R> joiner;
+        private readonly ValueJoiner<V1, V2, R> joiner;
 
         public KTableKTableJoinProcessor(
             IKTableValueGetter<K, V2> valueGetter,
-            IValueJoiner<V1, V2, R> joiner,
+            ValueJoiner<V1, V2, R> joiner,
             string storeName,
             bool sendOldValues)
         {
@@ -63,12 +64,12 @@ namespace Kafka.Streams.KStream.Internals
 
             if (change.NewValue != null)
             {
-                newValue = this.joiner.Apply(change.NewValue, valueRight);
+                newValue = this.joiner(change.NewValue, valueRight);
             }
 
             if (this.sendOldValues && change.OldValue != null)
             {
-                oldValue = this.joiner.Apply(change.OldValue, valueRight);
+                oldValue = this.joiner(change.OldValue, valueRight);
             }
 
             this.Context.Forward(key, new Change<R>(newValue, oldValue), To.All().WithTimestamp(resultTimestamp));

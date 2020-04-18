@@ -1,10 +1,3 @@
-using Kafka.Common;
-using Kafka.Streams.Configs;
-using Kafka.Streams.Errors;
-using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Tasks;
-using Microsoft.Extensions.Logging;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +5,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Kafka.Common;
+using Kafka.Streams.Configs;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.State
 {
@@ -52,7 +51,7 @@ namespace Kafka.Streams.State
             this.clock = clock;
             this.createStateDirectory = true;
             var stateDirName = config.StateStoreDirectory;
-            var baseDir = new DirectoryInfo(stateDirName);
+            var baseDir = stateDirName;
 
             if (this.createStateDirectory)
             {
@@ -120,7 +119,7 @@ namespace Kafka.Streams.State
             if (this.createStateDirectory && !dir.Exists)
             {
                 throw new ProcessorStateException(
-                    string.Format("global state directory [%s] doesn't exist and couldn't be created", dir.FullName));
+                    $"global state directory [{dir.FullName}] doesn't exist and couldn't be created");
             }
 
             return dir;

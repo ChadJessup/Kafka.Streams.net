@@ -20,6 +20,8 @@ namespace Kafka.Streams.KStream.Interfaces
      * @see SessionWindowedKStream#aggregate(Initializer, IAggregator, Merger, Materialized)
      * @see Reducer
      */
+
+    public delegate VAggregate Aggregator<in K, in V, VAggregate>(K key, V value, VAggregate aggregate);
     public interface IAggregator<K, V, VAggregate>
     {
         /**

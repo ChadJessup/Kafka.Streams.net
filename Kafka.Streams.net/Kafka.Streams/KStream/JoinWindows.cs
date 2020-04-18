@@ -196,7 +196,7 @@ namespace Kafka.Streams.KStream
         }
 
 
-        public override TimeSpan GracePeriod()
+        public TimeSpan GracePeriod()
         {
             // NOTE: in the future, when we Remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,

@@ -133,7 +133,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldReduce()
         {
-            IKeyValueMapper<string, int, KeyValuePair<string, int>> intProjection =
+            KeyValueMapper<string, int, KeyValuePair<string, int>> intProjection =
                 (key, value) => KeyValuePair.Create(key, value.intValue());
 
             IKTable<string, int> reduced = builder
@@ -142,7 +142,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                     Consumed.With(Serdes.String(), Serdes.Double()),
                     Materialized.As<string, double, IKeyValueStore<Bytes, byte[]>>("store")
                         .WithKeySerde(Serdes.String())
-                        .withValueSerde(Serdes.Double()))
+                        .WithValueSerde(Serdes.Double()))
                 .GroupBy(intProjection)
                 .Reduce(
                     MockReducer.INTEGER_ADDER,
@@ -152,14 +152,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             MockProcessorSupplier<string, int> supplier = getReducedResults(reduced);
 
             var driver = new TopologyTestDriver(builder.Build(), props);
-            assertReduced(supplier.TheCapturedProcessor().lastValueAndTimestampPerKey, topic, driver);
+            assertReduced(supplier.TheCapturedProcessor().LastValueAndTimestampPerKey, topic, driver);
             Assert.Equal(reduced.QueryableStoreName, "reduced");
         }
 
         [Fact]
         public void shouldReduceWithInternalStoreName()
         {
-            IKeyValueMapper<string, int, KeyValuePair<string, int>> intProjection =
+            KeyValueMapper<string, int, KeyValuePair<string, int>> intProjection =
                 (key, value) => KeyValuePair.Create(key, value.intValue());
 
             IKTable<string, int> reduced = builder
@@ -168,7 +168,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                     Consumed.With(Serdes.String(), Serdes.Double()),
                     Materialized.As<string, double, IKeyValueStore<Bytes, byte[]>>("store")
                         .WithKeySerde(Serdes.String())
-                        .withValueSerde(Serdes.Double()))
+                        .WithValueSerde(Serdes.Double()))
                 .GroupBy(intProjection)
                 .Reduce(MockReducer.INTEGER_ADDER, MockReducer.INTEGER_SUBTRACTOR);
 
@@ -176,7 +176,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             try
             {
                 var driver = new TopologyTestDriver(builder.Build(), props);
-                assertReduced(supplier.TheCapturedProcessor().lastValueAndTimestampPerKey, topic, driver);
+                assertReduced(supplier.TheCapturedProcessor().LastValueAndTimestampPerKey, topic, driver);
                 Assert.Null(reduced.QueryableStoreName);
             }
             catch (Exception e)
@@ -204,7 +204,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             MockProcessorSupplier<string, int> supplier = getReducedResults(reduced);
 
             var driver = new TopologyTestDriver(builder.Build(), props);
-            assertReduced(supplier.TheCapturedProcessor().lastValueAndTimestampPerKey, topic, driver);
+            assertReduced(supplier.TheCapturedProcessor().LastValueAndTimestampPerKey, topic, driver);
             {
                 IKeyValueStore<string, int> reduce = driver.GetKeyValueStore("reduce");
                 Assert.Equal(reduce.Get("A"), 5);

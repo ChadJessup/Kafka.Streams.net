@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Kafka.Common;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,6 @@ namespace Kafka.Streams.Tests.Helpers
          * @param keySerializer the Key serializer
          * @param valueSerializer the value serializer
          */
-
         public ConsumerRecordFactory(
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer)
@@ -153,6 +153,16 @@ namespace Kafka.Streams.Tests.Helpers
             this.valueSerializer = valueSerializer ?? throw new ArgumentNullException(nameof(valueSerializer));
             this.timeMs = startTimestampMs;
             this.advanceMs = autoAdvanceMs;
+        }
+
+        public ConsumerRecordFactory(ISerde<K> keySerde, ISerde<V> valueSerde)
+            : this(keySerde.Serializer, valueSerde.Serializer)
+        {
+        }
+
+        public ConsumerRecordFactory(ISerde<K> keySerde, ISerde<V> valueSerde, long startTimestampMs)
+            : this(keySerde.Serializer, valueSerde.Serializer, startTimestampMs: startTimestampMs)
+        {
         }
 
         /**

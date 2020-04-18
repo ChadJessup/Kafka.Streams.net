@@ -93,7 +93,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldProcessRecordsForOtherTopic()
         {
-            byte[] integerBytes = new IntegerSerializer().Serialize("foo", 1);
+            byte[] integerBytes = new Serdes.Int().Serializer().Serialize("foo", 1);
             globalStateTask.initialize();
             globalStateTask.Update(new ConsumeResult<>(topic2, 1, 1, integerBytes, integerBytes));
             Assert.Equal(1, sourceTwo.numReceived);
@@ -132,7 +132,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldThrowStreamsExceptionWhenKeyDeserializationFails()
         {
             byte[] key = new Serdes.Long().Serializer().Serialize(topic2, 1L);
-            byte[] recordValue = new IntegerSerializer().Serialize(topic2, 10);
+            byte[] recordValue = new Serdes.Int().Serializer().Serialize(topic2, 10);
             MaybeDeserialize(globalStateTask, key, recordValue, true);
         }
 
@@ -140,7 +140,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldThrowStreamsExceptionWhenValueDeserializationFails()
         {
-            byte[] key = new IntegerSerializer().Serialize(topic2, 1);
+            byte[] key = new Serdes.Int().Serializer().Serialize(topic2, 1);
             byte[] recordValue = new Serdes.Long().Serializer().Serialize(topic2, 10L);
             MaybeDeserialize(globalStateTask, key, recordValue, true);
         }
@@ -156,7 +156,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 logContext
             );
             byte[] key = new Serdes.Long().Serializer().Serialize(topic2, 1L);
-            byte[] recordValue = new IntegerSerializer().Serialize(topic2, 10);
+            byte[] recordValue = new Serdes.Int().Serializer().Serialize(topic2, 10);
 
             MaybeDeserialize(globalStateTask2, key, recordValue, false);
         }
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 new LogAndContinueExceptionHandler(),
                 logContext
             );
-            byte[] key = new IntegerSerializer().Serialize(topic2, 1);
+            byte[] key = new Serdes.Int().Serializer().Serialize(topic2, 1);
             byte[] recordValue = new Serdes.Long().Serializer().Serialize(topic2, 10L);
 
             MaybeDeserialize(globalStateTask2, key, recordValue, false);

@@ -63,8 +63,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         private static string STORE_NAME = "session-store";
 
         private ToInternal toInternal = new ToInternal();
-        private Initializer<long> initializer = () => 0L;
-        private Aggregator<string, string, long> aggregator = (aggKey, value, aggregate) => aggregate + 1;
+        private WrappedInitializer<long> initializer = () => 0L;
+        private WrappedAggregator<string, string, long> aggregator = (aggKey, value, aggregate) => aggregate + 1;
         private Merger<string, long> sessionMerger = (aggKey, aggOne, aggTwo) => aggOne + aggTwo;
         private KStreamSessionWindowAggregate<string, string, long> sessionAggregator =
             new KStreamSessionWindowAggregate<>(
@@ -117,7 +117,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                     Stores.PersistentSessionStore(STORE_NAME, FromMilliseconds(GAP_MS * 3)),
                     Serdes.String(),
                     Serdes.Long())
-                .withLoggingDisabled();
+                .WithLoggingDisabled();
 
             if (enableCaching)
             {
@@ -397,7 +397,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             LogCaptureAppender.setClassLoggerToDebug(KStreamSessionWindowAggregate));
             LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
             Processor<string, string> processor = new KStreamSessionWindowAggregate<>(
-                SessionWindows.With(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(0L)),
+                SessionWindows.With(TimeSpan.FromMilliseconds(10L)).Grace(TimeSpan.FromMilliseconds(0L)),
                 STORE_NAME,
                 initializer,
                 aggregator,
@@ -462,7 +462,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             LogCaptureAppender.setClassLoggerToDebug(KStreamSessionWindowAggregate));
             LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
             Processor<string, string> processor = new KStreamSessionWindowAggregate<>(
-                SessionWindows.With(TimeSpan.FromMilliseconds(10L)).grace(TimeSpan.FromMilliseconds(1L)),
+                SessionWindows.With(TimeSpan.FromMilliseconds(10L)).Grace(TimeSpan.FromMilliseconds(1L)),
                 STORE_NAME,
                 initializer,
                 aggregator,

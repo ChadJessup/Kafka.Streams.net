@@ -1073,7 +1073,7 @@
 
 //    private static KeyValuePair<IWindowed<K>, V> WindowedPair<K, V>(K key, V value, long timestamp, long windowSize)
 //    {
-//        return KeyValuePair.Create(new Windowed2<>(key, WindowKeySchema.timeWindowForSize(timestamp, windowSize)), value);
+//        return KeyValuePair.Create(new Windowed<>(key, WindowKeySchema.timeWindowForSize(timestamp, windowSize)), value);
 //    }
 
 //    protected void SetCurrentTime(long currentTime)

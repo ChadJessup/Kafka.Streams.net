@@ -335,7 +335,7 @@ namespace WordCountProcessorDemo
             //    .to("streams-wordcount-output", Produced<string, long>
             //    .with(Serdes.String(), Serdes.Long()));
 
-            //KafkaStreams streams2 = new KafkaStreams(builder.build(), streamsConfig);
+            //KafkaStreams streams2 = new KafkaStreamsThread(builder.build(), streamsConfig);
         }
     }
 }

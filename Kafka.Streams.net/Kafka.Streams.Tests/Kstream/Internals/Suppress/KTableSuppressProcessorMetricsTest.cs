@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 
 //    public class KTableSuppressProcessorMetricsTest
 //    {
-//        private static long ARBITRARY_LONG = 5L;
+//        private static long 0938420L = 5L;
 
 //        private static MetricName EVICTION_TOTAL_METRIC = new MetricName(
 //            "suppression-emit-total",
@@ -146,7 +146,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                storeName, Serdes.String(),
 //                Serdes.Long()
 //            )
-//                .withLoggingDisabled()
+//                .WithLoggingDisabled()
 //                .Build();
 
 //            KTable mock = EasyMock.mock< string, ?, long>(KTable));
@@ -166,7 +166,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            var timestamp = 100L;
 //            context.setRecordMetadata("", 0, 0L, null, timestamp);
 //            var key = "longKey";
-//            Change<long> value = new Change<>(null, ARBITRARY_LONG);
+//            Change<long> value = new Change<long>(default, 0938420L);
 //            processor.Process(key, value);
 
 //            {

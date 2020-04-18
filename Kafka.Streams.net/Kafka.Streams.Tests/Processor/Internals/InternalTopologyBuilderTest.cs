@@ -485,7 +485,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.NotEqual(oldNodeGroups, newNodeGroups);
 
             oldNodeGroups = newNodeGroups;
-            builder.addGlobalStore(new MockKeyValueStoreBuilder("global-store", false).withLoggingDisabled(), "globalSource", null, null, null, "globalTopic", "global-processor", new MockProcessorSupplier());
+            builder.addGlobalStore(new MockKeyValueStoreBuilder("global-store", false).WithLoggingDisabled(), "globalSource", null, null, null, "globalTopic", "global-processor", new MockProcessorSupplier());
             newNodeGroups = builder.nodeGroups();
             Assert.NotEqual(oldNodeGroups, newNodeGroups);
         }

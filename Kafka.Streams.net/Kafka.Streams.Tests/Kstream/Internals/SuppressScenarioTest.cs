@@ -40,8 +40,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                    "input",
 //                    Consumed.With(STRING_SERDE, STRING_SERDE),
 //                    Materialized.with<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
-//                        .withCachingDisabled()
-//                        .withLoggingDisabled()
+//                        .WithCachingDisabled()
+//                        .WithLoggingDisabled()
 //                )
 //                .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
 //                .Count();
@@ -123,8 +123,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                "input",
 //                Consumed.With(STRING_SERDE, STRING_SERDE),
 //                Materialized.with<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
-//                    .withCachingDisabled()
-//                    .withLoggingDisabled()
+//                    .WithCachingDisabled()
+//                    .WithLoggingDisabled()
 //            )
 //            .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
 //            .Count();
@@ -198,8 +198,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            "input",
 //            Consumed.With(STRING_SERDE, STRING_SERDE),
 //            Materialized..with<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
-//                .withCachingDisabled()
-//                .withLoggingDisabled()
+//                .WithCachingDisabled()
+//                .WithLoggingDisabled()
 //        )
 //        .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
 //        .Count(Materialized.With(STRING_SERDE, Serdes.Long()));
@@ -265,8 +265,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            "input",
 //            Consumed.With(STRING_SERDE, STRING_SERDE),
 //            Materialized.with<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
-//                .withCachingDisabled()
-//                .withLoggingDisabled()
+//                .WithCachingDisabled()
+//                .WithLoggingDisabled()
 //        )
 //        .GroupBy((k, v) => KeyValuePair.Create(v, k), Grouped.With(STRING_SERDE, STRING_SERDE))
 //        .Count();
@@ -331,16 +331,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
-//        .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(1L)))
-//        .Count(Materialized.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled());
+//        .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(2L)).Grace(TimeSpan.FromMilliseconds(1L)))
+//        .Count(Materialized.As < string, long, IWindowStore<Bytes, byte[]>("counts").WithCachingDisabled());
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .ToStream()
-//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .ToStream()
-//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
@@ -384,16 +384,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
-//        .WindowedBy(TimeWindows.of(TimeSpan.FromMilliseconds(2L)).grace(TimeSpan.FromMilliseconds(2L)))
-//        .Count(Materialized.As < string, long, IWindowStore<Bytes, byte[]>("counts").withCachingDisabled().WithKeySerde(STRING_SERDE));
+//        .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(2L)).Grace(TimeSpan.FromMilliseconds(2L)))
+//        .Count(Materialized.As < string, long, IWindowStore<Bytes, byte[]>("counts").WithCachingDisabled().WithKeySerde(STRING_SERDE));
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .ToStream()
-//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .ToStream()
-//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());
@@ -441,16 +441,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //    IKTable<IWindowed<string>, long> valueCounts = builder
 //        .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //        .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
-//        .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).grace(TimeSpan.FromMilliseconds(0L)))
-//        .Count(Materialized.As < string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled());
+//        .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).Grace(TimeSpan.FromMilliseconds(0L)))
+//        .Count(Materialized.As < string, long, ISessionStore<Bytes, byte[]>("counts").WithCachingDisabled());
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .ToStream()
-//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .ToStream()
-//        .map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
+//        .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //        .To("output-raw", Produced.With(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.WriteLine(topology.describe());

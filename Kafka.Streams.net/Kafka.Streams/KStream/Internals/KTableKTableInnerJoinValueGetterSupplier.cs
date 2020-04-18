@@ -4,14 +4,14 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableKTableInnerJoinValueGetterSupplier<K, R, V1, V2> : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2>
     {
-        private readonly IKeyValueMapper<K, V1, K> keyValueMapper;
-        private readonly IValueJoiner<V1, V2, R> joiner;
+        private readonly KeyValueMapper<K, V1, K> keyValueMapper;
+        private readonly ValueJoiner<V1, V2, R> joiner;
 
         public KTableKTableInnerJoinValueGetterSupplier(
             IKTableValueGetterSupplier<K, V1> valueGetterSupplier1,
             IKTableValueGetterSupplier<K, V2> valueGetterSupplier2,
-            IKeyValueMapper<K, V1, K> keyValueMapper,
-            IValueJoiner<V1, V2, R> joiner)
+            KeyValueMapper<K, V1, K> keyValueMapper,
+            ValueJoiner<V1, V2, R> joiner)
                 : base(valueGetterSupplier1, valueGetterSupplier2)
         {
             this.keyValueMapper = keyValueMapper;

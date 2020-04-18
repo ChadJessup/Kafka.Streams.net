@@ -40,8 +40,8 @@
 //        private static MockInternalProcessorContext MakeContext()
 //        {
 //            StreamsConfig properties = new StreamsConfig();
-//            properties.Set(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
-//            properties.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "");
+//            properties.Set(StreamsConfig.ApplicationIdConfig, APP_ID);
+//            properties.Set(StreamsConfig.BootstrapServersConfig, "");
 
 //            TaskId taskId = new TaskId(0, 0);
 
@@ -277,7 +277,7 @@
 //                ((MockRecordCollector)context.recordCollector())
 //                    .collected()
 //                    .Stream()
-//                    .map(pr =>
+//                    .Map(pr =>
 //                    {
 //                        KeyValuePair<long, BufferValue> niceValue;
 //                        if (pr.Value == null)

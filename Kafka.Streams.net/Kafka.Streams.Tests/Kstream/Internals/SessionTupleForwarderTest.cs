@@ -47,14 +47,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            if (sendOldValued)
 //            {
 //                context.Forward(
-//                    new Windowed2<>("key", new SessionWindow(21L, 42L)),
+//                    new Windowed<>("key", new SessionWindow(21L, 42L)),
 //                    new Change<>("value", "oldValue"),
 //                    To.All().WithTimestamp(42L));
 //            }
 //            else
 //            {
 //                context.Forward(
-//                    new Windowed2<>("key", new SessionWindow(21L, 42L)),
+//                    new Windowed<>("key", new SessionWindow(21L, 42L)),
 //                    new Change<>("value", null),
 //                    To.All().WithTimestamp(42L));
 //            }
@@ -62,7 +62,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            replay(store, context);
 
 //            new SessionTupleForwarder<>(store, context, null, sendOldValued)
-//                .maybeForward(new Windowed2<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
+//                .maybeForward(new Windowed<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
 
 //            verify(store, context);
 //        }
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            replay(store, context);
 
 //            new SessionTupleForwarder<>(store, context, null, false)
-//                .maybeForward(new Windowed2<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
+//                .maybeForward(new Windowed<>("key", new SessionWindow(21L, 42L)), "value", "oldValue");
 
 //            verify(store, context);
 //        }

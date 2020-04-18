@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Integration
         private static string inputStream;
         private static string STORE_NAME = "store";
 
-        private KafkaStreams kafkaStreams;
+        private KafkaStreamsThread kafkaStreams;
         private static int testCounter = 0;
 
 
@@ -30,18 +30,18 @@ namespace Kafka.Streams.Tests.Integration
         public void createTopics()
         {// throws Exception
             inputStream = "input-stream-" + testCounter;
-            CLUSTER.createTopic(inputStream);
+            CLUSTER.CreateTopic(inputStream);
         }
 
         private StreamsConfig props()
         {
             StreamsConfig streamsConfiguration = new StreamsConfig();
-            streamsConfiguration.Set(StreamsConfig.APPLICATION_ID_CONFIG, "addId-" + testCounter++);
-            streamsConfiguration.Set(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            streamsConfiguration.Set(StreamsConfig.ApplicationIdConfig, "addId-" + testCounter++);
+            streamsConfiguration.Set(StreamsConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             streamsConfiguration.Set(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
             streamsConfiguration.Set(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-            streamsConfiguration.Set(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
-            streamsConfiguration.Set(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().GetType());
+            streamsConfiguration.Set(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.Int().GetType());
+            streamsConfiguration.Set(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.Int().GetType());
             streamsConfiguration.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
             streamsConfiguration.Set(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
             return streamsConfiguration;
@@ -81,8 +81,8 @@ namespace Kafka.Streams.Tests.Integration
             //      .Process(KeyValueProcessor, STORE_NAME);
 
             StreamsConfig props = props();
-            kafkaStreams = new KafkaStreams(streamsBuilderForOldStore.Build(), props);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(streamsBuilderForOldStore.Build(), props);
+            kafkaStreams.Start();
 
             processKeyValueAndVerifyPlainCount(1, Collections.singletonList(KeyValuePair.Create(1, 1L)));
 
@@ -132,8 +132,8 @@ namespace Kafka.Streams.Tests.Integration
             //    .< int, int> stream(inputStream)
             //     .Process(TimestampedKeyValueProcessor, STORE_NAME);
 
-            kafkaStreams = new KafkaStreams(streamsBuilderForNewStore.Build(), props);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(streamsBuilderForNewStore.Build(), props);
+            kafkaStreams.Start();
 
             verifyCountWithTimestamp(1, 2L, lastUpdateKeyOne);
             verifyCountWithTimestamp(2, 1L, lastUpdateKeyTwo);
@@ -190,8 +190,8 @@ namespace Kafka.Streams.Tests.Integration
             //     .Process(KeyValueProcessor, STORE_NAME);
 
             StreamsConfig props = props();
-            kafkaStreams = new KafkaStreams(streamsBuilderForOldStore.Build(), props);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(streamsBuilderForOldStore.Build(), props);
+            kafkaStreams.Start();
 
             processKeyValueAndVerifyPlainCount(1, Collections.singletonList(KeyValuePair.Create(1, 1L)));
 
@@ -237,8 +237,8 @@ namespace Kafka.Streams.Tests.Integration
             //    .< int, int> stream(inputStream)
             //     .Process(TimestampedKeyValueProcessor, STORE_NAME);
 
-            kafkaStreams = new KafkaStreams(streamsBuilderForNewStore.Build(), props);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(streamsBuilderForNewStore.Build(), props);
+            kafkaStreams.Start();
 
             verifyCountWithSurrogateTimestamp(1, 2L);
             verifyCountWithSurrogateTimestamp(2, 1L);
@@ -289,8 +289,8 @@ namespace Kafka.Streams.Tests.Integration
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
                 TestUtils.producerConfig(CLUSTER.bootstrapServers(),
-                    IntegerSerializer,
-                    IntegerSerializer),
+                    Serdes.Int().Serializer,
+                    Serdes.Int().Serializer),
                 CLUSTER.time);
 
             //TestUtils.WaitForCondition(
@@ -375,8 +375,8 @@ namespace Kafka.Streams.Tests.Integration
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
                 TestUtils.producerConfig(CLUSTER.bootstrapServers(),
-                    IntegerSerializer,
-                    IntegerSerializer),
+                    Serdes.Int().Serializer,
+                    Serdes.Int().Serializer),
                 timestamp);
 
             //        TestUtils.WaitForCondition(
@@ -412,8 +412,8 @@ namespace Kafka.Streams.Tests.Integration
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
                 TestUtils.producerConfig(CLUSTER.bootstrapServers(),
-                    IntegerSerializer,
-                    IntegerSerializer),
+                    Serdes.Int().Serializer,
+                    Serdes.Int().Serializer),
                 timestamp);
 
             //            TestUtils.WaitForCondition(
@@ -472,8 +472,8 @@ namespace Kafka.Streams.Tests.Integration
 
 
             shouldMigrateWindowStoreToTimestampedWindowStoreUsingPapi(
-                new KafkaStreams(streamsBuilderForOldStore.Build(), props()),
-                new KafkaStreams(streamsBuilderForNewStore.Build(), props()),
+                new KafkaStreamsThread(streamsBuilderForOldStore.Build(), props()),
+                new KafkaStreamsThread(streamsBuilderForNewStore.Build(), props()),
                 false);
         }
 
@@ -511,18 +511,18 @@ namespace Kafka.Streams.Tests.Integration
 
             StreamsConfig props = props();
             shouldMigrateWindowStoreToTimestampedWindowStoreUsingPapi(
-                new KafkaStreams(streamsBuilderForOldStore.Build(), props),
-                new KafkaStreams(streamsBuilderForNewStore.Build(), props),
+                new KafkaStreamsThread(streamsBuilderForOldStore.Build(), props),
+                new KafkaStreamsThread(streamsBuilderForNewStore.Build(), props),
                 true);
         }
 
         private void shouldMigrateWindowStoreToTimestampedWindowStoreUsingPapi(
-            KafkaStreams kafkaStreamsOld,
-            KafkaStreams kafkaStreamsNew,
+            KafkaStreamsThread kafkaStreamsOld,
+            KafkaStreamsThread kafkaStreamsNew,
             bool persistentStore)
         {// throws Exception
             kafkaStreams = kafkaStreamsOld;
-            kafkaStreams.start();
+            kafkaStreams.Start();
 
             processWindowedKeyValueAndVerifyPlainCount(1, Collections.singletonList(
                 KeyValuePair.Create(new Windowed<string>(1, new TimeWindow(0L, 1000L)), 1L)));
@@ -567,7 +567,7 @@ namespace Kafka.Streams.Tests.Integration
 
 
             kafkaStreams = kafkaStreamsNew;
-            kafkaStreams.start();
+            kafkaStreams.Start();
 
             verifyWindowedCountWithTimestamp(new Windowed<string>(1, new TimeWindow(0L, 1000L)), 2L, lastUpdateKeyOne);
             verifyWindowedCountWithTimestamp(new Windowed<string>(2, new TimeWindow(0L, 1000L)), 1L, lastUpdateKeyTwo);
@@ -674,8 +674,8 @@ namespace Kafka.Streams.Tests.Integration
             //      .Process(WindowedProcessor, STORE_NAME);
 
             StreamsConfig props = props();
-            kafkaStreams = new KafkaStreams(streamsBuilderForOldStore.Build(), props);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(streamsBuilderForOldStore.Build(), props);
+            kafkaStreams.Start();
 
             processWindowedKeyValueAndVerifyPlainCount(1, Collections.singletonList(
                 KeyValuePair.Create(new Windowed<string>(1, new TimeWindow(0L, 1000L)), 1L)));
@@ -727,8 +727,8 @@ namespace Kafka.Streams.Tests.Integration
             //    .< int, int> stream(inputStream)
             //     .Process(TimestampedWindowedProcessor, STORE_NAME);
 
-            kafkaStreams = new KafkaStreams(streamsBuilderForNewStore.Build(), props);
-            kafkaStreams.start();
+            kafkaStreams = new KafkaStreamsThread(streamsBuilderForNewStore.Build(), props);
+            kafkaStreams.Start();
 
             verifyWindowedCountWithSurrogateTimestamp(new Windowed<string>(1, new TimeWindow(0L, 1000L)), 2L);
             verifyWindowedCountWithSurrogateTimestamp(new Windowed<string>(2, new TimeWindow(0L, 1000L)), 1L);
@@ -783,8 +783,8 @@ namespace Kafka.Streams.Tests.Integration
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
                 TestUtils.producerConfig(CLUSTER.bootstrapServers(),
-                    IntegerSerializer,
-                    IntegerSerializer),
+                    Serdes.Int().Serializer,
+                    Serdes.Int().Serializer),
                 CLUSTER.time);
 
             //        TestUtils.WaitForCondition(
@@ -820,7 +820,7 @@ namespace Kafka.Streams.Tests.Integration
                     {
                         IReadOnlyWindowStore<K, IValueAndTimestamp<long>> store =
                             kafkaStreams.store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
-                        IValueAndTimestamp<long> count = store.Fetch(key.Key, key.window().start());
+                        IValueAndTimestamp<long> count = store.Fetch(key.Key, key.window().Start());
                         return count.Value == value && count.Timestamp == -1L;
                     }
                     catch (Exception swallow)
@@ -845,7 +845,7 @@ namespace Kafka.Streams.Tests.Integration
          //            {
          //                IReadOnlyWindowStore<K, IValueAndTimestamp<long>> store =
          //                    kafkaStreams.store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
-         //                IValueAndTimestamp<long> count = store.Fetch(key.Key, key.window().start());
+         //                IValueAndTimestamp<long> count = store.Fetch(key.Key, key.window().Start());
          //                return count.Value == value && count.Timestamp == timestamp;
          //            }
          //            catch (Exception swallow)
@@ -867,8 +867,8 @@ namespace Kafka.Streams.Tests.Integration
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
                 TestUtils.producerConfig(CLUSTER.bootstrapServers(),
-                    IntegerSerializer,
-                    IntegerSerializer),
+                    Serdes.Int().Serializer,
+                    Serdes.Int().Serializer),
                 timestamp);
 
             //        TestUtils.WaitForCondition(

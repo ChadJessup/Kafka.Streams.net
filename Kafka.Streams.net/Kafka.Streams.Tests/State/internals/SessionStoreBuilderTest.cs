@@ -86,7 +86,7 @@
 //        [Fact]
 //        public void ShouldNotHaveChangeLoggingStoreWhenDisabled()
 //        {
-//            ISessionStore<string, string> store = builder.withLoggingDisabled().Build();
+//            ISessionStore<string, string> store = builder.WithLoggingDisabled().Build();
 //            IStateStore next = ((WrappedStateStore)store).wrapped();
 //            Assert.Equal(next, CoreMatchers.< IStateStore > equalTo(inner));
 //        }

@@ -1,3 +1,4 @@
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.State;
 using System;
@@ -11,14 +12,14 @@ namespace Kafka.Streams.KStream.Internals
         private readonly KTable<K, S, V2> table2;
         protected IKTableValueGetterSupplier<K, V1> valueGetterSupplier1 { get; }
         protected IKTableValueGetterSupplier<K, V2> valueGetterSupplier2 { get; }
-        protected IValueJoiner<V1, V2, R> joiner { get; }
+        protected ValueJoiner<V1, V2, R> joiner { get; }
 
         protected bool sendOldValues { get; set; } = false;
 
         public KTableKTableAbstractJoin(
             KTable<K, S, V1> table1,
             KTable<K, S, V2> table2,
-            IValueJoiner<V1, V2, R> joiner)
+            ValueJoiner<V1, V2, R> joiner)
         {
             this.table1 = table1 ?? throw new ArgumentNullException(nameof(table1));
             this.table2 = table2 ?? throw new ArgumentNullException(nameof(table2));

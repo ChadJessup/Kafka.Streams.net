@@ -9,7 +9,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         private readonly IKTableValueGetter<K, V> parentGetter;
         private IProcessorContext context;
-        private readonly IKeyValueMapper<K, V, V> mapper;
+        private readonly KeyValueMapper<K, V, V> mapper;
 
         public KTableMapValueGetter(IKTableValueGetter<K, V> parentGetter)
         {

@@ -7,6 +7,17 @@ namespace Kafka.Streams.Threads
     /**
      * Listen to {@link State} change events.
      */
+    public interface IStateListener<States> : IStateListener
+       where States : Enum
+    {
+        void OnChange(IThread<States> thread, States newState, States oldState);
+        new void OnChange<States1>(
+            IThread<States1> thread,
+            States1 newState,
+            States1 oldState)
+            where States1 : States;
+    }
+
     public interface IStateListener
     {
         /**
@@ -16,7 +27,7 @@ namespace Kafka.Streams.Threads
          * @param oldState previous state
          */
         void OnChange<States>(
-            IThread<States> thread, 
+            IThread<States> thread,
             States newState,
             States oldState)
             where States : Enum;

@@ -61,12 +61,12 @@
 
 //            string bootstrapServers = CLUSTER.bootstrapServers();
 //            Driver driver = new Driver(bootstrapServers, 10, 1000);
-//            driver.start();
+//            driver.Start();
 //            System.Console.Out.WriteLine("started driver");
 
 
 //            StreamsConfig props = new StreamsConfig();
-//            props.Put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+//            props.Put(StreamsConfig.BootstrapServersConfig, bootstrapServers);
 
 //            // cycle out Streams instances as long as the test is running.
 //            while (driver.isAlive())

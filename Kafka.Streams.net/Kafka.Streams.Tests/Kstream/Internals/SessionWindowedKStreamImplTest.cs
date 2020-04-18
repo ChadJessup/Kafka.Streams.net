@@ -59,15 +59,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("1", new SessionWindow(10L, 15L))),
+//                result.Get(new Windowed<>("1", new SessionWindow(10L, 15L))),
 //                equalTo(ValueAndTimestamp.Make(2L, 15L)));
 
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("2", new SessionWindow(599L, 600L))),
+//                result.Get(new Windowed<>("2", new SessionWindow(599L, 600L))),
 //                equalTo(ValueAndTimestamp.Make(2L, 600L)));
 
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("1", new SessionWindow(600L, 600L))),
+//                result.Get(new Windowed<>("1", new SessionWindow(600L, 600L))),
 //                equalTo(ValueAndTimestamp.Make(1L, 600L)));
 //        }
 
@@ -87,13 +87,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("1", new SessionWindow(10, 15))),
+//                result.Get(new Windowed<>("1", new SessionWindow(10, 15))),
 //                equalTo(ValueAndTimestamp.Make("1+2", 15L)));
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("2", new SessionWindow(599L, 600))),
+//                result.Get(new Windowed<>("2", new SessionWindow(599L, 600))),
 //                equalTo(ValueAndTimestamp.Make("1+2", 600L)));
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("1", new SessionWindow(600, 600))),
+//                result.Get(new Windowed<>("1", new SessionWindow(600, 600))),
 //                equalTo(ValueAndTimestamp.Make("3", 600L)));
 //        }
 
@@ -115,13 +115,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
 //            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("1", new SessionWindow(10, 15))),
+//                result.Get(new Windowed<>("1", new SessionWindow(10, 15))),
 //                equalTo(ValueAndTimestamp.Make("0+0+1+2", 15L)));
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("2", new SessionWindow(599, 600))),
+//                result.Get(new Windowed<>("2", new SessionWindow(599, 600))),
 //                equalTo(ValueAndTimestamp.Make("0+0+1+2", 600L)));
 //            Assert.Equal(
-//                result.Get(new Windowed2<>("1", new SessionWindow(600, 600))),
+//                result.Get(new Windowed<>("1", new SessionWindow(600, 600))),
 //                equalTo(ValueAndTimestamp.Make("0+3", 600L)));
 //        }
 
@@ -139,9 +139,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                Assert.Equal(
 //                    data,
 //                    equalTo(Array.AsReadOnly(
-//                        KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(10, 15)), 2L),
-//                        KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(600, 600)), 1L),
-//                        KeyValuePair.Create(new Windowed2<>("2", new SessionWindow(599, 600)), 2L))));
+//                        KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), 2L),
+//                        KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), 1L),
+//                        KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), 2L))));
 //            }
 //    }
 
@@ -158,9 +158,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Assert.Equal(
 //                data,
 //                equalTo(Array.AsReadOnly(
-//                    KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(10, 15)), "1+2"),
-//                    KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(600, 600)), "3"),
-//                    KeyValuePair.Create(new Windowed2<>("2", new SessionWindow(599, 600)), "1+2"))));
+//                    KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), "1+2"),
+//                    KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), "3"),
+//                    KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), "1+2"))));
 //        }
 //    }
 
@@ -171,7 +171,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            MockInitializer.STRING_INIT,
 //            MockAggregator.TOSTRING_ADDER,
 //            sessionMerger,
-//            Materialized.As < string, string, ISessionStore<Bytes, byte[]>("aggregated").withValueSerde(Serdes.String()));
+//            Materialized.As < string, string, ISessionStore<Bytes, byte[]>("aggregated").WithValueSerde(Serdes.String()));
 
 //        var driver = new TopologyTestDriver(builder.Build(), props);
 //        processData(driver);
@@ -180,9 +180,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //        Assert.Equal(
 //            data,
 //            Array.AsReadOnly(
-//                KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(10, 15)), "0+0+1+2"),
-//                KeyValuePair.Create(new Windowed2<>("1", new SessionWindow(600, 600)), "0+3"),
-//                KeyValuePair.Create(new Windowed2<>("2", new SessionWindow(599, 600)), "0+0+1+2")));
+//                KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), "0+0+1+2"),
+//                KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), "0+3"),
+//                KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), "0+0+1+2")));
 //    }
 //}
 

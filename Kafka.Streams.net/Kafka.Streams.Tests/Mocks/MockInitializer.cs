@@ -16,6 +16,6 @@ namespace Kafka.Streams.Tests.Mocks
             }
         }
 
-        public static IInitializer<string> STRING_INIT = new StringInit();
+        public static Initializer<string> STRING_INIT = () => "0";
     }
 }

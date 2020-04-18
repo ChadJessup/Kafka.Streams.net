@@ -1,8 +1,6 @@
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Processors;
 using Kafka.Streams.State;
-using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -10,12 +8,12 @@ namespace Kafka.Streams.KStream.Internals
         where S : IStateStore
     {
         private readonly string storeName;
-        private readonly IKeyValueMapper<K, V1, K> keyValueMapper = new KeyValueMapper<K, V1, K>((key, value) => key);
+        private readonly KeyValueMapper<K, V1, K> keyValueMapper = new KeyValueMapper<K, V1, K>((key, value) => key);
 
         public KTableKTableInnerJoin(
             KTable<K, S, V1> table1,
             KTable<K, S, V2> table2,
-            IValueJoiner<V1, V2, R> joiner,
+            ValueJoiner<V1, V2, R> joiner,
             string storeName)
             : base(table1, table2, joiner)
         {

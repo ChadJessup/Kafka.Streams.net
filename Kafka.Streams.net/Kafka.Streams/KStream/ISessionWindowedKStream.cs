@@ -77,7 +77,7 @@ namespace Kafka.Streams.KStream
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store Name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          *
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -127,6 +127,21 @@ namespace Kafka.Streams.KStream
             IAggregator<K, V, VR> aggregator,
             Merger<K, VR> sessionMerger);
 
+        IKTable<IWindowed<K>, VR> Aggregate<VR>(
+            Initializer<VR> initializer,
+            IAggregator<K, V, VR> aggregator,
+            Merger<K, VR> sessionMerger)
+            => this.Aggregate(new WrappedInitializer<VR>(initializer), aggregator, sessionMerger);
+
+        IKTable<IWindowed<K>, VR> Aggregate<VR>(
+            Initializer<VR> initializer,
+            Aggregator<K, V, VR> aggregator,
+            Merger<K, VR> sessionMerger)
+            => this.Aggregate(
+                new WrappedInitializer<VR>(initializer),
+                new WrappedAggregator<K, V, VR>(aggregator),
+                sessionMerger);
+
         /**
          * Aggregate the values of records in this stream by the grouped key and defined {@link SessionWindows}.
          * Records with {@code null} key or value are ignored.
@@ -167,7 +182,7 @@ namespace Kafka.Streams.KStream
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store Name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          *
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
@@ -183,6 +198,22 @@ namespace Kafka.Streams.KStream
         IKTable<IWindowed<K>, VR> Aggregate<VR>(
             IInitializer<VR> initializer,
             IAggregator<K, V, VR> aggregator,
+            Merger<K, VR> sessionMerger,
+            Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized);
+        IKTable<IWindowed<K>, VR> Aggregate<VR>(
+            Initializer<VR> initializer,
+            IAggregator<K, V, VR> aggregator,
+            Merger<K, VR> sessionMerger,
+            Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized)
+            => this.Aggregate<VR>(
+                new WrappedInitializer<VR>(initializer),
+                aggregator,
+                sessionMerger,
+                materialized);
+
+        IKTable<IWindowed<K>, VR> Aggregate<VR>(
+            Initializer<VR> initializer,
+            Aggregator<K, V, VR> aggregator,
             Merger<K, VR> sessionMerger,
             Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized);
 
@@ -265,7 +296,7 @@ namespace Kafka.Streams.KStream
          * alphanumerics, '.', '_' and '-'.
          * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
          * user-specified in {@link StreamsConfig} via parameter
-         * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+         * {@link StreamsConfig#ApplicationIdConfig ApplicationIdConfig}, "storeName" is the
          * provide store Name defined in {@code Materialized}, and "-changelog" is a fixed suffix.
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
