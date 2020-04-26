@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream
          * Construct a {@code TimeWindowedSerde} object to deserialize changelog topic
          * for the specified inner class type and window size.
          */
-        public static Serde<IWindowed<T>> TimeWindowedSerdeFrom<T>(long windowSize)
+        public static ISerde<IWindowed<T>> TimeWindowedSerdeFrom<T>(long windowSize)
         {
             return null;// new TimeWindowedSerde<T>(Serdes.SerdeFrom<T>(), windowSize);
         }
@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream
         /**
          * Construct a {@code SessionWindowedSerde} object for the specified inner class type.
          */
-        public static Serde<IWindowed<T>> SessionWindowedSerdeFrom<T>()
+        public static ISerde<IWindowed<T>> SessionWindowedSerdeFrom<T>()
         {
             return null; // new SessionWindowedSerde<T>(Serdes.SerdeFrom<T>());
         }

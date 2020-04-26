@@ -44,7 +44,7 @@
 //            underlyingWindowStore.Put("my-key", "my-value", 0L);
 //            underlyingWindowStore.Put("my-key", "my-later-value", 10L);
 
-//            IWindowStoreIterator<string> iterator = windowStore.Fetch("my-key", ofEpochMilli(0L), ofEpochMilli(25L));
+//            IWindowStoreIterator<string> iterator = windowStore.Fetch("my-key", TimeSpan.FromMilliseconds(0L), TimeSpan.FromMilliseconds(25L));
 //            List<KeyValuePair<long, string>> results = StreamsTestUtils.toList(iterator);
 
 //            Assert.Equal(asList(new KeyValuePair<long, string>(0L, "my-value"),
@@ -55,8 +55,8 @@
 //        [Fact]
 //        public void ShouldReturnEmptyIteratorIfNoData()
 //        {
-//            IWindowStoreIterator<string> iterator = windowStore.Fetch("my-key", ofEpochMilli(0L), ofEpochMilli(25L));
-//            Assert.Equal(false, iterator.HasNext());
+//            IWindowStoreIterator<string> iterator = windowStore.Fetch("my-key", TimeSpan.FromMilliseconds(0L), TimeSpan.FromMilliseconds(25L));
+//            Assert.Equal(false, iterator.MoveNext());
 //        }
 
 //        [Fact]
@@ -69,10 +69,10 @@
 //            underlyingWindowStore.Put("key-one", "value-one", 0L);
 //            secondUnderlying.Put("key-two", "value-two", 10L);
 
-//            List<KeyValuePair<long, string>> keyOneResults = StreamsTestUtils.toList(windowStore.Fetch("key-one", ofEpochMilli(0L),
-//                                                                                                         ofEpochMilli(1L)));
-//            List<KeyValuePair<long, string>> keyTwoResults = StreamsTestUtils.toList(windowStore.Fetch("key-two", ofEpochMilli(10L),
-//                                                                                                         ofEpochMilli(11L)));
+//            List<KeyValuePair<long, string>> keyOneResults = StreamsTestUtils.toList(windowStore.Fetch("key-one", TimeSpan.FromMilliseconds(0L),
+//                                                                                                         TimeSpan.FromMilliseconds(1L)));
+//            List<KeyValuePair<long, string>> keyTwoResults = StreamsTestUtils.toList(windowStore.Fetch("key-two", TimeSpan.FromMilliseconds(10L),
+//                                                                                                         TimeSpan.FromMilliseconds(11L)));
 
 //            Assert.Equal(Collections.singletonList(KeyValuePair.Create(0L, "value-one")), keyOneResults);
 //            Assert.Equal(Collections.singletonList(KeyValuePair.Create(10L, "value-two")), keyTwoResults);
@@ -84,7 +84,7 @@
 //            otherUnderlyingStore.Put("some-key", "some-value", 0L);
 //            underlyingWindowStore.Put("some-key", "my-value", 1L);
 
-//            List<KeyValuePair<long, string>> results = StreamsTestUtils.toList(windowStore.Fetch("some-key", ofEpochMilli(0L), ofEpochMilli(2L)));
+//            List<KeyValuePair<long, string>> results = StreamsTestUtils.toList(windowStore.Fetch("some-key", TimeSpan.FromMilliseconds(0L), TimeSpan.FromMilliseconds(2L)));
 //            Assert.Equal(Collections.singletonList(KeyValuePair.Create(1L, "my-value")), results);
 //        }
 
@@ -92,7 +92,7 @@
 //        public void ShouldThrowInvalidStateStoreExceptionOnRebalance()
 //        {
 //            CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new StateStoreProviderStub(true), QueryableStoreTypes.windowStore(), "foo");
-//            store.Fetch("key", ofEpochMilli(1), ofEpochMilli(10));
+//            store.Fetch("key", TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(10));
 //        }
 
 //        [Fact]
@@ -103,7 +103,7 @@
 //                    new CompositeReadOnlyWindowStore<>(stubProviderOne, QueryableStoreTypes.windowStore(), "window-store");
 //            try
 //            {
-//                store.Fetch("key", ofEpochMilli(1), ofEpochMilli(10));
+//                store.Fetch("key", TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(10));
 //                Assert.True(false, "InvalidStateStoreException was expected");
 //            }
 //            catch (InvalidStateStoreException e)
@@ -118,9 +118,9 @@
 //        {
 //            CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
 //                    StateStoreProviderStub(false), QueryableStoreTypes.windowStore(), "foo");
-//            IWindowStoreIterator<object> windowStoreIterator = store.Fetch("key", ofEpochMilli(1), ofEpochMilli(10));
+//            IWindowStoreIterator<object> windowStoreIterator = store.Fetch("key", TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(10));
 
-//            Assert.False(windowStoreIterator.HasNext());
+//            Assert.False(windowStoreIterator.MoveNext());
 //        }
 
 //        [Fact]
@@ -128,7 +128,7 @@
 //        {
 //            CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
 //                    StateStoreProviderStub(false), QueryableStoreTypes.windowStore(), "foo");
-//            IWindowStoreIterator<object> windowStoreIterator = store.Fetch("key", ofEpochMilli(1), ofEpochMilli(10));
+//            IWindowStoreIterator<object> windowStoreIterator = store.Fetch("key", TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(10));
 //            Assert.Throws<NotImplementedException>(() => windowStoreIterator::peekNextKey);
 //        }
 
@@ -137,7 +137,7 @@
 //        {
 //            CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
 //                    StateStoreProviderStub(false), QueryableStoreTypes.windowStore(), "foo");
-//            IWindowStoreIterator<object> windowStoreIterator = store.Fetch("key", ofEpochMilli(1), ofEpochMilli(10));
+//            IWindowStoreIterator<object> windowStoreIterator = store.Fetch("key", TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(10));
 //            Assert.Throws(NoSuchElementException, windowStoreIterator::next);
 //        }
 
@@ -148,7 +148,7 @@
 //            stubProviderTwo.addStore(storeName, secondUnderlying);
 //            underlyingWindowStore.Put("a", "a", 0L);
 //            secondUnderlying.Put("b", "b", 10L);
-//            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.Fetch("a", "b", ofEpochMilli(0), ofEpochMilli(10)));
+//            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.Fetch("a", "b", TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(10)));
 //            Assert.Equal(results, (Arrays.asList(
 //                    KeyValuePair.Create(new Windowed<>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
 //                    KeyValuePair.Create(new Windowed<>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
@@ -190,28 +190,28 @@
 //            stubProviderTwo.addStore(storeName, secondUnderlying);
 //            underlyingWindowStore.Put("a", "a", 0L);
 //            secondUnderlying.Put("b", "b", 10L);
-//            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.FetchAll(ofEpochMilli(0), ofEpochMilli(10)));
+//            List<KeyValuePair<IWindowed<string>, string>> results = StreamsTestUtils.toList(windowStore.FetchAll(TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(10)));
 //            Assert.Equal(results, (Arrays.asList(
 //                    KeyValuePair.Create(new Windowed<string>("a", new TimeWindow(0, WINDOW_SIZE)), "a"),
 //                    KeyValuePair.Create(new Windowed<string>("b", new TimeWindow(10, 10 + WINDOW_SIZE)), "b"))));
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNPEIfKeyIsNull()
 //        {
-//            windowStore.Fetch(null, ofEpochMilli(0), ofEpochMilli(0));
+//            windowStore.Fetch(null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(0));
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNPEIfFromKeyIsNull()
 //        {
-//            windowStore.Fetch(null, "a", ofEpochMilli(0), ofEpochMilli(0));
+//            windowStore.Fetch(null, "a", TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(0));
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNPEIfToKeyIsNull()
 //        {
-//            windowStore.Fetch("a", null, ofEpochMilli(0), ofEpochMilli(0));
+//            windowStore.Fetch("a", null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(0));
 //        }
 
 //    }

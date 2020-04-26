@@ -1,14 +1,17 @@
 using Confluent.Kafka;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Mappers;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Queryable;
 using Kafka.Streams.State.ReadOnly;
 using Kafka.Streams.Temporary;
 using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Threads.KafkaStreams;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -36,31 +39,32 @@ namespace Kafka.Streams.Tests.Integration
         private Dictionary<string, string> results = new Dictionary<string, string>();
         private StreamsBuilder builder;
         private StreamsConfig streamsConfiguration;
-        private KafkaStreamsThread kafkaStreams;
+        private IKafkaStreamsThread kafkaStreams;
         private string globalTableTopic;
         private string streamTopic;
         private IGlobalKTable<long, string> globalTable;
         private IKStream<long, string> stream;
-        private ForeachAction<string, string> foreachAction;
+        private Action<long, string> foreachAction;
 
 
         public void Before()
         {// throws Exception
             builder = new StreamsBuilder();
-            createTopics();
+            CreateTopics();
             streamsConfiguration = new StreamsConfig();
-            string applicationId = "globalTableTopic-table-eos-test-" + testNo.incrementAndGet();
+            string applicationId = "globalTableTopic-table-eos-test-" + ++testNo;
             streamsConfiguration.Put(StreamsConfig.ApplicationIdConfig, applicationId);
             streamsConfiguration.Put(StreamsConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
             streamsConfiguration.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-            streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+            streamsConfiguration.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory());
             streamsConfiguration.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
             streamsConfiguration.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
             streamsConfiguration.Put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, "exactly_once");
-            globalTable = builder.globalTable(globalTableTopic, Consumed.With(Serdes.Long(), Serdes.String()),
-                                              Materialized.As<long, string, IKeyValueStore<Bytes, byte[]>>(globalStore)
-                                                      .WithKeySerde(Serdes.Long())
-                                                      .WithValueSerde(Serdes.String()));
+            globalTable = builder.GlobalTable(
+                globalTableTopic, Consumed.With(Serdes.Long(), Serdes.String()),
+                Materialized.As<long, string, IKeyValueStore<Bytes, byte[]>>(globalStore)
+                    .WithKeySerde(Serdes.Long())
+                    .WithValueSerde(Serdes.String()));
             Consumed<string, long> stringLongConsumed = Consumed.With(Serdes.String(), Serdes.Long());
             stream = builder.Stream(streamTopic, stringLongConsumed);
             foreachAction = results.Put;
@@ -79,13 +83,13 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void ShouldKStreamGlobalKTableLeftJoin()
         {// throws Exception
-            IKStream<K, V> streamTableJoin = stream.LeftJoin(globalTable, keyMapper, joiner);
+            IKStream<long, string> streamTableJoin = stream.LeftJoin(globalTable, keyMapper, joiner);
             streamTableJoin.ForEach(foreachAction);
-            produceInitialGlobalTableValues();
-            startStreams();
-            produceTopicValues(streamTopic);
+            ProduceInitialGlobalTableValues();
+            StartStreams();
+            ProduceTopicValues(streamTopic);
 
-            Dictionary<string, string> expected = new HashMap<>();
+            Dictionary<string, string> expected = new Dictionary<string, string>();
             expected.Put("a", "1+A");
             expected.Put("b", "2+B");
             expected.Put("c", "3+C");
@@ -98,17 +102,17 @@ namespace Kafka.Streams.Tests.Integration
                 "waiting for initial values");
 
 
-            produceGlobalTableValues();
+            ProduceGlobalTableValues();
 
             IReadOnlyKeyValueStore<long, string> replicatedStore =
-                kafkaStreams.store(globalStore, QueryableStoreTypes.KeyValueStore);
+                kafkaStreams.Store(globalStore, QueryableStoreTypes.KeyValueStore<long, string>());
 
             TestUtils.WaitForCondition(
                 () => "J".Equals(replicatedStore.Get(5L)),
                 30000,
                 "waiting for data in replicated store");
 
-            produceTopicValues(streamTopic);
+            ProduceTopicValues(streamTopic);
 
             expected.Put("a", "1+F");
             expected.Put("b", "2+G");
@@ -125,13 +129,13 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void ShouldKStreamGlobalKTableJoin()
         {// throws Exception
-            IKStream<K, V> streamTableJoin = stream.Join(globalTable, keyMapper, joiner);
+            IKStream<long, string> streamTableJoin = stream.Join(globalTable, keyMapper, joiner);
             streamTableJoin.ForEach(foreachAction);
-            produceInitialGlobalTableValues();
-            startStreams();
-            produceTopicValues(streamTopic);
+            ProduceInitialGlobalTableValues();
+            StartStreams();
+            ProduceTopicValues(streamTopic);
 
-            Dictionary<string, string> expected = new HashMap<>();
+            Dictionary<string, string> expected = new Dictionary<string, string>();
             expected.Put("a", "1+A");
             expected.Put("b", "2+B");
             expected.Put("c", "3+C");
@@ -143,17 +147,17 @@ namespace Kafka.Streams.Tests.Integration
                 "waiting for initial values");
 
 
-            produceGlobalTableValues();
+            ProduceGlobalTableValues();
 
             IReadOnlyKeyValueStore<long, string> replicatedStore =
-                kafkaStreams.store(globalStore, QueryableStoreTypes.KeyValueStore);
+                kafkaStreams.Store(globalStore, QueryableStoreTypes.KeyValueStore<long, string>());
 
             TestUtils.WaitForCondition(
                 () => "J".Equals(replicatedStore.Get(5L)),
                 30000,
                 "waiting for data in replicated store");
 
-            produceTopicValues(streamTopic);
+            ProduceTopicValues(streamTopic);
 
             expected.Put("a", "1+F");
             expected.Put("b", "2+G");
@@ -170,11 +174,11 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void ShouldRestoreTransactionalMessages()
         {// throws Exception
-            produceInitialGlobalTableValues();
+            ProduceInitialGlobalTableValues();
 
-            startStreams();
+            StartStreams();
 
-            Dictionary<long, string> expected = new HashMap<>();
+            Dictionary<long, string> expected = new Dictionary<long, string>();
             expected.Put(1L, "A");
             expected.Put(2L, "B");
             expected.Put(3L, "C");
@@ -186,17 +190,19 @@ namespace Kafka.Streams.Tests.Integration
                     IReadOnlyKeyValueStore<long, string> store;
                     try
                     {
-                        store = kafkaStreams.store(globalStore, QueryableStoreTypes.KeyValueStore);
+                        store = kafkaStreams.Store(globalStore, QueryableStoreTypes.KeyValueStore<long, string>());
                     }
                     catch (InvalidStateStoreException ex)
                     {
                         return false;
                     }
-                    Dictionary<long, string> result = new HashMap<>();
-                    Iterator<KeyValuePair<long, string>> it = store.All();
-                    while (it.HasNext())
+
+                    Dictionary<long, string> result = new Dictionary<long, string>();
+                    var it = store.All();
+
+                    while (it.MoveNext())
                     {
-                        KeyValuePair<long, string> kv = it.MoveNext();
+                        KeyValuePair<long, string> kv = it.Current;
                         result.Put(kv.Key, kv.Value);
                     }
                     return result.Equals(expected);
@@ -208,11 +214,11 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void ShouldNotRestoreAbortedMessages()
         {// throws Exception
-            produceAbortedMessages();
-            produceInitialGlobalTableValues();
-            produceAbortedMessages();
+            ProduceAbortedMessages();
+            ProduceInitialGlobalTableValues();
+            ProduceAbortedMessages();
 
-            startStreams();
+            StartStreams();
 
             Dictionary<long, string> expected = new Dictionary<long, string>();
             expected.Add(1L, "A");
@@ -226,17 +232,18 @@ namespace Kafka.Streams.Tests.Integration
                     IReadOnlyKeyValueStore<long, string> store;
                     try
                     {
-                        store = kafkaStreams.store(globalStore, QueryableStoreTypes.KeyValueStore);
+                        store = kafkaStreams.Store(globalStore, QueryableStoreTypes.KeyValueStore<long, string>());
                     }
                     catch (InvalidStateStoreException ex)
                     {
                         return false;
                     }
-                    Dictionary<long, string> result = new HashMap<>();
-                    Iterator<KeyValuePair<long, string>> it = store.All();
-                    while (it.HasNext())
+
+                    Dictionary<long, string> result = new Dictionary<long, string>();
+                    var it = store.All();
+                    while (it.MoveNext())
                     {
-                        KeyValuePair<long, string> kv = it.MoveNext();
+                        KeyValuePair<long, string> kv = it.Current;
                         result.Put(kv.Key, kv.Value);
                     }
                     return result.Equals(expected);
@@ -249,7 +256,7 @@ namespace Kafka.Streams.Tests.Integration
         {// throws Exception
             streamTopic = "stream-" + testNo;
             globalTableTopic = "globalTable-" + testNo;
-            CLUSTER.createTopics(streamTopic);
+            CLUSTER.CreateTopics(streamTopic);
             CLUSTER.CreateTopic(globalTableTopic, 2, 1);
         }
 
@@ -269,7 +276,7 @@ namespace Kafka.Streams.Tests.Integration
                             KeyValuePair.Create("c", 3L),
                             KeyValuePair.Create("d", 4L),
                             KeyValuePair.Create("e", 5L)),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.Long().Serializer,
@@ -282,14 +289,14 @@ namespace Kafka.Streams.Tests.Integration
             StreamsConfig properties = new StreamsConfig();
             properties.Set(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "someid");
             properties.Set(ProducerConfig.RETRIES_CONFIG, 1);
-            IntegrationTestUtils.produceAbortedKeyValuesSynchronouslyWithTimestamp(
+            IntegrationTestUtils.ProduceAbortedKeyValuesSynchronouslyWithTimestamp(
                     globalTableTopic, Arrays.asList(
                             KeyValuePair.Create(1L, "A"),
                             KeyValuePair.Create(2L, "B"),
                             KeyValuePair.Create(3L, "C"),
                             KeyValuePair.Create(4L, "D")
                             ),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                                     CLUSTER.bootstrapServers(),
                                     Serdes.Long().Serializer,
                                     Serdes.String().Serializer,
@@ -299,7 +306,7 @@ namespace Kafka.Streams.Tests.Integration
 
         private void ProduceInitialGlobalTableValues()
         {// throws Exception
-            produceInitialGlobalTableValues(true);
+            ProduceInitialGlobalTableValues(true);
         }
 
         private void ProduceInitialGlobalTableValues(bool enableTransactions)
@@ -310,15 +317,15 @@ namespace Kafka.Streams.Tests.Integration
                 properties.Put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "someid");
                 properties.Put(ProducerConfig.RETRIES_CONFIG, 1);
             }
+
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                     globalTableTopic,
                     Arrays.asList(
                             KeyValuePair.Create(1L, "A"),
                             KeyValuePair.Create(2L, "B"),
                             KeyValuePair.Create(3L, "C"),
-                            KeyValuePair.Create(4L, "D")
-                            ),
-                    TestUtils.producerConfig(
+                            KeyValuePair.Create(4L, "D")),
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.Long().Serializer,
                             Serdes.String().Serializer,
@@ -337,7 +344,7 @@ namespace Kafka.Streams.Tests.Integration
                             KeyValuePair.Create(3L, "H"),
                             KeyValuePair.Create(4L, "I"),
                             KeyValuePair.Create(5L, "J")),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.Long().Serializer,
                             Serdes.String().Serializer,

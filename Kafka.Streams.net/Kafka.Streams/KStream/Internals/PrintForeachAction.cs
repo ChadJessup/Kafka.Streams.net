@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Apply(K key, V value)
         {
-            var data = string.Format("[%s]: %s", this.label, this.mapper.Apply(key, value));
+            var data = string.Format("[%s]: %s", this.label, this.mapper(key, value));
             //printWriter.println(data);
             if (!this.closable)
             {

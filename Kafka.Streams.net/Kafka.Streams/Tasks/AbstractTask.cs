@@ -50,7 +50,7 @@ namespace Kafka.Streams.Tasks
             this.partitions = new HashSet<TopicPartition>(partitions);
             this.topology = topology;
             this.consumer = consumer;
-            this.eosEnabled = StreamsConfig.ExactlyOnce.Equals(config.GetString(StreamsConfig.ProcessingGuarantee));
+            this.eosEnabled = StreamsConfig.ExactlyOnceConfig.Equals(config.GetString(StreamsConfig.ProcessingGuaranteeConfig));
             this.stateDirectory = stateDirectory;
 
             this.logPrefix = $"{(isStandby ? "standby-task" : "task")} [{id}] ";

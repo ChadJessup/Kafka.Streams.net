@@ -3,7 +3,10 @@ using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.TimeStamped;
+using Kafka.Streams.Temporary;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,12 +27,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private TopicPartition t2 = new TopicPartition("t2", 1);
         private TopicPartition t3 = new TopicPartition("t3", 1);
         private TopicPartition t4 = new TopicPartition("t4", 1);
-        private GlobalStateManagerImpl stateManager;
+        private GlobalStateManager stateManager;
         private StateDirectory stateDirectory;
         private StreamsConfig streamsConfig;
         private NoOpReadOnlyStore<object, object> store1, store2, store3, store4;
         private MockConsumer<byte[], byte[]> consumer;
-        private File checkpointFile;
+        private FileInfo checkpointFile;
         private ProcessorTopology topology;
         private InternalMockProcessorContext processorContext;
 
@@ -71,29 +74,29 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             stateDirectory = new StateDirectory(streamsConfig, time, true);
             consumer = new MockConsumer<>(OffsetResetStrategy.NONE);
-            stateManager = new GlobalStateManagerImpl(
+            stateManager = new GlobalStateManager(
                 new LogContext("test"),
                 topology,
                 consumer,
                 stateDirectory,
                 stateRestoreListener,
                 streamsConfig);
-            processorContext = new InternalMockProcessorContext(stateDirectory.globalStateDir(), streamsConfig);
+            processorContext = new InternalMockProcessorContext(stateDirectory.GlobalStateDir(), streamsConfig);
             stateManager.setGlobalProcessorContext(processorContext);
-            checkpointFile = new FileInfo(stateManager.baseDir(), StateManagerUtil.CHECKPOINT_FILE_NAME);
+            checkpointFile = new FileInfo(Path.Combine(stateManager, StateManagerUtil.CHECKPOINT_FILE_NAME));
         }
 
 
         public void after()
         { //throws IOException
-            stateDirectory.unlockGlobalState();
+            stateDirectory.UnlockGlobalState();
         }
 
         [Fact]
         public void shouldLockGlobalStateDirectory()
         {
             stateManager.initialize();
-            Assert.True(new FileInfo(stateDirectory.globalStateDir(), ".Lock").Exists);
+            Assert.True(new FileInfo(Path.Combine(stateDirectory.GlobalStateDir().FullName, ".Lock")).Exists);
         }
 
         [Fact]// (expected = LockException)
@@ -102,29 +105,29 @@ namespace Kafka.Streams.Tests.Processor.Internals
             StateDirectory stateDir = new StateDirectory(streamsConfig, time, true);
             try
             {
-                stateDir.lockGlobalState();
+                stateDir.LockGlobalState();
                 stateManager.initialize();
             }
             finally
             {
-                stateDir.unlockGlobalState();
+                stateDir.UnlockGlobalState();
             }
         }
 
         [Fact]
         public void shouldReadCheckpointOffsets()
         { //throws IOException
-            Dictionary<TopicPartition, long> expected = writeCheckpoint();
+            Dictionary<TopicPartition, long?> expected = WriteCheckpoint();
 
             stateManager.initialize();
-            Dictionary<TopicPartition, long> offsets = stateManager.checkpointed();
+            Dictionary<TopicPartition, long?> offsets = stateManager.checkpointed();
             Assert.Equal(expected, offsets);
         }
 
         [Fact]
         public void shouldNotDeleteCheckpointFileAfterLoaded()
         { //throws IOException
-            writeCheckpoint();
+            WriteCheckpoint();
             stateManager.initialize();
             Assert.True(checkpointFile.Exists);
         }
@@ -132,7 +135,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]// (expected = StreamsException)
         public void shouldThrowStreamsExceptionIfFailedToReadCheckpointedOffsets()
         { //throws IOException
-            writeCorruptCheckpoint();
+            WriteCorruptCheckpoint();
             stateManager.initialize();
         }
 
@@ -148,7 +151,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void shouldReturnInitializedStoreNames()
         {
             HashSet<string> storeNames = stateManager.initialize();
-            Assert.Equal(Utils.mkSet(storeName1, storeName2, storeName3, storeName4), storeNames);
+            Assert.Equal(new HashSet<string> { storeName1, storeName2, storeName3, storeName4 }, storeNames);
         }
 
         [Fact]
@@ -312,9 +315,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
         { //throws IOException
             initializeConsumer(5, 5, t1);
 
-            OffsetCheckpoint offsetCheckpoint = new OffsetCheckpoint(new FileInfo(stateManager.baseDir(),
-                                                                                    StateManagerUtil.CHECKPOINT_FILE_NAME));
-            offsetCheckpoint.write(Collections.singletonMap(t1, 5L));
+            OffsetCheckpoint offsetCheckpoint = new OffsetCheckpoint(
+                new FileInfo(Path.Combine(stateManager.baseDir(), StateManagerUtil.CHECKPOINT_FILE_NAME)));
+
+            offsetCheckpoint.Write(t1, 5L);
 
             stateManager.initialize();
             stateManager.register(store1, stateRestoreCallback);
@@ -411,11 +415,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
             try
             {
                 // should be able to get the lock now as it should've been released in Close
-                Assert.True(stateDir.lockGlobalState());
+                Assert.True(stateDir.LockGlobalState());
             }
             finally
             {
-                stateDir.unlockGlobalState();
+                stateDir.UnlockGlobalState();
             }
         }
 
@@ -423,22 +427,23 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void shouldNotCloseStoresIfCloseAlreadyCalled()
         { //throws IOException
             stateManager.initialize();
-            initializeConsumer(1, 0, t1);
-            //        stateManager.register(new NoOpReadOnlyStore("t1-store")
+            InitializeConsumer(1, 0, t1);
+            stateManager.register(new NoOpReadOnlyStore("t1-store"),
+            //{
+            //    public void Close()
+            //    {
+            //        if (!IsOpen())
             //        {
-            //
-            //                public void Close()
-            //        {
-            //            if (!IsOpen())
-            //            {
-            //                throw new RuntimeException("store already closed");
-            //            }
-            //            base.Close();
+            //            throw new RuntimeException("store already closed");
             //        }
-            //    }, stateRestoreCallback);
-            //            stateManager.Close(true);
-            //
-            //            stateManager.Close(true);
+            //        base.Close();
+            //    }
+            //},
+            stateRestoreCallback);
+
+            stateManager.Close(true);
+
+            stateManager.Close(true);
         }
 
         [Fact]
@@ -475,7 +480,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void shouldReleaseLockIfExceptionWhenLoadingCheckpoints()
         { //throws IOException
-            writeCorruptCheckpoint();
+            WriteCorruptCheckpoint();
             try
             {
                 stateManager.initialize();
@@ -488,11 +493,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
             try
             {
                 // should be able to get the lock now as it should've been released
-                Assert.True(stateDir.lockGlobalState());
+                Assert.True(stateDir.LockGlobalState());
             }
             finally
             {
-                stateDir.unlockGlobalState();
+                stateDir.UnlockGlobalState();
             }
         }
 
@@ -522,16 +527,16 @@ namespace Kafka.Streams.Tests.Processor.Internals
             stateManager.checkpoint(Collections.singletonMap(t1, 101L));
 
             Dictionary<TopicPartition, long> updatedCheckpoint = stateManager.checkpointed();
-            Assert.Equal(updatedCheckpoint.Get(t2), initialCheckpoint.Get(t2));
-            Assert.Equal(updatedCheckpoint.Get(t1), 101L);
+            Assert.Equal(updatedCheckpoint[t2], initialCheckpoint[t2]);
+            Assert.Equal(101L, updatedCheckpoint[t1]);
         }
 
         [Fact]
         public void shouldSkipNullKeysWhenRestoring()
         {
-            HashDictionary<TopicPartition, long> startOffsets = new HashMap<>();
+            Dictionary<TopicPartition, long> startOffsets = new HashMap<>();
             startOffsets.Put(t1, 1L);
-            HashDictionary<TopicPartition, long> endOffsets = new HashMap<>();
+            Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.Put(t1, 3L);
             consumer.updatePartitions(t1.Topic, Collections.singletonList(new PartitionInfo(t1.Topic, t1.Partition, null, null, null)));
             consumer.Assign(Collections.singletonList(t1));
@@ -575,9 +580,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         private Dictionary<TopicPartition, long> readOffsetsCheckpoint()
         { //throws IOException
-            OffsetCheckpoint offsetCheckpoint = new OffsetCheckpoint(new FileInfo(stateManager.baseDir(),
-                                                                                    StateManagerUtil.CHECKPOINT_FILE_NAME));
-            return offsetCheckpoint.read();
+            OffsetCheckpoint offsetCheckpoint = new OffsetCheckpoint(
+                new FileInfo(Path.Combine(stateManager.baseDir(), StateManagerUtil.CHECKPOINT_FILE_NAME)));
+
+            return offsetCheckpoint.Read();
         }
 
         [Fact]
@@ -611,7 +617,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void shouldRetryWhenEndOffsetsThrowsTimeoutException()
         {
             int retries = 2;
-            int numberOfCalls = new int(0);
+            int numberOfCalls = 0;
             //        consumer = new MockConsumer<byte[], byte[]>(OffsetResetStrategy.EARLIEST)
             //        {
             //
@@ -648,7 +654,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void shouldRetryWhenPartitionsForThrowsTimeoutException()
         {
             int retries = 2;
-            int numberOfCalls = new int(0);
+            int numberOfCalls = 0;
             //            consumer = new MockConsumer<byte[], byte[]>(OffsetResetStrategy.EARLIEST)
             //            {
             //
@@ -658,17 +664,18 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //                throw new TimeoutException();
             //            }
             //        };
-            streamsConfig = new StreamsConfig(new StreamsConfig()
-        {
-            {
-                Put(StreamsConfig.ApplicationIdConfig, "appId");
-            Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
-            Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
-            Put(StreamsConfig.RETRIES_CONFIG, retries);
-        }
-    });
+            //            streamsConfig = new StreamsConfig(new StreamsConfig()
+            //        {
+            //            {
+            //                Put(StreamsConfig.ApplicationIdConfig, "appId");
+            //            Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
+            //            Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().getPath());
+            //            Put(StreamsConfig.RETRIES_CONFIG, retries);
+            //        }
+            //    });
 
-            try {
+            try
+            {
                 new GlobalStateManagerImpl(
                     new LogContext("mock"),
                     topology,
@@ -676,125 +683,127 @@ namespace Kafka.Streams.Tests.Processor.Internals
                     stateDirectory,
                     stateRestoreListener,
                     streamsConfig);
-            } catch (StreamsException expected) {
-                Assert.Equal(numberOfCalls.Get(), retries);
+            }
+            catch (StreamsException expected)
+            {
+                Assert.Equal(numberOfCalls, retries);
             }
         }
 
         [Fact]
-public void shouldDeleteAndRecreateStoreDirectoryOnReinitialize()
-{ //throws IOException
-    File storeDirectory1 = new FileInfo(stateDirectory.globalStateDir().FullName
-                                              + Path.DirectorySeparatorChar + "rocksdb"
-                                              + Path.DirectorySeparatorChar + storeName1);
-    File storeDirectory2 = new FileInfo(stateDirectory.globalStateDir().FullName
-                                              + Path.DirectorySeparatorChar + "rocksdb"
-                                              + Path.DirectorySeparatorChar + storeName2);
-    File storeDirectory3 = new FileInfo(stateDirectory.globalStateDir().FullName
-                                              + Path.DirectorySeparatorChar + storeName3);
-    File storeDirectory4 = new FileInfo(stateDirectory.globalStateDir().FullName
-                                              + Path.DirectorySeparatorChar + storeName4);
-    File testFile1 = new FileInfo(storeDirectory1.FullName + Path.DirectorySeparatorChar + "testFile");
-    File testFile2 = new FileInfo(storeDirectory2.FullName + Path.DirectorySeparatorChar + "testFile");
-    File testFile3 = new FileInfo(storeDirectory3.FullName + Path.DirectorySeparatorChar + "testFile");
-    File testFile4 = new FileInfo(storeDirectory4.FullName + Path.DirectorySeparatorChar + "testFile");
+        public void ShouldDeleteAndRecreateStoreDirectoryOnReinitialize()
+        { //throws IOException
+            var storeDirectory1 = new DirectoryInfo(stateDirectory.GlobalStateDir().FullName
+                                                      + Path.DirectorySeparatorChar + "rocksdb"
+                                                      + Path.DirectorySeparatorChar + storeName1);
 
-    consumer.updatePartitions(t1.Topic, Collections.singletonList(new PartitionInfo(t1.Topic, t1.Partition, null, null, null)));
-    consumer.updatePartitions(t2.Topic, Collections.singletonList(new PartitionInfo(t2.Topic, t2.Partition, null, null, null)));
-    consumer.updatePartitions(t3.Topic, Collections.singletonList(new PartitionInfo(t3.Topic, t3.Partition, null, null, null)));
-    consumer.updatePartitions(t4.Topic, Collections.singletonList(new PartitionInfo(t4.Topic, t4.Partition, null, null, null)));
-    //    consumer.UpdateBeginningOffsets(new HashDictionary<TopicPartition, long>() {
-    //                {
-    //                    Put(t1, 0L);
-    //    Put(t2, 0L);
-    //    Put(t3, 0L);
-    //    Put(t4, 0L);
-    //}
-    //            });
-    //            consumer.updateEndOffsets(new HashDictionary<TopicPartition, long>() {
-    //                {
-    //                    Put(t1, 0L);
-    //Put(t2, 0L);
-    //Put(t3, 0L);
-    //Put(t4, 0L);
-    //                }
-    //            });
+            var storeDirectory2 = new DirectoryInfo(stateDirectory.GlobalStateDir().FullName
+                                                      + Path.DirectorySeparatorChar + "rocksdb"
+                                                      + Path.DirectorySeparatorChar + storeName2);
+            var storeDirectory3 = new DirectoryInfo(stateDirectory.GlobalStateDir().FullName
+                                                      + Path.DirectorySeparatorChar + storeName3);
+            var storeDirectory4 = new DirectoryInfo(stateDirectory.GlobalStateDir().FullName
+                                                      + Path.DirectorySeparatorChar + storeName4);
+            var testFile1 = new FileInfo(storeDirectory1.FullName + Path.DirectorySeparatorChar + "testFile");
+            var testFile2 = new FileInfo(storeDirectory2.FullName + Path.DirectorySeparatorChar + "testFile");
+            var testFile3 = new FileInfo(storeDirectory3.FullName + Path.DirectorySeparatorChar + "testFile");
+            var testFile4 = new FileInfo(storeDirectory4.FullName + Path.DirectorySeparatorChar + "testFile");
 
-    stateManager.initialize();
-    stateManager.register(store1, stateRestoreCallback);
-    stateManager.register(store2, stateRestoreCallback);
-    stateManager.register(store3, stateRestoreCallback);
-    stateManager.register(store4, stateRestoreCallback);
+            consumer.UpdatePartitions(t1.Topic, Collections.singletonList(new PartitionInfo(t1.Topic, t1.Partition, null, null, null)));
+            consumer.UpdatePartitions(t2.Topic, Collections.singletonList(new PartitionInfo(t2.Topic, t2.Partition, null, null, null)));
+            consumer.UpdatePartitions(t3.Topic, Collections.singletonList(new PartitionInfo(t3.Topic, t3.Partition, null, null, null)));
+            consumer.UpdatePartitions(t4.Topic, Collections.singletonList(new PartitionInfo(t4.Topic, t4.Partition, null, null, null)));
+            //    consumer.UpdateBeginningOffsets(new Dictionary<TopicPartition, long>() {
+            //                {
+            //                    Put(t1, 0L);
+            //    Put(t2, 0L);
+            //    Put(t3, 0L);
+            //    Put(t4, 0L);
+            //}
+            //            });
+            //            consumer.updateEndOffsets(new Dictionary<TopicPartition, long>() {
+            //                {
+            //                    Put(t1, 0L);
+            //Put(t2, 0L);
+            //Put(t3, 0L);
+            //Put(t4, 0L);
+            //                }
+            //            });
 
-    testFile1.createNewFile();
-    Assert.True(testFile1.Exists);
-    testFile2.createNewFile();
-    Assert.True(testFile2.Exists);
-    testFile3.createNewFile();
-    Assert.True(testFile3.Exists);
-    testFile4.createNewFile();
-    Assert.True(testFile4.Exists);
+            stateManager.initialize();
+            stateManager.register(store1, stateRestoreCallback);
+            stateManager.register(store2, stateRestoreCallback);
+            stateManager.register(store3, stateRestoreCallback);
+            stateManager.register(store4, stateRestoreCallback);
 
-    // only delete and recreate store 1 and 3 -- 2 and 4 must be untouched
-    stateManager.reinitializeStateStoresForPartitions(asList(t1, t3), processorContext);
+            testFile1.Create().Close();
+            Assert.True(testFile1.Exists);
+            testFile2.Create().Close();
+            Assert.True(testFile2.Exists);
+            testFile3.Create().Close();
+            Assert.True(testFile3.Exists);
+            testFile4.Create().Close();
+            Assert.True(testFile4.Exists);
 
-    Assert.False(testFile1.Exists);
-    Assert.True(testFile2.Exists);
-    Assert.False(testFile3.Exists);
-    Assert.True(testFile4.Exists);
-}
+            // only delete and recreate store 1 and 3 -- 2 and 4 must be untouched
+            stateManager.reinitializeStateStoresForPartitions(Arrays.asList(t1, t3), processorContext);
 
-private void writeCorruptCheckpoint()
-{ //throws IOException
-    var checkpointFile = new FileInfo(stateManager.baseDir(), StateManagerUtil.CHECKPOINT_FILE_NAME);
-    OutputStream stream = Files.newOutputStream(checkpointFile.toPath());
-    stream.write("0\n1\nfoo".GetBytes());
-}
+            Assert.False(testFile1.Exists);
+            Assert.True(testFile2.Exists);
+            Assert.False(testFile3.Exists);
+            Assert.True(testFile4.Exists);
+        }
 
-private void initializeConsumer(long numRecords, long startOffset, TopicPartition topicPartition)
-{
-    HashDictionary<TopicPartition, long> startOffsets = new HashMap<>();
-    startOffsets.Put(topicPartition, startOffset);
-    HashDictionary<TopicPartition, long> endOffsets = new HashMap<>();
-    endOffsets.Put(topicPartition, startOffset + numRecords);
-    consumer.updatePartitions(topicPartition.Topic, Collections.singletonList(new PartitionInfo(topicPartition.Topic, topicPartition.Partition, null, null, null)));
-    consumer.Assign(Collections.singletonList(topicPartition));
-    consumer.updateEndOffsets(endOffsets);
-    consumer.UpdateBeginningOffsets(startOffsets);
+        private void WriteCorruptCheckpoint()
+        {
+            var checkpointFile = new FileInfo(Path.Combine(stateManager.baseDir(), StateManagerUtil.CHECKPOINT_FILE_NAME));
+            StreamWriter stream = new StreamWriter(checkpointFile.FullName);
+            stream.Write("0\n1\nfoo".GetBytes());
+        }
 
-    for (int i = 0; i < numRecords; i++)
-    {
-        consumer.AddRecord(new ConsumeResult<>(topicPartition.Topic, topicPartition.Partition, startOffset + i, "key".GetBytes(), "value".GetBytes()));
-    }
-}
+        private void initializeConsumer(long numRecords, long startOffset, TopicPartition topicPartition)
+        {
+            Dictionary<TopicPartition, long> startOffsets = new Dictionary<TopicPartition, long>();
+            startOffsets.Put(topicPartition, startOffset);
+            Dictionary<TopicPartition, long> endOffsets = new Dictionary<TopicPartition, long>();
+            endOffsets.Put(topicPartition, startOffset + numRecords);
+            consumer.UpdatePartitions(topicPartition.Topic, Collections.singletonList(new PartitionInfo(topicPartition.Topic, topicPartition.Partition, null, null, null)));
+            consumer.Assign(Collections.singletonList(topicPartition));
+            consumer.UpdateEndOffsets(endOffsets);
+            consumer.UpdateBeginningOffsets(startOffsets);
 
-private Dictionary<TopicPartition, long> writeCheckpoint()
-{ //throws IOException
-    OffsetCheckpoint checkpoint = new OffsetCheckpoint(checkpointFile);
-    Dictionary<TopicPartition, long> expected = Collections.singletonMap(t1, 1L);
-    checkpoint.write(expected);
-    return expected;
-}
+            for (int i = 0; i < numRecords; i++)
+            {
+                consumer.AddRecord(new ConsumeResult<>(topicPartition.Topic, topicPartition.Partition, startOffset + i, "key".GetBytes(), "value".GetBytes()));
+            }
+        }
 
-private static class TheStateRestoreCallback : StateRestoreCallback
-{
-    private List<KeyValuePair<byte[], byte[]>> restored = new List<KeyValuePair<byte[], byte[]>>();
+        private Dictionary<TopicPartition, long?> WriteCheckpoint()
+        {
+            OffsetCheckpoint checkpoint = new OffsetCheckpoint(checkpointFile);
+            Dictionary<TopicPartition, long?> expected = new Dictionary<TopicPartition, long?> { { t1, 1L } };
+            checkpoint.Write(expected);
+            return expected;
+        }
 
+        private class TheStateRestoreCallback : IStateRestoreCallback
+        {
+            private List<KeyValuePair<byte[], byte[]>> restored = new List<KeyValuePair<byte[], byte[]>>();
 
-    public void restore(byte[] key, byte[] value)
-    {
-        restored.Add(KeyValuePair.Create(key, value));
-    }
-}
+            public void Restore(byte[] key, byte[] value)
+            {
+                restored.Add(KeyValuePair.Create(key, value));
+            }
+        }
 
-private class ConverterStore<K, V> : NoOpReadOnlyStore<K, V> : TimestampedBytesStore
-{
-    ConverterStore(string Name,
-                   bool rocksdbStore)
-    {
-        super(Name, rocksdbStore);
-    }
-}
-
+        private class ConverterStore<K, V>
+            : NoOpReadOnlyStore<K, V>,
+            ITimestampedBytesStore
+        {
+            public ConverterStore(string Name, bool rocksdbStore)
+                : base(Name, rocksdbStore)
+            {
+            }
+        }
     }
 }

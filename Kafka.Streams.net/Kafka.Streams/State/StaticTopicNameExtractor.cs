@@ -7,21 +7,21 @@ namespace Kafka.Streams.Processors.Internals
      */
     public class StaticTopicNameExtractor : ITopicNameExtractor
     {
-        public string topicName { get; }
+        public string TopicName { get; }
 
         public StaticTopicNameExtractor(string topicName)
         {
-            this.topicName = topicName;
+            this.TopicName = topicName;
         }
 
-        public string Extract<K, V>(K key, V value, IRecordContext recordContext)
+        public string Extract(object key, object value, IRecordContext recordContext)
         {
-            return this.topicName;
+            return this.TopicName;
         }
 
         public override string ToString()
         {
-            return $"StaticTopicNameExtractor({this.topicName})";
+            return $"StaticTopicNameExtractor({this.TopicName})";
         }
     }
 }

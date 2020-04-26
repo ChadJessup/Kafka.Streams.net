@@ -22,16 +22,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         public void shouldRoundTripNullChange()
         {
             Assert.Equal(
-                serde.serializeParts(null, new Change<>(null, null)),
+                serde.serializeParts(null, new Change<string>(null, null)),
                 new Change<byte[]>(null, null)
             );
 
             Assert.Equal(
-                serde.deserializeParts(null, new Change<>(null, null)),
+                serde.deserializeParts(null, new Change<string>(null, null)),
                 new Change<string>(null, null)
             );
 
-            byte[] legacyFormat = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(new Change<>(null, null));
+            byte[] legacyFormat = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(new Change<string>(null, null));
             Assert.Equal(
                 FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(legacyFormat),
                 new Change<byte[]>(null, null)
@@ -41,36 +41,36 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldRoundTripOldNull()
         {
-            Change<byte[]> serialized = serde.serializeParts(null, new Change<>("new", null));
+            Change<byte[]> serialized = serde.serializeParts(null, new Change<string>("new", null));
             byte[] legacyFormat = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serialized);
             Change<byte[]> decomposedLegacyFormat = FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(legacyFormat);
             Assert.Equal(
                 serde.deserializeParts(null, decomposedLegacyFormat),
-                new Change<>("new", null)
+                new Change<string>("new", null)
             );
         }
 
         [Fact]
         public void shouldRoundTripNewNull()
         {
-            Change<byte[]> serialized = serde.serializeParts(null, new Change<>(null, "old"));
+            Change<byte[]> serialized = serde.serializeParts(null, new Change<string>(null, "old"));
             byte[] legacyFormat = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serialized);
             Change<byte[]> decomposedLegacyFormat = FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(legacyFormat);
             Assert.Equal(
                 serde.deserializeParts(null, decomposedLegacyFormat),
-                new Change<>(null, "old")
+                new Change<string>(null, "old")
             );
         }
 
         [Fact]
         public void shouldRoundTripChange()
         {
-            Change<byte[]> serialized = serde.serializeParts(null, new Change<>("new", "old"));
+            Change<byte[]> serialized = serde.serializeParts(null, new Change<string>("new", "old"));
             byte[] legacyFormat = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serialized);
             Change<byte[]> decomposedLegacyFormat = FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(legacyFormat);
             Assert.Equal(
                 serde.deserializeParts(null, decomposedLegacyFormat),
-                new Change<>("new", "old")
+                new Change<string>("new", "old")
             );
         }
     }

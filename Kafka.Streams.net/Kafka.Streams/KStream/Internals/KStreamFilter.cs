@@ -12,7 +12,7 @@ namespace Kafka.Streams.KStream.Internals
         public KStreamFilter(FilterPredicate<K, V> predicate, bool filterNot)
         {
             this.predicate = predicate;
-            this.FilterNot = filterNot;
+            this.filterNot = filterNot;
         }
 
         public IKeyValueProcessor<K, V> Get()

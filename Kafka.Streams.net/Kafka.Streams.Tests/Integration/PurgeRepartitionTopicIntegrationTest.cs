@@ -167,7 +167,7 @@ namespace Kafka.Streams.Tests.Integration
 
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(INPUT_TOPIC,
                     messages,
-                    TestUtils.producerConfig(CLUSTER.bootstrapServers(),
+                    TestUtils.ProducerConfig(CLUSTER.bootstrapServers(),
                             Serdes.Int().Serializer,
                             Serdes.Int().Serializer),
                     time.NowAsEpochMilliseconds);

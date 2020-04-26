@@ -110,8 +110,8 @@ namespace Kafka.Streams.Tests
 
             // assign single partition
             thread.TaskManager.SetAssignmentMetadata(
-                activeTasks: new Dictionary<TaskId, HashSet<TopicPartition>>(),
-                standbyTasks: new Dictionary<TaskId, HashSet<TopicPartition>>());
+                ActiveTasks: new Dictionary<TaskId, HashSet<TopicPartition>>(),
+                StandbyTasks: new Dictionary<TaskId, HashSet<TopicPartition>>());
 
             var consumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
             consumer.Assign(assignedPartitions);
@@ -376,7 +376,7 @@ namespace Kafka.Streams.Tests
                     props.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, commitInterval.ToString());
 
                     StreamsConfig config = new StreamsConfig(props);
-                    IConsumer<byte[], byte[]> consumer = Mock.Of<typeof(IConsumer<byte[], byte[]>));
+                    IConsumer<byte[], byte[]> consumer = Mock.Of<IConsumer<byte[], byte[]>));
                     TaskManager TaskManager = mockTaskManagerCommit(consumer, 1, 0);
 
                     StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -412,7 +412,7 @@ namespace Kafka.Streams.Tests
                     props.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, commitInterval.ToString());
 
                     StreamsConfig config = new StreamsConfig(props);
-                    IConsumer<byte[], byte[]> consumer = Mock.Of<typeof(IConsumer<byte[], byte[]>).FullName);
+                    IConsumer<byte[], byte[]> consumer = Mock.Of<IConsumer<byte[], byte[]>).FullName);
                     TaskManager TaskManager = mockTaskManagerCommit(consumer, 2, 1);
 
                     var streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -443,7 +443,7 @@ namespace Kafka.Streams.Tests
                                                           int numberOfCommits,
                                                           int commits)
                 {
-                    TaskManager TaskManager = Mock.Of<typeof(TaskManager).FullName);
+                    TaskManager TaskManager = Mock.Of<TaskManager).FullName);
                     EasyMock.expect(TaskManager.CommitAll()).andReturn(commits).times(numberOfCommits);
                     EasyMock.replay(TaskManager, consumer);
                     return TaskManager;
@@ -460,7 +460,7 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, new List<TopicPartitionOffset>());
 
-                    var activeTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    var ActiveTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
                     varassignedPartitions = new HashSet<TopicPartition>
                     {
 
@@ -469,10 +469,10 @@ namespace Kafka.Streams.Tests
                         t1p2
                     };
 
-                    activeTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
-                    activeTasks.Add(Task2, new HashSet<TopicPartition> { t1p2 });
+                    ActiveTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
+                    ActiveTasks.Add(Task2, new HashSet<TopicPartition> { t1p2 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
 
                     MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
                     mockConsumer.Assign(assignedPartitions);
@@ -487,7 +487,7 @@ namespace Kafka.Streams.Tests
 
                     foreach (StreamTask Task in thread.Tasks().Values)
                     {
-                        Assert.Same(globalProducer, ((RecordCollectorImpl)((StreamTask)Task).recordCollector()).producer());
+                        Assert.Same(globalProducer, ((RecordCollector)((StreamTask)Task).recordCollector()).producer());
                     }
                     Assert.Same(clientSupplier.Consumer, thread.Consumer);
                     Assert.Same(clientSupplier.RestoreConsumer, thread.RestoreConsumer);
@@ -503,7 +503,7 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, new List<TopicPartitionOffset>());
 
-                    Dictionary<TaskId, HashSet<TopicPartition>> activeTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    Dictionary<TaskId, HashSet<TopicPartition>> ActiveTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
                     List<TopicPartition>assignedPartitions = new List<TopicPartition>
                     {
                         //.Assign single partition
@@ -511,10 +511,10 @@ namespace Kafka.Streams.Tests
                         t1p2
                     };
 
-                    activeTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
-                    activeTasks.Add(Task2, new HashSet<TopicPartition> { t1p2 });
+                    ActiveTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
+                    ActiveTasks.Add(Task2, new HashSet<TopicPartition> { t1p2 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
 
                     MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
                     mockConsumer.Assign(assignedPartitions);
@@ -541,7 +541,7 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, new List<TopicPartitionOffset>());
 
-                    var activeTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    var ActiveTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
                     List<TopicPartition>assignedPartitions = new List<TopicPartition>
                     {
                         //.Assign single partition
@@ -549,10 +549,10 @@ namespace Kafka.Streams.Tests
                         t1p2
                     };
 
-                    activeTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
-                    activeTasks.Add(Task2, new HashSet<TopicPartition> { t1p2 });
+                    ActiveTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
+                    ActiveTasks.Add(Task2, new HashSet<TopicPartition> { t1p2 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
                     MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
                     mockConsumer.Assign(assignedPartitions);
                     var beginOffsets = new Dictionary<TopicPartition, long>();
@@ -567,7 +567,7 @@ namespace Kafka.Streams.Tests
 
                     foreach (var Task in thread.Tasks().Values)
                     {
-                        Assert.True(((MockProducer)((RecordCollectorImpl)((StreamTask)Task).recordCollector()).producer()).closed());
+                        Assert.True(((MockProducer)((RecordCollector)((StreamTask)Task).recordCollector()).producer()).closed());
                     }
                 }
 
@@ -740,13 +740,13 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, new List<TopicPartitionOffset>());
 
-                    var standbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>
+                    var StandbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>
                     {
                         //.Assign single partition
                         { Task1, new HashSet<TopicPartition> { t1p1 } },
                     };
 
-                    thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), standbyTasks);
+                    thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), StandbyTasks);
                     thread.TaskManager.CreateTasks(new List<TopicPartition>());
 
                     thread.RebalanceListener.OnPartitionsAssigned(null, new List<TopicPartition>());
@@ -767,14 +767,14 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
 
-                    Dictionary<TaskId, List<TopicPartition>> activeTasks = new Dictionary<TaskId, List<TopicPartition>>();
+                    Dictionary<TaskId, List<TopicPartition>> ActiveTasks = new Dictionary<TaskId, List<TopicPartition>>();
                     List<TopicPartition>assignedPartitions = new List<TopicPartition>();
 
                     //.Assign single partition
                    assignedPartitions.Add(t1p1);
-                    activeTasks.Add(Task1, new List<TopicPartition> { t1p1 });
+                    ActiveTasks.Add(Task1, new List<TopicPartition> { t1p1 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
 
                     MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
                     mockConsumer.Assign(assignedPartitions);
@@ -828,16 +828,16 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
 
-                    var activeTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    var ActiveTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
                     List<TopicPartition>assignedPartitions = new List<TopicPartition>
                     {
                         //.Assign single partition
                         t1p1
                     };
 
-                    activeTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
+                    ActiveTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
 
                     MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
                     mockConsumer.Assign(assignedPartitions);
@@ -867,7 +867,7 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
 
-                    var activeTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    var ActiveTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
                     List<TopicPartition>assignedPartitions = new List<TopicPartition>
                     {
 
@@ -875,9 +875,9 @@ namespace Kafka.Streams.Tests
                         t1p1
                     };
 
-                    activeTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
+                    ActiveTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
 
                     MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
                     mockConsumer.Assign(assignedPartitions);
@@ -907,16 +907,16 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
 
-                    var activeTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    var ActiveTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
                     List<TopicPartition>assignedPartitions = new List<TopicPartition>
                     {
                         //.Assign single partition
                         t1p1
                     };
 
-                    activeTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
+                    ActiveTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
 
                     MockConsumer<byte[], byte[]> mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
                     mockConsumer.Assign(assignedPartitions);
@@ -928,7 +928,7 @@ namespace Kafka.Streams.Tests
                     ThreadMetadata threadMetadata = thread.ThreadMetadata;
                     Assert.Equal(KafkaStreamThreadStates.RUNNING.ToString(), threadMetadata.ThreadState);
                     Assert.Contains(new TaskMetadata(Task1.ToString(), Utils.mkSet(t1p1)), threadMetadata.ActiveTasks);
-                    Assert.False(threadMetadata.standbyTasks.Any());
+                    Assert.False(threadMetadata.StandbyTasks.Any());
                 }
 
                 [Fact]
@@ -959,14 +959,14 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
 
-                    var standbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>
+                    var StandbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>
                     {
 
                         //.Assign single partition
                         { Task1, new HashSet<TopicPartition> { t1p1 } }
                     };
 
-                    thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), standbyTasks);
+                    thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), StandbyTasks);
 
                     thread.RebalanceListener.OnPartitionsAssigned(null, new List<TopicPartition>());
 
@@ -974,7 +974,7 @@ namespace Kafka.Streams.Tests
 
                     ThreadMetadata threadMetadata = thread.ThreadMetadata;
                     Assert.Equal(KafkaStreamThreadStates.RUNNING.ToString(), threadMetadata.ThreadState);
-                    Assert.Contains(new TaskMetadata(Task1.ToString(), Utils.mkSet(t1p1)), threadMetadata.standbyTasks);
+                    Assert.Contains(new TaskMetadata(Task1.ToString(), Utils.mkSet(t1p1)), threadMetadata.StandbyTasks);
                     Assert.False(threadMetadata.ActiveTasks.Any());
                 }
 
@@ -1018,7 +1018,7 @@ namespace Kafka.Streams.Tests
                     RestoreConsumer.UpdateBeginningOffsets(Collections.singletonMap(partition2, 0L));
                     // let the store1 be restored from 0 to 10; store2 be restored from 5 (checkpointed) to 10
                     OffsetCheckpoint checkpoint
-                        = new OffsetCheckpoint(new FileInfo(stateDirectory.directoryForTask(Task3), CHECKPOINT_FILE_NAME));
+                        = new OffsetCheckpoint(new FileInfo(stateDirectory.DirectoryForTask(Task3), CHECKPOINT_FILE_NAME));
                     checkpoint.write(Collections.singletonMap(partition2, 5L));
 
                     for (long i = 0L; i < 10L; i++)
@@ -1040,14 +1040,14 @@ namespace Kafka.Streams.Tests
                     thread.State.SetState(KafkaStreamThreadStates.STARTING);
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
 
-                    var standbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>
+                    var StandbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>
                     {
                         //.Assign single partition
                         { Task1, new HashSet<TopicPartition> { t1p1 } },
                         { Task3, new HashSet<TopicPartition> { t2p1 } }
                     };
 
-                    thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), standbyTasks);
+                    thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), StandbyTasks);
 
                     thread.RebalanceListener.OnPartitionsAssigned(null, new List<TopicPartition>());
 
@@ -1055,8 +1055,8 @@ namespace Kafka.Streams.Tests
 
                     StandbyTask standbyTask1 = thread.TaskManager.StandbyTask(partition1);
                     StandbyTask standbyTask2 = thread.TaskManager.StandbyTask(partition2);
-                    IKeyValueStore<object, long> store1 = (IKeyValueStore<object, long>)standbyTask1.getStore(storeName1);
-                    IKeyValueStore<object, long> store2 = (IKeyValueStore<object, long>)standbyTask2.getStore(storeName2);
+                    IKeyValueStore<object, long> store1 = (IKeyValueStore<object, long>)standbyTask1.GetStore(storeName1);
+                    IKeyValueStore<object, long> store2 = (IKeyValueStore<object, long>)standbyTask2.GetStore(storeName2);
 
                     Assert.Equal(10L, store1.approximateNumEntries);
                     Assert.Equal(5L, store2.approximateNumEntries);
@@ -1156,13 +1156,13 @@ namespace Kafka.Streams.Tests
                     thread.RebalanceListener.OnPartitionsRevoked(null, null);
                     List<TopicPartition>assignedPartitions = new List<TopicPartition>();
 
-                    var activeTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    var ActiveTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
 
                     //.Assign single partition
                    assignedPartitions.Add(t1p1);
-                    activeTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
+                    ActiveTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, new Dictionary<TaskId, HashSet<TopicPartition>>());
 
                     clientSupplier.Consumer.Assign(assignedPartitions);
                     clientSupplier.Consumer.UpdateBeginningOffsets(Collections.singletonMap(t1p1, 0L));
@@ -1258,15 +1258,15 @@ namespace Kafka.Streams.Tests
                     thread.RebalanceListener.OnPartitionsRevoked(null,assignedPartitions);
                    .AssertThreadMetadata.AsEmptyTasksWithState(thread.ThreadMetadata, KafkaStreamThreadStates.PARTITIONS_REVOKED);
 
-                    var activeTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
-                    var standbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    var ActiveTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+                    var StandbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
 
                     //.Assign single partition
                    assignedPartitions.Add(t1p1);
-                    activeTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
-                    standbyTasks.Add(Task2, new HashSet<TopicPartition> { t1p2 });
+                    ActiveTasks.Add(Task1, new HashSet<TopicPartition> { t1p1 });
+                    StandbyTasks.Add(Task2, new HashSet<TopicPartition> { t1p2 });
 
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, standbyTasks);
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, StandbyTasks);
 
                     thread.RebalanceListener.OnPartitionsAssigned(null,assignedPartitions);
 
@@ -1288,9 +1288,9 @@ namespace Kafka.Streams.Tests
                     TopicPartition topicPartition = new TopicPartition("topic", 0);
                     List<TopicPartition> topicPartitionSet = new List<TopicPartition> { topicPartition };
 
-                    Dictionary<TaskId, List<TopicPartition>> activeTasks = new HashMap<>();
-                    activeTasks.Add(new TaskId(0, 0), topicPartitionSet);
-                    thread.TaskManager.SetAssignmentMetadata(activeTasks, Collections.emptyMap());
+                    Dictionary<TaskId, List<TopicPartition>> ActiveTasks = new HashMap<>();
+                    ActiveTasks.Add(new TaskId(0, 0), topicPartitionSet);
+                    thread.TaskManager.SetAssignmentMetadata(ActiveTasks, Collections.emptyMap());
 
                     mockConsumer.UpdatePartitions(
                                 "topic",
@@ -1553,7 +1553,7 @@ namespace Kafka.Streams.Tests
                 {
                     Assert.Equal(state.ToString(), metadata.ThreadState);
                     Assert.False(metadata.ActiveTasks.Any());
-                    Assert.False(metadata.standbyTasks.Any());
+                    Assert.False(metadata.StandbyTasks.Any());
                 }
 
                 [Fact]

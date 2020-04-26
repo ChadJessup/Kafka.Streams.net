@@ -73,9 +73,9 @@
 //            mkEntry("task-id", taskId.ToString()),
 //            mkEntry("scope-id", "metered")
 //        );
-//        (type = MockType.NICE)
+//        
 //    private IKeyValueStore<Bytes, byte[]> inner;
-//        (type = MockType.NICE)
+//        
 //    private ProcessorContext context;
 
 //        private MeteredTimestampedKeyValueStore<string, string> metered;
@@ -203,7 +203,7 @@
 
 //            IKeyValueIterator<string, IValueAndTimestamp<string>> iterator = metered.Range(key, key);
 //            Assert.Equal(iterator.MoveNext().Value, (valueAndTimestamp));
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //            iterator.Close();
 
 //            KafkaMetric metric = metric("range-rate");
@@ -220,7 +220,7 @@
 
 //            IKeyValueIterator<string, IValueAndTimestamp<string>> iterator = metered.All();
 //            Assert.Equal(iterator.MoveNext().Value, (valueAndTimestamp));
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //            iterator.Close();
 
 //            KafkaMetric metric = metric(new MetricName("All-rate", "stream-scope-metrics", "", tags));

@@ -43,9 +43,9 @@
 //    public class KeyValueStoreBuilderTest
 //    {
 
-//        (type = MockType.NICE)
+//        
 //    private IKeyValueBytesStoreSupplier supplier;
-//        (type = MockType.NICE)
+//        
 //    private IKeyValueStore<Bytes, byte[]> inner;
 //        private KeyValueStoreBuilder<string, string> builder;
 
@@ -124,31 +124,31 @@
 //        }
 
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfInnerIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfMetricsScopeIsNull()
 //        {
 //            new KeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime());

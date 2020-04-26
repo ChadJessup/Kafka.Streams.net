@@ -269,7 +269,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfKVStoreClosed()
 //        {
 //            mockThread(true);
-//            taskOne.getStore("kv-store").Close();
+//            taskOne.GetStore("kv-store").Close();
 //            provider.Stores("kv-store", QueryableStoreTypes.KeyValueStore);
 //        }
 
@@ -277,7 +277,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfTsKVStoreClosed()
 //        {
 //            mockThread(true);
-//            taskOne.getStore("timestamped-kv-store").Close();
+//            taskOne.GetStore("timestamped-kv-store").Close();
 //            provider.Stores("timestamped-kv-store", QueryableStoreTypes.TimestampedKeyValueStore());
 //        }
 
@@ -285,7 +285,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfWindowStoreClosed()
 //        {
 //            mockThread(true);
-//            taskOne.getStore("window-store").Close();
+//            taskOne.GetStore("window-store").Close();
 //            provider.Stores("window-store", QueryableStoreTypes.windowStore());
 //        }
 
@@ -293,7 +293,7 @@
 //        public void ShouldThrowInvalidStoreExceptionIfTsWindowStoreClosed()
 //        {
 //            mockThread(true);
-//            taskOne.getStore("timestamped-window-store").Close();
+//            taskOne.GetStore("timestamped-window-store").Close();
 //            provider.Stores("timestamped-window-store", QueryableStoreTypes.timestampedWindowStore());
 //        }
 

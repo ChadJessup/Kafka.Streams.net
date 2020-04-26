@@ -48,7 +48,7 @@
 //                SINGLE_PARTITION_THROUGH_TOPIC, MULTI_PARTITION_THROUGH_TOPIC,
 //                SINGLE_PARTITION_OUTPUT_TOPIC, MULTI_PARTITION_OUTPUT_TOPIC);
 
-//            CLUSTER.createTopics(SINGLE_PARTITION_INPUT_TOPIC, SINGLE_PARTITION_THROUGH_TOPIC, SINGLE_PARTITION_OUTPUT_TOPIC);
+//            CLUSTER.CreateTopics(SINGLE_PARTITION_INPUT_TOPIC, SINGLE_PARTITION_THROUGH_TOPIC, SINGLE_PARTITION_OUTPUT_TOPIC);
 //            CLUSTER.CreateTopic(MULTI_PARTITION_INPUT_TOPIC, NUM_TOPIC_PARTITIONS, 1);
 //            CLUSTER.CreateTopic(MULTI_PARTITION_THROUGH_TOPIC, NUM_TOPIC_PARTITIONS, 1);
 //            CLUSTER.CreateTopic(MULTI_PARTITION_OUTPUT_TOPIC, NUM_TOPIC_PARTITIONS, 1);
@@ -129,7 +129,7 @@
 //                IntegrationTestUtils.ProduceKeyValuesSynchronously(
 //                    inputTopic,
 //                    inputData,
-//                    TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
+//                    TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
 //                    CLUSTER.time
 //                );
 
@@ -220,7 +220,7 @@
 //            IntegrationTestUtils.ProduceKeyValuesSynchronously(
 //                SINGLE_PARTITION_INPUT_TOPIC,
 //                firstBurstOfData,
-//                TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
+//                TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
 //                CLUSTER.time
 //            );
 
@@ -244,7 +244,7 @@
 //            IntegrationTestUtils.ProduceKeyValuesSynchronously(
 //                SINGLE_PARTITION_INPUT_TOPIC,
 //                secondBurstOfData,
-//                TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
+//                TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
 //                CLUSTER.time
 //            );
 
@@ -659,7 +659,7 @@
 //    IntegrationTestUtils.ProduceKeyValuesSynchronously(
 //        MULTI_PARTITION_INPUT_TOPIC,
 //        records,
-//        TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
+//        TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.Long().Serializer, Serdes.Long().Serializer),
 //        CLUSTER.time
 //    );
 //}
@@ -695,7 +695,7 @@
 //{
 //    List<KeyValuePair<long, long>> expectedResult = new List<>(input.Count);
 
-//    HashDictionary<long, long> sums = new HashMap<>();
+//    Dictionary<long, long> sums = new HashMap<>();
 
 //    foreach (KeyValuePair<long, long> record in input)
 //    {
@@ -719,7 +719,7 @@
 //{
 //    HashSet<KeyValuePair<long, long>> expectedResult = new HashSet<>(input.Count);
 
-//    HashDictionary<long, long> maxPerKey = new HashMap<>();
+//    Dictionary<long, long> maxPerKey = new HashMap<>();
 
 //    foreach (KeyValuePair<long, long> record in input)
 //    {
@@ -749,7 +749,7 @@
 //    {
 //        try
 //        {
-//            store = streams.store(storeName, QueryableStoreTypes.KeyValueStore);
+//            store = streams.Store(storeName, QueryableStoreTypes.KeyValueStore);
 //            break;
 //        }
 //        catch (InvalidStateStoreException okJustRetry)
@@ -765,7 +765,7 @@
 //    Assert.NotNull(store);
 
 //    IKeyValueIterator<long, long> it = store.All();
-//    while (it.HasNext())
+//    while (it.MoveNext())
 //    {
 //        Assert.True(expectedStoreContent.remove(it.MoveNext()));
 //    }

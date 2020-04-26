@@ -1,4 +1,5 @@
 using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Temporary;
 using System.Collections.Generic;
 using Xunit;
 
@@ -6,24 +7,24 @@ namespace Kafka.Streams.Tests.Processor.Internals
 {
     public class InternalTopicConfigTest
     {
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldThrowIfNameIsNull()
         {
-            new RepartitionTopicConfig(null, Collections.< string, string > emptyMap());
+            new RepartitionTopicConfig(null, Collections.emptyMap<string, string>());
         }
 
         [Fact]// (expected = InvalidTopicException)
         public void ShouldThrowIfNameIsInvalid()
         {
-            new RepartitionTopicConfig("foo bar baz", Collections.< string, string > emptyMap());
+            new RepartitionTopicConfig("foo bar baz", Collections.emptyMap<string, string>());
         }
 
         [Fact]
         public void ShouldAugmentRetentionMsWithWindowedChangelog()
         {
-            WindowedChangelogTopicConfig topicConfig = new WindowedChangelogTopicConfig("Name", Collections.< string, string > emptyMap());
+            WindowedChangelogTopicConfig topicConfig = new WindowedChangelogTopicConfig("Name", Collections.emptyMap<string, string>());
             topicConfig.setRetentionMs(10);
-            Assert.Equal("30", topicConfig.getProperties(Collections.< string, string > emptyMap(), 20).Get(TopicConfig.RETENTION_MS_CONFIG));
+            Assert.Equal("30", topicConfig.getProperties(Collections.emptyMap<string, string>(), 20).Get(TopicConfig.RETENTION_MS_CONFIG));
         }
 
         [Fact]
@@ -35,18 +36,18 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             UnwindowedChangelogTopicConfig topicConfig = new UnwindowedChangelogTopicConfig("Name", configs);
 
-            Dictionary<string, string> properties = topicConfig.getProperties(Collections.< string, string > emptyMap(), 0);
-            Assert.Equal("1000", properties.Get("retention.ms"));
-            Assert.Equal("10000", properties.Get("retention.bytes"));
+            Dictionary<string, string> properties = topicConfig.getProperties(Collections.emptyMap<string, string>(), 0);
+            Assert.Equal("1000", properties["retention.ms"]);
+            Assert.Equal("10000", properties["retention.bytes"]);
         }
 
         [Fact]
         public void ShouldUseSuppliedConfigsForRepartitionConfig()
         {
-            Dictionary<string, string> configs = new HashMap<>();
+            Dictionary<string, string> configs = new Dictionary<string, string>();
             configs.Put("retention.ms", "1000");
             RepartitionTopicConfig topicConfig = new RepartitionTopicConfig("Name", configs);
-            Assert.Equal("1000", topicConfig.getProperties(Collections.< string, string > emptyMap(), 0).Get(TopicConfig.RETENTION_MS_CONFIG));
+            Assert.Equal("1000", topicConfig.getProperties(Collections.emptyMap<string, string>(), 0).Get(TopicConfig.RETENTION_MS_CONFIG));
         }
     }
 }

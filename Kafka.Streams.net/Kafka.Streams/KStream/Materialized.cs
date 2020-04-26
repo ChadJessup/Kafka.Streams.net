@@ -4,6 +4,7 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.Windowed;
 
@@ -136,7 +137,7 @@ namespace Kafka.Streams.KStream
          * @param      value type of the store
          * @return a new {@link Materialized} instance with the given supplier
          */
-        public static Materialized.As<K, V, IKeyValueStore<Bytes, byte[]>><K, V>(IKeyValueBytesStoreSupplier supplier)
+        public static Materialized<K, V, IKeyValueStore<Bytes, byte[]>> As<K, V>(IKeyValueBytesStoreSupplier supplier)
         {
             return new Materialized<K, V, IKeyValueStore<Bytes, byte[]>>(supplier);
         }

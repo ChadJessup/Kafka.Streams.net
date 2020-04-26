@@ -13,33 +13,38 @@ namespace Kafka.Streams.Tests.Helpers
             bool enableEoS = false,
             int numberOfMockBrokers = 3,
             int numberOfThreads = 2)
-            => new StreamsConfig(new Dictionary<string, string>
-                {
-                    { StreamsConfig.ClientId, "clientId" },
-                    { "test.mock.num.brokers", numberOfMockBrokers.ToString() },
-                    { StreamsConfig.BootstrapServers, "localhost:9092" },
-                    { StreamsConfig.NumberOfStreamThreads, numberOfThreads.ToString() },
-                    { StreamsConfig.ApplicationId, applicationId },
-                    { StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIG, "3" },
-                    { StreamsConfig.DefaultTimestampExtractorClass, typeof(MockTimestampExtractor).FullName },
-                    { StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName },
-                    { StreamsConfig.ProcessingGuarantee, enableEoS? StreamsConfig.ExactlyOnce : StreamsConfig.AtLeastOnce },
-                    { StreamsConfig.GroupId, "testGroupId" },
-                });
+        {
+            var config = new StreamsConfig
+            {
+                ClientId = "clientId",
+                BootstrapServers = "localhost:9092",
+                NumberOfStreamThreads = numberOfThreads,
+                ApplicationId = applicationId,
+                DefaultTimestampExtractorType = typeof(MockTimestampExtractor),
+                StateStoreDirectory = TestUtils.GetTempDirectory(),
+                // BUFFERED_RECORDS_PER_PARTITION_CONFIG = "3",
+                // ProcessingGuarantee = enableEoS ? StreamsConfig.ExactlyOnceConfig : StreamsConfig.AtLeastOnceConfig,
+                GroupId = "testGroupId",
+            };
+
+            config.Set("test.mock.num.brokers", numberOfMockBrokers.ToString());
+
+            return config;
+        }
 
         public static StreamsConfig GetStandardConfig(
             string applicationId,
             string bootstrapServers,
-            string keySerdeClassName,
-            string valueSerdeClassName,
+            Type keySerdeType,
+            Type valueSerdeType,
             StreamsConfig additional)
         {
             StreamsConfig props = GetStandardConfig(applicationId, enableEoS: false);
 
-            props.Set(StreamsConfig.BootstrapServers, bootstrapServers);
-            props.Set(StreamsConfig.DefaultKeySerdeClass, keySerdeClassName);
-            props.Set(StreamsConfig.DefaultValueSerdeClass, valueSerdeClassName);
-            props.Set(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
+            props.BootstrapServers = bootstrapServers;
+            props.DefaultKeySerdeType = keySerdeType;
+            props.DefaultValueSerdeType = valueSerdeType;
+            props.StateStoreDirectory = TestUtils.GetTempDirectory();
             props.SetAll(additional);
 
             return props;
@@ -50,11 +55,11 @@ namespace Kafka.Streams.Tests.Helpers
             ISerde<V> valueDeserializer)
         {
             return GetStandardConfig(
-                    Guid.NewGuid().ToString(),
-                    "localhost:9091",
-                    keyDeserializer.GetType().FullName,
-                    valueDeserializer.GetType().FullName,
-                    GetStandardConfig());
+                Guid.NewGuid().ToString(),
+                "localhost:9091",
+                keyDeserializer.GetType(),
+                valueDeserializer.GetType(),
+                GetStandardConfig());
         }
 
         public static StreamsConfig GetStandardConfig(string applicationId)
@@ -62,8 +67,8 @@ namespace Kafka.Streams.Tests.Helpers
             return GetStandardConfig(
                 applicationId,
                 "localhost:9091",
-                Serdes.ByteArray().GetType().FullName,
-                Serdes.ByteArray().GetType().FullName,
+                Serdes.ByteArray().GetType(),
+                Serdes.ByteArray().GetType(),
             new StreamsConfig());
         }
     }

@@ -1,34 +1,18 @@
 using Kafka.Streams.Configs;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
-
+using Kafka.Streams.Processors;
+using Kafka.Streams.Topologies;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public class RepartitionTopicNamingTest
     {
 
@@ -50,24 +34,24 @@ namespace Kafka.Streams.Tests.Kstream
         public void shouldReuseFirstRepartitionTopicNameWhenOptimizing()
         {
 
-            string optimizedTopology = buildTopology(StreamsConfig.OPTIMIZE).describe().ToString();
-            string unOptimizedTopology = buildTopology(StreamsConfig.NO_OPTIMIZATION).describe().ToString();
+            string optimizedTopology = buildTopology(StreamsConfig.OPTIMIZE).Describe().ToString();
+            string unOptimizedTopology = buildTopology(StreamsConfig.NO_OPTIMIZATION).Describe().ToString();
 
             Assert.Equal(optimizedTopology, EXPECTED_OPTIMIZED_TOPOLOGY);
             // only one repartition topic
             Assert.Equal(1, getCountOfRepartitionTopicsFound(optimizedTopology, repartitionTopicPattern));
             // the first named repartition topic
-            Assert.True(optimizedTopology.Contains(firstRepartitionTopicName + "-repartition"));
+            Assert.Contains(firstRepartitionTopicName + "-repartition", optimizedTopology);
 
 
             Assert.Equal(unOptimizedTopology, EXPECTED_UNOPTIMIZED_TOPOLOGY);
             // now 4 repartition topic
             Assert.Equal(4, getCountOfRepartitionTopicsFound(unOptimizedTopology, repartitionTopicPattern));
             // All 4 named repartition topics present
-            Assert.True(unOptimizedTopology.Contains(firstRepartitionTopicName + "-repartition"));
-            Assert.True(unOptimizedTopology.Contains(secondRepartitionTopicName + "-repartition"));
-            Assert.True(unOptimizedTopology.Contains(thirdRepartitionTopicName + "-repartition"));
-            Assert.True(unOptimizedTopology.Contains(fourthRepartitionTopicName + "-left-repartition"));
+            Assert.Contains(firstRepartitionTopicName + "-repartition", unOptimizedTopology);
+            Assert.Contains(secondRepartitionTopicName + "-repartition", unOptimizedTopology);
+            Assert.Contains(thirdRepartitionTopicName + "-repartition", unOptimizedTopology);
+            Assert.Contains(fourthRepartitionTopicName + "-left-repartition", unOptimizedTopology);
 
         }
 
@@ -78,11 +62,11 @@ namespace Kafka.Streams.Tests.Kstream
             try
             {
                 var builder = new StreamsBuilder();
-                builder.Stream<string, string>("topic").selectKey((k, v) => k)
+                builder.Stream<string, string>("topic").SelectKey((k, v) => k)
                                                 .GroupByKey(Grouped.As("grouping"))
                                                 .Count().ToStream();
 
-                builder.Stream<string, string>("topicII").selectKey((k, v) => k)
+                builder.Stream<string, string>("topicII").SelectKey((k, v) => k)
                                                   .GroupByKey(Grouped.As("grouping"))
                                                   .Count().ToStream();
                 builder.Build();
@@ -99,15 +83,15 @@ namespace Kafka.Streams.Tests.Kstream
         {
             var builder = new StreamsBuilder();
             KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
-                                                                         .selectKey((k, v) => k)
+                                                                         .SelectKey((k, v) => k)
                                                                          .GroupByKey(Grouped.As("grouping"));
 
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10L))).Count().ToStream().To("output-one");
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(30L))).Count().ToStream().To("output-two");
 
-            string topologyString = builder.Build().describe().ToString();
+            string topologyString = builder.Build().Describe().ToString();
             Assert.Equal(1, getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern));
-            Assert.True(topologyString.Contains("grouping-repartition"));
+            Assert.Contains("grouping-repartition", topologyString);
         }
 
         [Fact]
@@ -115,7 +99,7 @@ namespace Kafka.Streams.Tests.Kstream
         {
             var builder = new StreamsBuilder();
             KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
-                                                                         .selectKey((k, v) => k)
+                                                                         .SelectKey((k, v) => k)
                                                                          .GroupByKey(Grouped.As("grouping"));
 
             TimeWindowedIIKStream<K, V> timeWindowedKStream = kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10L)));
@@ -124,9 +108,9 @@ namespace Kafka.Streams.Tests.Kstream
             timeWindowedKStream.Reduce((v, v2) => v + v2).ToStream().To("output-two");
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(30L))).Count().ToStream().To("output-two");
 
-            string topologyString = builder.Build().describe().ToString();
+            string topologyString = builder.Build().Describe().ToString();
             Assert.Equal(1, getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern));
-            Assert.True(topologyString.Contains("grouping-repartition"));
+            Assert.Contains("grouping-repartition", topologyString);
         }
 
         [Fact]
@@ -134,7 +118,7 @@ namespace Kafka.Streams.Tests.Kstream
         {
             var builder = new StreamsBuilder();
             KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
-                                                                         .selectKey((k, v) => k)
+                                                                         .SelectKey((k, v) => k)
                                                                          .GroupByKey(Grouped.As("grouping"));
 
             ISessionWindowedKStream<K, V> sessionWindowedKStream = kGroupedStream.WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(10L)));
@@ -143,22 +127,24 @@ namespace Kafka.Streams.Tests.Kstream
             sessionWindowedKStream.Reduce((v, v2) => v + v2).ToStream().To("output-two");
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(30L))).Count().ToStream().To("output-two");
 
-            string topologyString = builder.Build().describe().ToString();
+            string topologyString = builder.Build().Describe().ToString();
             Assert.Equal(1, getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern));
-            Assert.True(topologyString.Contains("grouping-repartition"));
+            Assert.Contains("grouping-repartition", topologyString);
         }
 
         [Fact]
         public void shouldNotFailWithSameRepartitionTopicNameUsingSameKGroupedTable()
         {
             var builder = new StreamsBuilder();
-            KGroupedTable<string, string> kGroupedTable = builder.< string, string> table("topic")
-                                                                        .GroupBy(KeyValuePair::pair, Grouped.As("grouping"));
+            IKGroupedTable<string, string> kGroupedTable = builder.Table<string, string>("topic")
+                .GroupBy(KeyValuePair.Create, Grouped.As<string, string>("grouping"));
+
             kGroupedTable.Count().ToStream().To("output-count");
             kGroupedTable.Reduce((v, v2) => v2, (v, v2) => v2).ToStream().To("output-reduce");
-            string topologyString = builder.Build().describe().ToString();
+
+            string topologyString = builder.Build().Describe().ToString();
             Assert.Equal(1, getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern));
-            Assert.True(topologyString.Contains("grouping-repartition"));
+            Assert.Contains("grouping-repartition", topologyString);
         }
 
         [Fact]
@@ -166,11 +152,11 @@ namespace Kafka.Streams.Tests.Kstream
         {
             var builder = new StreamsBuilder();
             KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
-                                                                         .selectKey((k, v) => k)
+                                                                         .SelectKey((k, v) => k)
                                                                          .GroupByKey();
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10L))).Count().ToStream().To("output-one");
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(30L))).Count().ToStream().To("output-two");
-            string topologyString = builder.Build().describe().ToString();
+            string topologyString = builder.Build().Describe().ToString();
             Assert.Equal(2, getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern));
         }
 
@@ -178,10 +164,10 @@ namespace Kafka.Streams.Tests.Kstream
         public void shouldNotReuseRepartitionNodeWithUnamedRepartitionTopicsKGroupedTable()
         {
             var builder = new StreamsBuilder();
-            KGroupedTable<string, string> kGroupedTable = builder.< string, string> table("topic").GroupBy(KeyValuePair::pair);
+            IKGroupedTable<string, string> kGroupedTable = builder.Table<string, string>("topic").GroupBy(KeyValuePair.Create);
             kGroupedTable.Count().ToStream().To("output-count");
             kGroupedTable.Reduce((v, v2) => v2, (v, v2) => v2).ToStream().To("output-reduce");
-            string topologyString = builder.Build().describe().ToString();
+            string topologyString = builder.Build().Describe().ToString();
             Assert.Equal(2, getCountOfRepartitionTopicsFound(topologyString, repartitionTopicPattern));
         }
 
@@ -190,14 +176,14 @@ namespace Kafka.Streams.Tests.Kstream
         {
             var builder = new StreamsBuilder();
             KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
-                                                                         .selectKey((k, v) => k)
+                                                                         .SelectKey((k, v) => k)
                                                                          .GroupByKey(Grouped.As("grouping"));
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10L))).Count();
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(30L))).Count();
             var properties = new StreamsConfig();
             properties.Put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
             Topology topology = builder.Build(properties);
-            Assert.Equal(getCountOfRepartitionTopicsFound(topology.describe().ToString(), repartitionTopicPattern), 1);
+            Assert.Equal(1, getCountOfRepartitionTopicsFound(topology.Describe().ToString(), repartitionTopicPattern));
         }
 
 
@@ -208,18 +194,23 @@ namespace Kafka.Streams.Tests.Kstream
             try
             {
                 var builder = new StreamsBuilder();
-                IKStream<K, V> k);
-                IKStream<K, V> k);
-                IKStream<K, V> k);
 
-                IKStream<K, V> v1 + v2,
-                                                                    JoinWindows.Of(TimeSpan.FromMilliseconds(30L)),
-                                                                    Joined.named("join-repartition"));
+                IKStream<string, string> stream1 = builder.Stream<string, string>("topic").SelectKey((k, v) => k);
+                IKStream<string, string> stream2 = builder.Stream<string, string>("topic2").SelectKey((k, v) => k);
+                IKStream<string, string> stream3 = builder.Stream<string, string>("topic3").SelectKey((k, v) => k);
+                IKStream<string, string> joined = stream1.Join(
+                    stream2, (v1, v2) => v1 + v2,
+                    JoinWindows.Of(TimeSpan.FromMilliseconds(30L)),
+                    Joined.As<string, string, string>("join-repartition"));
 
-                joined.Join(stream3, (v1, v2) => v1 + v2, JoinWindows.Of(TimeSpan.FromMilliseconds(30L)),
-                                                          Joined.named("join-repartition"));
+                joined.Join(
+                    stream3,
+                    (v1, v2) => v1 + v2,
+                    JoinWindows.Of(TimeSpan.FromMilliseconds(30L)),
+                    Joined.As<string, string, string>("join-repartition"));
+
                 builder.Build();
-                Assert.False(true, "Should not build re-using repartition topic Name");
+                Assert.True(false, "Should not build re-using repartition topic name");
             }
             catch (TopologyException te)
             {
@@ -232,10 +223,11 @@ namespace Kafka.Streams.Tests.Kstream
         {
             var builder = new StreamsBuilder();
             var properties = new StreamsConfig();
-            properties.Put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
-            KGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
-                                                                         .selectKey((k, v) => k)
-                                                                         .GroupByKey(Grouped.As("grouping"));
+            properties.TOPOLOGY_OPTIMIZATION = StreamsConfig.OPTIMIZE;
+            IKGroupedStream<string, string> kGroupedStream = builder.Stream<string, string>("topic")
+                .SelectKey((k, v) => k)
+                .GroupByKey(Grouped.As("grouping"));
+
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(10L))).Count();
             kGroupedStream.WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(30L))).Count();
             builder.Build(properties);
@@ -245,20 +237,19 @@ namespace Kafka.Streams.Tests.Kstream
         [Fact]
         public void shouldKeepRepartitionTopicNameForJoins()
         {
-
             var expectedLeftRepartitionTopic = "(topic: my-join-left-repartition)";
             var expectedRightRepartitionTopic = "(topic: my-join-right-repartition)";
 
 
             var joinTopologyFirst = buildStreamJoin(false);
 
-            Assert.True(joinTopologyFirst.Contains(expectedLeftRepartitionTopic));
-            Assert.True(joinTopologyFirst.Contains(expectedRightRepartitionTopic));
+            Assert.Contains(expectedLeftRepartitionTopic, joinTopologyFirst);
+            Assert.Contains(expectedRightRepartitionTopic, joinTopologyFirst);
 
             var joinTopologyUpdated = buildStreamJoin(true);
 
-            Assert.True(joinTopologyUpdated.Contains(expectedLeftRepartitionTopic));
-            Assert.True(joinTopologyUpdated.Contains(expectedRightRepartitionTopic));
+            Assert.Contains(expectedLeftRepartitionTopic, joinTopologyUpdated);
+            Assert.Contains(expectedRightRepartitionTopic, joinTopologyUpdated);
         }
 
         [Fact]
@@ -268,10 +259,10 @@ namespace Kafka.Streams.Tests.Kstream
             var expectedTimeWindowRepartitionTopic = "(topic: time-window-grouping-repartition)";
 
             var timeWindowGroupingRepartitionTopology = buildStreamGroupByKeyTimeWindows(false, true);
-            Assert.True(timeWindowGroupingRepartitionTopology.Contains(expectedTimeWindowRepartitionTopic));
+            Assert.Contains(expectedTimeWindowRepartitionTopic, timeWindowGroupingRepartitionTopology);
 
             var timeWindowGroupingUpdatedTopology = buildStreamGroupByKeyTimeWindows(true, true);
-            Assert.True(timeWindowGroupingUpdatedTopology.Contains(expectedTimeWindowRepartitionTopic));
+            Assert.Contains(expectedTimeWindowRepartitionTopic, timeWindowGroupingUpdatedTopology);
         }
 
         [Fact]
@@ -281,10 +272,10 @@ namespace Kafka.Streams.Tests.Kstream
             var expectedTimeWindowRepartitionTopic = "(topic: time-window-grouping-repartition)";
 
             var timeWindowGroupingRepartitionTopology = buildStreamGroupByKeyTimeWindows(false, false);
-            Assert.True(timeWindowGroupingRepartitionTopology.Contains(expectedTimeWindowRepartitionTopic));
+            Assert.Contains(expectedTimeWindowRepartitionTopic, timeWindowGroupingRepartitionTopology);
 
             var timeWindowGroupingUpdatedTopology = buildStreamGroupByKeyTimeWindows(true, false);
-            Assert.True(timeWindowGroupingUpdatedTopology.Contains(expectedTimeWindowRepartitionTopic));
+            Assert.Contains(expectedTimeWindowRepartitionTopic, timeWindowGroupingUpdatedTopology);
         }
 
 
@@ -295,10 +286,10 @@ namespace Kafka.Streams.Tests.Kstream
             var expectedNoWindowRepartitionTopic = "(topic: kstream-grouping-repartition)";
 
             var noWindowGroupingRepartitionTopology = buildStreamGroupByKeyNoWindows(false, true);
-            Assert.True(noWindowGroupingRepartitionTopology.Contains(expectedNoWindowRepartitionTopic));
+            Assert.Contains(expectedNoWindowRepartitionTopic, noWindowGroupingRepartitionTopology);
 
             var noWindowGroupingUpdatedTopology = buildStreamGroupByKeyNoWindows(true, true);
-            Assert.True(noWindowGroupingUpdatedTopology.Contains(expectedNoWindowRepartitionTopic));
+            Assert.Contains(expectedNoWindowRepartitionTopic, noWindowGroupingUpdatedTopology);
         }
 
         [Fact]
@@ -308,10 +299,10 @@ namespace Kafka.Streams.Tests.Kstream
             var expectedNoWindowRepartitionTopic = "(topic: kstream-grouping-repartition)";
 
             var noWindowGroupingRepartitionTopology = buildStreamGroupByKeyNoWindows(false, false);
-            Assert.True(noWindowGroupingRepartitionTopology.Contains(expectedNoWindowRepartitionTopic));
+            Assert.Contains(expectedNoWindowRepartitionTopic, noWindowGroupingRepartitionTopology);
 
             var noWindowGroupingUpdatedTopology = buildStreamGroupByKeyNoWindows(true, false);
-            Assert.True(noWindowGroupingUpdatedTopology.Contains(expectedNoWindowRepartitionTopic));
+            Assert.Contains(expectedNoWindowRepartitionTopic, noWindowGroupingUpdatedTopology);
         }
 
 
@@ -322,10 +313,10 @@ namespace Kafka.Streams.Tests.Kstream
             var expectedSessionWindowRepartitionTopic = "(topic: session-window-grouping-repartition)";
 
             var sessionWindowGroupingRepartitionTopology = buildStreamGroupByKeySessionWindows(false, true);
-            Assert.True(sessionWindowGroupingRepartitionTopology.Contains(expectedSessionWindowRepartitionTopic));
+            Assert.Contains(expectedSessionWindowRepartitionTopic, sessionWindowGroupingRepartitionTopology);
 
             var sessionWindowGroupingUpdatedTopology = buildStreamGroupByKeySessionWindows(true, true);
-            Assert.True(sessionWindowGroupingUpdatedTopology.Contains(expectedSessionWindowRepartitionTopic));
+            Assert.Contains(expectedSessionWindowRepartitionTopic, sessionWindowGroupingUpdatedTopology);
         }
 
         [Fact]
@@ -335,10 +326,10 @@ namespace Kafka.Streams.Tests.Kstream
             var expectedSessionWindowRepartitionTopic = "(topic: session-window-grouping-repartition)";
 
             var sessionWindowGroupingRepartitionTopology = buildStreamGroupByKeySessionWindows(false, false);
-            Assert.True(sessionWindowGroupingRepartitionTopology.Contains(expectedSessionWindowRepartitionTopic));
+            Assert.Contains(expectedSessionWindowRepartitionTopic, sessionWindowGroupingRepartitionTopology);
 
             var sessionWindowGroupingUpdatedTopology = buildStreamGroupByKeySessionWindows(true, false);
-            Assert.True(sessionWindowGroupingUpdatedTopology.Contains(expectedSessionWindowRepartitionTopic));
+            Assert.Contains(expectedSessionWindowRepartitionTopic, sessionWindowGroupingUpdatedTopology);
         }
 
         [Fact]
@@ -347,10 +338,10 @@ namespace Kafka.Streams.Tests.Kstream
             var expectedKTableGroupByRepartitionTopic = "(topic: ktable-group-by-repartition)";
 
             var ktableGroupByTopology = buildKTableGroupBy(false);
-            Assert.True(ktableGroupByTopology.Contains(expectedKTableGroupByRepartitionTopic));
+            Assert.Contains(expectedKTableGroupByRepartitionTopic, ktableGroupByTopology);
 
             var ktableUpdatedGroupByTopology = buildKTableGroupBy(true);
-            Assert.True(ktableUpdatedGroupByTopology.Contains(expectedKTableGroupByRepartitionTopic));
+            Assert.Contains(expectedKTableGroupByRepartitionTopic, ktableUpdatedGroupByTopology);
         }
 
 
@@ -363,14 +354,14 @@ namespace Kafka.Streams.Tests.Kstream
 
             if (otherOperations)
             {
-                ktable.Filter((k, v) => true).GroupBy(KeyValuePair::pair, Grouped.As(ktableGroupByTopicName)).Count();
+                ktable.Filter((k, v) => true).GroupBy(KeyValuePair.Create, Grouped.As(ktableGroupByTopicName)).Count();
             }
             else
             {
-                ktable.GroupBy(KeyValuePair::pair, Grouped.As(ktableGroupByTopicName)).Count();
+                ktable.GroupBy(KeyValuePair.Create, Grouped.As(ktableGroupByTopicName)).Count();
             }
 
-            return builder.Build().describe().ToString();
+            return builder.Build().Describe().ToString();
         }
 
         private string buildStreamGroupByKeyTimeWindows(bool otherOperations, bool isGroupByKey)
@@ -379,7 +370,7 @@ namespace Kafka.Streams.Tests.Kstream
             var groupedTimeWindowRepartitionTopicName = "time-window-grouping";
             var builder = new StreamsBuilder();
 
-            IKStream<K, V> k + v);
+            IKStream<string, string> selectKeyStream = builder.Stream<string, string>("topic").SelectKey((k, v) => k + v);
 
 
             if (isGroupByKey)
@@ -405,7 +396,7 @@ namespace Kafka.Streams.Tests.Kstream
                 }
             }
 
-            return builder.Build().describe().ToString();
+            return builder.Build().Describe().ToString();
         }
 
 
@@ -414,7 +405,7 @@ namespace Kafka.Streams.Tests.Kstream
 
             var builder = new StreamsBuilder();
 
-            IKStream<K, V> k + v);
+            IKStream<string, string> selectKeyStream = builder.Stream<string, string>("topic").SelectKey((k, v) => k + v);
 
             var groupedSessionWindowRepartitionTopicName = "session-window-grouping";
             if (isGroupByKey)
@@ -440,7 +431,7 @@ namespace Kafka.Streams.Tests.Kstream
                 }
             }
 
-            return builder.Build().describe().ToString();
+            return builder.Build().Describe().ToString();
         }
 
 
@@ -449,7 +440,7 @@ namespace Kafka.Streams.Tests.Kstream
 
             var builder = new StreamsBuilder();
 
-            IKStream<K, V> k + v);
+            IKStream<string, string> selectKeyStream = builder.Stream<string, string>("topic").SelectKey((k, v) => k + v);
 
             var groupByAndCountRepartitionTopicName = "kstream-grouping";
             if (isGroupByKey)
@@ -475,35 +466,35 @@ namespace Kafka.Streams.Tests.Kstream
                 }
             }
 
-            return builder.Build().describe().ToString();
+            return builder.Build().Describe().ToString();
         }
 
         private string buildStreamJoin(bool includeOtherOperations)
         {
             var builder = new StreamsBuilder();
-            IKStream<K, V> initialStreamOne = builder.Stream("topic-one");
-            IKStream<K, V> initialStreamTwo = builder.Stream("topic-two");
+            IKStream<string, string> initialStreamOne = builder.Stream("topic-one");
+            IKStream<string, string> initialStreamTwo = builder.Stream("topic-two");
 
-            IKStream<K, V> updatedStreamOne;
-            IKStream<K, V> updatedStreamTwo;
+            IKStream<string, string> updatedStreamOne;
+            IKStream<string, string> updatedStreamTwo;
 
             if (includeOtherOperations)
             {
                 // without naming the join, the repartition topic Name would change due to operator changing before join performed
-                updatedStreamOne = initialStreamOne.selectKey((k, v) => k + v).Filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + v));
-                updatedStreamTwo = initialStreamTwo.selectKey((k, v) => k + v).Filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + v));
+                updatedStreamOne = initialStreamOne.SelectKey((k, v) => k + v).Filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + v));
+                updatedStreamTwo = initialStreamTwo.SelectKey((k, v) => k + v).Filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + v));
             }
             else
             {
-                updatedStreamOne = initialStreamOne.selectKey((k, v) => k + v);
-                updatedStreamTwo = initialStreamTwo.selectKey((k, v) => k + v);
+                updatedStreamOne = initialStreamOne.SelectKey((k, v) => k + v);
+                updatedStreamTwo = initialStreamTwo.SelectKey((k, v) => k + v);
             }
 
             var joinRepartitionTopicName = "my-join";
             updatedStreamOne.Join(updatedStreamTwo, (v1, v2) => v1 + v2,
                     JoinWindows.Of(TimeSpan.FromMilliseconds(1000L)), Joined.With(Serdes.String(), Serdes.String(), Serdes.String(), joinRepartitionTopicName));
 
-            return builder.Build().describe().ToString();
+            return builder.Build().Describe().ToString();
         }
 
 
@@ -522,58 +513,63 @@ namespace Kafka.Streams.Tests.Kstream
         private Topology buildTopology(string optimizationConfig)
         {
             Initializer<int> initializer = () => 0;
-            Aggregator<string, string, int> aggregator = (k, v, agg) => agg + v.Length();
+            Aggregator<string, string, int> aggregator = (k, v, agg) => agg + v.Length;
             Reducer<string> reducer = (v1, v2) => v1 + ":" + v2;
-            List<string> processorValueCollector = new List<>();
+            List<string> processorValueCollector = new List<string>();
 
-            var builder = new StreamsBuilder();
+            StreamsBuilder builder = new StreamsBuilder();
 
-            IKStream<K, V> sourceStream = builder.Stream(INPUT_TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
+            IKStream<string, string> sourceStream = builder.Stream(INPUT_TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
+            IKStream<string, string> mappedStream = sourceStream.Map((k, v) => KeyValuePair.Create(k.ToUpper(), v));
 
-            IKStream<K, V> KeyValuePair.Create(k.toUppercase(Locale.getDefault()), v));
+            mappedStream.Filter((k, v) => k.Equals("B"))
+                .MapValues(v => v.ToUpper())
+                .Process(() => new SimpleProcessor(processorValueCollector));
 
-            mappedStream.Filter((k, v) => k.Equals("B")).MapValues(v => v.toUppercase(Locale.getDefault()))
-                    .Process(() => new SimpleProcessor(processorValueCollector));
-
-            IKStream<K, V> countStream = mappedStream.GroupByKey(Grouped.As(firstRepartitionTopicName)).Count(Materialized.With(Serdes.String(), Serdes.Long())).ToStream();
+            IKStream<string, long> countStream = mappedStream
+                .GroupByKey(Grouped.As(firstRepartitionTopicName))
+                .Count(Materialized.With(Serdes.String(), Serdes.Long())).ToStream();
 
             countStream.To(COUNT_TOPIC, Produced.With(Serdes.String(), Serdes.Long()));
 
-            mappedStream.GroupByKey(Grouped.As(secondRepartitionTopicName)).Aggregate(initializer,
+            mappedStream.GroupByKey(Grouped.As(secondRepartitionTopicName)).aggregate(initializer,
                     aggregator,
                     Materialized.With(Serdes.String(), Serdes.Int()))
-                    .ToStream().To(AGGREGATION_TOPIC, Produced.With(Serdes.String(), Serdes.Int()));
+                    .toStream().to(AGGREGATION_TOPIC, Produced.With(Serdes.String(), Serdes.Int()));
 
             // adding operators for case where the repartition node is further downstream
-            mappedStream.Filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + ":" + v)).GroupByKey(Grouped.As(thirdRepartitionTopicName))
+            mappedStream.Filter((k, v)=> true).Peek((k, v)=>Console.WriteLine(k + ":" + v))
+                .GroupByKey(Grouped.As(thirdRepartitionTopicName))
                     .Reduce(reducer, Materialized.With(Serdes.String(), Serdes.String()))
-                    .ToStream().To(REDUCE_TOPIC, Produced.With(Serdes.String(), Serdes.String()));
+                    .ToStream()
+                    .To(REDUCE_TOPIC, Produced.With(Serdes.String(), Serdes.String()));
 
-            mappedStream.Filter((k, v) => k.Equals("A"))
-                    .Join(countStream, (v1, v2) => v1 + ":" + v2.ToString(),
-                            JoinWindows.Of(TimeSpan.FromMilliseconds(5000L)),
-                            Joined.With(Serdes.String(), Serdes.String(), Serdes.Long(), fourthRepartitionTopicName))
-                    .To(JOINED_TOPIC);
+            mappedStream.Filter((k, v)=>k.Equals("A"))
+                    .join(countStream, (v1, v2)=>v1 + ":" + v2.toString(),
+                            JoinWindows.of(Duration.ofMillis(5000L)),
+                            Joined.with(Serdes.String(), Serdes.String(), Serdes.Long(), fourthRepartitionTopicName))
+                    .to(JOINED_TOPIC);
 
             var properties = new StreamsConfig();
 
-            properties.Put(StreamsConfig.TOPOLOGY_OPTIMIZATION, optimizationConfig);
+            properties.TOPOLOGY_OPTIMIZATION = optimizationConfig;
+
             return builder.Build(properties);
         }
 
 
-        private static class SimpleProcessor : AbstractProcessor<string, string>
+        private class SimpleProcessor : AbstractProcessor<string, string>
         {
 
             List<string> valueList;
 
-            SimpleProcessor(List<string> valueList)
+            public SimpleProcessor(List<string> valueList)
             {
                 this.valueList = valueList;
             }
 
 
-            public void process(string key, string value)
+            public void Process(string key, string value)
             {
                 valueList.Add(value);
             }

@@ -43,7 +43,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 stream.peek(null);
                 Assert.False(true, "expected null action to throw NPE");
             }
-            catch (NullPointerException expected)
+            catch (NullReferenceException expected)
             {
                 // do nothing
             }

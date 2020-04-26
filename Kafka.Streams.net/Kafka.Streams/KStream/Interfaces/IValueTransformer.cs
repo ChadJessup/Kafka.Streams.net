@@ -65,7 +65,7 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         public VR Transform(V value)
         {
-            return value;
+            return (VR)(object)value;
         }
 
         /**

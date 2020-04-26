@@ -2,6 +2,7 @@ using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Tasks;
+using Kafka.Streams.Temporary;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -23,8 +24,8 @@ namespace Kafka.Streams.Tests.Processor
             "cluster",
             Collections.singletonList(Node.noNode()),
             infos,
-            Collections.< string > emptySet(),
-            Collections.< string > emptySet());
+            Collections.emptySet<string>(),
+            Collections.emptySet<string>());
 
         [Fact]
         public void ShouldComputeGroupingForTwoGroups()

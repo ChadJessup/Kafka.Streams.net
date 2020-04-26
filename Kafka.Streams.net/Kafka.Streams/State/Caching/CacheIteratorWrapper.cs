@@ -63,12 +63,12 @@ namespace Kafka.Streams.State.Internals
                 return false;
             }
 
-            if (this.current.HasNext())
+            if (this.current.MoveNext())
             {
                 return true;
             }
 
-            while (!this.current.HasNext())
+            while (!this.current.MoveNext())
             {
                 this.GetNextSegmentIterator();
                 if (this.current == null)
@@ -81,7 +81,7 @@ namespace Kafka.Streams.State.Internals
 
         public Bytes PeekNextKey()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new KeyNotFoundException();
             }
@@ -92,7 +92,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<Bytes, LRUCacheEntry> PeekNext()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new KeyNotFoundException();
             }
@@ -102,7 +102,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<Bytes, LRUCacheEntry> Next()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new KeyNotFoundException();
             }

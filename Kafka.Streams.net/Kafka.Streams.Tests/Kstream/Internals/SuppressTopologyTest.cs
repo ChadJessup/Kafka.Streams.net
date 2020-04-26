@@ -156,12 +156,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
 //            .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).Grace(TimeSpan.FromMilliseconds(5L)))
-//            .Count(Materialized.As<string, long, ISessionStore<Bytes, byte[]>("counts").WithCachingDisabled())
+//            .Count(Materialized.As<string, long, ISessionStore<Bytes, byte[]>>("counts").WithCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()))
 //            .ToStream()
 //            .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
-//        string anonymousNodeTopology = anonymousNodeBuilder.Build().describe().ToString();
+//        string anonymousNodeTopology = anonymousNodeBuilder.Build().Describe().ToString();
 
 //        // without the Name, the suppression node increments the topology index
 //        Assert.Equal(anonymousNodeTopology, (ANONYMOUS_FINAL_TOPOLOGY));
@@ -174,12 +174,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            .Stream("input", Consumed.With(STRING_SERDE, STRING_SERDE))
 //            .GroupBy((string k, string v) => k, Grouped.With(STRING_SERDE, STRING_SERDE))
 //            .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(5L)).Grace(TimeSpan.FromMilliseconds(5L)))
-//            .Count(Materialized.As<string, long, ISessionStore<Bytes, byte[]>("counts").WithCachingDisabled())
+//            .Count(Materialized.As<string, long, ISessionStore<Bytes, byte[]>>("counts").WithCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()).withName("myname"))
 //            .ToStream()
 //            .Map((IWindowed<string> k, long v) => KeyValuePair.Create(k.ToString(), v))
 //            .To("output-suppressed", Produced.With(STRING_SERDE, Serdes.Long()));
-//        string namedNodeTopology = namedNodeBuilder.Build().describe().ToString();
+//        string namedNodeTopology = namedNodeBuilder.Build().Describe().ToString();
 
 //        // without the Name, the suppression node does not increment the topology index
 //        Assert.Equal(namedNodeTopology, (NAMED_FINAL_TOPOLOGY));
@@ -195,7 +195,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            .suppress(untilTimeLimit(TimeSpan.FromSeconds(1), unbounded()))
 //            .ToStream()
 //            .To("output", Produced.With(STRING_SERDE, Serdes.Long()));
-//        string anonymousNodeTopology = anonymousNodeBuilder.Build().describe().ToString();
+//        string anonymousNodeTopology = anonymousNodeBuilder.Build().Describe().ToString();
 
 //        // without the Name, the suppression node increments the topology index
 //        Assert.Equal(anonymousNodeTopology, (ANONYMOUS_INTERMEDIATE_TOPOLOGY));
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            .suppress(untilTimeLimit(TimeSpan.FromSeconds(1), unbounded()).withName("asdf"))
 //            .ToStream()
 //            .To("output", Produced.With(STRING_SERDE, Serdes.Long()));
-//        string namedNodeTopology = namedNodeBuilder.Build().describe().ToString();
+//        string namedNodeTopology = namedNodeBuilder.Build().Describe().ToString();
 
 //        // without the Name, the suppression node does not increment the topology index
 //        Assert.Equal(namedNodeTopology, (NAMED_INTERMEDIATE_TOPOLOGY));

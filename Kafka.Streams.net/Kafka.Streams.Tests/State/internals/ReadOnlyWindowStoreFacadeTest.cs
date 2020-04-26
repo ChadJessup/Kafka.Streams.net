@@ -108,12 +108,12 @@
 //            expect(mockedWindowTimestampIterator.MoveNext())
 //                .andReturn(KeyValuePair.Create(21L, ValueAndTimestamp.Make("value1", 22L)))
 //                .andReturn(KeyValuePair.Create(42L, ValueAndTimestamp.Make("value2", 23L)));
-//            expect(mockedWindowTimestampStore.Fetch("key1", Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L)))
+//            expect(mockedWindowTimestampStore.Fetch("key1", Instant.TimeSpan.FromMilliseconds(21L), Instant.TimeSpan.FromMilliseconds(42L)))
 //                .andReturn(mockedWindowTimestampIterator);
 //            replay(mockedWindowTimestampIterator, mockedWindowTimestampStore);
 
 //            IWindowStoreIterator<string> iterator =
-//                readOnlyWindowStoreFacade.Fetch("key1", Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L));
+//                readOnlyWindowStoreFacade.Fetch("key1", Instant.TimeSpan.FromMilliseconds(21L), Instant.TimeSpan.FromMilliseconds(42L));
 
 //            Assert.Equal(iterator.Current, KeyValuePair.Create(21L, "value1")); iterator.MoveNext();
 //            Assert.Equal(iterator.Current, KeyValuePair.Create(42L, "value2")); iterator.MoveNext();
@@ -152,12 +152,12 @@
 //                .andReturn(KeyValuePair.Create(
 //                    new Windowed<>("key2", new TimeWindow(42L, 43L)),
 //                    ValueAndTimestamp.Make("value2", 100L)));
-//            expect(mockedWindowTimestampStore.Fetch("key1", "key2", Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L)))
+//            expect(mockedWindowTimestampStore.Fetch("key1", "key2", Instant.TimeSpan.FromMilliseconds(21L), Instant.TimeSpan.FromMilliseconds(42L)))
 //                .andReturn(mockedKeyValueWindowTimestampIterator);
 //            replay(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator =
-//                readOnlyWindowStoreFacade.Fetch("key1", "key2", Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L));
+//                readOnlyWindowStoreFacade.Fetch("key1", "key2", Instant.TimeSpan.FromMilliseconds(21L), Instant.TimeSpan.FromMilliseconds(42L));
 
 //            Assert.Equal(iterator.MoveNext(), KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1"));
 //            Assert.Equal(iterator.MoveNext(), KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2"));
@@ -196,12 +196,12 @@
 //                .andReturn(KeyValuePair.Create(
 //                    new Windowed<>("key2", new TimeWindow(42L, 43L)),
 //                    ValueAndTimestamp.Make("value2", 100L)));
-//            expect(mockedWindowTimestampStore.FetchAll(Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L)))
+//            expect(mockedWindowTimestampStore.FetchAll(Instant.TimeSpan.FromMilliseconds(21L), Instant.TimeSpan.FromMilliseconds(42L)))
 //                .andReturn(mockedKeyValueWindowTimestampIterator);
 //            replay(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator =
-//                readOnlyWindowStoreFacade.FetchAll(Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L));
+//                readOnlyWindowStoreFacade.FetchAll(Instant.TimeSpan.FromMilliseconds(21L), Instant.TimeSpan.FromMilliseconds(42L));
 
 //            Assert.Equal(iterator.MoveNext(), KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1"));
 //            Assert.Equal(iterator.MoveNext(), KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2"));

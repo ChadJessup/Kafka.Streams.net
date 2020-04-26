@@ -10,6 +10,7 @@ using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.Queryable;
 using Kafka.Streams.Threads.GlobalStream;
 using Kafka.Streams.Threads.Stream;
 using Kafka.Streams.Topologies;
@@ -48,8 +49,8 @@ namespace Kafka.Streams.Threads.KafkaStreams
      * Properties props = new Properties();
      * props.Add(StreamsConfig.ApplicationIdConfig, "my-stream-processing-application");
      * props.Add(StreamsConfig.BootstrapServers, "localhost:9092");
-     * props.Add(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.string().getClass());
-     * props.Add(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.string().getClass());
+     * props.Add(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.Serdes.String().getClass());
+     * props.Add(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.Serdes.String().getClass());
      *
      * StreamsBuilder builder = new StreamsBuilder();
      * builder.<string, string>stream("my-input-topic").MapValues(value => string.valueOf(value.Length())).to("my-output-topic");
@@ -314,7 +315,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
          * @param eh the uncaught exception handler for All internal threads; {@code null} deletes the current handler
          * @throws Exception if this {@code KafkaStreams} instance is not in state {@link State#CREATED CREATED}.
          */
-        public void SetUncaughtExceptionHandler(/*UncaughtExceptionHandler eh*/)
+        public void SetUncaughtExceptionHandler()//UncaughtExceptionHandler eh)
         {
             lock (this.stateLock)
             {
@@ -322,12 +323,12 @@ namespace Kafka.Streams.Threads.KafkaStreams
                 {
                     foreach (var thread in this.Threads)
                     {
-                        //context.Thread.setUncaughtExceptionHandler(eh);
+                        //context.Thread.SetUncaughtExceptionHandler(eh);
                     }
 
                     if (this.globalStreamThread != null)
                     {
-                        // globalStreamThread.setUncaughtExceptionHandler(eh);
+                        //this.globalStreamThread.SetUncaughtExceptionHandler(eh);
                     }
                 }
                 else
@@ -346,7 +347,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
          * @throws Exception if this {@code KafkaStreams} instance is not in state {@link State#CREATED CREATED}.
          */
         public void SetGlobalStateRestoreListener(Action<IThread<KafkaStreamsThreadStates>, KafkaStreamsThreadStates, KafkaStreamsThreadStates> globalStateRestoreListener)
-           => this.SetGlobalStateRestoreListener(new WrappedStateRestoreListener<KafkaStreamsThreadStates>(globalStateRestoreListener);
+           => this.SetGlobalStateRestoreListener(new WrappedStateRestoreListener<KafkaStreamsThreadStates>(globalStateRestoreListener));
 
         public void SetGlobalStateRestoreListener(IStateRestoreListener globalStateRestoreListener)
         {
@@ -684,11 +685,12 @@ namespace Kafka.Streams.Threads.KafkaStreams
          * @throws InvalidStateStoreException if Kafka Streams is (re-)initializing or a store with {@code storeName} and
          * {@code queryableStoreType} doesn't exist
          */
-        //public T store<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
-        //{
-        //    validateIsRunning();
-        //    return queryableStoreProvider.getStore(storeName, queryableStoreType);
-        //}
+        public T Store<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
+        {
+            this.ValidateIsRunning();
+
+            return this.queryableStoreProvider.GetStore(storeName, queryableStoreType);
+        }
 
         /**
          * Returns runtime information about the local threads of this {@link KafkaStreams} instance.

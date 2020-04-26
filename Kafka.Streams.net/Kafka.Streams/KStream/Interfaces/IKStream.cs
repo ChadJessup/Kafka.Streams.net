@@ -898,8 +898,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -996,8 +996,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1097,8 +1097,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1197,8 +1197,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1297,8 +1297,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1380,8 +1380,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1465,8 +1465,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1551,8 +1551,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1639,8 +1639,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1733,8 +1733,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1829,8 +1829,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -1924,8 +1924,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -2020,8 +2020,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myProcessorState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -2086,8 +2086,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myProcessorState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *

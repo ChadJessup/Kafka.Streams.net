@@ -11,6 +11,10 @@ namespace Kafka.Streams.KStream.Interfaces
             this.reducer = reducer;
         }
 
+        public WrappedReducer(Reducer<V> reducer1)
+        {
+        }
+
         public V Apply(V value1, V value2)
             => this.reducer(value1, value2);
     }

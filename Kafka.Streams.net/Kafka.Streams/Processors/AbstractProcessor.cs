@@ -30,9 +30,5 @@ namespace Kafka.Streams.Processors
         }
 
         public abstract void Process(K key, V value);
-
-        public void Process<K1, V1>(K1 key, V1 value)
-        {
-        }
     }
 }

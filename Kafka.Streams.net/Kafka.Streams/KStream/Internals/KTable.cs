@@ -572,7 +572,7 @@ namespace Kafka.Streams.KStream.Internals
             IKTable<K, V1> other,
             ValueJoiner<V, V1, R> joiner)
         {
-            return DoJoin<V1, R>(
+            return this.DoJoin(
                 other,
                 joiner,
                 NamedInternal.Empty(),
@@ -587,7 +587,7 @@ namespace Kafka.Streams.KStream.Internals
             ValueJoiner<V, VO, VR> joiner,
             Named named)
         {
-            return DoJoin(
+            return this.DoJoin(
                 other,
                 joiner,
                 named,
@@ -723,13 +723,13 @@ namespace Kafka.Streams.KStream.Internals
                 other.EnableSendingOldValues();
             }
 
-            KTableKTableAbstractJoin<K, S, VR, V, VO>? joinThis = null;
-            KTableKTableAbstractJoin<K, S, VR, VO, V>? joinOther = null;
+            KTableKTableAbstractJoin<K, VR, V, VO>? joinThis = null;
+            KTableKTableAbstractJoin<K, VR, VO, V>? joinOther = null;
 
             if (!leftOuter)
             { // inner
-                joinThis = new KTableKTableInnerJoin<K, S, VR, V, VO>(this, (KTable<K, S, VO>)other, joiner, this.QueryableStoreName);
-                joinOther = new KTableKTableInnerJoin<K, S, VR, VO, V>((KTable<K, S, VO>)other, this, ReverseJoiner(joiner), this.QueryableStoreName);
+                joinThis = new KTableKTableInnerJoin<K, VR, V, VO>(this, (KTable<K, S, VO>)other, joiner, this.QueryableStoreName);
+                joinOther = new KTableKTableInnerJoin<K, VR, VO, V>((KTable<K, S, VO>)other, this, ReverseJoiner(joiner), this.QueryableStoreName);
             }
             else if (!rightOuter)
             { // left

@@ -252,7 +252,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             //       .Aggregate(
             //           () => "",
             //           MockAggregator.toStringInstance("+"),
-            //           Materialized.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonicalized").WithValueSerde(Serdes.String()).WithCachingDisabled().WithLoggingDisabled()
+            //           Materialized.As < string, string, IWindowStore<Bytes, byte[]>>("topic1-Canonicalized").WithValueSerde(Serdes.String()).WithCachingDisabled().WithLoggingDisabled()
             //       )
             //       .ToStream()
             //       .Map((key, value) => KeyValuePair.Create(key.ToString(), value))

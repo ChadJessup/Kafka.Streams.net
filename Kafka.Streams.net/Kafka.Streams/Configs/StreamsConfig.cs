@@ -8,6 +8,7 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Topologies;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -113,6 +114,16 @@ namespace Kafka.Streams.Configs
             this.SetAll(config);
             this.SetDefaultConfiguration();
         }
+
+        public void Put(string key, string value)
+            => this.Set(key, value);
+
+        public TopologyOptimization? TopologyOptimization
+        {
+            get => (TopologyOptimization?)this.GetEnum(typeof(TopologyOptimization), StreamsConfig.TOPOLOGY_OPTIMIZATIONConfig);
+            set => this.SetObject(StreamsConfig.TOPOLOGY_OPTIMIZATIONConfig, value);
+        }
+
         public string GroupId
         {
             get => this.Get(StreamsConfig.GroupIdConfig);

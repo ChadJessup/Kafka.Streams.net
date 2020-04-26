@@ -8,7 +8,7 @@ namespace Kafka.Streams.Processors
      * @param the type of keys
      * @param the type of values
      */
-    public interface IKeyValueProcessor<K, V> : IKeyValueProcessor
+    public interface IKeyValueProcessor<in K, in V> : IKeyValueProcessor
     {
         /**
          * Process the record with the given key and value.
@@ -17,10 +17,8 @@ namespace Kafka.Streams.Processors
          * @param value the value for the record
          */
         void Process(K key, V value);
-        new void Process<K1, V1>(K1 key, V1 value)
-            where K1 : K
-            where V1 : V
-            => this.Process(key, value);
+        void IKeyValueProcessor.Process(object key, object value)
+            => this.Process((K)key, (V)value);
     }
 
     public interface IKeyValueProcessor
@@ -54,6 +52,6 @@ namespace Kafka.Streams.Processors
          * @param key the key for the record
          * @param value the value for the record
          */
-        void Process<K, V>(K key, V value);
+        void Process(object key, object value);
     }
 }

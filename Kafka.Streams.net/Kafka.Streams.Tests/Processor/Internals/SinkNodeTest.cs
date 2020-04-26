@@ -13,7 +13,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     {
         private ISerializer<byte[]> anySerializer = Serdes.ByteArray().Serializer;
         private StateSerdes<Bytes, Bytes> anyStateSerde = StateSerdes.WithBuiltinTypes("anyName", Bytes, Bytes);
-        private IRecordCollector recordCollector = new RecordCollectorImpl(
+        private IRecordCollector recordCollector = new RecordCollector(
             null,
             new LogContext("sinknode-test "),
             new DefaultProductionExceptionHandler());

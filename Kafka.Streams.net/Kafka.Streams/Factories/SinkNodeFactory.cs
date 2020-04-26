@@ -43,7 +43,7 @@ namespace Kafka.Streams.Factories
         {
             if (this.TopicExtractor is StaticTopicNameExtractor)
             {
-                var topic = ((StaticTopicNameExtractor)this.TopicExtractor).topicName;
+                var topic = ((StaticTopicNameExtractor)this.TopicExtractor).TopicName;
                 if (this.internalTopologyBuilder.internalTopicNames.Contains(topic))
                 {
                     // prefix the internal topic Name with the application id

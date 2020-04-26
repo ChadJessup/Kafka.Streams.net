@@ -44,9 +44,9 @@
 //    public class WindowStoreBuilderTest
 //    {
 
-//        (type = MockType.NICE)
+//        
 //    private WindowBytesStoreSupplier supplier;
-//        (type = MockType.NICE)
+//        
 //    private IWindowStore<Bytes, byte[]> inner;
 //        private WindowStoreBuilder<string, string> builder;
 
@@ -124,25 +124,25 @@
 //        }
 
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfInnerIsNull()
 //        {
 //            new WindowStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            new WindowStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            new WindowStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            new WindowStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);

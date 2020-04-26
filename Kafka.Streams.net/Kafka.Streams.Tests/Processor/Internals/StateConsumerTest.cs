@@ -32,7 +32,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldAssignPartitionsToConsumer()
         {
             stateConsumer.initialize();
-            Assert.Equal(Utils.mkSet(topicOne, topicTwo), consumer.assignment());
+            Assert.Equal(Utils.mkSet(topicOne, topicTwo), consumer.Assignment());
         }
 
         [Fact]

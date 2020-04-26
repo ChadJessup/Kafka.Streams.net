@@ -140,7 +140,7 @@
 //        replay(innerStoreMock);
 
 //        store.Init(context, store);
-//        store.Fetch("a", ofEpochMilli(1), ofEpochMilli(1)).Close(); // recorded on Close;
+//        store.Fetch("a", TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(1)).Close(); // recorded on Close;
 //        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
 //        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Fetch-total", "stream-scope-metrics", singletonMap("scope-id", "All")).metricValue());
 //        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Fetch-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
@@ -154,7 +154,7 @@
 //        replay(innerStoreMock);
 
 //        store.Init(context, store);
-//        store.Fetch("a", "b", ofEpochMilli(1), ofEpochMilli(1)).Close(); // recorded on Close;
+//        store.Fetch("a", "b", TimeSpan.FromMilliseconds(1), TimeSpan.FromMilliseconds(1)).Close(); // recorded on Close;
 //        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
 //        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Fetch-total", "stream-scope-metrics", singletonMap("scope-id", "All")).metricValue());
 //        Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "Fetch-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());

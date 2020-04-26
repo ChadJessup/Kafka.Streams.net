@@ -1,9 +1,9 @@
 using Kafka.Streams.State;
-
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State;
+using Moq;
+using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals
 {
@@ -13,13 +13,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldForwardValueTimestampIfNewValueExists()
         {
-            IInternalProcessorContext context = Mock.Of<typeof(IInternalProcessorContext));
+            IInternalProcessorContext context = Mock.Of<IInternalProcessorContext>();
             expect(context.currentNode()).andReturn(null).anyTimes();
             context.setCurrentNode(null);
             context.setCurrentNode(null);
             context.Forward(
                 "key",
-                new Change<>("newValue", "oldValue"),
+                new Change<string>("newValue", "oldValue"),
                 To.All().WithTimestamp(42L));
             expect.AstCall();
             replay(context);
@@ -36,13 +36,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldForwardParameterTimestampIfNewValueIsNull()
         {
-            IInternalProcessorContext context = Mock.Of<typeof(IInternalProcessorContext));
+            IInternalProcessorContext context = Mock.Of<IInternalProcessorContext>());
             expect(context.currentNode()).andReturn(null).anyTimes();
             context.setCurrentNode(null);
             context.setCurrentNode(null);
             context.Forward(
                 "key",
-                new Change<>(null, "oldValue"),
+                new Change<string>(null, "oldValue"),
                 To.All().WithTimestamp(73L));
             expect.AstCall();
             replay(context);

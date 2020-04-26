@@ -22,7 +22,7 @@ namespace Kafka.Streams.Tests.Tests
 
 //        StreamsConfig streamsProperties = Utils.loadProps(propFileName);
 
-//        string groupInstanceId = Objects.requireNonNull(streamsProperties.getProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG));
+//        string groupInstanceId = Objects.requireNonNull(streamsProperties.Get(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG));
 
 //        System.Console.Out.WriteLine(testName + " instance started with group.instance.id " + groupInstanceId);
 //        System.Console.Out.WriteLine("props=" + streamsProperties);

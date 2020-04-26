@@ -179,7 +179,7 @@ namespace Kafka.Streams.Threads.Stream
         {
             IProducer<byte[], byte[]>? threadProducer = null;
 
-            var eosEnabled = StreamsConfig.ExactlyOnce.Equals(config.GetString(StreamsConfig.ProcessingGuarantee));
+            var eosEnabled = StreamsConfig.ExactlyOnceConfig.Equals(config.GetString(StreamsConfig.ProcessingGuaranteeConfig));
             if (!eosEnabled)
             {
                 var producerConfigs = config.GetProducerConfigs(StreamsBuilder.GetThreadProducerClientId(threadClientId));
@@ -195,7 +195,7 @@ namespace Kafka.Streams.Threads.Stream
         {
             this.logger.LogInformation("Creating consumer client");
 
-            var applicationId = config.ApplicationId ?? throw new ArgumentNullException(StreamsConfig.ApplicationId);
+            var applicationId = config.ApplicationId ?? throw new ArgumentNullException(StreamsConfig.ApplicationIdConfig);
 
             var consumerConfigs = config.GetMainConsumerConfigs(applicationId, StreamsBuilder.GetConsumerClientId(threadClientId), threadId);
             // consumerConfigs.Add(InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, this.taskManager);

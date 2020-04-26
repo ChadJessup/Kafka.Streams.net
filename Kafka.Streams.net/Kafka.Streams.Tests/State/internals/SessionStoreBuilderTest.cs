@@ -47,9 +47,9 @@
 //    public class SessionStoreBuilderTest
 //    {
 
-//        (type = MockType.NICE)
+//        
 //    private SessionBytesStoreSupplier supplier;
-//        (type = MockType.NICE)
+//        
 //    private ISessionStore<Bytes, byte[]> inner;
 //        private SessionStoreBuilder<string, string> builder;
 

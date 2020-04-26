@@ -18,7 +18,7 @@
 
 //        // private InternalMockProcessorContext context = new InternalMockProcessorContext(
 //        //     StateSerdes.WithBuiltinTypes(topic, int, string),
-//        //     new RecordCollectorImpl(
+//        //     new RecordCollector(
 //        //         "StoreChangeLoggerTest",
 //        //         new LogContext("StoreChangeLoggerTest "),
 //        //         new DefaultProductionExceptionHandler(),

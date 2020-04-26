@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tasks
             return exception;
         }
 
-        public void UpdateRestored(List<TopicPartition> restored)
+        public void UpdateRestored(IEnumerable<TopicPartition> restored)
         {
             if (!restored.Any())
             {

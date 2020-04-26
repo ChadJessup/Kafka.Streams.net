@@ -43,6 +43,9 @@ namespace Kafka.Streams.State.Internals
         /**
          * @throws IOException if any file operation fails with an IO exception
          */
+        public void Write(TopicPartition topic, long? offset)
+           => this.Write(new Dictionary<TopicPartition, long?> { { topic, offset } });
+
         public void Write(Dictionary<TopicPartition, long?> offsets)
         {
             // if there is no offsets, skip writing the file to save disk IOs

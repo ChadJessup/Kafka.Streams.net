@@ -23,7 +23,7 @@
 
 //        public override bool HasNext()
 //        {
-//            return bytesIterator.HasNext();
+//            return bytesIterator.MoveNext();
 //        }
 
 //        public override KeyValuePair<IWindowed<Bytes>, byte[]> next()

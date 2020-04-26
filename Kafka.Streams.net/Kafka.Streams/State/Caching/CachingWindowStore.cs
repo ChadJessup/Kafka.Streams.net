@@ -66,11 +66,11 @@ namespace Kafka.Streams.State.Internals
             this.Name = context.TaskId + "-" + this.Name;
             this.cache = this.context.GetCache();
 
-            cache.AddDirtyEntryFlushListener(Name, entries =>
+            this.cache.AddDirtyEntryFlushListener(this.Name, entries =>
             {
                 foreach (var entry in entries)
                 {
-                    PutAndMaybeForward(entry, context);
+                    this.PutAndMaybeForward(entry, context);
                 }
             });
         }

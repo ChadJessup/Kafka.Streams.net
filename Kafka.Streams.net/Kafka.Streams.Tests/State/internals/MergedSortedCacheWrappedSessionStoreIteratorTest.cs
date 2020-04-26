@@ -63,7 +63,7 @@
 //    public void ShouldHaveNextFromStore()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
-//        Assert.True(mergeIterator.HasNext());
+//        Assert.True(mergeIterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -84,7 +84,7 @@
 //    public void ShouldHaveNextFromCache()
 //    {
 //        MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
-//        Assert.True(mergeIterator.HasNext());
+//        Assert.True(mergeIterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -107,7 +107,7 @@
 //        MergedSortedCacheSessionStoreIterator iterator = createIterator(storeKvs, cacheKvs);
 //        Assert.Equal(iterator.MoveNext(), (KeyValuePair.Create(new Windowed<>(storeKey, storeWindow), storeKey.Get())));
 //        Assert.Equal(iterator.MoveNext(), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey.Get())));
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    private MergedSortedCacheSessionStoreIterator CreateIterator(Iterator<KeyValuePair<IWindowed<Bytes>, byte[]>> storeKvs,

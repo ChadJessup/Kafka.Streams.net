@@ -77,7 +77,7 @@
 //            if (loggingEnabled)
 //            {
 //                collector = ((RecordCollector.Supplier)context).recordCollector();
-//                changelogTopic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), storeName);
+//                changelogTopic = ProcessorStateManager.StoreChangelogTopic(context.applicationId(), storeName);
 //            }
 //            updateBufferMetrics();
 //            open = true;
@@ -285,7 +285,7 @@
 //            if (predicate())
 //            {
 //                KeyValuePair<BufferKey, BufferValue> next = null;
-//                if (@delegate.HasNext())
+//                if (@delegate.MoveNext())
 //                {
 //                    next = @delegate.MoveNext();
 //                }
@@ -316,7 +316,7 @@
 //                    memBufferSize -= computeRecordSize(next.Key.key, bufferValue);
 
 //                    // peek at the next record so we can update the minTimestamp
-//                    if (@delegate.HasNext())
+//                    if (@delegate.MoveNext())
 //                    {
 //                        next = @delegate.MoveNext();
 //                        minTimestamp = next == null ? long.MaxValue : next.Key.time;

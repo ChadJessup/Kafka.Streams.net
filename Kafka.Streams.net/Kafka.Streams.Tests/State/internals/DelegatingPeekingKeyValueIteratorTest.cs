@@ -53,7 +53,7 @@
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(Name, store.All());
 //            Assert.Equal("A", peekingIterator.PeekNextKey());
 //            Assert.Equal("A", peekingIterator.PeekNextKey());
-//            Assert.True(peekingIterator.HasNext());
+//            Assert.True(peekingIterator.MoveNext());
 //            peekingIterator.Close();
 //        }
 
@@ -64,7 +64,7 @@
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(Name, store.All());
 //            Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.PeekNext());
 //            Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.PeekNext());
-//            Assert.True(peekingIterator.HasNext());
+//            Assert.True(peekingIterator.MoveNext());
 //            peekingIterator.Close();
 //        }
 
@@ -79,7 +79,7 @@
 
 //            DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(Name, store.All());
 //            int index = 0;
-//            while (peekingIterator.HasNext())
+//            while (peekingIterator.MoveNext())
 //            {
 //                string peekNext = peekingIterator.PeekNextKey();
 //                string key = peekingIterator.MoveNext().Key;

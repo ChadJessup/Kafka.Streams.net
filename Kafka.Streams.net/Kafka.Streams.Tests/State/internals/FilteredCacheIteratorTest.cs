@@ -79,7 +79,7 @@
 
 //            public bool hasNext(IKeyValueIterator<Bytes, ?> iterator)
 //        {
-//            return iterator.HasNext();
+//            return iterator.MoveNext();
 //        }
 //    };
 //    allIterator = new FilteredCacheIterator(
@@ -92,7 +92,7 @@
 
 //            public bool HasNext(IKeyValueIterator<Bytes, ?> iterator)
 //    {
-//        return iterator.HasNext() && iterator.PeekNextKey().Equals(firstEntry.Key);
+//        return iterator.MoveNext() && iterator.PeekNextKey().Equals(firstEntry.Key);
 //    }
 //        };
 //        firstEntryIterator = new FilteredCacheIterator(
@@ -111,7 +111,7 @@
 //    [Fact]
 //    public void ShouldPeekNextKey()
 //    {
-//        while (allIterator.HasNext())
+//        while (allIterator.MoveNext())
 //        {
 //            Bytes nextKey = allIterator.PeekNextKey();
 //            KeyValuePair<Bytes, LRUCacheEntry> next = allIterator.MoveNext();
@@ -122,7 +122,7 @@
 //    [Fact]
 //    public void ShouldPeekNext()
 //    {
-//        while (allIterator.HasNext())
+//        while (allIterator.MoveNext())
 //        {
 //            KeyValuePair<Bytes, LRUCacheEntry> peeked = allIterator.PeekNext();
 //            KeyValuePair<Bytes, LRUCacheEntry> next = allIterator.MoveNext();
@@ -133,9 +133,9 @@
 //    [Fact]
 //    public void ShouldNotHaveNextIfHasNextConditionNotMet()
 //    {
-//        Assert.True(firstEntryIterator.HasNext());
+//        Assert.True(firstEntryIterator.MoveNext());
 //        firstEntryIterator.MoveNext();
-//        Assert.False(firstEntryIterator.HasNext());
+//        Assert.False(firstEntryIterator.MoveNext());
 //    }
 
 //    [Fact]

@@ -18,6 +18,9 @@ namespace Kafka.Streams.KStream
      * @see SessionWindowedKStream#reduce(Reducer, Materialized)
      * @see IAggregator
      */
+
+    public delegate V Reducer<V>(V value1, V value2);
+
     public interface IReducer<V>
     {
         /**

@@ -190,7 +190,7 @@
 //        public void ShouldSerializeDeserialize()
 //        {
 //            byte[] bytes = keySerde.Serializer.Serialize(topic, windowedKey);
-//            IWindowed<string> result = keySerde.deserializer().Deserialize(topic, bytes);
+//            IWindowed<string> result = keySerde.Deserializer.Deserialize(topic, bytes);
 //            Assert.Equal(windowedKey, result);
 //        }
 
@@ -209,14 +209,14 @@
 //        [Fact]
 //        public void ShouldDeSerializeNullToNull()
 //        {
-//            Assert.Null(keySerde.deserializer().Deserialize(topic, null));
+//            Assert.Null(keySerde.Deserializer.Deserialize(topic, null));
 //        }
 
 //        [Fact]
 //        public void ShouldConvertToBinaryAndBack()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
-//            IWindowed<string> result = SessionKeySchema.from(serialized, Serdes.String().deserializer(), "dummy");
+//            IWindowed<string> result = SessionKeySchema.from(serialized, Serdes.String().Deserializer, "dummy");
 //            Assert.Equal(windowedKey, result);
 //        }
 
@@ -252,7 +252,7 @@
 //        public void ShouldExtractKeyFromBinary()
 //        {
 //            byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
-//            Assert.Equal(windowedKey, SessionKeySchema.from(serialized, serde.deserializer(), "dummy"));
+//            Assert.Equal(windowedKey, SessionKeySchema.from(serialized, serde.Deserializer, "dummy"));
 //        }
 
 //        [Fact]

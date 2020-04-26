@@ -58,7 +58,7 @@ namespace Kafka.Streams.KStream.Internals
             }
             else
             {
-                K2 mappedKey = this.keyMapper.Apply(key, value);
+                K2 mappedKey = this.keyMapper(key, value);
                 V2 value2 = this.valueGetter.Get(mappedKey).Value;
 
                 if (this.leftJoin || value2 != null)

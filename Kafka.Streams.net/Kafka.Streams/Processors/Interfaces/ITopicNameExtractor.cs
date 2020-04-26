@@ -1,4 +1,3 @@
-
 namespace Kafka.Streams.Processors.Interfaces
 {
     /// <summary>
@@ -14,7 +13,15 @@ namespace Kafka.Streams.Processors.Interfaces
         /// <param Name="value">The record value.</param>
         /// <param Name="recordContext">Current context metadata of the record.</param>
         /// <returns>The topic Name this record should be sent to.</returns>
-        string Extract<K, V>(K key, V value, IRecordContext recordContext);
+        string Extract(object key, object value, IRecordContext recordContext);
+    }
+    
+    public interface ITopicNameExtractor<in K, in V> : ITopicNameExtractor
+    {
+        string Extract(K key, V value, IRecordContext recordContext);
+
+        string ITopicNameExtractor.Extract(object key, object value, IRecordContext recordContext)
+            => this.Extract((K)key, (V)value, recordContext);
     }
 
     public delegate string TopicNameExtractor<in TKey, in TValue>(TKey key, TValue value, IRecordContext recordContext);

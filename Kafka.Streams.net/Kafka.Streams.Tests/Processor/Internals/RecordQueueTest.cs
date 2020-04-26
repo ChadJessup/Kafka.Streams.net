@@ -21,7 +21,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         InternalMockProcessorContext context = new InternalMockProcessorContext(
             StateSerdes.WithBuiltinTypes("anyName", Bytes, Bytes),
-            new RecordCollectorImpl(
+            new RecordCollector(
                 null,
                 new LogContext("record-queue-test "),
                 new DefaultProductionExceptionHandler(),

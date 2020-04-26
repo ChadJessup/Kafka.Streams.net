@@ -36,7 +36,7 @@ namespace Kafka.Streams.RocksDbState
             {
                 throw new InvalidStateStoreException(string.Format("RocksDb iterator for store %s has closed", this.storeName));
             }
-            return base.HasNext();
+            return base.MoveNext();
         }
 
         public override KeyValuePair<Bytes, byte[]> MakeNext()
@@ -68,7 +68,7 @@ namespace Kafka.Streams.RocksDbState
 
         public Bytes PeekNextKey()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new IndexOutOfRangeException();
             }

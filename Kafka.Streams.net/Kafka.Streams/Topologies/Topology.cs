@@ -77,7 +77,7 @@ namespace Kafka.Streams.Topologies
             string Name,
             Regex topicPattern)
         {
-//            internalTopologyBuilder.AddSource<K, V>(null, Name, null, null, null, topicPattern);
+            //            internalTopologyBuilder.AddSource<K, V>(null, Name, null, null, null, topicPattern);
             return this;
         }
 
@@ -445,7 +445,14 @@ namespace Kafka.Streams.Topologies
             string topic,
             string[] parentNames)
         {
-            this.internalTopologyBuilder.AddSink<K, V>(Name, topic, null, null, null, parentNames);
+            this.internalTopologyBuilder.AddSink<K, V>(
+                Name,
+                topic,
+                null,
+                null,
+                null,
+                parentNames);
+
             return this;
         }
 
@@ -479,7 +486,7 @@ namespace Kafka.Streams.Topologies
             string Name,
             string topic,
             IStreamPartitioner<K, V> partitioner,
-            string[] parentNames)
+            params string[] parentNames)
         {
             this.internalTopologyBuilder.AddSink<K, V>(Name, topic, null, null, partitioner, parentNames);
             return this;
@@ -513,7 +520,14 @@ namespace Kafka.Streams.Topologies
             ISerializer<V> valueSerializer,
             string[] parentNames)
         {
-            this.internalTopologyBuilder.AddSink(Name, topic, keySerializer, valueSerializer, null, parentNames);
+            this.internalTopologyBuilder.AddSink(
+                Name,
+                topic,
+                keySerializer,
+                valueSerializer,
+                null,
+                parentNames);
+
             return this;
         }
 
@@ -545,9 +559,16 @@ namespace Kafka.Streams.Topologies
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             IStreamPartitioner<K, V> partitioner,
-            string[] parentNames)
+            params string[] parentNames)
         {
-            this.internalTopologyBuilder.AddSink<K, V>(Name, topic, keySerializer, valueSerializer, partitioner, parentNames);
+            this.internalTopologyBuilder.AddSink(
+                Name,
+                topic,
+                keySerializer,
+                valueSerializer,
+                partitioner,
+                parentNames);
+
             return this;
         }
 
@@ -571,10 +592,17 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
             string Name,
-            ITopicNameExtractor topicExtractor,
-            string[] parentNames)
+            TopicNameExtractor<K, V> topicExtractor,
+            params string[] parentNames)
         {
-            this.internalTopologyBuilder.AddSink<K, V>(Name, topicExtractor, null, null, null, parentNames);
+            this.internalTopologyBuilder.AddSink<K, V>(
+                Name,
+                topicExtractor,
+                null,
+                null,
+                null,
+                parentNames);
+
             return this;
         }
 
@@ -607,11 +635,18 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
             string Name,
-            ITopicNameExtractor topicExtractor,
+            TopicNameExtractor<K, V> topicExtractor,
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            this.internalTopologyBuilder.AddSink<K, V>(Name, topicExtractor, null, null, partitioner, parentNames);
+            this.internalTopologyBuilder.AddSink<K, V>(
+                Name,
+                topicExtractor,
+                null,
+                null,
+                partitioner,
+                parentNames);
+
             return this;
         }
 
@@ -639,12 +674,19 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
             string Name,
-            ITopicNameExtractor topicExtractor,
+            TopicNameExtractor<K, V> topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             string[] parentNames)
         {
-            this.internalTopologyBuilder.AddSink(Name, topicExtractor, keySerializer, valueSerializer, null, parentNames);
+            this.internalTopologyBuilder.AddSink(
+                Name,
+                topicExtractor,
+                keySerializer,
+                valueSerializer,
+                null,
+                parentNames);
+
             return this;
         }
 
@@ -673,13 +715,20 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSink<K, V>(
             string Name,
-            ITopicNameExtractor topicExtractor,
+            TopicNameExtractor<K, V> topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             IStreamPartitioner<K, V> partitioner,
-            string[] parentNames)
+            params string[] parentNames)
         {
-            this.internalTopologyBuilder.AddSink(Name, topicExtractor, keySerializer, valueSerializer, partitioner, parentNames);
+            this.internalTopologyBuilder.AddSink(
+                Name,
+                topicExtractor,
+                keySerializer,
+                valueSerializer,
+                partitioner,
+                parentNames);
+
             return this;
         }
 
@@ -699,7 +748,7 @@ namespace Kafka.Streams.Topologies
         public Topology AddProcessor<K, V>(
             string Name,
             IProcessorSupplier<K, V> supplier,
-            string[] parentNames)
+            params string[] parentNames)
         {
             this.internalTopologyBuilder.AddProcessor<K, V>(Name, supplier, parentNames);
 
@@ -715,15 +764,15 @@ namespace Kafka.Streams.Topologies
          * @throws TopologyException if state store supplier is already added
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology AddStateStore<T>(
+        public Topology AddStateStore<K, V, T>(
             IStoreBuilder<T> storeBuilder,
             string[] processorNames)
             where T : IStateStore
         {
-            //internalTopologyBuilder.addStateStore<T>(
-            //    storeBuilder,
-            //    allowOverride: false,
-            //    processorNames);
+            this.internalTopologyBuilder.AddStateStore<K, V, T>(
+                storeBuilder,
+                allowOverride: false,
+                processorNames);
 
             return this;
         }
@@ -762,8 +811,15 @@ namespace Kafka.Streams.Topologies
             IProcessorSupplier<K, V> stateUpdateSupplier)
             where T : IStateStore
         {
-            this.internalTopologyBuilder.AddGlobalStore(storeBuilder, sourceName, null, keyDeserializer,
-                valueDeserializer, topic, processorName, stateUpdateSupplier);
+            this.internalTopologyBuilder.AddGlobalStore(
+                storeBuilder,
+                sourceName,
+                null,
+                keyDeserializer,
+                valueDeserializer,
+                topic,
+                processorName,
+                stateUpdateSupplier);
 
             return this;
         }
@@ -804,8 +860,15 @@ namespace Kafka.Streams.Topologies
             IProcessorSupplier<K, V> stateUpdateSupplier)
             where T : IStateStore
         {
-            this.internalTopologyBuilder.AddGlobalStore(storeBuilder, sourceName, timestampExtractor, keyDeserializer,
-                valueDeserializer, topic, processorName, stateUpdateSupplier);
+            this.internalTopologyBuilder.AddGlobalStore(
+                storeBuilder,
+                sourceName,
+                timestampExtractor,
+                keyDeserializer,
+                valueDeserializer,
+                topic,
+                processorName,
+                stateUpdateSupplier);
 
             return this;
         }

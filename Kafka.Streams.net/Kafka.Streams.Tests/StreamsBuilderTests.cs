@@ -224,7 +224,7 @@ namespace Kafka.Streams.Tests
                         }
 
                         // no exception .As thrown
-                        Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)),
+                        Assert.Equal(Collections.singletonList(new KeyValueTimestamp<string, string>("A", "aa", 0)),
                                  processorSupplier.TheCapturedProcessor().processed);
                     }
 
@@ -248,8 +248,8 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         driver.PipeInput(recordFactory.Create("topic-source", "A", "aa"));
                     }
 
-                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), sourceProcessorSupplier.TheCapturedProcessor().processed);
-                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), throughProcessorSupplier.TheCapturedProcessor().processed);
+                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<string, string>("A", "aa", 0)), sourceProcessorSupplier.TheCapturedProcessor().processed);
+                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<string, string>("A", "aa", 0)), throughProcessorSupplier.TheCapturedProcessor().processed);
                     }
 
                 [Fact]
@@ -276,10 +276,10 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         driver.PipeInput(recordFactory.Create(topic1, "D", "dd"));
                     }
 
-                    Assert.EqualsasList(new KeyValueTimestamp<>("A", "aa", 0),
-                            new KeyValueTimestamp<>("B", "bb", 0),
-                            new KeyValueTimestamp<>("C", "cc", 0),
-                            new KeyValueTimestamp<>("D", "dd", 0)), processorSupplier.TheCapturedProcessor().processed);
+                    Assert.EqualsasList(new KeyValueTimestamp<string, string>("A", "aa", 0),
+                            new KeyValueTimestamp<string, string>("B", "bb", 0),
+                            new KeyValueTimestamp<string, string>("C", "cc", 0),
+                            new KeyValueTimestamp<string, string>("D", "dd", 0)), processorSupplier.TheCapturedProcessor().processed);
                     }
 
             [Fact]
@@ -400,7 +400,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     builder.Build();
                 }
 
-        [Fact]// // (expected = NullPointerException))
+        [Fact]// // (expected = NullReferenceException))
                 public void shouldThrowExceptionWhenTopicNamesAreNull()
                 {
                     builder.Stream(new List<string> { null, null });

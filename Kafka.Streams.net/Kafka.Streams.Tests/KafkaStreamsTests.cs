@@ -528,13 +528,13 @@ namespace Kafka.Streams.Tests
         // [Fact]// (expected = IllegalStateException))
         // public void ShouldNotGetTaskWithKeyAndSerializerWhenNotRunning()
         // {
-        //     globalStreams.metadataForKey("store", "key", Serdes.String().Serializer);
+        //     globalStreams.MetadataForKey("store", "key", Serdes.String().Serializer);
         // }
 
         //[Fact]// (expected = IllegalStateException))
         //public void shouldNotGetTaskWithKeyAndPartitionerWhenNotRunning()
         //{
-        //    globalStreams.metadataForKey("store", "key", (topic, key, value, numPartitions) => 0);
+        //    globalStreams.MetadataForKey("store", "key", (topic, key, value, numPartitions) => 0);
         //}
 
         //[Fact]
@@ -548,7 +548,7 @@ namespace Kafka.Streams.Tests
         //        StreamsBuilder builder = new StreamsBuilder();
         //        CountDownLatch latch = new CountDownLatch(1);
         //        string topic = "input";
-        //        CLUSTER.createTopics(topic);
+        //        CLUSTER.CreateTopics(topic);
 
         //        builder.Stream(topic, Consumed.With(Serdes.String(), Serdes.String()))
         //                .Foreach((key, value) =>
@@ -570,7 +570,7 @@ namespace Kafka.Streams.Tests
         //        streams.Start();
         //        IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(topic,
         //            Collections.singletonList(KeyValuePair.Create("A", "A")),
-        //            TestUtils.producerConfig(
+        //            TestUtils.ProducerConfig(
         //                CLUSTER.bootstrapServers(),
         //                Serdes.String().Serializer,
         //            Serdes.String().Serializer,
@@ -644,7 +644,7 @@ namespace Kafka.Streams.Tests
         //    }
         //    catch (IllegalStateException expected)
         //    {
-        //        Assert.Equal("Cannot clean up while running.", expected.getMessage());
+        //        Assert.Equal("Cannot clean up while running.", expected.Message);
         //    }
         //}
 
@@ -670,7 +670,7 @@ namespace Kafka.Streams.Tests
         //                latch.countDown();
         //            }
         //        });
-        //        string appDir = props.Get(StreamsConfig.STATE_DIR_CONFIG) + Path.DirectorySeparatorChar + props.getProperty(StreamsConfig.ApplicationId);
+        //        string appDir = props.Get(StreamsConfig.STATE_DIR_CONFIG) + Path.DirectorySeparatorChar + props.Get(StreamsConfig.ApplicationId);
         //        File oldTaskDir = new FileInfo(appDir, "10_1");
         //        Assert.True(oldTaskDir.mkdirs());
 
@@ -724,10 +724,10 @@ namespace Kafka.Streams.Tests
         //{
         //    string inputTopic = testName.getMethodName() + "-input";
         //    string outputTopic = testName.getMethodName() + "-output";
-        //    CLUSTER.createTopics(inputTopic, outputTopic);
+        //    CLUSTER.CreateTopics(inputTopic, outputTopic);
 
         //    Topology topology = new Topology();
-        //    topology.AddSource("source", Serdes.String().deserializer(), Serdes.String().deserializer(), inputTopic)
+        //    topology.AddSource("source", Serdes.String().Deserializer, Serdes.String().Deserializer, inputTopic)
         //            .AddProcessor("process", () => new AbstractProcessor<string, string>()
         //            {
         //                //public void process(string key, string value)
@@ -773,7 +773,7 @@ namespace Kafka.Streams.Tests
         //                                     string globalStoreName,
         //                                     bool isPersistentStore) //// throws Exception
         //{
-        //    CLUSTER.createTopics(inputTopic, outputTopic, globalTopicName);
+        //    CLUSTER.CreateTopics(inputTopic, outputTopic, globalTopicName);
         //    IStoreBuilder<IKeyValueStore<string, long>> storeBuilder = Stores.KeyValueStoreBuilder(
         //            isPersistentStore ?
         //                Stores.PersistentKeyValueStore(storeName)
@@ -781,7 +781,7 @@ namespace Kafka.Streams.Tests
         //            Serdes.String(),
         //            Serdes.Long());
         //    Topology topology = new Topology();
-        //    topology.AddSource("source", Serdes.String().deserializer(), Serdes.String().deserializer(), inputTopic)
+        //    topology.AddSource("source", Serdes.String().Deserializer, Serdes.String().Deserializer, inputTopic)
         //                    .AddProcessor("process", () => new AbstractProcessor<string, string>()
         //                    {
         //                        //                                public void process(string key, string value)
@@ -802,8 +802,8 @@ namespace Kafka.Streams.Tests
         //            Serdes.String(), Serdes.String()).WithLoggingDisabled();
         //    topology.addGlobalStore(globalStoreBuilder,
         //            "global",
-        //            Serdes.String().deserializer(),
-        //            Serdes.String().deserializer(),
+        //            Serdes.String().Deserializer,
+        //            Serdes.String().Deserializer,
         //            globalTopicName,
         //            globalTopicName + "-processor",
         //            new MockProcessorSupplier());
@@ -833,7 +833,7 @@ namespace Kafka.Streams.Tests
         //    {
         //        IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(topic,
         //                Collections.singletonList(KeyValuePair.Create("A", "A")),
-        //                TestUtils.producerConfig(
+        //                TestUtils.ProducerConfig(
         //                        CLUSTER.bootstrapServers(),
         //                        Serdes.String().Serializer,
         //                    Serdes.String().Serializer,

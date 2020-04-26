@@ -1,8 +1,14 @@
 using Kafka.Streams.Configs;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
+using Kafka.Streams.Processors;
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Threads.KafkaStreams;
+using Kafka.Streams.Topologies;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Integration
@@ -17,8 +23,8 @@ namespace Kafka.Streams.Tests.Integration
 
         private const string INPUT_TOPIC = "input-topic";
 
-        private KafkaStreamsThread client1;
-        private KafkaStreamsThread client2;
+        private IKafkaStreamsThread client1;
+        private IKafkaStreamsThread client2;
         private readonly bool client1IsOk = false;
         private readonly bool client2IsOk = false;
 
@@ -59,7 +65,7 @@ namespace Kafka.Streams.Tests.Integration
                                             Serdes.Int()).WithLoggingDisabled();
             builder.AddStateStore(KeyValueStoreBuilder);
             builder.Stream(INPUT_TOPIC, Consumed.With(Serdes.Int(), Serdes.Int()))
-                .transform(() => new Transformer<int, int, KeyValuePair<int, int>>();
+                .Transform(() => new Transformer<int, int, KeyValuePair<int, int>>());
             //        {
             //
             //
@@ -80,7 +86,7 @@ namespace Kafka.Streams.Tests.Integration
             Topology topology = builder.Build();
             createClients(topology, streamsConfiguration(), topology, streamsConfiguration());
 
-            setStateListenersForVerification(thread => thread.standbyTasks().IsEmpty() && !thread.activeTasks().IsEmpty());
+            setStateListenersForVerification(thread => thread.StandbyTasks().IsEmpty() && !thread.ActiveTasks().IsEmpty());
 
             startClients();
 
@@ -107,7 +113,7 @@ namespace Kafka.Streams.Tests.Integration
                 streamsConfiguration2
             );
 
-            setStateListenersForVerification(thread => !thread.standbyTasks().IsEmpty() && !thread.activeTasks().IsEmpty());
+            setStateListenersForVerification(thread => !thread.StandbyTasks().IsEmpty() && !thread.ActiveTasks().IsEmpty());
 
             startClients();
 
@@ -116,10 +122,11 @@ namespace Kafka.Streams.Tests.Integration
             );
         }
 
-        private void CreateClients(Topology topology1,
-                                   StreamsConfig streamsConfiguration1,
-                                   Topology topology2,
-                                   StreamsConfig streamsConfiguration2)
+        private void CreateClients(
+            Topology topology1,
+            StreamsConfig streamsConfiguration1,
+            Topology topology2,
+            StreamsConfig streamsConfiguration2)
         {
 
             client1 = new KafkaStreamsThread(topology1, streamsConfiguration1);

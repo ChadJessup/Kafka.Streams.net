@@ -3,18 +3,18 @@ using Kafka.Streams.Processors.Interfaces;
 
 namespace Kafka.Streams.Factories
 {
-    internal class WrappedTopicExtractor : ITopicNameExtractor
+    internal class WrappedTopicExtractor<K, V> : ITopicNameExtractor<K, V>
     {
-        private TopicNameExtractor<object, object> topicExtractor;
+        private TopicNameExtractor<K, V> topicExtractor;
 
-        public WrappedTopicExtractor(TopicNameExtractor<object, object> topicExtractor)
+        public WrappedTopicExtractor(TopicNameExtractor<K, V> topicExtractor)
         {
-            this.topicExtractor = topicExtractor;
+            this.topicExtractor = topicExtractor ?? throw new System.ArgumentNullException(nameof(topicExtractor));
         }
 
-        string ITopicNameExtractor.Extract<K1, V1>(K1 key, V1 value, IRecordContext recordContext)
+        public string Extract(K key, V value, IRecordContext recordContext)
         {
-            return this.topicExtractor(key, value, recordContext);
+            return this.topicExtractor.Invoke(key, value, recordContext);
         }
     }
 }

@@ -44,7 +44,7 @@
 //        {
 //            bool hasNext = false;
 //            while ((currentIterator == null || !(hasNext = hasNextConditionHasNext()) || !currentSegment.IsOpen())
-//                    && segments.HasNext())
+//                    && segments.MoveNext())
 //            {
 //                Close();
 //                currentSegment = segments.MoveNext();

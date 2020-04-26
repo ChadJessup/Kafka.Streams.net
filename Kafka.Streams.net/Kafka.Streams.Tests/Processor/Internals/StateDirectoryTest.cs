@@ -1,9 +1,16 @@
 using Kafka.Common;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Errors;
+using Kafka.Streams.State;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Temporary;
+using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Tests.Integration;
+using Kafka.Streams.Tests.Processor.Internals.Assignment;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Xunit;
 
@@ -13,14 +20,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
     {
 
         private MockTime time = new MockTime();
-        private File stateDir;
+        private DirectoryInfo stateDir;
         private readonly string applicationId = "applicationId";
         private StateDirectory directory;
-        private readonly File appDir;
+        private DirectoryInfo appDir;
 
         private void InitializeStateDirectory(bool createStateDirectory)
         {// throws Exception
-            stateDir = new FileInfo(TestUtils.IO_TMP_DIR, "kafka-" + TestUtils.randomString(5));
+            stateDir = new DirectoryInfo(TestUtils.IO_TMP_DIR, "kafka-" + TestUtils.randomString(5));
             if (!createStateDirectory)
             {
                 cleanup();
@@ -34,13 +41,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //        }
             //    }),
             //            time, createStateDirectory);
-            appDir = new FileInfo(stateDir, applicationId);
+            appDir = new DirectoryInfo(Path.Combine(stateDir.FullName, applicationId));
         }
 
 
         public void Before()
         {// throws Exception
-            initializeStateDirectory(true);
+            InitializeStateDirectory(true);
         }
 
 
@@ -62,7 +69,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldCreateTaskStateDirectory()
         {
             TaskId taskId = new TaskId(0, 0);
-            File taskDirectory = directory.directoryForTask(taskId);
+            var taskDirectory = directory.DirectoryForTask(taskId);
             Assert.True(taskDirectory.Exists);
             Assert.True(taskDirectory.isDirectory());
         }
@@ -71,27 +78,26 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldLockTaskStateDirectory()
         {// throws Exception
             TaskId taskId = new TaskId(0, 0);
-            File taskDirectory = directory.directoryForTask(taskId);
+            var taskDirectory = directory.DirectoryForTask(taskId);
 
             directory.Lock(taskId);
 
             try
             {
-                FileChannel channel = FileChannel.open(
-                    new FileInfo(taskDirectory, StateDirectory.LOCK_FILE_NAME).toPath(),
-                    StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+                FileStream channel = new FileStream(
+                    Path.Combine(taskDirectory.FullName, StateDirectory.LOCK_FILE_NAME),
+                    FileMode.Create, FileAccess.Write);
 
-
-                    channel.tryLock();
+                channel.Lock(0, channel.Length);
                 Assert.True(false, "shouldn't be able to lock already locked directory");
             }
-            catch (OverlappingFileLockException e)
+            catch (Exception e)
             {
                 // swallow
             }
             finally
             {
-                directory.unlock(taskId);
+                directory.Unlock(taskId);
             }
         }
 
@@ -99,7 +105,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldBeTrueIfAlreadyHoldsLock()
         {// throws Exception
             TaskId taskId = new TaskId(0, 0);
-            directory.directoryForTask(taskId);
+            directory.DirectoryForTask(taskId);
             directory.Lock(taskId);
             try
             {
@@ -107,7 +113,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             }
             finally
             {
-                directory.unlock(taskId);
+                directory.Unlock(taskId);
             }
         }
 
@@ -116,14 +122,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {// throws Exception
             TaskId taskId = new TaskId(0, 0);
 
-            Utils.Delete(stateDir);
+            stateDir.Delete(recursive: true);
 
             try
             {
-                directory.directoryForTask(taskId);
+                directory.DirectoryForTask(taskId);
                 Assert.True(false, "Should have thrown ProcessorStateException");
             }
-            catch (ProcessorStateException expected)
+            catch (ProcessorStateException)
             {
                 // swallow
             }
@@ -131,58 +137,65 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         [Fact]
         public void ShouldNotLockDeletedDirectory()
-        {// throws Exception
+        {
             TaskId taskId = new TaskId(0, 0);
 
-            Utils.Delete(stateDir);
+            stateDir.Delete(recursive: true);
             Assert.False(directory.Lock(taskId));
         }
 
         [Fact]
         public void ShouldLockMultipleTaskDirectories()
-        {// throws Exception
+        {
             TaskId taskId = new TaskId(0, 0);
-            var task1Dir = directory.directoryForTask(taskId);
+            var task1Dir = directory.DirectoryForTask(taskId);
             TaskId taskId2 = new TaskId(1, 0);
-            var task2Dir = directory.directoryForTask(taskId2);
+            var task2Dir = directory.DirectoryForTask(taskId2);
 
+            try
+            {
+                FileStream channel1 = new FileStream(
+                    Path.Combine(task1Dir.FullName, StateDirectory.LOCK_FILE_NAME),
+                    FileMode.Create,
+                    FileAccess.Write);
 
-            FileChannel channel1 = FileChannel.open(
-                new FileInfo(task1Dir, StateDirectory.LOCK_FILE_NAME).toPath(),
-                StandardOpenOption.CREATE,
-                StandardOpenOption.WRITE);
-            FileChannel channel2 = FileChannel.open(new FileInfo(task2Dir, StateDirectory.LOCK_FILE_NAME).toPath(),
-                StandardOpenOption.CREATE,
-                StandardOpenOption.WRITE);
+                FileStream channel2 = new FileStream(Path.Combine(task2Dir.FullName, StateDirectory.LOCK_FILE_NAME),
+                    FileMode.Create,
+                    FileAccess.Write);
 
-            directory.Lock(taskId);
-            directory.Lock(taskId2);
+                directory.Lock(taskId);
+                directory.Lock(taskId2);
 
-            channel1.tryLock();
-            channel2.tryLock();
-            Assert.True(false, "shouldn't be able to lock already locked directory");
-
-            // was finally
-            directory.unlock(taskId);
-            directory.unlock(taskId2);
+                channel1.Lock(0, channel1.Length);
+                channel2.Lock(0, channel2.Length);
+                Assert.True(false, "shouldn't be able to lock already locked directory");
+            }
+            catch (IOException)
+            {
+                Assert.True(true);
+            }
+            finally
+            {
+                directory.Unlock(taskId);
+                directory.Unlock(taskId2);
+            }
         }
 
         [Fact]
         public void ShouldReleaseTaskStateDirectoryLock()
         {// throws Exception
             TaskId taskId = new TaskId(0, 0);
-            var taskDirectory = directory.directoryForTask(taskId);
+            var taskDirectory = directory.DirectoryForTask(taskId);
 
             directory.Lock(taskId);
-            directory.unlock(taskId);
+            directory.Unlock(taskId);
 
-            // FileChannel channel = FileChannel.open(
-            //     new FileInfo(taskDirectory, StateDirectory.LOCK_FILE_NAME).toPath(),
-            //     StandardOpenOption.CREATE,
-            //     StandardOpenOption.WRITE))
-            // {
-            //     channel.tryLock();
-            // }
+            FileStream channel = new FileStream(
+                Path.Combine(taskDirectory.FullName, StateDirectory.LOCK_FILE_NAME),
+                FileMode.Create,
+                FileAccess.Write);
+
+            channel.Lock(0, channel.Length);
         }
 
         [Fact]
@@ -194,75 +207,76 @@ namespace Kafka.Streams.Tests.Processor.Internals
             {
                 directory.Lock(task0);
                 directory.Lock(task1);
-                directory.directoryForTask(new TaskId(2, 0));
+                directory.DirectoryForTask(new TaskId(2, 0));
 
-                List<FileInfo> files = Arrays.asList(Objects.requireNonNull(appDir.listFiles()));
-                Assert.Equal(3, files.Count);
+                var files = appDir.listFiles();
+                Assert.Equal(3, files.Count());
 
                 time.Sleep(1000);
-                directory.cleanRemovedTasks(0);
+                directory.CleanRemovedTasks(0);
 
-                files = Arrays.asList(Objects.requireNonNull(appDir.listFiles()));
-                Assert.Equal(2, files.Count);
-                Assert.True(files.Contains(new FileInfo(appDir, task0.ToString())));
-                Assert.True(files.Contains(new FileInfo(appDir, task1.ToString())));
+                files = appDir.listFiles();
+                Assert.Equal(2, files.Count());
+                Assert.Contains(new FileInfo(Path.Combine(appDir.FullName, task0.ToString())), files);
+                Assert.Contains(new FileInfo(Path.Combine(appDir.FullName, task1.ToString())), files);
             }
             finally
             {
-                directory.unlock(task0);
-                directory.unlock(task1);
+                directory.Unlock(task0);
+                directory.Unlock(task1);
             }
         }
 
         [Fact]
         public void ShouldCleanupStateDirectoriesWhenLastModifiedIsLessThanNowMinusCleanupDelay()
         {
-            File dir = directory.directoryForTask(new TaskId(2, 0));
+            var dir = directory.DirectoryForTask(new TaskId(2, 0));
             int cleanupDelayMs = 60000;
-            directory.cleanRemovedTasks(cleanupDelayMs);
+            directory.CleanRemovedTasks(cleanupDelayMs);
             Assert.True(dir.Exists);
 
             time.Sleep(cleanupDelayMs + 1000);
-            directory.cleanRemovedTasks(cleanupDelayMs);
+            directory.CleanRemovedTasks(cleanupDelayMs);
             Assert.False(dir.Exists);
         }
 
         [Fact]
         public void ShouldNotRemoveNonTaskDirectoriesAndFiles()
         {
-            File otherDir = TestUtils.GetTempDirectory(stateDir.toPath(), "foo");
-            directory.cleanRemovedTasks(0);
+            var otherDir = TestUtils.GetTempDirectory(stateDir.FullName, "foo");
+            directory.CleanRemovedTasks(0);
             Assert.True(otherDir.Exists);
         }
 
         [Fact]
         public void ShouldListAllTaskDirectories()
         {
-            TestUtils.GetTempDirectory(stateDir.toPath(), "foo");
-            File taskDir1 = directory.directoryForTask(new TaskId(0, 0));
-            File taskDir2 = directory.directoryForTask(new TaskId(0, 1));
+            TestUtils.GetTempDirectory(stateDir.FullName, "foo");
+            var taskDir1 = directory.DirectoryForTask(new TaskId(0, 0));
+            var taskDir2 = directory.DirectoryForTask(new TaskId(0, 1));
 
-            List<File> dirs = Arrays.asList(directory.listTaskDirectories());
+            List<DirectoryInfo> dirs = Arrays.asList(directory.ListTaskDirectories());
             Assert.Equal(2, dirs.Count);
-            Assert.True(dirs.Contains(taskDir1));
-            Assert.True(dirs.Contains(taskDir2));
+            Assert.Contains(taskDir1, dirs);
+            Assert.Contains(taskDir2, dirs);
         }
 
         [Fact]
         public void ShouldCreateDirectoriesIfParentDoesntExist()
         {
             DirectoryInfo tempDir = TestUtils.GetTempDirectory();
-            DirectoryInfo stateDir = new DirectoryInfo(Path.Combine(tempDir.FullName, "foo", "state-dir");
-            //            StateDirectory stateDirectory = new StateDirectory(
-            //                new StreamsConfig(new StreamsConfig() {
-            //                {
-            //                    Put(StreamsConfig.ApplicationIdConfig, applicationId);
-            //            Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
-            //            Put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
-            //        }
-            //    }),
-            //            time, true);
-            var taskDir = stateDirectory.directoryForTask(new TaskId(0, 0));
+            DirectoryInfo stateDir = new DirectoryInfo(Path.Combine(tempDir.FullName, "foo", "state-dir"));
+            StateDirectory stateDirectory = new StateDirectory(
+                null,
+            new StreamsConfig
+            {
+                ApplicationId = applicationId,
+                BootstrapServers = "dummy:1234",
+                StateStoreDirectory = stateDir,
+            },
+            time);
+
+            var taskDir = stateDirectory.DirectoryForTask(new TaskId(0, 0));
             Assert.True(stateDir.Exists);
             Assert.True(taskDir.Exists);
         }
@@ -270,49 +284,49 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldLockGlobalStateDirectory()
         {// throws Exception
-            directory.lockGlobalState();
+            directory.LockGlobalState();
 
             try
             {
-                FileChannel channel = FileChannel.open(
-                    new FileInfo(directory.globalStateDir(), StateDirectory.LOCK_FILE_NAME).toPath(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.WRITE);
+                FileStream channel = new FileStream(
+                    Path.Combine(directory.GlobalStateDir().FullName, StateDirectory.LOCK_FILE_NAME),
+                    FileMode.Create,
+                    FileAccess.Write);
+
                 channel.Lock();
                 Assert.True(false, "Should have thrown OverlappingFileLockException");
             }
-            catch (OverlappingFileLockException expcted)
+            catch (Exception)
             {
                 // swallow
             }
             finally
             {
-                directory.unlockGlobalState();
+                directory.UnlockGlobalState();
             }
         }
 
         [Fact]
         public void ShouldUnlockGlobalStateDirectory()
-        {// throws Exception
-            directory.lockGlobalState();
-            directory.unlockGlobalState();
+        {
+            directory.LockGlobalState();
+            directory.UnlockGlobalState();
 
-            //try (
-            //    FileChannel channel = FileChannel.open(
-            //        new FileInfo(directory.globalStateDir(), StateDirectory.LOCK_FILE_NAME).toPath(),
-            //        StandardOpenOption.CREATE,
-            //        StandardOpenOption.WRITE)
-            //    ) {
-            //    // should lock without any exceptions
-            //    channel.Lock();
-            //}
+            FileStream channel = new FileStream(
+                Path.Combine(directory.GlobalStateDir().FullName, StateDirectory.LOCK_FILE_NAME),
+                FileMode.Create,
+                FileAccess.Write);
+
+            // should lock without any exceptions
+            channel.Lock();
         }
 
         [Fact]
         public void ShouldNotLockStateDirLockedByAnotherThread()
-        {// throws Exception
+        {
             TaskId taskId = new TaskId(0, 0);
-            AtomicReference<IOException> exceptionOnThread = new AtomicReference<>();
+            IOException? exceptionOnThread = null;
+
             Thread thread = new Thread(() =>
             {
                 try
@@ -321,13 +335,15 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 }
                 catch (IOException e)
                 {
-                    exceptionOnThread.set(e);
+                    Interlocked.Exchange(ref exceptionOnThread, e);
                 }
             });
 
             thread.Start();
             thread.Join(30000);
-            Assert.Null("should not have had an exception during locking on other thread", exceptionOnThread.Get());
+
+            // should not have had an exception during locking on other thread
+            Assert.Null(exceptionOnThread);
             Assert.False(directory.Lock(taskId));
         }
 
@@ -337,26 +353,28 @@ namespace Kafka.Streams.Tests.Processor.Internals
             TaskId taskId = new TaskId(0, 0);
             CountDownLatch lockLatch = new CountDownLatch(1);
             CountDownLatch unlockLatch = new CountDownLatch(1);
-            AtomicReference<Exception> exceptionOnThread = new AtomicReference<>();
+            Exception? exceptionOnThread = null;
+
             Thread thread = new Thread(() =>
             {
                 try
                 {
                     directory.Lock(taskId);
                     lockLatch.countDown();
-                    unlockLatch.await();
-                    directory.unlock(taskId);
+                    unlockLatch.wait();
+                    directory.Unlock(taskId);
                 }
                 catch (Exception e)
                 {
-                    exceptionOnThread.set(e);
+                    Interlocked.Exchange(ref exceptionOnThread, e);
                 }
             });
+
             thread.Start();
-            lockLatch.await(5, TimeUnit.SECONDS);
+            lockLatch.wait(5, TimeUnit.SECONDS);
 
             Assert.Null("should not have had an exception on other thread", exceptionOnThread.Get());
-            directory.unlock(taskId);
+            directory.Unlock(taskId);
             Assert.False(directory.Lock(taskId));
 
             unlockLatch.countDown();
@@ -369,22 +387,22 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldCleanupAllTaskDirectoriesIncludingGlobalOne()
         {
-            directory.directoryForTask(new TaskId(1, 0));
-            directory.globalStateDir();
+            directory.DirectoryForTask(new TaskId(1, 0));
+            directory.GlobalStateDir();
 
-            List<File> files = Arrays.asList(Objects.requireNonNull(appDir.listFiles()));
+            var files = Arrays.asList(appDir.listFiles());
             Assert.Equal(2, files.Count);
 
-            directory.clean();
+            directory.Clean();
 
-            files = Arrays.asList(Objects.requireNonNull(appDir.listFiles()));
-            Assert.Equal(0, files.Count);
+            files = Arrays.asList(appDir.listFiles());
+            Assert.Empty(files);
         }
 
         [Fact]
         public void ShouldNotCreateBaseDirectory()
         {// throws Exception
-            initializeStateDirectory(false);
+            InitializeStateDirectory(false);
             Assert.False(stateDir.Exists);
             Assert.False(appDir.Exists);
         }
@@ -392,24 +410,24 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldNotCreateTaskStateDirectory()
         {// throws Exception
-            initializeStateDirectory(false);
+            InitializeStateDirectory(false);
             TaskId taskId = new TaskId(0, 0);
-            File taskDirectory = directory.directoryForTask(taskId);
+            var taskDirectory = directory.DirectoryForTask(taskId);
             Assert.False(taskDirectory.Exists);
         }
 
         [Fact]
         public void ShouldNotCreateGlobalStateDirectory()
         {// throws Exception
-            initializeStateDirectory(false);
-            File globalStateDir = directory.globalStateDir();
+            InitializeStateDirectory(false);
+            var globalStateDir = directory.GlobalStateDir();
             Assert.False(globalStateDir.Exists);
         }
 
         [Fact]
         public void ShouldLockTaskStateDirectoryWhenDirectoryCreationDisabled()
         {// throws Exception
-            initializeStateDirectory(false);
+            InitializeStateDirectory(false);
             TaskId taskId = new TaskId(0, 0);
             Assert.True(directory.Lock(taskId));
         }
@@ -417,8 +435,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldLockGlobalStateDirectoryWhenDirectoryCreationDisabled()
         {// throws Exception
-            initializeStateDirectory(false);
-            Assert.True(directory.lockGlobalState());
+            InitializeStateDirectory(false);
+            Assert.True(directory.LockGlobalState());
         }
     }
 }

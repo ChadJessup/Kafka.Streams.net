@@ -91,7 +91,7 @@ namespace Kafka.Streams.Processors.Internals
                     throw new StreamsException("Deserialization exception handler is set to fail upon" +
                         " a deserialization error. If you would rather have the streaming pipeline" +
                         " continue after a deserialization error, please set the " +
-                        StreamsConfig.DefaultDeserializationExceptionHandlerClass + " appropriately.",
+                        StreamsConfig.DefaultDeserializationExceptionHandlerClassConfig + " appropriately.",
                         deserializationException);
                 }
                 else

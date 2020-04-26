@@ -15,7 +15,7 @@ using Kafka.Streams.State.ReadOnly;
 using Kafka.Streams.Temporary;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
-using Kafka.Streams.Threads.KafkaStreamsThread;
+using Kafka.Streams.Threads.KafkaStreams;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -129,10 +129,10 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void shouldReduceWindowed()
         {// throws Exception
-            long firstBatchTimestamp = mockTime.NowAsEpochMilliseconds; ;
+            long firstBatchTimestamp = mockTime.NowAsEpochMilliseconds;
             mockTime.Sleep(1000);
             produceMessages(firstBatchTimestamp);
-            long secondBatchTimestamp = mockTime.NowAsEpochMilliseconds; ;
+            long secondBatchTimestamp = mockTime.NowAsEpochMilliseconds;
             produceMessages(secondBatchTimestamp);
             produceMessages(secondBatchTimestamp);
 
@@ -240,10 +240,10 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void shouldAggregateWindowed()
         {// throws Exception
-            long firstTimestamp = mockTime.NowAsEpochMilliseconds; ;
+            long firstTimestamp = mockTime.NowAsEpochMilliseconds;
             mockTime.Sleep(1000);
             produceMessages(firstTimestamp);
-            long secondTimestamp = mockTime.NowAsEpochMilliseconds; ;
+            long secondTimestamp = mockTime.NowAsEpochMilliseconds;
             produceMessages(secondTimestamp);
             produceMessages(secondTimestamp);
 
@@ -370,7 +370,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void shouldGroupByKey()
         {// throws Exception
-            long timestamp = mockTime.NowAsEpochMilliseconds; ;
+            long timestamp = mockTime.NowAsEpochMilliseconds;
             produceMessages(timestamp);
             produceMessages(timestamp);
 
@@ -417,7 +417,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(
                     userSessionsStream,
                     t1Messages,
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -428,7 +428,7 @@ namespace Kafka.Streams.Tests.Integration
                     userSessionsStream,
                     Collections.singletonList(
                             KeyValuePair.Create("emily", "resume")),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -441,7 +441,7 @@ namespace Kafka.Streams.Tests.Integration
                             KeyValuePair.Create("bob", "pause"),
                             KeyValuePair.Create("penny", "stop")
                     ),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -454,7 +454,7 @@ namespace Kafka.Streams.Tests.Integration
                             KeyValuePair.Create("bob", "resume"), // bobs session continues
                             KeyValuePair.Create("jo", "resume")   // jo's starts new session
                     ),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -466,7 +466,7 @@ namespace Kafka.Streams.Tests.Integration
                 Collections.singletonList(
                     KeyValuePair.Create("jo", "late")   // jo has late arrival
                 ),
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.String().Serializer,
                     Serdes.String().Serializer,
@@ -529,7 +529,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(
                     userSessionsStream,
                     t1Messages,
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -541,7 +541,7 @@ namespace Kafka.Streams.Tests.Integration
                     Collections.singletonList(
                             KeyValuePair.Create("emily", "resume")
                     ),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -554,7 +554,7 @@ namespace Kafka.Streams.Tests.Integration
                             KeyValuePair.Create("bob", "pause"),
                             KeyValuePair.Create("penny", "stop")
                     ),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -567,7 +567,7 @@ namespace Kafka.Streams.Tests.Integration
                             KeyValuePair.Create("bob", "resume"), // bobs session continues
                             KeyValuePair.Create("jo", "resume")   // jo's starts new session
                     ),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -579,7 +579,7 @@ namespace Kafka.Streams.Tests.Integration
                 Collections.singletonList(
                     KeyValuePair.Create("jo", "late")   // jo has late arrival
                 ),
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.String().Serializer,
                     Serdes.String().Serializer,
@@ -630,11 +630,11 @@ namespace Kafka.Streams.Tests.Integration
 
             // verify can query data via IQ
             IReadOnlySessionStore<string, string> sessionStore =
-                kafkaStreams.store(userSessionsStore, QueryableStoreTypes.SessionStore);
+                kafkaStreams.Store(userSessionsStore, QueryableStoreTypes.SessionStore);
             IKeyValueIterator<IWindowed<string>, string> bob = sessionStore.Fetch("bob");
             Assert.Equal(bob.Current, (KeyValuePair.Create(new Windowed<string>("bob", new SessionWindow(t1, t1)), "start")));
             Assert.Equal(bob.Current, (KeyValuePair.Create(new Windowed<string>("bob", new SessionWindow(t3, t4)), "pause:resume")));
-            Assert.False(bob.HasNext());
+            Assert.False(bob.MoveNext());
         }
 
         [Fact]
@@ -650,7 +650,7 @@ namespace Kafka.Streams.Tests.Integration
                 KeyValuePair.Create("jo", "pause"),
                 KeyValuePair.Create("emily", "pause"));
 
-            StreamsConfig producerConfig = TestUtils.producerConfig(
+            StreamsConfig ProducerConfig = TestUtils.ProducerConfig(
                 CLUSTER.bootstrapServers(),
                 Serdes.String().Serializer,
                 Serdes.String().Serializer,
@@ -660,7 +660,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(
                 userSessionsStream,
                 t1Messages,
-                producerConfig,
+                ProducerConfig,
                 t1);
 
             long t2 = t1 + incrementTime;
@@ -669,7 +669,7 @@ namespace Kafka.Streams.Tests.Integration
                 Collections.singletonList(
                     KeyValuePair.Create("emily", "resume")
                 ),
-                producerConfig,
+                ProducerConfig,
                 t2);
             long t3 = t2 + incrementTime;
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(
@@ -678,7 +678,7 @@ namespace Kafka.Streams.Tests.Integration
                     KeyValuePair.Create("bob", "pause"),
                     KeyValuePair.Create("penny", "stop")
                 ),
-                producerConfig,
+                ProducerConfig,
                 t3);
 
             long t4 = t3 + incrementTime;
@@ -688,7 +688,7 @@ namespace Kafka.Streams.Tests.Integration
                     KeyValuePair.Create("bob", "resume"), // bobs session continues
                     KeyValuePair.Create("jo", "resume")   // jo's starts new session
                 ),
-                producerConfig,
+                ProducerConfig,
                 t4);
 
             Dictionary<IWindowed<string>, KeyValuePair<long, long>> results = new Dictionary<IWindowed<string>, KeyValuePair<long, long>>();
@@ -740,7 +740,7 @@ namespace Kafka.Streams.Tests.Integration
                     KeyValuePair.Create(3, "C"),
                     KeyValuePair.Create(4, "D"),
                     KeyValuePair.Create(5, "E")),
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.Int().Serializer,
                     Serdes.String().Serializer,
@@ -755,7 +755,7 @@ namespace Kafka.Streams.Tests.Integration
             outputTopic = "output-" + testNo;
             userSessionsStream = userSessionsStream + "-" + testNo;
             CLUSTER.CreateTopic(streamOneInput, 3, 1);
-            CLUSTER.createTopics(userSessionsStream, outputTopic);
+            CLUSTER.CreateTopics(userSessionsStream, outputTopic);
         }
 
         private void StartStreams()

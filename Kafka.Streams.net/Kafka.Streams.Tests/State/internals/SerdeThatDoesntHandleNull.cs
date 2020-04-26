@@ -35,7 +35,7 @@ namespace Kafka.Streams.Tests.State.Internals
         //            {
         //                if (data == null)
         //                {
-        //                    throw new NullPointerException();
+        //                    throw new NullReferenceException();
         //                }
         //                return base.Deserialize(topic, data);
         //            }

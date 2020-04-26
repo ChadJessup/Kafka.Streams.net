@@ -14,13 +14,13 @@
 //        }
 
 //        public TimeWindowedSerde(Serde<T> inner)
-//            : base(new TimeWindowedSerializer<>(inner.serializer()), new TimeWindowedDeserializer<>(inner.deserializer()))
+//            : base(new TimeWindowedSerializer<>(inner.serializer()), new TimeWindowedDeserializer<>(inner.Deserializer))
 //        {
 //        }
 
 //        // This constructor can be used for serialize/deserialize a windowed topic
 //        public TimeWindowedSerde(ISerde<T> inner, long windowSize)
-//            : base(new TimeWindowedSerializer<T>(inner.serializer()), new TimeWindowedDeserializer<>(inner.deserializer(), windowSize))
+//            : base(new TimeWindowedSerializer<T>(inner.serializer()), new TimeWindowedDeserializer<>(inner.Deserializer, windowSize))
 //        {
 //        }
 

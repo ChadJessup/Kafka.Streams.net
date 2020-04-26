@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Kafka.Common.Extensions;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
@@ -69,7 +70,7 @@ namespace Kafka.Streams.KStream.Internals
             // first get the matching windows
             var timestamp = this.Context.Timestamp;
             this.observedStreamTime = this.observedStreamTime.GetNewest(timestamp);
-            var closeTime = this.observedStreamTime - this.windows.GracePeriod();
+            var closeTime = this.observedStreamTime.Subtract(this.windows.GracePeriod());
 
             var matchedWindows = this.windows.WindowsFor(timestamp);
 
@@ -78,7 +79,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 var windowStart = entry.Key;
                 var windowEnd = entry.Value.EndTime;
-                if (windowEnd > closeTime)
+                if (windowEnd.ToEpochMilliseconds() > closeTime.TotalMilliseconds)
                 {
                     IValueAndTimestamp<Agg> oldAggAndTimestamp = this.windowStore.Fetch(key, windowStart);
                     Agg oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);

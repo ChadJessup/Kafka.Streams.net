@@ -17,7 +17,7 @@ namespace Kafka.Streams.Tests.Integration
             throw new NotImplementedException();
         }
 
-        internal bool wait(int v, TimeUnit sECONDS)
+        internal bool wait(int time, TimeUnit timeUnit)
         {
             throw new NotImplementedException();
         }

@@ -23,7 +23,7 @@
 
 //        public bool HasNext()
 //        {
-//            return bytesIterator.HasNext();
+//            return bytesIterator.MoveNext();
 //        }
 
 

@@ -32,8 +32,8 @@ namespace Kafka.Streams.Tests.Integration
                     Serdes.ByteArray().GetType().FullName,
                     props);
 
-            CLUSTER.createTopics(INPUT_TOPIC);
-            CLUSTER.createTopics(OUTPUT_TOPIC);
+            CLUSTER.CreateTopics(INPUT_TOPIC);
+            CLUSTER.CreateTopics(OUTPUT_TOPIC);
 
             IntegrationTestUtils.PurgeLocalStreamsState(streamsConfiguration);
         }
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tests.Integration
                     .WithValueSerde(Serdes.ByteArray())
                     .WithCachingDisabled()).ToStream().To(OUTPUT_TOPIC);
 
-            StreamsConfig producerConfig = TestUtils.producerConfig(
+            StreamsConfig ProducerConfig = TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(), Serdes.Int().Serializer, BytesSerializer);
 
             var initialKeyValues = new List<KeyValuePair<int, byte[]>>
@@ -58,7 +58,7 @@ namespace Kafka.Streams.Tests.Integration
             };
 
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
-                    INPUT_TOPIC, initialKeyValues, producerConfig, mockTime);
+                    INPUT_TOPIC, initialKeyValues, ProducerConfig, mockTime);
 
             KafkaStreamsThread streams = new KafkaStreamsThread(builder.Build(streamsConfiguration), streamsConfiguration);
             streams.Start();
@@ -66,7 +66,7 @@ namespace Kafka.Streams.Tests.Integration
             StreamsConfig consumerConfig = TestUtils.consumerConfig(
                     CLUSTER.bootstrapServers(), Serdes.Int().Deserializer, Serdes.ByteArray().Deserializer);
 
-            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(
+            IntegrationTestUtils.WaitUntilFinalKeyValueRecordsReceived(
                     consumerConfig, OUTPUT_TOPIC, initialKeyValues);
 
             // wipe out state store to trigger restore process on restart
@@ -77,10 +77,10 @@ namespace Kafka.Streams.Tests.Integration
             List<KeyValuePair<int, Bytes>> newKeyValues =
                     Collections.singletonList(KeyValuePair.Create(2, new Bytes(new byte[3])));
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
-                    INPUT_TOPIC, newKeyValues, producerConfig, mockTime);
+                    INPUT_TOPIC, newKeyValues, ProducerConfig, mockTime);
             streams = new KafkaStreamsThread(builder.Build(streamsConfiguration), streamsConfiguration);
             streams.Start();
-            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(
+            IntegrationTestUtils.WaitUntilFinalKeyValueRecordsReceived(
                     consumerConfig, OUTPUT_TOPIC, newKeyValues);
             streams.Close();
         }

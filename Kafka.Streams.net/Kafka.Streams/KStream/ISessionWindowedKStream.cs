@@ -64,7 +64,7 @@ namespace Kafka.Streams.KStream
          * <pre>{@code
          * KafkaStreams streams = [] // compute sum
          * Sting queryableStoreName = [] // the queryableStoreName should be the Name of the store as defined by the Materialized instance
-         * ReadOnlySessionStore<string,long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
+         * ReadOnlySessionStore<string,long> localWindowStore = streams.Store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
          * string key = "some-key";
          * KeyValueIterator<IWindowed<string>, long> sumForKeyForWindows = localWindowStore.Fetch(key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -83,7 +83,7 @@ namespace Kafka.Streams.KStream
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * @param materialized  an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}.
-         *                      Note: the valueSerde will be automatically set to {@link Serdes#long()} if there is no valueSerde provided
+         *                      Note: the valueSerde will be automatically set to {@link Serdes#Serdes.Long()} if there is no valueSerde provided
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link long} values
          * that represent the latest (rolling) count (i.e., number of records) for each key within a window
          */
@@ -171,7 +171,7 @@ namespace Kafka.Streams.KStream
          * <pre>{@code
          * KafkaStreams streams = [] // some windowed aggregation on value type double
          * Sting queryableStoreName = [] // the queryableStoreName should be the Name of the store as defined by the Materialized instance
-         * ReadOnlySessionStore<string, long> sessionStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>sessionStore());
+         * ReadOnlySessionStore<string, long> sessionStore = streams.Store(queryableStoreName, QueryableStoreTypes.<string, long>sessionStore());
          * string key = "some-key";
          * KeyValueIterator<IWindowed<string>, long> aggForKeyForSession = localWindowStore.Fetch(key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -200,6 +200,7 @@ namespace Kafka.Streams.KStream
             IAggregator<K, V, VR> aggregator,
             Merger<K, VR> sessionMerger,
             Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized);
+
         IKTable<IWindowed<K>, VR> Aggregate<VR>(
             Initializer<VR> initializer,
             IAggregator<K, V, VR> aggregator,
@@ -244,6 +245,7 @@ namespace Kafka.Streams.KStream
          * the latest (rolling) aggregate for each key within a window
          */
         IKTable<IWindowed<K>, V> Reduce(IReducer<V> reducer);
+        IKTable<IWindowed<K>, V> Reduce(Reducer<V> reducer);
 
         /**
          * Combine values of this stream by the grouped key into {@link SessionWindows}.
@@ -283,7 +285,7 @@ namespace Kafka.Streams.KStream
          * <pre>{@code
          * KafkaStreams streams = [] // compute sum
          * Sting queryableStoreName = [] // the queryableStoreName should be the Name of the store as defined by the Materialized instance
-         * ReadOnlySessionStore<string,long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
+         * ReadOnlySessionStore<string,long> localWindowStore = streams.Store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
          * string key = "some-key";
          * KeyValueIterator<IWindowed<string>, long> sumForKeyForWindows = localWindowStore.Fetch(key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -308,6 +310,10 @@ namespace Kafka.Streams.KStream
          */
         IKTable<IWindowed<K>, V> Reduce(
             IReducer<V> reducer,
+            Materialized<K, V, ISessionStore<Bytes, byte[]>> materializedAs);
+
+        IKTable<IWindowed<K>, V> Reduce(
+            Reducer<V> reducer,
             Materialized<K, V, ISessionStore<Bytes, byte[]>> materializedAs);
     }
 }

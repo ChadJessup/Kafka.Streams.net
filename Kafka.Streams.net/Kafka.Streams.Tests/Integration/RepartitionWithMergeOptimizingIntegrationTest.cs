@@ -44,7 +44,7 @@ namespace Kafka.Streams.Tests.Integration
                 Serdes.String().GetType().FullName,
                 props);
 
-            CLUSTER.createTopics(COUNT_TOPIC,
+            CLUSTER.CreateTopics(COUNT_TOPIC,
                                  COUNT_STRING_TOPIC,
                                  INPUT_A_TOPIC,
                                  INPUT_B_TOPIC);
@@ -92,16 +92,16 @@ namespace Kafka.Streams.Tests.Integration
             //
             //            streamsConfiguration.Set(StreamsConfig.TOPOLOGY_OPTIMIZATION, optimizationConfig);
             //
-            //            StreamsConfig producerConfig = TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
+            //            StreamsConfig ProducerConfig = TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
             //
-            //        IntegrationTestUtils.ProduceKeyValuesSynchronously(INPUT_A_TOPIC, GetKeyValues(), producerConfig, mockTime);
-            //            IntegrationTestUtils.ProduceKeyValuesSynchronously(INPUT_B_TOPIC, GetKeyValues(), producerConfig, mockTime);
+            //        IntegrationTestUtils.ProduceKeyValuesSynchronously(INPUT_A_TOPIC, GetKeyValues(), ProducerConfig, mockTime);
+            //            IntegrationTestUtils.ProduceKeyValuesSynchronously(INPUT_B_TOPIC, GetKeyValues(), ProducerConfig, mockTime);
             //
             //            StreamsConfig consumerConfig1 = TestUtils.consumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, LongDeserializer);
             //        StreamsConfig consumerConfig2 = TestUtils.consumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
             //
             //        Topology topology = builder.Build(streamsConfiguration);
-            //        string topologyString = topology.describe().ToString();
+            //        string topologyString = topology.Describe().ToString();
             //        System.Console.Out.WriteLine(topologyString);
             //
             //            if (optimizationConfig.Equals(StreamsConfig.OPTIMIZE))

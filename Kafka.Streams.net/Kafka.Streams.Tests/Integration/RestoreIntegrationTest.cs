@@ -156,16 +156,22 @@ namespace Kafka.Streams.Tests.Integration
 
             // restoring from 1000 to 4000 (committed), and then process from 4000 to 5000 on each of the two partitions
             int offsetLimitDelta = 1000;
-            int offsetCheckpointed = 1000;
+            long offsetCheckpointed = 1000;
             CreateStateForRestoration(INPUT_STREAM);
             SetCommittedOffset(INPUT_STREAM, offsetLimitDelta);
 
-            StateDirectory stateDirectory = new StateDirectory(new StreamsConfig(props), new MockTime(), true);
-            new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 0)).FullName, ".checkpoint"))
-                    .Write(Collections.singletonMap(new TopicPartition(INPUT_STREAM, 0), offsetCheckpointed));
-            new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 1)).FullName, ".checkpoint"))
-                    .Write(Collections.singletonMap(new TopicPartition(INPUT_STREAM, 1), offsetCheckpointed));
+            StateDirectory stateDirectory = new StateDirectory(null, new StreamsConfig(props), new MockTime(), true);
+            new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 0)).FullName, ".checkpoint")))
+                    .Write(new Dictionary<TopicPartition, long?>
+                    {
+                        { new TopicPartition(INPUT_STREAM, 0), offsetCheckpointed },
+                    });
 
+            new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 1)).FullName, ".checkpoint")))
+                    .Write(new Dictionary<TopicPartition, long?>
+                    {
+                        { new TopicPartition(INPUT_STREAM, 1), offsetCheckpointed },
+                    });
             //CountDownLatch startupLatch = new CountDownLatch(1);
             //CountDownLatch shutdownLatch = new CountDownLatch(1);
 
@@ -234,9 +240,9 @@ namespace Kafka.Streams.Tests.Integration
 
             StateDirectory stateDirectory = new StateDirectory(new StreamsConfig(props), new MockTime(), true);
             new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 0)).FullName, ".checkpoint")))
-                    .write(Collections.singletonMap(new TopicPartition(APPID + "-store-changelog", 0), offsetCheckpointed));
+                    .Write(Collections.singletonMap(new TopicPartition(APPID + "-store-changelog", 0), offsetCheckpointed));
             new OffsetCheckpoint(new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(new TaskId(0, 1)).FullName, ".checkpoint")))
-                    .write(Collections.singletonMap(new TopicPartition(APPID + "-store-changelog", 1), offsetCheckpointed));
+                    .Write(Collections.singletonMap(new TopicPartition(APPID + "-store-changelog", 1), offsetCheckpointed));
 
             CountDownLatch startupLatch = new CountDownLatch(1);
             CountDownLatch shutdownLatch = new CountDownLatch(1);
@@ -403,6 +409,14 @@ namespace Kafka.Streams.Tests.Integration
             }
 
             public void Close()
+            {
+            }
+
+            public void Process(int key, int value)
+            {
+            }
+
+            public void Process<K1, V1>(K1 key, V1 value)
             {
             }
         }

@@ -108,8 +108,8 @@ namespace Kafka.Streams.Processors.Interfaces
          */
         ICancellable Schedule(
             TimeSpan interval,
-            PunctuationType type,
-            IPunctuator callback);
+            PunctuationType? type,
+            IPunctuator? callback);
 
         ICancellable Schedule(
             TimeSpan interval,

@@ -36,7 +36,7 @@ namespace Kafka.Streams.Tests.Integration
         private string appID = "abstract-reset-integration-test";
         private StreamsConfig commonClientConfig;
         private StreamsConfig streamsConfig;
-        private StreamsConfig producerConfig;
+        private StreamsConfig ProducerConfig;
         private StreamsConfig resultConsumerConfig;
 
         private void PrepareEnvironment()
@@ -85,12 +85,12 @@ namespace Kafka.Streams.Tests.Integration
                 commonClientConfig.Set(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
             }
 
-            producerConfig = new StreamsConfig();
-            producerConfig.Set(ProducerConfig.ACKS_CONFIG, "All");
-            producerConfig.Set(ProducerConfig.RETRIES_CONFIG, 0);
-            producerConfig.Set(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.Long().Serializer);
-            producerConfig.Set(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
-            producerConfig.SetAll(commonClientConfig);
+            ProducerConfig = new StreamsConfig();
+            ProducerConfig.Set(ProducerConfig.ACKS_CONFIG, "All");
+            ProducerConfig.Set(ProducerConfig.RETRIES_CONFIG, 0);
+            ProducerConfig.Set(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, Serdes.Long().Serializer);
+            ProducerConfig.Set(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, Serdes.String().Serializer);
+            ProducerConfig.SetAll(commonClientConfig);
 
             resultConsumerConfig = new StreamsConfig();
             resultConsumerConfig.Set(ConsumerConfig.GROUP_ID_CONFIG, testId + "-result-consumer");
@@ -179,7 +179,7 @@ namespace Kafka.Streams.Tests.Integration
                 foreach (KeyValuePair<long, string> record in records)
                 {
                     mockTime.Sleep(10);
-                    IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(INPUT_TOPIC, Collections.singleton(record), producerConfig, mockTime.NowAsEpochMilliseconds);
+                    IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(INPUT_TOPIC, Collections.singleton(record), ProducerConfig, mockTime.NowAsEpochMilliseconds);
                 }
             }
 
@@ -302,7 +302,7 @@ namespace Kafka.Streams.Tests.Integration
                 IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(
                     INTERMEDIATE_USER_TOPIC,
                     Collections.singleton(badMessage),
-                        producerConfig,
+                        ProducerConfig,
                     mockTime.NowAsEpochMilliseconds);
 
                 // RESET

@@ -10,7 +10,7 @@ namespace Kafka.Streams.Threads.Stream
     /**
      * Class that handles stream thread transitions
      */
-    public class StreamStateListener : IStateListener
+    public class StreamStateListener : IStateListener<KafkaStreamsThreadStates>
     {
         private readonly ILogger<StreamStateListener> logger;
 
@@ -80,11 +80,10 @@ namespace Kafka.Streams.Threads.Stream
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void OnChange<States>(
-            IThread<States> thread,
-            States abstractNewState,
-            States abstractOldState)
-                where States : Enum
+        public void OnChange(
+            IThread<KafkaStreamsThreadStates> thread,
+            KafkaStreamsThreadStates abstractNewState,
+            KafkaStreamsThreadStates abstractOldState)
         {
             lock (this.threadStatesLock)
             {

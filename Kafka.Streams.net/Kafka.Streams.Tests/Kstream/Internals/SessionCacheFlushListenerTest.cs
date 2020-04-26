@@ -19,7 +19,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            context.setCurrentNode(null);
 //            context.Forward(
 //                new Windowed<>("key", new SessionWindow(21L, 73L)),
-//                new Change<>("newValue", "oldValue"),
+//                new Change<string>("newValue", "oldValue"),
 //                To.All().WithTimestamp(73L));
 //            expect.AstCall();
 //            replay(context);

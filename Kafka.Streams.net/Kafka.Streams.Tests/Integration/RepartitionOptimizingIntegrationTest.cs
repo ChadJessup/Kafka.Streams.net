@@ -3,7 +3,9 @@ using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Threads.KafkaStreams;
 using Kafka.Streams.Topologies;
 using System;
 using System.Collections.Generic;
@@ -16,7 +18,6 @@ namespace Kafka.Streams.Tests.Integration
 {
     public class RepartitionOptimizingIntegrationTest
     {
-
         private const int NUM_BROKERS = 1;
         private const string INPUT_TOPIC = "input";
         private const string COUNT_TOPIC = "outputTopic_0";
@@ -31,23 +32,25 @@ namespace Kafka.Streams.Tests.Integration
 
         private StreamsConfig streamsConfiguration;
 
-        //public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
-        private MockTime mockTime = null;// CLUSTER.time;
+        public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
+        private MockTime mockTime = CLUSTER.time;
 
         public void SetUp()
         {// throws Exception
-            StreamsConfig props = new StreamsConfig();
-            props.Set(StreamsConfig.CacheMaxBytesBuffering, (1024 * 10).ToString());
-            props.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 5000.ToString());
+            StreamsConfig props = new StreamsConfig
+            {
+                CacheMaxBytesBuffering = 1024 * 10,
+                CommitIntervalMs = 5000
+            };
 
             streamsConfiguration = StreamsTestUtils.getStreamsConfig(
                 "maybe-optimized-test-app",
-                //CLUSTER.bootstrapServers(),
+                CLUSTER.bootstrapServers(),
                 Serdes.String().GetType().FullName,
                 Serdes.String().GetType().FullName,
                 props);
 
-            //CLUSTER.createTopics(INPUT_TOPIC,
+            //CLUSTER.CreateTopics(INPUT_TOPIC,
             //                     COUNT_TOPIC,
             //                     AGGREGATION_TOPIC,
             //                     REDUCE_TOPIC,
@@ -59,25 +62,25 @@ namespace Kafka.Streams.Tests.Integration
 
         public void TearDown()
         {// throws Exception
-            CLUSTER.deleteAllTopicsAndWait(30_000L);
+            CLUSTER.DeleteAllTopicsAndWait(30_000L);
         }
 
         [Fact]
         public void ShouldSendCorrectRecords_OPTIMIZED()
         {// throws Exception
-            runIntegrationTest(StreamsConfig.OPTIMIZE,
-                               ONE_REPARTITION_TOPIC);
+            RunIntegrationTest(StreamsConfig.OPTIMIZE, ONE_REPARTITION_TOPIC);
         }
 
         [Fact]
         public void ShouldSendCorrectResults_NO_OPTIMIZATION()
         {// throws Exception
-            runIntegrationTest(StreamsConfig.NoOptimization, FOUR_REPARTITION_TOPICS);
+            RunIntegrationTest(StreamsConfig.NoOptimization, FOUR_REPARTITION_TOPICS);
         }
 
 
-        private void RunIntegrationTest(string optimizationConfig,
-                                        int expectedNumberRepartitionTopics)
+        private void RunIntegrationTest(
+            string optimizationConfig,
+            int expectedNumberRepartitionTopics)
         {// throws Exception
 
             Initializer<int> initializer = new Initializer<int>(() => 0);
@@ -89,20 +92,23 @@ namespace Kafka.Streams.Tests.Integration
 
             StreamsBuilder builder = new StreamsBuilder();
 
-            IKStream<K, V> sourceStream = builder.Stream(INPUT_TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
+            IKStream<string, string> sourceStream = builder.Stream(INPUT_TOPIC, Consumed.With(Serdes.String(), Serdes.String()));
 
-            IKStream<K, V> KeyValuePair.Create(k.ToUpper(CultureInfo.CurrentCulture), v));
+            IKStream<string, string> mappedStream = sourceStream.Map<string, string>((k, v) => KeyValuePair.Create(k.ToUpper(CultureInfo.CurrentCulture), v));
 
             mappedStream.Filter((k, v) => k.Equals("B")).MapValues<string>(v => v.ToUpper(CultureInfo.CurrentCulture))
                 .Process(() => new SimpleProcessor(processorValueCollector));
 
-            IKStream<K, V> countStream = mappedStream.GroupByKey().Count(Materialized.With(Serdes.String(), Serdes.Long())).ToStream();
+            IKStream<string, long> countStream = mappedStream.GroupByKey().Count(Materialized.With<string, long, IKeyValueStore<Bytes, byte[]>>(Serdes.String(), Serdes.Long())).ToStream();
 
             countStream.To(COUNT_TOPIC, Produced.With(Serdes.String(), Serdes.Long()));
 
-            mappedStream.GroupByKey().Aggregate(initializer,
-                                                aggregator,
-                                                Materialized.With(Serdes.String(), Serdes.Int()))
+            mappedStream
+                .GroupByKey()
+                .Aggregate(
+                    initializer,
+                    aggregator,
+                    Materialized.With(Serdes.String(), Serdes.Int()))
                 .ToStream().To(AGGREGATION_TOPIC, Produced.With(Serdes.String(), Serdes.Int()));
 
             // adding operators for case where the repartition node is further downstream
@@ -116,11 +122,11 @@ namespace Kafka.Streams.Tests.Integration
                       Joined.With(Serdes.String(), Serdes.String(), Serdes.Long()))
                 .To(JOINED_TOPIC);
 
-            streamsConfiguration.Set(StreamsConfig.TOPOLOGY_OPTIMIZATION, optimizationConfig);
+            streamsConfiguration.TOPOLOGY_OPTIMIZATION = optimizationConfig;
 
-            StreamsConfig producerConfig = TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
+            StreamsConfig ProducerConfig = TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
 
-            IntegrationTestUtils.ProduceKeyValuesSynchronously(INPUT_TOPIC, GetKeyValues(), producerConfig, mockTime);
+            IntegrationTestUtils.ProduceKeyValuesSynchronously(INPUT_TOPIC, GetKeyValues(), ProducerConfig, mockTime);
 
             StreamsConfig consumerConfig1 = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, LongDeserializer);
             StreamsConfig consumerConfig2 = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.Int().Deserializer);
@@ -143,20 +149,20 @@ namespace Kafka.Streams.Tests.Integration
              */
             Assert.Equal(expectedNumberRepartitionTopics, GetCountOfRepartitionTopicsFound(topologyString));
 
-            KafkaStreamsThread streams = new KafkaStreamsThread(topology, streamsConfiguration);
+            IKafkaStreamsThread streams = new KafkaStreamsThread(topology, streamsConfiguration);
             streams.Start();
 
             var expectedCountKeyValues = new List<KeyValuePair<string, long>> { KeyValuePair.Create("A", 3L), KeyValuePair.Create("B", 3L), KeyValuePair.Create("C", 3L) };
-            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(consumerConfig1, COUNT_TOPIC, expectedCountKeyValues);
+            IntegrationTestUtils.WaitUntilFinalKeyValueRecordsReceived(consumerConfig1, COUNT_TOPIC, expectedCountKeyValues);
 
             var expectedAggKeyValues = new List<KeyValuePair<string, int>> { KeyValuePair.Create("A", 9), KeyValuePair.Create("B", 9), KeyValuePair.Create("C", 9) };
-            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(consumerConfig2, AGGREGATION_TOPIC, expectedAggKeyValues);
+            IntegrationTestUtils.WaitUntilFinalKeyValueRecordsReceived(consumerConfig2, AGGREGATION_TOPIC, expectedAggKeyValues);
 
             var expectedReduceKeyValues = new List<KeyValuePair<string, string>> { KeyValuePair.Create("A", "foo:bar:baz"), KeyValuePair.Create("B", "foo:bar:baz"), KeyValuePair.Create("C", "foo:bar:baz") };
-            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(consumerConfig3, REDUCE_TOPIC, expectedReduceKeyValues);
+            IntegrationTestUtils.WaitUntilFinalKeyValueRecordsReceived(consumerConfig3, REDUCE_TOPIC, expectedReduceKeyValues);
 
             List<KeyValuePair<string, string>> expectedJoinKeyValues = new List<KeyValuePair<string, string>> { KeyValuePair.Create("A", "foo:3"), KeyValuePair.Create("A", "bar:3"), KeyValuePair.Create("A", "baz:3") };
-            IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(consumerConfig3, JOINED_TOPIC, expectedJoinKeyValues);
+            IntegrationTestUtils.WaitUntilFinalKeyValueRecordsReceived(consumerConfig3, JOINED_TOPIC, expectedJoinKeyValues);
 
 
             List<string> expectedCollectedProcessorValues = new List<string> { "FOO", "BAR", "BAZ" };
@@ -164,7 +170,7 @@ namespace Kafka.Streams.Tests.Integration
             Assert.Equal(3, processorValueCollector.Count);
             Assert.Equal(processorValueCollector, expectedCollectedProcessorValues);
 
-            streams.Close(TimeSpan.FromSeconds(5));
+            streams.Close();// TimeSpan.FromSeconds(5));
         }
 
         private int GetCountOfRepartitionTopicsFound(string topologyString)

@@ -48,14 +48,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            {
 //                context.Forward(
 //                    new Windowed<>("key", new SessionWindow(21L, 42L)),
-//                    new Change<>("value", "oldValue"),
+//                    new Change<string>("value", "oldValue"),
 //                    To.All().WithTimestamp(42L));
 //            }
 //            else
 //            {
 //                context.Forward(
 //                    new Windowed<>("key", new SessionWindow(21L, 42L)),
-//                    new Change<>("value", null),
+//                    new Change<string>("value", null),
 //                    To.All().WithTimestamp(42L));
 //            }
 //            expect.AstCall();

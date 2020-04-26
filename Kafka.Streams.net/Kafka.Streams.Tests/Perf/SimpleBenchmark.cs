@@ -244,7 +244,7 @@
 //        int valueSize = int.parseInt(args[4]);
 
 //        StreamsConfig props = Utils.loadProps(propFileName);
-//        string kafka = props.getProperty(StreamsConfig.BootstrapServersConfig);
+//        string kafka = props.Get(StreamsConfig.BootstrapServersConfig);
 
 //        if (kafka == null)
 //        {
@@ -288,7 +288,7 @@
 //    private StreamsConfig SetProduceConsumeProperties(string clientId)
 //    {
 //        StreamsConfig clientProps = new StreamsConfig();
-//        clientProps.Put(ProducerConfig.BootstrapServersConfig, props.getProperty(StreamsConfig.BootstrapServersConfig));
+//        clientProps.Put(ProducerConfig.BootstrapServersConfig, props.Get(StreamsConfig.BootstrapServersConfig));
 //        clientProps.Put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
 //        // the socket buffer needs to be large, especially when running in AWS with
 //        // high latency. if running locally the default is fine.
@@ -558,8 +558,8 @@
 //            public void process(int key, byte[] value)
 //            {
 //                long timestamp = context.Timestamp;
-//                IKeyValueIterator<IWindowed<int>, byte[]> iter = store.Fetch(key - 10, key + 10, ofEpochMilli(timestamp - 1000L), ofEpochMilli(timestamp));
-//                while (iter.HasNext())
+//                IKeyValueIterator<IWindowed<int>, byte[]> iter = store.Fetch(key - 10, key + 10, TimeSpan.FromMilliseconds(timestamp - 1000L), TimeSpan.FromMilliseconds(timestamp));
+//                while (iter.MoveNext())
 //                {
 //                    iter.MoveNext();
 //                }

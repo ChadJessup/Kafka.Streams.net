@@ -239,7 +239,7 @@
 //                        default:
 //                            TaskAssignmentException fatalException = new TaskAssignmentException("Unable to decode assignment data: " +
 //                                "used version: " + usedVersion + "; latest supported version: " + LATEST_SUPPORTED_VERSION);
-//                            log.LogError(fatalException.getMessage(), fatalException);
+//                            log.LogError(fatalException.Message, fatalException);
 //                            throw fatalException;
 //                    }
 

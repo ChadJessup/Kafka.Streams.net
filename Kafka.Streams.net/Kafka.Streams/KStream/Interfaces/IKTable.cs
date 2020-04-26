@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Interfaces
      *     streams.Start()
      *     ...
      *      string queryableStoreName = table.queryableStoreName(); // returns null if KTable is not queryable
-     *     IReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.KeyValueStore);
+     *     IReadOnlyKeyValueStore view = streams.Store(queryableStoreName, QueryableStoreTypes.KeyValueStore);
      *     view[key];
      *}</pre>
      *<p>
@@ -109,7 +109,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -151,7 +151,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -238,7 +238,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -277,7 +277,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = [] // filtering words
-         * IReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
+         * IReadOnlyKeyValueStore<K,V> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<K, V>KeyValueStore);
          * K key = "some-word";
          * V valueForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -734,8 +734,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -789,8 +789,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> TransformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
-                                            string[] stateStoreNames);
+        IKTable<K, VR> TransformValues<VR>(
+            IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+            params string[] stateStoreNames);
 
         /**
          * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -813,8 +814,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
@@ -891,16 +892,16 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
          * KTable outputTable = inputTable.transformValues(
          *     new ValueTransformerWithKeySupplier() { [] },
          *     Materialized.<string, string, KeyValueStore<Bytes, byte[]>>As("outputTable")
-         *                                 .withKeySerde(Serdes.string())
-         *                                 .WithValueSerde(Serdes.string()),
+         *                                 .withKeySerde(Serdes.Serdes.String())
+         *                                 .WithValueSerde(Serdes.Serdes.String()),
          *     "myValueTransformState");
          * }</pre>
          * <p>
@@ -976,16 +977,16 @@ namespace Kafka.Streams.KStream.Interfaces
          * // create store
          * StoreBuilder<KeyValueStore<string,string>> keyValueStoreBuilder =
          *         Stores.keyValueStoreBuilder(Stores.PersistentKeyValueStore("myValueTransformState"),
-         *                 Serdes.string(),
-         *                 Serdes.string());
+         *                 Serdes.Serdes.String(),
+         *                 Serdes.Serdes.String());
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
          * KTable outputTable = inputTable.transformValues(
          *     new ValueTransformerWithKeySupplier() { [] },
          *     Materialized.<string, string, KeyValueStore<Bytes, byte[]>>As("outputTable")
-         *                                 .withKeySerde(Serdes.string())
-         *                                 .WithValueSerde(Serdes.string()),
+         *                                 .withKeySerde(Serdes.Serdes.String())
+         *                                 .WithValueSerde(Serdes.Serdes.String()),
          *     "myValueTransformState");
          * }</pre>
          * <p>

@@ -46,7 +46,7 @@ namespace Kafka.Streams.State.Internals
 
             //    public bool HasNext()
             //    {
-            //        return cacheIterator.HasNext();
+            //        return cacheIterator.MoveNext();
             //    }
 
 

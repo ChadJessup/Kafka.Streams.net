@@ -71,16 +71,16 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]// (expected = TopologyException)
         public void ShouldNotAllowOffsetResetSourceWithoutTopics()
         {
-            builder.AddSource(Topology.AutoOffsetReset.EARLIEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer());
+            builder.AddSource(Topology.AutoOffsetReset.EARLIEST, "source", null, stringSerde.Deserializer, stringSerde.Deserializer);
         }
 
         [Fact]
         public void ShouldNotAllowOffsetResetSourceWithDuplicateSourceName()
         {
-            builder.AddSource(Topology.AutoOffsetReset.EARLIEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer(), "topic-1");
+            builder.AddSource(Topology.AutoOffsetReset.EARLIEST, "source", null, stringSerde.Deserializer, stringSerde.Deserializer, "topic-1");
             try
             {
-                builder.AddSource(Topology.AutoOffsetReset.LATEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer(), "topic-2");
+                builder.AddSource(Topology.AutoOffsetReset.LATEST, "source", null, stringSerde.Deserializer, stringSerde.Deserializer, "topic-2");
                 Assert.True(false, "Should throw TopologyException for duplicate source Name");
             }
             catch (TopologyException expected) { /* ok */ }
@@ -141,7 +141,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             builder.AddProcessor("processor", new MockProcessorSupplier());
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void TestAddProcessorWithNullParents()
         {
             builder.AddProcessor("processor", new MockProcessorSupplier(), (string)null);
@@ -179,7 +179,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             builder.AddSink<string, string>("sink", "topic", null, null, null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void TestAddSinkWithNullParents()
         {
             builder.AddSink<string, string>("sink", "topic", null, null, null, (string)null);
@@ -365,9 +365,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.Equal(3, topicGroups.Count);
             Assert.Equal(expectedTopicGroups, topicGroups);
 
-            Collection<HashSet<string>> copartitionGroups = builder.copartitionGroups();
+            Collection<HashSet<string>> CopartitionGroups = builder.CopartitionGroups();
 
-            Assert.Equal(mkSet(mkSet("topic-1", "X-topic-1x", "topic-2")), new HashSet<>(copartitionGroups));
+            Assert.Equal(mkSet(mkSet("topic-1", "X-topic-1x", "topic-2")), new HashSet<>(CopartitionGroups));
         }
 
         [Fact]
@@ -395,9 +395,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Dictionary<int, InternalTopologyBuilder.TopicsInfo> topicGroups = builder.topicGroups();
 
             Dictionary<int, InternalTopologyBuilder.TopicsInfo> expectedTopicGroups = new HashMap<>();
-            string store1 = ProcessorStateManager.storeChangelogTopic("X", "store-1");
-            string store2 = ProcessorStateManager.storeChangelogTopic("X", "store-2");
-            string store3 = ProcessorStateManager.storeChangelogTopic("X", "store-3");
+            string store1 = ProcessorStateManager.StoreChangelogTopic("X", "store-1");
+            string store2 = ProcessorStateManager.StoreChangelogTopic("X", "store-2");
+            string store3 = ProcessorStateManager.StoreChangelogTopic("X", "store-3");
             expectedTopicGroups.Put(0, new InternalTopologyBuilder.TopicsInfo(
                 Collections.emptySet(), mkSet("topic-1", "topic-1x", "topic-2"),
                 Collections.emptyMap(),
@@ -490,67 +490,67 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.NotEqual(oldNodeGroups, newNodeGroups);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAllowNullNameWhenAddingSink()
         {
             builder.AddSink(null, "topic", null, null, null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAllowNullTopicWhenAddingSink()
         {
             builder.AddSink("Name", (string)null, null, null, null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAllowNullTopicChooserWhenAddingSink()
         {
             builder.AddSink("Name", (TopicNameExtractor<object, object>)null, null, null, null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAllowNullNameWhenAddingProcessor()
         {
             builder.AddProcessor(null, () => null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAllowNullProcessorSupplier()
         {
             builder.AddProcessor("Name", null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAllowNullNameWhenAddingSource()
         {
             builder.AddSource(null, null, null, null, null, new Regex(".*", RegexOptions.Compiled));
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAllowNullProcessorNameWhenConnectingProcessorAndStateStores()
         {
             builder.connectProcessorAndStateStores(null, "store");
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAllowNullStateStoreNameWhenConnectingProcessorAndStateStores()
         {
             builder.connectProcessorAndStateStores("processor", new string[] { null });
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAddNullInternalTopic()
         {
             builder.AddInternalTopic(null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotSetApplicationIdToNull()
         {
             builder.SetApplicationId(null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldNotAddNullStateStoreSupplier()
         {
             builder.AddStateStore(null);
@@ -728,36 +728,36 @@ namespace Kafka.Streams.Tests.Processor.Internals
             builder.AddProcessor("processor3", new MockProcessorSupplier(), "processor2");
             builder.AddSink("sink1", "topic2", null, null, null, "processor1", "processor3");
 
-            Assert.Equal(1, builder.describe().subtopologies().Count);
+            Assert.Equal(1, builder.Describe().subtopologies().Count);
 
-            Iterator<TopologyDescription.Node> iterator = ((InternalTopologyBuilder.Subtopology)builder.describe().subtopologies().iterator().MoveNext()).nodesInOrder();
+            Iterator<TopologyDescription.Node> iterator = ((InternalTopologyBuilder.Subtopology)builder.Describe().subtopologies().iterator().MoveNext()).nodesInOrder();
 
-            Assert.True(iterator.HasNext());
+            Assert.True(iterator.MoveNext());
             InternalTopologyBuilder.AbstractNode node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
             Assert.Equal("source1", node.Name);
             Assert.Equal(6, node.size);
 
-            Assert.True(iterator.HasNext());
+            Assert.True(iterator.MoveNext());
             node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
             Assert.Equal("source2", node.Name);
             Assert.Equal(4, node.size);
 
-            Assert.True(iterator.HasNext());
+            Assert.True(iterator.MoveNext());
             node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
             Assert.Equal("processor2", node.Name);
             Assert.Equal(3, node.size);
 
-            Assert.True(iterator.HasNext());
+            Assert.True(iterator.MoveNext());
             node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
             Assert.Equal("processor1", node.Name);
             Assert.Equal(2, node.size);
 
-            Assert.True(iterator.HasNext());
+            Assert.True(iterator.MoveNext());
             node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
             Assert.Equal("processor3", node.Name);
             Assert.Equal(2, node.size);
 
-            Assert.True(iterator.HasNext());
+            Assert.True(iterator.MoveNext());
             node = (InternalTopologyBuilder.AbstractNode)iterator.MoveNext();
             Assert.Equal("sink1", node.Name);
             Assert.Equal(1, node.size);

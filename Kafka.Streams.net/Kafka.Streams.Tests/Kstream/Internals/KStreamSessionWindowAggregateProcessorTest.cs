@@ -102,7 +102,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             //            public void forward(K key, V value, To to)
             //            {
             //                toInternal.Update(to);
-            //                results.Add(new KeyValueTimestamp<>(key, value, toInternal.Timestamp));
+            //                results.Add(new KeyValueTimestamp<string, string>(key, value, toInternal.Timestamp));
             //            }
             //        };
 
@@ -204,17 +204,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             sessionStore.Flush();
             Assert.Equal(
                  Array.AsReadOnly(
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>(sessionId, new SessionWindow(0, 0)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          0L),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>(sessionId, new SessionWindow(GAP_MS + 1, GAP_MS + 1)),
-                         new Change<>(2L, null),
+                         new Change<string>(2L, null),
                          GAP_MS + 1),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>(sessionId, new SessionWindow(time, time)),
-                         new Change<>(3L, null),
+                         new Change<string>(3L, null),
                          time)
                  ),
                  results
@@ -264,33 +264,33 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             Assert.Equal(
                  Array.AsReadOnly(
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("a", new SessionWindow(0, 0)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          0L),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("b", new SessionWindow(0, 0)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          0L),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("c", new SessionWindow(0, 0)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          0L),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("d", new SessionWindow(0, GAP_MS / 2)),
-                         new Change<>(2L, null),
+                         new Change<string>(2L, null),
                          GAP_MS / 2),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("b", new SessionWindow(GAP_MS + 1, GAP_MS + 1)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          GAP_MS + 1),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("a", new SessionWindow(GAP_MS + 1, GAP_MS + 1 + GAP_MS / 2)),
-                         new Change<>(2L, null),
+                         new Change<string>(2L, null),
                          GAP_MS + 1 + GAP_MS / 2),
-                     new KeyValueTimestamp<>(new Windowed<string>(
+                     new KeyValueTimestamp<string, string>(new Windowed<string>(
                          "c",
-                         new SessionWindow(GAP_MS + 1 + GAP_MS / 2, GAP_MS + 1 + GAP_MS / 2)), new Change<>(1L, null),
+                         new SessionWindow(GAP_MS + 1 + GAP_MS / 2, GAP_MS + 1 + GAP_MS / 2)), new Change<string>(1L, null),
                          GAP_MS + 1 + GAP_MS / 2)
                  ),
                  results
@@ -326,17 +326,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             Assert.Equal(
                  Array.AsReadOnly(
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("a", new SessionWindow(0, 0)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          0L),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("b", new SessionWindow(0, 0)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          0L),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("c", new SessionWindow(0, 0)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          0L)
                  ),
                  results
@@ -355,17 +355,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             processor.Process("a", "1");
             Assert.Equal(
                  Array.AsReadOnly(
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("a", new SessionWindow(0, 0)),
-                         new Change<>(1L, null),
+                         new Change<string>(1L, null),
                          0L),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("a", new SessionWindow(0, 0)),
-                         new Change<>(null, null),
+                         new Change<string>(null, null),
                          0L),
-                     new KeyValueTimestamp<>(
+                     new KeyValueTimestamp<string, string>(
                          new Windowed<string>("a", new SessionWindow(0, 5)),
-                         new Change<>(2L, null),
+                         new Change<string>(2L, null),
                          5L)
                  ),
                  results

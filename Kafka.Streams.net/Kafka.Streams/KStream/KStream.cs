@@ -110,15 +110,14 @@ namespace Kafka.Streams.KStream.Internals
 
         public KStream(
             KafkaStreamsContext context,
-            string Name,
+            string name,
             ISerde<K>? keySerde,
             ISerde<V>? valueSerde,
             HashSet<string> sourceNodes,
             bool repartitionRequired,
             StreamsGraphNode streamsGraphNode,
             InternalStreamsBuilder builder)
-            : base(
-                  Name,
+            : base(name,
                   keySerde,
                   valueSerde,
                   sourceNodes,
@@ -594,7 +593,7 @@ namespace Kafka.Streams.KStream.Internals
                 producedInternal.WithValueSerde(this.ValueSerde);
             }
 
-            this.To(new StaticTopicNameExtractor(topic).Extract, producedInternal);
+            this.To((k, v, _) => topic, producedInternal);
         }
 
         public void To(TopicNameExtractor<K, V> topicExtractor)
@@ -620,7 +619,9 @@ namespace Kafka.Streams.KStream.Internals
             this.To(topicExtractor, producedInternal);
         }
 
-        private void To(TopicNameExtractor<K, V> topicExtractor, ProducedInternal<K, V> produced)
+        private void To
+            (TopicNameExtractor<K, V> topicExtractor, 
+            ProducedInternal<K, V> produced)
         {
             var Name = new NamedInternal(produced.Name).OrElseGenerateWithPrefix(this.Builder, KStream.SinkName);
             var sinkNode = new StreamSinkNode<K, V>(
@@ -1233,7 +1234,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         public IKGroupedStream<KR, V> GroupBy<KR>(KeyValueMapper<K, V, KR> selector)
-            => this.GroupBy(selector);
+            => this.GroupBy<KR>(selector, Grouped.With<KR, V>(null, this.ValueSerde));
 
         public IKGroupedStream<KR, V> GroupBy<KR>(
             KeyValueMapper<K, V, KR> selector,

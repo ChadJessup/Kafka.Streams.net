@@ -4,8 +4,6 @@ using Kafka.Streams;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
-using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.Threads.KafkaStreams;
 using Microsoft.Extensions.DependencyInjection;

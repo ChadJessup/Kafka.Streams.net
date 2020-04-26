@@ -105,7 +105,7 @@
 //            // should only have 2 values as the first segment is no longer open
 //            Assert.Equal(KeyValuePair.Create(SEGMENT_INTERVAL, "two"), iterator.MoveNext());
 //            Assert.Equal(KeyValuePair.Create(2 * SEGMENT_INTERVAL, "three"), iterator.MoveNext());
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //        }
 
 //        [Fact]
@@ -420,7 +420,7 @@
 
 //            iter = windowStore.Fetch(0, ofEpochMilli(0L), ofEpochMilli(SEGMENT_INTERVAL * 4));
 //            fetchedCount = 0;
-//            while (iter.HasNext())
+//            while (iter.MoveNext())
 //            {
 //                iter.MoveNext();
 //                fetchedCount++;
@@ -437,7 +437,7 @@
 
 //            iter = windowStore.Fetch(0, ofEpochMilli(0L), ofEpochMilli(SEGMENT_INTERVAL * 4));
 //            fetchedCount = 0;
-//            while (iter.HasNext())
+//            while (iter.MoveNext())
 //            {
 //                iter.MoveNext();
 //                fetchedCount++;
@@ -454,7 +454,7 @@
 
 //            iter = windowStore.Fetch(0, ofEpochMilli(SEGMENT_INTERVAL * 4), ofEpochMilli(SEGMENT_INTERVAL * 10));
 //            fetchedCount = 0;
-//            while (iter.HasNext())
+//            while (iter.MoveNext())
 //            {
 //                iter.MoveNext();
 //                fetchedCount++;
@@ -503,7 +503,7 @@
 //            try
 //            {
 //                (IWindowStoreIterator iter = windowStore.Fetch(0, ofEpochMilli(0L), ofEpochMilli(1000000L)));
-//                while (iter.HasNext())
+//                while (iter.MoveNext())
 //                {
 //                    iter.MoveNext();
 //                }

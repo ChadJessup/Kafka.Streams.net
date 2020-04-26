@@ -26,6 +26,7 @@ namespace Kafka.Streams.Tasks
         //public Guid processId { get; }
         private readonly AssignedStreamsTasks active;
         private readonly AssignedStandbyTasks standby;
+        private readonly KafkaStreamsContext context;
         private readonly IChangelogReader changelogReader;
         private readonly IConsumer<byte[], byte[]> restoreConsumer;
         private readonly AbstractTaskCreator<StreamTask> taskCreator;
@@ -37,15 +38,14 @@ namespace Kafka.Streams.Tasks
 
         // following information is updated during rebalance phase by the partition assignor
         private Cluster cluster;
-        private Dictionary<TaskId, HashSet<TopicPartition>> assignedActiveTasks;
-        private Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks;
+        public Dictionary<TaskId, HashSet<TopicPartition>> assignedActiveTasks { get; private set; }
+        public Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks { get; private set; }
 
         private string threadClientId;
         private IConsumer<byte[], byte[]> consumer;
 
         public TaskManager(
-            ILoggerFactory loggerFactory,
-            ILogger<TaskManager> logger,
+            KafkaStreamsContext context,
             IChangelogReader changelogReader,
             //Guid processId,
             RestoreConsumer restoreConsumer,
@@ -56,8 +56,8 @@ namespace Kafka.Streams.Tasks
             AssignedStreamsTasks active,
             AssignedStandbyTasks standby)
         {
+            this.context = context;
             this.changelogReader = changelogReader;
-            //this.processId = processId;
             this.streamsMetadataState = streamsMetadataState;
             this.restoreConsumer = restoreConsumer;
             this.taskCreator = taskCreator;
@@ -65,7 +65,7 @@ namespace Kafka.Streams.Tasks
             this.active = active;
             this.standby = standby;
 
-            this.logger = logger;
+            this.logger = this.logger;
 
             this.adminClient = adminClient;
         }

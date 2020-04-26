@@ -169,7 +169,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    List<ProducerRecord<byte[], byte[]>> needRetry2 = new List<ProducerRecord<byte[], byte[]>>();
 //                    foreach (ProducerRecord<byte[], byte[]> record in needRetry)
 //                    {
-//                        System.Console.Out.WriteLine("retry producing " + stringSerde.deserializer().Deserialize("", record.Key));
+//                        System.Console.Out.WriteLine("retry producing " + stringSerde.Deserializer.Deserialize("", record.Key));
 //                        producer.send(record, new TestCallback(record, needRetry2));
 //                    }
 //                    producer.Flush();
@@ -271,15 +271,15 @@ namespace Kafka.Streams.Tests.Tests
 //        case "sws-suppressed":
 //        case "max":
 //        case "dif":
-//            value = intSerde.deserializer().Deserialize(topic, data);
+//            value = intSerde.Deserializer.Deserialize(topic, data);
 //            break;
 //        case "sum":
 //        case "cnt":
 //        case "tagg":
-//            value = longSerde.deserializer().Deserialize(topic, data);
+//            value = longSerde.Deserializer.Deserialize(topic, data);
 //            break;
 //        case "avg":
-//            value = doubleSerde.deserializer().Deserialize(topic, data);
+//            value = doubleSerde.Deserializer.Deserialize(topic, data);
 //            break;
 //        default:
 //            throw new RuntimeException("unknown topic: " + topic);

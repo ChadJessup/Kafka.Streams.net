@@ -1,74 +1,77 @@
-﻿
-//namespace Kafka.Streams.KStream.Internals
-//{
-//    public class KTableKTableOuterJoinValueGetter : IKTableValueGetter<K, R>
-//    {
+﻿using System;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
 
-//        private IKTableValueGetter<K, V1> valueGetter1;
-//        private IKTableValueGetter<K, V2> valueGetter2;
+namespace Kafka.Streams.KStream.Internals
+{
+    public class KTableKTableOuterJoinValueGetter<K, R, V1, V2> : IKTableValueGetter<K, R>
+    {
+        private IKTableValueGetter<K, V1> valueGetter1;
+        private IKTableValueGetter<K, V2> valueGetter2;
+        private readonly ValueJoiner<V1, V2, R> joiner;
 
-//        KTableKTableOuterJoinValueGetter(IKTableValueGetter<K, V1> valueGetter1,
-//                                          IKTableValueGetter<K, V2> valueGetter2)
-//        {
-//            this.valueGetter1 = valueGetter1;
-//            this.valueGetter2 = valueGetter2;
-//        }
+        public KTableKTableOuterJoinValueGetter(
+            IKTableValueGetter<K, V1> valueGetter1,
+            IKTableValueGetter<K, V2> valueGetter2,
+            ValueJoiner<V1, V2, R> joiner)
+        {
+            this.valueGetter1 = valueGetter1 ?? throw new ArgumentNullException(nameof(valueGetter1));
+            this.valueGetter2 = valueGetter2 ?? throw new ArgumentNullException(nameof(valueGetter2));
+            this.joiner = joiner ?? throw new ArgumentNullException(nameof(joiner));
+        }
 
+        public void Init(IProcessorContext context, string storeName)
+        {
+            this.valueGetter1.Init(context, storeName);
+            this.valueGetter2.Init(context, storeName);
+        }
 
-//        public void Init(IProcessorContext context)
-//        {
-//            valueGetter1.Init(context);
-//            valueGetter2.Init(context);
-//        }
+        public IValueAndTimestamp<R> Get(K key)
+        {
+            R newValue = default;
 
+            IValueAndTimestamp<V1>? valueAndTimestamp1 = valueGetter1.Get(key);
+            V1 value1;
+            DateTime timestamp1;
+            if (valueAndTimestamp1 == null)
+            {
+                value1 = default;
+                timestamp1 = DateTime.MinValue;
+            }
+            else
+            {
 
-//        public ValueAndTimestamp<R> get(K key)
-//        {
-//            R newValue = null;
+                value1 = valueAndTimestamp1.Value;
+                timestamp1 = valueAndTimestamp1.Timestamp;
+            }
 
-//            ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1[key];
-//            V1 value1;
-//            long timestamp1;
-//            if (valueAndTimestamp1 == null)
-//            {
-//                value1 = null;
-//                timestamp1 = UNKNOWN;
-//            }
-//            else
-//            {
+            IValueAndTimestamp<V2>? valueAndTimestamp2 = valueGetter2.Get(key);
+            V2 value2;
+            DateTime timestamp2;
+            if (valueAndTimestamp2 == null)
+            {
+                value2 = default;
+                timestamp2 = DateTime.MinValue;
+            }
+            else
+            {
+                value2 = valueAndTimestamp2.Value;
+                timestamp2 = valueAndTimestamp2.Timestamp;
+            }
 
-//                value1 = valueAndTimestamp1.value();
-//                timestamp1 = valueAndTimestamp1.timestamp();
-//            }
+            if (value1 != null || value2 != null)
+            {
+                newValue = joiner(value1!, value2!);
+            }
 
-//            ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[key];
-//            V2 value2;
-//            long timestamp2;
-//            if (valueAndTimestamp2 == null)
-//            {
-//                value2 = null;
-//                timestamp2 = UNKNOWN;
-//            }
-//            else
-//            {
+            return ValueAndTimestamp.Make(newValue!, timestamp1.GetNewest(timestamp2));
+        }
 
-//                value2 = valueAndTimestamp2.value();
-//                timestamp2 = valueAndTimestamp2.timestamp();
-//            }
-
-//            if (value1 != null || value2 != null)
-//            {
-//                newValue = joiner.apply(value1, value2);
-//            }
-
-//            return ValueAndTimestamp.Make(newValue, Math.Max(timestamp1, timestamp2));
-//        }
-
-
-//        public void Close()
-//        {
-//            valueGetter1.Close();
-//            valueGetter2.Close();
-//        }
-//    }
-//}
+        public void Close()
+        {
+            valueGetter1.Close();
+            valueGetter2.Close();
+        }
+    }
+}

@@ -31,7 +31,7 @@ namespace Kafka.Streams.Tests
             return new List<KeyValueTimestamp<K, V>>();
         }
 
-        internal static void ProduceValuesSynchronously(string tOPIC_2, HashSet<string> hashSet, StreamsConfig producerConfig, MockTime mockTime)
+        internal static void ProduceValuesSynchronously(string topic, IEnumerable<string> hashSet, StreamsConfig producerConfig, MockTime mockTime)
         {
             throw new NotImplementedException();
         }

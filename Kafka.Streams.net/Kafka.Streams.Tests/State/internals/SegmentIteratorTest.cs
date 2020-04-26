@@ -96,23 +96,23 @@
 //                Bytes.Wrap("a".getBytes()),
 //                Bytes.Wrap("z".getBytes()));
 
-//            Assert.True(iterator.HasNext());
+//            Assert.True(iterator.MoveNext());
 //            Assert.Equal("a", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("a", "1"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.True(iterator.HasNext());
+//            Assert.True(iterator.MoveNext());
 //            Assert.Equal("b", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("b", "2"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.True(iterator.HasNext());
+//            Assert.True(iterator.MoveNext());
 //            Assert.Equal("c", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("c", "3"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.True(iterator.HasNext());
+//            Assert.True(iterator.MoveNext());
 //            Assert.Equal("d", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("d", "4"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //        }
 
 //        [Fact]
@@ -126,7 +126,7 @@
 
 //            iterator.currentIterator = segmentOne.All();
 //            segmentOne.Close();
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //        }
 
 //        [Fact]
@@ -138,15 +138,15 @@
 //                Bytes.Wrap("a".getBytes()),
 //                Bytes.Wrap("b".getBytes()));
 
-//            Assert.True(iterator.HasNext());
+//            Assert.True(iterator.MoveNext());
 //            Assert.Equal("a", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("a", "1"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.True(iterator.HasNext());
+//            Assert.True(iterator.MoveNext());
 //            Assert.Equal("b", new string(iterator.PeekNextKey().Get()));
 //            Assert.Equal(KeyValuePair.Create("b", "2"), toStringKeyValue(iterator.MoveNext()));
 
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //        }
 
 //        [Fact]// (expected = NoSuchElementException)

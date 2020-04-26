@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Internals
             this.context = context;
             this.queryableName = queryableName;
             this.sendOldValues = sendOldValues;
-            this.FilterNot = filterNot;
+            this.filterNot = filterNot;
             this.predicate = predicate;
         }
 
@@ -81,7 +81,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             V newValue = default;
 
-            if (value != null && (this.FilterNot ^ this.predicate(key, value)))
+            if (value != null && (this.filterNot ^ this.predicate(key, value)))
             {
                 newValue = value;
             }
@@ -98,7 +98,7 @@ namespace Kafka.Streams.KStream.Internals
             if (valueAndTimestamp != null)
             {
                 V value = valueAndTimestamp.Value;
-                if (this.FilterNot ^ this.predicate(key, value))
+                if (this.filterNot ^ this.predicate(key, value))
                 {
                     newValueAndTimestamp = valueAndTimestamp;
                 }

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Kafka.Streams.Tests.Processor.Internals.assignment
+namespace Kafka.Streams.Tests.Processor.Internals.Assignment
 {
     public class StickyTaskAssignorTest
     {
@@ -79,8 +79,8 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor firstAssignor = createTaskAssignor(task00, task01, task02);
             firstAssignor.Assign(0);
 
-            Assert.Equal(clients[p1].activeTasks(), hasItems(task00));
-            Assert.Equal(clients[p2].activeTasks(), hasItems(task01));
+            Assert.Equal(clients[p1].ActiveTasks(), hasItems(task00));
+            Assert.Equal(clients[p2].ActiveTasks(), hasItems(task01));
             Assert.Equal(AllActiveTasks(), Arrays.asList(task00, task01, task02));
 
             clients.Clear();
@@ -92,8 +92,8 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor secondAssignor = createTaskAssignor(task00, task01, task02);
             secondAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p1).activeTasks(), hasItems(task01));
-            Assert.Equal(clients.Get(p2).activeTasks(), hasItems(task02));
+            Assert.Equal(clients.Get(p1).ActiveTasks(), hasItems(task01));
+            Assert.Equal(clients.Get(p2).ActiveTasks(), hasItems(task02));
             Assert.Equal(AllActiveTasks(), Arrays.asList(task00, task01, task02));
         }
 
@@ -108,9 +108,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
 
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p2).activeTasks(), Collections.singleton(task01));
-            Assert.Equal(clients.Get(p1).activeTasks().Count, 1);
-            Assert.Equal(clients.Get(p3).activeTasks().Count, 1);
+            Assert.Equal(clients.Get(p2).ActiveTasks(), Collections.singleton(task01));
+            Assert.Equal(clients.Get(p1).ActiveTasks().Count, 1);
+            Assert.Equal(clients.Get(p3).ActiveTasks().Count, 1);
             Assert.Equal(AllActiveTasks(), Arrays.asList(task00, task01, task02));
         }
 
@@ -122,8 +122,8 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
 
             taskAssignor.Assign(0);
-            Assert.Equal(clients.Get(p1).activeTasks().Count, 1);
-            Assert.Equal(clients.Get(p2).activeTasks().Count, 2);
+            Assert.Equal(clients.Get(p1).ActiveTasks().Count, 1);
+            Assert.Equal(clients.Get(p2).ActiveTasks().Count, 2);
         }
 
         [Fact]
@@ -142,8 +142,8 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
 
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p1).activeTasks(), expectedClientITasks);
-            Assert.Equal(clients.Get(p2).activeTasks(), expectedClientIITasks);
+            Assert.Equal(clients.Get(p1).ActiveTasks(), expectedClientITasks);
+            Assert.Equal(clients.Get(p2).ActiveTasks(), expectedClientIITasks);
         }
 
         [Fact]
@@ -159,9 +159,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p1).activeTasks(), Collections.singleton(task00));
-            Assert.Equal(clients.Get(p2).activeTasks(), Collections.singleton(task02));
-            Assert.Equal(clients.Get(p3).activeTasks(), Collections.singleton(task01));
+            Assert.Equal(clients.Get(p1).ActiveTasks(), Collections.singleton(task00));
+            Assert.Equal(clients.Get(p2).ActiveTasks(), Collections.singleton(task02));
+            Assert.Equal(clients.Get(p3).ActiveTasks(), Collections.singleton(task01));
 
             // change up the assignment and make sure it is still sticky
             clients.Clear();
@@ -174,9 +174,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor secondAssignor = createTaskAssignor(task00, task01, task02);
             secondAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p2).activeTasks(), Collections.singleton(task00));
-            Assert.Equal(clients.Get(p4).activeTasks(), Collections.singleton(task02));
-            Assert.Equal(clients.Get(p5).activeTasks(), Collections.singleton(task01));
+            Assert.Equal(clients.Get(p2).ActiveTasks(), Collections.singleton(task00));
+            Assert.Equal(clients.Get(p4).ActiveTasks(), Collections.singleton(task02));
+            Assert.Equal(clients.Get(p5).ActiveTasks(), Collections.singleton(task01));
 
 
         }
@@ -185,35 +185,35 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
         public void ShouldAssignTasksToClientWithPreviousStandbyTasks()
         {
             ClientState client1 = CreateClient(p1, 1);
-            client1.addPreviousStandbyTasks(Utils.mkSet(task02));
+            client1.AddPreviousStandbyTasks(Utils.mkSet(task02));
             ClientState client2 = CreateClient(p2, 1);
-            client2.addPreviousStandbyTasks(Utils.mkSet(task01));
+            client2.AddPreviousStandbyTasks(Utils.mkSet(task01));
             ClientState client3 = CreateClient(p3, 1);
-            client3.addPreviousStandbyTasks(Utils.mkSet(task00));
+            client3.AddPreviousStandbyTasks(Utils.mkSet(task00));
 
             StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
 
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p1).activeTasks(), Collections.singleton(task02));
-            Assert.Equal(clients.Get(p2).activeTasks(), Collections.singleton(task01));
-            Assert.Equal(clients.Get(p3).activeTasks(), Collections.singleton(task00));
+            Assert.Equal(clients.Get(p1).ActiveTasks(), Collections.singleton(task02));
+            Assert.Equal(clients.Get(p2).ActiveTasks(), Collections.singleton(task01));
+            Assert.Equal(clients.Get(p3).ActiveTasks(), Collections.singleton(task00));
         }
 
         [Fact]
         public void ShouldAssignBasedOnCapacityWhenMultipleClientHaveStandbyTasks()
         {
             ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task00);
-            c1.addPreviousStandbyTasks(Utils.mkSet(task01));
+            c1.AddPreviousStandbyTasks(Utils.mkSet(task01));
             ClientState c2 = createClientWithPreviousActiveTasks(p2, 2, task02);
-            c2.addPreviousStandbyTasks(Utils.mkSet(task01));
+            c2.AddPreviousStandbyTasks(Utils.mkSet(task01));
 
             StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
 
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p1).activeTasks(), Collections.singleton(task00));
-            Assert.Equal(clients.Get(p2).activeTasks(), Utils.mkSet(task02, task01));
+            Assert.Equal(clients.Get(p1).ActiveTasks(), Collections.singleton(task00));
+            Assert.Equal(clients.Get(p2).ActiveTasks(), Utils.mkSet(task02, task01));
         }
 
         [Fact]
@@ -227,19 +227,19 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02, task03);
             taskAssignor.Assign(1);
 
-            Assert.Equal(clients.Get(p1).standbyTasks(), not(hasItems(task00)));
-            Assert.True(clients.Get(p1).standbyTasks().Count <= 2);
-            Assert.Equal(clients.Get(p2).standbyTasks(), not(hasItems(task01)));
-            Assert.True(clients.Get(p2).standbyTasks().Count <= 2);
-            Assert.Equal(clients.Get(p3).standbyTasks(), not(hasItems(task02)));
-            Assert.True(clients.Get(p3).standbyTasks().Count <= 2);
-            Assert.Equal(clients.Get(p4).standbyTasks(), not(hasItems(task03)));
-            Assert.True(clients.Get(p4).standbyTasks().Count <= 2);
+            Assert.Equal(clients.Get(p1).StandbyTasks(), not(hasItems(task00)));
+            Assert.True(clients.Get(p1).StandbyTasks().Count <= 2);
+            Assert.Equal(clients.Get(p2).StandbyTasks(), not(hasItems(task01)));
+            Assert.True(clients.Get(p2).StandbyTasks().Count <= 2);
+            Assert.Equal(clients.Get(p3).StandbyTasks(), not(hasItems(task02)));
+            Assert.True(clients.Get(p3).StandbyTasks().Count <= 2);
+            Assert.Equal(clients.Get(p4).StandbyTasks(), not(hasItems(task03)));
+            Assert.True(clients.Get(p4).StandbyTasks().Count <= 2);
 
             int nonEmptyStandbyTaskCount = 0;
             foreach (int client in clients.keySet())
             {
-                nonEmptyStandbyTaskCount += clients.Get(client).standbyTasks().IsEmpty() ? 0 : 1;
+                nonEmptyStandbyTaskCount += clients.Get(client).StandbyTasks().IsEmpty() ? 0 : 1;
             }
 
             Assert.True(nonEmptyStandbyTaskCount >= 3);
@@ -258,9 +258,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
             taskAssignor.Assign(2);
 
-            Assert.Equal(clients.Get(p1).standbyTasks(), Utils.mkSet(task01, task02));
-            Assert.Equal(clients.Get(p2).standbyTasks(), Utils.mkSet(task02, task00));
-            Assert.Equal(clients.Get(p3).standbyTasks(), Utils.mkSet(task00, task01));
+            Assert.Equal(clients.Get(p1).StandbyTasks(), Utils.mkSet(task01, task02));
+            Assert.Equal(clients.Get(p2).StandbyTasks(), Utils.mkSet(task02, task00));
+            Assert.Equal(clients.Get(p3).StandbyTasks(), Utils.mkSet(task00, task01));
         }
 
         [Fact]
@@ -269,7 +269,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             CreateClient(p1, 1);
             StickyTaskAssignor taskAssignor = createTaskAssignor(task00);
             taskAssignor.Assign(1);
-            Assert.Equal(clients.Get(p1).standbyTasks().Count, 0);
+            Assert.Equal(clients.Get(p1).StandbyTasks().Count, 0);
         }
 
         [Fact]
@@ -296,9 +296,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
 
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02);
             taskAssignor.Assign(0);
-            Assert.Equal(clients.Get(p1).assignedTaskCount(), 1);
-            Assert.Equal(clients.Get(p2).assignedTaskCount(), 1);
-            Assert.Equal(clients.Get(p3).assignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p1).AssignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p2).AssignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p3).AssignedTaskCount(), 1);
         }
 
         [Fact]
@@ -332,7 +332,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
 
             foreach (ClientState clientState in clients.values())
             {
-                Assert.Equal(clientState.assignedTaskCount(), 1);
+                Assert.Equal(1, clientState.AssignedTaskCount());
             }
         }
 
@@ -356,8 +356,8 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
                                                                                 new TaskId(3, 2));
 
             taskAssignor.Assign(0);
-            Assert.Equal(clients.Get(p2).assignedTaskCount(), 8);
-            Assert.Equal(clients.Get(p1).assignedTaskCount(), 4);
+            Assert.Equal(clients.Get(p2).AssignedTaskCount(), 8);
+            Assert.Equal(clients.Get(p1).AssignedTaskCount(), 4);
         }
 
         [Fact]
@@ -413,12 +413,12 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
 
             for (int i = p1; i <= p4; i++)
             {
-                HashSet<TaskId> taskIds = clients.Get(i).assignedTasks();
+                HashSet<TaskId> taskIds = clients.Get(i).AssignedTasks();
                 for (int j = p1; j <= p4; j++)
                 {
                     if (j != i)
                     {
-                        Assert.Equal("clients shouldn't have same task assignment", clients.Get(j).assignedTasks(),
+                        Assert.Equal("clients shouldn't have same task assignment", clients.Get(j).AssignedTasks(),
                                    not(equalTo(taskIds)));
                     }
                 }
@@ -439,12 +439,12 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
 
             for (int i = p1; i <= p4; i++)
             {
-                HashSet<TaskId> taskIds = clients.Get(i).assignedTasks();
+                HashSet<TaskId> taskIds = clients.Get(i).AssignedTasks();
                 for (int j = p1; j <= p4; j++)
                 {
                     if (j != i)
                     {
-                        Assert.Equal("clients shouldn't have same task assignment", clients.Get(j).assignedTasks(),
+                        Assert.Equal("clients shouldn't have same task assignment", clients.Get(j).AssignedTasks(),
                                    not(equalTo(taskIds)));
                     }
                 }
@@ -456,9 +456,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
         public void ShouldNotHaveSameAssignmentOnAnyTwoHostsWhenThereArePreviousStandbyTasks()
         {
             ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task01, task02);
-            c1.addPreviousStandbyTasks(Utils.mkSet(task03, task00));
+            c1.AddPreviousStandbyTasks(Utils.mkSet(task03, task00));
             ClientState c2 = createClientWithPreviousActiveTasks(p2, 1, task03, task00);
-            c2.addPreviousStandbyTasks(Utils.mkSet(task01, task02));
+            c2.AddPreviousStandbyTasks(Utils.mkSet(task01, task02));
 
             CreateClient(p3, 1);
             CreateClient(p4, 1);
@@ -468,12 +468,12 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
 
             for (int i = p1; i <= p4; i++)
             {
-                HashSet<TaskId> taskIds = clients.Get(i).assignedTasks();
+                HashSet<TaskId> taskIds = clients.Get(i).AssignedTasks();
                 for (int j = p1; j <= p4; j++)
                 {
                     if (j != i)
                     {
-                        Assert.Equal("clients shouldn't have same task assignment", clients.Get(j).assignedTasks(),
+                        Assert.Equal("clients shouldn't have same task assignment", clients.Get(j).AssignedTasks(),
                                    not(equalTo(taskIds)));
                     }
                 }
@@ -492,10 +492,10 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task01, task03);
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p1).assignedTaskCount(), 1);
-            Assert.Equal(clients.Get(p2).assignedTaskCount(), 1);
-            Assert.Equal(clients.Get(p3).assignedTaskCount(), 1);
-            Assert.Equal(clients.Get(p4).assignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p1).AssignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p2).AssignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p3).AssignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p4).AssignedTaskCount(), 1);
         }
 
         [Fact]
@@ -508,9 +508,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task01, task03);
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p3).assignedTaskCount(), 2);
-            Assert.Equal(clients.Get(p1).assignedTaskCount(), 1);
-            Assert.Equal(clients.Get(p2).assignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p3).AssignedTaskCount(), 2);
+            Assert.Equal(clients.Get(p1).AssignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p2).AssignedTaskCount(), 1);
         }
 
         [Fact]
@@ -520,8 +520,8 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             CreateClient(p3, 2);
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task03);
             taskAssignor.Assign(0);
-            Assert.Equal(clients.Get(p2).assignedTaskCount(), 1);
-            Assert.Equal(clients.Get(p3).assignedTaskCount(), 2);
+            Assert.Equal(clients.Get(p2).AssignedTaskCount(), 1);
+            Assert.Equal(clients.Get(p3).AssignedTaskCount(), 2);
         }
 
         [Fact]
@@ -537,15 +537,15 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task01, task03);
             taskAssignor.Assign(0);
 
-            HashSet<TaskId> p3ActiveTasks = clients.Get(p3).activeTasks();
-            Assert.Equal(1, p3ActiveTasks.Count);
+            HashSet<TaskId> p3ActiveTasks = clients.Get(p3).ActiveTasks();
+            Assert.Single(p3ActiveTasks);
             if (p1PrevTasks.removeAll(p3ActiveTasks))
             {
-                Assert.Equal(clients.Get(p2).activeTasks(), p2PrevTasks);
+                Assert.Equal(clients.Get(p2).ActiveTasks(), p2PrevTasks);
             }
             else
             {
-                Assert.Equal(clients.Get(p1).activeTasks(), p1PrevTasks);
+                Assert.Equal(clients.Get(p1).ActiveTasks(), p1PrevTasks);
             }
         }
 
@@ -558,8 +558,8 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task03, task01, task04, task02, task00, task05);
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p1).activeTasks(), hasItems(task00, task01));
-            Assert.Equal(clients.Get(p2).activeTasks(), hasItems(task02, task03));
+            Assert.Equal(clients.Get(p1).ActiveTasks(), hasItems(task00, task01));
+            Assert.Equal(clients.Get(p2).ActiveTasks(), hasItems(task02, task03));
         }
 
         [Fact]
@@ -573,9 +573,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task03, task01, task04, task02, task00, task05);
             taskAssignor.Assign(0);
 
-            Assert.Equal(clients.Get(p1).activeTasks(), hasItems(task02, task01));
-            Assert.Equal(clients.Get(p2).activeTasks(), hasItems(task00, task03));
-            Assert.Equal(clients.Get(p3).activeTasks(), hasItems(task04, task05));
+            Assert.Equal(clients.Get(p1).ActiveTasks(), hasItems(task02, task01));
+            Assert.Equal(clients.Get(p2).ActiveTasks(), hasItems(task00, task03));
+            Assert.Equal(clients.Get(p3).ActiveTasks(), hasItems(task04, task05));
         }
 
         [Fact]
@@ -591,22 +591,22 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId task23 = new TaskId(2, 3);
 
             ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task01, task12, task13);
-            c1.addPreviousStandbyTasks(Utils.mkSet(task00, task11, task20, task21, task23));
+            c1.AddPreviousStandbyTasks(Utils.mkSet(task00, task11, task20, task21, task23));
             ClientState c2 = createClientWithPreviousActiveTasks(p2, 1, task00, task11, task22);
-            c2.addPreviousStandbyTasks(Utils.mkSet(task01, task10, task02, task20, task03, task12, task21, task13, task23));
+            c2.AddPreviousStandbyTasks(Utils.mkSet(task01, task10, task02, task20, task03, task12, task21, task13, task23));
             ClientState c3 = createClientWithPreviousActiveTasks(p3, 1, task20, task21, task23);
-            c3.addPreviousStandbyTasks(Utils.mkSet(task02, task12));
+            c3.AddPreviousStandbyTasks(Utils.mkSet(task02, task12));
 
             ClientState newClient = CreateClient(p4, 1);
-            newClient.addPreviousStandbyTasks(Utils.mkSet(task00, task10, task01, task02, task11, task20, task03, task12, task21, task13, task22, task23));
+            newClient.AddPreviousStandbyTasks(Utils.mkSet(task00, task10, task01, task02, task11, task20, task03, task12, task21, task13, task22, task23));
 
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task10, task01, task02, task11, task20, task03, task12, task21, task13, task22, task23);
             taskAssignor.Assign(0);
 
-            Assert.Equal(c1.activeTasks(), Utils.mkSet(task01, task12, task13));
-            Assert.Equal(c2.activeTasks(), Utils.mkSet(task00, task11, task22));
-            Assert.Equal(c3.activeTasks(), Utils.mkSet(task20, task21, task23));
-            Assert.Equal(newClient.activeTasks(), Utils.mkSet(task02, task03, task10));
+            Assert.Equal(c1.ActiveTasks(), Utils.mkSet(task01, task12, task13));
+            Assert.Equal(c2.ActiveTasks(), Utils.mkSet(task00, task11, task22));
+            Assert.Equal(c3.ActiveTasks(), Utils.mkSet(task20, task21, task23));
+            Assert.Equal(newClient.ActiveTasks(), Utils.mkSet(task02, task03, task10));
         }
 
         [Fact]
@@ -622,23 +622,23 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId task23 = new TaskId(2, 3);
 
             ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task01, task12, task13);
-            c1.addPreviousStandbyTasks(Utils.mkSet(task00, task11, task20, task21, task23));
+            c1.AddPreviousStandbyTasks(Utils.mkSet(task00, task11, task20, task21, task23));
             ClientState c2 = createClientWithPreviousActiveTasks(p2, 1, task00, task11, task22);
-            c2.addPreviousStandbyTasks(Utils.mkSet(task01, task10, task02, task20, task03, task12, task21, task13, task23));
+            c2.AddPreviousStandbyTasks(Utils.mkSet(task01, task10, task02, task20, task03, task12, task21, task13, task23));
 
             ClientState bounce1 = CreateClient(p3, 1);
-            bounce1.addPreviousStandbyTasks(Utils.mkSet(task20, task21, task23));
+            bounce1.AddPreviousStandbyTasks(Utils.mkSet(task20, task21, task23));
 
             ClientState bounce2 = CreateClient(p4, 1);
-            bounce2.addPreviousStandbyTasks(Utils.mkSet(task02, task03, task10));
+            bounce2.AddPreviousStandbyTasks(Utils.mkSet(task02, task03, task10));
 
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task10, task01, task02, task11, task20, task03, task12, task21, task13, task22, task23);
             taskAssignor.Assign(0);
 
-            Assert.Equal(c1.activeTasks(), Utils.mkSet(task01, task12, task13));
-            Assert.Equal(c2.activeTasks(), Utils.mkSet(task00, task11, task22));
-            Assert.Equal(bounce1.activeTasks(), Utils.mkSet(task20, task21, task23));
-            Assert.Equal(bounce2.activeTasks(), Utils.mkSet(task02, task03, task10));
+            Assert.Equal(c1.ActiveTasks(), Utils.mkSet(task01, task12, task13));
+            Assert.Equal(c2.ActiveTasks(), Utils.mkSet(task00, task11, task22));
+            Assert.Equal(bounce1.ActiveTasks(), Utils.mkSet(task20, task21, task23));
+            Assert.Equal(bounce2.ActiveTasks(), Utils.mkSet(task02, task03, task10));
         }
 
         [Fact]
@@ -659,13 +659,13 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
 
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02, task03, task04, task05);
             taskAssignor.Assign(0);
-            Assert.Equal(c1.activeTasks(), not(hasItem(task03)));
-            Assert.Equal(c1.activeTasks(), not(hasItem(task04)));
-            Assert.Equal(c1.activeTasks(), not(hasItem(task05)));
+            Assert.Equal(c1.ActiveTasks(), not(hasItem(task03)));
+            Assert.Equal(c1.ActiveTasks(), not(hasItem(task04)));
+            Assert.Equal(c1.ActiveTasks(), not(hasItem(task05)));
             Assert.Equal(c1.activeTaskCount(), 2);
-            Assert.Equal(c2.activeTasks(), not(hasItems(task00)));
-            Assert.Equal(c2.activeTasks(), not(hasItems(task01)));
-            Assert.Equal(c2.activeTasks(), not(hasItems(task02)));
+            Assert.Equal(c2.ActiveTasks(), not(hasItems(task00)));
+            Assert.Equal(c2.ActiveTasks(), not(hasItems(task01)));
+            Assert.Equal(c2.ActiveTasks(), not(hasItems(task02)));
             Assert.Equal(c2.activeTaskCount(), 2);
             Assert.Equal(newClient.activeTaskCount(), 2);
         }
@@ -676,18 +676,18 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId task06 = new TaskId(0, 6);
             ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task00, task01, task02, task06);
             ClientState c2 = CreateClient(p2, 1);
-            c2.addPreviousStandbyTasks(Utils.mkSet(task03, task04, task05));
+            c2.AddPreviousStandbyTasks(Utils.mkSet(task03, task04, task05));
             ClientState newClient = CreateClient(p3, 1);
 
             StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02, task03, task04, task05, task06);
             taskAssignor.Assign(0);
-            Assert.Equal(c1.activeTasks(), not(hasItem(task03)));
-            Assert.Equal(c1.activeTasks(), not(hasItem(task04)));
-            Assert.Equal(c1.activeTasks(), not(hasItem(task05)));
+            Assert.Equal(c1.ActiveTasks(), not(hasItem(task03)));
+            Assert.Equal(c1.ActiveTasks(), not(hasItem(task04)));
+            Assert.Equal(c1.ActiveTasks(), not(hasItem(task05)));
             Assert.Equal(c1.activeTaskCount(), 3);
-            Assert.Equal(c2.activeTasks(), not(hasItems(task00)));
-            Assert.Equal(c2.activeTasks(), not(hasItems(task01)));
-            Assert.Equal(c2.activeTasks(), not(hasItems(task02)));
+            Assert.Equal(c2.ActiveTasks(), not(hasItems(task00)));
+            Assert.Equal(c2.ActiveTasks(), not(hasItems(task01)));
+            Assert.Equal(c2.ActiveTasks(), not(hasItems(task02)));
             Assert.Equal(c2.activeTaskCount(), 2);
             Assert.Equal(newClient.activeTaskCount(), 2);
         }
@@ -705,7 +705,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             List<TaskId> allActive = new List<TaskId>();
             foreach (var client in clients.Values)
             {
-                allActive.AddAll(client.activeTasks());
+                allActive.AddAll(client.ActiveTasks());
             }
 
             Collections.sort(allActive);
@@ -717,7 +717,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             List<TaskId> tasks = new List<TaskId>();
             foreach (ClientState client in clients.values())
             {
-                tasks.addAll(client.standbyTasks());
+                tasks.addAll(client.StandbyTasks());
             }
             Collections.sort(tasks);
             return tasks;
@@ -731,7 +731,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
         private ClientState CreateClientWithPreviousActiveTasks(int processId, int capacity, params TaskId[] taskIds)
         {
             ClientState clientState = new ClientState(capacity);
-            clientState.addPreviousActiveTasks(Utils.mkSet(taskIds));
+            clientState.AddPreviousActiveTasks(Utils.mkSet(taskIds));
             clients.Put(processId, clientState);
             return clientState;
         }
@@ -741,8 +741,8 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             foreach (var clientStateEntry in clients)
             {
                 List<int> topicGroupIds = new List<int>();
-                HashSet<TaskId> activeTasks = clientStateEntry.Value.activeTasks();
-                foreach (TaskId activeTask in activeTasks)
+                HashSet<TaskId> ActiveTasks = clientStateEntry.Value.ActiveTasks();
+                foreach (TaskId activeTask in ActiveTasks)
                 {
                     topicGroupIds.Add(activeTask.topicGroupId);
                 }
@@ -756,7 +756,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             Dictionary<int, HashSet<TaskId>> sortedAssignments = new HashMap<>();
             foreach (Map.Entry<int, ClientState> entry in clients)
             {
-                HashSet<TaskId> sorted = new TreeSet<>(entry.Value.activeTasks());
+                HashSet<TaskId> sorted = new TreeSet<>(entry.Value.ActiveTasks());
                 sortedAssignments.Put(entry.Key, sorted);
             }
             return sortedAssignments;

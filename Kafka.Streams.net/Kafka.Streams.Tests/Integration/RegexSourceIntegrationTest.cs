@@ -15,7 +15,6 @@ using Kafka.Streams.Tests;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
 using Kafka.Streams.Threads.KafkaStreams;
-using Kafka.Streams.Threads.KafkaStreamsThread;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -72,8 +71,8 @@ namespace Kafka.Streams.Tests.Integration
         {// throws InterruptedException
             outputTopic = CreateTopic(++topicSuffixGenerator);
             StreamsConfig properties = new StreamsConfig();
-            properties.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-            properties.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+            properties.CacheMaxBytesBuffering = 0;
+            properties.CommitIntervalMs = 100;
             properties.Put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "1000");
             properties.Put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -155,7 +154,7 @@ namespace Kafka.Streams.Tests.Integration
             List<string> expectedFirstAssignment = Arrays.asList("TEST-TOPIC-A", "TEST-TOPIC-B");
             List<string> expectedSecondAssignment = Collections.singletonList("TEST-TOPIC-B");
 
-            Cluster.createTopics("TEST-TOPIC-A", "TEST-TOPIC-B");
+            Cluster.CreateTopics("TEST-TOPIC-A", "TEST-TOPIC-B");
 
             StreamsBuilder builder = new StreamsBuilder();
 
@@ -167,7 +166,7 @@ namespace Kafka.Streams.Tests.Integration
             streams = new KafkaStreamsThread(
                 builder.Build(),
                 streamsConfiguration,
-                new DefaultKafkaClientSupplier();
+                new DefaultKafkaClientSupplier());
             //    {
             //
             //
@@ -257,14 +256,14 @@ namespace Kafka.Streams.Tests.Integration
             streams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
             streams.Start();
 
-            StreamsConfig producerConfig = TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
+            StreamsConfig ProducerConfig = TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
 
-            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_1, Collections.singleton(topic1TestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_2, Collections.singleton(topic2TestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_A, Collections.singleton(topicATestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_C, Collections.singleton(topicCTestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_Y, Collections.singleton(topicYTestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_Z, Collections.singleton(topicZTestMessage), producerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_1, Collections.singleton(topic1TestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_2, Collections.singleton(topic2TestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_A, Collections.singleton(topicATestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_C, Collections.singleton(topicCTestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_Y, Collections.singleton(topicYTestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(TOPIC_Z, Collections.singleton(topicZTestMessage), ProducerConfig, mockTime);
 
             StreamsConfig consumerConfig = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
 
@@ -302,7 +301,7 @@ namespace Kafka.Streams.Tests.Integration
             List<string> leaderAssignment = new List<string>();
             List<string> followerAssignment = new List<string>();
 
-            partitionedStreamsLeader = new KafkaStreamsThread(builderLeader.Build(), streamsConfiguration, new DefaultKafkaClientSupplier();
+            partitionedStreamsLeader = new KafkaStreamsThread(builderLeader.Build(), streamsConfiguration, new DefaultKafkaClientSupplier());
             //        {
             //
             //
@@ -318,7 +317,7 @@ namespace Kafka.Streams.Tests.Integration
             //            }
             //        };
             //            });
-            partitionedStreamsFollower = new KafkaStreamsThread(builderFollower.Build(), streamsConfiguration, new DefaultKafkaClientSupplier();
+            partitionedStreamsFollower = new KafkaStreamsThread(builderFollower.Build(), streamsConfiguration, new DefaultKafkaClientSupplier());
             //{
             //
             //    public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
@@ -381,10 +380,10 @@ namespace Kafka.Streams.Tests.Integration
 
             streams.Start();
 
-            StreamsConfig producerConfig = TestUtils.producerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
+            StreamsConfig ProducerConfig = TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
 
-            IntegrationTestUtils.ProduceValuesSynchronously(FA_TOPIC, Collections.singleton(fMessage), producerConfig, mockTime);
-            IntegrationTestUtils.ProduceValuesSynchronously(FOO_TOPIC, Collections.singleton(fooMessage), producerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(FA_TOPIC, Collections.singleton(fMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.ProduceValuesSynchronously(FOO_TOPIC, Collections.singleton(fooMessage), ProducerConfig, mockTime);
 
             StreamsConfig consumerConfig = TestUtils.ConsumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
             try

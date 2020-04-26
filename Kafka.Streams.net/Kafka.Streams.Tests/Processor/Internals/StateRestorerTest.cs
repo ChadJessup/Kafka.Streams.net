@@ -28,7 +28,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldCallRestoreOnRestoreCallback()
         {
-            restorer.restore(Collections.singletonList(new ConsumeResult<>("", 0, 0L, System.Array.Empty<byte>(), System.Array.Empty<byte>())));
+            restorer.Restore(Collections.singletonList(new ConsumeResult<>("", 0, 0L, System.Array.Empty<byte>(), System.Array.Empty<byte>())));
             Assert.Equal(callback.restored.Count, 1);
         }
 

@@ -1,10 +1,14 @@
 using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Temporary;
 using Kafka.Streams.Topologies;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 {
@@ -19,38 +23,37 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
         {
             var builder = new StreamsBuilder();
 
-            IKStream<K, V>("topic");
-            IKStream<K, V>("other-topic");
+            IKStream<string, string> stream = builder.Stream<string, string>("topic");
+            IKStream<string, string> streamII = builder.Stream<string, string>("other-topic");
             ValueJoiner<string, string, string> valueJoiner = (v, v2) => v + v2;
-
-
-            IKStream<K, V> joinedStream = stream.Join(streamII, valueJoiner, JoinWindows.Of(TimeSpan.FromMilliseconds(5000)));
+            IKStream<string, string> joinedStream = stream.Join(streamII, valueJoiner, JoinWindows.Of(TimeSpan.FromMilliseconds(5000)));
 
             // build step one
-            Assert.Equal(expectedJoinedTopology, builder.Build().describe().ToString());
+            Assert.Equal(expectedJoinedTopology, builder.Build().Describe().ToString());
 
-            IKStream<K, V> v.Equals("foo"));
+            IKStream<string, string> filteredJoinStream = joinedStream.Filter((k, v) => v.Equals("foo"));
             // build step two
-            Assert.Equal(expectedJoinedFilteredTopology, builder.Build().describe().ToString());
+            Assert.Equal(expectedJoinedFilteredTopology, builder.Build().Describe().ToString());
 
             filteredJoinStream.MapValues(v => v + "some value").To("output-topic");
             // build step three
-            Assert.Equal(expectedFullTopology, builder.Build().describe().ToString());
+            Assert.Equal(expectedFullTopology, builder.Build().Describe().ToString());
 
         }
 
         [Fact]
         public void shouldBeAbleToProcessNestedMultipleKeyChangingNodes()
         {
-            var properties = new StreamsConfig();
-            properties.Set(StreamsConfig.ApplicationId, "test-application");
-            properties.Set(StreamsConfig.BootstrapServers, "localhost:9092");
-            properties.Set(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
+            var properties = new StreamsConfig
+            {
+                ApplicationId = "test-application",
+                BootstrapServers = "localhost:9092",
+                TOPOLOGY_OPTIMIZATION = StreamsConfig.OPTIMIZE
+            };
 
             var builder = new StreamsBuilder();
-            IKStream<K, V>("inputTopic");
-
-            IKStream<K, V> v.substring(0, 5));
+            IKStream<string, string> inputStream = builder.Stream("inputTopic");
+            IKStream<string, string> changedKeyStream = inputStream.SelectKey((k, v) => v.Substring(0, 5));
 
             // first repartition
             changedKeyStream.GroupByKey(Grouped.As("count-repartition"))
@@ -74,9 +77,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
             Topology attemptedOptimize = getTopologyWithChangingValuesAfterChangingKey(StreamsConfig.OPTIMIZE);
             Topology noOptimization = getTopologyWithChangingValuesAfterChangingKey(StreamsConfig.NO_OPTIMIZATION);
 
-            Assert.Equal(attemptedOptimize.describe().ToString(), noOptimization.describe().ToString());
-            Assert.Equal(2, getCountOfRepartitionTopicsFound(attemptedOptimize.describe().ToString()));
-            Assert.Equal(2, getCountOfRepartitionTopicsFound(noOptimization.describe().ToString()));
+            Assert.Equal(attemptedOptimize.Describe().ToString(), noOptimization.Describe().ToString());
+            Assert.Equal(2, getCountOfRepartitionTopicsFound(attemptedOptimize.Describe().ToString()));
+            Assert.Equal(2, getCountOfRepartitionTopicsFound(noOptimization.Describe().ToString()));
         }
 
         // no need to optimize.As user .As already performed the repartitioning manually
@@ -87,9 +90,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
             Topology attemptedOptimize = getTopologyWithThroughOperation(StreamsConfig.OPTIMIZE);
             Topology noOptimziation = getTopologyWithThroughOperation(StreamsConfig.NoOptimization);
 
-            Assert.Equal(attemptedOptimize.describe().ToString(), noOptimziation.describe().ToString());
-            Assert.Equal(0, getCountOfRepartitionTopicsFound(attemptedOptimize.describe().ToString()));
-            Assert.Equal(0, getCountOfRepartitionTopicsFound(noOptimziation.describe().ToString()));
+            Assert.Equal(attemptedOptimize.Describe().ToString(), noOptimziation.Describe().ToString());
+            Assert.Equal(0, getCountOfRepartitionTopicsFound(attemptedOptimize.Describe().ToString()));
+            Assert.Equal(0, getCountOfRepartitionTopicsFound(noOptimziation.Describe().ToString()));
 
         }
 
@@ -100,14 +103,23 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
             var properties = new StreamsConfig();
             properties.Set(StreamsConfig.TOPOLOGY_OPTIMIZATION, optimizeConfig);
 
-            IKStream<K, V>("input");
-            IKStream<K, V> k + v);
+            IKStream<string, string> inputStream = builder.Stream("input");
+            IKStream<string, string> mappedKeyStream = inputStream.SelectKey((k, v) => k + v);
 
-            mappedKeyStream.MapValues(v => v.toUppercase(Locale.getDefault())).GroupByKey().Count().ToStream().To("output");
-            mappedKeyStream.flatMapValues(v => new List<string> { v.Split("\\s" })).GroupByKey().WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(5000))).Count().ToStream().To("windowed-output");
+            mappedKeyStream.MapValues(v => v.ToUpper())
+                .GroupByKey()
+                .Count()
+                .ToStream()
+                .To("output");
+
+            mappedKeyStream.FlatMapValues(v => Arrays.asList(v.Split("\\s")))
+                .GroupByKey()
+                .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(5000)))
+                .Count()
+                .ToStream()
+                .To("windowed-output");
 
             return builder.Build(properties);
-
         }
 
         private Topology getTopologyWithThroughOperation(string optimizeConfig)
@@ -115,10 +127,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
 
             var builder = new StreamsBuilder();
             var properties = new StreamsConfig();
-            properties.Set(StreamsConfig.TOPOLOGY_OPTIMIZATION, optimizeConfig);
+            properties.TOPOLOGY_OPTIMIZATION = optimizeConfig;
 
-            IKStream<K, V>("input");
-            IKStream<K, V> k + v).through("through-topic");
+            IKStream<string, string> inputStream = builder.Stream("input");
+            IKStream<string, string> mappedKeyStream = inputStream.SelectKey((k, v) => k + v).Through("through-topic");
 
             mappedKeyStream.GroupByKey().Count().ToStream().To("output");
             mappedKeyStream.GroupByKey().WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(5000))).Count().ToStream().To("windowed-output");

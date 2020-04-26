@@ -1,5 +1,7 @@
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Temporary;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             inputKey = 1;
             inputValue = 10;
-            transformer = Mock.Of<Transformer));
+            transformer = Mock.Of<Transformer>());
             context = strictMock(IProcessorContext));
             processor = new KStreamFlatTransformProcessor<>(transformer);
         }
@@ -68,7 +70,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             EasyMock.reset(transformer);
 
             EasyMock.expect(transformer.transform(inputKey, inputValue))
-                .andReturn(Collections.< KeyValuePair<int, int> > emptyList());
+                .andReturn(Collections.emptyList<KeyValuePair<int, int>>());
             replayAll();
 
             processor.Process(inputKey, inputValue);
@@ -105,15 +107,16 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldGetFlatTransformProcessor()
         {
-            ITransformerSupplier<int, int, Iterable<KeyValuePair<int, int>>> transformerSupplier =
-        Mock.Of<ITransformerSupplier>();
+            ITransformerSupplier<int, int, IEnumerable<KeyValuePair<int, int>>> transformerSupplier =
+        Mock.Of<ITransformerSupplier<int, int, IEnumerable<KeyValuePair<int, int>>>>();
+
             KStreamFlatTransform<int, int, int, int> processorSupplier =
-                new KStreamFlatTransform<>(transformerSupplier);
+                new KStreamFlatTransform<int, int, int, int>(transformerSupplier);
 
             // EasyMock.expect(transformerSupplier.Get()).andReturn(transformer);
             // replayAll();
 
-            Processor<int, int> processor = processorSupplier.Get();
+            var processor = processorSupplier.Get();
 
             //verifyAll();
             Assert.True(processor is IKStreamFlatTransformProcessor);

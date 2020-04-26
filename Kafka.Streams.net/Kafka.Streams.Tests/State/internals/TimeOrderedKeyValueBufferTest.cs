@@ -95,7 +95,7 @@
 //                buffer.Put(0, "asdf", null, GetContext(0));
 //                Assert.True(false, "expected an exception");
 //            }
-//            catch (NullPointerException expected)
+//            catch (NullReferenceException expected)
 //            {
 //                // expected
 //            }
@@ -128,7 +128,7 @@
 //            buffer.evictWhile(() => buffer.numRecords() > 1, evicted::add);
 //            Assert.Equal(buffer.numRecords(), (1));
 //            Assert.Equal(evicted, (singletonList(
-//                new Eviction<>("asdf", new Change<>("eyt", null), GetContext(0L))
+//                new Eviction<>("asdf", new Change<string>("eyt", null), GetContext(0L))
 //            )));
 //            Cleanup(context, buffer);
 //        }
@@ -247,8 +247,8 @@
 
 //            ProcessorRecordContext recordContext = GetContext(0L);
 //            context.setRecordContext(recordContext);
-//            buffer.Put(1L, "A", new Change<>("new-value", "old-value"), recordContext);
-//            buffer.Put(1L, "B", new Change<>("new-value", null), recordContext);
+//            buffer.Put(1L, "A", new Change<string>("new-value", "old-value"), recordContext);
+//            buffer.Put(1L, "B", new Change<string>("new-value", null), recordContext);
 //            Assert.Equal(buffer.priorValueForBuffered("A"), (Maybe.defined(ValueAndTimestamp.Make("old-value", -1))));
 //            Assert.Equal(buffer.priorValueForBuffered("B"), (Maybe.defined(null)));
 //        }
@@ -343,10 +343,10 @@
 
 //            FullChangeSerde<string> serializer = FullChangeSerde.Wrap(Serdes.String());
 
-//            byte[] todeleteValue = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serializer.serializeParts(null, new Change<>("doomed", null)));
-//            byte[] asdfValue = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serializer.serializeParts(null, new Change<>("qwer", null)));
-//            byte[] zxcvValue1 = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serializer.serializeParts(null, new Change<>("eo4im", "previous")));
-//            byte[] zxcvValue2 = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serializer.serializeParts(null, new Change<>("next", "eo4im")));
+//            byte[] todeleteValue = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serializer.serializeParts(null, new Change<string>("doomed", null)));
+//            byte[] asdfValue = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serializer.serializeParts(null, new Change<string>("qwer", null)));
+//            byte[] zxcvValue1 = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serializer.serializeParts(null, new Change<string>("eo4im", "previous")));
+//            byte[] zxcvValue2 = FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(serializer.serializeParts(null, new Change<string>("next", "eo4im")));
 //            stateRestoreCallback.restoreBatch(asList(
 //                new ConsumeResult<>("changelog-topic",
 //                                     0,
@@ -431,11 +431,11 @@
 //            Assert.Equal(evicted, (asList(
 //                new Eviction<>(
 //                    "zxcv",
-//                    new Change<>("next", "eo4im"),
+//                    new Change<string>("next", "eo4im"),
 //                    new ProcessorRecordContext(3L, 3, 0, "changelog-topic", new Headers())),
 //                new Eviction<>(
 //                    "asdf",
-//                    new Change<>("qwer", null),
+//                    new Change<string>("qwer", null),
 //                    new ProcessorRecordContext(1L, 1, 0, "changelog-topic", new Headers()))
 //            )));
 
@@ -460,11 +460,11 @@
 //            byte[] asdfValue = GetContextualRecord("qwer", 1).Serialize(0).array();
 //            FullChangeSerde<string> fullChangeSerde = FullChangeSerde.Wrap(Serdes.String());
 //            byte[] zxcvValue1 = new ContextualRecord(
-//                FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<>("3o4im", "previous"))),
+//                FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<string>("3o4im", "previous"))),
 //                GetContext(2L)
 //            ).Serialize(0).array();
 //            byte[] zxcvValue2 = new ContextualRecord(
-//                FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<>("next", "3o4im"))),
+//                FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<string>("next", "3o4im"))),
 //                GetContext(3L)
 //            ).Serialize(0).array();
 //            stateRestoreCallback.restoreBatch(asList(
@@ -555,11 +555,11 @@
 //            Assert.Equal(evicted, (asList(
 //                new Eviction<>(
 //                    "zxcv",
-//                    new Change<>("next", "3o4im"),
+//                    new Change<string>("next", "3o4im"),
 //                    GetContext(3L)),
 //                new Eviction<>(
 //                    "asdf",
-//                    new Change<>("qwer", null),
+//                    new Change<string>("qwer", null),
 //                    GetContext(1L)
 //                ))));
 
@@ -686,11 +686,11 @@
 //            Assert.Equal(evicted, (asList(
 //                new Eviction<>(
 //                    "zxcv",
-//                    new Change<>("next", "3o4im"),
+//                    new Change<string>("next", "3o4im"),
 //                    GetContext(3L)),
 //                new Eviction<>(
 //                    "asdf",
-//                    new Change<>("qwer", null),
+//                    new Change<string>("qwer", null),
 //                    GetContext(1L)
 //                ))));
 
@@ -748,7 +748,7 @@
 //        {
 //            ProcessorRecordContext recordContext = GetContext(recordTimestamp);
 //            context.setRecordContext(recordContext);
-//            buffer.Put(streamTime, key, new Change<>(value, null), recordContext);
+//            buffer.Put(streamTime, key, new Change<string>(value, null), recordContext);
 //        }
 
 //        private static BufferValue GetBufferValue(string value, long timestamp)
@@ -765,7 +765,7 @@
 //        {
 //            FullChangeSerde<string> fullChangeSerde = FullChangeSerde.Wrap(Serdes.String());
 //            return new ContextualRecord(
-//                FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<>(value, null))),
+//                FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<string>(value, null))),
 //                GetContext(timestamp)
 //            );
 //        }

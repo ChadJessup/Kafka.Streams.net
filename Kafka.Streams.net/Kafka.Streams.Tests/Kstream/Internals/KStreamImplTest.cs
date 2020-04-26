@@ -215,7 +215,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             StreamsBuilder builder = new StreamsBuilder();
             string input = "topic";
             IKStream<string, string> stream = builder.Stream(input, stringConsumed);
-            stream.Through("through-topic", Produced.With(Serdes.String(), Serdes.String()).Process(processorSupplier);
+            stream.Through("through-topic", Produced.With(Serdes.String(), Serdes.String()).Process(processorSupplier));
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             driver.PipeInput(recordFactory.Create(input, "a", "b"));
@@ -254,7 +254,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(input, "b", "v1"));
 
             List<MockProcessor<string, string>> mockProcessors = processorSupplier.CapturedProcessors(2);
-            Assert.Equal(mockProcessors.ElementAt(0).processed, equalToasList(new KeyValueTimestamp<string, string>("a", "v1", 0),
+            Assert.Equal(mockProcessors.ElementAt(0).processed, Arrays.asList(new KeyValueTimestamp<string, string>("a", "v1", 0),
                     new KeyValueTimestamp<string, string>("a", "v2", 0)));
             Assert.Equal(mockProcessors.ElementAt(1).processed, (Collections.singletonList(new KeyValueTimestamp<string, string>("b", "v1", 0))));
         }
@@ -361,43 +361,43 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             inputStream.To("output", Produced.With(Serdes.String(), Serdes.String()));
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullPredicateOnFilter()
         {
             testStream.Filter(null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullPredicateOnFilterNot()
         {
             testStream.FilterNot(null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullMapperOnSelectKey()
         {
             testStream.SelectKey<string>(null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullMapperOnMap()
         {
             testStream.Map<string, string>(null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void ShouldNotAllowNullMapperOnMapValues()
         {
             testStream.MapValues((ValueMapper<string, string>)null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullMapperOnMapValuesWithKey()
         {
             testStream.MapValues((ValueMapperWithKey<string, string, string>)null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullMapperOnFlatMap()
         {
             testStream.FlatMap<string, string>(null);
@@ -415,13 +415,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             Assert.Throws<ArgumentException>(() => testStream.Branch());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void ShouldCantHaveNullPredicate()
         {
             Assert.Throws<NullReferenceException>(() => testStream.Branch(null));
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullTopicOnThrough()
         {
             testStream.Through(null);
@@ -490,55 +490,55 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             Assert.Equal("valueTransformerSupplier can't be null", e.ToString());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullProcessSupplier()
         {
             testStream.Process((IProcessorSupplier<string, string>)null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void ShouldNotAllowNullOtherStreamOnJoin()
         {
             testStream.Join(null, MockValueJoiner.TOSTRING_JOINER(), JoinWindows.Of(TimeSpan.FromMilliseconds(10)));
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullValueJoinerOnJoin()
         {
             testStream.Join<string, string>(testStream, null, JoinWindows.Of(TimeSpan.FromMilliseconds(10)));
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void ShouldNotAllowNullJoinWindowsOnJoin()
         {
             testStream.Join(testStream, MockValueJoiner.TOSTRING_JOINER(), null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullTableOnTableJoin()
         {
             testStream.LeftJoin<string, string>(null, MockValueJoiner.TOSTRING_JOINER());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullValueMapperOnTableJoin()
         {
             testStream.LeftJoin<string, string>(builder.Table("topic", stringConsumed), null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullSelectorOnGroupBy()
         {
             testStream.GroupBy<string>(null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullActionOnForEach()
         {
             testStream.ForEach(null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void ShouldNotAllowNullTableOnJoinWithGlobalTable()
         {
             testStream.Join<string, string, string>(
@@ -547,7 +547,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 MockValueJoiner.TOSTRING_JOINER());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullMapperOnJoinWithGlobalTable()
         {
             testStream.Join<string, string, string>(
@@ -556,7 +556,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 MockValueJoiner.TOSTRING_JOINER());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullJoinerOnJoinWithGlobalTable()
         {
             testStream.Join<string, string, string>(
@@ -565,7 +565,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullTableOnJLeftJoinWithGlobalTable()
         {
             testStream.LeftJoin(
@@ -574,7 +574,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 MockValueJoiner.TOSTRING_JOINER());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullMapperOnLeftJoinWithGlobalTable()
         {
             testStream.LeftJoin<string, string, string>(
@@ -583,7 +583,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 MockValueJoiner.TOSTRING_JOINER());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void ShouldNotAllowNullJoinerOnLeftJoinWithGlobalTable()
         {
             var globalTable = builder.GlobalTable("global", stringConsumed);
@@ -593,19 +593,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnPrintIfPrintedIsNull()
         {
             //testStream.Print(null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnThroughWhenProducedIsNull()
         {
             testStream.Through("topic", null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnToWhenProducedIsNull()
         {
             testStream.To("topic", null);
@@ -622,7 +622,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                     MockValueJoiner.TOSTRING_JOINER(),
                     null);
 
-                Assert.False(true, "Should have thrown NullPointerException");
+                Assert.False(true, "Should have thrown NullReferenceException");
             }
             catch (NullReferenceException e)
             {
@@ -641,7 +641,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                     MockValueJoiner.TOSTRING_JOINER(),
                     null);
 
-                Assert.False(true, "Should have thrown NullPointerException");
+                Assert.False(true, "Should have thrown NullReferenceException");
             }
             catch (NullReferenceException e)
             {
@@ -649,7 +649,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             }
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void ShouldThrowNullPointerOnJoinWithStreamWhenJoinedIsNull()
         {
             testStream.Join<string, string>(
@@ -658,7 +658,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 JoinWindows.Of(TimeSpan.FromMilliseconds(10)), null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void ShouldThrowNullPointerOnOuterJoinJoinedIsNull()
         {
             testStream.OuterJoin<string, string>(

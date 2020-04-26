@@ -440,7 +440,7 @@
 //                {
 //                    return true;
 //                }
-//                if (recordIterator == null || (!recordIterator.HasNext() && !segmentIterator.HasNext()))
+//                if (recordIterator == null || (!recordIterator.MoveNext() && !segmentIterator.MoveNext()))
 //                {
 //                    return false;
 //                }
@@ -479,7 +479,7 @@
 //            // Note this does not guarantee a next record exists as the next segments may not contain any keys in range
 //            protected KeyValuePair<Bytes, byte[]> getNext()
 //            {
-//                while (!recordIterator.HasNext())
+//                while (!recordIterator.MoveNext())
 //                {
 //                    recordIterator = setRecordIterator();
 //                    if (recordIterator == null)
@@ -495,7 +495,7 @@
 //            // Note it may not actually point to anything if no keys in range exist in the next segment
 //            IEnumerator<KeyValuePair<Bytes, byte[]>> setRecordIterator()
 //            {
-//                if (!segmentIterator.HasNext())
+//                if (!segmentIterator.MoveNext())
 //                {
 //                    return null;
 //                }

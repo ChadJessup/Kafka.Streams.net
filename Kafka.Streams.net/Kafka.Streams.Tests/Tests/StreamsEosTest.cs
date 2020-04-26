@@ -22,7 +22,7 @@
 //            string command = args[1];
 
 //            StreamsConfig streamsProperties = Utils.loadProps(propFileName);
-//            string kafka = streamsProperties.getProperty(StreamsConfig.BootstrapServersConfig);
+//            string kafka = streamsProperties.Get(StreamsConfig.BootstrapServersConfig);
 
 //            if (kafka == null)
 //            {

@@ -114,7 +114,7 @@ namespace Kafka.Streams.Tests.Integration
                         new KeyValueTimestamp<string, long>("k3", 1L, scaledTime(3L))
                     ))
                 );
-                Assert.Equal(eventCount, 0);
+                Assert.Equal(0, eventCount);
 
                 // Flush two of the first three events System.Console.Out.
                 ProduceSynchronouslyToPartitionZero(
@@ -131,7 +131,7 @@ namespace Kafka.Streams.Tests.Integration
                         new KeyValueTimestamp<string, long>("k5", 1L, scaledTime(5L))
                     ))
                 );
-                Assert.Equal(eventCount, 2);
+                Assert.Equal(2, eventCount);
                 verifyOutput(
                     outputSuppressed,
                     Arrays.asList(
@@ -145,7 +145,7 @@ namespace Kafka.Streams.Tests.Integration
 
                 // restart the driver
                 driver.Close();
-                Assert.Equal(driver.State.CurrentState, KafkaStreamsThreadStates.NOT_RUNNING);
+                Assert.Equal(KafkaStreamsThreadStates.NOT_RUNNING, driver.State.CurrentState);
                 driver = getStartedStreams(streamsConfig, builder, false);
 
 
@@ -282,14 +282,14 @@ namespace Kafka.Streams.Tests.Integration
 
             internal static void ProduceSynchronouslyToPartitionZero(string topic, List<KeyValueTimestamp<string, string>> toProduce)
             {
-                StreamsConfig producerConfig = mkProperties(mkMap(
+                StreamsConfig ProducerConfig = mkProperties(mkMap(
                     mkEntry(ProducerConfig.CLIENT_ID_CONFIG, "anything"),
                     mkEntry(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ((ISerializer<string>)STRING_SERIALIZER).GetType().FullName),
                     mkEntry(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ((ISerializer<string>)STRING_SERIALIZER).GetType().FullName),
                     mkEntry(ProducerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers())
                 ));
 
-                IntegrationTestUtils.ProduceSynchronously(producerConfig, false, topic, 0, toProduce);
+                IntegrationTestUtils.ProduceSynchronously(ProducerConfig, false, topic, 0, toProduce);
             }
         }
     }

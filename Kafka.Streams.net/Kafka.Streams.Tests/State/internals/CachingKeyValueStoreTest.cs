@@ -88,11 +88,11 @@
 //                context.setRecordContext(new ProcessorRecordContext(10, 0, 0, topic, null));
 //                store.Init(context, null);
 //                cache.Flush("0_0-store");
-//                EasyMock.expectLastCall().andThrow(new NullPointerException("Simulating an error on Flush"));
+//                EasyMock.expectLastCall().andThrow(new NullReferenceException("Simulating an error on Flush"));
 //                EasyMock.replay(cache);
 //                store.Close();
 //            }
-//            catch (NullPointerException npe)
+//            catch (NullReferenceException npe)
 //            {
 //                Assert.False(underlyingStore.IsOpen());
 //            }
@@ -202,7 +202,7 @@
 //            int items = AddItemsToCache();
 //            IKeyValueIterator<Bytes, byte[]> All = store.All();
 //            List<Bytes> results = new List<Bytes>();
-//            while (All.HasNext())
+//            while (All.MoveNext())
 //            {
 //                results.Add(All.MoveNext().Key);
 //            }
@@ -215,7 +215,7 @@
 //            int items = AddItemsToCache();
 //            IKeyValueIterator<Bytes, byte[]> range = store.Range(bytesKey(string.valueOf(0)), bytesKey(string.valueOf(items)));
 //            List<Bytes> results = new List<Bytes>();
-//            while (range.HasNext())
+//            while (range.MoveNext())
 //            {
 //                results.Add(range.MoveNext().Key);
 //            }
@@ -228,8 +228,8 @@
 //            store.Put(BytesKey("a"), BytesValue("a"));
 //            store.Delete(BytesKey("a"));
 //            Assert.Null(store.Get(BytesKey("a")));
-//            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).HasNext());
-//            Assert.False(store.All().HasNext());
+//            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).MoveNext());
+//            Assert.False(store.All().MoveNext());
 //        }
 
 //        [Fact]
@@ -239,8 +239,8 @@
 //            store.Flush();
 //            store.Delete(BytesKey("a"));
 //            Assert.Null(store.Get(BytesKey("a")));
-//            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).HasNext());
-//            Assert.False(store.All().HasNext());
+//            Assert.False(store.Range(BytesKey("a"), BytesKey("b")).MoveNext());
+//            Assert.False(store.All().MoveNext());
 //        }
 
 //        [Fact]
@@ -301,13 +301,13 @@
 //            store.PutIfAbsent(BytesKey("b"), BytesValue("c"));
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerExceptionOnPutWithNullKey()
 //        {
 //            store.Put(null, BytesValue("c"));
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerExceptionOnPutIfAbsentWithNullKey()
 //        {
 //            store.PutIfAbsent(null, BytesValue("c"));
@@ -321,7 +321,7 @@
 //            try
 //            {
 //                store.PutAll(entries);
-//                Assert.True(false, "Should have thrown NullPointerException while putAll null key");
+//                Assert.True(false, "Should have thrown NullReferenceException while putAll null key");
 //            }
 //            catch (NullReferenceException expected)
 //            {
@@ -396,7 +396,7 @@
 //            {
 //                forwarded.Put(
 //                    keyDeserializer.Deserialize(null, key),
-//                    new Change<>(
+//                    new Change<string>(
 //                        valueDesializer.Deserialize(null, newValue),
 //                        valueDesializer.Deserialize(null, oldValue)));
 //            }

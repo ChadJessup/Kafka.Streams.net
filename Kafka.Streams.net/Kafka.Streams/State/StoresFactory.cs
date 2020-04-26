@@ -29,7 +29,7 @@ namespace Kafka.Streams.State
      *   "topicName",
      *   Materialized.<long,string>As(storeSupplier)
      *               .withKeySerde(Serdes.Long())
-     *               .WithValueSerde(Serdes.string())
+     *               .WithValueSerde(Serdes.Serdes.String())
      *               .WithCachingDisabled());
      * }</pre>
      * When using the IProcessor API, i.e., {@link org.apache.kafka.streams.Topology Topology}, users create

@@ -288,7 +288,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
-                TestUtils.producerConfig(CLUSTER.bootstrapServers(),
+                TestUtils.ProducerConfig(CLUSTER.bootstrapServers(),
                     Serdes.Int().Serializer,
                     Serdes.Int().Serializer),
                 CLUSTER.time);
@@ -297,12 +297,12 @@ namespace Kafka.Streams.Tests.Integration
             //    () => {
             //        try {
             //            IReadOnlyKeyValueStore<K, V> store =
-            //                kafkaStreams.store(STORE_NAME, QueryableStoreTypes.KeyValueStore);
+            //                kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.KeyValueStore);
 
             //IKeyValueIterator<K, V> All = store.All();
             //List<KeyValuePair<K, V>> storeContent = new LinkedList<>();
             //
-            //                while (All.HasNext()) {
+            //                while (All.MoveNext()) {
             //                    storeContent.Add(All.MoveNext());
             //                }
             //                return storeContent.Equals(expectedStoreContent);
@@ -327,7 +327,7 @@ namespace Kafka.Streams.Tests.Integration
                     try
                     {
                         IReadOnlyKeyValueStore<K, IValueAndTimestamp<long>> store =
-                            kafkaStreams.store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
+                            kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
                         IValueAndTimestamp<long> count = store.Get(key);
                         return count.Value == value && count.Timestamp == timestamp;
                     }
@@ -350,7 +350,7 @@ namespace Kafka.Streams.Tests.Integration
         //            try
         //            {
         //                IReadOnlyKeyValueStore<K, IValueAndTimestamp<long>> store =
-        //                    kafkaStreams.store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
+        //                    kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
         //                IValueAndTimestamp<long> count = store.Get(key);
         //                return count.Value == value && count.Timestamp == -1L;
         //            }
@@ -374,7 +374,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
-                TestUtils.producerConfig(CLUSTER.bootstrapServers(),
+                TestUtils.ProducerConfig(CLUSTER.bootstrapServers(),
                     Serdes.Int().Serializer,
                     Serdes.Int().Serializer),
                 timestamp);
@@ -383,10 +383,10 @@ namespace Kafka.Streams.Tests.Integration
             //            () =>
             //    {
             //                    IReadOnlyKeyValueStore<K, IValueAndTimestamp<V>> store =
-            //                        kafkaStreams.store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
+            //                        kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
             //IKeyValueIterator<K, IValueAndTimestamp<V>> All = store.All();
             //var storeContent = new List<KeyValuePair<K, IValueAndTimestamp<V>>>();
-            //                        while (All.HasNext()) {
+            //                        while (All.MoveNext()) {
             //                            storeContent.Add(All.MoveNext());
             //                        }
             //                        return storeContent.Equals(expectedStoreContent);
@@ -395,7 +395,7 @@ namespace Kafka.Streams.Tests.Integration
             //    catch (Exception swallow)
             //    {
             //                    swallow.printStackTrace();
-            //                    System.Console.Error.WriteLine(swallow.getMessage());
+            //                    System.Console.Error.WriteLine(swallow.Message);
             //                    return false;
             //                }
             //            },
@@ -411,7 +411,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
-                TestUtils.producerConfig(CLUSTER.bootstrapServers(),
+                TestUtils.ProducerConfig(CLUSTER.bootstrapServers(),
                     Serdes.Int().Serializer,
                     Serdes.Int().Serializer),
                 timestamp);
@@ -420,10 +420,10 @@ namespace Kafka.Streams.Tests.Integration
             //                () =>
             //                {
             //                    IReadOnlyKeyValueStore<K, IValueAndTimestamp<V>> store =
-            //                    kafkaStreams.store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
+            //                    kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.TimestampedKeyValueStore());
             //                    IKeyValueIterator<K, IValueAndTimestamp<V>> All = store.All();
             //                    var storeContent = new List<KeyValuePair<K, IValueAndTimestamp<V>>>();
-            //                    while (All.HasNext())
+            //                    while (All.MoveNext())
             //                    {
             //                        storeContent.Add(All.MoveNext());
             //                    }
@@ -431,7 +431,7 @@ namespace Kafka.Streams.Tests.Integration
             //                }
             //                } catch (Exception swallow) {
             //                    swallow.printStackTrace();
-            //                    System.Console.Error.WriteLine(swallow.getMessage());
+            //                    System.Console.Error.WriteLine(swallow.Message);
             //                    return false;
             //                }
             //},
@@ -574,7 +574,7 @@ namespace Kafka.Streams.Tests.Integration
             verifyWindowedCountWithTimestamp(new Windowed<string>(3, new TimeWindow(0L, 1000L)), 1L, lastUpdateKeyThree);
             verifyWindowedCountWithTimestamp(new Windowed<string>(4, new TimeWindow(0L, 1000L)), 3L, lastUpdateKeyFour);
 
-            long currentTime = CLUSTER.time.NowAsEpochMilliseconds; ;
+            long currentTime = CLUSTER.time.NowAsEpochMilliseconds;
             processKeyValueAndVerifyWindowedCountWithTimestamp(1, currentTime + 42L, Arrays.asList(
                 KeyValuePair.Create(
                     new Windowed<string>(1, new TimeWindow(0L, 1000L)),
@@ -782,7 +782,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
-                TestUtils.producerConfig(CLUSTER.bootstrapServers(),
+                TestUtils.ProducerConfig(CLUSTER.bootstrapServers(),
                     Serdes.Int().Serializer,
                     Serdes.Int().Serializer),
                 CLUSTER.time);
@@ -791,18 +791,18 @@ namespace Kafka.Streams.Tests.Integration
             //            () => {
             //                try {
             //                    IReadOnlyWindowStore<K, V> store =
-            //                        kafkaStreams.store(STORE_NAME, QueryableStoreTypes.windowStore());
+            //                        kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.windowStore());
             //                    try { 
             // (IKeyValueIterator<IWindowed<K>, V> All = store.All());
             //                        List<KeyValuePair<IWindowed<K>, V>> storeContent = new LinkedList<>();
-            //                        while (All.HasNext()) {
+            //                        while (All.MoveNext()) {
             //                            storeContent.Add(All.MoveNext());
             //                        }
             //                        return storeContent.Equals(expectedStoreContent);
             //                    }
             //                } catch (Exception swallow) {
             //                    swallow.printStackTrace();
-            //                    System.Console.Error.WriteLine(swallow.getMessage());
+            //                    System.Console.Error.WriteLine(swallow.Message);
             //                    return false;
             //                }
             //            },
@@ -819,14 +819,14 @@ namespace Kafka.Streams.Tests.Integration
                     try
                     {
                         IReadOnlyWindowStore<K, IValueAndTimestamp<long>> store =
-                            kafkaStreams.store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
+                            kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
                         IValueAndTimestamp<long> count = store.Fetch(key.Key, key.window().Start());
                         return count.Value == value && count.Timestamp == -1L;
                     }
                     catch (Exception swallow)
                     {
                         swallow.printStackTrace();
-                        System.Console.Error.WriteLine(swallow.getMessage());
+                        System.Console.Error.WriteLine(swallow.Message);
                         return false;
                     }
                 },
@@ -844,14 +844,14 @@ namespace Kafka.Streams.Tests.Integration
          //            try
          //            {
          //                IReadOnlyWindowStore<K, IValueAndTimestamp<long>> store =
-         //                    kafkaStreams.store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
+         //                    kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
          //                IValueAndTimestamp<long> count = store.Fetch(key.Key, key.window().Start());
          //                return count.Value == value && count.Timestamp == timestamp;
          //            }
          //            catch (Exception swallow)
          //            {
          //                swallow.printStackTrace();
-         //                System.Console.Error.WriteLine(swallow.getMessage());
+         //                System.Console.Error.WriteLine(swallow.Message);
          //                return false;
          //            }
          //        },
@@ -866,7 +866,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronouslyWithTimestamp(
                 inputStream,
                 Collections.singletonList(KeyValuePair.Create(key, 0)),
-                TestUtils.producerConfig(CLUSTER.bootstrapServers(),
+                TestUtils.ProducerConfig(CLUSTER.bootstrapServers(),
                     Serdes.Int().Serializer,
                     Serdes.Int().Serializer),
                 timestamp);
@@ -874,10 +874,10 @@ namespace Kafka.Streams.Tests.Integration
             //        TestUtils.WaitForCondition(
             //            () => {
             //                    IReadOnlyWindowStore<K, IValueAndTimestamp<V>> store =
-            //                        kafkaStreams.store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
+            //                        kafkaStreams.Store(STORE_NAME, QueryableStoreTypes.timestampedWindowStore());
             //        IKeyValueIterator<IWindowed<K>, IValueAndTimestamp<V>> All = store.All();
             //        var storeContent = new List<KeyValuePair<IWindowed<K>, IValueAndTimestamp<V>>>();
-            //                        while (All.HasNext()) {
+            //                        while (All.MoveNext()) {
             //                            storeContent.Add(All.MoveNext());
             //                        }
             //                        return storeContent.Equals(expectedStoreContent);

@@ -327,7 +327,7 @@
 
 //        // key by campaign rather than by ad as original
 //        IKStream<K, V> keyedByCampaign = joined
-//            .selectKey((key, value) => value);
+//            .SelectKey((key, value) => value);
 
 //        // calculate windowed counts
 //        keyedByCampaign

@@ -53,7 +53,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<K, V> Next()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new IndexOutOfRangeException();
             }

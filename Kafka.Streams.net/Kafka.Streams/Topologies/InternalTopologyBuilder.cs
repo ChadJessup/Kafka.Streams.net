@@ -963,7 +963,7 @@ namespace Kafka.Streams.Topologies
                 processorMap[predecessor].AddChild(node);
                 if (sinkNodeFactory.TopicExtractor is StaticTopicNameExtractor)
                 {
-                    string topic = ((StaticTopicNameExtractor)sinkNodeFactory.TopicExtractor).topicName;
+                    string topic = ((StaticTopicNameExtractor)sinkNodeFactory.TopicExtractor).TopicName;
 
                     if (this.internalTopicNames.Contains(topic))
                     {
@@ -1029,7 +1029,7 @@ namespace Kafka.Streams.Topologies
                         // remember the changelog topic if this state store is change-logging enabled
                         //if (/*stateStoreFactory.loggingEnabled && */!storeToChangelogTopic.ContainsKey(stateStoreName))
                         //{
-                        //    string changelogTopic = ProcessorStateManager<K, V>.storeChangelogTopic(applicationId, stateStoreName);
+                        //    string changelogTopic = ProcessorStateManager<K, V>.StoreChangelogTopic(applicationId, stateStoreName);
                         //    storeToChangelogTopic.Add(stateStoreName, changelogTopic);
                         //}
                         //stateStoreMap.Add(stateStoreName, stateStoreFactory.build());
@@ -1142,7 +1142,7 @@ namespace Kafka.Streams.Topologies
                         //{
                         //    string topicName = storeToChangelogTopic.ContainsKey(stateFactory.Name)
                         //        ? storeToChangelogTopic[stateFactory.Name]
-                        //        : ProcessorStateManager.storeChangelogTopic(applicationId, stateFactory.Name);
+                        //        : ProcessorStateManager.StoreChangelogTopic(applicationId, stateFactory.Name);
 
                         //    if (!stateChangelogTopics.ContainsKey(topicName))
                         //    {

@@ -150,7 +150,7 @@
 //        //     ByteArraySerializer rawSerializer = new ByteArraySerializer();
 //        //     Producer<byte[], byte[]> producer = new MockProducer<>(true, rawSerializer, rawSerializer);
 //        // 
-//        //     RecordCollector recordCollector = new RecordCollectorImpl(
+//        //     RecordCollector recordCollector = new RecordCollector(
 //        //         "KeyValueStoreTestDriver",
 //        //         new LogContext("KeyValueStoreTestDriver "),
 //        //         new DefaultProductionExceptionHandler(),
@@ -338,7 +338,7 @@
 //    {
 //        int size = 0;
 //        IKeyValueIterator iterator = store.All<K, V>();
-//        while (iterator.HasNext())
+//        while (iterator.MoveNext())
 //        {
 //            iterator.MoveNext();
 //            ++size;

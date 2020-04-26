@@ -173,7 +173,7 @@
 //            // Create the store, which should register with the context and automatically
 //            // receive the restore entries ...
 //            store = createKeyValueStore(driver.context);
-//            context.restore(store.Name(), driver.restoredEntries());
+//            context.Restore(store.Name(), driver.restoredEntries());
 //            // Verify that the store's changelog does not get more appends ...
 //            Assert.Equal(0, driver.numFlushedEntryStored());
 //            Assert.Equal(0, driver.numFlushedEntryRemoved());

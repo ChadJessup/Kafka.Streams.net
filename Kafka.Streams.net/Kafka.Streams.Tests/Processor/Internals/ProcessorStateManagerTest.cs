@@ -1,15 +1,21 @@
 using Confluent.Kafka;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.State;
+using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.Tasks;
+using Kafka.Streams.Temporary;
+using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Tests.Mocks;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Processor.Internals
 {
     public class ProcessorStateManagerTest
     {
-
         private readonly HashSet<TopicPartition> noPartitions = Collections.emptySet();
         private readonly string applicationId = "test-application";
         private readonly string persistentStoreName = "persistentStore";
@@ -30,27 +36,26 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private readonly ConsumeResult<byte[], byte[]> consumerRecord = new ConsumeResult<>(changelogTopic, 0, 0, key, value);
         private LogContext logContext = new LogContext("process-state-manager-test ");
 
-        private File baseDir;
-        private File checkpointFile;
+        private DirectoryInfo baseDir;
+        private FileInfo checkpointFile;
         private OffsetCheckpoint checkpoint;
         private StateDirectory stateDirectory;
 
 
-        public void Setup()
+        public ProcessorStateManagerTest()
         {
             baseDir = TestUtils.GetTempDirectory();
 
-            //            stateDirectory = new StateDirectory(new StreamsConfig(new StreamsConfig() {
+            stateDirectory = new StateDirectory(null, new StreamsConfig(), new MockTime());
             //            {
             //                Put(StreamsConfig.ApplicationIdConfig, applicationId),
             //        Put(StreamsConfig.BootstrapServersConfig, "dummy:1234");
             //            Put(StreamsConfig.STATE_DIR_CONFIG, baseDir.getPath());
             //        }
             //    }), new MockTime(), true);
-            checkpointFile = new FileInfo(stateDirectory.directoryForTask(taskId), StateManagerUtil.CHECKPOINT_FILE_NAME);
+            checkpointFile = new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(taskId).FullName, StateManagerUtil.CHECKPOINT_FILE_NAME));
             checkpoint = new OffsetCheckpoint(checkpointFile);
         }
-
 
         public void Cleanup()
         { //throws IOException
@@ -65,18 +70,18 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             KeyValuePair<byte[], byte[]> expectedKeyValue = KeyValuePair.Create(key, value);
 
-            MockKeyValueStore persistentStore = getPersistentStore();
-            ProcessorStateManager stateMgr = getStandByStateManager(taskId);
+            MockKeyValueStore persistentStore = GetPersistentStore();
+            ProcessorStateManager stateMgr = GetStandByStateManager(taskId);
 
             try
             {
-                stateMgr.register(persistentStore, batchingRestoreCallback);
-                stateMgr.updateStandbyStates(
+                stateMgr.Register(persistentStore, batchingRestoreCallback);
+                stateMgr.UpdateStandbyStates(
                     persistentStorePartition,
                     Collections.singletonList(consumerRecord),
-                    consumerRecord.Offset
-                );
-                Assert.Equal(batchingRestoreCallback.getRestoredRecords().Count, is 1);
+                    consumerRecord.Offset);
+
+                Assert.Equal(batchingRestoreCallback.getRestoredRecords().Count, 1);
                 Assert.True(batchingRestoreCallback.getRestoredRecords().Contains(expectedKeyValue));
             }
             finally
@@ -91,17 +96,17 @@ namespace Kafka.Streams.Tests.Processor.Internals
             TaskId taskId = new TaskId(0, 2);
             int intKey = 1;
 
-            MockKeyValueStore persistentStore = getPersistentStore();
-            ProcessorStateManager stateMgr = getStandByStateManager(taskId);
+            MockKeyValueStore persistentStore = GetPersistentStore();
+            ProcessorStateManager stateMgr = GetStandByStateManager(taskId);
 
             try
             {
-                stateMgr.register(persistentStore, persistentStore.stateRestoreCallback);
-                stateMgr.updateStandbyStates(
+                stateMgr.Register(persistentStore, persistentStore.StateRestoreCallback);
+                stateMgr.UpdateStandbyStates(
                     persistentStorePartition,
                     Collections.singletonList(consumerRecord),
                     consumerRecord.Offset);
-                Assert.Equal(persistentStore.keys.Count, 1);
+                Assert.Equal(persistentStore.Keys.Count, 1);
                 Assert.True(persistentStore.keys.Contains(intKey));
                 Assert.Equal(9, persistentStore.values.Get(0).Length);
             }
@@ -117,18 +122,18 @@ namespace Kafka.Streams.Tests.Processor.Internals
             TaskId taskId = new TaskId(0, 2);
             int intKey = 1;
 
-            MockKeyValueStore persistentStore = getConverterStore();
-            ProcessorStateManager stateMgr = getStandByStateManager(taskId);
+            MockKeyValueStore persistentStore = GetConverterStore();
+            ProcessorStateManager stateMgr = GetStandByStateManager(taskId);
 
             try
             {
-                stateMgr.register(persistentStore, persistentStore.stateRestoreCallback);
-                stateMgr.updateStandbyStates(
+                stateMgr.Register(persistentStore, persistentStore.StateRestoreCallback);
+                stateMgr.UpdateStandbyStates(
                     persistentStorePartition,
                     Collections.singletonList(consumerRecord),
                     consumerRecord.Offset
                 );
-                Assert.Equal(persistentStore.keys.Count, is 1);
+                Assert.Equal(persistentStore.keys.Count, 1);
                 Assert.True(persistentStore.keys.Contains(intKey));
                 Assert.Equal(17, persistentStore.values.Get(0).Length);
             }
@@ -143,8 +148,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
         { //throws IOException
             TaskId taskId = new TaskId(0, 2);
 
-            MockKeyValueStore persistentStore = getPersistentStore();
+            MockKeyValueStore persistentStore = GetPersistentStore();
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -159,8 +165,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                stateMgr.register(persistentStore, persistentStore.stateRestoreCallback);
-                Assert.True(changelogReader.wasRegistered(new TopicPartition(persistentStoreTopicName, 2)));
+                stateMgr.Register(persistentStore, persistentStore.StateRestoreCallback);
+                Assert.True(changelogReader.WasRegistered(new TopicPartition(persistentStoreTopicName, 2)));
             }
             finally
             {
@@ -174,6 +180,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             MockKeyValueStore nonPersistentStore =
                 new MockKeyValueStore(nonPersistentStoreName, false); // non Persistent store
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 new TaskId(0, 2),
                 noPartitions,
                 false,
@@ -188,8 +195,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                stateMgr.register(nonPersistentStore, nonPersistentStore.stateRestoreCallback);
-                Assert.True(changelogReader.wasRegistered(new TopicPartition(nonPersistentStoreTopicName, 2)));
+                stateMgr.Register(nonPersistentStore, nonPersistentStore.stateRestoreCallback);
+                Assert.True(changelogReader.WasRegistered(new TopicPartition(nonPersistentStoreTopicName, 2)));
             }
             finally
             {
@@ -206,19 +213,19 @@ namespace Kafka.Streams.Tests.Processor.Internals
             string storeName2 = "store2";
             string storeName3 = "store3";
 
-            string storeTopicName1 = ProcessorStateManager.storeChangelogTopic(applicationId, storeName1);
-            string storeTopicName2 = ProcessorStateManager.storeChangelogTopic(applicationId, storeName2);
-            string storeTopicName3 = ProcessorStateManager.storeChangelogTopic(applicationId, storeName3);
+            string storeTopicName1 = ProcessorStateManager.StoreChangelogTopic(applicationId, storeName1);
+            string storeTopicName2 = ProcessorStateManager.StoreChangelogTopic(applicationId, storeName2);
+            string storeTopicName3 = ProcessorStateManager.StoreChangelogTopic(applicationId, storeName3);
 
-            Dictionary<string, string> storeToChangelogTopic = new HashMap<>();
+            Dictionary<string, string> storeToChangelogTopic = new Dictionary<string, string>();
             storeToChangelogTopic.Put(storeName1, storeTopicName1);
             storeToChangelogTopic.Put(storeName2, storeTopicName2);
             storeToChangelogTopic.Put(storeName3, storeTopicName3);
 
             OffsetCheckpoint checkpoint = new OffsetCheckpoint(
-                new FileInfo(stateDirectory.directoryForTask(taskId), StateManagerUtil.CHECKPOINT_FILE_NAME)
-            );
-            checkpoint.write(singletonMap(new TopicPartition(storeTopicName1, 0), storeTopic1LoadedCheckpoint));
+                new FileInfo(Path.Combine(stateDirectory.DirectoryForTask(taskId).FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)));
+
+            checkpoint.Write(new TopicPartition(storeTopicName1, 0), storeTopic1LoadedCheckpoint);
 
             TopicPartition partition1 = new TopicPartition(storeTopicName1, 0);
             TopicPartition partition2 = new TopicPartition(storeTopicName2, 0);
@@ -232,6 +239,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             HashSet<TopicPartition> sourcePartitions = Utils.mkSet(new TopicPartition(storeTopicName3, 1));
 
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 sourcePartitions,
                 true, // standby
@@ -243,9 +251,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                stateMgr.register(store1, store1.stateRestoreCallback);
-                stateMgr.register(store2, store2.stateRestoreCallback);
-                stateMgr.register(store3, store3.stateRestoreCallback);
+                stateMgr.Register(store1, store1.StateRestoreCallback);
+                stateMgr.Register(store2, store2.StateRestoreCallback);
+                stateMgr.Register(store3, store3.StateRestoreCallback);
 
                 Dictionary<TopicPartition, long> changeLogOffsets = stateMgr.Checkpointed();
 
@@ -254,8 +262,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 Assert.True(changeLogOffsets.ContainsKey(partition2));
                 Assert.True(changeLogOffsets.ContainsKey(partition3));
                 Assert.Equal(storeTopic1LoadedCheckpoint, (long)changeLogOffsets.Get(partition1));
-                Assert.Equal(-1L, (long)changeLogOffsets.Get(partition2));
-                Assert.Equal(-1L, (long)changeLogOffsets.Get(partition3));
+                Assert.Equal(-1L, changeLogOffsets[partition2]);
+                Assert.Equal(-1L, changeLogOffsets[partition3]);
 
             }
             finally
@@ -269,6 +277,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         { //throws IOException
             MockKeyValueStore mockKeyValueStore = new MockKeyValueStore(nonPersistentStoreName, false);
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 new TaskId(0, 1),
                 noPartitions,
                 false,
@@ -281,8 +290,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             {
                 stateMgr.register(mockKeyValueStore, mockKeyValueStore.stateRestoreCallback);
 
-                Assert.Null(stateMgr.getStore("noSuchStore"));
-                Assert.Equal(mockKeyValueStore, stateMgr.getStore(nonPersistentStoreName));
+                Assert.Null(stateMgr.GetStore("noSuchStore"));
+                Assert.Equal(mockKeyValueStore, stateMgr.GetStore(nonPersistentStoreName));
 
             }
             finally
@@ -297,12 +306,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
             checkpoint.write(emptyMap());
 
             // set up ack'ed offsets
-            HashDictionary<TopicPartition, long> ackedOffsets = new HashMap<>();
+            Dictionary<TopicPartition, long> ackedOffsets = new Dictionary<TopicPartition, long>();
             ackedOffsets.Put(new TopicPartition(persistentStoreTopicName, 1), 123L);
             ackedOffsets.Put(new TopicPartition(nonPersistentStoreTopicName, 1), 456L);
-            ackedOffsets.Put(new TopicPartition(ProcessorStateManager.storeChangelogTopic(applicationId, "otherTopic"), 1), 789L);
+            ackedOffsets.Put(new TopicPartition(ProcessorStateManager.StoreChangelogTopic(applicationId, "otherTopic"), 1), 789L);
 
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -339,7 +349,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             // the checkpoint file should contain an offset from the Persistent store only.
             Dictionary<TopicPartition, long> checkpointedOffsets = checkpoint.read();
-            Assert.Equal(checkpointedOffsets, is (singletonMap(new TopicPartition(persistentStoreTopicName, 1), 124L)));
+            Assert.Equal(checkpointedOffsets, singletonMap(new TopicPartition(persistentStoreTopicName, 1), 124L));
         }
 
         [Fact]
@@ -352,6 +362,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             TopicPartition nonPersistentTopicPartition = new TopicPartition(nonPersistentStoreTopicName, 1);
 
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -383,6 +394,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldRegisterStoreWithoutLoggingEnabledAndNotBackedByATopic()
         { //throws IOException
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 new TaskId(0, 1),
                 noPartitions,
                 false,
@@ -392,7 +404,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 false,
                 logContext);
             stateMgr.register(nonPersistentStore, nonPersistentStore.stateRestoreCallback);
-            Assert.NotNull(stateMgr.getStore(nonPersistentStoreName));
+            Assert.NotNull(stateMgr.GetStore(nonPersistentStoreName));
         }
 
         [Fact]
@@ -403,6 +415,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             MockKeyValueStore persistentStore = new MockKeyValueStore(persistentStoreName, true);
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -428,6 +441,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             MockKeyValueStore persistentStore = new MockKeyValueStore(persistentStoreName, true);
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -454,6 +468,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             MockKeyValueStore persistentStore = new MockKeyValueStore(persistentStoreName, true);
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -480,6 +495,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             MockKeyValueStore persistentStore = new MockKeyValueStore(persistentStoreName, true);
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -510,6 +526,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             MockKeyValueStore persistentStore = new MockKeyValueStore(persistentStoreName, true);
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -542,6 +559,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldWriteCheckpointForPersistentLogEnabledStore()
         { //throws IOException
             ProcessorStateManager stateMgr = new ProcessorStateManager(
+                null,
                 taskId,
                 noPartitions,
                 false,
@@ -643,7 +661,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                stateManager.register(new MockKeyValueStore(StateManagerUtil.CHECKPOINT_FILE_NAME, true), null);
+                stateManager.Register(new MockKeyValueStore(StateManagerUtil.CHECKPOINT_FILE_NAME, true), null);
                 Assert.True(false, "should have thrown illegal argument exception when store Name same as checkpoint file");
             }
             catch (ArgumentException e)
@@ -665,11 +683,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 false,
                 logContext);
 
-            stateManager.register(mockKeyValueStore, null);
+            stateManager.Register(mockKeyValueStore, null);
 
             try
             {
-                stateManager.register(mockKeyValueStore, null);
+                stateManager.Register(mockKeyValueStore, null);
                 Assert.True(false, "should have thrown illegal argument exception when store with same Name already registered");
             }
             catch (ArgumentException e)
@@ -683,6 +701,39 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldThrowProcessorStateExceptionOnFlushIfStoreThrowsAnException()
         { //throws IOException
 
+            //            ProcessorStateManager stateManager = new ProcessorStateManager(
+            //                taskId,
+            //                Collections.singleton(changelogTopicPartition),
+            //                false,
+            //                stateDirectory,
+            //                singletonMap(storeName, changelogTopic),
+            //                changelogReader,
+            //                false,
+            //                logContext);
+            //
+            //            MockKeyValueStore stateStore = new MockKeyValueStore(storeName, true)
+            //            {
+            //
+            //
+            //            public void Flush()
+            //            {
+            //                throw new RuntimeException("KABOOM!");
+            //            }
+            //        };
+            //        stateManager.register(stateStore, stateStore.stateRestoreCallback);
+            //
+            //        try {
+            //            stateManager.Flush();
+            //            Assert.True(false, "Should throw ProcessorStateException if store Flush throws exception");
+            //        } catch (ProcessorStateException e) {
+            //            // pass
+            //        }
+        }
+
+        [Fact]
+        public void ShouldThrowProcessorStateExceptionOnCloseIfStoreThrowsAnException()
+        { //throws IOException
+
             ProcessorStateManager stateManager = new ProcessorStateManager(
                 taskId,
                 Collections.singleton(changelogTopicPartition),
@@ -693,306 +744,279 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 false,
                 logContext);
 
-            MockKeyValueStore stateStore = new MockKeyValueStore(storeName, true)
-            {
+            MockKeyValueStore stateStore = new MockKeyValueStore(storeName, true);
+            //    {
+            //
+            //
+            //            public void Close()
+            //    {
+            //        throw new RuntimeException("KABOOM!");
+            //    }
+            //};
+            //stateManager.register(stateStore, stateStore.stateRestoreCallback);
+            //
+            //        try {
+            //            stateManager.Close(true);
+            //            Assert.True(false, "Should throw ProcessorStateException if store Close throws exception");
+            //        } catch (ProcessorStateException e) {
+            //            // pass
+            //        }
+            //    }
+        }
 
+        // if the optional is absent, it'll throw an exception and fail the test.
 
-            public void Flush()
+        [Fact]
+        public void ShouldLogAWarningIfCheckpointThrowsAnIOException()
+        {
+            LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
+
+            ProcessorStateManager stateMgr;
+            try
             {
-                throw new RuntimeException("KABOOM!");
+                stateMgr = new ProcessorStateManager(
+                    taskId,
+                    noPartitions,
+                    false,
+                    stateDirectory,
+                    singletonMap(persistentStore.Name(), persistentStoreTopicName),
+                    changelogReader,
+                    false,
+                    logContext);
             }
-        };
-        stateManager.register(stateStore, stateStore.stateRestoreCallback);
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                throw new AssertionError(e);
+            }
+            stateMgr.register(persistentStore, persistentStore.stateRestoreCallback);
 
-        try {
-            stateManager.Flush();
-            Assert.True(false, "Should throw ProcessorStateException if store Flush throws exception");
-        } catch (ProcessorStateException e) {
-            // pass
+            stateDirectory.clean();
+            stateMgr.checkpoint(singletonMap(persistentStorePartition, 10L));
+            LogCaptureAppender.Unregister(appender);
+
+            bool foundExpectedLogMessage = false;
+            foreach (LogCaptureAppender.Event logEvent in appender.getEvents())
+            {
+                if ("WARN".Equals(logEvent.GetLevel())
+                    && logEvent.GetMessage().startsWith("process-state-manager-test Failed to write offset checkpoint file to [")
+                    && logEvent.GetMessage().endsWith(".checkpoint]")
+                    && logEvent.GetThrowableInfo().Get().startsWith("java.io.FileNotFoundException: "))
+                {
+
+                    foundExpectedLogMessage = true;
+                    break;
+                }
+            }
+
+            Assert.True(foundExpectedLogMessage);
         }
-    }
 
-    [Fact]
-public void ShouldThrowProcessorStateExceptionOnCloseIfStoreThrowsAnException()
-{ //throws IOException
+        [Fact]
+        public void ShouldFlushAllStoresEvenIfStoreThrowsException()
+        { //throws IOException
+            bool flushedStore = false;
 
-    ProcessorStateManager stateManager = new ProcessorStateManager(
-        taskId,
-        Collections.singleton(changelogTopicPartition),
-        false,
-        stateDirectory,
-        singletonMap(storeName, changelogTopic),
-        changelogReader,
-        false,
-        logContext);
+            MockKeyValueStore stateStore1 = new MockKeyValueStore(storeName, true);
+            //            {
+            //
+            //
+            //            public void Flush()
+            //            {
+            //                throw new RuntimeException("KABOOM!");
+            //            }
+            //        };
+            //        MockKeyValueStore stateStore2 = new MockKeyValueStore(storeName + "2", true)
+            //        {
+            //
+            //
+            //            public void Flush()
+            //        {
+            //            flushedStore.set(true);
+            //        }
+            //    };
+            ProcessorStateManager stateManager = new ProcessorStateManager(
+                taskId,
+                Collections.singleton(changelogTopicPartition),
+                false,
+                stateDirectory,
+                singletonMap(storeName, changelogTopic),
+                changelogReader,
+                false,
+                logContext);
 
-    MockKeyValueStore stateStore = new MockKeyValueStore(storeName, true)
-    {
+            stateManager.register(stateStore1, stateStore1.stateRestoreCallback);
+            stateManager.register(stateStore2, stateStore2.stateRestoreCallback);
 
-
-            public void Close()
-    {
-        throw new RuntimeException("KABOOM!");
-    }
-};
-stateManager.register(stateStore, stateStore.stateRestoreCallback);
-
-        try {
-            stateManager.Close(true);
-            Assert.True(false, "Should throw ProcessorStateException if store Close throws exception");
-        } catch (ProcessorStateException e) {
-            // pass
+            try
+            {
+                stateManager.Flush();
+            }
+            catch (ProcessorStateException expected) { /* ignode */ }
+            Assert.True(flushedStore.Get());
         }
-    }
 
-    // if the optional is absent, it'll throw an exception and fail the test.
-    
-    [Fact]
-public void ShouldLogAWarningIfCheckpointThrowsAnIOException()
-{
-    LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
+        [Fact]
+        public void ShouldCloseAllStoresEvenIfStoreThrowsExcepiton()
+        { //throws IOException
 
-    ProcessorStateManager stateMgr;
-    try
-    {
-        stateMgr = new ProcessorStateManager(
-            taskId,
-            noPartitions,
-            false,
-            stateDirectory,
-            singletonMap(persistentStore.Name(), persistentStoreTopicName),
-            changelogReader,
-            false,
-            logContext);
-    }
-    catch (IOException e)
-    {
-        e.printStackTrace();
-        throw new AssertionError(e);
-    }
-    stateMgr.register(persistentStore, persistentStore.stateRestoreCallback);
+            bool closedStore = false;
 
-    stateDirectory.clean();
-    stateMgr.checkpoint(singletonMap(persistentStorePartition, 10L));
-    LogCaptureAppender.Unregister(appender);
+            MockKeyValueStore stateStore1 = new MockKeyValueStore(storeName, true);
+            //            {
+            //
+            //
+            //            public void Close()
+            //            {
+            //                throw new RuntimeException("KABOOM!");
+            //            }
+            //        };
+            //        MockKeyValueStore stateStore2 = new MockKeyValueStore(storeName + "2", true)
+            //        {
+            //
+            //
+            //            public void Close()
+            //        {
+            //            closedStore.set(true);
+            //        }
+            //    };
+            ProcessorStateManager stateManager = new ProcessorStateManager(
+                taskId,
+                Collections.singleton(changelogTopicPartition),
+                false,
+                stateDirectory,
+                singletonMap(storeName, changelogTopic),
+                changelogReader,
+                false,
+                logContext);
 
-    bool foundExpectedLogMessage = false;
-    foreach (LogCaptureAppender.Event logEvent in appender.getEvents())
-    {
-        if ("WARN".Equals(logEvent.GetLevel())
-            && logEvent.GetMessage().startsWith("process-state-manager-test Failed to write offset checkpoint file to [")
-            && logEvent.GetMessage().endsWith(".checkpoint]")
-            && logEvent.GetThrowableInfo().Get().startsWith("java.io.FileNotFoundException: "))
+            stateManager.register(stateStore1, stateStore1.stateRestoreCallback);
+            stateManager.register(stateStore2, stateStore2.stateRestoreCallback);
+
+            try
+            {
+                stateManager.Close(true);
+            }
+            catch (ProcessorStateException expected) { /* ignode */ }
+            Assert.True(closedStore.Get());
+        }
+
+        [Fact]
+        public void ShouldDeleteCheckpointFileOnCreationIfEosEnabled()
+        { //throws IOException
+            checkpoint.write(singletonMap(new TopicPartition(persistentStoreTopicName, 1), 123L));
+            Assert.True(checkpointFile.Exists);
+
+            ProcessorStateManager stateManager = null;
+            try
+            {
+                stateManager = new ProcessorStateManager(
+                    taskId,
+                    noPartitions,
+                    false,
+                    stateDirectory,
+                    emptyMap(),
+                    changelogReader,
+                    true,
+                    logContext);
+
+                Assert.False(checkpointFile.Exists);
+            }
+            finally
+            {
+                if (stateManager != null)
+                {
+                    stateManager.Close(true);
+                }
+            }
+        }
+
+        [Fact]
+        public void ShouldSuccessfullyReInitializeStateStoresWithEosDisable()
+        {// throws Exception
+            shouldSuccessfullyReInitializeStateStores(false);
+        }
+
+        [Fact]
+        public void ShouldSuccessfullyReInitializeStateStoresWithEosEnable()
+        {// throws Exception
+            shouldSuccessfullyReInitializeStateStores(true);
+        }
+
+        private void ShouldSuccessfullyReInitializeStateStores(bool eosEnabled)
+        {// throws Exception
+            string store2Name = "store2";
+            string store2Changelog = "store2-changelog";
+            TopicPartition store2Partition = new TopicPartition(store2Changelog, 0);
+            List<TopicPartition> changelogPartitions = Arrays.asList(changelogTopicPartition, store2Partition);
+            Dictionary<string, string> storeToChangelog = mkMap(
+                    mkEntry(storeName, changelogTopic),
+                    mkEntry(store2Name, store2Changelog)
+            );
+
+            MockKeyValueStore stateStore = new MockKeyValueStore(storeName, true);
+            MockKeyValueStore stateStore2 = new MockKeyValueStore(store2Name, true);
+
+            ProcessorStateManager stateManager = new ProcessorStateManager(
+                taskId,
+                changelogPartitions,
+                false,
+                stateDirectory,
+                storeToChangelog,
+                changelogReader,
+                eosEnabled,
+                logContext);
+
+            stateManager.register(stateStore, stateStore.stateRestoreCallback);
+            stateManager.register(stateStore2, stateStore2.stateRestoreCallback);
+
+            stateStore.initialized = false;
+            stateStore2.initialized = false;
+
+            stateManager.reinitializeStateStoresForPartitions(changelogPartitions, new NoOpProcessorContext());
+            //            {
+            //
+            //
+            //            public void register(IStateStore store, StateRestoreCallback stateRestoreCallback)
+            //            {
+            //                stateManager.register(store, stateRestoreCallback);
+            //            }
+            //        });
+
+            Assert.True(stateStore.initialized);
+            Assert.True(stateStore2.initialized);
+        }
+
+        private ProcessorStateManager GetStandByStateManager(TaskId taskId)
+        { //throws IOException
+            return new ProcessorStateManager(
+                taskId,
+                noPartitions,
+                true,
+                stateDirectory,
+                singletonMap(persistentStoreName, persistentStoreTopicName),
+                changelogReader,
+                false,
+                logContext);
+        }
+
+        private MockKeyValueStore GetPersistentStore()
         {
-
-            foundExpectedLogMessage = true;
-            break;
+            return new MockKeyValueStore("persistentStore", true);
         }
-    }
-    Assert.True(foundExpectedLogMessage);
-}
 
-[Fact]
-public void ShouldFlushAllStoresEvenIfStoreThrowsException()
-{ //throws IOException
-    bool flushedStore = new bool(false);
-
-    MockKeyValueStore stateStore1 = new MockKeyValueStore(storeName, true)
-    {
-
-
-            public void Flush()
-    {
-        throw new RuntimeException("KABOOM!");
-    }
-};
-MockKeyValueStore stateStore2 = new MockKeyValueStore(storeName + "2", true)
-{
-
-
-            public void Flush()
-{
-    flushedStore.set(true);
-}
-        };
-        ProcessorStateManager stateManager = new ProcessorStateManager(
-            taskId,
-            Collections.singleton(changelogTopicPartition),
-            false,
-            stateDirectory,
-            singletonMap(storeName, changelogTopic),
-            changelogReader,
-            false,
-            logContext);
-
-stateManager.register(stateStore1, stateStore1.stateRestoreCallback);
-        stateManager.register(stateStore2, stateStore2.stateRestoreCallback);
-
-        try {
-            stateManager.Flush();
-        } catch (ProcessorStateException expected) { /* ignode */ }
-        Assert.True(flushedStore.Get());
-    }
-
-    [Fact]
-public void ShouldCloseAllStoresEvenIfStoreThrowsExcepiton()
-{ //throws IOException
-
-    bool closedStore = new bool(false);
-
-    MockKeyValueStore stateStore1 = new MockKeyValueStore(storeName, true)
-    {
-
-
-            public void Close()
-    {
-        throw new RuntimeException("KABOOM!");
-    }
-};
-MockKeyValueStore stateStore2 = new MockKeyValueStore(storeName + "2", true)
-{
-
-
-            public void Close()
-{
-    closedStore.set(true);
-}
-        };
-        ProcessorStateManager stateManager = new ProcessorStateManager(
-            taskId,
-            Collections.singleton(changelogTopicPartition),
-            false,
-            stateDirectory,
-            singletonMap(storeName, changelogTopic),
-            changelogReader,
-            false,
-            logContext);
-
-stateManager.register(stateStore1, stateStore1.stateRestoreCallback);
-        stateManager.register(stateStore2, stateStore2.stateRestoreCallback);
-
-        try {
-            stateManager.Close(true);
-        } catch (ProcessorStateException expected) { /* ignode */ }
-        Assert.True(closedStore.Get());
-    }
-
-    [Fact]
-public void ShouldDeleteCheckpointFileOnCreationIfEosEnabled()
-{ //throws IOException
-    checkpoint.write(singletonMap(new TopicPartition(persistentStoreTopicName, 1), 123L));
-    Assert.True(checkpointFile.Exists);
-
-    ProcessorStateManager stateManager = null;
-    try
-    {
-        stateManager = new ProcessorStateManager(
-            taskId,
-            noPartitions,
-            false,
-            stateDirectory,
-            emptyMap(),
-            changelogReader,
-            true,
-            logContext);
-
-        Assert.False(checkpointFile.Exists);
-    }
-    finally
-    {
-        if (stateManager != null)
+        private MockKeyValueStore GetConverterStore()
         {
-            stateManager.Close(true);
+            return new ConverterStore("persistentStore", true);
+        }
+
+        private class ConverterStore : MockKeyValueStore, ITimestampedBytesStore
+        {
+            ConverterStore(string Name,
+                           bool Persistent)
+                : base(Name, Persistent)
+            {
+            }
         }
     }
-}
-
-[Fact]
-public void ShouldSuccessfullyReInitializeStateStoresWithEosDisable()
-{// throws Exception
-    shouldSuccessfullyReInitializeStateStores(false);
-}
-
-[Fact]
-public void ShouldSuccessfullyReInitializeStateStoresWithEosEnable()
-{// throws Exception
-    shouldSuccessfullyReInitializeStateStores(true);
-}
-
-private void ShouldSuccessfullyReInitializeStateStores(bool eosEnabled)
-{// throws Exception
-    string store2Name = "store2";
-    string store2Changelog = "store2-changelog";
-    TopicPartition store2Partition = new TopicPartition(store2Changelog, 0);
-    List<TopicPartition> changelogPartitions = Arrays.asList(changelogTopicPartition, store2Partition);
-    Dictionary<string, string> storeToChangelog = mkMap(
-            mkEntry(storeName, changelogTopic),
-            mkEntry(store2Name, store2Changelog)
-    );
-
-    MockKeyValueStore stateStore = new MockKeyValueStore(storeName, true);
-    MockKeyValueStore stateStore2 = new MockKeyValueStore(store2Name, true);
-
-    ProcessorStateManager stateManager = new ProcessorStateManager(
-        taskId,
-        changelogPartitions,
-        false,
-        stateDirectory,
-        storeToChangelog,
-        changelogReader,
-        eosEnabled,
-        logContext);
-
-    stateManager.register(stateStore, stateStore.stateRestoreCallback);
-    stateManager.register(stateStore2, stateStore2.stateRestoreCallback);
-
-    stateStore.initialized = false;
-    stateStore2.initialized = false;
-
-    stateManager.reinitializeStateStoresForPartitions(changelogPartitions, new NoOpProcessorContext()
-    {
-
-
-            public void register(IStateStore store, StateRestoreCallback stateRestoreCallback)
-    {
-        stateManager.register(store, stateRestoreCallback);
-    }
-});
-
-        Assert.True(stateStore.initialized);
-        Assert.True(stateStore2.initialized);
-    }
-
-    private ProcessorStateManager GetStandByStateManager(TaskId taskId)
-{ //throws IOException
-    return new ProcessorStateManager(
-        taskId,
-        noPartitions,
-        true,
-        stateDirectory,
-        singletonMap(persistentStoreName, persistentStoreTopicName),
-        changelogReader,
-        false,
-        logContext);
-}
-
-private MockKeyValueStore GetPersistentStore()
-{
-    return new MockKeyValueStore("persistentStore", true);
-}
-
-private MockKeyValueStore GetConverterStore()
-{
-    return new ConverterStore("persistentStore", true);
-}
-
-private class ConverterStore : MockKeyValueStore, ITimestampedBytesStore
-{
-    ConverterStore(string Name,
-                   bool Persistent)
-        : base(Name, Persistent)
-    {
-    }
-}
-}
 }

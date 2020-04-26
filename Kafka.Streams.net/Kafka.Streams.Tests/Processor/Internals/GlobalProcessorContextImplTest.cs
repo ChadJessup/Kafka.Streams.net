@@ -8,6 +8,8 @@ using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
+using Kafka.Streams.State.Windowed;
+using Moq;
 using System;
 using Xunit;
 
@@ -32,20 +34,20 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         public void Setup()
         {
-            StreamsConfig streamsConfig = Mock.Of<StreamsConfig);
+            StreamsConfig streamsConfig = Mock.Of<StreamsConfig>();
             expect(streamsConfig.getString(StreamsConfig.ApplicationIdConfig)).andReturn("dummy-id");
             expect(streamsConfig.GetDefaultValueSerde()).andReturn(Serdes.ByteArray());
             expect(streamsConfig.GetDefaultKeySerde()).andReturn(Serdes.ByteArray());
             replay(streamsConfig);
 
-            IStateManager stateManager = Mock.Of<StateManager);
-            expect(stateManager.getGlobalStore(GLOBAL_STORE_NAME)).andReturn(Mock.Of<IStateStore));
-            expect(stateManager.getGlobalStore(GLOBAL_KEY_VALUE_STORE_NAME)).andReturn(Mock.Of<IKeyValueStore));
-            expect(stateManager.getGlobalStore(GLOBAL_TIMESTAMPED_KEY_VALUE_STORE_NAME)).andReturn(Mock.Of<ITimestampedKeyValueStore));
-            expect(stateManager.getGlobalStore(GLOBAL_WINDOW_STORE_NAME)).andReturn(Mock.Of<IWindowStore));
-            expect(stateManager.getGlobalStore(GLOBAL_TIMESTAMPED_WINDOW_STORE_NAME)).andReturn(Mock.Of<ITimestampedWindowStore));
-            expect(stateManager.getGlobalStore(GLOBAL_SESSION_STORE_NAME)).andReturn(Mock.Of<ISessionStore));
-            expect(stateManager.getGlobalStore(UNKNOWN_STORE)).andReturn(null);
+            IStateManager stateManager = Mock.Of<IStateManager>();
+            expect(stateManager.GetGlobalStore(GLOBAL_STORE_NAME)).andReturn(Mock.Of<IStateStore>());
+            expect(stateManager.GetGlobalStore(GLOBAL_KEY_VALUE_STORE_NAME)).andReturn(Mock.Of<IKeyValueStore>());
+            expect(stateManager.GetGlobalStore(GLOBAL_TIMESTAMPED_KEY_VALUE_STORE_NAME)).andReturn(Mock.Of<ITimestampedKeyValueStore>());
+            expect(stateManager.GetGlobalStore(GLOBAL_WINDOW_STORE_NAME)).andReturn(Mock.Of<IWindowStore>());
+            expect(stateManager.GetGlobalStore(GLOBAL_TIMESTAMPED_WINDOW_STORE_NAME)).andReturn(Mock.Of<ITimestampedWindowStore>());
+            expect(stateManager.GetGlobalStore(GLOBAL_SESSION_STORE_NAME)).andReturn(Mock.Of<ISessionStore>());
+            expect(stateManager.GetGlobalStore(UNKNOWN_STORE)).andReturn(null);
             replay(stateManager);
 
             globalContext = new GlobalProcessorContextImpl(
@@ -54,10 +56,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 null,
                 null);
 
-            ProcessorNode processorNode = Mock.Of<ProcessorNode);
+            ProcessorNode processorNode = Mock.Of<ProcessorNode>();
             globalContext.setCurrentNode(processorNode);
 
-            child = Mock.Of<ProcessorNode);
+            child = Mock.Of<ProcessorNode>();
 
             expect(processorNode.children)
                 .andReturn(Collections.singletonList(child))
@@ -68,7 +70,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 .andReturn(null);
             replay(processorNode);
 
-            recordContext = Mock.Of<ProcessorRecordContext);
+            recordContext = Mock.Of<ProcessorRecordContext>();
             globalContext.setRecordContext(recordContext);
         }
 

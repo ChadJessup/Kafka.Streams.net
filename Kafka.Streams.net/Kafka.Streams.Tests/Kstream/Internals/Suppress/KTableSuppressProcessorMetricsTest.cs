@@ -164,7 +164,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //            processor.Init(context);
 
 //            var timestamp = 100L;
-//            context.setRecordMetadata("", 0, 0L, null, timestamp);
+//            context.SetRecordMetadata("", 0, 0L, null, timestamp);
 //            var key = "longKey";
 //            Change<long> value = new Change<long>(default, 0938420L);
 //            processor.Process(key, value);
@@ -182,7 +182,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
 //                verifyMetric(metrics, BUFFER_COUNT_MAX_METRIC, (1.0));
 //            }
 
-//            context.setRecordMetadata("", 0, 1L, null, timestamp + 1);
+//            context.SetRecordMetadata("", 0, 1L, null, timestamp + 1);
 //            processor.Process("key", value);
 
 //            {

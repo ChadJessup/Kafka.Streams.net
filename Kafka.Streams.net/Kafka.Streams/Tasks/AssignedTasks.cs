@@ -170,7 +170,6 @@ namespace Kafka.Streams.Tasks
         {
             try
             {
-
                 task.Close(false, true);
             }
             catch (RuntimeException e)
@@ -178,6 +177,7 @@ namespace Kafka.Streams.Tasks
                 this.logger.LogWarning("Failed to Close zombie {} {} due to {}; ignore and proceed.", this.taskTypeName, task.id, e.ToString());
                 return e;
             }
+
             return null;
         }
 
@@ -189,7 +189,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool MaybeResumeSuspendedTask(TaskId taskId, HashSet<TopicPartition> partitions)
+        public bool MaybeResumeSuspendedTask(TaskId taskId, IEnumerable<TopicPartition> partitions)
         {
             if (this.suspended.ContainsKey(taskId))
             {

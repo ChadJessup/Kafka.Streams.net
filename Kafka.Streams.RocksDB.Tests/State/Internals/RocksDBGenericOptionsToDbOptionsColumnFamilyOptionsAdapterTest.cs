@@ -138,7 +138,7 @@
 //        catch (InvocationTargetException undeclaredMockMethodCall)
 //        {
 //            Assert.Equal(undeclaredMockMethodCall.getCause(), instanceOf(AssertionError));
-//            Assert.Equal(undeclaredMockMethodCall.getCause().getMessage().trim(),
+//            Assert.Equal(undeclaredMockMethodCall.getCause().Message.trim(),
 //                matchesPattern("Unexpected method call DBOptions\\." + method.getName() + "((.*\n*)*):"));
 //        }
 //    }
@@ -238,7 +238,7 @@
 //        catch (InvocationTargetException undeclaredMockMethodCall)
 //        {
 //            Assert.Equal(undeclaredMockMethodCall.getCause(), instanceOf(AssertionError));
-//            Assert.Equal(undeclaredMockMethodCall.getCause().getMessage().trim(),
+//            Assert.Equal(undeclaredMockMethodCall.getCause().Message.trim(),
 //                matchesPattern("Unexpected method call ColumnFamilyOptions\\." + method.getName() + "(.*)"));
 //        }
 //    }

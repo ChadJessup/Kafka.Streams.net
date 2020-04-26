@@ -426,7 +426,7 @@ namespace Kafka.Streams.RocksDbState
             this.DbAccessor = null;
             this.WOptions = null;
             this.Db = null;
-            this.Filter = null;
+            // this.Filter = null;
             this.cache = null;
         }
 

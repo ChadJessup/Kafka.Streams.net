@@ -266,7 +266,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var supplier = new MockProcessorSupplier<IWindowed<string>, string>();
             IKTable<IWindowed<string>, string> table = groupedStream
                 .WindowedBy(SessionWindows.With(TimeSpan.FromMilliseconds(30)))
-                .Reduce(new Reducer<string>((value1, value2) => value1 + ":" + value2);
+                .Reduce((value1, value2) => value1 + ":" + value2);
             table.ToStream().Process(supplier);
             DoReduceSessionWindows(supplier);
             Assert.Null(table.QueryableStoreName);
@@ -442,9 +442,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             IKeyValueStore<string, string> reduced = driver.GetKeyValueStore<string, string>("reduce");
 
-            Assert.Equal(reduced.Get("1"), "A+C+D");
-            Assert.Equal(reduced.Get("2"), "B");
-            Assert.Equal(reduced.Get("3"), "E+F");
+            Assert.Equal("A+C+D", reduced.Get("1"));
+            Assert.Equal("B", reduced.Get("2"));
+            Assert.Equal("E+F", reduced.Get("3"));
             var reducedKVS = driver.GetTimestampedKeyValueStore<string, string>("reduce");
 
             Assert.Equal(reduced.Get("1"), ValueAndTimestamp.Make("A+C+D", 10L).Value);

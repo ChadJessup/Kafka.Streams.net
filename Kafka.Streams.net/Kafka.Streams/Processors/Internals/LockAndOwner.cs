@@ -2,15 +2,13 @@
 {
     public class LockAndOwner
     {
-        private readonly string Name;
-
-        public LockAndOwner(string Name, FileLock @lock)
+        public LockAndOwner(string owningThread, FileLock lockedFile)
         {
-            this.Name = Name;
-            this.@lock = @lock;
+            this.OwningThread = owningThread;
+            this.Lockedfile = lockedFile;
         }
 
-        public FileLock @lock { get; set; }
-        public string owningThread { get; set; }
+        public FileLock Lockedfile { get; }
+        public string OwningThread { get; }
     }
 }

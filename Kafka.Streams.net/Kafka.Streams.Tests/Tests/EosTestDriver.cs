@@ -55,7 +55,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    if (exception is TimeoutException) {
 //                        try {
 //                            // message == org.apache.kafka.common.errors.TimeoutException: Expiring 4 record(s) for data-0: 30004 ms has passed since last attempt plus backoff time
-//                            int expired = int.parseInt(exception.getMessage().Split(" ")[2]);
+//                            int expired = int.parseInt(exception.Message.Split(" ")[2]);
 //        updateNumRecordsProduces(-expired);
 //    } catch (Exception ignore) { }
 //                    }
@@ -267,7 +267,7 @@ namespace Kafka.Streams.Tests.Tests
 //                maxConsumerPositionPerPartition.Put(tp, consumer.position(tp));
 //                if (consumer.position(tp) >= readEndOffsets.Get(tp))
 //                {
-//                    consumer.pause(Collections.singletonList(tp));
+//                    consumer.Pause(Collections.singletonList(tp));
 //                }
 //            }
 
@@ -360,7 +360,7 @@ namespace Kafka.Streams.Tests.Tests
 //        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 //        Serdes.Int().Deserializer integerDeserializer = Serializers.Int32;
 
-//        HashDictionary<string, int> currentMinPerKey = new HashMap<>();
+//        Dictionary<string, int> currentMinPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in minPerTopicPerPartition)
 //        {
 //            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.Key.Partition);
@@ -410,7 +410,7 @@ namespace Kafka.Streams.Tests.Tests
 //        Serdes.Int().Deserializer integerDeserializer = Serializers.Int32;
 //        LongDeserializer longDeserializer = new LongDeserializer();
 
-//        HashDictionary<string, long> currentSumPerKey = new HashMap<>();
+//        Dictionary<string, long> currentSumPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in minPerTopicPerPartition)
 //        {
 //            TopicPartition inputTopicPartition = new TopicPartition("data", partitionRecords.Key.Partition);
@@ -459,7 +459,7 @@ namespace Kafka.Streams.Tests.Tests
 //        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 //        Serdes.Int().Deserializer integerDeserializer = Serializers.Int32;
 
-//        HashDictionary<string, int> currentMinPerKey = new HashMap<>();
+//        Dictionary<string, int> currentMinPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in maxPerTopicPerPartition)
 //        {
 //            TopicPartition inputTopicPartition = new TopicPartition("repartition", partitionRecords.Key.Partition);
@@ -506,7 +506,7 @@ namespace Kafka.Streams.Tests.Tests
 //        Serdes.String().Deserializer stringDeserializer = new Serdes.String().Deserializer();
 //        LongDeserializer longDeserializer = new LongDeserializer();
 
-//        HashDictionary<string, long> currentSumPerKey = new HashMap<>();
+//        Dictionary<string, long> currentSumPerKey = new HashMap<>();
 //        foreach (Map.Entry<TopicPartition, List<ConsumeResult<byte[], byte[]>>> partitionRecords in cntPerTopicPerPartition)
 //        {
 //            TopicPartition inputTopicPartition = new TopicPartition("repartition", partitionRecords.Key.Partition);

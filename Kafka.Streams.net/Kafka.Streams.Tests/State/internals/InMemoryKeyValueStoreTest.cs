@@ -33,7 +33,7 @@
 //            driver.addEntryToRestoreLog(0, null);
 
 //            store = createKeyValueStore(driver.context);
-//            context.restore(store.Name(), driver.restoredEntries());
+//            context.Restore(store.Name(), driver.restoredEntries());
 
 //            Assert.Equal(3, driver.sizeOf(store));
 

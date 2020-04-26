@@ -16,15 +16,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
         public WrappedStateListener(Action<States, States> onChange)
             => this.onChange = onChange;
 
-        void IStateListener.OnChange<States1>(
-            IThread<States1> thread,
-            States1 newState,
-            States1 oldState)
-            where States1 : States
-        {
-            this.OnChange(thread, newState, oldState);
-        }
-
         public void OnChange(IThread<States> thread, States newState, States oldState)
         {
             if (this.onChangeWithThread != null)

@@ -112,7 +112,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    public static void PurgeLocalStreamsState(StreamsConfig streamsConfiguration) throws
 //        IOException {
 //        string tmpDir = TestUtils.IO_TMP_DIR.getPath();
-//        string path = streamsConfiguration.getProperty(StreamsConfig.STATE_DIR_CONFIG);
+//        string path = streamsConfiguration.Get(StreamsConfig.STATE_DIR_CONFIG);
 //        if (path != null) {
 //            File node = Paths.Get(path).normalize().toFile();
 //            // Only purge state when it's under java.io.tmpdir.  This is a safety net to prevent accidentally
@@ -150,51 +150,51 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * @param topic          Kafka topic to write the data records to
 //     * @param records        Data records to write to Kafka
-//     * @param producerConfig Kafka producer configuration
+//     * @param ProducerConfig Kafka producer configuration
 //     * @param time           Timestamp provider
 //     * @param <K>            Key type of the data records
 //     * @param <V>            Value type of the data records
 //     */
 //    public static void ProduceKeyValuesSynchronously<K, V>(
-//        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig producerConfig, Time time)
+//        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig ProducerConfig, Time time)
 //        //throws ExecutionException, InterruptedException {
-//        ProduceKeyValuesSynchronously(topic, records, producerConfig, time, false);
+//        ProduceKeyValuesSynchronously(topic, records, ProducerConfig, time, false);
 //    }
 
 //    /**
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param headers             {@link Headers} of the data records
 //     * @param time                Timestamp provider
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
 //    public static void ProduceKeyValuesSynchronously<K, V>(
-//        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig producerConfig, Headers headers, Time time)
+//        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig ProducerConfig, Headers headers, Time time)
 //        //throws ExecutionException, InterruptedException {
-//        ProduceKeyValuesSynchronously(topic, records, producerConfig, headers, time, false);
+//        ProduceKeyValuesSynchronously(topic, records, ProducerConfig, headers, time, false);
 //    }
 
 //    /**
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param time                Timestamp provider
 //     * @param enableTransactions  Send messages in a transaction
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
 //    public static void ProduceKeyValuesSynchronously<K, V>(
-//        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig producerConfig, Time time, bool enableTransactions)
+//        string topic, Collection<KeyValuePair<K, V>> records, StreamsConfig ProducerConfig, Time time, bool enableTransactions)
 //        //throws ExecutionException, InterruptedException {
-//        ProduceKeyValuesSynchronously(topic, records, producerConfig, null, time, enableTransactions);
+//        ProduceKeyValuesSynchronously(topic, records, ProducerConfig, null, time, enableTransactions);
 //    }
 
 //    /**
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param headers             {@link Headers} of the data records
 //     * @param time                Timestamp provider
 //     * @param enableTransactions  Send messages in a transaction
@@ -203,7 +203,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     */
 //    public static void ProduceKeyValuesSynchronously<K, V>(string topic,
 //                                                            Collection<KeyValuePair<K, V>> records,
-//                                                            StreamsConfig producerConfig,
+//                                                            StreamsConfig ProducerConfig,
 //                                                            Headers headers,
 //                                                            Time time,
 //                                                            bool enableTransactions)
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        foreach (KeyValuePair<K, V> record in records) {
 //            ProduceKeyValuesSynchronouslyWithTimestamp(topic,
 //                Collections.singleton(record),
-//                producerConfig,
+//                ProducerConfig,
 //                headers,
 //                time.NowAsEpochMilliseconds;,
 //                enableTransactions);
@@ -222,23 +222,23 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param timestamp           Timestamp of the record
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
 //    public static void ProduceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                         Collection<KeyValuePair<K, V>> records,
-//                                                                         StreamsConfig producerConfig,
+//                                                                         StreamsConfig ProducerConfig,
 //                                                                         long timestamp)
 //        //throws ExecutionException, InterruptedException {
-//        ProduceKeyValuesSynchronouslyWithTimestamp(topic, records, producerConfig, timestamp, false);
+//        ProduceKeyValuesSynchronouslyWithTimestamp(topic, records, ProducerConfig, timestamp, false);
 //    }
 
 //    /**
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param timestamp           Timestamp of the record
 //     * @param enableTransactions  Send messages in a transaction
 //     * @param <K>                 Key type of the data records
@@ -247,18 +247,18 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //    public static void ProduceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                         Collection<KeyValuePair<K, V>> records,
-//                                                                         StreamsConfig producerConfig,
+//                                                                         StreamsConfig ProducerConfig,
 //                                                                         long timestamp,
 //                                                                         bool enableTransactions)
 //            //throws ExecutionException, InterruptedException {
 
-//        ProduceKeyValuesSynchronouslyWithTimestamp(topic, records, producerConfig, null, timestamp, enableTransactions);
+//        ProduceKeyValuesSynchronouslyWithTimestamp(topic, records, ProducerConfig, null, timestamp, enableTransactions);
 //    }
 
 //    /**
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param headers             {@link Headers} of the data records
 //     * @param timestamp           Timestamp of the record
 //     * @param enableTransactions  Send messages in a transaction
@@ -268,14 +268,14 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //    public static void ProduceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                         Collection<KeyValuePair<K, V>> records,
-//                                                                         StreamsConfig producerConfig,
+//                                                                         StreamsConfig ProducerConfig,
 //                                                                         Headers headers,
 //                                                                         long timestamp,
 //                                                                         bool enableTransactions)
 //            //throws ExecutionException, InterruptedException {
 
 //        try { 
-// (Producer<K, V> producer = new KafkaProducer<>(producerConfig));
+// (Producer<K, V> producer = new KafkaProducer<>(ProducerConfig));
 //            if (enableTransactions) {
 //                producer.initTransactions();
 //                producer.beginTransaction();
@@ -292,13 +292,13 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        }
 //    }
 
-//    public static void produceSynchronously<V, K>(StreamsConfig producerConfig,
+//    public static void produceSynchronously<V, K>(StreamsConfig ProducerConfig,
 //                                                   bool eos,
 //                                                   string topic,
 //                                                   Optional<int> partition,
 //                                                   List<KeyValueTimestamp<K, V>> toProduce) {
 //        try { 
-// (Producer<K, V> producer = new KafkaProducer<>(producerConfig));
+// (Producer<K, V> producer = new KafkaProducer<>(ProducerConfig));
 //            if (eos) {
 //                producer.initTransactions();
 //                producer.beginTransaction();
@@ -333,18 +333,18 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     *
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param timestamp           Timestamp of the record
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
 //    public static void produceAbortedKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                                Collection<KeyValuePair<K, V>> records,
-//                                                                                StreamsConfig producerConfig,
+//                                                                                StreamsConfig ProducerConfig,
 //                                                                                long timestamp)
 //        //throws ExecutionException, InterruptedException {
 //        try { 
-// (Producer<K, V> producer = new KafkaProducer<>(producerConfig));
+// (Producer<K, V> producer = new KafkaProducer<>(ProducerConfig));
 //            producer.initTransactions();
 //            foreach (KeyValuePair<K, V> record in records) {
 //                producer.beginTransaction();
@@ -359,22 +359,22 @@ namespace Kafka.Streams.Tests.Integration.utils
 //    /**
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param time                Timestamp provider
 //     * @param <V>                 Value type of the data records
 //     */
 //    public static <V> void produceValuesSynchronously(string topic,
 //                                                      Collection<V> records,
-//                                                      StreamsConfig producerConfig,
+//                                                      StreamsConfig ProducerConfig,
 //                                                      Time time)
 //        //throws ExecutionException, InterruptedException {
-//        produceValuesSynchronously(topic, records, producerConfig, time, false);
+//        produceValuesSynchronously(topic, records, ProducerConfig, time, false);
 //    }
 
 //    /**
 //     * @param topic               Kafka topic to write the data records to
 //     * @param records             Data records to write to Kafka
-//     * @param producerConfig      Kafka producer configuration
+//     * @param ProducerConfig      Kafka producer configuration
 //     * @param time                Timestamp provider
 //     * @param enableTransactions  Send messages in a transaction
 //     * @param <V>                 Value type of the data records
@@ -382,7 +382,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //    public static <V> void produceValuesSynchronously(string topic,
 //                                                      Collection<V> records,
-//                                                      StreamsConfig producerConfig,
+//                                                      StreamsConfig ProducerConfig,
 //                                                      Time time,
 //                                                      bool enableTransactions)
 //            //throws ExecutionException, InterruptedException {
@@ -391,7 +391,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //            KeyValuePair<object, V> kv = KeyValuePair.Create(null, value);
 //            keyedRecords.Add(kv);
 //        }
-//        ProduceKeyValuesSynchronously(topic, keyedRecords, producerConfig, time, enableTransactions);
+//        ProduceKeyValuesSynchronously(topic, keyedRecords, ProducerConfig, time, enableTransactions);
 //    }
 
 //    /**
@@ -403,7 +403,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //     *   It's somewhat ok to get this wrong, as the main failure case would be an immediate return due to the clients
 //     *   not being initialized, which you can avoid with any non-zero value. But it's probably better to get it right ;)
 //     */
-//    public static void waitForCompletion(KafkaStreamsThread streams,
+//    public static void WaitForCompletion(KafkaStreamsThread streams,
 //                                         int expectedPartitions,
 //                                         int timeoutMilliseconds) {
 //        long start = System.currentTimeMillis();
@@ -779,7 +779,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 
 //        HashSet<KeyValueTimestamp<string, long>> actual =
 //            results.Stream()
-//                   .Map(result => new KeyValueTimestamp<>(result.Key, result.Value, result.Timestamp))
+//                   .Map(result => new KeyValueTimestamp<string, string>(result.Key, result.Value, result.Timestamp))
 //                   .collect(Collectors.toSet());
 
 //        Assert.Equal(actual, (expected));
@@ -932,7 +932,7 @@ namespace Kafka.Streams.Tests.Integration.utils
 //        List<KeyValueTimestamp<K, V>> consumedValues = new List<KeyValueTimestamp<K, V>>();
 //        List<ConsumeResult<K, V>> records = readRecords(topic, consumer, waitTime, maxMessages);
 //        foreach (ConsumeResult<K, V> record in records) {
-//            consumedValues.Add(new KeyValueTimestamp<>(record.Key, record.Value, record.Timestamp));
+//            consumedValues.Add(new KeyValueTimestamp<string, string>(record.Key, record.Value, record.Timestamp));
 //        }
 //        return consumedValues;
 //    }

@@ -51,10 +51,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             var expected = new KeyValueTimestamp[]
             {
-                new KeyValueTimestamp<>(1, 1, 0),
-                new KeyValueTimestamp<>(10, 2, 5),
-                new KeyValueTimestamp<>(100, 3, 50),
-                new KeyValueTimestamp<>(1000, 4, 500),
+                new KeyValueTimestamp<string, string>(1, 1, 0),
+                new KeyValueTimestamp<string, string>(10, 2, 5),
+                new KeyValueTimestamp<string, string>(100, 3, 50),
+                new KeyValueTimestamp<string, string>(1000, 4, 500),
             };
 
             Assert.Equal(expected, supplier.TheCapturedProcessor().processed.ToArray());
@@ -79,10 +79,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 driver.PipeInput(recordFactory.Create(topicName, expectedKey, int.ToString(expectedKey), expectedKey / 2L));
             }
 
-            KeyValueTimestamp[] expected = {new KeyValueTimestamp<>(1, 2, 0),
-            new KeyValueTimestamp<>(10, 12, 5),
-            new KeyValueTimestamp<>(100, 103, 50),
-            new KeyValueTimestamp<>(1000, 1004, 500)};
+            KeyValueTimestamp[] expected = {new KeyValueTimestamp<string, string>(1, 2, 0),
+            new KeyValueTimestamp<string, string>(10, 12, 5),
+            new KeyValueTimestamp<string, string>(100, 103, 50),
+            new KeyValueTimestamp<string, string>(1000, 1004, 500)};
 
             Assert.Equal(expected, supplier.TheCapturedProcessor().processed.ToArray());
         }

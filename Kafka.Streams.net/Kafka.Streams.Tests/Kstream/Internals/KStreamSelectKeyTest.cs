@@ -24,9 +24,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             keyMap.Add(2, "TWO");
             keyMap.Add(3, "THREE");
 
-            var expected = new KeyValueTimestamp[]{new KeyValueTimestamp<>("ONE", 1, 0),
-            new KeyValueTimestamp<>("TWO", 2, 0),
-            new KeyValueTimestamp<>("THREE", 3, 0)};
+            var expected = new KeyValueTimestamp[]{new KeyValueTimestamp<string, string>("ONE", 1, 0),
+            new KeyValueTimestamp<string, string>("TWO", 2, 0),
+            new KeyValueTimestamp<string, string>("THREE", 3, 0)};
             var expectedValues = new int[] { 1, 2, 3 };
 
             IKStream<K, V> stream =

@@ -22,16 +22,16 @@ namespace Kafka.Streams.State
     public class StateDirectory
     {
         private static readonly Regex PATH_NAME = new Regex("\\d+_\\d+", RegexOptions.Compiled);
-        private const string LOCK_FILE_NAME = ".lock";
+        public const string LOCK_FILE_NAME = ".lock";
 
         private readonly ILogger logger;
         private readonly DirectoryInfo stateDir;
         private readonly bool createStateDirectory;
-        private readonly Dictionary<TaskId, FileChannel> channels = new Dictionary<TaskId, FileChannel>();
+        private readonly Dictionary<TaskId, FileStream> channels = new Dictionary<TaskId, FileStream>();
         private readonly Dictionary<TaskId, LockAndOwner> locks = new Dictionary<TaskId, LockAndOwner>();
         private readonly IClock clock;
 
-        private FileChannel globalStateChannel;
+        private FileStream globalStateChannel;
         private FileLock globalStateLock;
 
         /**
@@ -144,21 +144,21 @@ namespace Kafka.Streams.State
             }
 
             var lockFile = new FileInfo(Path.Combine(this.GlobalStateDir().FullName, LOCK_FILE_NAME));
-            FileChannel channel;
+            FileStream channel;
 
             try
             {
-                channel = null;// FileChannel.open(lockFile.FullName, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+                channel = null;// FileStream.open(lockFile.FullName, FileMode.Create, FileAccess.Write);
             }
             catch (FileNotFoundException)
             {
-                // FileChannel.open(..) could throw FileNotFoundException when there is another thread
+                // FileStream.open(..) could throw FileNotFoundException when there is another thread
                 // concurrently deleting the parent directory (i.e. the directory of the taskId) of the lock
                 // file, in this case we will return immediately indicating locking failed.
                 return false;
             }
 
-            FileLock fileLock = this.TryLock(channel);
+            FileLock? fileLock = this.TryLock(channel);
             if (fileLock == null)
             {
                 channel.Close();
@@ -168,7 +168,7 @@ namespace Kafka.Streams.State
             this.globalStateChannel = channel;
             this.globalStateLock = fileLock;
 
-            this.logger.LogDebug("{} Acquired global state dir lock", this.LogPrefix());
+            this.logger.LogDebug($"{this.LogPrefix()} Acquired global state dir lock");
 
             return true;
         }
@@ -196,15 +196,15 @@ namespace Kafka.Streams.State
         public void Unlock(TaskId taskId)
         {
             LockAndOwner lockAndOwner = this.locks[taskId];
-            if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.CurrentThread.Name))
+            if (lockAndOwner != null && lockAndOwner.OwningThread.Equals(Thread.CurrentThread.Name))
             {
                 this.locks.Remove(taskId);
                 //lockAndOwner.@lock.release();
                 this.logger.LogDebug("{} Released state dir lock for task {}", this.LogPrefix(), taskId);
 
-                if (this.channels.Remove(taskId, out FileChannel fileChannel))
+                if (this.channels.Remove(taskId, out FileStream FileStream))
                 {
-                    fileChannel.Close();
+                    FileStream.Close();
                 }
             }
         }
@@ -311,7 +311,7 @@ namespace Kafka.Streams.State
                         if (manualUserCall)
                         {
                             this.logger.LogError("{} Failed to get the state directory lock.", this.LogPrefix(), e);
-                            
+
                             throw;
                         }
                     }
@@ -354,25 +354,89 @@ namespace Kafka.Streams.State
                 : this.stateDir.GetDirectories().Where(pathname => pathname.Attributes == FileAttributes.Directory && PATH_NAME.IsMatch(pathname.FullName)).ToArray();
         }
 
-        private FileChannel GetOrCreateFileChannel(
+        private FileStream GetOrCreateFileStream(
             TaskId taskId,
             string lockPath)
         {
             if (!this.channels.ContainsKey(taskId))
             {
-                //                channels.Add(taskId, FileChannel.open(lockPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE));
+                //                channels.Add(taskId, FileStream.open(lockPath, FileMode.Create, FileAccess.Write));
             }
 
             return this.channels[taskId];
         }
 
-        private FileLock TryLock(FileChannel channel)
+        /**
+ * Get the lock for the {@link TaskId}s directory if it is available
+ * @param taskId
+ * @return true if successful
+ * @throws IOException
+ */
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public bool Lock(TaskId taskId)
+        {
+            if (!this.createStateDirectory)
+            {
+                return true;
+            }
+
+            FileInfo lockFile;
+            // we already have the lock so bail out here
+            LockAndOwner lockAndOwner = this.locks[taskId];
+            if (lockAndOwner != null && lockAndOwner.OwningThread.Equals(Thread.CurrentThread.Name))
+            {
+                this.logger.LogTrace("{} Found cached state dir lock for task {}", this.LogPrefix(), taskId);
+                return true;
+            }
+            else if (lockAndOwner != null)
+            {
+                // another thread owns the lock
+                return false;
+            }
+
+            try
+            {
+                lockFile = new FileInfo(Path.Combine(this.DirectoryForTask(taskId).FullName, LOCK_FILE_NAME));
+            }
+            catch (ProcessorStateException e)
+            {
+                // directoryForTask could be throwing an exception if another thread
+                // has concurrently deleted the directory
+                return false;
+            }
+
+            FileStream channel;
+
+            try
+            {
+                channel = this.GetOrCreateFileStream(taskId, lockFile.FullName);
+            }
+            catch (FileNotFoundException)
+            {
+                // FileStream.open(..) could throw NoSuchFileException when there is another thread
+                // concurrently deleting the parent directory (i.e. the directory of the taskId) of the lock
+                // file, in this case we will return immediately indicating locking failed.
+                return false;
+            }
+
+            FileLock? lockedFile = this.TryLock(channel);
+            if (lockedFile != null)
+            {
+                this.locks.Add(taskId, new LockAndOwner(Thread.CurrentThread.Name, lockedFile));
+
+                this.logger.LogDebug($"{this.LogPrefix()} Acquired state dir lock for task {taskId}");
+            }
+
+            return lockFile != null;
+        }
+
+        private FileLock? TryLock(FileStream channel)
         {
             try
             {
-                return channel.TryLock();
+                return new FileLock(channel);
             }
-            catch (OverlappingFileLockException e)
+            catch (IOException)
             {
                 return null;
             }

@@ -34,9 +34,9 @@
 //        public abstract string GetMetricsScope();
 //        public abstract void SetClassLoggerToDebug();
 
-//        private RecordCollectorImpl CreateRecordCollector(string Name)
+//        private RecordCollector CreateRecordCollector(string Name)
 //        {
-//            return new RecordCollectorImpl(Name,
+//            return new RecordCollector(Name,
 //                new LogContext(Name),
 //                new DefaultProductionExceptionHandler());
 //            //{
@@ -193,10 +193,10 @@
 //            sessionStore.remove(new Windowed<string>("a", new SessionWindow(0, 1000)));
 
 //            IKeyValueIterator<IWindowed<string>, long> results = sessionStore.findSessions("a", 0L, 1000L);
-//            Assert.False(results.HasNext());
+//            Assert.False(results.MoveNext());
 
 //            IKeyValueIterator<IWindowed<string>, long> results = sessionStore.findSessions("a", 1500L, 2500L);
-//            Assert.True(results.HasNext());
+//            Assert.True(results.MoveNext());
 //        }
 //    }
 
@@ -208,10 +208,10 @@
 //        sessionStore.Put(new Windowed<string>("a", new SessionWindow(0, 1000)), null);
 
 //        IKeyValueIterator<IWindowed<string>, long> results = sessionStore.findSessions("a", 0L, 1000L);
-//        Assert.False(results.HasNext());
+//        Assert.False(results.MoveNext());
 
 //        IKeyValueIterator<IWindowed<string>, long> results = sessionStore.findSessions("a", 1500L, 2500L);
-//        Assert.True(results.HasNext());
+//        Assert.True(results.MoveNext());
 //    }
 
 //    [Fact]
@@ -309,7 +309,7 @@
 //        Assert.Equal(iterator.PeekNextKey(), new Windowed<string>("a", new SessionWindow(0L, 0L)));
 //        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().Key);
 //        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().Key);
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -334,7 +334,7 @@
 //        IKeyValueIterator<IWindowed<string>, long> values = sessionStore.Fetch("a");
 //        Assert.Equal(Collections.emptySet(), toSet(values));
 
-//        context.restore(sessionStore.Name(), changeLog);
+//        context.Restore(sessionStore.Name(), changeLog);
 
 //        IKeyValueIterator<IWindowed<string>, long> values = sessionStore.Fetch("a");
 //        Assert.Equal(new HashSet<>(expected), toSet(values));
@@ -348,10 +348,10 @@
 //        sessionStore.Put(new Windowed<string>("c", new SessionWindow(100, 500)), 3L);
 
 //        IKeyValueIterator<IWindowed<string>, long> iterator = sessionStore.Fetch("a");
-//        Assert.True(iterator.HasNext());
+//        Assert.True(iterator.MoveNext());
 //        sessionStore.Close();
 
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -367,8 +367,8 @@
 
 //        Assert.Equal(singleKeyIterator.MoveNext(), rangeIterator.MoveNext());
 //        Assert.Equal(singleKeyIterator.MoveNext(), rangeIterator.MoveNext());
-//        Assert.False(singleKeyIterator.HasNext());
-//        Assert.False(rangeIterator.HasNext());
+//        Assert.False(singleKeyIterator.MoveNext());
+//        Assert.False(rangeIterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -425,49 +425,49 @@
 //        sessionStore.remove(new Windowed<string>("a", new SessionWindow(0, 1)));
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnFindSessionsNullKey()
 //    {
 //        sessionStore.findSessions(null, 1L, 2L);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnFindSessionsNullFromKey()
 //    {
 //        sessionStore.findSessions(null, "anyKeyTo", 1L, 2L);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnFindSessionsNullToKey()
 //    {
 //        sessionStore.findSessions("anyKeyFrom", null, 1L, 2L);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnFetchNullFromKey()
 //    {
 //        sessionStore.Fetch(null, "anyToKey");
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnFetchNullToKey()
 //    {
 //        sessionStore.Fetch("anyFromKey", null);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnFetchNullKey()
 //    {
 //        sessionStore.Fetch(null);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnRemoveNullKey()
 //    {
 //        sessionStore.remove(null);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //    {
 //        sessionStore.Put(null, 1L);
@@ -479,13 +479,13 @@
 //        setClassLoggerToDebug();
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
-//        string keyFrom = Serdes.String().deserializer()
+//        string keyFrom = Serdes.String().Deserializer
 //            .Deserialize("", Serdes.Int().Serializer.Serialize("", -1));
-//        string keyTo = Serdes.String().deserializer()
+//        string keyTo = Serdes.String().Deserializer
 //            .Deserialize("", Serdes.Int().Serializer.Serialize("", 1));
 
 //        IKeyValueIterator<IWindowed<string>, long> iterator = sessionStore.findSessions(keyFrom, keyTo, 0L, 10L);
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 
 //        List<string> messages = appender.getMessages();
 //        Assert.Equal(messages,
@@ -498,7 +498,7 @@
 //    {
 //        HashSet<V> results = new HashSet<V>();
 
-//        while (iterator.HasNext())
+//        while (iterator.MoveNext())
 //        {
 //            results.Add(iterator.MoveNext().Value);
 //        }
@@ -509,7 +509,7 @@
 //    {
 //        HashSet<KeyValuePair<K, V>> results = new HashSet<KeyValuePair<K, V>>();
 
-//        while (iterator.HasNext())
+//        while (iterator.MoveNext())
 //        {
 //            results.Add(iterator.MoveNext());
 //        }

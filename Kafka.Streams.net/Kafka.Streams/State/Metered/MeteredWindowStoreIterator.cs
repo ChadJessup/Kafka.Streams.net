@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Metered
 
         public bool HasNext()
         {
-            return true;//iter.HasNext();
+            return true;//iter.MoveNext();
         }
 
         public KeyValuePair<DateTime, V> Next()

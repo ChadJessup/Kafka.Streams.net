@@ -1,3 +1,16 @@
+using Confluent.Kafka;
+using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Kafka.Streams;
+using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.Temporary;
+using Kafka.Streams.Threads.KafkaStreams;
+using System;
+using System.Collections.Generic;
+using Xunit;
+
 namespace Kafka.Streams.Tests.Integration
 {
     public class SuppressionIntegrationTest
@@ -8,17 +21,17 @@ namespace Kafka.Streams.Tests.Integration
             mkProperties(mkMap()),
             0L
         );
-        private static Serdes.String().Serializer STRING_SERIALIZER = new Serdes.String().Serializer();
-        private static Serde<string> STRING_SERDE = Serdes.String();
+        private static ISerializer<string> STRING_SERIALIZER = Serdes.String().Serializer;
+        private static ISerde<string> STRING_SERDE = Serdes.String();
         private const int COMMIT_INTERVAL = 100;
 
-        private static KTable<string, long> BuildCountsTable(string input, StreamsBuilder builder)
+        private static IKTable<string, long> BuildCountsTable(string input, StreamsBuilder builder)
         {
             return builder
-                .table(
+                .Table(
                     input,
                     Consumed.With(STRING_SERDE, STRING_SERDE),
-                    Materialized.< string, string, IKeyValueStore<Bytes, byte[]> > with(STRING_SERDE, STRING_SERDE)
+                    Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(STRING_SERDE, STRING_SERDE)
                         .WithCachingDisabled()
                         .WithLoggingDisabled()
                 )
@@ -30,7 +43,7 @@ namespace Kafka.Streams.Tests.Integration
         public void ShouldUseDefaultSerdes()
         {
             string testId = "-shouldInheritSerdes";
-            string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
+            string appId = this.GetType().FullName.ToLower() + testId;
             string input = "input" + testId;
             string outputSuppressed = "output-suppressed" + testId;
             string outputRaw = "output-raw" + testId;
@@ -39,9 +52,9 @@ namespace Kafka.Streams.Tests.Integration
 
             StreamsBuilder builder = new StreamsBuilder();
 
-            IKStream<K, V> inputStream = builder.Stream(input);
+            IKStream<string, string> inputStream = builder.Stream(input);
 
-            KTable<string, string> valueCounts = inputStream
+            IKTable<string, string> valueCounts = inputStream
                 .GroupByKey()
                 .Aggregate(() => "()", (key, value, aggregate) => aggregate + ",(" + key + ": " + value + ")");
 
@@ -58,22 +71,22 @@ namespace Kafka.Streams.Tests.Integration
             streamsConfig.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.StringSerde);
             streamsConfig.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.StringSerde);
 
-            KafkaStreamsThread driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
+            IKafkaStreamsThread driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
             try
             {
                 produceSynchronously(
                     input,
                     Arrays.asList(
-                        new KeyValueTimestamp<>("k1", "v1", ScaledTime(0L)),
-                        new KeyValueTimestamp<>("k1", "v2", ScaledTime(1L)),
-                        new KeyValueTimestamp<>("k2", "v1", ScaledTime(2L)),
-                        new KeyValueTimestamp<>("x", "x", ScaledTime(3L))
+                        new KeyValueTimestamp<string, string>("k1", "v1", ScaledTime(0L)),
+                        new KeyValueTimestamp<string, string>("k1", "v2", ScaledTime(1L)),
+                        new KeyValueTimestamp<string, string>("k2", "v1", ScaledTime(2L)),
+                        new KeyValueTimestamp<string, string>("x", "x", ScaledTime(3L))
                     )
                 );
                 bool rawRecords = WaitForAnyRecord(outputRaw);
                 bool suppressedRecords = WaitForAnyRecord(outputSuppressed);
                 Assert.Equal(rawRecords, Matchers.Is(true));
-                Assert.Equal(suppressedRecords, true);
+                Assert.Equal(true, suppressedRecords);
             }
             finally
             {
@@ -86,7 +99,7 @@ namespace Kafka.Streams.Tests.Integration
         public void ShouldInheritSerdes()
         {
             string testId = "-shouldInheritSerdes";
-            string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
+            string appId = this.GetType().FullName.ToLower() + testId;
             string input = "input" + testId;
             string outputSuppressed = "output-suppressed" + testId;
             string outputRaw = "output-raw" + testId;
@@ -121,16 +134,16 @@ namespace Kafka.Streams.Tests.Integration
                 produceSynchronously(
                     input,
                     Arrays.asList(
-                        new KeyValueTimestamp<>("k1", "v1", ScaledTime(0L)),
-                        new KeyValueTimestamp<>("k1", "v2", ScaledTime(1L)),
-                        new KeyValueTimestamp<>("k2", "v1", ScaledTime(2L)),
-                        new KeyValueTimestamp<>("x", "x", ScaledTime(3L))
+                        new KeyValueTimestamp<string, string>("k1", "v1", ScaledTime(0L)),
+                        new KeyValueTimestamp<string, string>("k1", "v2", ScaledTime(1L)),
+                        new KeyValueTimestamp<string, string>("k2", "v1", ScaledTime(2L)),
+                        new KeyValueTimestamp<string, string>("x", "x", ScaledTime(3L))
                     )
                 );
                 bool rawRecords = WaitForAnyRecord(outputRaw);
                 bool suppressedRecords = WaitForAnyRecord(outputSuppressed);
-                Assert.Equal(rawRecords, Matchers.(true));
-                Assert.Equal(suppressedRecords, true);
+                Assert.Equal(rawRecords, Matchers());
+                Assert.Equal(true, suppressedRecords);
             }
             finally
             {
@@ -173,7 +186,7 @@ namespace Kafka.Streams.Tests.Integration
         public void ShouldShutdownWhenRecordConstraintIsViolated()
         {// throws InterruptedException
             string testId = "-shouldShutdownWhenRecordConstraintIsViolated";
-            string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
+            string appId = this.GetType().FullName.ToLower() + testId;
             string input = "input" + testId;
             string outputSuppressed = "output-suppressed" + testId;
             string outputRaw = "output-raw" + testId;
@@ -181,7 +194,7 @@ namespace Kafka.Streams.Tests.Integration
             cleanStateBeforeTest(CLUSTER, input, outputRaw, outputSuppressed);
 
             StreamsBuilder builder = new StreamsBuilder();
-            KTable<string, long> valueCounts = BuildCountsTable(input, builder);
+            IKTable<string, long> valueCounts = BuildCountsTable(input, builder);
 
             valueCounts
                 .suppress(untilTimeLimit(TimeSpan.FromMilliseconds(MAX_VALUE), maxRecords(1L).shutDownWhenFull()))
@@ -199,10 +212,10 @@ namespace Kafka.Streams.Tests.Integration
                 produceSynchronously(
                     input,
                     Arrays.asList(
-                        new KeyValueTimestamp<>("k1", "v1", ScaledTime(0L)),
-                        new KeyValueTimestamp<>("k1", "v2", ScaledTime(1L)),
-                        new KeyValueTimestamp<>("k2", "v1", ScaledTime(2L)),
-                        new KeyValueTimestamp<>("x", "x", ScaledTime(3L))
+                        new KeyValueTimestamp<string, string>("k1", "v1", ScaledTime(0L)),
+                        new KeyValueTimestamp<string, string>("k1", "v2", ScaledTime(1L)),
+                        new KeyValueTimestamp<string, string>("k2", "v1", ScaledTime(2L)),
+                        new KeyValueTimestamp<string, string>("x", "x", ScaledTime(3L))
                     )
                 );
                 VerifyErrorShutdown(driver);
@@ -218,7 +231,7 @@ namespace Kafka.Streams.Tests.Integration
         public void ShouldShutdownWhenBytesConstraintIsViolated()
         {// throws InterruptedException
             string testId = "-shouldShutdownWhenBytesConstraintIsViolated";
-            string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
+            string appId = this.GetType().FullName.ToLower() + testId;
             string input = "input" + testId;
             string outputSuppressed = "output-suppressed" + testId;
             string outputRaw = "output-raw" + testId;
@@ -226,7 +239,7 @@ namespace Kafka.Streams.Tests.Integration
             cleanStateBeforeTest(CLUSTER, input, outputRaw, outputSuppressed);
 
             StreamsBuilder builder = new StreamsBuilder();
-            KTable<string, long> valueCounts = BuildCountsTable(input, builder);
+            IKTable<string, long> valueCounts = BuildCountsTable(input, builder);
 
             valueCounts
                 // this is a bit brittle, but I happen to know that the entries are a little over 100 bytes in size.
@@ -245,10 +258,10 @@ namespace Kafka.Streams.Tests.Integration
                 produceSynchronously(
                     input,
                     Arrays.asList(
-                        new KeyValueTimestamp<>("k1", "v1", ScaledTime(0L)),
-                        new KeyValueTimestamp<>("k1", "v2", ScaledTime(1L)),
-                        new KeyValueTimestamp<>("k2", "v1", ScaledTime(2L)),
-                        new KeyValueTimestamp<>("x", "x", ScaledTime(3L))
+                        new KeyValueTimestamp<string, string>("k1", "v1", ScaledTime(0L)),
+                        new KeyValueTimestamp<string, string>("k1", "v2", ScaledTime(1L)),
+                        new KeyValueTimestamp<string, string>("k2", "v1", ScaledTime(2L)),
+                        new KeyValueTimestamp<string, string>("x", "x", ScaledTime(3L))
                     )
                 );
                 VerifyErrorShutdown(driver);
@@ -283,13 +296,13 @@ namespace Kafka.Streams.Tests.Integration
 
         private static void ProduceSynchronously(string topic, List<KeyValueTimestamp<string, string>> toProduce)
         {
-            StreamsConfig producerConfig = mkProperties(mkMap(
+            StreamsConfig ProducerConfig = mkProperties(mkMap(
                 mkEntry(ProducerConfig.CLIENT_ID_CONFIG, "anything"),
                 mkEntry(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ((Serializer<string>)STRING_SERIALIZER).GetType().FullName),
                 mkEntry(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ((Serializer<string>)STRING_SERIALIZER).GetType().FullName),
                 mkEntry(ProducerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers())
             ));
-            IntegrationTestUtils.produceSynchronously(producerConfig, false, topic, Optional.empty(), toProduce);
+            IntegrationTestUtils.produceSynchronously(ProducerConfig, false, topic, Optional.empty(), toProduce);
         }
 
         private static void VerifyErrorShutdown(KafkaStreamsThread driver)

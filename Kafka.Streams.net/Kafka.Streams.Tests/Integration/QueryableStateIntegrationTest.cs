@@ -6,7 +6,6 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Queryable;
@@ -15,15 +14,14 @@ using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Temporary;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
-using Kafka.Streams.Threads;
 using Kafka.Streams.Threads.KafkaStreams;
-using Kafka.Streams.Threads.KafkaStreamsThread;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Integration
@@ -54,7 +52,7 @@ namespace Kafka.Streams.Tests.Integration
         private List<string> inputValues;
         private int numberOfWordsPerIteration = 0;
         private HashSet<string> inputValuesKeys;
-        private KafkaStreamsThread kafkaStreams;
+        private IKafkaStreamsThread kafkaStreams;
         private Comparator<KeyValuePair<string, string>> stringComparator;
         private Comparator<KeyValuePair<string, long>> stringLongComparator;
         private static volatile int testNo = 0;
@@ -69,10 +67,10 @@ namespace Kafka.Streams.Tests.Integration
             outputTopicConcurrentWindowed = outputTopicConcurrentWindowed + "-" + testNo;
             outputTopicThree = outputTopicThree + "-" + testNo;
             streamTwo = streamTwo + "-" + testNo;
-            CLUSTER.createTopics(streamOne, streamConcurrent);
+            CLUSTER.CreateTopics(streamOne, streamConcurrent);
             CLUSTER.CreateTopic(streamTwo, STREAM_TWO_PARTITIONS, NUM_REPLICAS);
             CLUSTER.CreateTopic(streamThree, STREAM_THREE_PARTITIONS, 1);
-            CLUSTER.createTopics(outputTopic, outputTopicConcurrent, outputTopicConcurrentWindowed, outputTopicThree);
+            CLUSTER.CreateTopics(outputTopic, outputTopicConcurrent, outputTopicConcurrentWindowed, outputTopicThree);
         }
 
         /**
@@ -83,7 +81,7 @@ namespace Kafka.Streams.Tests.Integration
         private List<string> GetInputValues()
         {
             List<string> input = new List<string>();
-            ClassLoader classLoader = getClass().getClassLoader();
+            var classLoader = getClass().getClassLoader();
             string fileName = "QueryableStateIntegrationTest" + Path.DirectorySeparatorChar + "inputValues.txt";
             BufferedReader reader = new BufferedReader(
                 new FileReader(Objects.requireNonNull(classLoader.getResource(fileName)).getFile()));
@@ -119,13 +117,13 @@ namespace Kafka.Streams.Tests.Integration
             streamsConfiguration = new StreamsConfig();
             string applicationId = "queryable-state-" + ++testNo;
 
-            streamsConfiguration.Set(StreamsConfig.ApplicationId, applicationId);
-            streamsConfiguration.Set(StreamsConfig.BootstrapServers, CLUSTER.bootstrapServers());
-            //streamsConfiguration.Set(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-            streamsConfiguration.Set(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory("qs-test").getPath());
-            streamsConfiguration.Set(StreamsConfig.DefaultKeySerdeClass, Serdes.String().GetType());
-            streamsConfiguration.Set(StreamsConfig.DefaultValueSerdeClass, Serdes.String().GetType());
-            streamsConfiguration.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
+            streamsConfiguration.ApplicationId = applicationId;
+            streamsConfiguration.BootstrapServers = CLUSTER.bootstrapServers();
+            streamsConfiguration.AutoOffsetReset = AutoOffsetReset.Earliest;
+            streamsConfiguration.StateStoreDirectory = TestUtils.GetTempDirectory("qs-test");
+            streamsConfiguration.DefaultKeySerdeType = Serdes.String().GetType();
+            streamsConfiguration.DefaultValueSerdeType = Serdes.String().GetType();
+            streamsConfiguration.CommitIntervalMs = 100;
 
             stringComparator = Comparator.comparing((KeyValuePair<string, string> o) => o.Key).thenComparing(o => o.Value);
             stringLongComparator = Comparator.comparing((KeyValuePair<string, long> o) => o.Key).thenComparingLong(o => o.Value);
@@ -139,20 +137,20 @@ namespace Kafka.Streams.Tests.Integration
             }
         }
 
-
         public void Shutdown()
         {// throws Exception
             if (kafkaStreams != null)
             {
                 kafkaStreams.Close(TimeSpan.FromSeconds(30));
             }
+
             IntegrationTestUtils.PurgeLocalStreamsState(streamsConfiguration);
         }
 
         /**
          * Creates a typical word count topology
          */
-        private KafkaStreamsThread CreateCountStream(
+        private IKafkaStreamsThread CreateCountStream(
             string inputTopic,
             string outputTopic,
             string windowOutputTopic,
@@ -169,8 +167,8 @@ namespace Kafka.Streams.Tests.Integration
                 .GroupBy(MockMapper.GetSelectValueMapper<string, string>());
 
             // Create a State Store for the All time word count
-            groupedByWords
-                .Count(Materialized.As(storeName + "-" + inputTopic))
+            groupedByWord
+                .Count(Materialized.As<string, string>(storeName + "-" + inputTopic))
                 .ToStream()
                 .To(outputTopic, Produced.With(Serdes.String(), Serdes.Long()));
 
@@ -186,7 +184,7 @@ namespace Kafka.Streams.Tests.Integration
 
         private class StreamRunnable //: Runnable
         {
-            private KafkaStreamsThread myStream;
+            private IKafkaStreamsThread myStream;
             private bool closed = false;
             private StateListenerStub stateListener = new StateListenerStub();
 
@@ -203,7 +201,6 @@ namespace Kafka.Streams.Tests.Integration
                 myStream = CreateCountStream(inputTopic, outputTopic, outputTopicWindowed, storeName, windowStoreName, props);
                 myStream.SetStateListener(stateListener);
             }
-
 
             public void Run()
             {
@@ -224,7 +221,7 @@ namespace Kafka.Streams.Tests.Integration
                 return closed;
             }
 
-            public KafkaStreamsThread GetStream()
+            public IKafkaStreamsThread GetStream()
             {
                 return myStream;
             }
@@ -237,11 +234,11 @@ namespace Kafka.Streams.Tests.Integration
 
         private void VerifyAllKVKeys(
             StreamRunnable[] streamRunnables,
-            KafkaStreamsThread streams,
+            IKafkaStreamsThread streams,
             StateListenerStub stateListenerStub,
             HashSet<string> keys,
             string storeName)
-        {// throws Exception
+        {
             foreach (string key in keys)
             {
                 TestUtils.WaitForCondition(
@@ -249,24 +246,25 @@ namespace Kafka.Streams.Tests.Integration
                     {
                         try
                         {
-                            StreamsMetadata metadata = streams.MetadataForKey(storeName, key, Serdes.Int().Serializer);
+                            StreamsMetadata metadata = streams.MetadataForKey<string>(storeName, key, Serdes.String().Serializer);
 
                             if (metadata == null || metadata.Equals(StreamsMetadata.NOT_AVAILABLE))
                             {
                                 return false;
                             }
-                            int index = metadata.HostInfo().port();
-                            KafkaStreamsThread streamsWithKey = streamRunnables[index].GetStream();
+
+                            int index = metadata.Port;
+                            IKafkaStreamsThread streamsWithKey = streamRunnables[index].GetStream();
                             IReadOnlyKeyValueStore<string, long> store =
-                                streamsWithKey.Store(storeName, QueryableStoreTypes.KeyValueStore);
+                                streamsWithKey.Store(storeName, QueryableStoreTypes.KeyValueStore<string, long>());
 
                             return store != null && store.Get(key) != null;
                         }
-                        catch (Exception e)
-                        {
-                            // Kafka Streams instance may have closed but rebalance hasn't happened
-                            return false;
-                        }
+                        //catch (Exception e)
+                        //{
+                        //    // Kafka Streams instance may have closed but rebalance hasn't happened
+                        //    return false;
+                        //}
                         catch (Exception e)
                         {
                             // there must have been at least one rebalance state
@@ -287,7 +285,7 @@ namespace Kafka.Streams.Tests.Integration
             string storeName,
             long from,
             long to)
-        {// throws Exception
+        {
             foreach (string key in keys)
             {
                 TestUtils.WaitForCondition(
@@ -295,22 +293,24 @@ namespace Kafka.Streams.Tests.Integration
                     {
                         try
                         {
-                            StreamsMetadata metadata = streams.metadataForKey(storeName, key, new Serdes.String().Serializer());
+                            var metadata = streams.MetadataForKey(storeName, key, Serdes.String().Serializer);
                             if (metadata == null || metadata.Equals(StreamsMetadata.NOT_AVAILABLE))
                             {
                                 return false;
                             }
-                            int index = metadata.hostInfo().port();
+
+                            int index = metadata.Port;
                             IKafkaStreamsThread streamsWithKey = streamRunnables[index].GetStream();
                             IReadOnlyWindowStore<string, long> store =
-                                streamsWithKey.store(storeName, QueryableStoreTypes.windowStore());
-                            return store != null && store.Fetch(key, ofEpochMilli(from), ofEpochMilli(to)) != null;
+                                streamsWithKey.Store(storeName, QueryableStoreTypes.WindowStore<string, long>());
+
+                            return store != null && store.Fetch(key, Timestamp.UnixTimestampMsToDateTime(from), Timestamp.UnixTimestampMsToDateTime(to)) != null;
                         }
-                        catch (IllegalStateException e)
-                        {
-                            // Kafka Streams instance may have closed but rebalance hasn't happened
-                            return false;
-                        }
+                        //catch (IllegalStateException e)
+                        //{
+                        //    // Kafka Streams instance may have closed but rebalance hasn't happened
+                        //    return false;
+                        //}
                         catch (InvalidStateStoreException e)
                         {
                             // there must have been at least one rebalance state
@@ -325,7 +325,7 @@ namespace Kafka.Streams.Tests.Integration
 
         [Fact]
         public void QueryOnRebalance()
-        {// throws Exception
+        {
             int numThreads = STREAM_TWO_PARTITIONS;
             StreamRunnable[] streamRunnables = new StreamRunnable[numThreads];
             IKafkaStreamsThread[] streamThreads = new KafkaStreamsThread[numThreads];
@@ -345,6 +345,7 @@ namespace Kafka.Streams.Tests.Integration
                     storeName,
                     windowStoreName,
                     i);
+
                 streamThreads[i] = new KafkaStreamsThread(streamRunnables[i]);
                 streamThreads[i].Start();
             }
@@ -361,6 +362,7 @@ namespace Kafka.Streams.Tests.Integration
                         streamRunnables[i].GetStateListener(),
                         inputValuesKeys,
                         storeName + "-" + streamThree);
+
                     VerifyAllWindowedKeys(
                         streamRunnables,
                         streamRunnables[i].GetStream(),
@@ -399,7 +401,10 @@ namespace Kafka.Streams.Tests.Integration
                     windowStoreName + "-" + streamThree,
                     0L,
                     WINDOW_SIZE);
-                Assert.Equal(KafkaStreamsThreadStates.RUNNING, streamRunnables[0].GetStream().state());
+
+                Assert.Equal(
+                    KafkaStreamsThreadStates.RUNNING,
+                    streamRunnables[0].GetStream().State.CurrentState);
             }
             finally
             {
@@ -441,10 +446,10 @@ namespace Kafka.Streams.Tests.Integration
                 WaitUntilAtLeastNumRecordProcessed(outputTopicConcurrentWindowed, numberOfWordsPerIteration);
 
                 IReadOnlyKeyValueStore<string, long> KeyValueStore =
-                    kafkaStreams.Store(storeName + "-" + streamConcurrent, QueryableStoreTypes.KeyValueStore);
+                    kafkaStreams.Store<IReadOnlyKeyValueStore<string, long>>(storeName + "-" + streamConcurrent, QueryableStoreTypes.KeyValueStore<string, long>());
 
                 IReadOnlyWindowStore<string, long> windowStore =
-                    kafkaStreams.Store(windowStoreName + "-" + streamConcurrent, QueryableStoreTypes.windowStore());
+                    kafkaStreams.Store(windowStoreName + "-" + streamConcurrent, QueryableStoreTypes.WindowStore<string, long>());
 
                 Dictionary<string, long> expectedWindowState = new Dictionary<string, long>();
                 Dictionary<string, long> expectedCount = new Dictionary<string, long>();
@@ -477,9 +482,11 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void ShouldBeAbleToQueryFilterState()
         {// throws Exception
-            streamsConfiguration.Put(StreamsConfig.DefaultKeySerdeClassConfig, Serdes.String().GetType());
-            streamsConfiguration.Put(StreamsConfig.DefaultValueSerdeClassConfig, Serdes.Long().GetType());
+            streamsConfiguration.DefaultKeySerdeType = Serdes.String().GetType();
+            streamsConfiguration.DefaultValueSerdeType = Serdes.Long().GetType();
+
             StreamsBuilder builder = new StreamsBuilder();
+
             string[] keys = { "hello", "goodbye", "welcome", "go", "kafka" };
             HashSet<KeyValuePair<string, long>> batch1 = new HashSet<KeyValuePair<string, long>>(
                 Arrays.asList(
@@ -487,16 +494,14 @@ namespace Kafka.Streams.Tests.Integration
                     KeyValuePair.Create(keys[1], 1L),
                     KeyValuePair.Create(keys[2], 3L),
                     KeyValuePair.Create(keys[3], 5L),
-                    KeyValuePair.Create(keys[4], 2L))
-            );
+                    KeyValuePair.Create(keys[4], 2L)));
 
-            HashSet<KeyValuePair<string, long>> expectedBatch1 =
-                new HashSet<KeyValuePair<string, long>>(Collections.singleton(KeyValuePair.Create(keys[4], 2L)));
+            var expectedBatch1 = new HashSet<KeyValuePair<string, long>>(Collections.singleton(KeyValuePair.Create(keys[4], 2L)));
 
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                 streamOne,
                 batch1,
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.String().Serializer,
                     Serdes.Long().Serializer,
@@ -515,9 +520,9 @@ namespace Kafka.Streams.Tests.Integration
             WaitUntilAtLeastNumRecordProcessed(outputTopic, 1);
 
             IReadOnlyKeyValueStore<string, long>
-                myFilterStore = kafkaStreams.Store("queryFilter", QueryableStoreTypes.KeyValueStore);
+                myFilterStore = kafkaStreams.Store("queryFilter", QueryableStoreTypes.KeyValueStore<string, long>());
             IReadOnlyKeyValueStore<string, long>
-                myFilterNotStore = kafkaStreams.Store("queryFilterNot", QueryableStoreTypes.KeyValueStore);
+                myFilterNotStore = kafkaStreams.Store("queryFilterNot", QueryableStoreTypes.KeyValueStore<string, long>());
 
             foreach (KeyValuePair<string, long> expectedEntry in expectedBatch1)
             {
@@ -569,7 +574,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                 streamOne,
                 batch1,
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.String().Serializer,
                     Serdes.String().Serializer,
@@ -588,7 +593,7 @@ namespace Kafka.Streams.Tests.Integration
             WaitUntilAtLeastNumRecordProcessed(outputTopic, 5);
 
             IReadOnlyKeyValueStore<string, long> myMapStore =
-                kafkaStreams.Store("queryMapValues", QueryableStoreTypes.KeyValueStore);
+                kafkaStreams.Store("queryMapValues", QueryableStoreTypes.KeyValueStore<string, long>());
 
             foreach (KeyValuePair<string, string> batchEntry in batch1)
             {
@@ -626,7 +631,7 @@ namespace Kafka.Streams.Tests.Integration
                 mockTime);
 
             Func<string, string, bool> filterPredicate = (key, value) => key.Contains("kafka");
-            IKTable<string, string> t1 = builder.Table(streamOne);
+            IKTable<string, string> t1 = builder.Table<string, string>(streamOne);
             IKTable<string, string> t2 = t1.Filter(filterPredicate, Materialized.As("queryFilter"));
             IKTable<string, long> t3 = t2
                 .MapValues(
@@ -643,7 +648,7 @@ namespace Kafka.Streams.Tests.Integration
 
             IReadOnlyKeyValueStore<string, long>
                 myMapStore = kafkaStreams.Store("queryMapValues",
-                QueryableStoreTypes.KeyValueStore);
+                QueryableStoreTypes.KeyValueStore<string, long>());
 
             foreach (KeyValuePair<string, long> expectedEntry in expectedBatch1)
             {
@@ -676,7 +681,7 @@ namespace Kafka.Streams.Tests.Integration
                 KeyValuePair.Create(keys[3], "go"),
                 KeyValuePair.Create(keys[4], "kafka")));
 
-            HashSet<KeyValuePair<string, long>> expectedCount = new TreeSet<>(stringLongComparator);
+            HashSet<KeyValuePair<string, long>> expectedCount = new HashSet<KeyValuePair<string, long>>(stringLongComparator);
             foreach (string key in keys)
             {
                 expectedCount.Add(KeyValuePair.Create(key, 1L));
@@ -685,14 +690,14 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                     streamOne,
                     batch1,
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.String().Serializer,
                     Serdes.String().Serializer,
                     new StreamsConfig()),
                     mockTime);
 
-            IKStream<K, V> s1 = builder.Stream(streamOne);
+            IKStream<string, string> s1 = builder.Stream<string, string>(streamOne);
 
             // Non Windowed
             string storeName = "my-count";
@@ -711,10 +716,10 @@ namespace Kafka.Streams.Tests.Integration
             WaitUntilAtLeastNumRecordProcessed(outputTopic, 1);
 
             IReadOnlyKeyValueStore<string, long>
-                myCount = kafkaStreams.store(storeName, QueryableStoreTypes.KeyValueStore);
+                myCount = kafkaStreams.Store(storeName, QueryableStoreTypes.KeyValueStore<string, long>());
 
             IReadOnlyWindowStore<string, long> windowStore =
-                kafkaStreams.store(windowStoreName, QueryableStoreTypes.windowStore());
+                kafkaStreams.Store(windowStoreName, QueryableStoreTypes.WindowStore<string, long>());
             VerifyCanGetByKey(keys,
                 expectedCount,
                 expectedCount,
@@ -726,9 +731,9 @@ namespace Kafka.Streams.Tests.Integration
 
         [Fact]
         public void ShouldNotMakeStoreAvailableUntilAllStoresAvailable()
-        {// throws Exception
+        {
             StreamsBuilder builder = new StreamsBuilder();
-            IKStream<K, V> stream = builder.Stream(streamThree);
+            IKStream<string, long> stream = builder.Stream<string, long>(streamThree);
 
             string storeName = "count-by-key";
             stream.GroupByKey().Count(Materialized.As(storeName));
@@ -739,7 +744,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                     streamThree,
                     Arrays.asList(hello, hello, hello, hello, hello, hello, hello, hello),
-                    TestUtils.producerConfig(
+                    TestUtils.ProducerConfig(
                             CLUSTER.bootstrapServers(),
                             Serdes.String().Serializer,
                             Serdes.String().Serializer,
@@ -754,10 +759,10 @@ namespace Kafka.Streams.Tests.Integration
                 "waiting for store " + storeName);
 
             IReadOnlyKeyValueStore<string, long> store =
-                kafkaStreams.store(storeName, QueryableStoreTypes.KeyValueStore);
+                kafkaStreams.Store(storeName, QueryableStoreTypes.KeyValueStore<string, long>());
 
             TestUtils.WaitForCondition(
-                () => new long(8).Equals(store.Get("hello")),
+                () => 8L.Equals(store.Get("hello")),
                 maxWaitMs,
                 "wait for count to be 8");
 
@@ -776,7 +781,7 @@ namespace Kafka.Streams.Tests.Integration
                     {
                         Assert.Equal(
                             8L.ToString(),
-                            kafkaStreams.store(storeName, QueryableStoreTypes.KeyValueStore<string, long>).Get("hello"));
+                            kafkaStreams.Store(storeName, QueryableStoreTypes.KeyValueStore<string, long>()).Get("hello"));
                         return true;
                     }
                     catch (InvalidStateStoreException ise)
@@ -803,7 +808,7 @@ namespace Kafka.Streams.Tests.Integration
             {
                 try
                 {
-                    kafkaStreams.store(storeName, QueryableStoreTypes.KeyValueStore<string, long>());
+                    kafkaStreams.Store(storeName, QueryableStoreTypes.KeyValueStore<string, long>());
                     return true;
                 }
                 catch (InvalidStateStoreException ise)
@@ -827,21 +832,23 @@ namespace Kafka.Streams.Tests.Integration
                 .GroupByKey()
                 .Reduce((value1, value2) =>
                 {
-                    if (value1.Length() > 1)
+                    if (value1.Length > 1)
                     {
                         if (beforeFailure.CompareAndSet(true, false))
                         {
                             throw new RuntimeException("Injected test exception");
                         }
                     }
+
                     return value1 + value2;
-                }, Materialized.As(storeName))
+                },
+                Materialized.As(storeName))
                 .ToStream()
                 .To(outputTopic);
 
-            streamsConfiguration.Put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 2);
+            streamsConfiguration.NumberOfStreamThreads = 2;
             kafkaStreams = new KafkaStreamsThread(builder.Build(), streamsConfiguration);
-            kafkaStreams.setUncaughtExceptionHandler((t, e) => failed.set(true));
+            kafkaStreams.SetUncaughtExceptionHandler((t, e) => failed.set(true));
             kafkaStreams.Start();
 
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
@@ -851,7 +858,7 @@ namespace Kafka.Streams.Tests.Integration
                     KeyValuePair.Create("a", "2"),
                     KeyValuePair.Create("b", "3"),
                     KeyValuePair.Create("b", "4")),
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.String().Serializer,
                     Serdes.String().Serializer,
@@ -866,7 +873,7 @@ namespace Kafka.Streams.Tests.Integration
                 "waiting for store " + storeName);
 
             IReadOnlyKeyValueStore<string, string> store =
-                kafkaStreams.store(storeName, QueryableStoreTypes.KeyValueStore);
+                kafkaStreams.Store(storeName, QueryableStoreTypes.KeyValueStore<string, string>());
 
             TestUtils.WaitForCondition(
                 () => "12".Equals(store.Get("a")) && "34".Equals(store.Get("b")),
@@ -876,7 +883,7 @@ namespace Kafka.Streams.Tests.Integration
             IntegrationTestUtils.ProduceKeyValuesSynchronously(
                 streamOne,
                 Collections.singleton(KeyValuePair.Create("a", "5")),
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.String().Serializer,
                     Serdes.String().Serializer,
@@ -893,7 +900,7 @@ namespace Kafka.Streams.Tests.Integration
                 "waiting for store " + storeName);
 
             IReadOnlyKeyValueStore<string, string> store2 =
-                kafkaStreams.store(storeName, QueryableStoreTypes.KeyValueStore);
+                kafkaStreams.Store(storeName, QueryableStoreTypes.KeyValueStore<string, string>());
 
             try
             {
@@ -944,11 +951,12 @@ namespace Kafka.Streams.Tests.Integration
             Assert.Equal(countAllResults, expectedCount);
         }
 
-        private void VerifyCanGetByKey(string[] keys,
-                                       HashSet<KeyValuePair<string, long>> expectedWindowState,
-                                       HashSet<KeyValuePair<string, long>> expectedCount,
-                                       IReadOnlyWindowStore<string, long> windowStore,
-                                       IReadOnlyKeyValueStore<string, long> myCount)
+        private void VerifyCanGetByKey(
+            string[] keys,
+            HashSet<KeyValuePair<string, long>> expectedWindowState,
+            HashSet<KeyValuePair<string, long>> expectedCount,
+            IReadOnlyWindowStore<string, long> windowStore,
+            IReadOnlyKeyValueStore<string, long> myCount)
         {// throws Exception
             HashSet<KeyValuePair<string, long>> windowState = new TreeSet<>(stringLongComparator);
             HashSet<KeyValuePair<string, long>> countState = new TreeSet<>(stringLongComparator);
@@ -961,7 +969,7 @@ namespace Kafka.Streams.Tests.Integration
                 Thread.Sleep(10);
                 foreach (string key in keys)
                 {
-                    windowState.addAll(Fetch(windowStore, key));
+                    windowState.AddAll(Fetch(windowStore, key));
                     long value = myCount.Get(key);
                     if (value != null)
                     {
@@ -1041,8 +1049,7 @@ namespace Kafka.Streams.Tests.Integration
 
         }
 
-        private void WaitUntilAtLeastNumRecordProcessed(string topic,
-                                                        int numRecs)
+        private void WaitUntilAtLeastNumRecordProcessed(string topic, int numRecs)
         {// throws Exception
             StreamsConfig config = new StreamsConfig();
             config.Set(ConsumerConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());
@@ -1057,11 +1064,13 @@ namespace Kafka.Streams.Tests.Integration
                 120 * 1000);
         }
 
-        private HashSet<KeyValuePair<string, long>> Fetch(IReadOnlyWindowStore<string, long> store,
-                                                  string key)
+        private HashSet<KeyValuePair<string, long>> Fetch(
+            IReadOnlyWindowStore<string, long> store,
+            string key)
         {
             IWindowStoreIterator<long> Fetch =
-                store.Fetch(key, ofEpochMilli(0), ofEpochMilli(System.currentTimeMillis()));
+                store.Fetch(key, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(System.currentTimeMillis()));
+
             if (Fetch.MoveNext())
             {
                 KeyValuePair<long, long> next = Fetch.Current;
@@ -1075,8 +1084,8 @@ namespace Kafka.Streams.Tests.Integration
                                            string key)
         {
             IWindowStoreIterator<long> Fetch =
-                store.Fetch(key, ofEpochMilli(0), ofEpochMilli(System.currentTimeMillis()));
-            if (Fetch.HasNext())
+                store.Fetch(key, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(System.currentTimeMillis()));
+            if (Fetch.MoveNext())
             {
                 KeyValuePair<long, long> next = Fetch.MoveNext();
                 return Collections.singletonMap(key, next.Value);
@@ -1118,7 +1127,7 @@ namespace Kafka.Streams.Tests.Integration
             }
 
             [MethodImpl(MethodImplOptions.Synchronized)]
-            void Shutdown()
+            public void Shutdown()
             {
                 this.shutdown = true;
             }

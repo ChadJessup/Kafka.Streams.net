@@ -103,10 +103,5 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         public void Close()
         {
         }
-
-        public void Process<K1, V1>(K1 key, V1 value)
-        {
-            this.Process(key, value);
-        }
     }
 }

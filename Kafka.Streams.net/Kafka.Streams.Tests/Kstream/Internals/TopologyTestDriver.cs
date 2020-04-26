@@ -384,7 +384,7 @@ namespace Kafka.Streams.Tests
                     storeChangelogReader,
                     StreamsConfig.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuarantee)));
 
-                var recordCollector = new RecordCollectorImpl(
+                var recordCollector = new RecordCollector(
                     TASK_ID.ToString(),
                     //consumer,
                     //new StreamsProducer(producer, eosEnabled, logContext, streamsConfig.getString(StreamsConfig.ApplicationIdConfig)),
@@ -945,7 +945,7 @@ namespace Kafka.Streams.Tests
         {
             if (this.task != null)
             {
-                //IStateStore stateStore = ((ProcessorContextImpl)task.recordContext).getStateMgr().getStore(Name);
+                //IStateStore stateStore = ((ProcessorContextImpl)task.recordContext).getStateMgr().GetStore(Name);
                 //if (stateStore != null)
                 //{
                 //    if (throwForBuiltInStores)

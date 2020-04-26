@@ -422,7 +422,7 @@ namespace Kafka.Streams.Processors.Internals
             finally
             {
 
-                //stateDirectory.unlockGlobalState();
+                //stateDirectory.UnlockGlobalState();
             }
         }
 

@@ -255,7 +255,7 @@
 //        {
 //            ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, Bytes.Wrap(new byte[] { 0 }), Bytes.Wrap(new byte[] { 1 }));
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //        }
 
 //        [Fact]
@@ -269,7 +269,7 @@
 //            }
 //            ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.Range(ns, Bytes.Wrap(new byte[] { 1 }), Bytes.Wrap(new byte[] { 4 }));
 //            int bytesIndex = 1;
-//            while (iterator.HasNext())
+//            while (iterator.MoveNext())
 //            {
 //                Bytes peekedKey = iterator.PeekNextKey();
 //                KeyValuePair<Bytes, LRUCacheEntry> next = iterator.MoveNext();

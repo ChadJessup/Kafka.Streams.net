@@ -305,7 +305,7 @@
 //            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.All();
 //            HashSet<string> keys = new HashSet<>();
 
-//            while (iterator.HasNext())
+//            while (iterator.MoveNext())
 //            {
 //                keys.Add(stringDeserializer.deserialize(null, iterator.MoveNext().key.Get()));
 //            }
@@ -331,7 +331,7 @@
 //            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.All();
 //            HashSet<string> keys = new HashSet<>();
 
-//            while (iterator.HasNext())
+//            while (iterator.MoveNext())
 //            {
 //                keys.Add(stringDeserializer.deserialize(null, iterator.MoveNext().key.Get()));
 //            }
@@ -391,7 +391,7 @@
 //            IKeyValueIterator<Bytes, byte[]> iterator = rocksDBStore.All();
 //            HashSet<string> keys = new HashSet<>();
 
-//            while (iterator.HasNext())
+//            while (iterator.MoveNext())
 //            {
 //                keys.Add(stringDeserializer.deserialize(null, iterator.MoveNext().key.Get()));
 //            }
@@ -406,9 +406,9 @@
 //            try
 //            {
 //                rocksDBStore.Put(null, stringSerializer.Serialize(null, "someVal"));
-//                Assert.True(false, "Should have thrown NullPointerException on null Put()");
+//                Assert.True(false, "Should have thrown NullReferenceException on null Put()");
 //            }
-//            catch (NullPointerException e)
+//            catch (NullReferenceException e)
 //            {
 //                // this is good
 //            }
@@ -421,9 +421,9 @@
 //            try
 //            {
 //                rocksDBStore.Put(null, stringSerializer.Serialize(null, "someVal"));
-//                Assert.True(false, "Should have thrown NullPointerException on null Put()");
+//                Assert.True(false, "Should have thrown NullReferenceException on null Put()");
 //            }
-//            catch (NullPointerException e)
+//            catch (NullReferenceException e)
 //            {
 //                // this is good
 //            }
@@ -436,9 +436,9 @@
 //            try
 //            {
 //                rocksDBStore.Get(null);
-//                Assert.True(false, "Should have thrown NullPointerException on null get()");
+//                Assert.True(false, "Should have thrown NullReferenceException on null get()");
 //            }
-//            catch (NullPointerException e)
+//            catch (NullReferenceException e)
 //            {
 //                // this is good
 //            }
@@ -451,9 +451,9 @@
 //            try
 //            {
 //                rocksDBStore.delete(null);
-//                Assert.True(false, "Should have thrown NullPointerException on deleting null key");
+//                Assert.True(false, "Should have thrown NullReferenceException on deleting null key");
 //            }
-//            catch (NullPointerException e)
+//            catch (NullReferenceException e)
 //            {
 //                // this is good
 //            }
@@ -466,9 +466,9 @@
 //            try
 //            {
 //                rocksDBStore.Range(null, new Bytes(stringSerializer.Serialize(null, "2")));
-//                Assert.True(false, "Should have thrown NullPointerException on deleting null key");
+//                Assert.True(false, "Should have thrown NullReferenceException on deleting null key");
 //            }
-//            catch (NullPointerException e)
+//            catch (NullReferenceException e)
 //            {
 //                // this is good
 //            }

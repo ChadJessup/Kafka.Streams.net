@@ -1,3 +1,19 @@
+using Confluent.Kafka;
+using Kafka.Common;
+using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Kafka.Streams;
+using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.Tasks;
+using Kafka.Streams.Temporary;
+using Kafka.Streams.Tests.Integration;
+using Kafka.Streams.Topologies;
+using System;
+using System.Collections.Generic;
+using Xunit;
+
 namespace Kafka.Streams.Tests.Processor.Internals
 {
     /*
@@ -122,7 +138,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private readonly string userEndPoint = "localhost:8080";
         private readonly string applicationId = "stream-partition-assignor-test";
 
-        private TaskManager taskManager = Mock.Of<TaskManager);
+        private TaskManager taskManager = Mock.Of<TaskManager>();
 
         private Dictionary<string, object> ConfigProps()
         {
@@ -220,10 +236,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Collections.sort(subscription.topics());
             Assert.Equal(asList("topic1", "topic2"), subscription.topics());
 
-            HashSet<TaskId> standbyTasks = new HashSet<>(cachedTasks);
-            standbyTasks.removeAll(prevTasks);
+            HashSet<TaskId> StandbyTasks = new HashSet<>(cachedTasks);
+            StandbyTasks.removeAll(prevTasks);
 
-            SubscriptionInfo info = new SubscriptionInfo(processId, prevTasks, standbyTasks, null);
+            SubscriptionInfo info = new SubscriptionInfo(processId, prevTasks, StandbyTasks, null);
             Assert.Equal(info.encode(), subscription.userData());
         }
 
@@ -272,17 +288,17 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             // the first consumer
             AssignmentInfo info10 = checkAssignment(allTopics, assignments.Get("consumer10"));
-            HashSet<TaskId> allActiveTasks = new HashSet<>(info10.activeTasks());
+            HashSet<TaskId> allActiveTasks = new HashSet<>(info10.ActiveTasks());
 
             // the second consumer
             AssignmentInfo info11 = checkAssignment(allTopics, assignments.Get("consumer11"));
-            allActiveTasks.addAll(info11.activeTasks());
+            allActiveTasks.addAll(info11.ActiveTasks());
 
             Assert.Equal(Utils.mkSet(task0, task1), allActiveTasks);
 
             // the third consumer
             AssignmentInfo info20 = checkAssignment(allTopics, assignments.Get("consumer20"));
-            allActiveTasks.addAll(info20.activeTasks());
+            allActiveTasks.addAll(info20.ActiveTasks());
 
             Assert.Equal(3, allActiveTasks.Count);
             Assert.Equal(allTasks, new HashSet<>(allActiveTasks));
@@ -353,13 +369,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
             AssignmentInfo info10 = AssignmentInfo.decode(assignments.Get("consumer10").userData());
 
             List<TaskId> expectedInfo10TaskIds = Arrays.asList(taskIdA1, taskIdA3, taskIdB1, taskIdB3);
-            Assert.Equal(expectedInfo10TaskIds, info10.activeTasks());
+            Assert.Equal(expectedInfo10TaskIds, info10.ActiveTasks());
 
             // the second consumer
             AssignmentInfo info11 = AssignmentInfo.decode(assignments.Get("consumer11").userData());
             List<TaskId> expectedInfo11TaskIds = Arrays.asList(taskIdA0, taskIdA2, taskIdB0, taskIdB2);
 
-            Assert.Equal(expectedInfo11TaskIds, info11.activeTasks());
+            Assert.Equal(expectedInfo11TaskIds, info11.ActiveTasks());
         }
 
         [Fact]
@@ -390,7 +406,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             // check assignment info
             AssignmentInfo info10 = checkAssignment(Utils.mkSet("topic1"), assignments.Get("consumer10"));
-            HashSet<TaskId> allActiveTasks = new HashSet<>(info10.activeTasks());
+            HashSet<TaskId> allActiveTasks = new HashSet<>(info10.ActiveTasks());
 
             Assert.Equal(3, allActiveTasks.Count);
             Assert.Equal(allTasks, new HashSet<>(allActiveTasks));
@@ -431,7 +447,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             // check assignment info
             AssignmentInfo info10 = checkAssignment(Collections.emptySet(), assignments.Get("consumer10"));
-            HashSet<TaskId> allActiveTasks = new HashSet<>(info10.activeTasks());
+            HashSet<TaskId> allActiveTasks = new HashSet<>(info10.ActiveTasks());
 
             Assert.Equal(0, allActiveTasks.Count);
 
@@ -443,7 +459,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             // the first consumer
             info10 = checkAssignment(allTopics, assignments.Get("consumer10"));
-            allActiveTasks.addAll(info10.activeTasks());
+            allActiveTasks.addAll(info10.ActiveTasks());
 
             Assert.Equal(3, allActiveTasks.Count);
             Assert.Equal(allTasks, new HashSet<>(allActiveTasks));
@@ -490,15 +506,15 @@ namespace Kafka.Streams.Tests.Processor.Internals
             // also note that previously assigned partitions / tasks may not stay on the previous host since we may assign the new task first and
             // then later ones will be re-assigned to other hosts due to load balancing
             AssignmentInfo info = AssignmentInfo.decode(assignments.Get("consumer10").userData());
-            HashSet<TaskId> allActiveTasks = new HashSet<>(info.activeTasks());
+            HashSet<TaskId> allActiveTasks = new HashSet<>(info.ActiveTasks());
             HashSet<TopicPartition> allPartitions = new HashSet<>(assignments.Get("consumer10").partitions());
 
             info = AssignmentInfo.decode(assignments.Get("consumer11").userData());
-            allActiveTasks.addAll(info.activeTasks());
+            allActiveTasks.addAll(info.ActiveTasks());
             allPartitions.addAll(assignments.Get("consumer11").partitions());
 
             info = AssignmentInfo.decode(assignments.Get("consumer20").userData());
-            allActiveTasks.addAll(info.activeTasks());
+            allActiveTasks.addAll(info.ActiveTasks());
             allPartitions.addAll(assignments.Get("consumer20").partitions());
 
             Assert.Equal(allTasks, allActiveTasks);
@@ -562,14 +578,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
             AssignmentInfo info11 = AssignmentInfo.decode(assignments.Get("consumer11").userData());
             AssignmentInfo info20 = AssignmentInfo.decode(assignments.Get("consumer20").userData());
 
-            Assert.Equal(2, info10.activeTasks().Count);
-            Assert.Equal(2, info11.activeTasks().Count);
-            Assert.Equal(2, info20.activeTasks().Count);
+            Assert.Equal(2, info10.ActiveTasks().Count);
+            Assert.Equal(2, info11.ActiveTasks().Count);
+            Assert.Equal(2, info20.ActiveTasks().Count);
 
             HashSet<TaskId> allTasks = new HashSet<>();
-            allTasks.addAll(info10.activeTasks());
-            allTasks.addAll(info11.activeTasks());
-            allTasks.addAll(info20.activeTasks());
+            allTasks.addAll(info10.ActiveTasks());
+            allTasks.addAll(info11.ActiveTasks());
+            allTasks.addAll(info20.ActiveTasks());
             Assert.Equal(new HashSet<>(tasks), allTasks);
 
             // check tasks for state topics
@@ -584,7 +600,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                                           List<TaskId> tasks,
                                           Dictionary<int, InternalTopologyBuilder.TopicsInfo> topicGroups)
         {
-            string changelogTopic = ProcessorStateManager.storeChangelogTopic(applicationId, storeName);
+            string changelogTopic = ProcessorStateManager.StoreChangelogTopic(applicationId, storeName);
 
             HashSet<TaskId> ids = new HashSet<>();
             foreach (Map.Entry<int, InternalTopologyBuilder.TopicsInfo> entry in topicGroups)
@@ -649,15 +665,15 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             // the first consumer
             AssignmentInfo info10 = checkAssignment(allTopics, assignments.Get("consumer10"));
-            HashSet<TaskId> allActiveTasks = new HashSet<>(info10.activeTasks());
-            HashSet<TaskId> allStandbyTasks = new HashSet<>(info10.standbyTasks().keySet());
+            HashSet<TaskId> allActiveTasks = new HashSet<>(info10.ActiveTasks());
+            HashSet<TaskId> allStandbyTasks = new HashSet<>(info10.StandbyTasks().keySet());
 
             // the second consumer
             AssignmentInfo info11 = checkAssignment(allTopics, assignments.Get("consumer11"));
-            allActiveTasks.addAll(info11.activeTasks());
-            allStandbyTasks.addAll(info11.standbyTasks().keySet());
+            allActiveTasks.addAll(info11.ActiveTasks());
+            allStandbyTasks.addAll(info11.StandbyTasks().keySet());
 
-            Assert.NotEqual("same processId has same set of standby tasks", info11.standbyTasks().keySet(), info10.standbyTasks().keySet());
+            Assert.NotEqual("same processId has same set of standby tasks", info11.StandbyTasks().keySet(), info10.StandbyTasks().keySet());
 
             // check active tasks assigned to the first client
             Assert.Equal(Utils.mkSet(task0, task1), new HashSet<>(allActiveTasks));
@@ -665,8 +681,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             // the third consumer
             AssignmentInfo info20 = checkAssignment(allTopics, assignments.Get("consumer20"));
-            allActiveTasks.addAll(info20.activeTasks());
-            allStandbyTasks.addAll(info20.standbyTasks().keySet());
+            allActiveTasks.addAll(info20.ActiveTasks());
+            allStandbyTasks.addAll(info20.StandbyTasks().keySet());
 
             // All task ids are in the active tasks and also in the standby tasks
 
@@ -683,23 +699,23 @@ namespace Kafka.Streams.Tests.Processor.Internals
             configurePartitionAssignor(Collections.emptyMap());
 
             List<TaskId> activeTaskList = Arrays.asList(task0, task3);
-            Dictionary<TaskId, HashSet<TopicPartition>> activeTasks = new HashMap<>();
-            Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks = new HashMap<>();
+            Dictionary<TaskId, HashSet<TopicPartition>> ActiveTasks = new HashMap<>();
+            Dictionary<TaskId, HashSet<TopicPartition>> StandbyTasks = new HashMap<>();
             Dictionary<HostInfo, HashSet<TopicPartition>> hostState = Collections.singletonMap(
                     new HostInfo("localhost", 9090),
                     Utils.mkSet(t3p0, t3p3));
-            activeTasks.Put(task0, Utils.mkSet(t3p0));
-            activeTasks.Put(task3, Utils.mkSet(t3p3));
-            standbyTasks.Put(task1, Utils.mkSet(t3p1));
-            standbyTasks.Put(task2, Utils.mkSet(t3p2));
+            ActiveTasks.Put(task0, Utils.mkSet(t3p0));
+            ActiveTasks.Put(task3, Utils.mkSet(t3p3));
+            StandbyTasks.Put(task1, Utils.mkSet(t3p1));
+            StandbyTasks.Put(task2, Utils.mkSet(t3p2));
 
-            AssignmentInfo info = new AssignmentInfo(activeTaskList, standbyTasks, hostState);
+            AssignmentInfo info = new AssignmentInfo(activeTaskList, StandbyTasks, hostState);
             ConsumerPartitionAssignor.Assignment assignment = new ConsumerPartitionAssignor.Assignment(asList(t3p0, t3p3), info.encode());
 
             Capture<Cluster> capturedCluster = EasyMock.newCapture();
             taskManager.setPartitionsByHostState(hostState);
             EasyMock.expectLastCall();
-            taskManager.SetAssignmentMetadata(activeTasks, standbyTasks);
+            taskManager.SetAssignmentMetadata(ActiveTasks, StandbyTasks);
             EasyMock.expectLastCall();
             taskManager.setClusterMetadata(EasyMock.capture(capturedCluster));
             EasyMock.expectLastCall();
@@ -801,7 +817,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             // forcing the stream.Map to get repartitioned to a topic with four partitions.
             stream1.Join(
                 table1,
-                (ValueJoiner)(value1, value2) => null);
+                (value1, value2) => null);
 
             UUID uuid = UUID.randomUUID();
             string client = "client1";
@@ -952,40 +968,40 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             StreamsBuilder builder = new StreamsBuilder();
 
-            IKStream<K, V> stream1 = builder
+            IKStream<string, string?> stream1 = builder
 
                 // Task 1 (should get created):
-                .Stream("topic1")
+                .Stream<string, string>("topic1")
                 // force repartitioning for aggregation
-                .selectKey((key, value) => null)
+                .SelectKey<string?>((key, value) => null)
                 .GroupByKey()
 
                 // Task 2 (should get created):
                 // Create repartioning and changelog topic as task 1 exists
-                .Count(Materialized.As("count"))
+                .Count(Materialized.As<string?, long, IKeyValueStore<Bytes, byte[]>>("count"))
 
                 // force repartitioning for join, but second join input topic unknown
                 // => internal repartitioning topic should not get created
                 .ToStream()
-                .Map((KeyValueMapper<object, long, KeyValuePair<object, object>>)(key, value) => null);
+                .Map<string, string?>((key, value) => default);
 
             builder
                 // Task 3 (should not get created because input topic unknown)
-                .Stream("unknownTopic")
+                .Stream<string, string>("unknownTopic")
 
                 // force repartitioning for join, but input topic unknown
                 // => thus should not Create internal repartitioning topic
-                .selectKey((key, value) => null)
+                .SelectKey<string?>((key, value) => null)
 
                 // Task 4 (should not get created because input topics unknown)
                 // should not Create any of both input repartition topics or any of both changelog topics
-                .Join(
+                .Join<string?, string?>(
                     stream1,
-                    (ValueJoiner)(value1, value2) => null,
+                    (value1, value2) => null,
                     JoinWindows.Of(TimeSpan.FromMilliseconds(0))
                 );
 
-            UUID uuid = UUID.randomUUID();
+            var uuid = Guid.NewGuid();
             string client = "client1";
 
             InternalTopologyBuilder internalTopologyBuilder = TopologyWrapper.getInternalTopologyBuilder(builder.Build());
@@ -994,13 +1010,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
             mockTaskManager(
                 emptyTasks,
                 emptyTasks,
-                UUID.randomUUID(),
+                Guid.NewGuid(),
                 internalTopologyBuilder);
             configurePartitionAssignor(Collections.emptyMap());
 
             MockInternalTopicManager mockInternalTopicManager = new MockInternalTopicManager(
                 streamsConfig,
-                mockClientSupplier.restoreConsumer);
+                mockClientSupplier.RestoreConsumer);
             partitionAssignor.setInternalTopicManager(mockInternalTopicManager);
 
             subscriptions.Put(client,
@@ -1010,9 +1026,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
             );
             Dictionary<string, ConsumerPartitionAssignor.Assignment> assignment = partitionAssignor.Assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
 
-            Assert.Equal(mockInternalTopicManager.readyTopics.IsEmpty(), true);
+            Assert.Equal(true, mockInternalTopicManager.readyTopics.IsEmpty());
 
-            Assert.Equal(assignment.Get(client).partitions().IsEmpty(), true);
+            Assert.Equal(true, assignment.Get(client).partitions().IsEmpty());
         }
 
         [Fact]
@@ -1086,7 +1102,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldThrowKafkaExceptionIfTaskMangerNotConfigured()
         {
             Dictionary<string, object> config = ConfigProps();
-            config.remove(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR);
+            config.Remove(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR);
 
             try
             {
@@ -1095,7 +1111,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             }
             catch (KafkaException expected)
             {
-                Assert.Equal(expected.getMessage(), "TaskManager is not specified");
+                Assert.Equal("TaskManager is not specified", expected.Message);
             }
         }
 
@@ -1112,7 +1128,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             }
             catch (KafkaException expected)
             {
-                Assert.Equal(expected.getMessage(),
+                Assert.Equal(expected.Message,
                     equalTo("java.lang.string is not an instance of org.apache.kafka.streams.processor.internals.TaskManager"));
             }
         }
@@ -1130,7 +1146,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             }
             catch (KafkaException expected)
             {
-                Assert.Equal(expected.getMessage(), "assignmentErrorCode is not specified");
+                Assert.Equal(expected.Message, "assignmentErrorCode is not specified");
             }
         }
 
@@ -1147,7 +1163,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             }
             catch (KafkaException expected)
             {
-                Assert.Equal(expected.getMessage(),
+                Assert.Equal(expected.Message,
                     equalTo("java.lang.string is not an instance of java.util.concurrent.atomic.int"));
             }
         }
@@ -1193,7 +1209,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             partitionAssignor.configure(ConfigProps());
             Dictionary<string, ConsumerPartitionAssignor.Assignment> assignment = partitionAssignor.Assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
 
-            Assert.Equal(assignment.Count, 2);
+            Assert.Equal(2, assignment.Count);
             Assert.Equal(AssignmentInfo.decode(assignment.Get("consumer1").userData()).version(), smallestVersion);
             Assert.Equal(AssignmentInfo.decode(assignment.Get("consumer2").userData()).version(), smallestVersion);
         }
@@ -1266,158 +1282,158 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             HashSet<TaskId> allTasks = Utils.mkSet(task0, task1, task2);
 
-            HashSet<TaskId> activeTasks = Utils.mkSet(task0, task1);
-            HashSet<TaskId> standbyTasks = Utils.mkSet(task2);
-            Dictionary<TaskId, HashSet<TopicPartition>> standbyTaskMap = new HashMap<TaskId, HashSet<TopicPartition>>() {
-            {
-                Put(task2, Collections.singleton(t1p2));
+            HashSet<TaskId> ActiveTasks = Utils.mkSet(task0, task1);
+            HashSet<TaskId> StandbyTasks = Utils.mkSet(task2);
+            Dictionary<TaskId, HashSet<TopicPartition>> standbyTaskMap = new HashMap<TaskId, HashSet<TopicPartition>>();
+            //            {
+            //                Put(task2, Collections.singleton(t1p2));
+            //        }
+            //    };
+
+            subscriptions.Put("consumer1",
+                        new ConsumerPartitionAssignor.Subscription(
+                                Collections.singletonList("topic1"),
+                                new SubscriptionInfo(UUID.randomUUID(), ActiveTasks, StandbyTasks, null).encode())
+                );
+            subscriptions.Put("future-consumer",
+                    new ConsumerPartitionAssignor.Subscription(
+                            Collections.singletonList("topic1"),
+                            encodeFutureSubscription())
+            );
+
+            mockTaskManager(
+                allTasks,
+                allTasks,
+                UUID.randomUUID(),
+                builder);
+            partitionAssignor.configure(configProps());
+            Dictionary<string, ConsumerPartitionAssignor.Assignment> assignment = partitionAssignor.Assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
+
+            Assert.Equal(assignment.Count, (2));
+            Assert.Equal(
+                AssignmentInfo.decode(assignment.Get("consumer1").userData()),
+                equalTo(new AssignmentInfo(
+                    new List<>(ActiveTasks),
+                    standbyTaskMap,
+                    Collections.emptyMap()
+                )));
+            Assert.Equal(assignment.Get("consumer1").partitions(), (asList(t1p0, t1p1)));
+
+            Assert.Equal(AssignmentInfo.decode(assignment.Get("future-consumer").userData()), (new AssignmentInfo()));
+            Assert.Equal(assignment.Get("future-consumer").partitions().Count, (0));
         }
-    };
 
-    subscriptions.Put("consumer1",
-                new ConsumerPartitionAssignor.Subscription(
-                        Collections.singletonList("topic1"),
-                        new SubscriptionInfo(UUID.randomUUID(), activeTasks, standbyTasks, null).encode())
-        );
-        subscriptions.Put("future-consumer",
-                new ConsumerPartitionAssignor.Subscription(
-                        Collections.singletonList("topic1"),
-                        encodeFutureSubscription())
-        );
-
-        mockTaskManager(
-            allTasks,
-            allTasks,
-            UUID.randomUUID(),
-            builder);
-    partitionAssignor.configure(configProps());
-        Dictionary<string, ConsumerPartitionAssignor.Assignment> assignment = partitionAssignor.Assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
-
-    Assert.Equal(assignment.Count, (2));
-        Assert.Equal(
-            AssignmentInfo.decode(assignment.Get("consumer1").userData()),
-            equalTo(new AssignmentInfo(
-                new List<>(activeTasks),
-                standbyTaskMap,
-                Collections.emptyMap()
-            )));
-        Assert.Equal(assignment.Get("consumer1").partitions(), (asList(t1p0, t1p1)));
-
-        Assert.Equal(AssignmentInfo.decode(assignment.Get("future-consumer").userData()), (new AssignmentInfo()));
-        Assert.Equal(assignment.Get("future-consumer").partitions().Count, (0));
-    }
-
-[Fact]
-public void ShouldThrowIfV1SubscriptionAndFutureSubscriptionIsMixed()
-{
-    shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(1);
-}
-
-[Fact]
-public void ShouldThrowIfV2SubscriptionAndFutureSubscriptionIsMixed()
-{
-    shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(2);
-}
-
-private ByteBuffer EncodeFutureSubscription()
-{
-    ByteBuffer buf = new ByteBuffer().Allocate(4 /* used version */
-                                               + 4 /* supported version */);
-    buf.putInt(SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1);
-    buf.putInt(SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1);
-    return buf;
-}
-
-private void ShouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(int oldVersion)
-{
-    subscriptions.Put("consumer1",
-            new ConsumerPartitionAssignor.Subscription(
-                    Collections.singletonList("topic1"),
-                    new SubscriptionInfo(oldVersion, UUID.randomUUID(), emptyTasks, emptyTasks, null).encode())
-    );
-    subscriptions.Put("future-consumer",
-            new ConsumerPartitionAssignor.Subscription(
-                    Collections.singletonList("topic1"),
-                    encodeFutureSubscription())
-    );
-
-    mockTaskManager(
-        emptyTasks,
-        emptyTasks,
-        UUID.randomUUID(),
-        builder);
-    partitionAssignor.configure(configProps());
-
-    try
-    {
-        partitionAssignor.Assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
-        Assert.True(false, "Should have thrown IllegalStateException");
-    }
-    catch (IllegalStateException expected)
-    {
-        // pass
-    }
-}
-
-private ConsumerPartitionAssignor.Assignment CreateAssignment(Dictionary<HostInfo, HashSet<TopicPartition>> firstHostState)
-{
-    AssignmentInfo info = new AssignmentInfo(Collections.emptyList(),
-                                                   Collections.emptyMap(),
-                                                   firstHostState);
-
-    return new ConsumerPartitionAssignor.Assignment(
-            Collections.emptyList(), info.encode());
-}
-
-private AssignmentInfo CheckAssignment(HashSet<string> expectedTopics,
-                                       ConsumerPartitionAssignor.Assignment assignment)
-{
-
-    // This assumed 1) DefaultPartitionGrouper is used, and 2) there is an only one topic group.
-
-    AssignmentInfo info = AssignmentInfo.decode(assignment.userData());
-
-    // check if the number of assigned partitions == the size of active task id list
-    Assert.Equal(assignment.partitions().Count, info.activeTasks().Count);
-
-    // check if active tasks are consistent
-    List<TaskId> activeTasks = new List<TaskId>();
-    HashSet<string> activeTopics = new HashSet<>();
-    foreach (TopicPartition partition in assignment.partitions())
-    {
-        // since default grouper, taskid.partition == partition.Partition
-        activeTasks.Add(new TaskId(0, partition.Partition));
-        activeTopics.Add(partition.Topic);
-    }
-    Assert.Equal(activeTasks, info.activeTasks());
-
-    // check if active partitions cover All topics
-    Assert.Equal(expectedTopics, activeTopics);
-
-    // check if standby tasks are consistent
-    HashSet<string> standbyTopics = new HashSet<>();
-    foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in info.standbyTasks())
-    {
-        TaskId id = entry.Key;
-        HashSet<TopicPartition> partitions = entry.Value;
-        foreach (TopicPartition partition in partitions)
+        [Fact]
+        public void ShouldThrowIfV1SubscriptionAndFutureSubscriptionIsMixed()
         {
-            // since default grouper, taskid.partition == partition.Partition
-            Assert.Equal(id.partition, partition.Partition);
+            shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(1);
+        }
 
-            standbyTopics.Add(partition.Topic);
+        [Fact]
+        public void ShouldThrowIfV2SubscriptionAndFutureSubscriptionIsMixed()
+        {
+            shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(2);
+        }
+
+        private ByteBuffer EncodeFutureSubscription()
+        {
+            ByteBuffer buf = new ByteBuffer().Allocate(4 /* used version */
+                                                       + 4 /* supported version */);
+            buf.putInt(SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1);
+            buf.putInt(SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1);
+            return buf;
+        }
+
+        private void ShouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(int oldVersion)
+        {
+            subscriptions.Put("consumer1",
+                    new ConsumerPartitionAssignor.Subscription(
+                            Collections.singletonList("topic1"),
+                            new SubscriptionInfo(oldVersion, UUID.randomUUID(), emptyTasks, emptyTasks, null).encode())
+            );
+            subscriptions.Put("future-consumer",
+                    new ConsumerPartitionAssignor.Subscription(
+                            Collections.singletonList("topic1"),
+                            encodeFutureSubscription())
+            );
+
+            mockTaskManager(
+                emptyTasks,
+                emptyTasks,
+                UUID.randomUUID(),
+                builder);
+            partitionAssignor.configure(configProps());
+
+            try
+            {
+                partitionAssignor.Assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
+                Assert.True(false, "Should have thrown IllegalStateException");
+            }
+            catch (IllegalStateException expected)
+            {
+                // pass
+            }
+        }
+
+        private ConsumerPartitionAssignor.Assignment CreateAssignment(Dictionary<HostInfo, HashSet<TopicPartition>> firstHostState)
+        {
+            AssignmentInfo info = new AssignmentInfo(Collections.emptyList(),
+                                                           Collections.emptyMap(),
+                                                           firstHostState);
+
+            return new ConsumerPartitionAssignor.Assignment(
+                    Collections.emptyList(), info.encode());
+        }
+
+        private AssignmentInfo CheckAssignment(HashSet<string> expectedTopics,
+                                               ConsumerPartitionAssignor.Assignment assignment)
+        {
+
+            // This assumed 1) DefaultPartitionGrouper is used, and 2) there is an only one topic group.
+
+            AssignmentInfo info = AssignmentInfo.decode(assignment.userData());
+
+            // check if the number of assigned partitions == the size of active task id list
+            Assert.Equal(assignment.partitions().Count, info.ActiveTasks().Count);
+
+            // check if active tasks are consistent
+            List<TaskId> ActiveTasks = new List<TaskId>();
+            HashSet<string> activeTopics = new HashSet<>();
+            foreach (TopicPartition partition in assignment.partitions())
+            {
+                // since default grouper, taskid.partition == partition.Partition
+                ActiveTasks.Add(new TaskId(0, partition.Partition));
+                activeTopics.Add(partition.Topic);
+            }
+            Assert.Equal(ActiveTasks, info.ActiveTasks());
+
+            // check if active partitions cover All topics
+            Assert.Equal(expectedTopics, activeTopics);
+
+            // check if standby tasks are consistent
+            HashSet<string> standbyTopics = new HashSet<>();
+            foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in info.StandbyTasks())
+            {
+                TaskId id = entry.Key;
+                HashSet<TopicPartition> partitions = entry.Value;
+                foreach (TopicPartition partition in partitions)
+                {
+                    // since default grouper, taskid.partition == partition.Partition
+                    Assert.Equal(id.partition, partition.Partition);
+
+                    standbyTopics.Add(partition.Topic);
+                }
+            }
+
+            if (info.StandbyTasks().Count > 0)
+            {
+                // check if standby partitions cover All topics
+                Assert.Equal(expectedTopics, standbyTopics);
+            }
+
+            return info;
         }
     }
-
-    if (info.standbyTasks().Count > 0)
-    {
-        // check if standby partitions cover All topics
-        Assert.Equal(expectedTopics, standbyTopics);
-    }
-
-    return info;
-}
-}
 }
 /*
 

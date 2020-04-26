@@ -82,7 +82,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 Materialized.As("store"));
         }
 
-        [Fact]//(expected = NullPointerException))
+        [Fact]//(expected = NullReferenceException))
         public void shouldNotAllowNullSubtractorOnReduce()
         {
             groupedTable.Reduce(
@@ -153,7 +153,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             assertReduced(supplier.TheCapturedProcessor().LastValueAndTimestampPerKey, topic, driver);
-            Assert.Equal(reduced.QueryableStoreName, "reduced");
+            Assert.Equal("reduced", reduced.QueryableStoreName);
         }
 
         [Fact]
@@ -207,8 +207,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             assertReduced(supplier.TheCapturedProcessor().LastValueAndTimestampPerKey, topic, driver);
             {
                 IKeyValueStore<string, int> reduce = driver.GetKeyValueStore("reduce");
-                Assert.Equal(reduce.Get("A"), 5);
-                Assert.Equal(reduce.Get("B"), 6);
+                Assert.Equal(5, reduce.Get("A"));
+                Assert.Equal(6, reduce.Get("B"));
             }
             {
                 IKeyValueStore<string, IValueAndTimestamp<int>> reduce = driver.GetTimestampedKeyValueStore("reduce");
@@ -237,8 +237,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             processData(topic, driver);
             {
                 IKeyValueStore<string, long> counts = driver.GetKeyValueStore("count");
-                Assert.Equal(counts.Get("1"), 3L);
-                Assert.Equal(counts.Get("2"), 2L);
+                Assert.Equal(3L, counts.Get("1"));
+                Assert.Equal(2L, counts.Get("2"));
             }
             {
                 IKeyValueStore<string, IValueAndTimestamp<long>> counts = driver.getTimestampedKeyValueStore("count");
@@ -271,8 +271,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             {
                 {
                     IKeyValueStore<string, string> aggregate = driver.GetKeyValueStore("aggregate");
-                    Assert.Equal(aggregate.Get("1"), "0+1+1+1");
-                    Assert.Equal(aggregate.Get("2"), "0+2+2");
+                    Assert.Equal("0+1+1+1", aggregate.Get("1"));
+                    Assert.Equal("0+2+2", aggregate.Get("2"));
                 }
                 {
                     IKeyValueStore<string, IValueAndTimestamp<string>> aggregate = driver.getTimestampedKeyValueStore("aggregate");

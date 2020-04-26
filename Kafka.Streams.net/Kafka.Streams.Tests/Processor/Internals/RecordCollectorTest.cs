@@ -1,9 +1,14 @@
 using Confluent.Kafka;
 using Kafka.Common;
+using Kafka.Streams.Errors;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Temporary;
+using Kafka.Streams.Tests.Errors;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Processor.Internals
@@ -19,12 +24,15 @@ namespace Kafka.Streams.Tests.Processor.Internals
             new PartitionInfo("topic1", 2, Node.noNode(), System.Array.Empty<Node>(), System.Array.Empty<Node>())
         );
 
-        private Cluster cluster = new Cluster("cluster", Collections.singletonList(Node.noNode()), infos,
-            Collections.emptySet(), Collections.emptySet());
+        private Cluster cluster = new Cluster(
+            "cluster",
+            Collections.singletonList(Node.noNode()),
+            infos,
+            Collections.emptySet<string>(),
+            Collections.emptySet<string>());
 
-
-        private ByteArraySerializer byteArraySerializer = new ByteArraySerializer();
-        private Serdes.String().Serializer stringSerializer = new Serdes.String().Serializer();
+        private ISerializer<byte[]> byteArraySerializer = Serdes.ByteArray().Serializer;
+        private ISerializer<string> stringSerializer = Serdes.String().Serializer;
 
         private IStreamPartitioner<string, object> streamPartitioner = (topic, key, value, numPartitions) =>
         {
@@ -34,51 +42,48 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void TestSpecificPartition()
         {
-
-            RecordCollectorImpl collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "RecordCollectorTest-TestSpecificPartition",
-                new LogContext("RecordCollectorTest-TestSpecificPartition "),
-                new DefaultProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records")
-            );
+                //new LogContext("RecordCollectorTest-TestSpecificPartition "),
+                new DefaultProductionExceptionHandler());
             collector.Init(new MockProducer<>(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer));
 
-            Headers headers = new Headers(new Header[] { new RecordHeader("key", "value".GetBytes()) });
+            Headers headers = new Headers(new Header[] { new Header("key", "value".GetBytes()) });
 
-            collector.send("topic1", "999", "0", null, 0, null, stringSerializer, stringSerializer);
-            collector.send("topic1", "999", "0", null, 0, null, stringSerializer, stringSerializer);
-            collector.send("topic1", "999", "0", null, 0, null, stringSerializer, stringSerializer);
+            collector.Send("topic1", "999", "0", null, DateTime.MinValue, null, stringSerializer, stringSerializer);
+            collector.Send("topic1", "999", "0", null, DateTime.MinValue, null, stringSerializer, stringSerializer);
+            collector.Send("topic1", "999", "0", null, DateTime.MinValue, null, stringSerializer, stringSerializer);
 
-            collector.send("topic1", "999", "0", headers, 1, null, stringSerializer, stringSerializer);
-            collector.send("topic1", "999", "0", headers, 1, null, stringSerializer, stringSerializer);
+            collector.Send("topic1", "999", "0", headers, DateTime.MinValue + TimeSpan.FromSeconds(1), null, stringSerializer, stringSerializer);
+            collector.Send("topic1", "999", "0", headers, DateTime.MinValue + TimeSpan.FromSeconds(1), null, stringSerializer, stringSerializer);
 
-            collector.send("topic1", "999", "0", headers, 2, null, stringSerializer, stringSerializer);
+            collector.Send("topic1", "999", "0", headers, DateTime.MinValue + TimeSpan.FromSeconds(2), null, stringSerializer, stringSerializer);
 
-            Dictionary<TopicPartition, long> offsets = collector.offsets();
+            Dictionary<TopicPartition, long> offsets = collector.offsets;
 
-            Assert.Equal((long)2L, offsets.Get(new TopicPartition("topic1", 0)));
-            Assert.Equal((long)1L, offsets.Get(new TopicPartition("topic1", 1)));
-            Assert.Equal((long)0L, offsets.Get(new TopicPartition("topic1", 2)));
+            Assert.Equal(2L, offsets[new TopicPartition("topic1", 0)]);
+            Assert.Equal(1L, offsets[new TopicPartition("topic1", 1)]);
+            Assert.Equal(0L, offsets[new TopicPartition("topic1", 2)]);
 
             // ignore StreamPartitioner
-            collector.send("topic1", "999", "0", null, 0, null, stringSerializer, stringSerializer);
-            collector.send("topic1", "999", "0", null, 1, null, stringSerializer, stringSerializer);
-            collector.send("topic1", "999", "0", headers, 2, null, stringSerializer, stringSerializer);
+            collector.Send("topic1", "999", "0", null, DateTime.MinValue + TimeSpan.FromSeconds(0), stringSerializer, stringSerializer, null);
+            collector.Send("topic1", "999", "0", null, DateTime.MinValue + TimeSpan.FromSeconds(1), stringSerializer, stringSerializer, null);
+            collector.Send("topic1", "999", "0", headers, DateTime.MinValue + TimeSpan.FromSeconds(2), stringSerializer, stringSerializer, null);
 
-            Assert.Equal((long)3L, offsets.Get(new TopicPartition("topic1", 0)));
-            Assert.Equal((long)2L, offsets.Get(new TopicPartition("topic1", 1)));
-            Assert.Equal((long)1L, offsets.Get(new TopicPartition("topic1", 2)));
+            Assert.Equal(3L, offsets[new TopicPartition("topic1", 0)]);
+            Assert.Equal(2L, offsets[new TopicPartition("topic1", 1)]);
+            Assert.Equal(1L, offsets[new TopicPartition("topic1", 2)]);
         }
 
         [Fact]
         public void TestStreamPartitioner()
         {
 
-            RecordCollectorImpl collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "RecordCollectorTest-TestStreamPartitioner",
-                new LogContext("RecordCollectorTest-TestStreamPartitioner "),
-                new DefaultProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records")
+                //new LogContext("RecordCollectorTest-TestStreamPartitioner "),
+                new DefaultProductionExceptionHandler()
+                //new Metrics().sensor("skipped-records")
             );
             collector.Init(new MockProducer<>(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer));
 
@@ -107,11 +112,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]// (expected = StreamsException)
         public void ShouldThrowStreamsExceptionOnAnyExceptionButProducerFencedException()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
                 logContext,
                 new DefaultProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //new Metrics().sensor("skipped-records"));
             //            collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //            {
             //
@@ -122,18 +127,18 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //            }
             //        });
 
-            collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+            collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner));
         }
 
 
         [Fact]
         public void ShouldThrowStreamsExceptionOnSubsequentCallIfASendFailsWithDefaultExceptionHandler()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
+                //logContext,
                 new DefaultProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //new Metrics().sensor("skipped-records"));
             //          collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //          {
             //
@@ -145,7 +150,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //          }
             //      });
 
-            collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+            collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner));
 
             try
             {
@@ -159,11 +164,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldNotThrowStreamsExceptionOnSubsequentCallIfASendFailsWithContinueExceptionHandler()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
-                new AlwaysContinueProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //logContext,
+                new AlwaysContinueProductionExceptionHandler());
+                //new Metrics().sensor("skipped-records"));
             //            collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //            {
             //
@@ -184,16 +189,16 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldRecordSkippedMetricAndLogWarningIfSendFailsWithContinueExceptionHandler()
         {
-            Metrics metrics = new Metrics();
-            Sensor sensor = metrics.sensor("skipped-records");
-            LogCaptureAppender logCaptureAppender = LogCaptureAppender.CreateAndRegister();
-            MetricName metricName = new MetricName("Name", "group", "description", Collections.emptyMap());
-            sensor.Add(metricName, new WindowedSum());
-            RecordCollector collector = new RecordCollectorImpl(
+            //Metrics metrics = new Metrics();
+            //Sensor sensor = metrics.sensor("skipped-records");
+            //LogCaptureAppender logCaptureAppender = LogCaptureAppender.CreateAndRegister();
+            //MetricName metricName = new MetricName("Name", "group", "description", Collections.emptyMap());
+            //sensor.Add(metricName, new WindowedSum());
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
-                new AlwaysContinueProductionExceptionHandler(),
-                sensor);
+                //  logContext,
+                new AlwaysContinueProductionExceptionHandler());
+                //sensor);
             //            collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //            {
             //
@@ -214,11 +219,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldThrowStreamsExceptionOnFlushIfASendFailedWithDefaultExceptionHandler()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
-                new DefaultProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //logContext,
+                new DefaultProductionExceptionHandler());
+                //new Metrics().sensor("skipped-records"));
             //            collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //            {
             //
@@ -244,11 +249,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldNotThrowStreamsExceptionOnFlushIfASendFailedWithContinueExceptionHandler()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
-                new AlwaysContinueProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //logContext,
+                new AlwaysContinueProductionExceptionHandler());
+                //new Metrics().sensor("skipped-records"));
             //            collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //            {
             //
@@ -269,11 +274,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldThrowStreamsExceptionOnCloseIfASendFailedWithDefaultExceptionHandler()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
-                new DefaultProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //logContext,
+                new DefaultProductionExceptionHandler());
+                //new Metrics().sensor("skipped-records"));
             //    collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //    {
             //
@@ -299,11 +304,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldNotThrowStreamsExceptionOnCloseIfASendFailedWithContinueExceptionHandler()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
-                new AlwaysContinueProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //logContext,
+                new AlwaysContinueProductionExceptionHandler());
+                //new Metrics().sensor("skipped-records"));
             //            collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //            {
             //
@@ -324,11 +329,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]// (expected = StreamsException)
         public void ShouldThrowIfTopicIsUnknownWithDefaultExceptionHandler()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
-                new DefaultProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //logContext,
+                new DefaultProductionExceptionHandler());
+                //new Metrics().sensor("skipped-records"));
             //    collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //    {
             //
@@ -346,11 +351,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]// (expected = StreamsException)
         public void ShouldThrowIfTopicIsUnknownWithContinueExceptionHandler()
         {
-            RecordCollector collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                 "test",
-                logContext,
-                new AlwaysContinueProductionExceptionHandler(),
-                new Metrics().sensor("skipped-records"));
+                //logContext,
+                new AlwaysContinueProductionExceptionHandler());
+                //new Metrics().sensor("skipped-records"));
             //            collector.Init(new MockProducer(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer)
             //            {
             //
@@ -371,11 +376,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
             CustomStringSerializer valueSerializer = new CustomStringSerializer();
             keySerializer.Configure(Collections.emptyMap(), true);
 
-            RecordCollectorImpl collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                     "test",
-                    logContext,
-                    new DefaultProductionExceptionHandler(),
-                    new Metrics().sensor("skipped-records")
+                    //logContext,
+                    new DefaultProductionExceptionHandler()
+                    //new Metrics().sensor("skipped-records")
             );
             MockProducer<byte[], byte[]> mockProducer = new MockProducer<>(cluster, true, new DefaultPartitioner(),
                     byteArraySerializer, byteArraySerializer);
@@ -396,11 +401,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void TestShouldNotThrowNPEOnCloseIfProducerIsNotInitialized()
         {
-            RecordCollectorImpl collector = new RecordCollectorImpl(
+            RecordCollector collector = new RecordCollector(
                     "NoNPE",
-                    logContext,
-                    new DefaultProductionExceptionHandler(),
-                    new Metrics().sensor("skipped-records")
+                    //logContext,
+                    new DefaultProductionExceptionHandler()
+                    //new Metrics().sensor("skipped-records")
             );
 
             collector.Close();

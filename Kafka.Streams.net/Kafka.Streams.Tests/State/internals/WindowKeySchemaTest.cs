@@ -209,7 +209,7 @@
 //        public void TestSerializeDeserializeOverflowWindowSize()
 //        {
 //            byte[] bytes = keySerde.Serializer.Serialize(topic, windowedKey);
-//            IWindowed<string> result = new TimeWindowedDeserializer<>(serde.deserializer(), long.MaxValue - 1)
+//            IWindowed<string> result = new TimeWindowedDeserializer<>(serde.Deserializer, long.MaxValue - 1)
 //                    .Deserialize(topic, bytes);
 //            Assert.Equal(new Windowed<>(key, new TimeWindow(startTime, long.MaxValue)), result);
 //        }
@@ -218,7 +218,7 @@
 //        public void ShouldSerializeDeserializeExpectedWindowSize()
 //        {
 //            byte[] bytes = keySerde.Serializer.Serialize(topic, windowedKey);
-//            IWindowed<string> result = new TimeWindowedDeserializer<>(serde.deserializer(), endTime - startTime)
+//            IWindowed<string> result = new TimeWindowedDeserializer<>(serde.Deserializer, endTime - startTime)
 //                .Deserialize(topic, bytes);
 //            Assert.Equal(windowedKey, result);
 //        }
@@ -237,7 +237,7 @@
 //            {
 //                // Let the deserializer know that it's deserializing a changelog windowed key
 //                Serde<IWindowed<string>> keySerde = new WindowedSerdes.TimeWindowedSerde<>(serde, keyValue.Value).forChangelog(true);
-//                IWindowed<string> result = keySerde.deserializer().Deserialize(topic, keyValue.Key.Get());
+//                IWindowed<string> result = keySerde.Deserializer.Deserialize(topic, keyValue.Key.Get());
 //                Window resultWindow = result.window();
 //                results.Add(resultWindow.end() - resultWindow.Start());
 //            }

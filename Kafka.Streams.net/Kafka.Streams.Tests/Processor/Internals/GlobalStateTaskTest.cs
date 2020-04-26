@@ -1,7 +1,10 @@
 using Confluent.Kafka;
+using Kafka.Streams.Errors;
+using Kafka.Streams.KStream;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.Temporary;
 using System.Collections.Generic;
 using Xunit;
 
@@ -9,8 +12,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 {
     public class GlobalStateTaskTest
     {
-
-        private LogContext logContext = new LogContext();
+        //private LogContext logContext = new LogContext();
 
         private readonly string topic1 = "t1";
         private readonly string topic2 = "t2";
@@ -18,8 +20,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private TopicPartition t2 = new TopicPartition(topic2, 1);
         private MockSourceNode sourceOne = new MockSourceNode<>(
             new string[] { topic1 },
-            new Serdes.String().Deserializer(),
-            new Serdes.String().Deserializer());
+            Serdes.String().Deserializer,
+            Serdes.String().Deserializer);
         private MockSourceNode sourceTwo = new MockSourceNode<>(
             new string[] { topic2 },
             Serializers.Int32,
@@ -47,7 +49,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             topology = ProcessorTopologyFactories.With(
                 Arrays.asList(sourceOne, sourceTwo, processorOne, processorTwo),
                 sourceByTopics,
-                Collections.< IStateStore > emptyList(),
+                Collections.emptyList<IStateStore>(),
                 storeToTopic);
 
             offsets.Add(t1, 50L);
@@ -59,7 +61,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldInitializeStateManager()
         {
-            Dictionary<TopicPartition, long> startingOffsets = globalStateTask.initialize();
+            Dictionary<TopicPartition, long> startingOffsets = globalStateTask.Initialize();
             Assert.True(stateMgr.initialized);
             Assert.Equal(offsets, startingOffsets);
         }
@@ -67,14 +69,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldInitializeContext()
         {
-            globalStateTask.initialize();
+            globalStateTask.Initialize();
             Assert.True(context.initialized);
         }
 
         [Fact]
         public void ShouldInitializeProcessorTopology()
         {
-            globalStateTask.initialize();
+            globalStateTask.Initialize();
             Assert.True(sourceOne.initialized);
             Assert.True(sourceTwo.initialized);
             Assert.True(processorOne.initialized);
@@ -84,7 +86,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldProcessRecordsForTopic()
         {
-            globalStateTask.initialize();
+            globalStateTask.Initialize();
             globalStateTask.Update(new ConsumeResult<>(topic1, 1, 1, "foo".getBytes(), "bar".getBytes()));
             Assert.Equal(1, sourceOne.numReceived);
             Assert.Equal(0, sourceTwo.numReceived);
@@ -93,8 +95,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldProcessRecordsForOtherTopic()
         {
-            byte[] integerBytes = new Serdes.Int().Serializer().Serialize("foo", 1);
-            globalStateTask.initialize();
+            byte[] integerBytes = Serdes.Int().Serializer.Serialize("foo", 1);
+            globalStateTask.Initialize();
             globalStateTask.Update(new ConsumeResult<>(topic2, 1, 1, integerBytes, integerBytes));
             Assert.Equal(1, sourceTwo.numReceived);
             Assert.Equal(0, sourceOne.numReceived);
@@ -107,9 +109,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             ConsumeResult<byte[], byte[]> record = new ConsumeResult<>(
                 topic2, 1, 1, 0L, TimestampType.CreateTime,
-                0L, 0, 0, key, recordValue
-            );
-            globalStateTask.initialize();
+                0L, 0, 0, key, recordValue);
+
+            globalStateTask.Initialize();
             try
             {
                 globalStateTask.Update(record);
@@ -131,8 +133,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldThrowStreamsExceptionWhenKeyDeserializationFails()
         {
-            byte[] key = new Serdes.Long().Serializer().Serialize(topic2, 1L);
-            byte[] recordValue = new Serdes.Int().Serializer().Serialize(topic2, 10);
+            byte[] key = Serdes.Long().Serializer.Serialize(topic2, 1L);
+            byte[] recordValue = Serdes.Int().Serializer.Serialize(topic2, 10);
             MaybeDeserialize(globalStateTask, key, recordValue, true);
         }
 
@@ -140,8 +142,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldThrowStreamsExceptionWhenValueDeserializationFails()
         {
-            byte[] key = new Serdes.Int().Serializer().Serialize(topic2, 1);
-            byte[] recordValue = new Serdes.Long().Serializer().Serialize(topic2, 10L);
+            byte[] key = Serdes.Int().Serializer.Serialize(topic2, 1);
+            byte[] recordValue = Serdes.Long().Serializer.Serialize(topic2, 10L);
             MaybeDeserialize(globalStateTask, key, recordValue, true);
         }
 
@@ -153,10 +155,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 context,
                 stateMgr,
                 new LogAndContinueExceptionHandler(),
-                logContext
-            );
-            byte[] key = new Serdes.Long().Serializer().Serialize(topic2, 1L);
-            byte[] recordValue = new Serdes.Int().Serializer().Serialize(topic2, 10);
+                logContext);
+
+            byte[] key = Serdes.Long().Serializer.Serialize(topic2, 1L);
+            byte[] recordValue = Serdes.Int().Serializer.Serialize(topic2, 10);
 
             MaybeDeserialize(globalStateTask2, key, recordValue, false);
         }
@@ -171,8 +173,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 new LogAndContinueExceptionHandler(),
                 logContext
             );
-            byte[] key = new Serdes.Int().Serializer().Serialize(topic2, 1);
-            byte[] recordValue = new Serdes.Long().Serializer().Serialize(topic2, 10L);
+            byte[] key = Serdes.Int().Serializer.Serialize(topic2, 1);
+            byte[] recordValue = Serdes.Long().Serializer.Serialize(topic2, 10L);
 
             MaybeDeserialize(globalStateTask2, key, recordValue, false);
         }
@@ -184,7 +186,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Dictionary<TopicPartition, long> expectedOffsets = new HashMap<>();
             expectedOffsets.Put(t1, 52L);
             expectedOffsets.Put(t2, 100L);
-            globalStateTask.initialize();
+            globalStateTask.Initialize();
             globalStateTask.Update(new ConsumeResult<>(topic1, 1, 51, "foo".getBytes(), "foo".getBytes()));
             globalStateTask.flushState();
             Assert.Equal(expectedOffsets, stateMgr.checkpointed());
@@ -196,7 +198,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Dictionary<TopicPartition, long> expectedOffsets = new HashMap<>();
             expectedOffsets.Add(t1, 102L);
             expectedOffsets.Add(t2, 100L);
-            globalStateTask.initialize();
+            globalStateTask.Initialize();
             globalStateTask.Update(new ConsumeResult<>(topic1, 1, 101, "foo".getBytes(), "foo".getBytes()));
             globalStateTask.flushState();
             Assert.Equal(stateMgr.checkpointed(), expectedOffsets);

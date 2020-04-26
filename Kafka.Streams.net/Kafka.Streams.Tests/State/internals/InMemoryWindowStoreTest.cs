@@ -47,7 +47,7 @@
 //        public void ShouldRestore()
 //        {
 //            // should be empty initially
-//            Assert.False(windowStore.All().HasNext());
+//            Assert.False(windowStore.All().MoveNext());
 
 //            StateSerdes<int, string> serdes = new StateSerdes<int, string>("", Serdes.Int(),
 //                Serdes.String());
@@ -61,14 +61,14 @@
 //            restorableEntries.Add(KeyValuePair.Create(toStoreKeyBinary(3, 2 * WINDOW_SIZE, 0, serdes).Get(),
 //                serdes.RawValue("three")));
 
-//            context.restore(STORE_NAME, restorableEntries);
+//            context.Restore(STORE_NAME, restorableEntries);
 //            IKeyValueIterator<IWindowed<int>, string> iterator = windowStore
 //                .FetchAll(0L, 2 * WINDOW_SIZE);
 
 //            Assert.Equal(windowedPair(1, "one", 0L), iterator.MoveNext());
 //            Assert.Equal(windowedPair(2, "two", WINDOW_SIZE), iterator.MoveNext());
 //            Assert.Equal(windowedPair(3, "three", 2 * WINDOW_SIZE), iterator.MoveNext());
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //        }
 
 //        [Fact]
@@ -92,14 +92,14 @@
 //            Assert.Equal(new KeyValuePair<long, string>(15L, "two"), iterator2.MoveNext());
 //            Assert.Equal(new KeyValuePair<long, string>(10L, "two"), iterator1.MoveNext());
 
-//            Assert.False(iterator1.HasNext());
-//            Assert.False(iterator2.HasNext());
+//            Assert.False(iterator1.MoveNext());
+//            Assert.False(iterator2.MoveNext());
 
 //            iterator1.Close();
 //            iterator2.Close();
 
 //            // Make sure expired records are removed now that open iterators are closed
-//            Assert.False(windowStore.Fetch(1, 0L, 50L).HasNext());
+//            Assert.False(windowStore.Fetch(1, 0L, 50L).MoveNext());
 //        }
 
 //        [Fact]
@@ -141,7 +141,7 @@
 //            Assert.Equal(windowedPair(1, "three", RETENTION_PERIOD / 2), iterator.MoveNext());
 //            Assert.Equal(windowedPair(1, "four", 3 * (RETENTION_PERIOD / 4)), iterator.MoveNext());
 //            Assert.Equal(windowedPair(1, "five", RETENTION_PERIOD), iterator.MoveNext());
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 
 //            iterator = windowStore.FetchAll(0L, currentTime);
 
@@ -150,7 +150,7 @@
 //            Assert.Equal(windowedPair(1, "four", 3 * (RETENTION_PERIOD / 4)), iterator.MoveNext());
 //            Assert.Equal(windowedPair(1, "five", RETENTION_PERIOD), iterator.MoveNext());
 //            Assert.Equal(windowedPair(1, "six", 5 * (RETENTION_PERIOD / 4)), iterator.MoveNext());
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //        }
 
 //    }

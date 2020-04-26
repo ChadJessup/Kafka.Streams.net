@@ -3,18 +3,21 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Tests.Mocks;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals
 {
-
     public class KStreamTransformValuesTest
     {
         private string topicName = "topic";
-        private MockProcessorSupplier<int, int> supplier = new MockProcessorSupplier<>();
+        private MockProcessorSupplier<int, int> supplier = new MockProcessorSupplier<int, int>();
         private ConsumerRecordFactory<int, int> recordFactory =
-            new ConsumerRecordFactory<>(Serdes.Int(), Serdes.Int(), 0L);
+            new ConsumerRecordFactory<int, int>(Serdes.Int(), Serdes.Int(), 0L);
+
         private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.Int());
         private IProcessorContext context;
 
@@ -44,9 +47,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             int[] expectedKeys = { 1, 10, 100, 1000 };
 
-            IKStream<K, V> stream;
+            IKStream<int, int> stream;
             stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.Int()));
-            stream.transformValues(valueTransformerSupplier).Process(supplier);
+            stream.TransformValues(valueTransformerSupplier).Process(supplier);
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             foreach (var expectedKey in expectedKeys)
@@ -55,12 +58,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             }
             //}
 
-            var expected = new[] KeyValueTimestamp
+            var expected = new KeyValueTimestamp<int, int>[]
             {
-            new KeyValueTimestamp<>(1, 10, 0),
-            new KeyValueTimestamp<>(10, 110, 5),
-            new KeyValueTimestamp<>(100, 1110, 50),
-            new KeyValueTimestamp<>(1000, 11110, 500),
+                new KeyValueTimestamp<int, int>(1, 10, 0),
+                new KeyValueTimestamp<int, int>(10, 110, 5),
+                new KeyValueTimestamp<int, int>(100, 1110, 50),
+                new KeyValueTimestamp<int, int>(1000, 11110, 500),
             };
 
             Assert.Equal(expected, supplier.TheCapturedProcessor().processed.ToArray());
@@ -92,9 +95,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             int[] expectedKeys = { 1, 10, 100, 1000 };
 
-            IKStream<K, V> stream;
+            IKStream<int, int> stream;
             stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.Int()));
-            stream.transformValues(valueTransformerSupplier).Process(supplier);
+            stream.TransformValues(valueTransformerSupplier).Process(supplier);
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             foreach (var expectedKey in expectedKeys)
@@ -103,12 +106,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             }
             //}
 
-            var expected = new[] KeyValueTimestamp
+            var expected = new KeyValueTimestamp<int, int>[]
             {
-            new KeyValueTimestamp<>(1, 11, 0),
-            new KeyValueTimestamp<>(10, 121, 5),
-            new KeyValueTimestamp<>(100, 1221, 50),
-            new KeyValueTimestamp<>(1000, 12221, 500),
+                new KeyValueTimestamp<int, int>(1, 11, 0),
+                new KeyValueTimestamp<int, int>(10, 121, 5),
+                new KeyValueTimestamp<int, int>(100, 1221, 50),
+                new KeyValueTimestamp<int, int>(1000, 12221, 500),
             };
 
             Assert.Equal(expected, supplier.TheCapturedProcessor().processed.ToArray());
@@ -127,3 +130,4 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             Assert.Equal(transformer.context, typeof(ForwardingDisabledProcessorContext<string, string>));
         }
     }
+}

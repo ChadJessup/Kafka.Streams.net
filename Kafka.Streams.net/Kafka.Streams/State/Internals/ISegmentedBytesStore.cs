@@ -46,7 +46,7 @@ namespace Kafka.Streams.Internals
          * @param to   the end of the time slot from which to search
          * @return an iterator over windowed key-value pairs {@code <IWindowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException if null is used for any key
+         * @throws NullReferenceException if null is used for any key
          */
         IKeyValueIterator<Bytes, byte[]> FetchAll(long from, long to);
 

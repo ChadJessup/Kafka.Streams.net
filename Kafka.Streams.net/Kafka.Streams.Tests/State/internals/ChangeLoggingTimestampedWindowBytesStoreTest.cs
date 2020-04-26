@@ -69,9 +69,9 @@
 //    private byte[] valueAndTimestamp = { 0, 0, 0, 0, 0, 0, 0, 42, 0 };
 //    private Bytes bytesKey = Bytes.Wrap(value);
 
-//    (type = MockType.NICE)
+//    
 //    private IWindowStore<Bytes, byte[]> inner;
-//    (type = MockType.NICE)
+//    
 //    private ProcessorContextImpl context;
 //    private ChangeLoggingTimestampedWindowBytesStore store;
 
@@ -121,7 +121,7 @@
 
 //        Init();
 
-//        store.Fetch(bytesKey, ofEpochMilli(0), ofEpochMilli(10));
+//        store.Fetch(bytesKey, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(10));
 //        EasyMock.verify(inner);
 //    }
 
@@ -134,7 +134,7 @@
 
 //        Init();
 
-//        store.Fetch(bytesKey, bytesKey, ofEpochMilli(0), ofEpochMilli(1));
+//        store.Fetch(bytesKey, bytesKey, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(1));
 //        EasyMock.verify(inner);
 //    }
 

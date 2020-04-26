@@ -21,7 +21,7 @@ namespace Kafka.Streams.Topologies
 
         public string? Topic
              => this.topicNameExtractor is StaticTopicNameExtractor
-                    ? ((StaticTopicNameExtractor)this.topicNameExtractor).topicName
+                    ? ((StaticTopicNameExtractor)this.topicNameExtractor).TopicName
                     : null;
 
 

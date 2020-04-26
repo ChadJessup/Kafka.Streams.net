@@ -39,7 +39,7 @@
 //                    Serdes.String())
 //                    .Build();
 
-//            store.Init(new InternalMockProcessorContext(new StateSerdes<>(ProcessorStateManager.storeChangelogTopic("appId", storeName), Serdes.String(), Serdes.String()),
+//            store.Init(new InternalMockProcessorContext(new StateSerdes<>(ProcessorStateManager.StoreChangelogTopic("appId", storeName), Serdes.String(), Serdes.String()),
 //                                                        new NoOpRecordCollector()),
 //                    store);
 
@@ -52,19 +52,19 @@
 //            Assert.Null(theStore.Get("whatever"));
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerExceptionOnGetNullKey()
 //        {
 //            theStore.Get(null);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
 //        {
 //            theStore.Range(null, "to");
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
 //        {
 //            theStore.Range("from", null);

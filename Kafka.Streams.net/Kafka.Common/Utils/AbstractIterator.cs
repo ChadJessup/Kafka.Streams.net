@@ -38,7 +38,7 @@ namespace Kafka.Common.Utils
 
         public virtual T next()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -56,7 +56,7 @@ namespace Kafka.Common.Utils
 
         public virtual T Peek()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new IndexOutOfRangeException();
             }

@@ -65,9 +65,9 @@
 //        }
 //    };
 
-//    (type = MockType.NICE)
+//    
 //    private ISessionStore<Bytes, byte[]> inner;
-//    (type = MockType.NICE)
+//    
 //    private ProcessorContextImpl context;
 
 //    private ChangeLoggingSessionBytesStore store;

@@ -93,7 +93,7 @@ namespace Kafka.Streams.KStream
      * StreamsBuilder builder = new StreamsBuilder();
      * IKStream<K, V> stream = builder.stream(
      *   "topicName",
-     *   Consumed.With(Serdes.string(), Serdes.Long())
+     *   Consumed.With(Serdes.Serdes.String(), Serdes.Long())
      *           .withTimestampExtractor(new LogAndSkipOnInvalidTimestamp()));
      * }</pre>
      * Similarly, you can read a topic as {@link KTable} with a custom {@code auto.offset.reset} configuration and force a

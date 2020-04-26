@@ -62,8 +62,8 @@ namespace Kafka.Streams.KStream.Internals
                 materializedInternal.WithValueSerde(this.ValueSerde);
             }
 
-            return DoAggregate(
-            new KStreamReduce<K, V>(materializedInternal.storeName, reducer),
+            return this.DoAggregate(
+            new KStreamReduce<K, V>(materializedInternal.StoreName, reducer),
             REDUCE_NAME,
             materializedInternal);
         }

@@ -9,19 +9,19 @@
 //{
 //    public class StateSerdesTest
 //    {
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowIfTopicNameIsNullForBuiltinTypes()
 //        {
 //            StateSerdes.WithBuiltinTypes(null, byte[], byte[]);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowIfKeyClassIsNullForBuiltinTypes()
 //        {
 //            StateSerdes.WithBuiltinTypes("anyName", null, byte[]);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowIfValueClassIsNullForBuiltinTypes()
 //        {
 //            StateSerdes.WithBuiltinTypes("anyName", byte[], null);
@@ -64,19 +64,19 @@
 //            StateSerdes.WithBuiltinTypes("anyName", byte[], Class);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowIfTopicNameIsNull()
 //        {
 //            new StateSerdes<>(null, Serdes.ByteArray(), Serdes.ByteArray());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowIfKeyClassIsNull()
 //        {
 //            new StateSerdes<>("anyName", null, Serdes.ByteArray());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowIfValueClassIsNull()
 //        {
 //            new StateSerdes<>("anyName", Serdes.ByteArray(), null);

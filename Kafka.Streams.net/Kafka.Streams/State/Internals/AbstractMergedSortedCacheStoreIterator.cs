@@ -57,7 +57,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<K, V> Next()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new KeyNotFoundException();
             }
@@ -124,7 +124,7 @@ namespace Kafka.Streams.State.Internals
 
         public K PeekNextKey()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new IndexOutOfRangeException();
             }

@@ -87,8 +87,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             Topology topology = builder.Build();
 
-            IKTableValueGetterSupplier<string, int> getterSupplier2 = table2.ValueGetterSupplier();
-            IKTableValueGetterSupplier<string, int> getterSupplier3 = table3.ValueGetterSupplier();
+            IKTableValueGetterSupplier<string, int> getterSupplier2 = table2.ValueGetterSupplier<int>();
+            IKTableValueGetterSupplier<string, int> getterSupplier3 = table3.ValueGetterSupplier<int>();
 
             InternalTopologyBuilder topologyBuilder = TopologyWrapper.GetInternalTopologyBuilder(topology);
             topologyBuilder.ConnectProcessorAndStateStores(table2.Name, getterSupplier2.StoreNames);
@@ -178,7 +178,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var topic1 = "topic1";
 
             var table1 = builder.Table(topic1, consumed);
-            var table2 = (IKTable<string, string>)table1.MapValues();
+            var table2 = (IKTable<string, string>)table1.MapValues(v => v);
 
             MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<string, int>();
             Topology topology = builder.Build().AddProcessor("proc", supplier, table2.Name);
@@ -186,26 +186,26 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var driver = new TopologyTestDriver(topology, props);
             MockProcessor<string, int> proc = supplier.TheCapturedProcessor();
 
-            Assert.False(table1.sendingOldValueEnabled());
-            Assert.False(table2.sendingOldValueEnabled());
+            Assert.False(table1.EnableSendingOldValues());
+            Assert.False(table2.EnableSendingOldValues());
 
             driver.PipeInput(recordFactory.Create(topic1, "A", "01", 5L));
             driver.PipeInput(recordFactory.Create(topic1, "B", "01", 10L));
             driver.PipeInput(recordFactory.Create(topic1, "C", "01", 15L));
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(1, null), 5),
-                    new KeyValueTimestamp<>("B", new Change<>(1, null), 10),
-                    new KeyValueTimestamp<>("C", new Change<>(1, null), 15));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>("A", new Change<string>(1, null), 5),
+                    new KeyValueTimestamp<string, string>("B", new Change<string>(1, null), 10),
+                    new KeyValueTimestamp<string, string>("C", new Change<string>(1, null), 15));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", "02", 10L));
             driver.PipeInput(recordFactory.Create(topic1, "B", "02", 8L));
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, null), 10),
-                    new KeyValueTimestamp<>("B", new Change<>(2, null), 8));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>("A", new Change<string>(2, null), 10),
+                    new KeyValueTimestamp<string, string>("B", new Change<string>(2, null), 8));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", "03", 20L));
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(3, null), 20));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>("A", new Change<string>(3, null), 20));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 30L));
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(null, null), 30));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>("A", new Change<string>(null, null), 30));
         }
 
         [Fact]
@@ -226,23 +226,23 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var driver = new TopologyTestDriver(builder.Build(), props);
             MockProcessor<string, int> proc = supplier.TheCapturedProcessor();
 
-            Assert.True(table1.sendingOldValueEnabled());
-            Assert.True(table2.sendingOldValueEnabled());
+            Assert.True(table1.SendingOldValueEnabled());
+            Assert.True(table2.SendingOldValueEnabled());
 
             driver.PipeInput(recordFactory.Create(topic1, "A", "01", 5L));
             driver.PipeInput(recordFactory.Create(topic1, "B", "01", 10L));
             driver.PipeInput(recordFactory.Create(topic1, "C", "01", 15L));
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(1, null), 5),
-                    new KeyValueTimestamp<>("B", new Change<>(1, null), 10),
-                    new KeyValueTimestamp<>("C", new Change<>(1, null), 15));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>("A", new Change<string>(1, null), 5),
+                    new KeyValueTimestamp<string, string>("B", new Change<string>(1, null), 10),
+                    new KeyValueTimestamp<string, string>("C", new Change<string>(1, null), 15));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", "02", 10L));
             driver.PipeInput(recordFactory.Create(topic1, "B", "02", 8L));
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(2, 1), 10),
-                    new KeyValueTimestamp<>("B", new Change<>(2, 1), 8));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>("A", new Change<string>(2, 1), 10),
+                    new KeyValueTimestamp<string, string>("B", new Change<string>(2, 1), 8));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", "03", 20L));
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>("A", new Change<>(3, 2), 20));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>("A", new Change<string>(3, 2), 20));
 
             driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 30L));
             proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, int>("A", new Change<int>(null, 3), 30));

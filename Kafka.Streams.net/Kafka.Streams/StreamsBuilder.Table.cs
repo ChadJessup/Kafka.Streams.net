@@ -42,7 +42,7 @@ namespace Kafka.Streams
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * IReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
+             * IReadOnlyKeyValueStore<String, long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
              * String key = "some-key";
              * long valueForKey = localStore.Get(key); // key must be local (application state is shared over All running Kafka Streams instances)
              * }</pre>
@@ -284,7 +284,7 @@ namespace Kafka.Streams
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * IReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
+             * IReadOnlyKeyValueStore<String, long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
              * String key = "some-key";
              * long valueForKey = localStore.Get(key);
              * }</pre>
@@ -343,7 +343,7 @@ namespace Kafka.Streams
              * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
              * <pre>{@code
              * KafkaStreams streams = ...
-             * IReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
+             * IReadOnlyKeyValueStore<String, long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<String, long>KeyValueStore);
              * String key = "some-key";
              * long valueForKey = localStore.Get(key);
              * }</pre>

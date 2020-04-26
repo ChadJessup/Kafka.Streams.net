@@ -79,7 +79,7 @@
 //        public void ShouldReturnEmptyIteratorIfNoData()
 //        {
 //            IKeyValueIterator<IWindowed<string>, long> result = sessionStore.Fetch("b");
-//            Assert.False(result.HasNext());
+//            Assert.False(result.MoveNext());
 //        }
 
 //        [Fact]
@@ -110,7 +110,7 @@
 
 //            IKeyValueIterator<IWindowed<string>, long> result = sessionStore.Fetch("foo");
 //            Assert.Equal(KeyValuePair.Create(expectedKey, 1L), result.MoveNext());
-//            Assert.False(result.HasNext());
+//            Assert.False(result.MoveNext());
 //        }
 
 //        [Fact]// (expected = InvalidStateStoreException)
@@ -137,7 +137,7 @@
 //            catch (InvalidStateStoreException e) { }
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerExceptionIfFetchingNullKey()
 //        {
 //            sessionStore.Fetch(null);
@@ -155,19 +155,19 @@
 //            Assert.Equal(results.Count, (2));
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNPEIfKeyIsNull()
 //        {
 //            underlyingSessionStore.Fetch(null);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNPEIfFromKeyIsNull()
 //        {
 //            underlyingSessionStore.Fetch(null, "a");
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNPEIfToKeyIsNull()
 //        {
 //            underlyingSessionStore.Fetch("a", null);

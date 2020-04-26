@@ -32,13 +32,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             context.setCurrentNode(new ProcessorNode<>("reduce", reduceProcessor, singleton("myStore")));
 
             context.setTime(10L);
-            reduceProcessor.Process("A", new Change<>(singleton("a"), null));
+            reduceProcessor.Process("A", new Change<string>(singleton("a"), null));
             Assert.Equal(ValueAndTimestamp.Make(singleton("a"), 10L), myStore.Get("A"));
             context.setTime(15L);
-            reduceProcessor.Process("A", new Change<>(singleton("b"), singleton("a")));
+            reduceProcessor.Process("A", new Change<string>(singleton("b"), singleton("a")));
             Assert.Equal(ValueAndTimestamp.Make(singleton("b"), 15L), myStore.Get("A"));
             context.setTime(12L);
-            reduceProcessor.Process("A", new Change<>(null, singleton("b")));
+            reduceProcessor.Process("A", new Change<string>(null, singleton("b")));
             Assert.Equal(ValueAndTimestamp.Make(emptySet(), 15L), myStore.Get("A"));
         }
 

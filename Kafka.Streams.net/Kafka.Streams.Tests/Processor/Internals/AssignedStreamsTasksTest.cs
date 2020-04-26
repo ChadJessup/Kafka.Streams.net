@@ -1,6 +1,8 @@
 using Confluent.Kafka;
 using Kafka.Streams.Tasks;
+using Moq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Processor.Internals
@@ -8,19 +10,19 @@ namespace Kafka.Streams.Tests.Processor.Internals
     public class AssignedStreamsTasksTest
     {
 
-        private StreamTask t1 = EasyMock.createMock(StreamTask);
-        private StreamTask t2 = EasyMock.createMock(StreamTask);
+        private StreamTask t1 = Mock.Of<StreamTask>();
+        private StreamTask t2 = Mock.Of<StreamTask>();
         private TopicPartition tp1 = new TopicPartition("t1", 0);
         private TopicPartition tp2 = new TopicPartition("t2", 0);
         private TopicPartition changeLog1 = new TopicPartition("cl1", 0);
         private TopicPartition changeLog2 = new TopicPartition("cl2", 0);
         private TaskId taskId1 = new TaskId(0, 0);
         private TaskId taskId2 = new TaskId(1, 0);
-        private AssignedStreamsTasks assignedTasks;
+        private AssignedStreamsTasks AssignedTasks;
 
         void Before()
         {
-            assignedTasks = new AssignedStreamsTasks(new LogContext("log "));
+            AssignedTasks = new AssignedStreamsTasks(new LogContext("log "));
             EasyMock.expect(t1.id()).andReturn(taskId1).anyTimes();
             EasyMock.expect(t2.id()).andReturn(taskId2).anyTimes();
         }
@@ -55,13 +57,13 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             EasyMock.replay(t1, t2);
 
-            assignedTasks.AddNewTask(t1);
-            assignedTasks.AddNewTask(t2);
+            AssignedTasks.AddNewTask(t1);
+            AssignedTasks.AddNewTask(t2);
 
-            assignedTasks.InitializeNewTasks();
+            AssignedTasks.InitializeNewTasks();
 
-            Collection<StreamTask> restoring = assignedTasks.restoringTasks();
-            Assert.Equal(restoring.Count, 1);
+            Collection<StreamTask> restoring = AssignedTasks.restoringTasks();
+            Assert.Equal(1, restoring.Count);
             Assert.Same(restoring.iterator().MoveNext(), t1);
         }
 
@@ -76,10 +78,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             EasyMock.replay(t2);
 
-            assignedTasks.AddNewTask(t2);
-            assignedTasks.InitializeNewTasks();
+            AssignedTasks.AddNewTask(t2);
+            AssignedTasks.InitializeNewTasks();
 
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.singleton(taskId2));
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.singleton(taskId2));
         }
 
         [Fact]
@@ -96,10 +98,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             AddAndInitTask();
 
-            assignedTasks.updateRestored(Utils.mkSet(changeLog1));
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections < TaskId > emptySet());
-            assignedTasks.updateRestored(Utils.mkSet(changeLog2));
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.singleton(taskId1));
+            AssignedTasks.UpdateRestored(Utils.mkSet(changeLog1));
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections < TaskId > emptySet());
+            AssignedTasks.UpdateRestored(Utils.mkSet(changeLog2));
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.singleton(taskId1));
         }
 
         [Fact]
@@ -110,7 +112,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             Assert.Equal(SuspendTask(), nullValue());
 
-            Assert.Equal(assignedTasks.PreviousTaskIds(), Collections.singleton(taskId1));
+            Assert.Equal(AssignedTasks.PreviousTaskIds(), Collections.singleton(taskId1));
             EasyMock.verify(t1);
         }
 
@@ -125,7 +127,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             EasyMock.replay(t1);
 
             AddAndInitTask();
-            Assert.Equal(assignedTasks.CloseAllRestoringTasks(), nullValue());
+            Assert.Equal(AssignedTasks.CloseAllRestoringTasks(), nullValue());
 
             EasyMock.verify(t1);
         }
@@ -137,8 +139,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             EasyMock.expectLastCall();
             EasyMock.replay(t1);
 
-            assignedTasks.AddNewTask(t1);
-            Assert.Equal(assignedTasks.Suspend(), nullValue());
+            AssignedTasks.AddNewTask(t1);
+            Assert.Equal(AssignedTasks.Suspend(), nullValue());
 
             EasyMock.verify(t1);
         }
@@ -150,7 +152,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             EasyMock.replay(t1);
 
             Assert.Equal(SuspendTask(), nullValue());
-            Assert.Equal(assignedTasks.Suspend(), nullValue());
+            Assert.Equal(AssignedTasks.Suspend(), nullValue());
             EasyMock.verify(t1);
         }
 
@@ -166,7 +168,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             EasyMock.replay(t1);
 
             Assert.Equal(SuspendTask(), not(nullValue()));
-            Assert.Equal(assignedTasks.PreviousTaskIds(), Collections.singleton(taskId1));
+            Assert.Equal(AssignedTasks.PreviousTaskIds(), Collections.singleton(taskId1));
             EasyMock.verify(t1);
         }
 
@@ -181,7 +183,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             EasyMock.replay(t1);
 
             Assert.Equal(SuspendTask(), nullValue());
-            Assert.True(assignedTasks.PreviousTaskIds().IsEmpty());
+            Assert.True(AssignedTasks.PreviousTaskIds().IsEmpty());
             EasyMock.verify(t1);
         }
 
@@ -197,8 +199,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             Assert.Equal(SuspendTask(), nullValue());
 
-            Assert.True(assignedTasks.MaybeResumeSuspendedTask(taskId1, Collections.singleton(tp1)));
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.singleton(taskId1));
+            Assert.True(AssignedTasks.MaybeResumeSuspendedTask(taskId1, Collections.singleton(tp1)));
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.singleton(taskId1));
             EasyMock.verify(t1);
         }
 
@@ -217,12 +219,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                assignedTasks.MaybeResumeSuspendedTask(taskId1, Collections.singleton(tp1));
+                AssignedTasks.MaybeResumeSuspendedTask(taskId1, Collections.singleton(tp1));
                 Assert.True(false, "Should have thrown TaskMigratedException.");
             }
             catch (TaskMigratedException expected) { /* ignore */ }
 
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.EMPTY_SET);
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.EMPTY_SET);
             EasyMock.verify(t1);
         }
 
@@ -246,7 +248,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             AddAndInitTask();
 
-            assignedTasks.Commit();
+            AssignedTasks.Commit();
             EasyMock.verify(t1);
         }
 
@@ -264,12 +266,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                assignedTasks.Commit();
+                AssignedTasks.Commit();
                 Assert.True(false, "Should have thrown TaskMigratedException.");
             }
             catch (TaskMigratedException expected) { /* ignore */ }
 
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.EMPTY_SET);
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.EMPTY_SET);
             EasyMock.verify(t1);
         }
 
@@ -285,14 +287,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                assignedTasks.Commit();
+                AssignedTasks.Commit();
                 Assert.True(false, "Should have thrown exception");
             }
             catch (Exception e)
             {
                 // ok
             }
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.singleton(taskId1));
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.singleton(taskId1));
             EasyMock.verify(t1);
         }
 
@@ -308,7 +310,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             AddAndInitTask();
 
-            Assert.Equal(1, assignedTasks.MaybeCommitPerUserRequested());
+            Assert.Equal(1, AssignedTasks.MaybeCommitPerUserRequested());
             EasyMock.verify(t1);
         }
 
@@ -327,12 +329,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                assignedTasks.MaybeCommitPerUserRequested();
+                AssignedTasks.MaybeCommitPerUserRequested();
                 Assert.True(false, "Should have thrown TaskMigratedException.");
             }
             catch (TaskMigratedException expected) { /* ignore */ }
 
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.EMPTY_SET);
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.EMPTY_SET);
             EasyMock.verify(t1);
         }
 
@@ -350,12 +352,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                assignedTasks.Process(0L);
+                AssignedTasks.Process(0L);
                 Assert.True(false, "Should have thrown TaskMigratedException.");
             }
             catch (TaskMigratedException expected) { /* ignore */ }
 
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.EMPTY_SET);
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.EMPTY_SET);
             EasyMock.verify(t1);
         }
 
@@ -367,7 +369,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             EasyMock.replay(t1);
             AddAndInitTask();
 
-            Assert.Equal(0, assignedTasks.Process(0L));
+            Assert.Equal(0, AssignedTasks.Process(0L));
 
             EasyMock.verify(t1);
         }
@@ -383,7 +385,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             AddAndInitTask();
 
-            Assert.Equal(1, assignedTasks.Process(0L));
+            Assert.Equal(1, AssignedTasks.Process(0L));
 
             EasyMock.verify(t1);
         }
@@ -398,7 +400,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             AddAndInitTask();
 
-            Assert.Equal(2, assignedTasks.Punctuate());
+            Assert.Equal(2, AssignedTasks.Punctuate());
             EasyMock.verify(t1);
         }
 
@@ -415,12 +417,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                assignedTasks.Punctuate();
+                AssignedTasks.Punctuate();
                 Assert.True(false, "Should have thrown TaskMigratedException.");
             }
             catch (TaskMigratedException expected) { /* ignore */ }
 
-            Assert.Equal(assignedTasks.runningTaskIds(), Collections.EMPTY_SET);
+            Assert.Equal(AssignedTasks.runningTaskIds(), Collections.EMPTY_SET);
             EasyMock.verify(t1);
         }
 
@@ -438,7 +440,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             try
             {
-                assignedTasks.Punctuate();
+                AssignedTasks.Punctuate();
                 Assert.True(false, "Should have thrown TaskMigratedException.");
             }
             catch (TaskMigratedException expected) { /* ignore */ }
@@ -455,20 +457,20 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             AddAndInitTask();
 
-            Assert.Equal(1, assignedTasks.Punctuate());
+            Assert.Equal(1, AssignedTasks.Punctuate());
             EasyMock.verify(t1);
         }
 
         private void AddAndInitTask()
         {
-            assignedTasks.AddNewTask(t1);
-            assignedTasks.InitializeNewTasks();
+            AssignedTasks.AddNewTask(t1);
+            AssignedTasks.InitializeNewTasks();
         }
 
         private RuntimeException SuspendTask()
         {
             AddAndInitTask();
-            return assignedTasks.Suspend();
+            return AssignedTasks.Suspend();
         }
 
         private void MockRunningTaskSuspension()

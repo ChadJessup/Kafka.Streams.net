@@ -1,5 +1,12 @@
+using Kafka.Streams.Configs;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.Tasks;
+using Moq;
+using System;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Processor.Internals
@@ -7,25 +14,23 @@ namespace Kafka.Streams.Tests.Processor.Internals
     public class ProcessorContextTest
     {
         private IProcessorContext context;
+        private readonly StreamsConfig streamsConfig;
 
-
-        public void Prepare()
+        public ProcessorContextTest()
         {
-            StreamsConfig streamsConfig = Mock.Of<StreamsConfig);
-            expect(streamsConfig.getString(StreamsConfig.ApplicationIdConfig)).andReturn("add-id");
-            expect(streamsConfig.defaultValueSerde()).andReturn(Serdes.ByteArray());
-            expect(streamsConfig.defaultKeySerde()).andReturn(Serdes.ByteArray());
-            replay(streamsConfig);
+            this.streamsConfig = Mock.Of<StreamsConfig>(sc =>
+                sc.ApplicationId == "add-id"
+                && sc.DefaultKeySerdeType == Serdes.ByteArray().GetType()
+                && sc.DefaultValueSerdeType == Serdes.ByteArray().GetType()); ;
 
-            context = new ProcessorContextImpl(
-                Mock.Of<TaskId),
-                Mock.Of<StreamTask),
+            context = new ProcessorContext<byte[], byte[]>(
+                Mock.Of<KafkaStreamsContext>(),
+                Mock.Of<TaskId>(),
+                Mock.Of<StreamTask>(),
                 streamsConfig,
-                Mock.Of<RecordCollector),
-                Mock.Of<ProcessorStateManager),
-                Mock.Of<StreamsMetricsImpl),
-                Mock.Of<ThreadCache)
-            );
+                Mock.Of<RecordCollector>(),
+                Mock.Of<ProcessorStateManager>(),
+                Mock.Of<ThreadCache>());
         }
 
         [Fact]
@@ -33,12 +38,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             try
             {
-                context.schedule(TimeSpan.FromMilliseconds(0L), null, null);
+                context.Schedule(TimeSpan.FromMilliseconds(0L), null, null);
                 Assert.True(false, "Should have thrown ArgumentException");
             }
             catch (ArgumentException expected)
             {
-                Assert.Equal(expected.getMessage(), "The minimum supported scheduling interval is 1 millisecond.");
+                Assert.Equal("The minimum supported scheduling interval is 1 millisecond.", expected.Message);
             }
         }
 
@@ -47,12 +52,12 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             try
             {
-                context.schedule(TimeSpan.ofNanos(999_999L), null, null);
+                context.Schedule(TimeSpan.FromTicks(1000), null, null);
                 Assert.True(false, "Should have thrown ArgumentException");
             }
             catch (ArgumentException expected)
             {
-                Assert.Equal(expected.getMessage(), "The minimum supported scheduling interval is 1 millisecond.");
+                Assert.Equal(expected.Message, "The minimum supported scheduling interval is 1 millisecond.");
             }
         }
     }

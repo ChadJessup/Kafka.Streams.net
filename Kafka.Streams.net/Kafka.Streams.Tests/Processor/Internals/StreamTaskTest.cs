@@ -221,11 +221,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
             assertTimeoutErrorLog(appender);
 
             // make sure we report the correct message
-            Assert.Equal(expected.getMessage(), ("task [0_0] Failed to initialize task 0_0 due to timeout."));
+            Assert.Equal(expected.Message, ("task [0_0] Failed to initialize task 0_0 due to timeout."));
 
             // make sure we preserve the cause
             Assert.Equal(expected.getCause().GetType(), TimeoutException);
-            Assert.Equal(expected.getCause().getMessage(), ("test"));
+            Assert.Equal(expected.getCause().Message, ("test"));
             //}
 
             LogCaptureAppender.unregister(appender);
@@ -291,11 +291,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 assertTimeoutErrorLog(appender);
 
                 // make sure we report the correct message
-                Assert.Equal(expected.getMessage(), ("task [0_0] Failed to initialize task 0_0 due to timeout."));
+                Assert.Equal(expected.Message, ("task [0_0] Failed to initialize task 0_0 due to timeout."));
 
                 // make sure we preserve the cause
                 Assert.Equal(expected.getCause().GetType(), typeof(TimeoutException));
-                Assert.Equal(expected.getCause().getMessage(), ("test"));
+                Assert.Equal(expected.getCause().Message, ("test"));
             }
             LogCaptureAppender.unregister(appender);
         }
@@ -313,7 +313,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //        appender
             //            .getEvents()
             //            .Stream()
-            //            .Filter(@event => @event.getMessage().Equals(expectedErrorLogMessage))
+            //            .Filter(@event => @event.Message.Equals(expectedErrorLogMessage))
             //            .Map(LogCaptureAppender.Event::getLevel)
             //            .collect(Collectors.toList());
             Assert.Equal(expectedError, Collections.singletonList("ERROR"));
@@ -588,7 +588,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             task = createStatelessTask(createConfig(false));
             task.InitializeStateStores();
             task.initializeTopology();
-            long now = time.NowAsEpochMilliseconds; ;
+            long now = time.NowAsEpochMilliseconds;
             time.Sleep(10);
             Assert.True(task.maybePunctuateSystemTime());
             processorSystemTime.mockProcessor.scheduleCancellable.cancel();
@@ -676,30 +676,30 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             Assert.False(task.isProcessable(time.NowAsEpochMilliseconds));
 
-            Assert.False(task.isProcessable(time.NowAsEpochMilliseconds; +50L));
+            Assert.False(task.isProcessable(time.NowAsEpochMilliseconds +50L));
 
-            Assert.True(task.isProcessable(time.NowAsEpochMilliseconds; +100L));
+            Assert.True(task.isProcessable(time.NowAsEpochMilliseconds +100L));
             Assert.Equal(1.0, metrics.metric(enforcedProcessMetric).metricValue());
 
             // once decided to enforce, continue doing that
-            Assert.True(task.isProcessable(time.NowAsEpochMilliseconds; +101L));
+            Assert.True(task.isProcessable(time.NowAsEpochMilliseconds +101L));
             Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
             task.addRecords(partition2, Collections.singleton(new ConsumeResult<>(topic2, 1, 0, bytes, bytes)));
 
-            Assert.True(task.isProcessable(time.NowAsEpochMilliseconds; +130L));
+            Assert.True(task.isProcessable(time.NowAsEpochMilliseconds +130L));
             Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
             // one resumed to normal processing, the timer should be reset
             task.Process();
 
-            Assert.False(task.isProcessable(time.NowAsEpochMilliseconds; +150L));
+            Assert.False(task.isProcessable(time.NowAsEpochMilliseconds +150L));
             Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
-            Assert.False(task.isProcessable(time.NowAsEpochMilliseconds; +249L));
+            Assert.False(task.isProcessable(time.NowAsEpochMilliseconds +249L));
             Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
-            Assert.True(task.isProcessable(time.NowAsEpochMilliseconds; +250L));
+            Assert.True(task.isProcessable(time.NowAsEpochMilliseconds +250L));
             Assert.Equal(3.0, metrics.metric(enforcedProcessMetric).metricValue());
         }
 
@@ -710,7 +710,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             task = createStatelessTask(createConfig(false));
             task.InitializeStateStores();
             task.initializeTopology();
-            long now = time.NowAsEpochMilliseconds; ;
+            long now = time.NowAsEpochMilliseconds;
             time.Sleep(10);
             Assert.True(task.maybePunctuateSystemTime());
             time.Sleep(10);
@@ -743,7 +743,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             task = createStatelessTask(createConfig(false));
             task.InitializeStateStores();
             task.initializeTopology();
-            long now = time.NowAsEpochMilliseconds; ;
+            long now = time.NowAsEpochMilliseconds;
             time.Sleep(100);
             Assert.True(task.maybePunctuateSystemTime());
             Assert.False(task.maybePunctuateSystemTime());
@@ -873,7 +873,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             task.initializeTopology();
             task.Commit();
             OffsetCheckpoint checkpoint = new OffsetCheckpoint(
-                new FileInfo(stateDirectory.directoryForTask(taskId00), StateManagerUtil.CHECKPOINT_FILE_NAME)
+                new FileInfo(stateDirectory.DirectoryForTask(taskId00), StateManagerUtil.CHECKPOINT_FILE_NAME)
             );
 
             Assert.Equal(checkpoint.read(), Collections.singletonMap(changelogPartition, offset));
@@ -887,7 +887,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             task.initializeTopology();
             task.Commit();
             File checkpointFile = new FileInfo(
-                stateDirectory.directoryForTask(taskId00),
+                stateDirectory.DirectoryForTask(taskId00),
                 StateManagerUtil.CHECKPOINT_FILE_NAME
             );
 
@@ -919,9 +919,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
             task.InitializeStateStores();
             task.initializeTopology();
             task.punctuate(processorStreamTime, 5, PunctuationType.STREAM_TIME, punctuator);
-            Assert.Equal(punctuatedAt, 5L);
+            Assert.Equal(5L, punctuatedAt);
             task.punctuate(processorStreamTime, 10, PunctuationType.STREAM_TIME, punctuator);
-            Assert.Equal(punctuatedAt, 10L);
+            Assert.Equal(10L, punctuatedAt);
         }
 
         [Fact]
@@ -954,7 +954,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             task = createStatelessTask(createConfig(false));
             task.processorContext.setCurrentNode(processorStreamTime);
-            task.schedule(1, PunctuationType.STREAM_TIME, new Punctuator();
+            task.schedule(1, PunctuationType.STREAM_TIME, new Punctuator());
             //    {
             //
             //
@@ -1564,21 +1564,22 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldAlwaysCommitIfEosEnabled()
         {
-            task = createStatelessTask(createConfig(true));
+            task = CreateStatelessTask(CreateConfig(true));
 
-            RecordCollectorImpl recordCollector = new RecordCollectorImpl("StreamTask",
-                    new LogContext("StreamTaskTest "), new DefaultProductionExceptionHandler(), new Metrics().sensor("skipped-records"));
+            RecordCollector recordCollector = new RecordCollector("StreamTask",
+                    new DefaultProductionExceptionHandler());
+
             recordCollector.Init(producer);
 
             task.InitializeStateStores();
-            task.initializeTopology();
-            task.punctuate(processorSystemTime, 5, PunctuationType.WALL_CLOCK_TIME, new Punctuator();
+            task.InitializeTopology();
+            task.Punctuate(processorSystemTime, 5, PunctuationType.WALL_CLOCK_TIME, new Punctuator());
             //            {
             //
             //
             //            public void punctuate(long timestamp)
             //            {
-            //                recordCollector.send("result-topic1", 3, 5, null, 0, time.NowAsEpochMilliseconds;,
+            //                recordCollector.send("result-topic1", 3, 5, null, 0, time.NowAsEpochMilliseconds,
             //                    new Serdes.Int().Serializer(), new Serdes.Int().Serializer());
             //        }
             //    });

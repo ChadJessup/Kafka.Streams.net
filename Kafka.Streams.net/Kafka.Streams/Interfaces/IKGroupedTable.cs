@@ -39,7 +39,7 @@ namespace Kafka.Streams.Interfaces
          * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = ... // counting words
-         * ReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>keyValueStore());
+         * ReadOnlyKeyValueStore<String, long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<String, long>keyValueStore());
          * String key = "some-word";
          * long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -136,7 +136,7 @@ namespace Kafka.Streams.Interfaces
          * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = ... // counting words
-         * ReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>keyValueStore());
+         * ReadOnlyKeyValueStore<String, long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<String, long>keyValueStore());
          * String key = "some-word";
          * long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>
@@ -162,6 +162,11 @@ namespace Kafka.Streams.Interfaces
         IKTable<K, V> Reduce(
             IReducer<V> adder,
             IReducer<V> subtractor,
+            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
+
+        IKTable<K, V> Reduce(
+            Reducer<V> adder,
+            Reducer<V> subtractor,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
@@ -218,6 +223,7 @@ namespace Kafka.Streams.Interfaces
          * latest (rolling) aggregate for each key
          */
         IKTable<K, V> Reduce(IReducer<V> adder, IReducer<V> subtractor);
+        IKTable<K, V> Reduce(Reducer<V> adder, Reducer<V> subtractor);
 
         /**
          * Aggregate the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -272,7 +278,7 @@ namespace Kafka.Streams.Interfaces
          * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
          * <pre>{@code
          * KafkaStreams streams = ... // counting words
-         * ReadOnlyKeyValueStore<String, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, long>keyValueStore());
+         * ReadOnlyKeyValueStore<String, long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<String, long>keyValueStore());
          * String key = "some-word";
          * long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
          * }</pre>

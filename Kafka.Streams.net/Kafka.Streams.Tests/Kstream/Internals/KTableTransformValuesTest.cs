@@ -77,7 +77,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                transformer.Get();
 //                Assert.False(true, "NPE expected");
 //            }
-//            catch (NullPointerException expected)
+//            catch (NullReferenceException expected)
 //            {
 //                // expected
 //            }
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //                view.Get();
 //                Assert.False(true, "NPE expected");
 //            }
-//            catch (NullPointerException expected)
+//            catch (NullReferenceException expected)
 //            {
 //                // expected
 //            }
@@ -123,11 +123,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Processor<string, Change<string>> processor = transformValues.Get();
 //            processor.Init(context);
 
-//            context.Forward("Key", new Change<>("Key=>newValue!", null));
+//            context.Forward("Key", new Change<string>("Key=>newValue!", null));
 //            expect.AstCall();
 //            replay(context);
 
-//            processor.Process("Key", new Change<>("newValue", "oldValue"));
+//            processor.Process("Key", new Change<string>("newValue", "oldValue"));
 
 //            verify(context);
 //        }
@@ -142,11 +142,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            Processor<string, Change<string>> processor = transformValues.Get();
 //            processor.Init(context);
 
-//            context.Forward("Key", new Change<>("Key=>newValue!", "Key=>oldValue!"));
+//            context.Forward("Key", new Change<string>("Key=>newValue!", "Key=>oldValue!"));
 //            expect.AstCall();
 //            replay(context);
 
-//            processor.Process("Key", new Change<>("newValue", "oldValue"));
+//            processor.Process("Key", new Change<string>("newValue", "oldValue"));
 
 //            verify(context);
 //        }
@@ -306,9 +306,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(INPUT_TOPIC, "D", (string)null, 15L));
 
 
-//            Assert.Equal(output(), asItems(new KeyValueTimestamp<>("A", "A=>a!", 5),
-//                    new KeyValueTimestamp<>("B", "B=>b!", 10),
-//                    new KeyValueTimestamp<>("D", "D=>null!", 15)
+//            Assert.Equal(output(), asItems(new KeyValueTimestamp<string, string>("A", "A=>a!", 5),
+//                    new KeyValueTimestamp<string, string>("B", "B=>b!", 10),
+//                    new KeyValueTimestamp<string, string>("D", "D=>null!", 15)
 //            ));
 //            Assert.Null("Store should not be materialized", driver.GetKeyValueStore(QUERYABLE_NAME));
 //        }
@@ -334,9 +334,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(INPUT_TOPIC, "B", "b", 10L));
 //            driver.PipeInput(recordFactory.Create(INPUT_TOPIC, "C", (string)null, 15L));
 
-//            Assert.Equal(output(), asItems(new KeyValueTimestamp<>("A", "A=>a!", 5),
-//                    new KeyValueTimestamp<>("B", "B=>b!", 10),
-//                    new KeyValueTimestamp<>("C", "C=>null!", 15)));
+//            Assert.Equal(output(), asItems(new KeyValueTimestamp<string, string>("A", "A=>a!", 5),
+//                    new KeyValueTimestamp<string, string>("B", "B=>b!", 10),
+//                    new KeyValueTimestamp<string, string>("C", "C=>null!", 15)));
 
 //            {
 //                IKeyValueStore<string, string> KeyValueStore = driver.GetKeyValueStore(QUERYABLE_NAME);
@@ -374,11 +374,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(INPUT_TOPIC, "A", "ignored", 15L));
 //            driver.PipeInput(recordFactory.Create(INPUT_TOPIC, "A", "ignored", 10L));
 
-//            Assert.Equal(output(), asItems(new KeyValueTimestamp<>("A", "1", 5),
-//                    new KeyValueTimestamp<>("A", "0", 15),
-//                    new KeyValueTimestamp<>("A", "2", 15),
-//                    new KeyValueTimestamp<>("A", "0", 15),
-//                    new KeyValueTimestamp<>("A", "3", 15)));
+//            Assert.Equal(output(), asItems(new KeyValueTimestamp<string, string>("A", "1", 5),
+//                    new KeyValueTimestamp<string, string>("A", "0", 15),
+//                    new KeyValueTimestamp<string, string>("A", "2", 15),
+//                    new KeyValueTimestamp<string, string>("A", "0", 15),
+//                    new KeyValueTimestamp<string, string>("A", "3", 15)));
 
 //            IKeyValueStore<string, int> KeyValueStore = driver.GetKeyValueStore(QUERYABLE_NAME);
 //            Assert.Equal(KeyValueStore.Get("A"), (3));
@@ -402,11 +402,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            driver.PipeInput(recordFactory.Create(INPUT_TOPIC, "A", "aa", 15L));
 //            driver.PipeInput(recordFactory.Create(INPUT_TOPIC, "A", "aaa", 10));
 
-//            Assert.Equal(output(), asItems(new KeyValueTimestamp<>("A", "1", 5),
-//                     new KeyValueTimestamp<>("A", "0", 15),
-//                     new KeyValueTimestamp<>("A", "2", 15),
-//                     new KeyValueTimestamp<>("A", "0", 15),
-//                     new KeyValueTimestamp<>("A", "3", 15)));
+//            Assert.Equal(output(), asItems(new KeyValueTimestamp<string, string>("A", "1", 5),
+//                     new KeyValueTimestamp<string, string>("A", "0", 15),
+//                     new KeyValueTimestamp<string, string>("A", "2", 15),
+//                     new KeyValueTimestamp<string, string>("A", "0", 15),
+//                     new KeyValueTimestamp<string, string>("A", "3", 15)));
 //        }
 
 //        private List<KeyValueTimestamp<object, object>> output()

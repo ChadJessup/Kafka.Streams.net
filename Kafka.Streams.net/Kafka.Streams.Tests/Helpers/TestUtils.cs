@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Xunit;
@@ -134,14 +135,14 @@ namespace Kafka.Streams.Tests.Helpers
             return mockClientSupplier;
         }
 
-        internal static StreamsConfig producerConfig(object p, ISerializer<string> serializer1, ISerializer<string> serializer2, StreamsConfig streamsConfig)
+        internal static ProducerConfig ProducerConfig<K, V>(string bootStrapServers, ISerializer<K> keySerializer, ISerializer<V> valueSerializer)
         {
-            throw new NotImplementedException();
+            return new ProducerConfig();
         }
 
-        internal static object ProducerConfig(string v, ISerializer<int> serializer1, ISerializer<int> serializer2)
+        internal static ProducerConfig ProducerConfig<K, V>(string bootStrapServers, ISerializer<K> keySerializer, ISerializer<V> valueSerializer, StreamsConfig streamsConfig)
         {
-            throw new NotImplementedException();
+            return new ProducerConfig();
         }
     }
 }

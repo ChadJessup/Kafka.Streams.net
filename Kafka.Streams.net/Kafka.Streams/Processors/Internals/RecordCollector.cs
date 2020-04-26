@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors.Internals
 {
-    public class RecordCollectorImpl : IRecordCollector
+    public class RecordCollector : IRecordCollector
     {
         private readonly ILogger log;
         private readonly string logPrefix;
@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Internals
 
         private volatile KafkaException sendException;
 
-        public RecordCollectorImpl(
+        public RecordCollector(
             string streamTaskId,
             IProductionExceptionHandler productionExceptionHandler)
         {
@@ -132,7 +132,7 @@ namespace Kafka.Streams.Processors.Internals
                 //        {
                 //            if (exception is ProducerFencedException)
                 //            {
-                //                log.LogWarning(LOG_MESSAGE, topic, exception.getMessage(), exception);
+                //                log.LogWarning(LOG_MESSAGE, topic, exception.Message, exception);
 
                 //                // KAFKA-7510 Put message key and value in TRACE level log so we don't leak data by default
                 //                log.LogTrace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition);

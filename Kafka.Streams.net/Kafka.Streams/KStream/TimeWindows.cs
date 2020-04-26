@@ -44,6 +44,8 @@ namespace Kafka.Streams.KStream
          */
         public TimeSpan Advance { get; }
 
+        private readonly TimeSpan grace;
+
         public TimeWindows(
             TimeSpan size,
             TimeSpan advance,
@@ -54,7 +56,7 @@ namespace Kafka.Streams.KStream
         {
             this.size = size;
             this.Advance = advance;
-            this.Grace = grace;
+            this.grace = grace;
             this.maintainDuration = maintainDuration;
         }
 
@@ -105,22 +107,22 @@ namespace Kafka.Streams.KStream
         {
             string msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(advance, "advance");
 
-            return AdvanceBy(ApiUtils.ValidateMillisecondDuration(advance, msgPrefix));
+            return this.AdvanceBy(ApiUtils.ValidateMillisecondDuration(advance, msgPrefix));
         }
 
         public override Dictionary<DateTime, TimeWindow> WindowsFor(DateTime timestamp)
         {
-            var calculatedStart = timestamp - size + Advance;
+            var calculatedStart = timestamp - this.size + this.Advance;
 
-            DateTime windowStart = new DateTime((calculatedStart.Ticks / Advance.Ticks) * Advance.Ticks, DateTimeKind.Utc);
+            DateTime windowStart = new DateTime((calculatedStart.Ticks / this.Advance.Ticks) * this.Advance.Ticks, DateTimeKind.Utc);
 
             Dictionary<DateTime, TimeWindow> windows = new Dictionary<DateTime, TimeWindow>();
 
             while (windowStart <= timestamp)
             {
-                TimeWindow window = new TimeWindow(windowStart, windowStart + size);
+                TimeWindow window = new TimeWindow(windowStart, windowStart + this.size);
                 windows.Put(windowStart, window);
-                windowStart += Advance;
+                windowStart += this.Advance;
             }
 
             return windows;
@@ -128,7 +130,7 @@ namespace Kafka.Streams.KStream
 
         public override TimeSpan Size()
         {
-            return size;
+            return this.size;
         }
 
         /**
@@ -151,11 +153,11 @@ namespace Kafka.Streams.KStream
             }
 
             return new TimeWindows(
-                size,
-                Advance,
+                this.size,
+                this.Advance,
                 validatedAfterWindowEnd,
-                maintainDuration,
-                segments);
+                this.maintainDuration,
+                this.segments);
         }
 
         public TimeSpan GracePeriod()
@@ -163,9 +165,9 @@ namespace Kafka.Streams.KStream
             // NOTE: in the future, when we remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,
             // or we can default to (24h - size) if you want to be super accurate.
-            return Grace != -1
-                ? Grace
-                : maintainMs() - size();
+            return grace.TotalMilliseconds != -1
+                ? grace
+                : this.maintainDuration - this.size;
         }
 
         /**
@@ -178,7 +180,7 @@ namespace Kafka.Streams.KStream
          */
         public long maintainMs()
         {
-            return Math.Max(maintainDuration, size);
+            return Math.Max((long)this.maintainDuration.TotalMilliseconds, (long)this.size.TotalMilliseconds);
         }
 
         public override bool Equals(object o)
@@ -192,31 +194,31 @@ namespace Kafka.Streams.KStream
                 return false;
             }
             TimeWindows that = (TimeWindows)o;
-            return maintainDuration == that.maintainDuration &&
-                segments == that.segments &&
-                size == that.size &&
-                Advance == that.Advance &&
-                Grace == that.Grace;
+            return this.maintainDuration == that.maintainDuration &&
+                this.segments == that.segments &&
+                this.size == that.size &&
+                this.Advance == that.Advance &&
+                grace == that.grace;
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(
-                maintainDuration,
-                segments,
-                size,
-                Advance,
-                Grace);
+                this.maintainDuration,
+                this.segments,
+                this.size,
+                this.Advance,
+                grace);
         }
 
         public override string ToString()
         {
             return "TimeWindows{" +
-                "maintainDurationMs=" + maintainDuration +
-                ", sizeMs=" + size +
-                ", advanceMs=" + Advance +
-                ", graceMs=" + Grace +
-                ", segments=" + segments +
+                "maintainDurationMs=" + this.maintainDuration.TotalMilliseconds +
+                ", sizeMs=" + this.size.TotalMilliseconds +
+                ", advanceMs=" + this.Advance.TotalMilliseconds +
+                ", graceMs=" + grace.TotalMilliseconds +
+                ", segments=" + this.segments +
                 '}';
         }
     }

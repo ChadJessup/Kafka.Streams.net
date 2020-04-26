@@ -120,9 +120,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var driver = new TopologyTestDriver(builder.Build(), props);
             MockProcessor<int, string> proc = supplier.TheCapturedProcessor();
 
-            Assert.True(((IKTable<object, object, object>)table1).sendingOldValueEnabled());
-            Assert.True(((IKTable<object, object, object>)table2).sendingOldValueEnabled());
-            Assert.True(((IKTable<object, object, object>)joined).sendingOldValueEnabled());
+            Assert.True(((IKTable<object, object, object>)table1).SendingOldValueEnabled());
+            Assert.True(((IKTable<object, object, object>)table2).SendingOldValueEnabled());
+            Assert.True(((IKTable<object, object, object>)joined).SendingOldValueEnabled());
 
             // push two items to the primary stream. the other table is empty
             for (var i = 0; i < 2; i++)
@@ -144,8 +144,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(topic2, null, "AnotherVal", 73L));
             // left: X0:0 (ts: 5), X1:1 (ts: 6)
             // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("X0+Y0", null), 5),
-                new KeyValueTimestamp<>(1, new Change<>("X1+Y1", null), 10));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, new Change<string>("X0+Y0", null), 5),
+                new KeyValueTimestamp<string, string>(1, new Change<string>("X1+Y1", null), 10));
             // push All four items to the primary stream. this should produce two items.
             foreach (var expectedKey in expectedKeys)
             {
@@ -153,8 +153,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             }
             // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
             // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("XX0+Y0", "X0+Y0"), 7),
-                new KeyValueTimestamp<>(1, new Change<>("XX1+Y1", "X1+Y1"), 10));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, new Change<string>("XX0+Y0", "X0+Y0"), 7),
+                new KeyValueTimestamp<string, string>(1, new Change<string>("XX1+Y1", "X1+Y1"), 10));
             // push All items to the other stream. this should produce four items.
             foreach (var expectedKey in expectedKeys)
             {
@@ -163,10 +163,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
             // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
             proc.CheckAndClearProcessResult(
-                new KeyValueTimestamp<>(0, new Change<>("XX0+YY0", "XX0+Y0"), 7),
-                new KeyValueTimestamp<>(1, new Change<>("XX1+YY1", "XX1+Y1"), 7),
-                new KeyValueTimestamp<>(2, new Change<>("XX2+YY2", null), 10),
-                new KeyValueTimestamp<>(3, new Change<>("XX3+YY3", null), 15));
+                new KeyValueTimestamp<string, string>(0, new Change<string>("XX0+YY0", "XX0+Y0"), 7),
+                new KeyValueTimestamp<string, string>(1, new Change<string>("XX1+YY1", "XX1+Y1"), 7),
+                new KeyValueTimestamp<string, string>(2, new Change<string>("XX2+YY2", null), 10),
+                new KeyValueTimestamp<string, string>(3, new Change<string>("XX3+YY3", null), 15));
 
             // push All four items to the primary stream. this should produce four items.
             foreach (var expectedKey in expectedKeys)
@@ -176,18 +176,18 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
             // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
             proc.CheckAndClearProcessResult(
-                new KeyValueTimestamp<>(0, new Change<>("XXX0+YY0", "XX0+YY0"), 6),
-                new KeyValueTimestamp<>(1, new Change<>("XXX1+YY1", "XX1+YY1"), 6),
-                new KeyValueTimestamp<>(2, new Change<>("XXX2+YY2", "XX2+YY2"), 10),
-                new KeyValueTimestamp<>(3, new Change<>("XXX3+YY3", "XX3+YY3"), 15));
+                new KeyValueTimestamp<string, string>(0, new Change<string>("XXX0+YY0", "XX0+YY0"), 6),
+                new KeyValueTimestamp<string, string>(1, new Change<string>("XXX1+YY1", "XX1+YY1"), 6),
+                new KeyValueTimestamp<string, string>(2, new Change<string>("XXX2+YY2", "XX2+YY2"), 10),
+                new KeyValueTimestamp<string, string>(3, new Change<string>("XXX3+YY3", "XX3+YY3"), 15));
 
             // push two items with null to the other stream.As deletes. this should produce two item.
             driver.PipeInput(recordFactory.Create(topic2, expectedKeys[0], null, 5L));
             driver.PipeInput(recordFactory.Create(topic2, expectedKeys[1], null, 7L));
             // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
             // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>(null, "XXX0+YY0"), 6),
-                new KeyValueTimestamp<>(1, new Change<>(null, "XXX1+YY1"), 7));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, new Change<string>(null, "XXX0+YY0"), 6),
+                new KeyValueTimestamp<string, string>(1, new Change<string>(null, "XXX1+YY1"), 7));
             // push All four items to the primary stream. this should produce two items.
             foreach (var expectedKey in expectedKeys)
             {
@@ -195,8 +195,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             }
             // left: XXXX0:0 (ts: 13), XXXX1:1 (ts: 13), XXXX2:2 (ts: 13), XXXX3:3 (ts: 13)
             // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(2, new Change<>("XXXX2+YY2", "XXX2+YY2"), 13),
-                new KeyValueTimestamp<>(3, new Change<>("XXXX3+YY3", "XXX3+YY3"), 15));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(2, new Change<string>("XXXX2+YY2", "XXX2+YY2"), 13),
+                new KeyValueTimestamp<string, string>(3, new Change<string>("XXXX3+YY3", "XXX3+YY3"), 15));
             // push four items to the primary stream with null. this should produce two items.
             driver.PipeInput(recordFactory.Create(topic1, expectedKeys[0], null, 0L));
             driver.PipeInput(recordFactory.Create(topic1, expectedKeys[1], null, 42L));
@@ -204,8 +204,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(topic1, expectedKeys[3], null, 20L));
             // left:
             // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(2, new Change<>(null, "XXXX2+YY2"), 10),
-                new KeyValueTimestamp<>(3, new Change<>(null, "XXXX3+YY3"), 20));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(2, new Change<string>(null, "XXXX2+YY2"), 10),
+                new KeyValueTimestamp<string, string>(3, new Change<string>(null, "XXXX3+YY3"), 20));
         }
 
 
@@ -221,10 +221,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             ).Get();
 
             var context = new MockProcessorContext();
-            context.setRecordMetadata("left", -1, -2, null, -3);
+            context.SetRecordMetadata("left", -1, -2, null, -3);
             join.Init(context);
             LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
-            join.Process(null, new Change<>("new", "old"));
+            join.Process(null, new Change<string>("new", "old"));
             LogCaptureAppender.unregister(appender);
 
             Assert.Equal(1.0, getMetricByName(context.metrics().metrics(), "skipped-records-total", "stream-metrics").metricValue());
@@ -242,9 +242,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             var driver = new TopologyTestDriver(builder.Build(), props);
             MockProcessor<int, string> proc = supplier.TheCapturedProcessor();
 
-            Assert.False(((IKTable<object, object, object>)table1).sendingOldValueEnabled());
-            Assert.False(((IKTable<object, object, object>)table2).sendingOldValueEnabled());
-            Assert.False(((IKTable<object, object, object>)joined).sendingOldValueEnabled());
+            Assert.False(((IKTable<object, object, object>)table1).SendingOldValueEnabled());
+            Assert.False(((IKTable<object, object, object>)table2).SendingOldValueEnabled());
+            Assert.False(((IKTable<object, object, object>)joined).SendingOldValueEnabled());
 
             // push two items to the primary stream. the other table is empty
             for (var i = 0; i < 2; i++)
@@ -266,8 +266,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(topic2, null, "AnotherVal", 73L));
             // left: X0:0 (ts: 5), X1:1 (ts: 6)
             // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("X0+Y0", null), 5),
-                new KeyValueTimestamp<>(1, new Change<>("X1+Y1", null), 10));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, new Change<string>("X0+Y0", null), 5),
+                new KeyValueTimestamp<string, string>(1, new Change<string>("X1+Y1", null), 10));
             // push All four items to the primary stream. this should produce two items.
             foreach (var expectedKey in expectedKeys)
             {
@@ -275,8 +275,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             }
             // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
             // right: Y0:0 (ts: 0), Y1:1 (ts: 10)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>("XX0+Y0", null), 7),
-                new KeyValueTimestamp<>(1, new Change<>("XX1+Y1", null), 10));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, new Change<string>("XX0+Y0", null), 7),
+                new KeyValueTimestamp<string, string>(1, new Change<string>("XX1+Y1", null), 10));
             // push All items to the other stream. this should produce four items.
             foreach (var expectedKey in expectedKeys)
             {
@@ -285,10 +285,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // left: XX0:0 (ts: 7), XX1:1 (ts: 7), XX2:2 (ts: 7), XX3:3 (ts: 7)
             // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
             proc.CheckAndClearProcessResult(
-                new KeyValueTimestamp<>(0, new Change<>("XX0+YY0", null), 7),
-                new KeyValueTimestamp<>(1, new Change<>("XX1+YY1", null), 7),
-                new KeyValueTimestamp<>(2, new Change<>("XX2+YY2", null), 10),
-                new KeyValueTimestamp<>(3, new Change<>("XX3+YY3", null), 15));
+                new KeyValueTimestamp<string, string>(0, new Change<string>("XX0+YY0", null), 7),
+                new KeyValueTimestamp<string, string>(1, new Change<string>("XX1+YY1", null), 7),
+                new KeyValueTimestamp<string, string>(2, new Change<string>("XX2+YY2", null), 10),
+                new KeyValueTimestamp<string, string>(3, new Change<string>("XX3+YY3", null), 15));
 
             // push All four items to the primary stream. this should produce four items.
             foreach (var expectedKey in expectedKeys)
@@ -298,18 +298,18 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
             // right: YY0:0 (ts: 0), YY1:1 (ts: 5), YY2:2 (ts: 10), YY3:3 (ts: 15)
             proc.CheckAndClearProcessResult(
-                new KeyValueTimestamp<>(0, new Change<>("XXX0+YY0", null), 6),
-                new KeyValueTimestamp<>(1, new Change<>("XXX1+YY1", null), 6),
-                new KeyValueTimestamp<>(2, new Change<>("XXX2+YY2", null), 10),
-                new KeyValueTimestamp<>(3, new Change<>("XXX3+YY3", null), 15));
+                new KeyValueTimestamp<string, string>(0, new Change<string>("XXX0+YY0", null), 6),
+                new KeyValueTimestamp<string, string>(1, new Change<string>("XXX1+YY1", null), 6),
+                new KeyValueTimestamp<string, string>(2, new Change<string>("XXX2+YY2", null), 10),
+                new KeyValueTimestamp<string, string>(3, new Change<string>("XXX3+YY3", null), 15));
 
             // push two items with null to the other stream.As deletes. this should produce two item.
             driver.PipeInput(recordFactory.Create(topic2, expectedKeys[0], null, 5L));
             driver.PipeInput(recordFactory.Create(topic2, expectedKeys[1], null, 7L));
             // left: XXX0:0 (ts: 6), XXX1:1 (ts: 6), XXX2:2 (ts: 6), XXX3:3 (ts: 6)
             // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, new Change<>(null, null), 6),
-                new KeyValueTimestamp<>(1, new Change<>(null, null), 7));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, new Change<string>(null, null), 6),
+                new KeyValueTimestamp<string, string>(1, new Change<string>(null, null), 7));
             // push All four items to the primary stream. this should produce two items.
             foreach (var expectedKey in expectedKeys)
             {
@@ -317,8 +317,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             }
             // left: XXXX0:0 (ts: 13), XXXX1:1 (ts: 13), XXXX2:2 (ts: 13), XXXX3:3 (ts: 13)
             // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(2, new Change<>("XXXX2+YY2", null), 13),
-                new KeyValueTimestamp<>(3, new Change<>("XXXX3+YY3", null), 15));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(2, new Change<string>("XXXX2+YY2", null), 13),
+                new KeyValueTimestamp<string, string>(3, new Change<string>("XXXX3+YY3", null), 15));
             // push four items to the primary stream with null. this should produce two items.
             driver.PipeInput(recordFactory.Create(topic1, expectedKeys[0], null, 0L));
             driver.PipeInput(recordFactory.Create(topic1, expectedKeys[1], null, 42L));
@@ -326,17 +326,17 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(topic1, expectedKeys[3], null, 20L));
             // left:
             // right: YY2:2 (ts: 10), YY3:3 (ts: 15)
-            proc.CheckAndClearProcessResult(new KeyValueTimestamp<>(2, new Change<>(null, null), 10),
-                new KeyValueTimestamp<>(3, new Change<>(null, null), 20));
+            proc.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(2, new Change<string>(null, null), 10),
+                new KeyValueTimestamp<string, string>(3, new Change<string>(null, null), 20));
         }
 
         private void doTestJoin(StreamsBuilder builder, int[] expectedKeys)
         {
-            Collection<HashSet<string>> copartitionGroups =
-                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
+            Collection<HashSet<string>> CopartitionGroups =
+                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).CopartitionGroups();
 
-            Assert.Equal(1, copartitionGroups.Count);
-            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), copartitionGroups.iterator().MoveNext());
+            Assert.Equal(1, CopartitionGroups.Count);
+            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), CopartitionGroups.iterator().MoveNext());
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             // push two items to the primary stream. the other table is empty
@@ -438,7 +438,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                                                    long expectedTimestamp)
         {
             OutputVerifier.compareKeyValueTimestamp(
-                driver.readOutput(output, Serdes.Int().deserializer(), Serdes.String().deserializer()),
+                driver.readOutput(output, Serdes.Int().Deserializer, Serdes.String().Deserializer),
                 expectedKey,
                 expectedValue,
                 expectedTimestamp);

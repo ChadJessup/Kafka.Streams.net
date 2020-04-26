@@ -60,7 +60,7 @@
 //        byte[][] values = new byte[8][];
 //        int index = 0;
 //        int bytesIndex = 2;
-//        while (iterator.HasNext()) {
+//        while (iterator.MoveNext()) {
 //            byte[] value = iterator.MoveNext().Value;
 //            values[index++] = value;
 //            assertArrayEquals(bytes[bytesIndex++], value);
@@ -76,7 +76,7 @@
 //        cache.Put(namespace, Bytes.Wrap(bytes[1]), new LRUCacheEntry(null));
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
 //        assertArrayEquals(bytes[0], iterator.MoveNext().Key.Get());
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -86,7 +86,7 @@
 //        store.Put(Bytes.Wrap(bytes[1]), bytes[1]);
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
 //        assertArrayEquals(bytes[1], iterator.MoveNext().Key.Get());
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -95,7 +95,7 @@
 //        cache.Put(namespace, Bytes.Wrap(bytes[0]), new LRUCacheEntry(null));
 //        store.Put(Bytes.Wrap(bytes[0]), bytes[0]);
 //        MergedSortedCacheKeyValueBytesStoreIterator iterator = createIterator();
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -106,7 +106,7 @@
 //            store.Put(aBytes, aByte);
 //            cache.Put(namespace, aBytes, new LRUCacheEntry(null));
 //        }
-//        Assert.False(createIterator().HasNext());
+//        Assert.False(createIterator().MoveNext());
 //    }
 
 //    [Fact]
@@ -115,7 +115,7 @@
 //        foreach (byte[] aByte in bytes) {
 //            cache.Put(namespace, Bytes.Wrap(aByte), new LRUCacheEntry(null));
 //        }
-//        Assert.False(createIterator().HasNext());
+//        Assert.False(createIterator().MoveNext());
 //    }
 
 //    [Fact]
@@ -140,7 +140,7 @@
 //        assertArrayEquals(bytes[7], iterator.MoveNext().Key.Get());
 //        assertArrayEquals(bytes[9], iterator.MoveNext().Key.Get());
 //        assertArrayEquals(bytes[10], iterator.MoveNext().Key.Get());
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 
 //    }
 
@@ -166,7 +166,7 @@
 //        byte[][] values = new byte[8][];
 //        int index = 0;
 //        int bytesIndex = 2;
-//        while (iterator.HasNext()) {
+//        while (iterator.MoveNext()) {
 //            byte[] keys = iterator.PeekNextKey().Get();
 //            values[index++] = keys;
 //            assertArrayEquals(bytes[bytesIndex++], keys);

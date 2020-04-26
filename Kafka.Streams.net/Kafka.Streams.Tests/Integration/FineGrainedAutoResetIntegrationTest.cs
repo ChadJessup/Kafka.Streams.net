@@ -61,7 +61,7 @@ namespace Kafka.Streams.Tests.Integration
 
         public static void StartKafkaCluster()
         {// throws InterruptedException
-            CLUSTER.createTopics(
+            CLUSTER.CreateTopics(
                 TOPIC_1_0,
                 TOPIC_2_0,
                 TOPIC_A_0,
@@ -155,14 +155,14 @@ namespace Kafka.Streams.Tests.Integration
             pattern2Stream.To(outputTopic, Produced.With(stringSerde, stringSerde));
             namedTopicsStream.To(outputTopic, Produced.With(stringSerde, stringSerde));
 
-            StreamsConfig producerConfig = TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
+            StreamsConfig ProducerConfig = TestUtils.ProducerConfig(CLUSTER.bootstrapServers(), Serdes.String().Serializer, Serdes.String().Serializer);
 
-            IntegrationTestUtils.produceValuesSynchronously(topic1, Collections.singletonList(topic1TestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.produceValuesSynchronously(topic2, Collections.singletonList(topic2TestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.produceValuesSynchronously(topicA, Collections.singletonList(topicATestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.produceValuesSynchronously(topicC, Collections.singletonList(topicCTestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.produceValuesSynchronously(topicY, Collections.singletonList(topicYTestMessage), producerConfig, mockTime);
-            IntegrationTestUtils.produceValuesSynchronously(topicZ, Collections.singletonList(topicZTestMessage), producerConfig, mockTime);
+            IntegrationTestUtils.produceValuesSynchronously(topic1, Collections.singletonList(topic1TestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.produceValuesSynchronously(topic2, Collections.singletonList(topic2TestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.produceValuesSynchronously(topicA, Collections.singletonList(topicATestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.produceValuesSynchronously(topicC, Collections.singletonList(topicCTestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.produceValuesSynchronously(topicY, Collections.singletonList(topicYTestMessage), ProducerConfig, mockTime);
+            IntegrationTestUtils.produceValuesSynchronously(topicZ, Collections.singletonList(topicZTestMessage), ProducerConfig, mockTime);
 
             StreamsConfig consumerConfig = TestUtils.consumerConfig(CLUSTER.bootstrapServers(), Serdes.String().Deserializer, Serdes.String().Deserializer);
 

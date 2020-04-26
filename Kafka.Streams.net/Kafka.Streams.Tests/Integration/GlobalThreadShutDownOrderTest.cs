@@ -108,7 +108,7 @@ namespace Kafka.Streams.Tests.Integration
         {// throws Exception
             streamTopic = "stream-topic";
             globalStoreTopic = "global-store-topic";
-            CLUSTER.createTopics(streamTopic);
+            CLUSTER.CreateTopics(streamTopic);
             CLUSTER.CreateTopic(globalStoreTopic);
         }
 
@@ -122,7 +122,7 @@ namespace Kafka.Streams.Tests.Integration
                     new KeyValuePair<string, long>("B", 2L),
                     new KeyValuePair<string, long>("C", 3L),
                     new KeyValuePair<string, long>("D", 4L)),
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.String().Serializer,
                     Serdes.Long().Serializer,

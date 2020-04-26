@@ -90,7 +90,7 @@
 
 //        public string ZookeeperConnect()
 //        {
-//            return effectiveConfig.getProperty("zookeeper.connect", DEFAULT_ZK_CONNECT);
+//            return effectiveConfig.Get("zookeeper.connect", DEFAULT_ZK_CONNECT);
 //        }
 
 //        /**
@@ -159,7 +159,7 @@
 //            newTopic.configs(topicConfig);
 
 //            Admin adminClient = createAdminClient();
-//            adminClient.createTopics(Collections.singletonList(newTopic)).All().Get();
+//            adminClient.CreateTopics(Collections.singletonList(newTopic)).All().Get();
 //        }
 
 //        public Admin createAdminClient()

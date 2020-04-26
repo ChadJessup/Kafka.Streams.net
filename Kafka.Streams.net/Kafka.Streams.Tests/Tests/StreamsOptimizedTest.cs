@@ -85,7 +85,7 @@
 //            {
 //                if (oldState == State.REBALANCING && newState == State.RUNNING)
 //                {
-//                    int repartitionTopicCount = getCountOfRepartitionTopicsFound(topology.describe().ToString(), repartitionTopicPattern);
+//                    int repartitionTopicCount = getCountOfRepartitionTopicsFound(topology.Describe().ToString(), repartitionTopicPattern);
 //                    System.Console.Out.WriteLine(string.format("REBALANCING => RUNNING with REPARTITION TOPIC COUNT=%d", repartitionTopicCount));
 //                    System.Console.Out.Flush();
 //                }

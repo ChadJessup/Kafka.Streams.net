@@ -86,15 +86,15 @@ namespace Kafka.Streams.Tests.Tests
 //            // 3. Task ids of valid local states on the client's state directory.
 
 //            TaskManager taskManager = taskManger();
-//            HashSet<TaskId> previousActiveTasks = taskManager.prevActiveTaskIds();
-//            HashSet<TaskId> standbyTasks = taskManager.cachedTasksIds();
-//            standbyTasks.removeAll(previousActiveTasks);
+//            HashSet<TaskId> PreviousActiveTasks = taskManager.prevActiveTaskIds();
+//            HashSet<TaskId> StandbyTasks = taskManager.cachedTasksIds();
+//            StandbyTasks.removeAll(PreviousActiveTasks);
 //            FutureSubscriptionInfo data = new FutureSubscriptionInfo(
 //                usedSubscriptionMetadataVersion,
 //                SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1,
 //                taskManager.processId(),
-//                previousActiveTasks,
-//                standbyTasks,
+//                PreviousActiveTasks,
+//                StandbyTasks,
 //                userEndPoint());
 
 //            taskManager.UpdateSubscriptionsFromMetadata(topics);
@@ -142,18 +142,18 @@ namespace Kafka.Streams.Tests.Tests
 //            partitions.sort(PARTITION_COMPARATOR);
 
 //            // version 1 field
-//            Dictionary<TaskId, HashSet<TopicPartition>> activeTasks = new HashMap<>();
+//            Dictionary<TaskId, HashSet<TopicPartition>> ActiveTasks = new HashMap<>();
 //            // version 2 fields
 //            Dictionary<TopicPartition, PartitionInfo> topicToPartitionInfo = new HashMap<>();
 //            Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost;
 
-//            processLatestVersionAssignment(info, partitions, activeTasks, topicToPartitionInfo);
+//            processLatestVersionAssignment(info, partitions, ActiveTasks, topicToPartitionInfo);
 //            partitionsByHost = info.partitionsByHost();
 
 //            TaskManager taskManager = taskManger();
 //            taskManager.setClusterMetadata(Cluster.empty().withPartitions(topicToPartitionInfo));
 //            taskManager.setPartitionsByHostState(partitionsByHost);
-//            taskManager.SetAssignmentMetadata(activeTasks, info.standbyTasks());
+//            taskManager.SetAssignmentMetadata(ActiveTasks, info.StandbyTasks());
 //            taskManager.UpdateSubscriptionsFromAssignment(partitions);
 //        }
 
@@ -197,7 +197,7 @@ namespace Kafka.Streams.Tests.Tests
 //                            new SubscriptionInfo(
 //                                info.processId(),
 //                                info.prevTasks(),
-//                                info.standbyTasks(),
+//                                info.StandbyTasks(),
 //                                info.userEndPoint())
 //                                .encode()));
 //                }
@@ -232,9 +232,9 @@ namespace Kafka.Streams.Tests.Tests
 //                                   int latestSupportedVersion,
 //                                   UUID processId,
 //                                   HashSet<TaskId> prevTasks,
-//                                   HashSet<TaskId> standbyTasks,
+//                                   HashSet<TaskId> StandbyTasks,
 //                                   string userEndPoint)
-//            : base(version, latestSupportedVersion, processId, prevTasks, standbyTasks, userEndPoint)
+//            : base(version, latestSupportedVersion, processId, prevTasks, StandbyTasks, userEndPoint)
 //        {
 //        }
 
@@ -264,7 +264,7 @@ namespace Kafka.Streams.Tests.Tests
 //            buf.putInt(LATEST_SUPPORTED_VERSION + 1); // supported version
 //            encodeClientUUID(buf);
 //            encodeTasks(buf, prevTasks());
-//            encodeTasks(buf, standbyTasks());
+//            encodeTasks(buf, StandbyTasks());
 //            encodeUserEndPoint(buf, endPointBytes);
 
 //            return buf;

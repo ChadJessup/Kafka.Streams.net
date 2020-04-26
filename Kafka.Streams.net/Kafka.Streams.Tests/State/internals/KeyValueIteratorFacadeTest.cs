@@ -21,11 +21,11 @@
 //        [Fact]
 //        public void ShouldForwardHasNext()
 //        {
-//            expect(mockedKeyValueIterator.HasNext()).andReturn(true).andReturn(false);
+//            expect(mockedKeyValueIterator.MoveNext()).andReturn(true).andReturn(false);
 //            replay(mockedKeyValueIterator);
 
-//            Assert.True(keyValueIteratorFacade.HasNext());
-//            Assert.False(keyValueIteratorFacade.HasNext());
+//            Assert.True(keyValueIteratorFacade.MoveNext());
+//            Assert.False(keyValueIteratorFacade.MoveNext());
 //            verify(mockedKeyValueIterator);
 //        }
 

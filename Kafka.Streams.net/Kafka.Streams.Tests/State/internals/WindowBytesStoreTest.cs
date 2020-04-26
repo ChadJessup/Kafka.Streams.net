@@ -41,9 +41,9 @@
 
 //        public abstract void SetClassLoggerToDebug();
 
-//        private RecordCollectorImpl CreateRecordCollector(string Name)
+//        private RecordCollector CreateRecordCollector(string Name)
 //        {
-//            return new RecordCollectorImpl(Name,
+//            return new RecordCollector(Name,
 //                new LogContext(Name),
 //                new DefaultProductionExceptionHandler())
 ////                new Metrics().sensor("skipped-records"))
@@ -111,8 +111,8 @@
 //            new HashSet<>(Collections.singletonList("zero")),
 //            toSet(windowStore.Fetch(
 //                0,
-//                ofEpochMilli(startTime + 0 - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 0 + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 0 - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 0 + WINDOW_SIZE))));
 
 //        putSecondBatch(windowStore, startTime, context);
 
@@ -127,92 +127,92 @@
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime - 2L - WINDOW_SIZE),
-//                ofEpochMilli(startTime - 2L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime - 2L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime - 2L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("two")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime - 1L - WINDOW_SIZE),
-//                ofEpochMilli(startTime - 1L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime - 1L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime - 1L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime - WINDOW_SIZE),
-//                ofEpochMilli(startTime + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 1L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 1L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 1L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 1L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2", "two+3")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 2L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 2L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 2L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 2L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2", "two+3", "two+4")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 3L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 3L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 3L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 3L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2", "two+3", "two+4", "two+5")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 4L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 4L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 4L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 4L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2", "two+3", "two+4", "two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 5L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 5L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 5L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 5L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+1", "two+2", "two+3", "two+4", "two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 6L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 6L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 6L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 6L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+2", "two+3", "two+4", "two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 7L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 7L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 7L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 7L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+3", "two+4", "two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 8L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 8L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 8L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 8L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+4", "two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 9L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 9L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 9L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 9L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 10L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 10L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 10L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 10L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 11L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 11L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 11L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 11L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 12L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 12L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 12L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 12L + WINDOW_SIZE))));
 
 //        // Flush the store and verify All current entries were properly flushed ...
 //        windowStore.Flush();
@@ -264,15 +264,15 @@
 
 //        Assert.Equal(
 //            new HashSet<>(asList(one, two, four)),
-//            toSet(windowStore.FetchAll(ofEpochMilli(startTime + 1), ofEpochMilli(startTime + 4)))
+//            toSet(windowStore.FetchAll(TimeSpan.FromMilliseconds(startTime + 1), TimeSpan.FromMilliseconds(startTime + 4)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(asList(zero, one, two)),
-//            toSet(windowStore.FetchAll(ofEpochMilli(startTime + 0), ofEpochMilli(startTime + 3)))
+//            toSet(windowStore.FetchAll(TimeSpan.FromMilliseconds(startTime + 0), TimeSpan.FromMilliseconds(startTime + 3)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(asList(one, two, four, five)),
-//            toSet(windowStore.FetchAll(ofEpochMilli(startTime + 1), ofEpochMilli(startTime + 5)))
+//            toSet(windowStore.FetchAll(TimeSpan.FromMilliseconds(startTime + 1), TimeSpan.FromMilliseconds(startTime + 5)))
 //        );
 //    }
 
@@ -294,64 +294,64 @@
 //            toSet(windowStore.Fetch(
 //                0,
 //                1,
-//                ofEpochMilli(startTime + 0L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 0L + WINDOW_SIZE)))
+//                TimeSpan.FromMilliseconds(startTime + 0L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 0L + WINDOW_SIZE)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList(one)),
 //            toSet(windowStore.Fetch(
 //                1,
 //                1,
-//                ofEpochMilli(startTime + 0L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 0L + WINDOW_SIZE)))
+//                TimeSpan.FromMilliseconds(startTime + 0L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 0L + WINDOW_SIZE)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(asList(one, two)),
 //            toSet(windowStore.Fetch(
 //                1,
 //                3,
-//                ofEpochMilli(startTime + 0L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 0L + WINDOW_SIZE)))
+//                TimeSpan.FromMilliseconds(startTime + 0L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 0L + WINDOW_SIZE)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(asList(zero, one, two)),
 //            toSet(windowStore.Fetch(
 //                0,
 //                5,
-//                ofEpochMilli(startTime + 0L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 0L + WINDOW_SIZE)))
+//                TimeSpan.FromMilliseconds(startTime + 0L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 0L + WINDOW_SIZE)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(asList(zero, one, two, four, five)),
 //            toSet(windowStore.Fetch(
 //                0,
 //                5,
-//                ofEpochMilli(startTime + 0L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 0L + WINDOW_SIZE + 5L)))
+//                TimeSpan.FromMilliseconds(startTime + 0L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 0L + WINDOW_SIZE + 5L)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(asList(two, four, five)),
 //            toSet(windowStore.Fetch(
 //                0,
 //                5,
-//                ofEpochMilli(startTime + 2L),
-//                ofEpochMilli(startTime + 0L + WINDOW_SIZE + 5L)))
+//                TimeSpan.FromMilliseconds(startTime + 2L),
+//                TimeSpan.FromMilliseconds(startTime + 0L + WINDOW_SIZE + 5L)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                4,
 //                5,
-//                ofEpochMilli(startTime + 2L),
-//                ofEpochMilli(startTime + WINDOW_SIZE)))
+//                TimeSpan.FromMilliseconds(startTime + 2L),
+//                TimeSpan.FromMilliseconds(startTime + WINDOW_SIZE)))
 //        );
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                0,
 //                3,
-//                ofEpochMilli(startTime + 3L),
-//                ofEpochMilli(startTime + WINDOW_SIZE + 5)))
+//                TimeSpan.FromMilliseconds(startTime + 3L),
+//                TimeSpan.FromMilliseconds(startTime + WINDOW_SIZE + 5)))
 //        );
 //    }
 
@@ -366,38 +366,38 @@
 //            new HashSet<>(Collections.singletonList("zero")),
 //            toSet(windowStore.Fetch(
 //                0,
-//                ofEpochMilli(startTime + 0L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 0L))));
+//                TimeSpan.FromMilliseconds(startTime + 0L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 0L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("one")),
 //            toSet(windowStore.Fetch(
 //                1,
-//                ofEpochMilli(startTime + 1L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 1L))));
+//                TimeSpan.FromMilliseconds(startTime + 1L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 1L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("two")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 2L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 2L))));
+//                TimeSpan.FromMilliseconds(startTime + 2L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 2L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                3,
-//                ofEpochMilli(startTime + 3L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 3L))));
+//                TimeSpan.FromMilliseconds(startTime + 3L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 3L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("four")),
 //            toSet(windowStore.Fetch(
 //                4,
-//                ofEpochMilli(startTime + 4L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 4L))));
+//                TimeSpan.FromMilliseconds(startTime + 4L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 4L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("five")),
 //            toSet(windowStore.Fetch(
 //                5,
-//                ofEpochMilli(startTime + 5L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 5L))));
+//                TimeSpan.FromMilliseconds(startTime + 5L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 5L))));
 
 //        putSecondBatch(windowStore, startTime, context);
 
@@ -405,92 +405,92 @@
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime - 1L - WINDOW_SIZE),
-//                ofEpochMilli(startTime - 1L))));
+//                TimeSpan.FromMilliseconds(startTime - 1L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime - 1L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 0L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 0L))));
+//                TimeSpan.FromMilliseconds(startTime + 0L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 0L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 1L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 1L))));
+//                TimeSpan.FromMilliseconds(startTime + 1L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 1L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("two")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 2L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 2L))));
+//                TimeSpan.FromMilliseconds(startTime + 2L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 2L))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 3L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 3L))));
+//                TimeSpan.FromMilliseconds(startTime + 3L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 3L))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 4L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 4L))));
+//                TimeSpan.FromMilliseconds(startTime + 4L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 4L))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2", "two+3")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 5L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 5L))));
+//                TimeSpan.FromMilliseconds(startTime + 5L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 5L))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+1", "two+2", "two+3", "two+4")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 6L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 6L))));
+//                TimeSpan.FromMilliseconds(startTime + 6L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 6L))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+2", "two+3", "two+4", "two+5")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 7L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 7L))));
+//                TimeSpan.FromMilliseconds(startTime + 7L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 7L))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+3", "two+4", "two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 8L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 8L))));
+//                TimeSpan.FromMilliseconds(startTime + 8L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 8L))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+4", "two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 9L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 9L))));
+//                TimeSpan.FromMilliseconds(startTime + 9L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 9L))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+5", "two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 10L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 10L))));
+//                TimeSpan.FromMilliseconds(startTime + 10L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 10L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("two+6")),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 11L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 11L))));
+//                TimeSpan.FromMilliseconds(startTime + 11L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 11L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 12L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 12L))));
+//                TimeSpan.FromMilliseconds(startTime + 12L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 12L))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                2,
-//                ofEpochMilli(startTime + 13L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 13L))));
+//                TimeSpan.FromMilliseconds(startTime + 13L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 13L))));
 
 //        // Flush the store and verify All current entries were properly flushed ...
 //        windowStore.Flush();
@@ -516,91 +516,91 @@
 
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("zero")),
-//            toSet(windowStore.Fetch(0, ofEpochMilli(startTime + 0L),
-//                ofEpochMilli(startTime + 0L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(0, TimeSpan.FromMilliseconds(startTime + 0L),
+//                TimeSpan.FromMilliseconds(startTime + 0L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("one")),
-//            toSet(windowStore.Fetch(1, ofEpochMilli(startTime + 1L),
-//                ofEpochMilli(startTime + 1L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(1, TimeSpan.FromMilliseconds(startTime + 1L),
+//                TimeSpan.FromMilliseconds(startTime + 1L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("two")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 2L),
-//                ofEpochMilli(startTime + 2L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 2L),
+//                TimeSpan.FromMilliseconds(startTime + 2L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
-//            toSet(windowStore.Fetch(3, ofEpochMilli(startTime + 3L),
-//                ofEpochMilli(startTime + 3L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(3, TimeSpan.FromMilliseconds(startTime + 3L),
+//                TimeSpan.FromMilliseconds(startTime + 3L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("four")),
-//            toSet(windowStore.Fetch(4, ofEpochMilli(startTime + 4L),
-//                ofEpochMilli(startTime + 4L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(4, TimeSpan.FromMilliseconds(startTime + 4L),
+//                TimeSpan.FromMilliseconds(startTime + 4L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("five")),
-//            toSet(windowStore.Fetch(5, ofEpochMilli(startTime + 5L),
-//                ofEpochMilli(startTime + 5L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(5, TimeSpan.FromMilliseconds(startTime + 5L),
+//                TimeSpan.FromMilliseconds(startTime + 5L + WINDOW_SIZE))));
 
 //        putSecondBatch(windowStore, startTime, context);
 
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime - 2L),
-//                ofEpochMilli(startTime - 2L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime - 2L),
+//                TimeSpan.FromMilliseconds(startTime - 2L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("two")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime - 1L),
-//                ofEpochMilli(startTime - 1L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime - 1L),
+//                TimeSpan.FromMilliseconds(startTime - 1L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1")),
 //            toSet(windowStore
-//                .Fetch(2, ofEpochMilli(startTime), ofEpochMilli(startTime + WINDOW_SIZE))));
+//                .Fetch(2, TimeSpan.FromMilliseconds(startTime), TimeSpan.FromMilliseconds(startTime + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 1L),
-//                ofEpochMilli(startTime + 1L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 1L),
+//                TimeSpan.FromMilliseconds(startTime + 1L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two", "two+1", "two+2", "two+3")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 2L),
-//                ofEpochMilli(startTime + 2L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 2L),
+//                TimeSpan.FromMilliseconds(startTime + 2L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+1", "two+2", "two+3", "two+4")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 3L),
-//                ofEpochMilli(startTime + 3L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 3L),
+//                TimeSpan.FromMilliseconds(startTime + 3L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+2", "two+3", "two+4", "two+5")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 4L),
-//                ofEpochMilli(startTime + 4L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 4L),
+//                TimeSpan.FromMilliseconds(startTime + 4L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+3", "two+4", "two+5", "two+6")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 5L),
-//                ofEpochMilli(startTime + 5L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 5L),
+//                TimeSpan.FromMilliseconds(startTime + 5L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+4", "two+5", "two+6")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 6L),
-//                ofEpochMilli(startTime + 6L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 6L),
+//                TimeSpan.FromMilliseconds(startTime + 6L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("two+5", "two+6")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 7L),
-//                ofEpochMilli(startTime + 7L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 7L),
+//                TimeSpan.FromMilliseconds(startTime + 7L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("two+6")),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 8L),
-//                ofEpochMilli(startTime + 8L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 8L),
+//                TimeSpan.FromMilliseconds(startTime + 8L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 9L),
-//                ofEpochMilli(startTime + 9L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 9L),
+//                TimeSpan.FromMilliseconds(startTime + 9L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 10L),
-//                ofEpochMilli(startTime + 10L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 10L),
+//                TimeSpan.FromMilliseconds(startTime + 10L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 11L),
-//                ofEpochMilli(startTime + 11L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 11L),
+//                TimeSpan.FromMilliseconds(startTime + 11L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
-//            toSet(windowStore.Fetch(2, ofEpochMilli(startTime + 12L),
-//                ofEpochMilli(startTime + 12L + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(2, TimeSpan.FromMilliseconds(startTime + 12L),
+//                TimeSpan.FromMilliseconds(startTime + 12L + WINDOW_SIZE))));
 
 //        // Flush the store and verify All current entries were properly flushed ...
 //        windowStore.Flush();
@@ -631,8 +631,8 @@
 
 //        Assert.Equal(
 //            new HashSet<>(Collections.singletonList("zero")),
-//            toSet(windowStore.Fetch(0, ofEpochMilli(startTime - WINDOW_SIZE),
-//                ofEpochMilli(startTime + WINDOW_SIZE))));
+//            toSet(windowStore.Fetch(0, TimeSpan.FromMilliseconds(startTime - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + WINDOW_SIZE))));
 
 //        windowStore.Put(0, "zero");
 //        windowStore.Put(0, "zero+");
@@ -642,32 +642,32 @@
 //            new HashSet<>(asList("zero", "zero", "zero+", "zero++")),
 //            toSet(windowStore.Fetch(
 //                0,
-//                ofEpochMilli(startTime - WINDOW_SIZE),
-//                ofEpochMilli(startTime + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("zero", "zero", "zero+", "zero++")),
 //            toSet(windowStore.Fetch(
 //                0,
-//                ofEpochMilli(startTime + 1L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 1L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 1L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 1L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("zero", "zero", "zero+", "zero++")),
 //            toSet(windowStore.Fetch(
 //                0,
-//                ofEpochMilli(startTime + 2L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 2L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 2L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 2L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(asList("zero", "zero", "zero+", "zero++")),
 //            toSet(windowStore.Fetch(
 //                0,
-//                ofEpochMilli(startTime + 3L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 3L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 3L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 3L + WINDOW_SIZE))));
 //        Assert.Equal(
 //            new HashSet<>(Collections.emptyList()),
 //            toSet(windowStore.Fetch(
 //                0,
-//                ofEpochMilli(startTime + 4L - WINDOW_SIZE),
-//                ofEpochMilli(startTime + 4L + WINDOW_SIZE))));
+//                TimeSpan.FromMilliseconds(startTime + 4L - WINDOW_SIZE),
+//                TimeSpan.FromMilliseconds(startTime + 4L + WINDOW_SIZE))));
 
 //        // Flush the store and verify All current entries were properly flushed ...
 //        windowStore.Flush();
@@ -685,11 +685,11 @@
 //        windowStore.Put(1, "two", 2L);
 //        windowStore.Put(1, "three", 3L);
 
-//        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, ofEpochMilli(1L), ofEpochMilli(3L));
-//        Assert.True(iterator.HasNext());
+//        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, TimeSpan.FromMilliseconds(1L), TimeSpan.FromMilliseconds(3L));
+//        Assert.True(iterator.MoveNext());
 //        windowStore.Close();
 
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -712,17 +712,17 @@
 //        windowStore.Put("a", "0005", 0x7a00000000000000L - 1);
 
 //        Set expected = new HashSet<>(asList("0001", "0003", "0005"));
-//        Assert.Equal(toSet(windowStore.Fetch("a", ofEpochMilli(0), ofEpochMilli(long.MaxValue))), (expected));
+//        Assert.Equal(toSet(windowStore.Fetch("a", TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue))), (expected));
 
 //        HashSet<KeyValuePair<IWindowed<string>, string>> set =
-//            toSet(windowStore.Fetch("a", "a", ofEpochMilli(0), ofEpochMilli(long.MaxValue)));
+//            toSet(windowStore.Fetch("a", "a", TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue)));
 //        Assert.Equal(set, (new HashSet<>(asList(
 //            windowedPair("a", "0001", 0, windowSize),
 //            windowedPair("a", "0003", 1, windowSize),
 //            windowedPair("a", "0005", 0x7a00000000000000L - 1, windowSize)
 //        ))));
 
-//        set = toSet(windowStore.Fetch("aa", "aa", ofEpochMilli(0), ofEpochMilli(long.MaxValue)));
+//        set = toSet(windowStore.Fetch("aa", "aa", TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue)));
 //        Assert.Equal(set, (new HashSet<>(asList(
 //            windowedPair("aa", "0002", 0, windowSize),
 //            windowedPair("aa", "0004", 1, windowSize)
@@ -743,7 +743,7 @@
 
 //        windowStore.Put(1, null);
 //        iterator = windowStore.Fetch(1, 0, currentTime);
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -752,28 +752,28 @@
 //        Assert.Null(windowStore.Fetch(1, 0L));
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //    {
 //        windowStore.Put(null, "anyValue");
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnGetNullKey()
 //    {
-//        windowStore.Fetch(null, ofEpochMilli(1L), ofEpochMilli(2L));
+//        windowStore.Fetch(null, TimeSpan.FromMilliseconds(1L), TimeSpan.FromMilliseconds(2L));
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
 //    {
-//        windowStore.Fetch(null, 2, ofEpochMilli(1L), ofEpochMilli(2L));
+//        windowStore.Fetch(null, 2, TimeSpan.FromMilliseconds(1L), TimeSpan.FromMilliseconds(2L));
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
 //    {
-//        windowStore.Fetch(1, null, ofEpochMilli(1L), ofEpochMilli(2L));
+//        windowStore.Fetch(1, null, TimeSpan.FromMilliseconds(1L), TimeSpan.FromMilliseconds(2L));
 //    }
 
 //    [Fact]
@@ -800,13 +800,13 @@
 //        windowStore.Put(key3, "9", 59999);
 
 //        Set expectedKey1 = new HashSet<>(asList("1", "4", "7"));
-//        Assert.Equal(toSet(windowStore.Fetch(key1, ofEpochMilli(0), ofEpochMilli(long.MaxValue))),
+//        Assert.Equal(toSet(windowStore.Fetch(key1, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue))),
 //            equalTo(expectedKey1));
 //        Set expectedKey2 = new HashSet<>(asList("2", "5", "8"));
-//        Assert.Equal(toSet(windowStore.Fetch(key2, ofEpochMilli(0), ofEpochMilli(long.MaxValue))),
+//        Assert.Equal(toSet(windowStore.Fetch(key2, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue))),
 //            equalTo(expectedKey2));
 //        Set expectedKey3 = new HashSet<>(asList("3", "6", "9"));
-//        Assert.Equal(toSet(windowStore.Fetch(key3, ofEpochMilli(0), ofEpochMilli(long.MaxValue))),
+//        Assert.Equal(toSet(windowStore.Fetch(key3, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue))),
 //            equalTo(expectedKey3));
 //    }
 
@@ -823,8 +823,8 @@
 
 //        Assert.Equal(singleKeyIterator.MoveNext().Value, keyRangeIterator.MoveNext().Value);
 //        Assert.Equal(singleKeyIterator.MoveNext().Value, keyRangeIterator.MoveNext().Value);
-//        Assert.False(singleKeyIterator.HasNext());
-//        Assert.False(keyRangeIterator.HasNext());
+//        Assert.False(singleKeyIterator.MoveNext());
+//        Assert.False(keyRangeIterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -834,7 +834,7 @@
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
 //        IKeyValueIterator iterator = windowStore.Fetch(-1, 1, 0L, 10L);
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 
 //        List<string> messages = appender.getMessages();
 //        Assert.Equal(messages,
@@ -898,7 +898,7 @@
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0L, 10L);
 
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -910,12 +910,12 @@
 
 //        IKeyValueIterator<IWindowed<int>, string> iterator = windowStore.FetchAll(0L, currentTime);
 
-//        Assert.True(iterator.HasNext());
+//        Assert.True(iterator.MoveNext());
 //        IWindowed<int> nextKey = iterator.PeekNextKey();
 
 //        Assert.Equal(iterator.PeekNextKey(), nextKey);
 //        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().Key);
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -925,12 +925,12 @@
 
 //        IWindowStoreIterator<string> iterator = windowStore.Fetch(1, 0L, 10L);
 
-//        Assert.True(iterator.HasNext());
+//        Assert.True(iterator.MoveNext());
 //        long nextKey = iterator.PeekNextKey();
 
 //        Assert.Equal(iterator.PeekNextKey(), nextKey);
 //        Assert.Equal(iterator.PeekNextKey(), iterator.MoveNext().Key);
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -959,7 +959,7 @@
 //        Assert.Equal(windowedPair(1, "two", WINDOW_SIZE * 10), iterator.MoveNext());
 //        Assert.Equal(windowedPair(1, "three", WINDOW_SIZE * 20), iterator.MoveNext());
 //        Assert.Equal(windowedPair(2, "four", WINDOW_SIZE * 30), iterator.MoveNext());
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -989,7 +989,7 @@
 //        Assert.Equal(new KeyValuePair<long, string>(0L, "one-2"), iterator.MoveNext());
 //        Assert.Equal(new KeyValuePair<long, string>(WINDOW_SIZE * 10, "two"), iterator.MoveNext());
 //        Assert.Equal(new KeyValuePair<long, string>(WINDOW_SIZE * 10, "two-2"), iterator.MoveNext());
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 
@@ -1041,7 +1041,7 @@
 //    {
 //        HashSet<KeyValuePair<K, V>> results = new HashSet<KeyValuePair<K, V>>();
 
-//        while (iterator.HasNext())
+//        while (iterator.MoveNext())
 //        {
 //            results.Add(iterator.MoveNext());
 //        }

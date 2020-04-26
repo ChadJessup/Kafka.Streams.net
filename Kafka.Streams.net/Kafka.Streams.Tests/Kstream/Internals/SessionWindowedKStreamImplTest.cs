@@ -171,7 +171,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 //            MockInitializer.STRING_INIT,
 //            MockAggregator.TOSTRING_ADDER,
 //            sessionMerger,
-//            Materialized.As < string, string, ISessionStore<Bytes, byte[]>("aggregated").WithValueSerde(Serdes.String()));
+//            Materialized.As < string, string, ISessionStore<Bytes, byte[]>>("aggregated").WithValueSerde(Serdes.String()));
 
 //        var driver = new TopologyTestDriver(builder.Build(), props);
 //        processData(driver);

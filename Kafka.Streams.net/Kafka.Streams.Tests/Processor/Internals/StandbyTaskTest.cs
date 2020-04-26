@@ -28,8 +28,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private string applicationId = "test-application";
         private string storeName1 = "store1";
         private string storeName2 = "store2";
-        private string storeChangelogTopicName1 = ProcessorStateManager.storeChangelogTopic(applicationId, storeName1);
-        private string storeChangelogTopicName2 = ProcessorStateManager.storeChangelogTopic(applicationId, storeName2);
+        private string storeChangelogTopicName1 = ProcessorStateManager.StoreChangelogTopic(applicationId, storeName1);
+        private string storeChangelogTopicName2 = ProcessorStateManager.StoreChangelogTopic(applicationId, storeName2);
         private string globalStoreName = "ktable1";
 
         private TopicPartition partition1 = new TopicPartition(storeChangelogTopicName1, 1);
@@ -166,7 +166,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             }
             catch (NullReferenceException npe)
             {
-                Assert.Equal(npe.getMessage(), containsString("stateRestoreCallback must not be null"));
+                Assert.Equal(npe.Message, containsString("stateRestoreCallback must not be null"));
             }
 
         }
@@ -226,8 +226,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             task.Update(partition2, restoreStateConsumer.poll(TimeSpan.FromMilliseconds(100)).records(partition2));
 
             StandbyContextImpl context = (StandbyContextImpl)task.context;
-            MockKeyValueStore store1 = (MockKeyValueStore)context.getStateMgr().getStore(storeName1);
-            MockKeyValueStore store2 = (MockKeyValueStore)context.getStateMgr().getStore(storeName2);
+            MockKeyValueStore store1 = (MockKeyValueStore)context.getStateMgr().GetStore(storeName1);
+            MockKeyValueStore store2 = (MockKeyValueStore)context.getStateMgr().GetStore(storeName2);
 
             Assert.Equal(Collections.emptyList(), store1.keys);
             Assert.Equal(asList(1, 2, 3), store2.keys);
@@ -253,7 +253,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 .Stream(Collections.singleton("topic"), new ConsumedInternal<>())
                 .GroupByKey()
                 .WindowedBy(TimeWindows.Of(TimeSpan.FromMilliseconds(60_000)).Grace(TimeSpan.FromMilliseconds(0L)))
-                .Count(Materialized.As<object, long, IWindowStore<Bytes, byte[]>>(storeName).withRetention(TimeSpan.FromMilliseconds(120_000L)));
+                .Count(Materialized.As<object, long, IWindowStore<Bytes, byte[]>>(storeName).WithRetention(TimeSpan.FromMilliseconds(120_000L)));
 
             builder.BuildAndOptimizeTopology();
 
@@ -381,7 +381,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             task.Suspend();
             task.Close(true, false);
 
-            File taskDir = stateDirectory.directoryForTask(taskId);
+            File taskDir = stateDirectory.DirectoryForTask(taskId);
             OffsetCheckpoint checkpoint = new OffsetCheckpoint(new FileInfo(taskDir, StateManagerUtil.CHECKPOINT_FILE_NAME));
             Dictionary<TopicPartition, long> offsets = checkpoint.read();
 
@@ -399,7 +399,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             var result = new List<KeyValuePair<IWindowed<int>, IValueAndTimestamp<long>>>();
 
             IKeyValueIterator<IWindowed<byte[]>, IValueAndTimestamp<long>> iterator =
-                     ((ITimestampedWindowStore)context.getStateMgr().getStore(storeName)).All()) {
+                     ((ITimestampedWindowStore)context.getStateMgr().GetStore(storeName)).All()) {
 
                 while (iterator.MoveNext())
                 {

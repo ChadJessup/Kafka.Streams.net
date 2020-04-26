@@ -2,6 +2,7 @@ using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
+using Moq;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -25,7 +26,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             inputKey = 1;
             inputValue = 10;
-            valueTransformer = Mock.Of<typeof(IValueTransformerWithKey));
+            valueTransformer = Mock.Of<IValueTransformerWithKey>();
             context = strictMock(typeof(IProcessorContext));
             processor = new KStreamFlatTransformValuesProcessor<>(valueTransformer);
         }
@@ -106,7 +107,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         public void shouldGetFlatTransformValuesProcessor()
         {
             IValueTransformerWithKeySupplier<int, int, Iterable<string>> valueTransformerSupplier =
-                Mock.Of<typeof(IValueTransformerWithKeySupplier));
+                Mock.Of<IValueTransformerWithKeySupplier));
             KStreamFlatTransformValues<int, int, string> processorSupplier =
                 new KStreamFlatTransformValues<>(valueTransformerSupplier);
 

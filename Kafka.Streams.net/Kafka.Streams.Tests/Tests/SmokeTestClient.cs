@@ -127,7 +127,7 @@ namespace Kafka.Streams.Tests.Tests
 //                    Materialized
 //                        .< string, int, IWindowStore<Bytes, byte[]> >as ("uwin-min")
 //                        .WithValueSerde(intSerde)
-//                        .withRetention(TimeSpan.ofHours(25))
+//                        .WithRetention(TimeSpan.ofHours(25))
 //                );
 
 //            streamify(minAggregation, "min-raw");

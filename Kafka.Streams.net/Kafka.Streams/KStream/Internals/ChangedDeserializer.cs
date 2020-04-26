@@ -27,16 +27,16 @@ namespace Kafka.Streams.KStream.Internals
 
             if (new ByteBuffer().Wrap(data).GetLong(data.Length - NEWFLAG_SIZE) != 0)
             {
-                return new Change<T>(inner.Deserialize(topic, bytes, isKey: true), default);
+                return new Change<T>(this.inner.Deserialize(topic, bytes, isKey: true), default);
             }
             else
             {
-                return new Change<T>(default, inner.Deserialize(topic, bytes, isKey: true));
+                return new Change<T>(default, this.inner.Deserialize(topic, bytes, isKey: true));
             }
         }
 
         public IChange<T> Deserialize(string topic, byte[] data)
-            => Deserialize(topic, headers: null, data);
+            => this.Deserialize(topic, headers: null, data);
 
         public IChange<T> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {

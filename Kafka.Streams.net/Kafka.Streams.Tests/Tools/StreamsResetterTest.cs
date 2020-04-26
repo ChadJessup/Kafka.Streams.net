@@ -215,7 +215,7 @@
 
 //        private Cluster CreateCluster(int numNodes)
 //        {
-//            HashDictionary<int, Node> nodes = new HashMap<>();
+//            Dictionary<int, Node> nodes = new HashMap<>();
 //            for (int i = 0; i < numNodes; ++i)
 //            {
 //                nodes.Put(i, new Node(i, "localhost", 8121 + i));

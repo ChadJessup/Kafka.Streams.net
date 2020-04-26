@@ -18,10 +18,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             ).Get();
 
             var context = new MockProcessorContext();
-            context.setRecordMetadata("left", -1, -2, null, -3);
+            context.SetRecordMetadata("left", -1, -2, null, -3);
             join.Init(context);
             LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
-            join.Process(null, new Change<>("new", "old"));
+            join.Process(null, new Change<string>("new", "old"));
             LogCaptureAppender.unregister(appender);
 
             Assert.Equal(1.0, getMetricByName(context.metrics().metrics(), "skipped-records-total", "stream-metrics").metricValue());

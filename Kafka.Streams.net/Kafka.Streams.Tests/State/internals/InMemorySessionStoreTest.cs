@@ -63,10 +63,10 @@
 //            sessionStore.Put(new Windowed<string>("aa", new SessionWindow(100, 2 * RETENTION_PERIOD)), 4L);
 
 //            Assert.Equal(valuesToSet(iterator), new HashSet<>(Arrays.asList(1L, 2L, 3L, 4L)));
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 
 //            iterator.Close();
-//            Assert.False(sessionStore.findSessions("a", "b", 0L, 20L).HasNext());
+//            Assert.False(sessionStore.findSessions("a", "b", 0L, 20L).MoveNext());
 //        }
 //    }
 //}

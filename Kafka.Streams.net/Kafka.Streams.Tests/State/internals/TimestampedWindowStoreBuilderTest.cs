@@ -44,9 +44,9 @@
 //    public class TimestampedWindowStoreBuilderTest
 //    {
 
-//        (type = MockType.NICE)
+//        
 //    private WindowBytesStoreSupplier supplier;
-//        (type = MockType.NICE)
+//        
 //    private RocksDBTimestampedWindowStore inner;
 //        private TimestampedWindowStoreBuilder<string, string> builder;
 
@@ -171,25 +171,25 @@
 //        }
 
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfInnerIsNull()
 //        {
 //            new TimestampedWindowStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfKeySerdeIsNull()
 //        {
 //            new TimestampedWindowStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfValueSerdeIsNull()
 //        {
 //            new TimestampedWindowStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerIfTimeIsNull()
 //        {
 //            new TimestampedWindowStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);

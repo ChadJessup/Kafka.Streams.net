@@ -75,7 +75,7 @@
 //            cacheIterator, storeIterator
 //        );
 //        int index = 0;
-//        while (iterator.HasNext()) {
+//        while (iterator.MoveNext()) {
 //            KeyValuePair<long, byte[]> next = iterator.MoveNext();
 //            KeyValuePair<long, byte[]> expected = expectedKvPairs.Get(index++);
 //            assertArrayEquals(expected.Value, next.Value);

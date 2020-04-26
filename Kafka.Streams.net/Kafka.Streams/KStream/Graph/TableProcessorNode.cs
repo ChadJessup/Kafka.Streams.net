@@ -1,6 +1,7 @@
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {

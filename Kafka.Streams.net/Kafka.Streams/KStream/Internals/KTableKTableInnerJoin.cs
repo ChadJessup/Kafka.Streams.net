@@ -1,18 +1,18 @@
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableKTableInnerJoin<K, S, R, V1, V2> : KTableKTableAbstractJoin<K, S, R, V1, V2>
-        where S : IStateStore
+    public class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2>
     {
         private readonly string storeName;
         private readonly KeyValueMapper<K, V1, K> keyValueMapper = new KeyValueMapper<K, V1, K>((key, value) => key);
 
         public KTableKTableInnerJoin(
-            KTable<K, S, V1> table1,
-            KTable<K, S, V2> table2,
+            IKTable<K, V1> table1,
+            IKTable<K, V2> table2,
             ValueJoiner<V1, V2, R> joiner,
             string storeName)
             : base(table1, table2, joiner)

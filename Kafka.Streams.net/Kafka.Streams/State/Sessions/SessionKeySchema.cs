@@ -57,7 +57,7 @@ namespace Kafka.Streams.State.Sessions
         //{
         //    //        return iterator=>
         //    //{
-        //    //            while (iterator.HasNext())
+        //    //            while (iterator.MoveNext())
         //    //            {
         //    //                Bytes bytes = iterator.PeekNextKey();
         //    //                IWindowed<Bytes> windowedKey = SessionKeySchema.from(bytes);

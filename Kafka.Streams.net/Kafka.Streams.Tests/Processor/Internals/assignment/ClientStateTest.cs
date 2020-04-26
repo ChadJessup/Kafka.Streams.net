@@ -1,50 +1,24 @@
-namespace Kafka.Streams.Tests.Processor.Internals.assignment
+using Kafka.Streams.Tasks;
+using Kafka.Streams.Temporary;
+using Xunit;
+
+namespace Kafka.Streams.Tests.Processor.Internals.Assignment
 {
-    /*
-
-
-
-
-
-
-    *
-
-    *
-
-
-
-
-
-    */
-
-
-
-
-
-
-
-
-
-
-
-
-
     public class ClientStateTest
     {
-
         private ClientState client = new ClientState(1);
 
         [Fact]
         public void ShouldHaveNotReachedCapacityWhenAssignedTasksLessThanCapacity()
         {
-            Assert.False(client.reachedCapacity());
+            Assert.False(client.ReachedCapacity());
         }
 
         [Fact]
         public void ShouldHaveReachedCapacityWhenAssignedTasksGreaterThanOrEqualToCapacity()
         {
             client.Assign(new TaskId(0, 1), true);
-            Assert.True(client.reachedCapacity());
+            Assert.True(client.ReachedCapacity());
         }
 
 
@@ -54,10 +28,10 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId tid = new TaskId(0, 1);
 
             client.Assign(tid, true);
-            Assert.Equal(client.activeTasks(), Collections.singleton(tid));
-            Assert.Equal(client.assignedTasks(), Collections.singleton(tid));
-            Assert.Equal(client.assignedTaskCount(), 1);
-            Assert.Equal(client.standbyTasks().Count, 0);
+            Assert.Equal(client.ActiveTasks(), Collections.singleton(tid));
+            Assert.Equal(client.AssignedTasks(), Collections.singleton(tid));
+            Assert.Equal(1, client.AssignedTaskCount());
+            Assert.Equal(0, client.StandbyTasks().Count);
         }
 
         [Fact]
@@ -66,10 +40,10 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId tid = new TaskId(0, 1);
 
             client.Assign(tid, false);
-            Assert.Equal(client.assignedTasks(), Collections.singleton(tid));
-            Assert.Equal(client.standbyTasks(), Collections.singleton(tid));
-            Assert.Equal(client.assignedTaskCount(), 1);
-            Assert.Equal(client.activeTasks().Count, 0);
+            Assert.Equal(client.AssignedTasks(), Collections.singleton(tid));
+            Assert.Equal(client.StandbyTasks(), Collections.singleton(tid));
+            Assert.Equal(1, client.AssignedTaskCount());
+            Assert.Equal(0, client.ActiveTasks().Count);
         }
 
         [Fact]
@@ -78,9 +52,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId tid1 = new TaskId(0, 1);
             TaskId tid2 = new TaskId(0, 2);
 
-            client.addPreviousActiveTasks(Utils.mkSet(tid1, tid2));
-            Assert.Equal(client.previousActiveTasks(), Utils.mkSet(tid1, tid2));
-            Assert.Equal(client.previousAssignedTasks(), Utils.mkSet(tid1, tid2));
+            client.AddPreviousActiveTasks(Utils.mkSet(tid1, tid2));
+            Assert.Equal(client.PreviousActiveTasks(), Utils.mkSet(tid1, tid2));
+            Assert.Equal(client.PreviousAssignedTasks(), Utils.mkSet(tid1, tid2));
         }
 
         [Fact]
@@ -89,9 +63,9 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId tid1 = new TaskId(0, 1);
             TaskId tid2 = new TaskId(0, 2);
 
-            client.addPreviousStandbyTasks(Utils.mkSet(tid1, tid2));
-            Assert.Equal(client.previousActiveTasks().Count, 0);
-            Assert.Equal(client.previousAssignedTasks(), Utils.mkSet(tid1, tid2));
+            client.AddPreviousStandbyTasks(Utils.mkSet(tid1, tid2));
+            Assert.Equal(0, client.PreviousActiveTasks().Count);
+            Assert.Equal(client.PreviousAssignedTasks(), Utils.mkSet(tid1, tid2));
         }
 
         [Fact]
@@ -100,7 +74,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId tid = new TaskId(0, 2);
 
             client.Assign(tid, true);
-            Assert.True(client.hasAssignedTask(tid));
+            Assert.True(client.HasAssignedTask(tid));
         }
 
         [Fact]
@@ -109,7 +83,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
             TaskId tid = new TaskId(0, 2);
 
             client.Assign(tid, false);
-            Assert.True(client.hasAssignedTask(tid));
+            Assert.True(client.HasAssignedTask(tid));
         }
 
         [Fact]
@@ -117,7 +91,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
         {
 
             client.Assign(new TaskId(0, 2), true);
-            Assert.False(client.hasAssignedTask(new TaskId(0, 3)));
+            Assert.False(client.HasAssignedTask(new TaskId(0, 3)));
         }
 
         [Fact]
@@ -125,16 +99,16 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
         {
             ClientState c2 = new ClientState(1);
             client.Assign(new TaskId(0, 1), true);
-            Assert.True(c2.hasMoreAvailableCapacityThan(client));
-            Assert.False(client.hasMoreAvailableCapacityThan(c2));
+            Assert.True(c2.HasMoreAvailableCapacityThan(client));
+            Assert.False(client.HasMoreAvailableCapacityThan(c2));
         }
 
         [Fact]
         public void ShouldHaveMoreAvailableCapacityWhenCapacityHigherAndSameAssignedTaskCount()
         {
             ClientState c2 = new ClientState(2);
-            Assert.True(c2.hasMoreAvailableCapacityThan(client));
-            Assert.False(client.hasMoreAvailableCapacityThan(c2));
+            Assert.True(c2.HasMoreAvailableCapacityThan(client));
+            Assert.False(client.HasMoreAvailableCapacityThan(c2));
         }
 
         [Fact]
@@ -152,7 +126,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
                 client.Assign(new TaskId(0, i), true);
             }
 
-            Assert.True(c2.hasMoreAvailableCapacityThan(client));
+            Assert.True(c2.HasMoreAvailableCapacityThan(client));
         }
 
         [Fact]
@@ -166,21 +140,21 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
                 c2.Assign(new TaskId(0, i), true);
             }
             c2.Assign(new TaskId(0, 5), true);
-            Assert.True(c1.hasMoreAvailableCapacityThan(c2));
+            Assert.True(c1.HasMoreAvailableCapacityThan(c2));
         }
 
         [Fact]// (expected = IllegalStateException)
         public void ShouldThrowIllegalStateExceptionIfCapacityOfThisClientStateIsZero()
         {
             ClientState c1 = new ClientState(0);
-            c1.hasMoreAvailableCapacityThan(new ClientState(1));
+            c1.HasMoreAvailableCapacityThan(new ClientState(1));
         }
 
         [Fact]// (expected = IllegalStateException)
         public void ShouldThrowIllegalStateExceptionIfCapacityOfOtherClientStateIsZero()
         {
             ClientState c1 = new ClientState(1);
-            c1.hasMoreAvailableCapacityThan(new ClientState(0));
+            c1.HasMoreAvailableCapacityThan(new ClientState(0));
         }
 
         [Fact]
@@ -188,7 +162,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
         {
             ClientState client = new ClientState(1);
             client.Assign(new TaskId(0, 1), true);
-            Assert.True(client.hasUnfulfilledQuota(2));
+            Assert.True(client.HasUnfulfilledQuota(2));
         }
 
         [Fact]
@@ -196,7 +170,7 @@ namespace Kafka.Streams.Tests.Processor.Internals.assignment
         {
             ClientState client = new ClientState(1);
             client.Assign(new TaskId(0, 1), true);
-            Assert.False(client.hasUnfulfilledQuota(1));
+            Assert.False(client.HasUnfulfilledQuota(1));
         }
 
     }

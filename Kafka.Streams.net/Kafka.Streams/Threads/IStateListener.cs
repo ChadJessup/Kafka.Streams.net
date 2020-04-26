@@ -10,12 +10,17 @@ namespace Kafka.Streams.Threads
     public interface IStateListener<States> : IStateListener
        where States : Enum
     {
-        void OnChange(IThread<States> thread, States newState, States oldState);
-        new void OnChange<States1>(
-            IThread<States1> thread,
-            States1 newState,
-            States1 oldState)
-            where States1 : States;
+        void OnChange(
+            IThread<States> thread,
+            States newState,
+            States oldState);
+
+        void IStateListener.OnChange(
+            IThread thread,
+            object newState,
+            object oldState)
+        {
+        }
     }
 
     public interface IStateListener
@@ -26,11 +31,10 @@ namespace Kafka.Streams.Threads
          * @param newState new state
          * @param oldState previous state
          */
-        void OnChange<States>(
-            IThread<States> thread,
-            States newState,
-            States oldState)
-            where States : Enum;
+        void OnChange(
+            IThread thread,
+            object newState,
+            object oldState);
 
         void SetThreadStates(Dictionary<long, StreamThreadState> threadStates);
     }

@@ -74,9 +74,9 @@
 //        );
 //        private Metrics metrics = new Metrics();
 //        private MeteredSessionStore<string, string> metered;
-//        (type = MockType.NICE)
+//        
 //    private ISessionStore<Bytes, byte[]> inner;
-//        (type = MockType.NICE)
+//        
 //    private ProcessorContext context;
 
 //        private readonly string key = "a";
@@ -140,7 +140,7 @@
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator = metered.findSessions(key, 0, 0);
 //            Assert.Equal(iterator.MoveNext().Value, (key));
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //            iterator.Close();
 
 //            KafkaMetric metric = metric("Fetch-rate");
@@ -158,7 +158,7 @@
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator = metered.findSessions(key, key, 0, 0);
 //            Assert.Equal(iterator.MoveNext().Value, (key));
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //            iterator.Close();
 
 //            KafkaMetric metric = metric("Fetch-rate");
@@ -191,7 +191,7 @@
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator = metered.Fetch(key);
 //            Assert.Equal(iterator.MoveNext().Value, (key));
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //            iterator.Close();
 
 //            KafkaMetric metric = metric("Fetch-rate");
@@ -209,7 +209,7 @@
 
 //            IKeyValueIterator<IWindowed<string>, string> iterator = metered.Fetch(key, key);
 //            Assert.Equal(iterator.MoveNext().Value, (key));
-//            Assert.False(iterator.HasNext());
+//            Assert.False(iterator.MoveNext());
 //            iterator.Close();
 
 //            KafkaMetric metric = metric("Fetch-rate");
@@ -234,49 +234,49 @@
 //            Assert.Null(metered.FetchSession("a", 0, long.MaxValue));
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerOnPutIfKeyIsNull()
 //        {
 //            metered.Put(null, "a");
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerOnRemoveIfKeyIsNull()
 //        {
 //            metered.remove(null);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerOnFetchIfKeyIsNull()
 //        {
 //            metered.Fetch(null);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerOnFetchRangeIfFromIsNull()
 //        {
 //            metered.Fetch(null, "to");
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerOnFetchRangeIfToIsNull()
 //        {
 //            metered.Fetch("from", null);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerOnFindSessionsIfKeyIsNull()
 //        {
 //            metered.findSessions(null, 0, 0);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerOnFindSessionsRangeIfFromIsNull()
 //        {
 //            metered.findSessions(null, "a", 0, 0);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void ShouldThrowNullPointerOnFindSessionsRangeIfToIsNull()
 //        {
 //            metered.findSessions("a", null, 0, 0);

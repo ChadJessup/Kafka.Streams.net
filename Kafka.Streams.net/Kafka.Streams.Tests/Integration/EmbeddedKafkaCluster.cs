@@ -20,9 +20,8 @@ namespace Kafka.Streams.Tests.Integration
             this.v = v;
         }
 
-        internal void CreateTopics(string tOPIC_1, string tOPIC_2, string tOPIC_A, string tOPIC_C, string tOPIC_Y, string tOPIC_Z, string fA_TOPIC, string fOO_TOPIC)
+        internal void CreateTopics(params string[] topics)
         {
-            throw new NotImplementedException();
         }
 
         internal string bootstrapServers()

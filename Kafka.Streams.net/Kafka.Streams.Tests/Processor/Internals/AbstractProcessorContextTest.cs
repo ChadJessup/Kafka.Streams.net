@@ -6,6 +6,7 @@ using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
+using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
 using System;
 using Xunit;
@@ -47,7 +48,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             context.register(stateStore, null);
         }
 
-        [Fact]// (expected = NullPointerException)
+        [Fact]// (expected = NullReferenceException)
         public void ShouldThrowNullPointerOnRegisterIfStateStoreIsNull()
         {
             context.register(null, null);
@@ -188,19 +189,16 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
 
-        private static class TestProcessorContext : AbstractProcessorContext
+        private class TestProcessorContext : AbstractProcessorContext
         {
-            static StreamsConfig config;
-            //static {
-            config = getStreamsConfig();
+            private static StreamsConfig config { get; } = StreamsTestConfigs.GetStandardConfig();
             // Value must be a string to test className => class conversion
-            config.Put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBConfigSetter.getName());
-            config.Put("user.supplied.config", "user-suppplied-value");
-        //}
+            //config.Put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBConfigSetter.getName());
 
-        TestProcessorContext(MockStreamsMetrics metrics)
-            : base(new TaskId(0, 0), new StreamsConfig(config), metrics, new StateManagerStub(), new ThreadCache(new LogContext("Name "), 0, metrics))
+            public TestProcessorContext(KafkaStreamsContext context)
+                : base(context, new TaskId(0, 0), config, new StateManagerStub(), new ThreadCache(null, config))
             {
+                config.Set("user.supplied.config", "user-suppplied-value");
             }
 
 

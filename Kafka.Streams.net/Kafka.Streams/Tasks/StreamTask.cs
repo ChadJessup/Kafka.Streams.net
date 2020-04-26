@@ -140,7 +140,7 @@ namespace Kafka.Streams.Tasks
 
             if (recordCollector == null)
             {
-                this.recordCollector = new RecordCollectorImpl(
+                this.recordCollector = new RecordCollector(
                     id.ToString(),
                     productionExceptionHandler);
             }
@@ -153,8 +153,8 @@ namespace Kafka.Streams.Tasks
 
             this.streamTimePunctuationQueue = new PunctuationQueue();
             this.systemTimePunctuationQueue = new PunctuationQueue();
-            this.maxTaskIdle = TimeSpan.FromMilliseconds(config.GetLong(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG) ?? 0L);
-            this.maxBufferedSize = config.GetInt(StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIG) ?? 1000;
+            this.maxTaskIdle = TimeSpan.FromMilliseconds(config.GetLong(StreamsConfig.MAX_TASK_IDLE_MS_CONFIGConfig) ?? 0L);
+            this.maxBufferedSize = config.GetInt(StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIGConfig) ?? 1000;
 
             // initialize the consumed and committed offset cache
             this.consumedOffsets = new Dictionary<TopicPartition, long>();

@@ -1,328 +1,336 @@
+using Microsoft.Extensions.Logging;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Common.Utils;
+using Kafka.Streams.Processors.Internals;
+using System.Collections.Generic;
+using System.Threading;
+using Kafka.Streams.State.KeyValues;
+using System;
 
-//using Microsoft.Extensions.Logging;
-//using Kafka.Streams.Processors.Interfaces;
-//using Kafka.Common.Utils;
-//using Kafka.Streams.Processors.Internals;
-//using System.Collections.Generic;
-//using System.Threading;
+namespace Kafka.Streams.State.Internals
+{
+    public class CachingKeyValueStore
+        : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>,
+        IKeyValueStore<Bytes, byte[]>,
+        ICachedStateStore<byte[], byte[]>
+    {
+        private static ILogger LOG = new LoggerFactory().CreateLogger<CachingKeyValueStore>();
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class CachingKeyValueStore
-//        : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
-//        , IKeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
-//    {
-//        private static ILogger LOG = new LoggerFactory().CreateLogger<CachingKeyValueStore>();
+        private FlushListener<byte[], byte[]> flushListener;
+        private bool sendOldValues;
+        private string cacheName;
+        private ThreadCache cache;
+        private IInternalProcessorContext context;
+        private Thread streamThread;
+        //private ReadWriteLock @lock = new ReentrantReadWriteLock();
 
-//        private ICacheFlushListener<byte[], byte[]> flushListener;
-//        private bool sendOldValues;
-//        private string cacheName;
-//        private ThreadCache cache;
-//        private IInternalProcessorContext<Bytes, byte[]>  context;
-//        private Thread streamThread;
-//        //private ReadWriteLock @lock = new ReentrantReadWriteLock();
+        public CachingKeyValueStore(
+            KafkaStreamsContext context,
+            IKeyValueStore<Bytes, byte[]> underlying)
+            : base(context, underlying)
+        {
+        }
 
-//        public CachingKeyValueStore(IKeyValueStore<Bytes, byte[]> underlying)
-//            : base(underlying)
-//        {
-//        }
+        public override void Init(
+            IProcessorContext context,
+            IStateStore root)
+        {
+            this.initInternal(context);
+            base.Init(context, root);
+            // save the stream thread as we only ever want to trigger a Flush
+            // when the stream thread is the current thread.
+            this.streamThread = Thread.CurrentThread;
+        }
 
-//        public override void Init(IProcessorContext<Bytes, byte[]> context,
-//                         IStateStore root)
-//        {
-//            initInternal(context);
-//            base.Init(context, root);
-//            // save the stream thread as we only ever want to trigger a Flush
-//            // when the stream thread is the current thread.
-//            streamThread = Thread.CurrentThread;
-//        }
+        private void initInternal(IProcessorContext context)
+        {
+            this.context = (IInternalProcessorContext)context;
 
+            this.cache = this.context.GetCache();
+            this.cacheName = ThreadCache.NameSpaceFromTaskIdAndStore(context.TaskId.ToString(), this.Name);
+            //        cache.AddDirtyEntryFlushListener(cacheName, entries =>
+            //{
+            //    foreach (DirtyEntry entry in entries)
+            //    {
+            //        putAndMaybeForward(entry, (IInternalProcessorContext)context);
+            //    }
+            //});
+        }
 
-//        private void initInternal(IProcessorContext<Bytes, byte[]> context)
-//        {
-//            this.context = (IInternalProcessorContext<Bytes, byte[]>)context;
+        private void putAndMaybeForward(
+            DirtyEntry entry,
+            IInternalProcessorContext context)
+        {
+            if (this.flushListener != null)
+            {
+                byte[] rawNewValue = entry.NewValue;
+                byte[] rawOldValue = rawNewValue == null || this.sendOldValues ? this.Wrapped.Get(entry.Key) : null;
 
-//            this.cache = this.context.getCache();
-//            this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId.ToString(), Name);
-//            //        cache.AddDirtyEntryFlushListener(cacheName, entries =>
-//            //{
-//            //    foreach (DirtyEntry entry in entries)
-//            //    {
-//            //        putAndMaybeForward(entry, (IInternalProcessorContext)context);
-//            //    }
-//            //});
-//        }
+                // this is an optimization: if this key did not exist in underlying store and also not in the cache,
+                // we can skip flushing to downstream as well as writing to underlying store
+                if (rawNewValue != null || rawOldValue != null)
+                {
+                    // we need to get the old values if needed, and then Put to store, and then Flush
+                    this.Wrapped.Add(entry.Key, entry.NewValue);
 
-//        private void putAndMaybeForward(
-//            DirtyEntry entry,
-//            IInternalProcessorContext<Bytes, byte[]> context)
-//        {
-//            if (flushListener != null)
-//            {
-//                byte[] rawNewValue = entry.newValue();
-//                byte[] rawOldValue = rawNewValue == null || sendOldValues ? wrapped[entry.key()] : null;
+                    ProcessorRecordContext current = context.RecordContext;
+                    context.SetRecordContext(entry.Entry().context);
+                    try
+                    {
+                        this.flushListener?.Invoke(
+                            entry.Key,
+                            rawNewValue,
+                            this.sendOldValues ? rawOldValue : null,
+                            entry.Entry().context.Timestamp);
+                    }
+                    finally
+                    {
+                        context.SetRecordContext(current);
+                    }
+                }
+            }
+            else
+            {
+                this.Wrapped.Add(entry.Key, entry.NewValue);
+            }
+        }
 
-//                // this is an optimization: if this key did not exist in underlying store and also not in the cache,
-//                // we can skip flushing to downstream as well as writing to underlying store
-//                if (rawNewValue != null || rawOldValue != null)
-//                {
-//                    // we need to get the old values if needed, and then Put to store, and then Flush
-//                    wrapped.Add(entry.key(), entry.newValue());
+        public override bool SetFlushListener(FlushListener<byte[], byte[]> flushListener, bool sendOldValues)
+        {
+            this.flushListener = flushListener;
+            this.sendOldValues = sendOldValues;
 
-//                    ProcessorRecordContext current = context.recordContext();
-//                    context.setRecordContext(entry.entry().context);
-//                    try
-//                    {
-//                        flushListener.apply(
-//                            entry.key(),
-//                            rawNewValue,
-//                            sendOldValues ? rawOldValue : null,
-//                            entry.entry().context.timestamp());
-//                    }
-//                    finally
-//                    {
-//                        context.setRecordContext(current);
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                wrapped.Add(entry.key(), entry.newValue());
-//            }
-//        }
+            return true;
+        }
 
-//        public override bool setFlushListener(ICacheFlushListener<byte[], byte[]> flushListener,
-//                                        bool sendOldValues)
-//        {
-//            this.flushListener = flushListener;
-//            this.sendOldValues = sendOldValues;
-
-//            return true;
-//        }
-
-//        public override void Put(Bytes key,
-//                        byte[] value)
-//        {
+        public void Add(Bytes key, byte[] value)
+        {
 //            key = key ?? throw new ArgumentNullException(nameof(key));
-//            validateStoreOpen();
+//            this.ValidateStoreOpen();
 //            lock (writeLock().@lock)
 //            {
 //                try
 //                {
 //                    // for null bytes, we still Put it into cache indicating tombstones
-//                    putInternal(key, value);
+//                    this.putInternal(key, value);
 //                }
 //                finally
 //                {
 //                    @lock.writeLock().unlock();
 //                }
 //            }
-//        }
+        }
 
-//        private void putInternal(Bytes key,
-//                                 byte[] value)
-//        {
-//            cache.Add(
-//                cacheName,
-//                key,
-//                new LRUCacheEntry(
-//                    value,
-//                    context.Headers,
-//                    true,
-//                    context.offset(),
-//                    context.timestamp(),
-//                    context.Partition,
-//                    context.Topic));
-//        }
+        private void putInternal(Bytes key, byte[] value)
+        {
+            this.cache.Put(
+                this.cacheName,
+                key,
+                new LRUCacheEntry(
+                    value,
+                    this.context.Headers,
+                    true,
+                    this.context.Offset,
+                    this.context.Timestamp,
+                    this.context.Partition,
+                    this.context.Topic));
+        }
 
-//        public override byte[] putIfAbsent(Bytes key,
-//                                  byte[] value)
-//        {
-//            key = key ?? throw new ArgumentNullException(nameof(key));
-//            validateStoreOpen();
-//            @lock.writeLock().@lock();
-//            try
-//            {
-//                byte[] v = getInternal(key);
-//                if (v == null)
-//                {
-//                    putInternal(key, value);
-//                }
-//                return v;
-//            }
-//            finally
-//            {
-//                @lock.writeLock().unlock();
-//            }
-//        }
+        public byte[] PutIfAbsent(Bytes key, byte[] value)
+        {
+            //            key = key ?? throw new ArgumentNullException(nameof(key));
+            //            this.ValidateStoreOpen();
+            //            @lock.writeLock().@lock();
+            //            try
+            //            {
+            //                byte[] v = this.getInternal(key);
+            //                if (v == null)
+            //                {
+            //                    this.putInternal(key, value);
+            //                }
+            //
+            //                return v;
+            //            }
+            //            finally
+            //            {
+            //                @lock.writeLock().unlock();
+            //            }
 
-//        public override void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
-//        {
-//            validateStoreOpen();
-//            @lock.writeLock().@lock();
-//            try
-//            {
-//                foreach (KeyValuePair<Bytes, byte[]> entry in entries)
-//                {
-//                    entry.key = entry.key ?? throw new ArgumentNullException(nameof(entry.key));
-//                    Put(entry.key, entry.value);
-//                }
-//            }
-//            finally
-//            {
-//                @lock.writeLock().unlock();
-//            }
-//        }
+            return Array.Empty<byte>();
+        }
 
-//        public override byte[] delete(Bytes key)
-//        {
-//            key = key ?? throw new ArgumentNullException(nameof(key));
-//            validateStoreOpen();
-//            @lock.writeLock().@lock();
-//            try
-//            {
-//                return deleteInternal(key);
-//            }
-//            finally
-//            {
-//                @lock.writeLock().unlock();
-//            }
-//        }
+        public void PutAll(List<KeyValuePair<Bytes, byte[]>> entries)
+        {
+            this.ValidateStoreOpen();
+            //@lock.writeLock().@lock();
+            try
+            {
+                foreach (KeyValuePair<Bytes, byte[]> entry in entries)
+                {
+                    var key = entry.Key ?? throw new ArgumentNullException(nameof(entry.Key));
+                    this.Add(key, entry.Value);
+                }
+            }
+            finally
+            {
+              //  @lock.writeLock().unlock();
+            }
+        }
 
-//        private byte[] deleteInternal(Bytes key)
-//        {
-//            byte[] v = getInternal(key);
-//            putInternal(key, null);
-//            return v;
-//        }
+        public byte[] Delete(Bytes key)
+        {
+            key = key ?? throw new ArgumentNullException(nameof(key));
+            this.ValidateStoreOpen();
+            // @lock.writeLock().@lock();
+            try
+            {
+                return this.deleteInternal(key);
+            }
+            finally
+            {
+                // @lock.writeLock().unlock();
+            }
+        }
 
-//        public override byte[] get(Bytes key)
-//        {
-//            key = key ?? throw new ArgumentNullException(nameof(key));
-//            validateStoreOpen();
-//            Lock theLock;
-//            if (Thread.CurrentThread.Equals(streamThread))
-//            {
-//                theLock = @lock.writeLock();
-//            }
-//            else
-//            {
-//                theLock = @lock.readLock();
-//            }
-//            lock (theLock.@lock)
-//            {
-//                try
-//                {
-//                    return getInternal(key);
-//                }
-//                finally
-//                {
-//                    theLock.unlock();
-//                }
-//            }
-//        }
+        private byte[] deleteInternal(Bytes key)
+        {
+            byte[] v = this.getInternal(key);
+            this.putInternal(key, null);
+            return v;
+        }
 
-//        private byte[] getInternal(Bytes key)
-//        {
-//            LRUCacheEntry entry = null;
-//            if (cache != null)
-//            {
-//                entry = cache[cacheName, key];
-//            }
-//            if (entry == null)
-//            {
-//                byte[] RawValue = wrapped[key];
-//                if (RawValue == null)
-//                {
-//                    return null;
-//                }
-//                // only update the cache if this call is on the streamThread
-//                // as we don't want other threads to trigger an eviction/Flush
-//                if (Thread.CurrentThread.Equals(streamThread))
-//                {
-//                    cache.Add(cacheName, key, new LRUCacheEntry(RawValue));
-//                }
-//                return RawValue;
-//            }
-//            else
-//            {
-//                return entry.value();
-//            }
-//        }
+        public byte[] Get(Bytes key)
+        {
+            key = key ?? throw new ArgumentNullException(nameof(key));
+            this.ValidateStoreOpen();
+            object theLock = new object();
 
-//        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
-//                                                     Bytes to)
-//        {
-//            if (from.CompareTo(to) > 0)
-//            {
-//                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
-//                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
-//                    "Note that the built-in numerical serdes do not follow this for negative numbers");
-//                return KeyValueIterators.emptyIterator();
-//            }
+            if (Thread.CurrentThread.Equals(this.streamThread))
+            {
+                //theLock = @lock.writeLock();
+            }
+            else
+            {
+                //theLock = @lock.readLock();
+            }
+            //lock (theLock.@lock)
+            {
+                try
+                {
+                    return this.getInternal(key);
+                }
+                finally
+                {
+              //      theLock.unlock();
+                }
+            }
+        }
 
-//            validateStoreOpen();
-//            IKeyValueIterator<Bytes, byte[]> storeIterator = wrapped.Range(from, to);
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.Range(cacheName, from, to);
-//            return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
-//        }
+        private byte[] getInternal(Bytes key)
+        {
+            LRUCacheEntry entry = null;
+            if (this.cache != null)
+            {
+                entry = this.cache.Get(this.cacheName, key);
+            }
+            if (entry == null)
+            {
+                byte[] RawValue = this.Wrapped.Get(key);
+                if (RawValue == null)
+                {
+                    return null;
+                }
+                // only update the cache if this call is on the streamThread
+                // as we don't want other threads to trigger an eviction/Flush
+                if (Thread.CurrentThread.Equals(this.streamThread))
+                {
+                    this.cache.Put(this.cacheName, key, new LRUCacheEntry(RawValue));
+                }
 
-//        public override IKeyValueIterator<Bytes, byte[]> All()
-//        {
-//            validateStoreOpen();
-//            IKeyValueIterator<Bytes, byte[]> storeIterator =
-//                new DelegatingPeekingKeyValueIterator<>(this.Name, wrapped.All());
-//            MemoryLRUCacheBytesIterator cacheIterator = cache.All(cacheName);
-//            return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
-//        }
+                return RawValue;
+            }
+            else
+            {
+                return entry.Value();
+            }
+        }
 
-//        public override long approximateNumEntries
-//        {
-//            validateStoreOpen();
-//            lock (readLock().@lock)
-//            {
-//                try
-//                {
-//                    return wrapped.approximateNumEntries;
-//                }
-//                finally
-//                {
-//                    @lock.readLock().unlock();
-//                }
-//            }
-//        }
+        public IKeyValueIterator<Bytes, byte[]> Range(Bytes from, Bytes to)
+        {
+            if (from.CompareTo(to) > 0)
+            {
+                LOG.LogWarning("Returning empty iterator for Fetch with invalid key range: from > to. "
+                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
+                    "Note that the built-in numerical serdes do not follow this for negative numbers");
 
-//        public override void Flush()
-//        {
-//            @lock.writeLock().@lock();
-//            try
-//            {
-//                cache.Flush(cacheName);
-//                base.Flush();
-//            }
-//            finally
-//            {
-//                @lock.writeLock().unlock();
-//            }
-//        }
+                return null;// KeyValueIterators<Bytes, byte[]>.EMPTY_ITERATOR;
+            }
 
-//        public override void Close()
-//        {
-//            try
-//            {
-//                Flush();
-//            }
-//            finally
-//            {
-//                try
-//                {
-//                    base.Close();
-//                }
-//                finally
-//                {
-//                    cache.Close(cacheName);
-//                }
-//            }
-//        }
-//    }
-//}
+            this.ValidateStoreOpen();
+            IKeyValueIterator<Bytes, byte[]> storeIterator = this.Wrapped.Range(from, to);
+            MemoryLRUCacheBytesIterator cacheIterator = this.cache.Range(this.cacheName, from, to);
+            return null; //new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
+        }
+
+        public IKeyValueIterator<Bytes, byte[]> All()
+        {
+            ValidateStoreOpen();
+            IKeyValueIterator<Bytes, byte[]> storeIterator =
+                new DelegatingPeekingKeyValueIterator<Bytes, byte[]>(this.Name, this.Wrapped.All());
+            MemoryLRUCacheBytesIterator cacheIterator = this.cache.All(this.cacheName);
+            return null; //new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
+        }
+
+        public long approximateNumEntries
+        {
+            get
+            {
+                ValidateStoreOpen();
+                //lock (readLock().@lock)
+                {
+                    try
+                    {
+                        return this.Wrapped.approximateNumEntries;
+                    }
+                    finally
+                    {
+                        // @lock.readLock().unlock();
+                    }
+                }
+            }
+        }
+
+        public override void Flush()
+        {
+            //@lock.writeLock().@lock();
+            try
+            {
+                this.cache.Flush(this.cacheName);
+                base.Flush();
+            }
+            finally
+            {
+              //  @lock.writeLock().unlock();
+            }
+        }
+
+        public override void Close()
+        {
+            try
+            {
+                this.Flush();
+            }
+            finally
+            {
+                try
+                {
+                    base.Close();
+                }
+                finally
+                {
+                    this.cache.Close(this.cacheName);
+                }
+            }
+        }
+    }
+}

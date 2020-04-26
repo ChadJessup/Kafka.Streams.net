@@ -77,8 +77,8 @@
 
 //        private static Dictionary<int, string> GetContents(IKeyValueIterator<int, string> iter)
 //        {
-//            HashDictionary<int, string> result = new HashMap<>();
-//            while (iter.HasNext())
+//            Dictionary<int, string> result = new HashMap<>();
+//            while (iter.MoveNext())
 //            {
 //                KeyValuePair<int, string> entry = iter.MoveNext();
 //                result.Put(entry.Key, entry.Value);
@@ -190,7 +190,7 @@
 //        Assert.False(driver.flushedEntryRemoved(4));
 //        Assert.True(driver.flushedEntryRemoved(5));
 
-//        HashDictionary<int, string> expectedContents = new HashMap<>();
+//        Dictionary<int, string> expectedContents = new HashMap<>();
 //        expectedContents.Put(2, "two");
 //        expectedContents.Put(4, "four");
 
@@ -252,7 +252,7 @@
 //        // Create the store, which should register with the context and automatically
 //        // receive the restore entries ...
 //        store = createKeyValueStore(driver.context);
-//        context.restore(store.Name(), driver.restoredEntries());
+//        context.Restore(store.Name(), driver.restoredEntries());
 
 //        // Verify that the store's contents were properly restored ...
 //        Assert.Equal(0, driver.checkForRestoredEntries(store));
@@ -275,7 +275,7 @@
 //        // Create the store, which should register with the context and automatically
 //        // receive the restore entries ...
 //        store = createKeyValueStore(driver.context);
-//        context.restore(store.Name(), driver.restoredEntries());
+//        context.Restore(store.Name(), driver.restoredEntries());
 //        // Verify that the store's contents were properly restored ...
 //        Assert.Equal(0, driver.checkForRestoredEntries(store));
 
@@ -312,7 +312,7 @@
 //        Assert.False(driver.flushedEntryRemoved(4));
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //    {
 //        store.Put(null, "anyValue");
@@ -324,7 +324,7 @@
 //        store.Put(1, null);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnPutIfAbsentNullKey()
 //    {
 //        store.PutIfAbsent(null, "anyValue");
@@ -336,7 +336,7 @@
 //        store.PutIfAbsent(1, null);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnPutAllNullKey()
 //    {
 //        store.PutAll(Collections.singletonList(KeyValuePair.Create(null, "anyValue")));
@@ -348,25 +348,25 @@
 //        store.PutAll(Collections.singletonList(KeyValuePair.Create(1, null)));
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnDeleteNullKey()
 //    {
 //        store.Delete(null);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnGetNullKey()
 //    {
 //        store.Get(null);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
 //    {
 //        store.Range(null, 2);
 //    }
 
-//    [Fact]// (expected = NullPointerException)
+//    [Fact]// (expected = NullReferenceException)
 //    public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
 //    {
 //        store.Range(2, null);
@@ -399,7 +399,7 @@
 //        List<KeyValuePair<int, string>> expectedReturned = Arrays.asList(KeyValuePair.Create(1, "one"), KeyValuePair.Create(2, "two"));
 //        Iterator<KeyValuePair<int, string>> iterator = store.All();
 
-//        while (iterator.HasNext())
+//        while (iterator.MoveNext())
 //        {
 //            allReturned.Add(iterator.MoveNext());
 //        }
@@ -429,7 +429,7 @@
 //        Iterator<KeyValuePair<int, string>> iterator = store.Range(2, 2);
 
 //        Assert.Equal(iterator.MoveNext().Value, store.Get(2));
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 //    }
 
 //    [Fact]
@@ -451,7 +451,7 @@
 //        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
 //        IKeyValueIterator<int, string> iterator = store.Range(-1, 1);
-//        Assert.False(iterator.HasNext());
+//        Assert.False(iterator.MoveNext());
 
 //        List<string> messages = appender.getMessages();
 //        Assert.Equal(messages, hasItem("Returning empty iterator for Fetch with invalid key range: from > to. "

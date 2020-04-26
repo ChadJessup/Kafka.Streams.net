@@ -23,7 +23,7 @@ namespace Kafka.Streams.State.Internals
 
         public Bytes? PeekNextKey()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<Bytes, LRUCacheEntry>? PeekNext()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new IndexOutOfRangeException();
             }
@@ -59,7 +59,7 @@ namespace Kafka.Streams.State.Internals
 
         public KeyValuePair<Bytes, LRUCacheEntry>? Next()
         {
-            if (!this.HasNext())
+            if (!this.MoveNext())
             {
                 throw new IndexOutOfRangeException();
             }

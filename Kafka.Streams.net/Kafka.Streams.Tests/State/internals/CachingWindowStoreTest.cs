@@ -80,7 +80,7 @@
 //            int count = 0;
 
 //            IKeyValueIterator<IWindowed<string>, string> All = store.All();
-//            while (All.HasNext())
+//            while (All.MoveNext())
 //            {
 //                count++;
 //                All.MoveNext();
@@ -95,7 +95,7 @@
 //            int count = 0;
 
 //            IKeyValueIterator<IWindowed<string>, string> All = store.All();
-//            while (All.HasNext())
+//            while (All.MoveNext())
 //            {
 //                count++;
 //                All.MoveNext();
@@ -162,12 +162,12 @@
 //    Assert.Equal(cachingStore.Fetch(bytesKey("c"), 10), (null));
 //    Assert.Equal(cachingStore.Fetch(bytesKey("a"), 0), (null));
 
-//    IWindowStoreIterator<byte[]> a = cachingStore.Fetch(bytesKey("a"), ofEpochMilli(10), ofEpochMilli(10));
-//    IWindowStoreIterator<byte[]> b = cachingStore.Fetch(bytesKey("b"), ofEpochMilli(10), ofEpochMilli(10));
+//    IWindowStoreIterator<byte[]> a = cachingStore.Fetch(bytesKey("a"), TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
+//    IWindowStoreIterator<byte[]> b = cachingStore.Fetch(bytesKey("b"), TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
 //    verifyKeyValue(a.MoveNext(), DEFAULT_TIMESTAMP, "a");
 //    verifyKeyValue(b.MoveNext(), DEFAULT_TIMESTAMP, "b");
-//    Assert.False(a.HasNext());
-//    Assert.False(b.HasNext());
+//    Assert.False(a.MoveNext());
+//    Assert.False(b.MoveNext());
 //    Assert.Equal(2, cache.Count);
 //}
 
@@ -191,7 +191,7 @@
 
 //private string StringFrom(byte[] from)
 //{
-//    return Serdes.String().deserializer().Deserialize("", from);
+//    return Serdes.String().Deserializer.Deserialize("", from);
 //}
 
 //[Fact]
@@ -201,7 +201,7 @@
 //    cachingStore.Put(bytesKey("b"), bytesValue("b"));
 
 //    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator =
-//        cachingStore.Fetch(bytesKey("a"), bytesKey("b"), ofEpochMilli(10), ofEpochMilli(10));
+//        cachingStore.Fetch(bytesKey("a"), bytesKey("b"), TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
 //    verifyWindowedKeyValue(
 //        iterator.MoveNext(),
 //        new Windowed<>(bytesKey("a"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
@@ -210,7 +210,7 @@
 //        iterator.MoveNext(),
 //        new Windowed<>(bytesKey("b"), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //        "b");
-//    Assert.False(iterator.HasNext());
+//    Assert.False(iterator.MoveNext());
 //    Assert.Equal(2, cache.Count);
 //}
 
@@ -235,7 +235,7 @@
 //            new Windowed<>(bytesKey(s), new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
 //            s);
 //    }
-//    Assert.False(iterator.HasNext());
+//    Assert.False(iterator.MoveNext());
 //}
 
 //[Fact]
@@ -249,7 +249,7 @@
 //    }
 
 //    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator =
-//        cachingStore.FetchAll(ofEpochMilli(0), ofEpochMilli(7));
+//        cachingStore.FetchAll(TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(7));
 //    for (int i = 0; i < array.Length; i++)
 //    {
 //        string str = array[i];
@@ -258,10 +258,10 @@
 //            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
-//    Assert.False(iterator.HasNext());
+//    Assert.False(iterator.MoveNext());
 
 //    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator1 =
-//        cachingStore.FetchAll(ofEpochMilli(2), ofEpochMilli(4));
+//        cachingStore.FetchAll(TimeSpan.FromMilliseconds(2), TimeSpan.FromMilliseconds(4));
 //    for (int i = 2; i <= 4; i++)
 //    {
 //        string str = array[i];
@@ -270,10 +270,10 @@
 //            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
-//    Assert.False(iterator1.HasNext());
+//    Assert.False(iterator1.MoveNext());
 
 //    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator2 =
-//        cachingStore.FetchAll(ofEpochMilli(5), ofEpochMilli(7));
+//        cachingStore.FetchAll(TimeSpan.FromMilliseconds(5), TimeSpan.FromMilliseconds(7));
 //    for (int i = 5; i <= 7; i++)
 //    {
 //        string str = array[i];
@@ -282,7 +282,7 @@
 //            new Windowed<>(bytesKey(str), new TimeWindow(i, i + WINDOW_SIZE)),
 //            str);
 //    }
-//    Assert.False(iterator2.HasNext());
+//    Assert.False(iterator2.MoveNext());
 //}
 
 //[Fact]
@@ -297,7 +297,7 @@
 //    KeyValuePair<Bytes, byte[]> next = iter.MoveNext();
 //    Assert.Equal(DEFAULT_TIMESTAMP, keySchema.segmentTimestamp(next.Key));
 //    assertArrayEquals("0".getBytes(), next.Value);
-//    Assert.False(iter.HasNext());
+//    Assert.False(iter.MoveNext());
 //    Assert.Equal(added - 1, cache.Count);
 //}
 
@@ -390,9 +390,9 @@
 //    cachingStore.Put(bytesKey("1"), bytesValue("b"), DEFAULT_TIMESTAMP);
 
 //    IWindowStoreIterator<byte[]> Fetch =
-//        cachingStore.Fetch(bytesKey("1"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP));
+//        cachingStore.Fetch(bytesKey("1"), TimeSpan.FromMilliseconds(DEFAULT_TIMESTAMP), TimeSpan.FromMilliseconds(DEFAULT_TIMESTAMP));
 //    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP, "b");
-//    Assert.False(Fetch.HasNext());
+//    Assert.False(Fetch.MoveNext());
 //}
 
 //[Fact]
@@ -402,10 +402,10 @@
 //    cachingStore.Put(bytesKey("1"), bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
 
 //    IWindowStoreIterator<byte[]> Fetch =
-//        cachingStore.Fetch(bytesKey("1"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//        cachingStore.Fetch(bytesKey("1"), TimeSpan.FromMilliseconds(DEFAULT_TIMESTAMP), TimeSpan.FromMilliseconds(DEFAULT_TIMESTAMP + WINDOW_SIZE));
 //    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP, "a");
 //    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP + WINDOW_SIZE, "b");
-//    Assert.False(Fetch.HasNext());
+//    Assert.False(Fetch.MoveNext());
 //}
 
 //[Fact]
@@ -415,10 +415,10 @@
 //    underlying.Put(WindowKeySchema.toStoreKeyBinary(key, DEFAULT_TIMESTAMP, 0), "a".getBytes());
 //    cachingStore.Put(key, bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
 //    IWindowStoreIterator<byte[]> Fetch =
-//        cachingStore.Fetch(bytesKey("1"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//        cachingStore.Fetch(bytesKey("1"), TimeSpan.FromMilliseconds(DEFAULT_TIMESTAMP), TimeSpan.FromMilliseconds(DEFAULT_TIMESTAMP + WINDOW_SIZE));
 //    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP, "a");
 //    verifyKeyValue(Fetch.MoveNext(), DEFAULT_TIMESTAMP + WINDOW_SIZE, "b");
-//    Assert.False(Fetch.HasNext());
+//    Assert.False(Fetch.MoveNext());
 //}
 
 //[Fact]
@@ -429,7 +429,7 @@
 //    cachingStore.Put(key, bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
 
 //    IKeyValueIterator<IWindowed<Bytes>, byte[]> fetchRange =
-//        cachingStore.Fetch(key, bytesKey("2"), ofEpochMilli(DEFAULT_TIMESTAMP), ofEpochMilli(DEFAULT_TIMESTAMP + WINDOW_SIZE));
+//        cachingStore.Fetch(key, bytesKey("2"), TimeSpan.FromMilliseconds(DEFAULT_TIMESTAMP), TimeSpan.FromMilliseconds(DEFAULT_TIMESTAMP + WINDOW_SIZE));
 //    verifyWindowedKeyValue(
 //        fetchRange.MoveNext(),
 //        new Windowed<>(key, new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE)),
@@ -438,7 +438,7 @@
 //        fetchRange.MoveNext(),
 //        new Windowed<>(key, new TimeWindow(DEFAULT_TIMESTAMP + WINDOW_SIZE, DEFAULT_TIMESTAMP + WINDOW_SIZE + WINDOW_SIZE)),
 //        "b");
-//    Assert.False(fetchRange.HasNext());
+//    Assert.False(fetchRange.MoveNext());
 //}
 
 //[Fact]
@@ -454,14 +454,14 @@
 //public void ShouldThrowIfTryingToFetchFromClosedCachingStore()
 //{
 //    cachingStore.Close();
-//    cachingStore.Fetch(bytesKey("a"), ofEpochMilli(0), ofEpochMilli(10));
+//    cachingStore.Fetch(bytesKey("a"), TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(10));
 //}
 
 //[Fact]// (expected = InvalidStateStoreException)
 //public void ShouldThrowIfTryingToFetchRangeFromClosedCachingStore()
 //{
 //    cachingStore.Close();
-//    cachingStore.Fetch(bytesKey("a"), bytesKey("b"), ofEpochMilli(0), ofEpochMilli(10));
+//    cachingStore.Fetch(bytesKey("a"), bytesKey("b"), TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(10));
 //}
 
 //[Fact]// (expected = InvalidStateStoreException)
@@ -486,7 +486,7 @@
 //        KeyValuePair.Create(SEGMENT_INTERVAL, bytesValue("0005"))
 //    );
 //    List<KeyValuePair<long, byte[]>> actual =
-//        toList(cachingStore.Fetch(bytesKey("a"), ofEpochMilli(0), ofEpochMilli(long.MaxValue)));
+//        toList(cachingStore.Fetch(bytesKey("a"), TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue)));
 //    verifyKeyValueList(expected, actual);
 //}
 
@@ -505,14 +505,14 @@
 //            windowedPair("a", "0003", 1),
 //            windowedPair("a", "0005", SEGMENT_INTERVAL)
 //        ),
-//        toList(cachingStore.Fetch(bytesKey("a"), bytesKey("a"), ofEpochMilli(0), ofEpochMilli(long.MaxValue)))
+//        toList(cachingStore.Fetch(bytesKey("a"), bytesKey("a"), TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue)))
 //    );
 
 //    verifyKeyValueList(
 //        Arrays.asList(
 //            windowedPair("aa", "0002", 0),
 //            windowedPair("aa", "0004", 1)),
-//        toList(cachingStore.Fetch(bytesKey("aa"), bytesKey("aa"), ofEpochMilli(0), ofEpochMilli(long.MaxValue)))
+//        toList(cachingStore.Fetch(bytesKey("aa"), bytesKey("aa"), TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue)))
 //    );
 
 //    verifyKeyValueList(
@@ -523,7 +523,7 @@
 //            windowedPair("aa", "0004", 1),
 //            windowedPair("a", "0005", SEGMENT_INTERVAL)
 //        ),
-//        toList(cachingStore.Fetch(bytesKey("a"), bytesKey("aa"), ofEpochMilli(0), ofEpochMilli(long.MaxValue)))
+//        toList(cachingStore.Fetch(bytesKey("a"), bytesKey("aa"), TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(long.MaxValue)))
 //    );
 //}
 
@@ -540,11 +540,11 @@
 
 //    Assert.Equal(stringFrom(singleKeyIterator.MoveNext().Value), stringFrom(keyRangeIterator.MoveNext().Value));
 //    Assert.Equal(stringFrom(singleKeyIterator.MoveNext().Value), stringFrom(keyRangeIterator.MoveNext().Value));
-//    Assert.False(singleKeyIterator.HasNext());
-//    Assert.False(keyRangeIterator.HasNext());
+//    Assert.False(singleKeyIterator.MoveNext());
+//    Assert.False(keyRangeIterator.MoveNext());
 //}
 
-//[Fact]// (expected = NullPointerException)
+//[Fact]// (expected = NullReferenceException)
 //public void ShouldThrowNullPointerExceptionOnPutNullKey()
 //{
 //    cachingStore.Put(null, bytesValue("anyValue"));
@@ -556,22 +556,22 @@
 //    cachingStore.Put(bytesKey("a"), null);
 //}
 
-//[Fact]// (expected = NullPointerException)
+//[Fact]// (expected = NullReferenceException)
 //public void ShouldThrowNullPointerExceptionOnFetchNullKey()
 //{
-//    cachingStore.Fetch(null, ofEpochMilli(1L), ofEpochMilli(2L));
+//    cachingStore.Fetch(null, TimeSpan.FromMilliseconds(1L), TimeSpan.FromMilliseconds(2L));
 //}
 
-//[Fact]// (expected = NullPointerException)
+//[Fact]// (expected = NullReferenceException)
 //public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
 //{
-//    cachingStore.Fetch(null, bytesKey("anyTo"), ofEpochMilli(1L), ofEpochMilli(2L));
+//    cachingStore.Fetch(null, bytesKey("anyTo"), TimeSpan.FromMilliseconds(1L), TimeSpan.FromMilliseconds(2L));
 //}
 
-//[Fact]// (expected = NullPointerException)
+//[Fact]// (expected = NullReferenceException)
 //public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
 //{
-//    cachingStore.Fetch(bytesKey("anyFrom"), null, ofEpochMilli(1L), ofEpochMilli(2L));
+//    cachingStore.Fetch(bytesKey("anyFrom"), null, TimeSpan.FromMilliseconds(1L), TimeSpan.FromMilliseconds(2L));
 //}
 
 //[Fact]
@@ -584,7 +584,7 @@
 //    Bytes keyTo = Bytes.Wrap(Serdes.Int().Serializer.Serialize("", 1));
 
 //    IKeyValueIterator<IWindowed<Bytes>, byte[]> iterator = cachingStore.Fetch(keyFrom, keyTo, 0L, 10L);
-//    Assert.False(iterator.HasNext());
+//    Assert.False(iterator.MoveNext());
 
 //    List<string> messages = appender.getMessages();
 //    Assert.Equal(messages, hasItem("Returning empty iterator for Fetch with invalid key range: from > to. "

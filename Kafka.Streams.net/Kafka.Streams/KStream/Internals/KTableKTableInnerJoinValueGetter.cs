@@ -37,7 +37,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (value1 != null)
             {
-                var valueAndTimestamp2 = this.valueGetter2.Get(this.keyValueMapper.Apply(key, value1));
+                var valueAndTimestamp2 = this.valueGetter2.Get(this.keyValueMapper(key, value1));
                 V2 value2 = ValueAndTimestamp.GetValueOrNull(valueAndTimestamp2);
 
                 if (value2 != null)

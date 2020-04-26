@@ -119,7 +119,7 @@
 
 //            bytesStore.remove(serializeKey(new IWindowed<>("a", windows[0])));
 //            IKeyValueIterator<Bytes, byte[]> value = bytesStore.Fetch(Bytes.Wrap("a".getBytes()), 0, 100);
-//            Assert.False(value.HasNext());
+//            Assert.False(value.MoveNext());
 //        }
 
 //        [Fact]
@@ -427,7 +427,7 @@
 //        {
 //            List<KeyValuePair<IWindowed<string>, long>> results = new List<KeyValuePair<IWindowed<string>, long>>();
 //            StateSerdes<string, long> stateSerdes = StateSerdes.WithBuiltinTypes("dummy", string, long);
-//            while (iterator.HasNext())
+//            while (iterator.MoveNext())
 //            {
 //                KeyValuePair<Bytes, byte[]> next = iterator.MoveNext();
 //                if (schema is WindowKeySchema)

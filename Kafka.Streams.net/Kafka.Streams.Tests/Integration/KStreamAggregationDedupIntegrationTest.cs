@@ -1,12 +1,15 @@
 using Confluent.Kafka;
 using Kafka.Streams;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Tests.Mocks;
+using Kafka.Streams.Threads.KafkaStreams;
+using System;
 using System.Collections.Generic;
+using Xunit;
 
 namespace Kafka.Streams.Tests.Integration
 {
@@ -23,10 +26,10 @@ namespace Kafka.Streams.Tests.Integration
         public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
 
         private readonly MockTime mockTime = CLUSTER.time;
-        private static volatile int testNo = new int(0);
+        private static volatile int testNo = 0;
         private StreamsBuilder builder;
         private StreamsConfig streamsConfiguration;
-        private KafkaStreamsThread kafkaStreams;
+        private IKafkaStreamsThread kafkaStreams;
         private string streamOneInput;
         private string outputTopic;
         private KGroupedStream<string, string> groupedStream;
@@ -83,11 +86,11 @@ namespace Kafka.Streams.Tests.Integration
                     new Serdes.String().Deserializer(),
                     new Serdes.String().Deserializer(),
                     Arrays.asList(
-                        new KeyValueTimestamp<>("A", "A:A", timestamp),
-                        new KeyValueTimestamp<>("B", "B:B", timestamp),
-                        new KeyValueTimestamp<>("C", "C:C", timestamp),
-                        new KeyValueTimestamp<>("D", "D:D", timestamp),
-                        new KeyValueTimestamp<>("E", "E:E", timestamp)));
+                        new KeyValueTimestamp<string, string>("A", "A:A", timestamp),
+                        new KeyValueTimestamp<string, string>("B", "B:B", timestamp),
+                        new KeyValueTimestamp<string, string>("C", "C:C", timestamp),
+                        new KeyValueTimestamp<string, string>("D", "D:D", timestamp),
+                        new KeyValueTimestamp<string, string>("E", "E:E", timestamp)));
         }
 
         [Fact]
@@ -114,16 +117,16 @@ namespace Kafka.Streams.Tests.Integration
                     new Serdes.String().Deserializer(),
                     new Serdes.String().Deserializer(),
                     Arrays.asList(
-                        new KeyValueTimestamp<>("A@" + firstBatchWindow, "A", firstBatchTimestamp),
-                        new KeyValueTimestamp<>("A@" + secondBatchWindow, "A:A", secondBatchTimestamp),
-                        new KeyValueTimestamp<>("B@" + firstBatchWindow, "B", firstBatchTimestamp),
-                        new KeyValueTimestamp<>("B@" + secondBatchWindow, "B:B", secondBatchTimestamp),
-                        new KeyValueTimestamp<>("C@" + firstBatchWindow, "C", firstBatchTimestamp),
-                        new KeyValueTimestamp<>("C@" + secondBatchWindow, "C:C", secondBatchTimestamp),
-                        new KeyValueTimestamp<>("D@" + firstBatchWindow, "D", firstBatchTimestamp),
-                        new KeyValueTimestamp<>("D@" + secondBatchWindow, "D:D", secondBatchTimestamp),
-                        new KeyValueTimestamp<>("E@" + firstBatchWindow, "E", firstBatchTimestamp),
-                        new KeyValueTimestamp<>("E@" + secondBatchWindow, "E:E", secondBatchTimestamp)
+                        new KeyValueTimestamp<string, string>("A@" + firstBatchWindow, "A", firstBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("A@" + secondBatchWindow, "A:A", secondBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("B@" + firstBatchWindow, "B", firstBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("B@" + secondBatchWindow, "B:B", secondBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("C@" + firstBatchWindow, "C", firstBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("C@" + secondBatchWindow, "C:C", secondBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("D@" + firstBatchWindow, "D", firstBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("D@" + secondBatchWindow, "D:D", secondBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("E@" + firstBatchWindow, "E", firstBatchTimestamp),
+                        new KeyValueTimestamp<string, string>("E@" + secondBatchWindow, "E:E", secondBatchTimestamp)
                     )
             );
         }
@@ -131,7 +134,7 @@ namespace Kafka.Streams.Tests.Integration
         [Fact]
         public void ShouldGroupByKey()
         {// throws Exception
-            long timestamp = mockTime.NowAsEpochMilliseconds; ;
+            long timestamp = mockTime.NowAsEpochMilliseconds;
             ProduceMessages(timestamp);
             ProduceMessages(timestamp);
 
@@ -149,11 +152,11 @@ namespace Kafka.Streams.Tests.Integration
                     new Serdes.String().Deserializer(),
                     new LongDeserializer(),
                     Arrays.asList(
-                        new KeyValueTimestamp<>("1@" + window, 2L, timestamp),
-                        new KeyValueTimestamp<>("2@" + window, 2L, timestamp),
-                        new KeyValueTimestamp<>("3@" + window, 2L, timestamp),
-                        new KeyValueTimestamp<>("4@" + window, 2L, timestamp),
-                        new KeyValueTimestamp<>("5@" + window, 2L, timestamp)
+                        new KeyValueTimestamp<string, string>("1@" + window, 2L, timestamp),
+                        new KeyValueTimestamp<string, string>("2@" + window, 2L, timestamp),
+                        new KeyValueTimestamp<string, string>("3@" + window, 2L, timestamp),
+                        new KeyValueTimestamp<string, string>("4@" + window, 2L, timestamp),
+                        new KeyValueTimestamp<string, string>("5@" + window, 2L, timestamp)
                     )
             );
         }
@@ -169,7 +172,7 @@ namespace Kafka.Streams.Tests.Integration
                     KeyValuePair.Create(3, "C"),
                     KeyValuePair.Create(4, "D"),
                     KeyValuePair.Create(5, "E")),
-                TestUtils.producerConfig(
+                TestUtils.ProducerConfig(
                     CLUSTER.bootstrapServers(),
                     Serdes.Int().Serializer,
                     Serdes.String().Serializer,

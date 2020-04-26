@@ -21,7 +21,7 @@ namespace Kafka.Streams.Tests.Tests
 //        string additionalConfigs = args[1];
 
 //        StreamsConfig streamsProperties = Utils.loadProps(propFileName);
-//        string kafka = streamsProperties.getProperty(StreamsConfig.BootstrapServersConfig);
+//        string kafka = streamsProperties.Get(StreamsConfig.BootstrapServersConfig);
 
 //        if (kafka == null) {
 //            System.Console.Error.WriteLine("No bootstrap kafka servers specified in " + StreamsConfig.BootstrapServersConfig);
@@ -104,8 +104,8 @@ namespace Kafka.Streams.Tests.Tests
 //                HashSet<ThreadMetadata> threadMetadata = streams.localThreadsMetadata();
 //                foreach (ThreadMetadata threadMetadatum in threadMetadata) {
 //                    System.Console.Out.WriteLine(
-//                        "ACTIVE_TASKS:" + threadMetadatum.activeTasks().Count
-//                        + " STANDBY_TASKS:" + threadMetadatum.standbyTasks().Count);
+//                        "ACTIVE_TASKS:" + threadMetadatum.ActiveTasks().Count
+//                        + " STANDBY_TASKS:" + threadMetadatum.StandbyTasks().Count);
 //                }
 //            }
 //        });

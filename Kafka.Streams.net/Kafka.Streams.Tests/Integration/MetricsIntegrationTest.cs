@@ -176,7 +176,7 @@ namespace Kafka.Streams.Tests.Integration
 
 //    public void before() {// throws InterruptedException
 //        builder = new StreamsBuilder();
-//        CLUSTER.createTopics(STREAM_INPUT, STREAM_OUTPUT_1, STREAM_OUTPUT_2, STREAM_OUTPUT_3, STREAM_OUTPUT_4);
+//        CLUSTER.CreateTopics(STREAM_INPUT, STREAM_OUTPUT_1, STREAM_OUTPUT_2, STREAM_OUTPUT_3, STREAM_OUTPUT_4);
 //        streamsConfiguration = new StreamsConfig();
 //        streamsConfiguration.Put(StreamsConfig.ApplicationIdConfig, "stream-metrics-test");
 //        streamsConfiguration.Put(StreamsConfig.BootstrapServersConfig, CLUSTER.bootstrapServers());

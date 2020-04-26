@@ -3,8 +3,10 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Tests.Integration;
+using Kafka.Streams.Tests.Mocks;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -12,7 +14,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class KStreamGlobalKTableLeftJoinTest
     {
-        private static KeyValueTimestamp[] EMPTY = System.Array.Empty<Streams.KeyValueTimestamp>();
+        private static KeyValueTimestamp<int, string>[] EMPTY = Array.Empty<KeyValueTimestamp<int, string>>();
 
         private string streamTopic = "streamTopic";
         private string globalTableTopic = "globalTableTopic";
@@ -22,20 +24,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         private TopologyTestDriver driver;
         private StreamsBuilder builder;
 
-
-        public void setUp()
+        public KStreamGlobalKTableLeftJoinTest()
         {
-
             builder = new StreamsBuilder();
-            IKStream<K, V> stream;
+            IKStream<int, string> stream;
             IGlobalKTable<string, string> table; // value of stream optionally.Contains key of table
             KeyValueMapper<int, string, string> keyMapper;
 
-            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
+            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<int, string>();
             Consumed<int, string> streamConsumed = Consumed.With(Serdes.Int(), Serdes.String());
             Consumed<string, string> tableConsumed = Consumed.With(Serdes.String(), Serdes.String());
+
             stream = builder.Stream(streamTopic, streamConsumed);
-            table = builder.globalTable(globalTableTopic, tableConsumed);
+            table = builder.GlobalTable(globalTableTopic, tableConsumed);
             keyMapper = new KeyValueMapper<int, string, string>((key, value) =>
             {
                 string[] tokens = value.Split(",");
@@ -44,7 +45,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 return tokens.Length > 1 ? tokens[1] : null;
             });
 
-            stream.LeftJoin(table, keyMapper, MockValueJoiner.TOSTRING_JOINER).Process(supplier);
+            stream.LeftJoin(table, keyMapper, MockValueJoiner.TOSTRING_JOINER()).Process(supplier);
 
             StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
             driver = new TopologyTestDriver(builder.Build(), props);
@@ -61,7 +62,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         private void pushToStream(int messageCount, string valuePrefix, bool includeForeignKey)
         {
             ConsumerRecordFactory<int, string> recordFactory =
-                new ConsumerRecordFactory<int, string>(Serdes.Int(), Serdes.String(), 0L, 1L);
+                new ConsumerRecordFactory<int, string>(Serdes.Int().Serializer, Serdes.String().Serializer, 0L, 1L);
             for (var i = 0; i < messageCount; i++)
             {
                 var value = valuePrefix + expectedKeys[i];
@@ -96,10 +97,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldNotRequireCopartitioning()
         {
-            HashSet<string> copartitionGroups =
-                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
+            var CopartitionGroups =
+                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).CopartitionGroups();
 
-            Assert.Equal("KStream-GlobalKTable joins do not need to be co-partitioned", 0, copartitionGroups.Count);
+            // "KStream-GlobalKTable joins do not need to be co-partitioned"
+            Assert.Empty(CopartitionGroups);
         }
 
         [Fact]
@@ -110,8 +112,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             pushToStream(2, "X", true);
             processor.CheckAndClearProcessResult(
-                new KeyValueTimestamp<long, string>(0, "X0,FKey0+null", 0),
-                new KeyValueTimestamp<long, string>(1, "X1,FKey1+null", 1));
+                new KeyValueTimestamp<int, string>(0, "X0,FKey0+null", 0),
+                new KeyValueTimestamp<int, string>(1, "X1,FKey1+null", 1));
         }
 
         [Fact]
@@ -122,8 +124,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             pushToStream(2, "X", true);
             processor.CheckAndClearProcessResult(
-                new KeyValueTimestamp<long, string>(0, "X0,FKey0+null", 0),
-                new KeyValueTimestamp<long, string>(1, "X1,FKey1+null", 1));
+                new KeyValueTimestamp<int, string>(0, "X0,FKey0+null", 0),
+                new KeyValueTimestamp<int, string>(1, "X1,FKey1+null", 1));
 
             // push two items to the globalTable. this should not produce any item.
 
@@ -134,10 +136,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             pushToStream(4, "X", true);
             processor.CheckAndClearProcessResult(
-                new KeyValueTimestamp<long, string>(0, "X0,FKey0+Y0", 0),
-                new KeyValueTimestamp<long, string>(1, "X1,FKey1+Y1", 1),
-                new KeyValueTimestamp<long, string>(2, "X2,FKey2+null", 2),
-                new KeyValueTimestamp<long, string>(3, "X3,FKey3+null", 3));
+                new KeyValueTimestamp<int, string>(0, "X0,FKey0+Y0", 0),
+                new KeyValueTimestamp<int, string>(1, "X1,FKey1+Y1", 1),
+                new KeyValueTimestamp<int, string>(2, "X2,FKey2+null", 2),
+                new KeyValueTimestamp<int, string>(3, "X3,FKey3+null", 3));
 
             // push All items to the globalTable. this should not produce any item
 
@@ -148,10 +150,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             pushToStream(4, "X", true);
             processor.CheckAndClearProcessResult(
-                new KeyValueTimestamp<long, string>(0, "X0,FKey0+YY0", 0),
-                new KeyValueTimestamp<long, string>(1, "X1,FKey1+YY1", 1),
-                new KeyValueTimestamp<long, string>(2, "X2,FKey2+YY2", 2),
-                new KeyValueTimestamp<long, string>(3, "X3,FKey3+YY3", 3));
+                new KeyValueTimestamp<int, string>(0, "X0,FKey0+YY0", 0),
+                new KeyValueTimestamp<int, string>(1, "X1,FKey1+YY1", 1),
+                new KeyValueTimestamp<int, string>(2, "X2,FKey2+YY2", 2),
+                new KeyValueTimestamp<int, string>(3, "X3,FKey3+YY3", 3));
 
             // push All items to the globalTable. this should not produce any item
 
@@ -162,7 +164,6 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldJoinRegardlessIfMatchFoundOnStreamUpdates()
         {
-
             // push two items to the globalTable. this should not produce any item.
 
             pushToGlobalTable(2, "Y");
@@ -172,10 +173,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             pushToStream(4, "X", true);
             processor.CheckAndClearProcessResult(
-                new KeyValueTimestamp<long, string>(0, "X0,FKey0+Y0", 0),
-                new KeyValueTimestamp<long, string>(1, "X1,FKey1+Y1", 1),
-                new KeyValueTimestamp<long, string>(2, "X2,FKey2+null", 2),
-                new KeyValueTimestamp<long, string>(3, "X3,FKey3+null", 3));
+                new KeyValueTimestamp<int, string>(0, "X0,FKey0+Y0", 0),
+                new KeyValueTimestamp<int, string>(1, "X1,FKey1+Y1", 1),
+                new KeyValueTimestamp<int, string>(2, "X2,FKey2+null", 2),
+                new KeyValueTimestamp<int, string>(3, "X3,FKey3+null", 3));
 
         }
 
@@ -192,10 +193,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             pushToStream(4, "X", true);
             processor.CheckAndClearProcessResult(
-                new KeyValueTimestamp<long, string>(0, "X0,FKey0+Y0", 0),
-                new KeyValueTimestamp<long, string>(1, "X1,FKey1+Y1", 1),
-                new KeyValueTimestamp<long, string>(2, "X2,FKey2+Y2", 2),
-                new KeyValueTimestamp<long, string>(3, "X3,FKey3+Y3", 3));
+                new KeyValueTimestamp<int, string>(0, "X0,FKey0+Y0", 0),
+                new KeyValueTimestamp<int, string>(1, "X1,FKey1+Y1", 1),
+                new KeyValueTimestamp<int, string>(2, "X2,FKey2+Y2", 2),
+                new KeyValueTimestamp<int, string>(3, "X3,FKey3+Y3", 3));
 
             // push two items with null to the globalTable.As deletes. this should not produce any item.
 
@@ -206,10 +207,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             pushToStream(4, "XX", true);
             processor.CheckAndClearProcessResult(
-                new KeyValueTimestamp<long, string>(0, "XX0,FKey0+null", 0),
-                new KeyValueTimestamp<long, string>(1, "XX1,FKey1+null", 1),
-                new KeyValueTimestamp<long, string>(2, "XX2,FKey2+Y2", 2),
-                new KeyValueTimestamp<long, string>(3, "XX3,FKey3+Y3", 3));
+                new KeyValueTimestamp<int, string>(0, "XX0,FKey0+null", 0),
+                new KeyValueTimestamp<int, string>(1, "XX1,FKey1+null", 1),
+                new KeyValueTimestamp<int, string>(2, "XX2,FKey2+Y2", 2),
+                new KeyValueTimestamp<int, string>(3, "XX3,FKey3+Y3", 3));
         }
 
         [Fact]
@@ -226,10 +227,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             pushToStream(4, "XXX", false);
             processor.CheckAndClearProcessResult(
-                new KeyValueTimestamp<long, string>(0, "XXX0+null", 0),
-                new KeyValueTimestamp<long, string>(1, "XXX1+null", 1),
-                new KeyValueTimestamp<long, string>(2, "XXX2+null", 2),
-                new KeyValueTimestamp<long, string>(3, "XXX3+null", 3));
+                new KeyValueTimestamp<int, string>(0, "XXX0+null", 0),
+                new KeyValueTimestamp<int, string>(1, "XXX1+null", 1),
+                new KeyValueTimestamp<int, string>(2, "XXX2+null", 2),
+                new KeyValueTimestamp<int, string>(3, "XXX3+null", 3));
         }
     }
 }

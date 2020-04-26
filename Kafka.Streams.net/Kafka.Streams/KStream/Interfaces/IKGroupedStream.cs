@@ -67,7 +67,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // counting words
          * string queryableStoreName = "storeName"; // the store Name should be the Name of the store as defined by the Materialized instance
-         * IReadOnlyKeyValueStore<string,long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
+         * IReadOnlyKeyValueStore<string,long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
          * string key = "some-word";
          * long countForWord = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -86,7 +86,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * You can retrieve All generated internal topic names via {@link Topology#describe()}.
          *
          * @param materialized  an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}.
-         *                      Note: the valueSerde will be automatically set to {@link org.apache.kafka.common.serialization.Serdes#long() Serdes#long()}
+         *                      Note: the valueSerde will be automatically set to {@link org.apache.kafka.common.serialization.Serdes#Serdes.Long() Serdes#Serdes.Long()}
          *                      if there is no valueSerde provided
          * @return a {@link KTable} that contains "update" records with unmodified keys and {@link long} values that
          * represent the latest (rolling) count (i.e., number of records) for each key
@@ -131,6 +131,8 @@ namespace Kafka.Streams.KStream.Interfaces
         IKTable<K, V> Reduce(IReducer<V> reducer);
         IKTable<K, V> Reduce(Func<V, V, V> reducer)
             => this.Reduce(new WrappedReducer<V>(reducer));
+        IKTable<K, V> Reduce(Reducer<V> reducer)
+            => this.Reduce(new WrappedReducer<V>(reducer));
 
         /**
          * Combine the value of records in this stream by the grouped key.
@@ -171,7 +173,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // compute sum
          * string queryableStoreName = "storeName" // the store Name should be the Name of the store as defined by the Materialized instance
-         * IReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
+         * IReadOnlyKeyValueStore<string, long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
          * string key = "some-key";
          * long sumForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>
@@ -207,6 +209,11 @@ namespace Kafka.Streams.KStream.Interfaces
         IKTable<K, V> Reduce(
             IReducer<V> reducer,
             Materialized<K, V> materialized);
+
+        IKTable<K, V> Reduce(
+            Reducer<V> reducer,
+            Materialized<K, V> materialized)
+            => this.Reduce(new WrappedReducer<V>(reducer), materialized);
 
         IKTable<K, V> Reduce(
             Func<V, V, V> reducer,
@@ -288,7 +295,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KafkaStreams streams = [] // some aggregation on value type double
          * string queryableStoreName = "storeName" // the store Name should be the Name of the store as defined by the Materialized instance
-         * IReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
+         * IReadOnlyKeyValueStore<string, long> localStore = streams.Store(queryableStoreName, QueryableStoreTypes.<string, long>KeyValueStore);
          * string key = "some-key";
          * long aggForKey = localStore[key); // key must be local (application state is shared over All running Kafka Streams instances)
          * }</pre>

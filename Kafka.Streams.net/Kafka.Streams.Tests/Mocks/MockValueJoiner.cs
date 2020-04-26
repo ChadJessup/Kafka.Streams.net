@@ -1,8 +1,4 @@
 ﻿using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kafka.Streams.Tests.Mocks
 {

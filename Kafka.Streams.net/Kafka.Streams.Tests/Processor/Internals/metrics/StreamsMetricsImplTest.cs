@@ -77,13 +77,13 @@
 //            Assert.Null(sensor);
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void TestNullMetrics()
 //        {
 //            new StreamsMetricsImpl(null, "");
 //        }
 
-//        [Fact]// (expected = NullPointerException)
+//        [Fact]// (expected = NullReferenceException)
 //        public void TestRemoveNullSensor()
 //        {
 //            StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), "");

@@ -77,11 +77,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void shouldRequireCopartitionedStreams()
         {
-            Collection<HashSet<string>> copartitionGroups =
-                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
+            Collection<HashSet<string>> CopartitionGroups =
+                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).CopartitionGroups();
 
-            Assert.Equal(1, copartitionGroups.Count);
-            Assert.Equal(new HashSet<>(new List<string> { streamTopic, tableTopic }), copartitionGroups.iterator().MoveNext());
+            Assert.Equal(1, CopartitionGroups.Count);
+            Assert.Equal(new HashSet<>(new List<string> { streamTopic, tableTopic }), CopartitionGroups.iterator().MoveNext());
         }
 
         [Fact]
@@ -89,8 +89,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             // push two items to the primary stream. the table is empty
             pushToStream(2, "X");
-            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+null", 0),
-                    new KeyValueTimestamp<>(1, "X1+null", 1));
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, "X0+null", 0),
+                    new KeyValueTimestamp<string, string>(1, "X1+null", 1));
         }
 
         [Fact]
@@ -98,8 +98,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             // push two items to the primary stream. the table is empty
             pushToStream(2, "X");
-            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+null", 0),
-                    new KeyValueTimestamp<>(1, "X1+null", 1));
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, "X0+null", 0),
+                    new KeyValueTimestamp<string, string>(1, "X1+null", 1));
 
             // push two items to the table. this should not produce any item.
             pushToTable(2, "Y");
@@ -107,10 +107,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             // push All four items to the primary stream. this should produce four items.
             pushToStream(4, "X");
-            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+Y0", 0),
-                    new KeyValueTimestamp<>(1, "X1+Y1", 1),
-                    new KeyValueTimestamp<>(2, "X2+null", 2),
-                    new KeyValueTimestamp<>(3, "X3+null", 3));
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, "X0+Y0", 0),
+                    new KeyValueTimestamp<string, string>(1, "X1+Y1", 1),
+                    new KeyValueTimestamp<string, string>(2, "X2+null", 2),
+                    new KeyValueTimestamp<string, string>(3, "X3+null", 3));
 
             // push All items to the table. this should not produce any item
             pushToTable(4, "YY");
@@ -118,10 +118,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             // push All four items to the primary stream. this should produce four items.
             pushToStream(4, "X");
-            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+YY0", 0),
-                    new KeyValueTimestamp<>(1, "X1+YY1", 1),
-                    new KeyValueTimestamp<>(2, "X2+YY2", 2),
-                    new KeyValueTimestamp<>(3, "X3+YY3", 3));
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, "X0+YY0", 0),
+                    new KeyValueTimestamp<string, string>(1, "X1+YY1", 1),
+                    new KeyValueTimestamp<string, string>(2, "X2+YY2", 2),
+                    new KeyValueTimestamp<string, string>(3, "X3+YY3", 3));
 
             // push All items to the table. this should not produce any item
             pushToTable(4, "YYY");
@@ -137,10 +137,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             // push All four items to the primary stream. this should produce four items.
             pushToStream(4, "X");
-            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+Y0", 0),
-                    new KeyValueTimestamp<>(1, "X1+Y1", 1),
-                    new KeyValueTimestamp<>(2, "X2+null", 2),
-                    new KeyValueTimestamp<>(3, "X3+null", 3));
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, "X0+Y0", 0),
+                    new KeyValueTimestamp<string, string>(1, "X1+Y1", 1),
+                    new KeyValueTimestamp<string, string>(2, "X2+null", 2),
+                    new KeyValueTimestamp<string, string>(3, "X3+null", 3));
 
         }
 
@@ -153,10 +153,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             // push All four items to the primary stream. this should produce four items.
             pushToStream(4, "X");
-            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "X0+Y0", 0),
-                    new KeyValueTimestamp<>(1, "X1+Y1", 1),
-                    new KeyValueTimestamp<>(2, "X2+Y2", 2),
-                    new KeyValueTimestamp<>(3, "X3+Y3", 3));
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, "X0+Y0", 0),
+                    new KeyValueTimestamp<string, string>(1, "X1+Y1", 1),
+                    new KeyValueTimestamp<string, string>(2, "X2+Y2", 2),
+                    new KeyValueTimestamp<string, string>(3, "X3+Y3", 3));
 
             // push two items with null to the table.As deletes. this should not produce any item.
             pushNullValueToTable(2);
@@ -164,10 +164,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             // push All four items to the primary stream. this should produce four items.
             pushToStream(4, "XX");
-            processor.CheckAndClearProcessResult(new KeyValueTimestamp<>(0, "XX0+null", 0),
-                    new KeyValueTimestamp<>(1, "XX1+null", 1),
-                    new KeyValueTimestamp<>(2, "XX2+Y2", 2),
-                    new KeyValueTimestamp<>(3, "XX3+Y3", 3));
+            processor.CheckAndClearProcessResult(new KeyValueTimestamp<string, string>(0, "XX0+null", 0),
+                    new KeyValueTimestamp<string, string>(1, "XX1+null", 1),
+                    new KeyValueTimestamp<string, string>(2, "XX2+Y2", 2),
+                    new KeyValueTimestamp<string, string>(3, "XX3+Y3", 3));
         }
 
     }

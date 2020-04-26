@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Metered
 
         public bool HasNext()
         {
-            return false;// iter.HasNext();
+            return false;// iter.MoveNext();
         }
 
 

@@ -39,10 +39,5 @@ namespace Kafka.Streams.KStream.Internals
         {
             this.valueTransformer.Close();
         }
-
-        public void Process<K1, V1>(K1 key, V1 value)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

@@ -4,19 +4,20 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.Temporary;
 using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Tests.Mocks;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class KTableAggregateTest
     {
-        private ISerde<string> stringSerde = Serdes.String();
-        private Consumed<string, string> consumed = null; // Consumed.With(stringSerde, stringSerde);
-        private Grouped<string, string> stringSerialized = null;// Grouped.With(stringSerde, stringSerde);
-        private MockProcessorSupplier<string, object> supplier = new MockProcessorSupplier<>();
+        private Consumed<string, string> consumed = Consumed.With<string, string>(Serdes.String(), Serdes.String());
+        private Grouped<string, string> stringSerialized = Grouped.With(Serdes.String(), Serdes.String());
+        private MockProcessorSupplier<string, long> supplier = new MockProcessorSupplier<string, long>();
 
         [Fact]
         public void testAggBasic()
@@ -27,7 +28,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             IKTable<string, string> table1 = builder.Table(topic1, consumed);
             IKTable<string, string> table2 = table1
                 .GroupBy(
-                    MockMapper.noOpKeyValueMapper(),
+                    MockMapper.GetNoOpKeyValueMapper<string, string>(),
                     stringSerialized)
                 .Aggregate(
                     MockInitializer.STRING_INIT,
@@ -48,7 +49,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 0L);
 
             ConsumerRecordFactory<string, string> recordFactory =
-                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L, 0L);
+                new ConsumerRecordFactory<string, string>(Serdes.String(), Serdes.String(), 0L, 0L);
 
             driver.PipeInput(recordFactory.Create(topic1, "A", "1", 10L));
             driver.PipeInput(recordFactory.Create(topic1, "B", "2", 15L));
@@ -61,18 +62,18 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             Assert.Equal(
        Arrays.asList(
-                     new KeyValueTimestamp<>("A", "0+1", 10L),
-                     new KeyValueTimestamp<>("B", "0+2", 15L),
-                     new KeyValueTimestamp<>("A", "0+1-1", 20L),
-                     new KeyValueTimestamp<>("A", "0+1-1+3", 20L),
-                     new KeyValueTimestamp<>("B", "0+2-2", 18L),
-                     new KeyValueTimestamp<>("B", "0+2-2+4", 18L),
-                     new KeyValueTimestamp<>("C", "0+5", 5L),
-                     new KeyValueTimestamp<>("D", "0+6", 25L),
-                     new KeyValueTimestamp<>("B", "0+2-2+4-4", 18L),
-                     new KeyValueTimestamp<>("B", "0+2-2+4-4+7", 18L),
-                     new KeyValueTimestamp<>("C", "0+5-5", 10L),
-                     new KeyValueTimestamp<>("C", "0+5-5+8", 10L)),
+                     new KeyValueTimestamp<string, string>("A", "0+1", 10L),
+                     new KeyValueTimestamp<string, string>("B", "0+2", 15L),
+                     new KeyValueTimestamp<string, string>("A", "0+1-1", 20L),
+                     new KeyValueTimestamp<string, string>("A", "0+1-1+3", 20L),
+                     new KeyValueTimestamp<string, string>("B", "0+2-2", 18L),
+                     new KeyValueTimestamp<string, string>("B", "0+2-2+4", 18L),
+                     new KeyValueTimestamp<string, string>("C", "0+5", 5L),
+                     new KeyValueTimestamp<string, string>("D", "0+6", 25L),
+                     new KeyValueTimestamp<string, string>("B", "0+2-2+4-4", 18L),
+                     new KeyValueTimestamp<string, string>("B", "0+2-2+4-4+7", 18L),
+                     new KeyValueTimestamp<string, string>("C", "0+5-5", 10L),
+                     new KeyValueTimestamp<string, string>("C", "0+5-5+8", 10L)),
                  supplier.TheCapturedProcessor().processed);
         }
 
@@ -116,7 +117,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 )),
                 0L);
             ConsumerRecordFactory<string, string> recordFactory =
-                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L, 0L);
+                new ConsumerRecordFactory<string, string>(Serdes.String(), Serdes.String(), 0L, 0L);
 
             driver.PipeInput(recordFactory.Create(topic1, "A", "1", 10L));
             driver.PipeInput(recordFactory.Create(topic1, "A", (string)null, 15L));
@@ -128,21 +129,22 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             driver.PipeInput(recordFactory.Create(topic1, "B", "7", 22L));
 
             Assert.Equal(
-       Arrays.asList(
-                     new KeyValueTimestamp<>("1", "0+1", 10),
-                     new KeyValueTimestamp<>("1", "0+1-1", 15),
-                     new KeyValueTimestamp<>("1", "0+1-1+1", 15),
-                     new KeyValueTimestamp<>("2", "0+2", 20),
-                         new KeyValueTimestamp<>("2", "0+2-2", 23),
-                         new KeyValueTimestamp<>("4", "0+4", 23),
-                         new KeyValueTimestamp<>("4", "0+4-4", 23),
-                         new KeyValueTimestamp<>("7", "0+7", 22)),
+                Arrays.asList(
+                     new KeyValueTimestamp<string, object>("1", "0+1", 10),
+                     new KeyValueTimestamp<string, object>("1", "0+1-1", 15),
+                     new KeyValueTimestamp<string, object>("1", "0+1-1+1", 15),
+                     new KeyValueTimestamp<string, object>("2", "0+2", 20),
+                     new KeyValueTimestamp<string, object>("2", "0+2-2", 23),
+                     new KeyValueTimestamp<string, object>("4", "0+4", 23),
+                     new KeyValueTimestamp<string, object>("4", "0+4-4", 23),
+                     new KeyValueTimestamp<string, object>("7", "0+7", 22)),
                  supplier.TheCapturedProcessor().processed);
         }
 
-        private static void testCountHelper(StreamsBuilder builder,
-                                            string input,
-                                            MockProcessorSupplier<string, object> supplier)
+        private static void testCountHelper(
+            StreamsBuilder builder,
+            string input,
+            MockProcessorSupplier<string, object> supplier)
         {
             var driver = new TopologyTestDriver(
                 builder.Build(),
@@ -153,7 +155,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 )),
                 0L);
             ConsumerRecordFactory<string, string> recordFactory =
-                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L, 0L);
+                new ConsumerRecordFactory<string, string>(Serdes.String().Serializer, Serdes.String().Serializer, 0L, 0L);
 
             driver.PipeInput(recordFactory.Create(input, "A", "green", 10L));
             driver.PipeInput(recordFactory.Create(input, "B", "green", 9L));
@@ -163,15 +165,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             Assert.Equal(
            Arrays.asList(
-                     new KeyValueTimestamp<>("green", 1L, 10),
-                     new KeyValueTimestamp<>("green", 2L, 10),
-                     new KeyValueTimestamp<>("green", 1L, 12),
-                     new KeyValueTimestamp<>("blue", 1L, 12),
-                     new KeyValueTimestamp<>("yellow", 1L, 15),
-                     new KeyValueTimestamp<>("green", 2L, 12)),
+                     new KeyValueTimestamp<string, object>("green", 1L, 10),
+                     new KeyValueTimestamp<string, object>("green", 2L, 10),
+                     new KeyValueTimestamp<string, object>("green", 1L, 12),
+                     new KeyValueTimestamp<string, object>("blue", 1L, 12),
+                     new KeyValueTimestamp<string, object>("yellow", 1L, 15),
+                     new KeyValueTimestamp<string, object>("green", 2L, 12)),
                  supplier.TheCapturedProcessor().processed);
         }
-
 
         [Fact]
         public void testCount()
@@ -181,7 +182,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             builder
                 .Table(input, consumed)
-                .GroupBy(MockMapper.selectValueKeyValueMapper(), stringSerialized)
+                .GroupBy(MockMapper.SelectValueKeyValueMapper(), stringSerialized)
                 .Count(Materialized.As("count"))
                 .ToStream()
                 .Process(supplier);
@@ -197,7 +198,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             builder
                 .Table(input, consumed)
-                .GroupBy(MockMapper.selectValueKeyValueMapper(), stringSerialized)
+                .GroupBy(MockMapper.GetSelectValueKeyValueMapper<string, string>(), stringSerialized)
                 .Count()
                 .ToStream()
                 .Process(supplier);
@@ -210,19 +211,18 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             var builder = new StreamsBuilder();
             var input = "count-test-input";
-            MockProcessorSupplier<string, string> supplier = new MockProcessorSupplier<>();
+            MockProcessorSupplier<string, string> supplier = new MockProcessorSupplier<string, string>();
 
             builder
                 .Table(input, consumed)
-                .GroupBy(new KeyValueMapper<string, string, string>(
-                    (key, value) => KeyValuePair<string, string>.Pair(
+                .GroupBy((key, value) => KeyValuePair.Create(
                         key[0].ToString(),
-                        key[1].ToString())),
+                        key[1].ToString()),
                     stringSerialized)
                 .Aggregate(
                     () => "",
                     (aggKey, value, aggregate) => aggregate + value,
-                    (key, value, aggregate) => aggregate.replaceAll(value, ""),
+                    (key, value, aggregate) => aggregate.ReplaceAll(value, ""),
                     Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("someStore")
                         .WithValueSerde(Serdes.String()))
                 .ToStream()
@@ -238,7 +238,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 0L);
 
             ConsumerRecordFactory<string, string> recordFactory =
-                new ConsumerRecordFactory<>(Serdes.String(), Serdes.String(), 0L, 0L);
+                new ConsumerRecordFactory<string, string>(Serdes.String().Serializer, Serdes.String().Serializer, 0L, 0L);
 
             MockProcessor<string, string> proc = supplier.TheCapturedProcessor();
 
@@ -249,14 +249,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             Assert.Equal(
        Arrays.asList(
-                     new KeyValueTimestamp<>("1", "1", 10),
-                     new KeyValueTimestamp<>("1", "12", 10),
-                     new KeyValueTimestamp<>("1", "2", 12),
-                     new KeyValueTimestamp<>("1", "", 12),
-                     new KeyValueTimestamp<>("1", "2", 12L)
-                 ),
-                 proc.processed
-             );
+                     new KeyValueTimestamp<string, string>("1", "1", 10),
+                     new KeyValueTimestamp<string, string>("1", "12", 10),
+                     new KeyValueTimestamp<string, string>("1", "2", 12),
+                     new KeyValueTimestamp<string, string>("1", "", 12),
+                     new KeyValueTimestamp<string, string>("1", "2", 12L)),
+                 proc.processed);
         }
     }
 }

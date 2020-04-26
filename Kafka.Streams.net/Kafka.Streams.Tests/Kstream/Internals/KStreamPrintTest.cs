@@ -23,7 +23,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 "test-stream"));
 
             printProcessor = kStreamPrint.Get();
-            IProcessorContext processorContext = Mock.Of<typeof(IProcessorContext));
+            IProcessorContext processorContext = Mock.Of<IProcessorContext));
             EasyMock.replay(processorContext);
 
             printProcessor.Init(processorContext);

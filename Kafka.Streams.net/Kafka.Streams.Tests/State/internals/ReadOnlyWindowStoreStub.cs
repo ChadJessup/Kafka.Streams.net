@@ -103,7 +103,7 @@
 
 //            public bool HasNext()
 //            {
-//                return iterator.HasNext();
+//                return iterator.MoveNext();
 //            }
 
 
@@ -162,7 +162,7 @@
 
 //        public bool HasNext()
 //        {
-//            return iterator.HasNext();
+//            return iterator.MoveNext();
 //        }
 
 
@@ -225,7 +225,7 @@
 
 //    public bool HasNext()
 //    {
-//        return iterator.HasNext();
+//        return iterator.MoveNext();
 //    }
 
 
@@ -321,7 +321,7 @@
 
 //    public bool HasNext()
 //    {
-//        return underlying.HasNext();
+//        return underlying.MoveNext();
 //    }
 
 

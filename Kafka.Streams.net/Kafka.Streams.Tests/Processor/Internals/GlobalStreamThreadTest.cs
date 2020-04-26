@@ -3,6 +3,7 @@ using Kafka.Common;
 using Kafka.Streams;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
+using Kafka.Streams.State;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Threads.GlobalStream;
 using Kafka.Streams.Topologies;
@@ -60,7 +61,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //            "processorName",
             //            new KTableSource<>(GLOBAL_STORE_NAME, GLOBAL_STORE_NAME));
             //
-            //        HashDictionary<string, object> properties = new HashMap<>();
+            //        Dictionary<string, object> properties = new HashMap<>();
             //        properties.Put(StreamsConfig.BootstrapServersConfig, "blah");
             //        properties.Put(StreamsConfig.ApplicationIdConfig, "blah");
             //        properties.Put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory().FullName);
@@ -121,7 +122,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             //            Assert.True(false, "Should have thrown StreamsException if start up failed");
             //} catch (StreamsException e) {
             //            Assert.Equal(e.getCause(), instanceOf(RuntimeException));
-            //Assert.Equal(e.getCause().getMessage(), ("KABOOM!"));
+            //Assert.Equal(e.getCause().Message, ("KABOOM!"));
             //        }
             //        Assert.False(globalStreamThread.stillRunning());
         }
@@ -134,7 +135,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.True(globalStreamThread.stillRunning());
         }
 
-        [Xunit.Fact(Timeout = 30000)
+        [Fact(Timeout = 30000)]
             public void ShouldStopRunningWhenClosedByUser()
         {// throws Exception
             initializeConsumer();

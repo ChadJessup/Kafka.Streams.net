@@ -50,7 +50,7 @@
 //            IKeyValueIterator<int, string> range = store.Range(1, 2);
 //            Assert.Equal("hi", range.MoveNext().value);
 //            Assert.Equal("goodbye", range.MoveNext().value);
-//            Assert.False(range.HasNext());
+//            Assert.False(range.MoveNext());
 //        }
 
 //        [Fact]
@@ -62,7 +62,7 @@
 //            IKeyValueIterator<int, string> range = store.All();
 //            Assert.Equal("hi", range.MoveNext().value);
 //            Assert.Equal("goodbye", range.MoveNext().value);
-//            Assert.False(range.HasNext());
+//            Assert.False(range.MoveNext());
 //        }
 
 //        [Fact]
@@ -74,14 +74,14 @@
 //            IKeyValueIterator<int, string> iteratorOne = store.Range(1, 5);
 //            IKeyValueIterator<int, string> iteratorTwo = store.Range(1, 4);
 
-//            Assert.True(iteratorOne.HasNext());
-//            Assert.True(iteratorTwo.HasNext());
+//            Assert.True(iteratorOne.MoveNext());
+//            Assert.True(iteratorTwo.MoveNext());
 
 //            store.Close();
 
 //            try
 //            {
-//                iteratorOne.HasNext();
+//                iteratorOne.MoveNext();
 //                Assert.True(false, "should have thrown InvalidStateStoreException on closed store");
 //            }
 //            catch (InvalidStateStoreException e)
@@ -101,7 +101,7 @@
 
 //            try
 //            {
-//                iteratorTwo.HasNext();
+//                iteratorTwo.MoveNext();
 //                Assert.True(false, "should have thrown InvalidStateStoreException on closed store");
 //            }
 //            catch (InvalidStateStoreException e)

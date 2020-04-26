@@ -49,7 +49,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             MockProcessorSupplier<string, object> supplier = new MockProcessorSupplier<string, object>();
             table1.ToStream().Process(supplier);
 
-            IKTable<string, int> table2 = table1.MapValues();
+            IKTable<string, int> table2 = table1.MapValues(v => int.Parse(v));
             table2.ToStream().Process(supplier);
 
             IKTable<string, int> table3 = table2.Filter((key, value) => (value % 2) == 0);
@@ -309,13 +309,13 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                     MockInitializer.STRING_INIT,
                     MockAggregator<string, string>.TOSTRING_ADDER,
                     MockAggregator<string, string>.TOSTRING_REMOVER,
-                    Materialized.As<string, string>("mock-result1"));
+                    Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("mock-result1"));
 
             table1.GroupBy(MockMapper.GetNoOpKeyValueMapper<string, string>())
                 .Reduce(
                     MockReducer.STRING_ADDER,
                     MockReducer.STRING_REMOVER,
-                    Materialized.As("mock-result2"));
+                    Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("mock-result2"));
 
             Topology topology = builder.Build();
 
@@ -342,43 +342,43 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             Assert.NotNull(((ChangedDeserializer)valDeserializerField.Get(driver.getProcessor("KSTREAM-SOURCE-0000000008"))).inner());
         }
 
-        [Fact]// (typeof(expected = NullPointerException))
+        [Fact]// (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullSelectorOnToStream()
         {
-            table.ToStream((KeyValueMapper)null);
+            table.ToStream((KeyValueMapper<string, string, string>)null);
         }
 
-        [Fact]// (typeof(expected = NullPointerException))
+        [Fact]// (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullPredicateOnFilter()
         {
             table.Filter(null);
         }
 
-        [Fact]// (typeof(expected = NullPointerException))
+        [Fact]// (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullPredicateOnFilterNot()
         {
             table.FilterNot(null);
         }
 
-        [Fact]// (typeof(expected = NullPointerException))
+        [Fact]// (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullMapperOnMapValues()
         {
-            table.MapValues((ValueMapper)null);
+            table.MapValues((ValueMapper<string, string>)null);
         }
 
-        [Fact]// (typeof(expected = NullPointerException))
-        public void shouldNotAllowNullMapperOnMapValueWithKey()
+        [Fact]// (typeof(expected = NullReferenceException))
+        public void ShouldNotAllowNullMapperOnMapValueWithKey()
         {
-            table.MapValues((ValueMapperWithKey)null);
+            table.MapValues((ValueMapperWithKey<string, string, string>)null);
         }
 
-        [Fact]// (typeof(expected = NullPointerException))
+        [Fact]// (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullSelectorOnGroupBy()
         {
-            table.GroupBy(null);
+            table.GroupBy<string, string>(null);
         }
 
-        [Fact]// (typeof(expected = NullPointerException))
+        [Fact]// (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullOtherTableOnJoin()
         {
             table.Join<string, string>(null, MockValueJoiner.TOSTRING_JOINER());
@@ -390,83 +390,83 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             table.Join(table, MockValueJoiner.TOSTRING_JOINER());
         }
 
-        [Fact] //(typeof(expected = NullPointerException))
+        [Fact] //(typeof(expected = NullReferenceException))
         public void shouldNotAllowNullJoinerJoin()
         {
             table.Join<string, string>(table, null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullOtherTableOnOuterJoin()
         {
             table.OuterJoin<string, string>(null, MockValueJoiner.TOSTRING_JOINER());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullJoinerOnOuterJoin()
         {
             table.OuterJoin<string, string>(table, null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullJoinerOnLeftJoin()
         {
             table.LeftJoin<string, string>(table, null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldNotAllowNullOtherTableOnLeftJoin()
         {
             table.LeftJoin(null, MockValueJoiner.TOSTRING_JOINER());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnFilterWhenMaterializedIsNull()
         {
-            table.Filter((key, value) => false, (Materialized)null);
+            table.Filter((key, value) => false, (Materialized<string, string, IKeyValueStore<Bytes, byte[]>>)null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnFilterNotWhenMaterializedIsNull()
         {
-            table.FilterNot((key, value) => false, (Materialized)null);
+            table.FilterNot((key, value) => false, (Materialized<string, string, IKeyValueStore<Bytes, byte[]>>)null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnJoinWhenMaterializedIsNull()
         {
-            table.Join(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized)null);
+            table.Join(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized<string, string, IKeyValueStore<Bytes, byte[]>>)null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnLeftJoinWhenMaterializedIsNull()
         {
-            table.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized)null);
+            table.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized<string, string, IKeyValueStore<Bytes, byte[]>>)null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnOuterJoinWhenMaterializedIsNull()
         {
-            table.OuterJoin(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized)null);
+            table.OuterJoin(table, MockValueJoiner.TOSTRING_JOINER(), (Materialized<string, string, IKeyValueStore<Bytes, byte[]>>)null);
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnTransformValuesWithKeyWhenTransformerSupplierIsNull()
         {
-            table.TransformValues((ValueTransformerWithKeySupplier)null);
+            table.TransformValues((IValueTransformerWithKeySupplier<string, string, string>)null);
         }
 
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnTransformValuesWithKeyWhenMaterializedIsNull()
         {
             IValueTransformerWithKeySupplier<string, string, string> valueTransformerSupplier =
                   Mock.Of<IValueTransformerWithKeySupplier<string, string, string>>();
 
-            table.TransformValues(valueTransformerSupplier, (Materialized)null);
+            table.TransformValues(valueTransformerSupplier, (Materialized<string, string, IKeyValueStore<Bytes, byte[]>>)null, Array.Empty<string>());
         }
 
-        [Fact] // (typeof(expected = NullPointerException))
+        [Fact] // (typeof(expected = NullReferenceException))
         public void shouldThrowNullPointerOnTransformValuesWithKeyWhenStoreNamesNull()
         {
             IValueTransformerWithKeySupplier<string, string, string> valueTransformerSupplier =

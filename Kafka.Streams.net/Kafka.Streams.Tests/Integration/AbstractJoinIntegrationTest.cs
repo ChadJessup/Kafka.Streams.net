@@ -102,7 +102,7 @@ namespace Kafka.Streams.Tests.Integration
 
         void PrepareEnvironment()
         {// throws InterruptedException
-            CLUSTER.createTopics(INPUT_TOPIC_LEFT, INPUT_TOPIC_RIGHT, OUTPUT_TOPIC);
+            CLUSTER.CreateTopics(INPUT_TOPIC_LEFT, INPUT_TOPIC_RIGHT, OUTPUT_TOPIC);
 
             if (!cacheEnabled)
             {
@@ -175,7 +175,7 @@ namespace Kafka.Streams.Tests.Integration
                         List<KeyValueTimestamp<long, string>> updatedExpected = new LinkedList<>();
                         foreach (KeyValueTimestamp<long, string> record in expected)
                         {
-                            updatedExpected.Add(new KeyValueTimestamp<>(record.Key, record.Value, firstTimestamp + record.Timestamp));
+                            updatedExpected.Add(new KeyValueTimestamp<string, string>(record.Key, record.Value, firstTimestamp + record.Timestamp));
                         }
 
                         CheckResult(OUTPUT_TOPIC, updatedExpected);
@@ -247,7 +247,7 @@ namespace Kafka.Streams.Tests.Integration
          */
         private void CheckQueryableStore(string queryableName, KeyValueTimestamp<long, string> expectedFinalResult)
         {
-            IReadOnlyKeyValueStore<long, IValueAndTimestamp<string>> store = streams.store(queryableName, QueryableStoreTypes.TimestampedKeyValueStore());
+            IReadOnlyKeyValueStore<long, IValueAndTimestamp<string>> store = streams.Store(queryableName, QueryableStoreTypes.TimestampedKeyValueStore());
 
             IKeyValueIterator<long, IValueAndTimestamp<string>> All = store.All();
             KeyValuePair<long, IValueAndTimestamp<string>> onlyEntry = All.Current;

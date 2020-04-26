@@ -23,7 +23,7 @@
 //                try
 //                {
 //                    IKeyValueIterator<IWindowed<K>, V> result = store.Fetch(key);
-//                    if (!result.HasNext())
+//                    if (!result.MoveNext())
 //                    {
 //                        result.Close();
 //                    }
