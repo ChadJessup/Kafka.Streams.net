@@ -2,6 +2,7 @@ using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Tasks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace Kafka.Streams.Processors.Internals
         private const string PARAMETER_HINT = "\nYou can increase the producer configs `delivery.timeout.ms` and/or " +
             "`retries` to avoid this error. Note that `retries` is set to infinite by default.";
 
-        private volatile KafkaException sendException;
+        private readonly KafkaException sendException;
 
         public RecordCollector(
             string streamTaskId,
@@ -35,6 +36,13 @@ namespace Kafka.Streams.Processors.Internals
 
             this.logPrefix = string.Format("task [%s] ", streamTaskId);
             this.productionExceptionHandler = productionExceptionHandler;
+        }
+
+        public RecordCollector(TaskId taskId, StreamsProducer? streamsProducer, Type defaultProductionExceptionHandler)
+        {
+            this.taskId = taskId;
+            this.streamsProducer = streamsProducer;
+            this.defaultProductionExceptionHandler = defaultProductionExceptionHandler;
         }
 
         public void Init(IProducer<byte[], byte[]> producer)
@@ -113,7 +121,7 @@ namespace Kafka.Streams.Processors.Internals
                 //producer.pr(serializedRecord, new Callback());
                 //{
 
-                //    public void onCompletion(RecordMetadata metadata,
+                //    public void onCompletion(MessageMetadata metadata,
                 //                             Exception exception)
                 //{
                 //    if (exception == null)
@@ -219,6 +227,10 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
+        internal void Initialize()
+        {
+        }
+
         private void CheckForException()
         {
             if (this.sendException != null)
@@ -250,6 +262,9 @@ namespace Kafka.Streams.Processors.Internals
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
+        private readonly TaskId taskId;
+        private readonly StreamsProducer? streamsProducer;
+        private readonly Type defaultProductionExceptionHandler;
 
         protected virtual void Dispose(bool disposing)
         {

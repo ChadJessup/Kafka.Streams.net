@@ -1,10 +1,7 @@
 using Kafka.Common;
 using Kafka.Streams.Configs;
-using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
-using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.Temporary;
-using Kafka.Streams.Threads.KafkaStreamsThread;
+using Kafka.Streams.Tests.Helpers;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Xunit;
@@ -23,53 +20,56 @@ namespace Kafka.Streams.Tests.Integration
         private const int ONE_REPARTITION_TOPIC = 1;
         private const int TWO_REPARTITION_TOPICS = 2;
 
-        private Regex repartitionTopicPattern = new Regex("Sink: .*-repartition", RegexOptions.Compiled);
+        private readonly Regex repartitionTopicPattern = new Regex("Sink: .*-repartition", RegexOptions.Compiled);
 
-        private StreamsConfig streamsConfiguration;
+        private readonly StreamsConfig streamsConfiguration;
 
-        // public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
-        private MockTime mockTime = CLUSTER.time;
+        public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
+        private readonly MockTime mockTime = CLUSTER.time;
 
 
-        public void SetUp()
+        public RepartitionWithMergeOptimizingIntegrationTest()
         {// throws Exception
-            StreamsConfig props = new StreamsConfig();
-            props.Put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 1024 * 10);
-            props.Put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 5000);
+            StreamsConfig props = new StreamsConfig
+            {
+                CacheMaxBytesBuffering = 1024 * 10,
+                CommitIntervalMs = 5000
+            };
 
-            streamsConfiguration = StreamsTestUtils.getStreamsConfig(
+            streamsConfiguration = StreamsTestConfigs.GetStandardConfig(
                 "maybe-optimized-with-merge-test-app",
                 CLUSTER.bootstrapServers(),
-                Serdes.String().GetType().FullName,
-                Serdes.String().GetType().FullName,
+                Serdes.String().GetType(),
+                Serdes.String().GetType(),
                 props);
 
-            CLUSTER.CreateTopics(COUNT_TOPIC,
-                                 COUNT_STRING_TOPIC,
-                                 INPUT_A_TOPIC,
-                                 INPUT_B_TOPIC);
+            CLUSTER.CreateTopics(
+                COUNT_TOPIC,
+                COUNT_STRING_TOPIC,
+                INPUT_A_TOPIC,
+                INPUT_B_TOPIC);
 
             IntegrationTestUtils.PurgeLocalStreamsState(streamsConfiguration);
         }
 
-
         public void TearDown()
         {// throws Exception
-            Cluster.deleteAllTopicsAndWait(30_000L);
+            Cluster.DeleteAllTopicsAndWait(30_000L);
         }
 
         [Fact]
         public void ShouldSendCorrectRecords_OPTIMIZED()
         {// throws Exception
-            runIntegrationTest(StreamsConfig.OPTIMIZE,
-                               ONE_REPARTITION_TOPIC);
+            RunIntegrationTest(
+                StreamsConfig.OPTIMIZEConfig,
+                ONE_REPARTITION_TOPIC);
         }
 
         [Fact]
         public void ShouldSendCorrectResults_NO_OPTIMIZATION()
         {// throws Exception
-            runIntegrationTest(
-                StreamsConfig.NO_OPTIMIZATION,
+            RunIntegrationTest(
+                StreamsConfig.NoOptimizationConfig,
                 TWO_REPARTITION_TOPICS);
         }
 

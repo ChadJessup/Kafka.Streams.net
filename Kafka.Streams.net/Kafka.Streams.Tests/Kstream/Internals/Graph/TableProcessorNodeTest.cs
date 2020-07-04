@@ -1,6 +1,9 @@
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
+using Kafka.Streams.State.TimeStamped;
+using Moq;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals.Graph
@@ -9,18 +12,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
     {
         private class TestProcessor : AbstractProcessor<string, string>
         {
-
-            public void Init(IProcessorContext context)
+            public override void Init(IProcessorContext context)
             {
             }
 
-
-            public void process(string key, string value)
+            public override void Process(string key, string value)
             {
             }
 
-
-            public void Close()
+            public override void Close()
             {
             }
         }
@@ -28,26 +28,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals.Graph
         [Fact]
         public void shouldConvertToStringWithNullStoreBuilder()
         {
-            TableProcessorNode<string, string> node = new TableProcessorNode<>(
+            var node = new TableProcessorNode<string, string, ITimestampedKeyValueStore<string, string>>(
                 "Name",
-                new ProcessorParameters<>(typeof(TestProcessor), "processor"),
+                new ProcessorParameters(Mock.Of<IProcessorSupplier>(), "processor"),
                 null,
-                new string[] { "store1", "store2" }
-            );
+                new string[] { "store1", "store2" });
 
             string asString = node.ToString();
             var expected = "storeBuilder=null";
-            Assert.True(
-                string.Format(
-                    "Expected ToString to return string with \"%s\", received: %s",
-                    expected,
-
-
-                   asString),
-
-
-               asString.Contains(expected)
-            );
+            Assert.True(asString.Contains(expected), $"Expected ToString to return string with \"{expected}\", received: {asString}");
         }
     }
 }

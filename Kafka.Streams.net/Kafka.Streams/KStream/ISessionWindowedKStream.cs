@@ -123,24 +123,9 @@ namespace Kafka.Streams.KStream
          * the latest (rolling) aggregate for each key within a window
          */
         IKTable<IWindowed<K>, VR> Aggregate<VR>(
-            IInitializer<VR> initializer,
-            IAggregator<K, V, VR> aggregator,
-            Merger<K, VR> sessionMerger);
-
-        IKTable<IWindowed<K>, VR> Aggregate<VR>(
-            Initializer<VR> initializer,
-            IAggregator<K, V, VR> aggregator,
-            Merger<K, VR> sessionMerger)
-            => this.Aggregate(new WrappedInitializer<VR>(initializer), aggregator, sessionMerger);
-
-        IKTable<IWindowed<K>, VR> Aggregate<VR>(
             Initializer<VR> initializer,
             Aggregator<K, V, VR> aggregator,
-            Merger<K, VR> sessionMerger)
-            => this.Aggregate(
-                new WrappedInitializer<VR>(initializer),
-                new WrappedAggregator<K, V, VR>(aggregator),
-                sessionMerger);
+            Merger<K, VR> sessionMerger);
 
         /**
          * Aggregate the values of records in this stream by the grouped key and defined {@link SessionWindows}.
@@ -196,23 +181,6 @@ namespace Kafka.Streams.KStream
          * the latest (rolling) aggregate for each key within a window
          */
         IKTable<IWindowed<K>, VR> Aggregate<VR>(
-            IInitializer<VR> initializer,
-            IAggregator<K, V, VR> aggregator,
-            Merger<K, VR> sessionMerger,
-            Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized);
-
-        IKTable<IWindowed<K>, VR> Aggregate<VR>(
-            Initializer<VR> initializer,
-            IAggregator<K, V, VR> aggregator,
-            Merger<K, VR> sessionMerger,
-            Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized)
-            => this.Aggregate<VR>(
-                new WrappedInitializer<VR>(initializer),
-                aggregator,
-                sessionMerger,
-                materialized);
-
-        IKTable<IWindowed<K>, VR> Aggregate<VR>(
             Initializer<VR> initializer,
             Aggregator<K, V, VR> aggregator,
             Merger<K, VR> sessionMerger,
@@ -244,7 +212,6 @@ namespace Kafka.Streams.KStream
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
          * the latest (rolling) aggregate for each key within a window
          */
-        IKTable<IWindowed<K>, V> Reduce(IReducer<V> reducer);
         IKTable<IWindowed<K>, V> Reduce(Reducer<V> reducer);
 
         /**
@@ -308,10 +275,6 @@ namespace Kafka.Streams.KStream
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
          * the latest (rolling) aggregate for each key within a window
          */
-        IKTable<IWindowed<K>, V> Reduce(
-            IReducer<V> reducer,
-            Materialized<K, V, ISessionStore<Bytes, byte[]>> materializedAs);
-
         IKTable<IWindowed<K>, V> Reduce(
             Reducer<V> reducer,
             Materialized<K, V, ISessionStore<Bytes, byte[]>> materializedAs);

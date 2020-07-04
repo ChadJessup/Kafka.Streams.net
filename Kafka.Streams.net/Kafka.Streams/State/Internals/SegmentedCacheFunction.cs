@@ -11,8 +11,8 @@ namespace Kafka.Streams.State.Internals
     {
         internal static int SEGMENT_ID_BYTES = 8;
 
-        private IKeySchema keySchema;
-        private TimeSpan segmentInterval;
+        private readonly IKeySchema keySchema;
+        private readonly TimeSpan segmentInterval;
 
         public SegmentedCacheFunction(IKeySchema keySchema, TimeSpan segmentInterval)
         {

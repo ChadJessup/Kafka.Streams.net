@@ -39,13 +39,16 @@ namespace Kafka.Streams.Clients.Consumers
 
         public virtual string MemberId => this.consumer.MemberId;
         public virtual List<TopicPartition> Assignment
-        { 
-            get => this.consumer.Assignment; 
+        {
+            get => this.consumer.Assignment;
         }
 
         public virtual List<string> Subscription => this.consumer.Subscription;
         public virtual Handle Handle => this.consumer.Handle;
         public virtual string Name => this.consumer.Name;
+
+        public IConsumerGroupMetadata ConsumerGroupMetadata
+            => this.consumer.ConsumerGroupMetadata;
 
         public virtual int AddBrokers(string brokers)
             => this.consumer.AddBrokers(brokers);
@@ -151,5 +154,11 @@ namespace Kafka.Streams.Clients.Consumers
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }
+
+        public ConsumeResult<K, V> Consume(int millisecondsTimeout)
+            => this.consumer.Consume(millisecondsTimeout);
+
+        public List<TopicPartitionOffset> Committed(TimeSpan timeout)
+            => this.consumer.Committed(timeout);
     }
 }

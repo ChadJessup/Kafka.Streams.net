@@ -1,4 +1,5 @@
-﻿using Kafka.Streams.Configs;
+﻿using Kafka.Common;
+using Kafka.Streams.Configs;
 using System;
 using System.Collections.Generic;
 
@@ -8,22 +9,18 @@ namespace Kafka.Streams.Tests
     {
         internal static void WaitUntilFinalKeyValueRecordsReceived<K, V>(StreamsConfig consumerConfig3, string reduceTopic, List<KeyValuePair<K, V>> expectedReducedValues)
         {
-            throw new NotImplementedException();
         }
 
         internal static void PurgeLocalStreamsState(StreamsConfig streamsConfiguration)
         {
-            throw new NotImplementedException();
         }
 
-        internal static void ProduceKeyValuesSynchronously(string globalTableTopic, object p1, object p2, MockTime mockTime)
+        internal static void ProduceKeyValuesSynchronously(string globalTableTopic, object p1, object p2, IClock mockTime)
         {
-            throw new NotImplementedException();
         }
 
         internal static void ProduceKeyValuesSynchronouslyWithTimestamp(string iNPUT_TOPIC, object p, StreamsConfig producerConfig, long nowAsEpochMilliseconds)
         {
-            throw new NotImplementedException();
         }
 
         internal static List<KeyValueTimestamp<K, V>> WaitUntilMinKeyValueWithTimestampRecordsReceived<K, V>(StreamsConfig consumerProperties, string outputTopic, int numMessages, int v)
@@ -47,6 +44,11 @@ namespace Kafka.Streams.Tests
         }
 
         internal static void ProduceSynchronously(StreamsConfig producerConfig, bool v1, string topic, int v2, List<KeyValueTimestamp<string, string>> toProduce)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static void WaitUntilFinalKeyValueTimestampRecordsReceived<K, V>(StreamsConfig consumerProperties, string outputTopic, List<KeyValueTimestamp<K, V>> expectedRecords)
         {
             throw new NotImplementedException();
         }

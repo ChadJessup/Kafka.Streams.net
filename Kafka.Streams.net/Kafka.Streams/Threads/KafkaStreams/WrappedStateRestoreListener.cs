@@ -7,7 +7,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
     public class WrappedStateRestoreListener<States> : IStateRestoreListener
         where States : Enum
     {
-        private Action<IThread<States>, States, States> globalStateRestoreListener;
+        private readonly Action<IThread<States>, States, States> globalStateRestoreListener;
 
         public WrappedStateRestoreListener(Action<IThread<States>, States, States> globalStateRestoreListener)
         {

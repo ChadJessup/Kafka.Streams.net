@@ -30,7 +30,19 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool MayPunctuate<K, V>(DateTime timestamp, PunctuationType type, IProcessorNodePunctuator<K, V> processorNodePunctuator)
+        public bool MayPunctuate<K, V>(
+           DateTime timestamp,
+           PunctuationType type,
+           ProcessorNodePunctuator<K, V> processorNodePunctuator)
+           => this.MayPunctuate<K, V>(
+               timestamp,
+               type,
+               new WrappedProcessorNodePunctuator<K, V>(processorNodePunctuator));
+
+        public bool MayPunctuate<K, V>(
+            DateTime timestamp,
+            PunctuationType type,
+            IProcessorNodePunctuator<K, V> processorNodePunctuator)
         {
             lock (this.pq)
             {

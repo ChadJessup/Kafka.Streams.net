@@ -17,10 +17,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class KStreamWindowAggregateTest
     {
-        private ConsumerRecordFactory<string, string> recordFactory =
+        private readonly ConsumerRecordFactory<string, string> recordFactory =
             new ConsumerRecordFactory<string, string>(Serdes.String(), Serdes.String());
 
-        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
+        private readonly StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
 
         [Fact]
         public void TestAggBasic()
@@ -38,7 +38,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             MockProcessorSupplier<IWindowed<string>, string> supplier = new MockProcessorSupplier<IWindowed<string>, string>();
             table2.ToStream().Process(supplier);
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             driver.PipeInput(recordFactory.Create(topic1, "A", "1", 0L));
             driver.PipeInput(recordFactory.Create(topic1, "B", "2", 1L));
             driver.PipeInput(recordFactory.Create(topic1, "C", "3", 2L));
@@ -122,7 +122,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
             table1.Join(table2, (p1, p2) => p1 + "%" + p2).ToStream().Process(supplier);
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             driver.PipeInput(recordFactory.Create(topic1, "A", "1", 0L));
             driver.PipeInput(recordFactory.Create(topic1, "B", "2", 1L));
             driver.PipeInput(recordFactory.Create(topic1, "C", "3", 2L));
@@ -231,7 +231,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 );
 
             //LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             driver.PipeInput(recordFactory.Create(topic, null, "1"));
             //LogCaptureAppender.unregister(appender);
 
@@ -261,7 +261,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // LogCaptureAppender.setClassLoggerToDebug(KStreamWindowAggregate));
             // LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             driver.PipeInput(recordFactory.Create(topic, "k", "100", 100L));
             driver.PipeInput(recordFactory.Create(topic, "k", "0", 0L));
             driver.PipeInput(recordFactory.Create(topic, "k", "1", 1L));
@@ -320,7 +320,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             // LogCaptureAppender.setClassLoggerToDebug(KStreamWindowAggregate));
             // LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             driver.PipeInput(recordFactory.Create(topic, "k", "100", 200L));
             driver.PipeInput(recordFactory.Create(topic, "k", "0", 100L));
             driver.PipeInput(recordFactory.Create(topic, "k", "1", 101L));

@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests
             this.sessionWindowedValueSerializer = new SessionWindowedSerializer<byte[]>(streamsBuilder.Context.Services);
 
             this.props.Add(StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASSConfig, Serdes.String().GetType().FullName);
-            this.props.Add(StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
+            this.props.Add(StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASSConfig, Serdes.ByteArray().GetType().FullName);
         }
 
         [Fact]

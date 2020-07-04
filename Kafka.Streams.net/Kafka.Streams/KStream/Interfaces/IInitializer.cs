@@ -16,7 +16,7 @@ namespace Kafka.Streams.KStream.Interfaces
      */
     public delegate VA Initializer<out VA>();
 
-    public interface IInitializer<VA>
+    public interface IInitializer2<VA>
     {
         /**
          * Return the initial value for an aggregation.

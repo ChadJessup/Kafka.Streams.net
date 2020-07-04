@@ -33,7 +33,7 @@ namespace Kafka.Streams.KStream
      */
     public class TimeWindows : Windows<TimeWindow>
     {
-        private TimeSpan maintainDuration;
+        private readonly TimeSpan maintainDuration;
 
         /** The size of the windows in milliseconds. */
         public TimeSpan size { get; }
@@ -88,8 +88,7 @@ namespace Kafka.Streams.KStream
          */
         public static TimeWindows Of(TimeSpan size)// throws ArgumentException
         {
-            string msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(size, "size");
-            return Of(ApiUtils.ValidateMillisecondDuration(size, msgPrefix));
+            return new TimeWindows(size, size, TimeSpan.MaxValue, TimeSpan.FromDays(1.0));
         }
 
         /**
@@ -103,11 +102,15 @@ namespace Kafka.Streams.KStream
          * @return a new window definition with default maintain duration of 1 day
          * @throws ArgumentException if the advance interval is negative, zero, or larger than the window size
          */
+        [Obsolete]
         public TimeWindows AdvanceBy(TimeSpan advance)
         {
-            string msgPrefix = ApiUtils.PrepareMillisCheckFailMsgPrefix(advance, "advance");
-
-            return this.AdvanceBy(ApiUtils.ValidateMillisecondDuration(advance, msgPrefix));
+            return new TimeWindows(
+                this.size,
+                advance,
+                this.grace,
+                this.maintainDuration,
+                this.segments);
         }
 
         public override Dictionary<DateTime, TimeWindow> WindowsFor(DateTime timestamp)
@@ -165,8 +168,8 @@ namespace Kafka.Streams.KStream
             // NOTE: in the future, when we remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,
             // or we can default to (24h - size) if you want to be super accurate.
-            return grace.TotalMilliseconds != -1
-                ? grace
+            return this.grace.TotalMilliseconds != -1
+                ? this.grace
                 : this.maintainDuration - this.size;
         }
 
@@ -198,7 +201,7 @@ namespace Kafka.Streams.KStream
                 this.segments == that.segments &&
                 this.size == that.size &&
                 this.Advance == that.Advance &&
-                grace == that.grace;
+                this.grace == that.grace;
         }
 
         public override int GetHashCode()
@@ -208,7 +211,7 @@ namespace Kafka.Streams.KStream
                 this.segments,
                 this.size,
                 this.Advance,
-                grace);
+                this.grace);
         }
 
         public override string ToString()
@@ -217,7 +220,7 @@ namespace Kafka.Streams.KStream
                 "maintainDurationMs=" + this.maintainDuration.TotalMilliseconds +
                 ", sizeMs=" + this.size.TotalMilliseconds +
                 ", advanceMs=" + this.Advance.TotalMilliseconds +
-                ", graceMs=" + grace.TotalMilliseconds +
+                ", graceMs=" + this.grace.TotalMilliseconds +
                 ", segments=" + this.segments +
                 '}';
         }

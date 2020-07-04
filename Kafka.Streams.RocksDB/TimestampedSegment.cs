@@ -5,7 +5,7 @@ using System;
 
 namespace Kafka.Streams.State.TimeStamped
 {
-    public class TimestampedSegment : RocksDbTimestampedStore, IComparable<TimestampedSegment>, ISegment, IDisposable
+    public class TimestampedSegment : RocksDbTimestampedStore, IComparable<TimestampedSegment>, ISegment
     {
         public long Id { get; }
 

@@ -160,11 +160,6 @@ namespace Kafka.Streams.Interfaces
          * latest (rolling) aggregate for each key
          */
         IKTable<K, V> Reduce(
-            IReducer<V> adder,
-            IReducer<V> subtractor,
-            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
-
-        IKTable<K, V> Reduce(
             Reducer<V> adder,
             Reducer<V> subtractor,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
@@ -222,7 +217,6 @@ namespace Kafka.Streams.Interfaces
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
          * latest (rolling) aggregate for each key
          */
-        IKTable<K, V> Reduce(IReducer<V> adder, IReducer<V> subtractor);
         IKTable<K, V> Reduce(Reducer<V> adder, Reducer<V> subtractor);
 
         /**
@@ -304,21 +298,10 @@ namespace Kafka.Streams.Interfaces
          * latest (rolling) aggregate for each key
          */
         IKTable<K, VR> Aggregate<VR>(
-            IInitializer<VR> initializer,
-            IAggregator<K, V, VR> adder,
-            IAggregator<K, V, VR> subtractor,
-            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
-
-        IKTable<K, VR> Aggregate<VR>(
             Initializer<VR> initializer,
             Aggregator<K, V, VR> adder,
             Aggregator<K, V, VR> subtractor,
-            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
-            => this.Aggregate(
-                new WrappedInitializer<VR>(initializer),
-                new WrappedAggregator<K, V, VR>(adder),
-                new WrappedAggregator<K, V, VR>(subtractor),
-                materialized);
+            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Aggregate the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -386,9 +369,8 @@ namespace Kafka.Streams.Interfaces
          * latest (rolling) aggregate for each key
          */
         IKTable<K, VR> Aggregate<VR>(
-            IInitializer<VR> initializer,
-            IAggregator<K, V, VR> adder,
-            IAggregator<K, V, VR> subtractor);
-
+            Initializer<VR> initializer,
+            Aggregator<K, V, VR> adder,
+            Aggregator<K, V, VR> subtractor);
     }
 }

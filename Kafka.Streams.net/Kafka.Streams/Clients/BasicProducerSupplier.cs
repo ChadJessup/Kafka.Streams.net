@@ -50,7 +50,7 @@ namespace Kafka.Streams.Clients
             return this.threadProducer;
         }
 
-        private string GetTaskProducerClientId(string threadClientId, TaskId taskId)
+        public string GetTaskProducerClientId(string threadClientId, TaskId taskId)
             => $"{threadClientId}-{taskId}-producer";
     }
 }

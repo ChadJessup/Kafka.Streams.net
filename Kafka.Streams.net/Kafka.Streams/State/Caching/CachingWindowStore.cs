@@ -22,8 +22,8 @@ namespace Kafka.Streams.State.Internals
     {
         private readonly ILogger<CachingWindowStore> logger;
 
-        private TimeSpan windowSize;
-        private IKeySchema keySchema;
+        private readonly TimeSpan windowSize;
+        private readonly IKeySchema keySchema;
 
         private ThreadCache cache;
         private bool sendOldValues;
@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.Internals
 
         private DateTime maxObservedTimestamp;
 
-        private SegmentedCacheFunction cacheFunction;
+        private readonly SegmentedCacheFunction cacheFunction;
 
         public CachingWindowStore(
             KafkaStreamsContext context,

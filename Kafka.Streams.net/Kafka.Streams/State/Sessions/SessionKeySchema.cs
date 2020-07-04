@@ -13,9 +13,9 @@ namespace Kafka.Streams.State.Sessions
 {
     public class SessionKeySchema : IKeySchema
     {
-        private static int TIMESTAMP_SIZE = 8;
-        private static int SUFFIX_SIZE = 2 * TIMESTAMP_SIZE;
-        private static byte[] MIN_SUFFIX = new byte[SUFFIX_SIZE];
+        private const int TIMESTAMP_SIZE = 8;
+        private static readonly int SUFFIX_SIZE = 2 * TIMESTAMP_SIZE;
+        private static readonly byte[] MIN_SUFFIX = new byte[SUFFIX_SIZE];
 
         public Bytes UpperRangeFixedSize(Bytes key, DateTime to)
         {

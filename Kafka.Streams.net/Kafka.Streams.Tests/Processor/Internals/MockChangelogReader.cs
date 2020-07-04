@@ -25,7 +25,7 @@ namespace Kafka.Streams.Tests.Internal
             return this.registered;
         }
 
-        void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
+        private void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
         {
             this.restoredOffsets = restoredOffsets;
         }
@@ -38,6 +38,11 @@ namespace Kafka.Streams.Tests.Internal
         public bool WasRegistered(TopicPartition partition)
         {
             return this.registered.Contains(partition);
+        }
+
+        public void Remove(IEnumerable<TopicPartition> enumerable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

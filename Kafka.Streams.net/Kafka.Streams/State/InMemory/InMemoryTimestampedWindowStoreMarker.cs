@@ -11,7 +11,7 @@ namespace Kafka.Streams.State.Internals
 {
     public class InMemoryTimestampedWindowStoreMarker : IWindowStore<Bytes, byte[]>, ITimestampedBytesStore
     {
-        private IWindowStore<Bytes, byte[]> wrapped;
+        private readonly IWindowStore<Bytes, byte[]> wrapped;
 
         public InMemoryTimestampedWindowStoreMarker(IWindowStore<Bytes, byte[]> wrapped)
         {

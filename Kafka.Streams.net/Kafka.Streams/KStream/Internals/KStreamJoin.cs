@@ -128,8 +128,7 @@ namespace Kafka.Streams.KStream.Internals
                 null,
                 allSourceNodes,
                 false,
-                joinGraphNode,
-                this.builder);
+                joinGraphNode);
         }
     }
 }

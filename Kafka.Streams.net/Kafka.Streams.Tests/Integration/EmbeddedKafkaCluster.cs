@@ -4,18 +4,18 @@ namespace Kafka.Streams.Tests.Integration
 {
     public class EmbeddedKafkaCluster
     {
-        private int nUM_BROKERS;
-        private long v;
+        private readonly int numBrokers;
+        private readonly long v;
 
         public MockTime time { get; internal set; }
 
-        public EmbeddedKafkaCluster(int nUM_BROKERS)
+        public EmbeddedKafkaCluster(int numBrokers)
         {
-            this.nUM_BROKERS = nUM_BROKERS;
+            this.numBrokers = numBrokers;
         }
 
-        public EmbeddedKafkaCluster(int nUM_BROKERS, long v)
-            : this(nUM_BROKERS)
+        public EmbeddedKafkaCluster(int numBrokers, long v)
+            : this(numBrokers)
         {
             this.v = v;
         }
@@ -26,22 +26,19 @@ namespace Kafka.Streams.Tests.Integration
 
         internal string bootstrapServers()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         internal void CreateTopic(string v)
         {
-            throw new NotImplementedException();
         }
 
         internal void deleteTopic(string v)
         {
-            throw new NotImplementedException();
         }
 
         internal void CreateTopic(string iNPUT_STREAM, int v1, int v2)
         {
-            throw new NotImplementedException();
         }
     }
 }

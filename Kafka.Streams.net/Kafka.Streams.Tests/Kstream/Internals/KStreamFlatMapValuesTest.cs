@@ -14,10 +14,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class KStreamFlatMapValuesTest
     {
-        private string topicName = "topic";
-        private ConsumerRecordFactory<int, int> recordFactory =
+        private readonly string topicName = "topic";
+        private readonly ConsumerRecordFactory<int, int> recordFactory =
             new ConsumerRecordFactory<int, int>(Serdes.Int(), Serdes.Int(), 0L);
-        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
+        private readonly StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
 
         [Fact]
         public void testFlatMapValues()
@@ -41,10 +41,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<int, string>();
             stream.FlatMapValues(mapper).Process(supplier);
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             foreach (var expectedKey in expectedKeys)
             {
-                // .Assing the timestamp to recordFactory.Create to disambiguate the call
+                // Passing the timestamp to recordFactory.Create to disambiguate the call
                 driver.PipeInput(recordFactory.Create(topicName, expectedKey, expectedKey, 0L));
             }
 
@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             stream.FlatMapValues(mapper).Process(supplier);
 
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             foreach (var expectedKey in expectedKeys)
             {
                 // .Assing the timestamp to recordFactory.Create to disambiguate the call

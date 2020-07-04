@@ -107,5 +107,10 @@ namespace Kafka.Streams.Processors.Internals
 
         public Dictionary<string, object> AppConfigsWithPrefix(string prefix)
             => this.del.AppConfigsWithPrefix(prefix);
+
+        public ICancellable Schedule(TimeSpan interval, PunctuationType? type, IPunctuator? callback)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

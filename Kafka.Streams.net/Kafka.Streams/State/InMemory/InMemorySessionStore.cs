@@ -14,16 +14,16 @@ namespace Kafka.Streams.State.Internals
 {
     public class InMemorySessionStore : ISessionStore<Bytes, byte[]>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<InMemorySessionStore>();
+        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<InMemorySessionStore>();
 
-        private string metricScope;
+        private readonly string metricScope;
         //private Sensor expiredRecordSensor;
         private DateTime observedStreamTime = DateTime.MinValue; // ConsumerRecord.NO_TIMESTAMP;
 
-        private TimeSpan retentionPeriod;
+        private readonly TimeSpan retentionPeriod;
 
-        private ConcurrentDictionary<DateTime, ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>>> endTimeMap = new ConcurrentDictionary<DateTime, ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>>>();
-        private HashSet<InMemorySessionStoreIterator> openIterators = new HashSet<InMemorySessionStoreIterator>();
+        private readonly ConcurrentDictionary<DateTime, ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>>> endTimeMap = new ConcurrentDictionary<DateTime, ConcurrentDictionary<Bytes, ConcurrentDictionary<DateTime, byte[]>>>();
+        private readonly HashSet<InMemorySessionStoreIterator> openIterators = new HashSet<InMemorySessionStoreIterator>();
 
         private volatile bool open = false;
 

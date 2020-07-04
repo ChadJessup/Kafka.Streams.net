@@ -16,8 +16,8 @@ namespace Kafka.Streams.KStream.Internals
         private readonly string storeName;
         private readonly KafkaStreamsContext context;
         private readonly bool sendOldValues;
-        private readonly IInitializer<Agg> initializer;
-        private readonly IAggregator<K, V, Agg> aggregator;
+        private readonly Initializer<Agg> initializer;
+        private readonly Aggregator<K, V, Agg> aggregator;
         private readonly Windows<W> windows;
         private ITimestampedWindowStore<K, Agg> windowStore;
         private TimestampedTupleForwarder<IWindowed<K>, Agg> tupleForwarder;
@@ -29,8 +29,8 @@ namespace Kafka.Streams.KStream.Internals
             Windows<W> windows,
             string storeName,
             bool sendOldValues,
-            IInitializer<Agg> initializer,
-            IAggregator<K, V, Agg> aggregator)
+            Initializer<Agg> initializer,
+            Aggregator<K, V, Agg> aggregator)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
             this.observedStreamTime = this.context.Clock.UtcNow;
@@ -89,7 +89,7 @@ namespace Kafka.Streams.KStream.Internals
 
                     if (oldAgg == null)
                     {
-                        oldAgg = this.initializer.Apply();
+                        oldAgg = this.initializer();
                         newTimestamp = this.Context.Timestamp;
                     }
                     else
@@ -97,7 +97,7 @@ namespace Kafka.Streams.KStream.Internals
                         newTimestamp = this.Context.Timestamp.GetNewest(oldAggAndTimestamp.Timestamp);
                     }
 
-                    newAgg = this.aggregator.Apply(key, value, oldAgg);
+                    newAgg = this.aggregator(key, value, oldAgg);
 
                     // update the store with the new value
                     this.windowStore.Put(key, ValueAndTimestamp.Make(newAgg, newTimestamp), windowStart);

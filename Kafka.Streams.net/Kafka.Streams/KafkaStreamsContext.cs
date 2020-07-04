@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kafka.Common;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Topologies;
@@ -21,36 +22,35 @@ namespace Kafka.Streams
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         public KafkaStreamsContext(
+            StreamsConfig config,
             InternalTopologyBuilder internalTopologyBuilder,
             IServiceCollection serviceCollection,
             ILogger<KafkaStreamsContext> logger,
             IConfiguration configuration,
             IStoresFactory storesFactory,
             ILoggerFactory loggerFactory,
-            Topology topology,
             IClock clock)
         {
             this.Clock = clock;
             this.Logger = logger;
-            this.Topology = topology;
+            this.StreamsConfig = config;
             this.Configuration = configuration;
             this.StoresFactory = storesFactory;
             this.LoggerFactory = loggerFactory;
             this.ServiceCollection = serviceCollection;
             this.InternalTopologyBuilder = internalTopologyBuilder;
-
-            this.Services = this.ServiceCollection.BuildServiceProvider();
         }
 
         public InternalStreamsBuilder InternalStreamsBuilder { get; internal set; }
         public InternalTopologyBuilder InternalTopologyBuilder { get; }
-        public IServiceCollection ServiceCollection { get; }
         public ILogger<KafkaStreamsContext> Logger { get; }
+        public Topology Topology { get; internal set; }
         public IConfiguration Configuration { get; }
         public ILoggerFactory LoggerFactory { get; }
-        public ServiceProvider Services { get; }
-        public Topology Topology { get; }
+        public ServiceProvider Services { get; internal set; }
         public IStoresFactory StoresFactory { get; }
+        public IServiceCollection ServiceCollection { get; }
+        public StreamsConfig StreamsConfig { get; }
         public IClock Clock { get; }
 
         public ILogger<TCategory> CreateLogger<TCategory>()

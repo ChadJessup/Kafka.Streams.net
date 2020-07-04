@@ -3,7 +3,7 @@ using System;
 
 namespace Kafka.Streams.KStream
 {
-    public class WrappedAggregator<K, V, VA> : IAggregator<K, V, VA>
+    public class WrappedAggregator<K, V, VA> : IAggregator2<K, V, VA>
     {
         private readonly Aggregator<K, V, VA> aggregator;
 

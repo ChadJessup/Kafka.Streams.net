@@ -11,7 +11,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private class TestNameProvider : IInternalNameProvider
         {
-            int index = 0;
+            private int index = 0;
 
             public string NewProcessorName(string prefix)
             {

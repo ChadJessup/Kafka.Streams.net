@@ -5,15 +5,16 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class KStreamMapTest
     {
-        private ConsumerRecordFactory<int, string> recordFactory =
+        private readonly ConsumerRecordFactory<int, string> recordFactory =
             new ConsumerRecordFactory<int, string>(Serdes.Int().Serializer, Serdes.String().Serializer, 0L);
-        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
+        private readonly StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
 
         [Fact]
         public void TestMap()
@@ -26,7 +27,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
             stream.Map((key, value) => KeyValuePair.Create(value, key)).Process(supplier);
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             foreach (var expectedKey in expectedKeys)
             {
                 driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey, 10L - expectedKey));
@@ -43,7 +44,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             Assert.Equal(4, supplier.TheCapturedProcessor().processed.Count);
             for (var i = 0; i < expected.Length; i++)
             {
-                Assert.Equal(expected[i], supplier.TheCapturedProcessor().processed.Get(i));
+                Assert.Equal(expected[i], supplier.TheCapturedProcessor().processed.ElementAt(i));
             }
         }
 

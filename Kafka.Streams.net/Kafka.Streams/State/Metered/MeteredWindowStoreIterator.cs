@@ -11,9 +11,9 @@ namespace Kafka.Streams.State.Metered
         public KeyValuePair<DateTime, V> Current { get; }
         object IEnumerator.Current { get; }
 
-        private IWindowStoreIterator<byte[]> iter;
-        private IStateSerdes<long, V> serdes;
-        private long startNs;
+        private readonly IWindowStoreIterator<byte[]> iter;
+        private readonly IStateSerdes<long, V> serdes;
+        private readonly long startNs;
 
         public MeteredWindowStoreIterator(
             KafkaStreamsContext context,

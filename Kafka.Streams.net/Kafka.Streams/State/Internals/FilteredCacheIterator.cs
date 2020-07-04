@@ -8,9 +8,9 @@ namespace Kafka.Streams.State.Internals
 {
     public class FilteredCacheIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
     {
-        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
-        private bool hasNextCondition;
-        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
+        private readonly IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
+        private readonly bool hasNextCondition;
+        private readonly IPeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
 
         public KeyValuePair<Bytes, LRUCacheEntry> Current { get; }
         object IEnumerator.Current { get; }

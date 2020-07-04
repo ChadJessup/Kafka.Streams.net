@@ -23,6 +23,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -121,7 +122,6 @@ namespace Kafka.Streams.Tests
     {
         private readonly IClock mockWallClockTime;
         private readonly KafkaStreamsContext context;
-        private InternalTopologyBuilder internalTopologyBuilder;
 
         private const int PARTITION_ID = 0;
         private static readonly TaskId TASK_ID = new TaskId(0, PARTITION_ID);
@@ -130,9 +130,10 @@ namespace Kafka.Streams.Tests
         private GlobalStateManager? globalStateManager;
 
         private StateDirectory stateDirectory;
+
         // private Metrics metrics;
-        ProcessorTopology processorTopology;
-        ProcessorTopology globalTopology;
+        private ProcessorTopology processorTopology;
+        private ProcessorTopology globalTopology;
 
         private readonly MockProducer<byte[], byte[]> producer;
 
@@ -154,7 +155,8 @@ namespace Kafka.Streams.Tests
          */
         public TopologyTestDriver(
             KafkaStreamsContext context,
-            Topology topology, StreamsConfig config)
+            Topology topology,
+            StreamsConfig config)
             : this(context, topology, config, null)
         {
         }
@@ -173,7 +175,6 @@ namespace Kafka.Streams.Tests
             DateTime? initialWallClockTime)
             : this(
                 context,
-                topology.internalTopologyBuilder,
                 config,
                 initialWallClockTime == null
                   ? DateTimeOffset.Now.ToUnixTimeMilliseconds()
@@ -190,21 +191,20 @@ namespace Kafka.Streams.Tests
          */
         private TopologyTestDriver(
             KafkaStreamsContext context,
-            InternalTopologyBuilder builder,
             StreamsConfig streamsConfig,
             long? initialWallClockTimeMs)
         {
             this.context = context;
-            this.internalTopologyBuilder = builder;
+
             //StreamsConfig streamsConfig = new QuietStreamsConfig(config);
             this.LogIfTaskIdleEnabled(streamsConfig);
 
             //new LogContext("topology-test-driver ");
             this.mockWallClockTime = new MockTime(initialWallClockTimeMs.GetValueOrDefault());
-            this.eosEnabled = StreamsConfig.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuarantee));
+            this.eosEnabled = StreamsConfig.ExactlyOnceConfig.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuaranteeConfig));
 
             //StreamsMetricsImpl streamsMetrics = setupMetrics(streamsConfig);
-            this.SetupTopology(builder, streamsConfig);
+            this.SetupTopology(streamsConfig);
 
             var cache = new ThreadCache(
                 context.CreateLogger<ThreadCache>(),
@@ -224,13 +224,9 @@ namespace Kafka.Streams.Tests
             this.SetupTask(streamsConfig, cache);
         }
 
-        public TopologyTestDriver(Topology topology, StreamsConfig props)
-        {
-        }
-
         private void LogIfTaskIdleEnabled(StreamsConfig streamsConfig)
         {
-            var taskIdleTime = streamsConfig.GetLong(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG);
+            var taskIdleTime = streamsConfig.GetLong(StreamsConfig.MAX_TASK_IDLE_MS_CONFIGConfig);
             if (taskIdleTime > 0)
             {
                 //  this.logger.Information("Detected {} config in use with TopologyTestDriver (set to {}ms)." +
@@ -247,13 +243,13 @@ namespace Kafka.Streams.Tests
         // private StreamsMetricsImpl setupMetrics(StreamsConfig streamsConfig)
         // {
         //     string threadId = Thread.currentThread().getName();
-        // 
+        //
         //     //MetricConfig metricConfig = new MetricConfig()
         //     //    .samples(streamsConfig.GetInt(StreamsConfig.METRICS_NUM_SAMPLES_CONFIG))
         //     //    .recordLevel(Sensor.RecordingLevel.forName(streamsConfig.getString(StreamsConfig.METRICS_RECORDING_LEVEL_CONFIG)))
         //     //    .timeWindow(streamsConfig.GetLong(StreamsConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG), TimeUnit.MILLISECONDS);
         //     //metrics = new Metrics(metricConfig, mockWallClockTime);
-        // 
+        //
         //     var streamsMetrics = new StreamsMetricsImpl(
         //         metrics,
         //         "test-client",
@@ -261,19 +257,16 @@ namespace Kafka.Streams.Tests
         //     );
         //     streamsMetrics.setRocksDBMetricsRecordingTrigger(new RocksDBMetricsRecordingTrigger());
         //     TaskMetrics.droppedRecordsSensorOrSkippedRecordsSensor(threadId, TASK_ID.ToString(), streamsMetrics);
-        // 
+        //
         //     return streamsMetrics;
         // }
 
-        private void SetupTopology(
-            InternalTopologyBuilder builder,
-            StreamsConfig streamsConfig)
+        private void SetupTopology(StreamsConfig streamsConfig)
         {
-            this.internalTopologyBuilder = builder;
-            this.internalTopologyBuilder.RewriteTopology(streamsConfig);
+            this.context.InternalTopologyBuilder.RewriteTopology(streamsConfig);
 
-            this.processorTopology = this.internalTopologyBuilder.Build();
-            this.globalTopology = this.internalTopologyBuilder.BuildGlobalStateTopology();
+            this.processorTopology = this.context.InternalTopologyBuilder.Build();
+            this.globalTopology = this.context.InternalTopologyBuilder.BuildGlobalStateTopology();
 
             foreach (string topic in this.processorTopology.SourceTopics)
             {
@@ -285,11 +278,7 @@ namespace Kafka.Streams.Tests
             var createStateDirectory = this.processorTopology.HasPersistentLocalStore() ||
                 (this.globalTopology != null && this.globalTopology.HasPersistentGlobalStore());
 
-            this.stateDirectory = new StateDirectory(
-                null,
-                streamsConfig,
-                this.mockWallClockTime);
-            //createStateDirectory);
+            this.stateDirectory = new StateDirectory(this.context);//, createStateDirectory);
         }
 
         private void SetupGlobalTask(
@@ -374,42 +363,39 @@ namespace Kafka.Streams.Tests
                         this.stateRestoreListener);
 
                 var stateManager = new ProcessorStateManager(
-                    Mock.Of<ILogger<ProcessorStateManager>>(),
+                    this.context,
                     TASK_ID,
-                    this.partitionsByInputTopic.Values.ToList(),
+                    TaskType.ACTIVE,
                     false,
-                    //ITask.Type.ACTIVE,
                     this.stateDirectory,
+                    null,//storeChangelogReader,
                     this.processorTopology.StoreToChangelogTopic,
-                    storeChangelogReader,
-                    StreamsConfig.ExactlyOnce.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuarantee)));
+                    this.partitionsByInputTopic.Values.ToList());
+                    //StreamsConfig.ExactlyOnceConfig.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuaranteeConfig)));
 
                 var recordCollector = new RecordCollector(
                     TASK_ID.ToString(),
                     //consumer,
                     //new StreamsProducer(producer, eosEnabled, logContext, streamsConfig.getString(StreamsConfig.ApplicationIdConfig)),
-                    streamsConfig.DefaultProductionExceptionHandler(this.context.Services));
+                    streamsConfig.GetDefaultProductionExceptionHandler(this.context.Services));
                 //eosEnabled);
 
                 this.task = new StreamTask(
                     this.context,
                     TASK_ID,
-                    new List<TopicPartition>(this.partitionsByInputTopic.Values),
+                    new HashSet<TopicPartition>(this.partitionsByInputTopic.Values),
                     this.processorTopology,
                     consumer,
-                    storeChangelogReader,
                     streamsConfig,
                     this.stateDirectory,
                     cache,
-                    //mockWallClockTime,
-                    // stateManager,
-                    Mock.Of<IProducerSupplier>(),
+                    stateManager,
                     recordCollector);
 
                 this.task.InitializeIfNeeded();
                 this.task.CompleteRestoration();
 
-                ((IInternalProcessorContext)this.task.context).SetRecordContext(new ProcessorRecordContext(
+                ((IInternalProcessorContext)this.task.ProcessorContext()).SetRecordContext(new ProcessorRecordContext(
                     DateTime.MinValue,
                     -1L,
                     -1,
@@ -525,7 +511,7 @@ namespace Kafka.Streams.Tests
                     // Process the record ...
                     //  task.Process(mockWallClockTime.NowAsEpochMilliseconds);
                     this.task.MaybePunctuateStreamTime();
-                    this.task.Commit();
+                    //this.task.Commit();
                     this.CaptureOutputsAndReEnqueueInternalResults();
                 }
 
@@ -540,11 +526,12 @@ namespace Kafka.Streams.Tests
             }
         }
 
-        private void ProcessGlobalRecord(TopicPartition globalInputTopicPartition,
-                                         long timestamp,
-                                         byte[] key,
-                                         byte[] value,
-                                         Headers headers)
+        private void ProcessGlobalRecord(
+            TopicPartition globalInputTopicPartition,
+            long timestamp,
+            byte[] key,
+            byte[] value,
+            Headers headers)
         {
             //globalStateTask.Update(new ConsumeResult<byte[], byte[]>(
             //    globalInputTopicPartition.Topic,
@@ -563,7 +550,7 @@ namespace Kafka.Streams.Tests
 
         private void ValidateSourceTopicNameRegexPattern(string inputRecordTopic)
         {
-            foreach (var sourceTopicName in this.internalTopologyBuilder.GetSourceTopicNames())
+            foreach (var sourceTopicName in this.context.InternalTopologyBuilder.GetSourceTopicNames())
             {
                 if (!sourceTopicName.Equals(inputRecordTopic) && new Regex(sourceTopicName, RegexOptions.Compiled).Matches(inputRecordTopic).Any())
                 {
@@ -576,7 +563,7 @@ namespace Kafka.Streams.Tests
 
         private TopicPartition GetInputTopicOrPatternPartition(string topicName)
         {
-            if (this.internalTopologyBuilder.GetSourceTopicNames().Any())
+            if (this.context.InternalTopologyBuilder.GetSourceTopicNames().Any())
             {
                 this.ValidateSourceTopicNameRegexPattern(topicName);
             }
@@ -601,17 +588,17 @@ namespace Kafka.Streams.Tests
             // Capture All the records sent to the producer ...
             // List<Message<byte[], byte[]>> output = producer.history();
             // producer.Clear();
-            // 
+            //
             // foreach (Message<byte[], byte[]> record in output)
             // {
             //     outputRecordsByTopic.computeIfAbsent(record.Topic, k => new LinkedList<>()).Add(record);
-            // 
+            //
             //     // Forward back into the topology if the produced record is to an internal or a source topic ...
             //     string outputTopicName = record.Topic;
-            // 
+            //
             //     TopicPartition inputTopicOrPatternPartition = getInputTopicOrPatternPartition(outputTopicName);
             //     TopicPartition globalInputTopicPartition = globalPartitionsByInputTopic.Get(outputTopicName);
-            // 
+            //
             //     if (inputTopicOrPatternPartition != null)
             //     {
             //         enqueueTaskRecord(
@@ -622,7 +609,7 @@ namespace Kafka.Streams.Tests
             //             record.Value,
             //             record.Headers);
             //     }
-            // 
+            //
             //     if (globalInputTopicPartition != null)
             //     {
             //         processGlobalRecord(
@@ -679,7 +666,7 @@ namespace Kafka.Streams.Tests
             if (this.task != null)
             {
                 this.task.MaybePunctuateSystemTime();
-                this.task.Commit();
+                // this.task.Commit();
             }
             this.CompleteAllProcessableWork();
         }
@@ -729,7 +716,7 @@ namespace Kafka.Streams.Tests
         //     V value = valueDeserializer.Deserialize(record.Topic, record.Value);
         //     return new Message<>(record.Topic, record.Partition, record.Timestamp, key, value, record.Headers);
         // }
-        // 
+        //
         // private Queue<Message<byte[], byte[]>> getRecordsQueue(string topicName)
         // {
         //     Queue<Message<byte[], byte[]>> outputRecords = outputRecordsByTopic[topicName];
@@ -814,7 +801,7 @@ namespace Kafka.Streams.Tests
         //     {
         //         return null;
         //     }
-        // 
+        //
         //     return outputRecords.poll();
         // }
 
@@ -837,7 +824,7 @@ namespace Kafka.Streams.Tests
         //     return new TestRecord<>(key, value, record.Headers, record.Timestamp);
         // }
 
-        void PipeRecord<K, V>(
+        private void PipeRecord<K, V>(
             string topic,
             TestRecord<K, V> record,
             ISerializer<K> keySerializer,
@@ -864,7 +851,7 @@ namespace Kafka.Streams.Tests
             this.PipeRecord(topic, timestamp, serializedKey, serializedValue, record.Headers);
         }
 
-        long GetQueueSize(string topic)
+        private long GetQueueSize(string topic)
         {
             //Queue<Message<byte[], byte[]>> queue = getRecordsQueue(topic);
             //if (queue == null)
@@ -877,7 +864,7 @@ namespace Kafka.Streams.Tests
             return 0;
         }
 
-        bool IsEmpty(string topic)
+        private bool IsEmpty(string topic)
         {
             return this.GetQueueSize(topic) == 0;
         }
@@ -906,7 +893,8 @@ namespace Kafka.Streams.Tests
         public Dictionary<string, IStateStore> GetAllStateStores()
         {
             var allStores = new Dictionary<string, IStateStore>();
-            foreach (var storeName in this.internalTopologyBuilder.AllStateStoreName())
+
+            foreach (var storeName in this.context.InternalTopologyBuilder.AllStateStoreName())
             {
                 allStores.Add(storeName, this.GetStateStore(storeName, false));
             }
@@ -945,15 +933,16 @@ namespace Kafka.Streams.Tests
         {
             if (this.task != null)
             {
-                //IStateStore stateStore = ((ProcessorContextImpl)task.recordContext).getStateMgr().GetStore(Name);
-                //if (stateStore != null)
-                //{
-                //    if (throwForBuiltInStores)
-                //    {
-                //        throwIfBuiltInStore(stateStore);
-                //    }
-                //    return stateStore;
-                //}
+                IStateStore stateStore = task.ProcessorContext().GetStateStore(Name);
+                if (stateStore != null)
+                {
+                    if (throwForBuiltInStores)
+                    {
+                        ThrowIfBuiltInStore(stateStore);
+                    }
+
+                    return stateStore;
+                }
             }
 
             if (this.globalStateManager != null)
@@ -1194,7 +1183,7 @@ namespace Kafka.Streams.Tests
         //     //        return 0L;
         //     //    }
         //     //};
-        // 
+        //
         //     // for each store
         //     foreach (var storeAndTopic in storeToChangelogTopic)
         //     {
@@ -1207,7 +1196,7 @@ namespace Kafka.Streams.Tests
         //         consumer.UpdatePartitions(topicName, partitionInfos);
         //         consumer.UpdateEndOffsets(new List<TopicPartition> { new TopicPartition(topicName, PARTITION_ID), 0L })};
         // }
-        // 
+        //
         //     return consumer;
         // }
     }

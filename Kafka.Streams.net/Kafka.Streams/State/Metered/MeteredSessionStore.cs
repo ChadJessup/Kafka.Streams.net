@@ -16,8 +16,8 @@ namespace Kafka.Streams.State.Metered
         ISessionStore<K, V>
     {
         //private string metricScope;
-        private ISerde<K> keySerde;
-        private ISerde<V> valueSerde;
+        private readonly ISerde<K> keySerde;
+        private readonly ISerde<V> valueSerde;
         private IStateSerdes<K, V> serdes;
         private string taskName;
 

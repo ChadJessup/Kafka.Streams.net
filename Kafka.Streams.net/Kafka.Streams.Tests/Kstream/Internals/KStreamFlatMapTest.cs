@@ -1,9 +1,9 @@
 using Confluent.Kafka;
 using Kafka.Streams;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Tests;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
@@ -39,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals
             int[] expectedKeys = { 0, 1, 2, 3 };
 
             var supplier = new MockProcessorSupplier<string, string>();
-            IKStream<K, V>(Serdes.Int(), Serdes.String()));
+            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
 
             stream.FlatMap(mapper).Process(supplier);
 

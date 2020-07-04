@@ -9,9 +9,9 @@ namespace Kafka.Streams.State.Internals
     public class MergedSortedCacheWindowStoreKeyValueIterator
         : AbstractMergedSortedCacheStoreIterator<IWindowed<Bytes>, IWindowed<Bytes>, byte[], byte[]>
     {
-        private IStateSerdes<Bytes, byte[]> serdes;
-        private TimeSpan windowSize;
-        private SegmentedCacheFunction cacheFunction;
+        private readonly IStateSerdes<Bytes, byte[]> serdes;
+        private readonly TimeSpan windowSize;
+        private readonly SegmentedCacheFunction cacheFunction;
 
         public MergedSortedCacheWindowStoreKeyValueIterator(
             KafkaStreamsContext context,

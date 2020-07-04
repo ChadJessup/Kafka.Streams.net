@@ -8,7 +8,7 @@ namespace Kafka.Streams.State.Internals
     public class ChangeLoggingKeyValueBytesStore
         : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, Bytes, byte[]>, IKeyValueStore<Bytes, byte[]>
     {
-        public StoreChangeLogger<Bytes, byte[]> changeLogger { get; }
+        public StoreChangeLogger<Bytes, byte[]> ChangeLogger { get; }
 
         public ChangeLoggingKeyValueBytesStore(KafkaStreamsContext context, IKeyValueStore<Bytes, byte[]> inner)
             : base(context, inner)
@@ -97,7 +97,7 @@ namespace Kafka.Streams.State.Internals
 
         private void Log(Bytes key, byte[] value)
         {
-            this.changeLogger.LogChange(key, value);
+            this.ChangeLogger.LogChange(key, value);
         }
     }
 }

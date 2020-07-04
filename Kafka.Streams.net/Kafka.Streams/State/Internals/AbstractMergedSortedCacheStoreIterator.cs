@@ -7,8 +7,8 @@ namespace Kafka.Streams.State.Internals
 {
     public abstract class AbstractMergedSortedCacheStoreIterator<K, KS, V, VS> : IKeyValueIterator<K, V>
     {
-        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
-        private IKeyValueIterator<KS, VS> storeIterator;
+        private readonly IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
+        private readonly IKeyValueIterator<KS, VS> storeIterator;
         private readonly KafkaStreamsContext context;
 
         public KeyValuePair<K, V> Current { get; }

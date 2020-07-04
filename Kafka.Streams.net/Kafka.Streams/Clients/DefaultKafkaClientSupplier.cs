@@ -54,11 +54,11 @@ namespace Kafka.Streams.Clients
 
         public IConsumer<byte[], byte[]> GetConsumer(ConsumerConfig config, IConsumerRebalanceListener rebalanceListener)
         {
-            var convertedConfig = config
+            var c = new ConsumerConfig(config
                 .Where(kvp => kvp.Key != null && kvp.Value != null)
-                .ToDictionary(k => k.Key, v => v.Value.ToString());
+                .ToDictionary(k => k.Key, v => v.Value.ToString()));
 
-            var builder = new ConsumerBuilder<byte[], byte[]>(convertedConfig);
+            var builder = new ConsumerBuilder<byte[], byte[]>(c);
 
             if (rebalanceListener != null)
             {
@@ -66,7 +66,12 @@ namespace Kafka.Streams.Clients
                 builder.SetPartitionsRevokedHandler(rebalanceListener.OnPartitionsRevoked);
             }
 
-            return builder.Build();
+            var consumer = new BaseConsumer<byte[], byte[]>(
+                this.loggerFactory.CreateLogger<BaseConsumer<byte[], byte[]>>(),
+                c,
+                builder);
+
+            return consumer;
         }
 
         public RestoreConsumer GetRestoreConsumer(RestoreConsumerConfig config)

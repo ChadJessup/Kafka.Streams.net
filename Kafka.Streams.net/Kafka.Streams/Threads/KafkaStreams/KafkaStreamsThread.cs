@@ -101,7 +101,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         public KafkaStreamsThread(
             ILogger<KafkaStreamsThread> logger,
             IServiceProvider serviceProvider,
-            IStateMachine<KafkaStreamsThreadStates> states,
+            IThreadStateMachine<KafkaStreamsThreadStates> states,
             StreamsConfig config,
             Topology topology,
             IClock clock,
@@ -219,7 +219,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         public void Join() => this.Thread?.Join();
         public int ManagedThreadId { get; }
         public IStateListener StateListener { get; private set; }
-        public IStateMachine<KafkaStreamsThreadStates> State { get; }
+        public IThreadStateMachine<KafkaStreamsThreadStates> State { get; }
         public Dictionary<long, StreamThreadState> ThreadStates { get; } = new Dictionary<long, StreamThreadState>();
 
         private bool WaitOnState(KafkaStreamsThreadStates targetState, long waitMs)
@@ -380,7 +380,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
          * There will be no error and the client will hang and retry to verify the broker version until it
          * {@link StreamsConfig#REQUEST_TIMEOUT_MS_CONFIG times out}.
 
-         * @throws IllegalStateException if process was already started
+         * @throws InvalidOperationException if process was already started
          * @throws StreamsException if the Kafka brokers have version 0.10.0.x or
          *                          if {@link StreamsConfig#PROCESSING_GUARANTEE_CONFIG exactly-once} is enabled for pre 0.11.0.x brokers
          */
@@ -549,7 +549,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
          * <p>
          * Calling this method triggers a restore of local {@link StateStore}s on the next {@link #start() application start}.
          *
-         * @throws IllegalStateException if this {@code KafkaStreams} instance is currently {@link State#RUNNING running}
+         * @throws InvalidOperationException if this {@code KafkaStreams} instance is currently {@link State#RUNNING running}
          * @throws StreamsException if cleanup failed
          */
         public void CleanUp()

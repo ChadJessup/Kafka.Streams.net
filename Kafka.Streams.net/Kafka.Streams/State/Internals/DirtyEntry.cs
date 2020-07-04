@@ -4,7 +4,7 @@
     {
         public Bytes Key { get; }
         public byte[] NewValue { get; }
-        private LRUCacheEntry recordContext;
+        private readonly LRUCacheEntry recordContext;
 
         public DirtyEntry(
             Bytes key,

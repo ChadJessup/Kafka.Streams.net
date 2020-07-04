@@ -9,7 +9,7 @@ namespace Kafka.Streams.KStream
 {
     public class TimeWindowedDeserializer<T> : IDeserializer<IWindowed<T>>
     {
-        private long windowSize;
+        private readonly long windowSize;
         private bool isChangelogTopic;
 
         private IDeserializer<T>? inner;

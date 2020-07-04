@@ -13,11 +13,11 @@ namespace Kafka.Streams.Tests
         public object? OldState { get; private set; } = null;
         public object? NewState { get; private set; } = null;
         public ConcurrentDictionary<object, long> mapStates = new ConcurrentDictionary<object, long>();
-        public void OnChange<States>(
-            IThread<States> thread,
-            States newState,
-            States oldState)
-            where States : Enum
+
+        public void OnChange(
+            IThread thread,
+            object newState,
+            object oldState)
         {
             var prevCount = this.mapStates.ContainsKey(newState)
                 ? this.mapStates[newState]
@@ -29,9 +29,17 @@ namespace Kafka.Streams.Tests
             this.mapStates[newState] = prevCount + 1;
         }
 
+        public void OnChange<States>(
+            IThread<States> thread,
+            States newState,
+            States oldState)
+            where States : Enum
+            => this.OnChange(thread,
+                newState,
+                oldState);
+
         public void SetThreadStates(Dictionary<long, StreamThreadState> threadStates)
         {
-            throw new NotImplementedException();
         }
     }
 }

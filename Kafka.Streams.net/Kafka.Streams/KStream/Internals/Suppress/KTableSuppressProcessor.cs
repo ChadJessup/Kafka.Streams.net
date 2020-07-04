@@ -19,7 +19,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private DateTime observedStreamTime = DateTime.MinValue; //-1L;// ConsumeResult.NO_TIMESTAMP;
 
         public KTableSuppressProcessor(
-            SuppressedInternal<K> suppress,
+            ISuppressed<K> suppress,
             string storeName)
         {
             if (suppress is null)

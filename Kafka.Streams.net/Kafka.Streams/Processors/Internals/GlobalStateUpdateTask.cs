@@ -8,12 +8,12 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class GlobalStateUpdateTask : IGlobalStateMaintainer
     {
-        private ProcessorTopology topology;
-        private IInternalProcessorContext processorContext;
-        private Dictionary<TopicPartition, long> offsets = new Dictionary<TopicPartition, long>();
-        private Dictionary<string, RecordDeserializer> deserializers = new Dictionary<string, RecordDeserializer>();
-        private GlobalStateManager stateMgr;
-        private IDeserializationExceptionHandler deserializationExceptionHandler;
+        private readonly ProcessorTopology topology;
+        private readonly IInternalProcessorContext processorContext;
+        private readonly Dictionary<TopicPartition, long> offsets = new Dictionary<TopicPartition, long>();
+        private readonly Dictionary<string, RecordDeserializer> deserializers = new Dictionary<string, RecordDeserializer>();
+        private readonly GlobalStateManager stateMgr;
+        private readonly IDeserializationExceptionHandler deserializationExceptionHandler;
 
         public GlobalStateUpdateTask(
             ProcessorTopology topology,

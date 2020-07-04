@@ -1,4 +1,3 @@
-using Avro.IO;
 using Confluent.Kafka;
 using Kafka.Streams.Processors.Internals;
 using System;

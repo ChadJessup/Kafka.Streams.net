@@ -39,6 +39,11 @@ namespace Kafka.Streams.Nodes
             this.processor = processor;
         }
 
+        public ProcessorNode(string v)
+        {
+            this.v = v;
+        }
+
         public virtual void Process<K, V>(K key, V value)
         {
             this.processor?.Process(key, value);
@@ -70,6 +75,7 @@ namespace Kafka.Streams.Nodes
         public ITimestampExtractor? TimestampExtractor { get; protected set; }
 
         private readonly IKeyValueProcessor? processor;
+        private readonly string v;
 
         public void Punctuate(DateTime timestamp, IPunctuator punctuator)
         {
@@ -116,7 +122,7 @@ namespace Kafka.Streams.Nodes
 
     public class ProcessorNode<K, V> : ProcessorNode, IProcessorNode<K, V>, IProcessorNode
     {
-        private readonly IKeyValueProcessor? processor;
+        protected readonly IKeyValueProcessor? processor;
 
         public ProcessorNode(IClock clock, string Name)
             : this(clock, Name, null, null)
@@ -148,7 +154,7 @@ namespace Kafka.Streams.Nodes
             base.AddChild(child);
         }
 
-        public void Close()
+        public virtual void Close()
         {
             try
             {
@@ -164,11 +170,5 @@ namespace Kafka.Streams.Nodes
         {
             this.processor?.Process(key, value);
         }
-    }
-
-    public interface IProcessorNode<K, V> : IProcessorNode
-    {
-        void AddChild(IProcessorNode<K, V> child);
-        new IProcessorNode<K, V> GetChild(string childName);
     }
 }

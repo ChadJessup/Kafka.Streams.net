@@ -18,6 +18,7 @@ namespace Kafka.Streams.KStream.Internals
     public abstract class AbstractStream<K, V>
     {
         public string Name { get; }
+        public KafkaStreamsContext Context { get; }
         public ISerde<K>? KeySerde { get; }
         public ISerde<V>? ValueSerde { get; }
         public HashSet<string> SourceNodes { get; }
@@ -42,20 +43,21 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         public AbstractStream(
-            string Name,
+            KafkaStreamsContext context,
+            string name,
             ISerde<K>? keySerde,
             ISerde<V>? valSerde,
             HashSet<string> sourceNodes,
-            StreamsGraphNode streamsGraphNode,
-            InternalStreamsBuilder builder)
+            StreamsGraphNode streamsGraphNode)
         {
             if (sourceNodes == null || !sourceNodes.Any())
             {
                 throw new ArgumentException("parameter <sourceNodes> must not be null or empty");
             }
 
-            this.Name = Name;
-            this.Builder = builder;
+            this.Name = name;
+            this.Context = context ?? throw new ArgumentNullException(nameof(context));
+            this.Builder = context.InternalStreamsBuilder;
             this.KeySerde = keySerde;
             this.ValueSerde = valSerde;
             this.SourceNodes = sourceNodes;

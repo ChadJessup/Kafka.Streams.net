@@ -13,7 +13,7 @@ namespace Kafka.Streams.Errors
     {
         public string Name { get; }
         public int Id { get; }
-
+        
         public ProductionExceptionHandlerResponse Handle(
             DeliveryResult<byte[], byte[]> record,
             Exception exception)

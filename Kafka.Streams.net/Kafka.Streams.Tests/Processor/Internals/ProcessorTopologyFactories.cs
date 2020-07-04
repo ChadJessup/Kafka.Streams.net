@@ -25,7 +25,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 new HashSet<string>());
         }
 
-        static ProcessorTopology WithLocalStores(List<IStateStore> stateStores,
+        private static ProcessorTopology WithLocalStores(List<IStateStore> stateStores,
                                                  Dictionary<string, string> storeToChangelogTopic)
         {
             return new ProcessorTopology(

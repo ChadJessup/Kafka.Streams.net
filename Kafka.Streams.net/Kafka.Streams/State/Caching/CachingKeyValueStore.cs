@@ -14,7 +14,7 @@ namespace Kafka.Streams.State.Internals
         IKeyValueStore<Bytes, byte[]>,
         ICachedStateStore<byte[], byte[]>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<CachingKeyValueStore>();
+        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<CachingKeyValueStore>();
 
         private FlushListener<byte[], byte[]> flushListener;
         private bool sendOldValues;
@@ -274,7 +274,7 @@ namespace Kafka.Streams.State.Internals
 
         public IKeyValueIterator<Bytes, byte[]> All()
         {
-            ValidateStoreOpen();
+            this.ValidateStoreOpen();
             IKeyValueIterator<Bytes, byte[]> storeIterator =
                 new DelegatingPeekingKeyValueIterator<Bytes, byte[]>(this.Name, this.Wrapped.All());
             MemoryLRUCacheBytesIterator cacheIterator = this.cache.All(this.cacheName);
@@ -285,7 +285,7 @@ namespace Kafka.Streams.State.Internals
         {
             get
             {
-                ValidateStoreOpen();
+                this.ValidateStoreOpen();
                 //lock (readLock().@lock)
                 {
                     try

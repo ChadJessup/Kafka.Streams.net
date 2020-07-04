@@ -2,9 +2,9 @@
 
 namespace Kafka.Streams.KStream.Interfaces
 {
-    public class WrappedReducer<V> : IReducer<V>
+    public class WrappedReducer<V> : IReducer2<V>
     {
-        private Func<V, V, V> reducer;
+        private readonly Func<V, V, V> reducer;
 
         public WrappedReducer(Func<V, V, V> reducer)
         {

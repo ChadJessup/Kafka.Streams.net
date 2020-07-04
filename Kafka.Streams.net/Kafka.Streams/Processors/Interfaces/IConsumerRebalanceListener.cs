@@ -82,8 +82,8 @@ namespace Kafka.Streams.Processors.Interfaces
          * @throws org.apache.kafka.common.errors.WakeupException If raised from a nested call to {@link KafkaConsumer}
          * @throws org.apache.kafka.common.errors.InterruptException If raised from a nested call to {@link KafkaConsumer}
          */
-        void OnPartitionsRevoked(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> revokedPartitions);
+        void OnPartitionsRevoked(IConsumer<byte[], byte[]>? consumer, List<TopicPartitionOffset> revokedPartitions);
 
-        void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions);
+        void OnPartitionsAssigned(IConsumer<byte[], byte[]>? consumer, List<TopicPartition> assignedPartitions);
     }
 }

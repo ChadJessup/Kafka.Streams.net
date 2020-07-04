@@ -8,5 +8,9 @@
         {
             this.offset = offset;
         }
+
+        public OffsetAndMetadata(long? offset1, string v)
+        {
+        }
     }
 }

@@ -43,6 +43,11 @@ namespace Kafka.Streams.Processors.Internals
             this.processorContextImpl = processorContextImpl;
         }
 
+        public PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues)
+        {
+            this.partitionQueues = partitionQueues;
+        }
+
         /**
          * Get the next record and queue
          *
@@ -169,6 +174,21 @@ namespace Kafka.Streams.Processors.Internals
             {
                 queue.Clear();
             }
+        }
+
+        internal long? HeadRecordOffset(TopicPartition partition)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal long PartitionTimestamp(TopicPartition partition)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void SetPartitionTime(TopicPartition partition, DateTime committedTimestamp)
+        {
+            throw new NotImplementedException();
         }
     }
 }

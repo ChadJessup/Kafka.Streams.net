@@ -1,120 +1,137 @@
-using Kafka.Streams.Configs;
-using Kafka.Streams.Interfaces;
-using Kafka.Streams.Kafka.Streams;
-using Kafka.Streams.KStream;
-using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.Processors;
-using System;
-using Xunit;
+//using Kafka.Streams.Configs;
+//using Kafka.Streams.Interfaces;
+//using Kafka.Streams.Kafka.Streams;
+//using Kafka.Streams.KStream;
+//using Kafka.Streams.KStream.Interfaces;
+//using Kafka.Streams.KStream.Internals;
+//using Kafka.Streams.KStream.Internals.Graph;
+//using Kafka.Streams.Processors;
+//using Kafka.Streams.Tests.Helpers;
+//using Kafka.Streams.Tests.Mocks;
+//using Moq;
+//using System;
+//using Xunit;
 
-namespace Kafka.Streams.Tests.Kstream.Internals
-{
-    public class AbstractStreamTest
-    {
+//namespace Kafka.Streams.Tests.Kstream.Internals
+//{
+//    public class AbstractStreamTest
+//    {
 
-        [Fact]
-        public void testToInternalValueTransformerSupplierSuppliesNewTransformers()
-        {
-            IValueTransformerSupplier<object, object> valueTransformerSupplier = createMock(IValueTransformerSupplier));
-            expect(valueTransformerSupplier.Get()).andReturn(null).times(3);
-            ValueTransformerWithKeySupplier<object, object, object> valueTransformerWithKeySupplier =
-                 AbstractStream.toValueTransformerWithKeySupplier(valueTransformerSupplier);
-            replay(valueTransformerSupplier);
-            valueTransformerWithKeySupplier.Get();
-            valueTransformerWithKeySupplier.Get();
-            valueTransformerWithKeySupplier.Get();
-            verify(valueTransformerSupplier);
-        }
+//        [Fact]
+//        public void testToInternalValueTransformerSupplierSuppliesNewTransformers()
+//        {
+//            IValueTransformerSupplier<object, object> valueTransformerSupplier = Mock.Of<IValueTransformerSupplier<object, object>>();
+//            expect(valueTransformerSupplier.Get()).andReturn(null).times(3);
 
-        [Fact]
-        public void testToInternalValueTransformerWithKeySupplierSuppliesNewTransformers()
-        {
-            IValueTransformerWithKeySupplier<object, object, object> valueTransformerWithKeySupplier =
-            createMock(typeof(IValueTransformerWithKeySupplier));
-            expect(valueTransformerWithKeySupplier.Get()).andReturn(null).times(3);
-            replay(valueTransformerWithKeySupplier);
-            valueTransformerWithKeySupplier.Get();
-            valueTransformerWithKeySupplier.Get();
-            valueTransformerWithKeySupplier.Get();
-            verify(valueTransformerWithKeySupplier);
-        }
+//            IValueTransformerWithKeySupplier<object, object, object> valueTransformerWithKeySupplier =
+//                 AbstractStream<object, object>.ToValueTransformerWithKeySupplier(valueTransformerSupplier);
 
-        [Fact]
-        public void testShouldBeExtensible()
-        {
-            var builder = new StreamsBuilder();
-            var expectedKeys = new int[] { 1, 2, 3, 4, 5, 6, 7 };
-            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<>();
-            var topicName = "topic";
+//            replay(valueTransformerSupplier);
+//            valueTransformerWithKeySupplier.Get();
+//            valueTransformerWithKeySupplier.Get();
+//            valueTransformerWithKeySupplier.Get();
+//            verify(valueTransformerSupplier);
+//        }
 
-            ExtendedIIKStream<K, V>(builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String())));
+//        [Fact]
+//        public void testToInternalValueTransformerWithKeySupplierSuppliesNewTransformers()
+//        {
+//            IValueTransformerWithKeySupplier<object, object, object> valueTransformerWithKeySupplier =
+//            Mock.Of<IValueTransformerWithKeySupplier<object, object, object>>();
 
-            stream.randomFilter().Process(supplier);
+//            expect(valueTransformerWithKeySupplier.Get()).andReturn(null).times(3);
+//            replay(valueTransformerWithKeySupplier);
+//            valueTransformerWithKeySupplier.Get();
+//            valueTransformerWithKeySupplier.Get();
+//            valueTransformerWithKeySupplier.Get();
+//            verify(valueTransformerWithKeySupplier);
+//        }
 
-            var props = new StreamsConfig();
-            props.Set(StreamsConfig.ApplicationId, "abstract-stream-test");
-            props.Set(StreamsConfig.BootstrapServers, "localhost:9091");
-            props.Set(StreamsConfig.STATE_DIR_CONFIG, TestUtils.GetTempDirectory());
+//        [Fact]
+//        public void testShouldBeExtensible()
+//        {
+//            var builder = new StreamsBuilder();
+//            var expectedKeys = new int[] { 1, 2, 3, 4, 5, 6, 7 };
+//            MockProcessorSupplier<int, string> supplier = new MockProcessorSupplier<int, string>();
+//            var topicName = "topic";
 
-            ConsumerRecordFactory<int, string> recordFactory = new ConsumerRecordFactory<>(Serdes.Int(), Serdes.String());
-            var driver = new TopologyTestDriver(builder.Build(), props);
-            foreach (var expectedKey in expectedKeys)
-            {
-                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
-            }
+//            ExtendedKStream<int, string> stream = builder.Stream(
+//                topicName, 
+//                Consumed.With(Serdes.Int(), Serdes.String()));
 
-            Assert.True(supplier.TheCapturedProcessor().processed.Count <= expectedKeys.Length);
-        }
+//            stream.randomFilter().Process(supplier);
 
-        private class ExtendedIIKStream<K, V>
-        {
+//            var props = new StreamsConfig();
+//            props.ApplicationId = "abstract-stream-test";
+//            props.BootstrapServers = "localhost:9091";
+//            props.StateStoreDirectory = TestUtils.GetTempDirectory();
 
-            ExtendedKStream(IKStream<K, V> stream)
-                : base((KStream<K, V>)stream)
-            {
-            }
+//            ConsumerRecordFactory<int, string> recordFactory = new ConsumerRecordFactory<int, string>(Serdes.Int(), Serdes.String());
+//            var driver = new TopologyTestDriver(builder.Build(), props);
+//            foreach (var expectedKey in expectedKeys)
+//            {
+//                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
+//            }
 
-            public IKStream<K, V> randomFilter()
-            {
-                string Name = builder.NewProcessorName("RANDOM-FILTER-");
-                ProcessorGraphNode<K, V> processorNode = new ProcessorGraphNode<>(
-                    Name,
-                    new ProcessorParameters<>(new ExtendedKStreamDummy<>(), Name));
-                builder.AddGraphNode<K, V>(this.streamsGraphNode, processorNode);
-                return new KStream<K, V>(Name, null, null, sourceNodes, false, processorNode, builder);
-            }
-        }
+//            Assert.True(supplier.TheCapturedProcessor().processed.Count <= expectedKeys.Length);
+//        }
 
-        public class ExtendedKStreamDummy<K, V> : IProcessorSupplier<K, V>
-        {
+//        private class ExtendedKStream<K, V> : AbstractStream<K, V>
+//        {
+//            public ExtendedKStream(IKStream<K, V> stream)
+//                : base((KStream<K, V>)stream)
+//            {
+//            }
 
-            private Random rand;
+//            public IKStream<K, V> randomFilter()
+//            {
+//                string Name = builder.NewProcessorName("RANDOM-FILTER-");
+//                ProcessorGraphNode<K, V> processorNode = new ProcessorGraphNode<K, V>(
+//                    Name,
+//                    new ProcessorParameters<K, V>(new ExtendedKStreamDummy<>(), Name));
 
-            ExtendedKStreamDummy()
-            {
-                rand = new Random();
-            }
+//                builder.AddGraphNode<K, V>(this.StreamsGraphNode, processorNode);
+//                return new KStream<K, V>(
+//                    Name,
+//                    null,
+//                    null,
+//                    sourceNodes,
+//                    false,
+//                    processorNode,
+//                    builder);
+//            }
+//        }
 
+//        public class ExtendedKStreamDummy<K, V> : IProcessorSupplier<K, V>
+//        {
+//            private Random rand;
 
-            public Processor<K, V> get()
-            {
-                return new ExtendedKStreamDummyProcessor();
-            }
+//            public ExtendedKStreamDummy()
+//            {
+//                rand = new Random();
+//            }
 
-            private class ExtendedKStreamDummyProcessor : AbstractProcessor<K, V>
-            {
+//            public IKeyValueProcessor Get()
+//            {
+//                return new ExtendedKStreamDummyProcessor();
+//            }
 
-                public void process(K key, V value)
-                {
-                    // flip a coin and filter
-                    if (rand.nextBoolean())
-                    {
-                        context.Forward(key, value);
-                    }
-                }
-            }
-        }
-    }
-}
+//            IKeyValueProcessor<K, V> IProcessorSupplier<K, V>.Get()
+//            {
+//                throw new NotImplementedException();
+//            }
+
+//            private class ExtendedKStreamDummyProcessor : AbstractProcessor<K, V>
+//            {
+//                public override void Process(K key, V value)
+//                {
+//                    // flip a coin and filter
+//                    if (rand.nextBoolean())
+//                    {
+//                        context.Forward(key, value);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}

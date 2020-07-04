@@ -25,7 +25,7 @@ namespace Kafka.Streams.Tests.Mocks
             return this._restoredOffsets;
         }
 
-        void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
+        private void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
         {
             this._restoredOffsets = restoredOffsets;
         }
@@ -38,6 +38,11 @@ namespace Kafka.Streams.Tests.Mocks
         public bool AsRegistered(TopicPartition partition)
         {
             return this.registered.Contains(partition);
+        }
+
+        public void Remove(IEnumerable<TopicPartition> enumerable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

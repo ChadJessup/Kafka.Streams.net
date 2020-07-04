@@ -140,7 +140,7 @@ namespace Kafka.Streams.Tests
             this.Builder.GlobalTable("table", this.consumed, materializedInternal);
 
             this.Builder.BuildAndOptimizeTopology();
-            ProcessorTopology topology = this.Builder.InternalTopologyBuilder
+            var topology = this.Builder.InternalTopologyBuilder
                 .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))
                 .BuildGlobalStateTopology();
 
@@ -152,7 +152,7 @@ namespace Kafka.Streams.Tests
 
         private void DoBuildGlobalTopologyWithAllGlobalTables()
         {
-            ProcessorTopology topology = this.Builder.InternalTopologyBuilder
+            var topology = this.Builder.InternalTopologyBuilder
                 .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))
                 .BuildGlobalStateTopology();
 
@@ -196,7 +196,7 @@ namespace Kafka.Streams.Tests
                  new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("not-global"), this.Builder, this.storePrefix);
             this.Builder.Table("not-global", this.consumed, materializedInternalNotGlobal);
 
-            KeyValueMapper<string, string, string> kvMapper = (key, value) => value;
+            static string kvMapper(string key, string value) => value;
 
             IKStream<string, string> stream = this.Builder.Stream(new[] { "t1" }, this.consumed);
             stream.LeftJoin(globalTable, kvMapper, MockValueJoiner.TOSTRING_JOINER());

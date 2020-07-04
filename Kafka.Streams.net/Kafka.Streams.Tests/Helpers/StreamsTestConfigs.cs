@@ -16,7 +16,7 @@ namespace Kafka.Streams.Tests.Helpers
             => new StreamsConfig(new Dictionary<string, string?>
                 {
                     { "test.mock.num.brokers", numberOfMockBrokers.ToString() },
-                    {  StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIGConfig, "3" },
+                    { StreamsConfig.BufferedRecordsPerPartitionConfig, "3" },
                     { StreamsConfig.ProcessingGuaranteeConfig, enableEoS ? StreamsConfig.ExactlyOnceConfig : StreamsConfig.AtLeastOnceConfig },
                 })
             {

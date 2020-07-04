@@ -29,5 +29,6 @@ namespace Kafka.Streams.Processors.Internals
         Dictionary<TopicPartition, long> GetRestoredOffsets();
 
         void Reset();
+        void Remove(IEnumerable<TopicPartition> enumerable);
     }
 }

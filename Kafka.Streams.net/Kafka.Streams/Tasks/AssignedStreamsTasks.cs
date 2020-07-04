@@ -56,15 +56,14 @@ namespace Kafka.Streams.Tasks
             while (restoringTaskIterator.MoveNext())
             {
                 StreamTask task = restoringTaskIterator.Current;
-                this.logger.LogDebug("Closing restoring task {}", task.id);
+                this.logger.LogDebug("Closing restoring task {}", task.Id);
                 try
                 {
-
-                    task.CloseStateManager(true);
+                    //task.CloseStateManager(true);
                 }
                 catch (RuntimeException e)
                 {
-                    this.logger.LogError("Failed to Remove restoring task {} due to the following error:", task.id, e);
+                    this.logger.LogError("Failed to Remove restoring task {} due to the following error:", task.Id, e);
                     if (exception == null)
                     {
                         exception = e;
@@ -96,25 +95,25 @@ namespace Kafka.Streams.Tasks
             {
                 KeyValuePair<TaskId, StreamTask> entry = it.Current;
                 StreamTask task = entry.Value;
-                if (this.restoredPartitions.All(p => task.changelogPartitions.Contains(p)))
+                if (this.restoredPartitions.All(p => task.ChangelogPartitions().Contains(p)))
                 {
                     this.TransitionToRunning(task);
                     this.restoring.Remove(it.Current.Key);
 
                     this.logger.LogTrace("Stream task {} completed restoration as All its changelog partitions {} have been applied to restore state",
-                        task.id,
-                        task.changelogPartitions);
+                        task.Id,
+                        task.ChangelogPartitions());
                 }
                 else
                 {
 
                     if (this.logger.IsEnabled(LogLevel.Trace))
                     {
-                        var outstandingPartitions = new HashSet<TopicPartition>(task.changelogPartitions);
+                        var outstandingPartitions = new HashSet<TopicPartition>(task.ChangelogPartitions());
                         outstandingPartitions.RemoveWhere(op => this.restoredPartitions.Contains(op));
 
                         this.logger.LogTrace("Stream task {} cannot resume processing yet since some of its changelog partitions have not completed restoring: {}",
-                            task.id,
+                            task.Id,
                             outstandingPartitions);
                     }
                 }
@@ -127,13 +126,13 @@ namespace Kafka.Streams.Tasks
 
         public void AddToRestoring(StreamTask task)
         {
-            this.restoring.Add(task.id, task);
-            foreach (TopicPartition topicPartition in task.partitions)
+            this.restoring.Add(task.Id, task);
+            foreach (TopicPartition topicPartition in task.Partitions)
             {
                 this.restoringByPartition.Add(topicPartition, task);
             }
 
-            foreach (TopicPartition topicPartition in task.changelogPartitions)
+            foreach (TopicPartition topicPartition in task.ChangelogPartitions())
             {
                 this.restoringByPartition.Add(topicPartition, task);
             }
@@ -154,17 +153,17 @@ namespace Kafka.Streams.Tasks
                 try
                 {
 
-                    if (task.commitRequested && task.commitNeeded)
+                    //if (task.CommitRequested() && task.CommitNeeded())
                     {
-                        task.Commit();
+                        //task.Commit();
                         committed++;
-                        this.logger.LogDebug("Committed active task {} per user request in", task.id);
+                        this.logger.LogDebug("Committed active task {} per user request in", task.Id);
                     }
                 }
                 catch (InvalidOperationException e)
                 {
                     this.logger.LogInformation(e, "Failed to commit {} since it got migrated to another thread already. " +
-                            "Closing it as zombie before triggering a new rebalance.", task.id);
+                            "Closing it as zombie before triggering a new rebalance.", task.Id);
                     RuntimeException fatalException = this.CloseZombieTask(task);
                     if (fatalException != null)
                     {
@@ -178,7 +177,7 @@ namespace Kafka.Streams.Tasks
                 catch (Exception t)
                 {
                     this.logger.LogError("Failed to commit StreamTask {} due to the following error:",
-                            task.id,
+                            task.Id,
                             t);
                     if (firstException == null)
                     {
@@ -204,7 +203,7 @@ namespace Kafka.Streams.Tasks
             var recordsToDelete = new Dictionary<TopicPartition, long>();
             foreach (var task in this.running.Values)
             {
-                foreach (var record in task.PurgableOffsets())
+                foreach (var record in task.PurgeableOffsets())
                 {
                     recordsToDelete.Add(record.Key, record.Value);
                 }
@@ -227,7 +226,7 @@ namespace Kafka.Streams.Tasks
                 try
                 {
 
-                    if (task.IsProcessable(now) && task.Process())
+                    if (task.IsProcessable(now) && task.Process(DateTime.UtcNow))
                     {
                         processed++;
                     }
@@ -235,7 +234,7 @@ namespace Kafka.Streams.Tasks
                 catch (TaskMigratedException e)
                 {
                     this.logger.LogInformation(e, "Failed to process stream task {} since it got migrated to another thread already. " +
-                            "Closing it as zombie before triggering a new rebalance.", task.id);
+                            "Closing it as zombie before triggering a new rebalance.", task.Id);
                     RuntimeException fatalException = this.CloseZombieTask(task);
                     if (fatalException != null)
                     {
@@ -248,7 +247,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (RuntimeException e)
                 {
-                    this.logger.LogError("Failed to process stream task {} due to the following error:", task.id, e);
+                    this.logger.LogError("Failed to process stream task {} due to the following error:", task.Id, e);
 
                     throw;
                 }
@@ -282,7 +281,7 @@ namespace Kafka.Streams.Tasks
                 catch (TaskMigratedException e)
                 {
                     this.logger.LogInformation(e, "Failed to punctuate stream task {} since it got migrated to another thread already. " +
-                            "Closing it as zombie before triggering a new rebalance.", task.id);
+                            "Closing it as zombie before triggering a new rebalance.", task.Id);
 
                     RuntimeException fatalException = this.CloseZombieTask(task);
                     if (fatalException != null)
@@ -296,7 +295,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (KafkaException e)
                 {
-                    this.logger.LogError("Failed to punctuate stream task {} due to the following error:", task.id, e);
+                    this.logger.LogError("Failed to punctuate stream task {} due to the following error:", task.Id, e);
 
                     throw;
                 }

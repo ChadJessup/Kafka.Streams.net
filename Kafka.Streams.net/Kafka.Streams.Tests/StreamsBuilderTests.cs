@@ -44,7 +44,7 @@ namespace Kafka.Streams.Tests
 
             this.builder
                 .Stream<Bytes, string>(STREAM_TOPIC)
-                .Join(filteredKTable, MockValueJoiner.TOSTRING_JOINER<string, string>());
+                .Join(filteredKTable, MockValueJoiner.TOSTRING_JOINER());
 
             this.builder.Build();
 

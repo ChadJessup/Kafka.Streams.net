@@ -32,7 +32,7 @@ namespace Kafka.Streams.Processors.Internals
         private readonly ILogger<RecordDeserializer> logger;
 
         public ISourceNode SourceNode { get; }
-        private IDeserializationExceptionHandler deserializationExceptionHandler;
+        private readonly IDeserializationExceptionHandler deserializationExceptionHandler;
 
         public RecordDeserializer(
             ILogger<RecordDeserializer> logger,

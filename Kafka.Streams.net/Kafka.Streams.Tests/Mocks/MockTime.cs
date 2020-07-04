@@ -8,8 +8,6 @@ namespace Kafka.Streams.Tests
     {
         private DateTime currentInstant;
         private readonly long autoTickMs;
-        private readonly long timeMs;
-        private readonly long highResTimeNs;
 
         public MockTime()
             : this(0)
@@ -27,20 +25,14 @@ namespace Kafka.Streams.Tests
             this.autoTickMs = autoTickMs;
         }
 
-        //public MockTime(long startTimestampMs)
-        //{
-        //    this.timeMs = startTimestampMs;
-        //    this.highResTimeNs = startTimestampMs * 1000L * 1000L;
-        //}
-
         public DateTime UtcNow
-            => Timestamp.UnixTimestampMsToDateTime(this.timeMs);
+            => this.currentInstant.ToUniversalTime();
 
         public long NowAsEpochMilliseconds
-            => this.timeMs;
+            => this.currentInstant.ToEpochMilliseconds();
 
         public long NowAsEpochNanoseconds
-            => this.highResTimeNs;
+            => this.currentInstant.ToEpochMilliseconds() * 1000000;
 
         public void Sleep(long ms)
         {

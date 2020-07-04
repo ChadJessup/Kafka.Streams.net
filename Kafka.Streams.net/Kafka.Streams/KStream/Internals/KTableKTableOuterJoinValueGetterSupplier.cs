@@ -18,8 +18,8 @@ namespace Kafka.Streams.KStream.Internals
         public override IKTableValueGetter<K, R> Get()
         {
             return new KTableKTableOuterJoinValueGetter<K, R, V1, V2>(
-                valueGetterSupplier1.Get(),
-                valueGetterSupplier2.Get(),
+                this.valueGetterSupplier1.Get(),
+                this.valueGetterSupplier2.Get(),
                 this.joiner);
         }
     }

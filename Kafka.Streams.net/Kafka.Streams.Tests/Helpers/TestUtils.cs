@@ -19,6 +19,8 @@ namespace Kafka.Streams.Tests.Helpers
 {
     public static class TestUtils
     {
+        public static DirectoryInfo IO_TMP_DIR => new DirectoryInfo(Path.GetTempPath());
+
         internal static void WaitForCondition(
             Func<bool> condition,
             string errorMessage)
@@ -42,6 +44,7 @@ namespace Kafka.Streams.Tests.Helpers
 
             Assert.True(SpinWait.SpinUntil(condition, timeout.Value), errorMessage);
         }
+
         public static StreamsBuilder GetStreamsBuilder(IServiceCollection services)
         {
             if (services is null)
@@ -110,9 +113,7 @@ namespace Kafka.Streams.Tests.Helpers
         }
 
         internal static ILogger<T> GetMockLogger<T>()
-        {
-            return new Mock<ILogger<T>>().Object;
-        }
+            => Mock.Of<ILogger<T>>();
 
         internal static T GetService<T>(ServiceProvider services)
             => services.GetRequiredService<T>();
@@ -135,12 +136,19 @@ namespace Kafka.Streams.Tests.Helpers
             return mockClientSupplier;
         }
 
-        internal static ProducerConfig ProducerConfig<K, V>(string bootStrapServers, ISerializer<K> keySerializer, ISerializer<V> valueSerializer)
+        internal static ProducerConfig ProducerConfig<K, V>(
+            string bootStrapServers,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer)
         {
             return new ProducerConfig();
         }
 
-        internal static ProducerConfig ProducerConfig<K, V>(string bootStrapServers, ISerializer<K> keySerializer, ISerializer<V> valueSerializer, StreamsConfig streamsConfig)
+        internal static ProducerConfig ProducerConfig<K, V>(
+            string bootStrapServers,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer,
+            StreamsConfig streamsConfig)
         {
             return new ProducerConfig();
         }

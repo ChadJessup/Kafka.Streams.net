@@ -24,16 +24,16 @@ namespace Kafka.Streams.Topologies
      */
     public class Topology
     {
+        private readonly KafkaStreamsContext context;
         private readonly ILogger<Topology> logger;
 
         public InternalTopologyBuilder internalTopologyBuilder { get; }
 
-        public Topology(
-            ILogger<Topology> logger,
-            InternalTopologyBuilder internalTopologyBuilder)
+        public Topology(KafkaStreamsContext context)
         {
-            this.logger = logger;
-            this.internalTopologyBuilder = internalTopologyBuilder;
+            this.context = context ?? throw new System.ArgumentNullException(nameof(context));
+            this.logger = this.context.CreateLogger<Topology>();
+            this.internalTopologyBuilder = this.context.InternalTopologyBuilder;
         }
 
         /**
@@ -123,10 +123,10 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology AddSource<K, V>(
             AutoOffsetReset offsetReset,
-            string Name,
+            string name,
             Regex topicPattern)
         {
-            this.internalTopologyBuilder.AddSource<K, V>(offsetReset, Name, null, null, null, topicPattern);
+            this.internalTopologyBuilder.AddSource<K, V>(offsetReset, name, null, null, null, topicPattern);
             return this;
         }
 

@@ -99,7 +99,7 @@ namespace Kafka.Streams.Processors.Internals
 
                     StateRestorer restorer = this.stateRestorers[partition];
                     restorer.SetCheckpointOffset(StateRestorer.NO_CHECKPOINT);
-                    task.ReinitializeStateStoresForPartitions(recoverableException.Results.Select(tpo => tpo.TopicPartition).ToList());
+                    // task.ReinitializeStateStoresForPartitions(recoverableException.Results.Select(tpo => tpo.TopicPartition).ToList());
                 }
 
                 this.restoreConsumer.SeekToBeginning(partitions);
@@ -234,20 +234,20 @@ namespace Kafka.Streams.Processors.Internals
                 // and in this case if EOS is turned on we should wipe out the state and re-initialize the task.
                 var task = active.RestoringTaskFor(partition);
 
-                if (task.IsEosEnabled())
+                if (false)//task.IsEosEnabled())
                 {
                     this.logger.LogInformation("No checkpoint found for task {} state store {} changelog {} with EOS turned on. " +
-                            "Reinitializing the task and restore its state from the beginning.", task.id, restorer.storeName, partition);
+                            "Reinitializing the task and restore its state from the beginning.", task.Id, restorer.storeName, partition);
 
                     this.needsInitializing.Remove(partition);
                     initialized.Remove(partition);
                     restorer.SetCheckpointOffset(this.restoreConsumer.Position(partition));
 
-                    task.ReinitializeStateStoresForPartitions(new List<TopicPartition> { partition });
+                    //task.ReinitializeStateStoresForPartitions(new List<TopicPartition> { partition });
                 }
                 else
                 {
-                    this.logger.LogInformation($"Restoring task {task.id}'s state store {restorer.storeName} from beginning of the changelog {partition} ");
+                    this.logger.LogInformation($"Restoring task {task.Id}'s state store {restorer.storeName} from beginning of the changelog {partition} ");
 
                     long position = this.restoreConsumer.Position(restorer.partition);
                     this.LogRestoreOffsets(
@@ -329,6 +329,11 @@ namespace Kafka.Streams.Processors.Internals
             }
 
             return false;
+        }
+
+        public void Remove(IEnumerable<TopicPartition> enumerable)
+        {
+            throw new NotImplementedException();
         }
     }
 }

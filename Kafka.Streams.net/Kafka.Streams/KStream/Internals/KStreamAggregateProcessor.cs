@@ -11,8 +11,8 @@ namespace Kafka.Streams.KStream.Internals
     {
         private TimestampedTupleForwarder<K, T> tupleForwarder;
         private ITimestampedKeyValueStore<K, T> store;
-        private readonly IInitializer<T> initializer;
-        private readonly IAggregator<K, V, T> aggregator;
+        private readonly Initializer<T> initializer;
+        private readonly Aggregator<K, V, T> aggregator;
         private readonly KafkaStreamsContext context;
         private readonly bool sendOldValues;
         private readonly string storeName;
@@ -21,8 +21,8 @@ namespace Kafka.Streams.KStream.Internals
             KafkaStreamsContext context,
             string storeName,
             bool sendOldValues,
-            IInitializer<T> initializer,
-            IAggregator<K, V, T> aggregator)
+            Initializer<T> initializer,
+            Aggregator<K, V, T> aggregator)
         {
             this.context = context;
             this.storeName = storeName;
@@ -67,7 +67,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (oldAgg == null)
             {
-                oldAgg = this.initializer.Apply();
+                oldAgg = this.initializer();
                 newTimestamp = this.Context.Timestamp;
             }
             else
@@ -76,7 +76,7 @@ namespace Kafka.Streams.KStream.Internals
                 newTimestamp = this.Context.Timestamp.GetNewest(oldAggAndTimestamp.Timestamp);
             }
 
-            newAgg = this.aggregator.Apply(key, value, oldAgg);
+            newAgg = this.aggregator(key, value, oldAgg);
 
             this.store.Add(key, ValueAndTimestamp.Make(newAgg, newTimestamp));
             this.tupleForwarder.MaybeForward(key, newAgg, this.sendOldValues

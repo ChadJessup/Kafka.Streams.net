@@ -49,9 +49,9 @@ namespace Kafka.Streams.KStream
     public class SessionWindows
     {
         private static readonly TimeSpan DEFAULT_RETENTION_MS = TimeSpan.FromDays(1.0);
-        private TimeSpan gap;
-        private TimeSpan maintainDuration;
-        private TimeSpan graceWindow;
+        private readonly TimeSpan gap;
+        private readonly TimeSpan maintainDuration;
+        private readonly TimeSpan graceWindow;
 
         private SessionWindows(TimeSpan gap, TimeSpan maintainDuration, TimeSpan graceWindow)
         {

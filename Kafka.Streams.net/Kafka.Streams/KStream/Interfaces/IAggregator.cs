@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Interfaces
      */
 
     public delegate VAggregate Aggregator<in K, in V, VAggregate>(K key, V value, VAggregate aggregate);
-    public interface IAggregator<K, V, VAggregate>
+    public interface IAggregator2<K, V, VAggregate>
     {
         /**
          * Compute a new aggregate from the key and value of a record and the current aggregate of the same key.

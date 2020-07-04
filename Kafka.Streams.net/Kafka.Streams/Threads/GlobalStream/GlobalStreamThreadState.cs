@@ -9,7 +9,7 @@ namespace Kafka.Streams.Threads.GlobalStream
      * This is the thread responsible for keeping All Global State Stores updated.
      * It delegates most of the responsibility to the internal StateConsumer
      */
-    public class GlobalStreamThreadState : IStateMachine<GlobalStreamThreadStates>
+    public class GlobalStreamThreadState : IThreadStateMachine<GlobalStreamThreadStates>
     {
         private readonly ILogger<GlobalStreamThreadState> logger;
         private Dictionary<GlobalStreamThreadStates, StateTransition<GlobalStreamThreadStates>> validTransitions = new Dictionary<GlobalStreamThreadStates, StateTransition<GlobalStreamThreadStates>>();

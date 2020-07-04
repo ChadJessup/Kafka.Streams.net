@@ -5,7 +5,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class ChangedDeserializer<T> : IDeserializer<IChange<T>>
     {
-        private static int NEWFLAG_SIZE = 1;
+        private const int NEWFLAG_SIZE = 1;
 
         private IDeserializer<T> inner;
 

@@ -20,7 +20,6 @@ namespace Kafka.Streams.State.Metered
         : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, K, V>,
         IKeyValueStore<K, V>
     {
-        protected KafkaStreamsContext Context { get; }
         protected ISerde<K> KeySerde { get; }
         protected ISerde<V> ValueSerde { get; }
         protected IStateSerdes<K, V> Serdes { get; set; }
@@ -34,7 +33,6 @@ namespace Kafka.Streams.State.Metered
             ISerde<V> valueSerde)
             : base(context, inner)
         {
-            this.Context = context;
             this.KeySerde = keySerde;
             this.ValueSerde = valueSerde;
         }

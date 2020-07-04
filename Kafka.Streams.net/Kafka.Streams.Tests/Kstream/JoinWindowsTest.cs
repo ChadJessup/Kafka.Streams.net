@@ -1,4 +1,5 @@
 using Kafka.Streams.KStream;
+using Moq;
 using System;
 using Xunit;
 
@@ -7,8 +8,8 @@ namespace Kafka.Streams.Tests.Kstream
     public class JoinWindowsTest
     {
 
-        private static long ANY_SIZE = 123L;
-        private static long ANY_OTHER_SIZE = 456L; // should be larger than anySize
+        private static readonly long ANY_SIZE = 123L;
+        private static readonly long ANY_OTHER_SIZE = 456L; // should be larger than anySize
 
         [Fact]
         public void validWindows()
@@ -27,9 +28,9 @@ namespace Kafka.Streams.Tests.Kstream
         }
 
         [Fact]
-        public void timeDifferenceMustNotBeNegative()
+        public void TimeDifferenceMustNotBeNegative()
         {
-            JoinWindows.Of(TimeSpan.FromMilliseconds(-1));
+            Assert.Throws<ArgumentException>(() => JoinWindows.Of(TimeSpan.FromMilliseconds(-1)));
         }
 
         [Fact]
@@ -63,11 +64,11 @@ namespace Kafka.Streams.Tests.Kstream
         }
 
         [Fact]
-        public void untilShouldSetGraceDuration()
+        public void UntilShouldSetGraceDuration()
         {
             JoinWindows windowSpec = JoinWindows.Of(TimeSpan.FromMilliseconds(ANY_SIZE));
-            var windowSize = windowSpec.Count;
-            Assert.Equal(windowSize, windowSpec.Grace(TimeSpan.FromMilliseconds(windowSize)).GracePeriod());
+            var windowSize = windowSpec.Size();
+            Assert.Equal(windowSize, windowSpec.Grace(windowSize).GracePeriod());
         }
 
 
@@ -75,10 +76,10 @@ namespace Kafka.Streams.Tests.Kstream
         public void RetentionTimeMustNoBeSmallerThanWindowSize()
         {
             JoinWindows windowSpec = JoinWindows.Of(TimeSpan.FromMilliseconds(ANY_SIZE));
-            var windowSize = windowSpec.Count;
+            var windowSize = windowSpec.Size();
             try
             {
-                windowSpec.Until(windowSize - 1);
+                windowSpec.Until(windowSize.Add(TimeSpan.FromMilliseconds(-1)));
                 Assert.False(true, "should not accept retention time smaller than window size");
             }
             catch (ArgumentException e)

@@ -51,9 +51,13 @@ namespace Kafka.Streams.KStream.Internals
             HashSet<string> sourceNodes,
             string? queryableStoreName,
             IProcessorSupplier processorSupplier,
-            StreamsGraphNode streamsGraphNode,
-            InternalStreamsBuilder builder)
-            : base(Name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
+            StreamsGraphNode streamsGraphNode)
+            : base(context,
+                  Name,
+                  keySerde,
+                  valSerde,
+                  sourceNodes,
+                  streamsGraphNode)
         {
             this.context = context;
             this.processorSupplier = processorSupplier;
@@ -128,8 +132,7 @@ namespace Kafka.Streams.KStream.Internals
                 this.SourceNodes,
                 queryableStoreName,
                 processorSupplier,
-                tableNode,
-                this.Builder);
+                tableNode);
         }
 
         public IKTable<K, V> Filter(Func<K, V, bool> predicate)
@@ -477,8 +480,7 @@ namespace Kafka.Streams.KStream.Internals
                 this.ValueSerde,
                 this.SourceNodes,
                 repartitionRequired: false,
-                toStreamNode,
-                this.Builder);
+                toStreamNode);
         }
 
 
@@ -832,23 +834,21 @@ namespace Kafka.Streams.KStream.Internals
             var selectName = new NamedInternal(groupedInternal.Name)
                 .OrElseGenerateWithPrefix(this.Builder, KTable.SELECT_NAME);
 
-            //IKTableProcessorSupplier<K, V, KeyValuePair<K1, V1>> selectSupplier = new KTableRepartitionMap<K, V, K1, V1>(this, selector);
-            //ProcessorParameters<K, Change<V>> processorParameters = new ProcessorParameters<K, Change<V>>(selectSupplier, selectName);
+            IKTableProcessorSupplier<K, V, KeyValuePair<K1, V1>> selectSupplier = new KTableRepartitionMap<K, V, K1, V1>(this, selector);
+            ProcessorParameters<K, IChange<V>> processorParameters = new ProcessorParameters<K, IChange<V>>(selectSupplier, selectName);
 
             // select the aggregate key and values (old and new), it would require parent to send old values
-            //ProcessorGraphNode<K, Change<V>> groupByMapNode = new ProcessorGraphNode<K, Change<V>>(selectName, processorParameters);
+            ProcessorGraphNode<K, IChange<V>> groupByMapNode = new ProcessorGraphNode<K, IChange<V>>(selectName, processorParameters);
 
-            //builder.AddGraphNode(this.streamsGraphNode, groupByMapNode);
+            this.Builder.AddGraphNode<K, V>(this.StreamsGraphNode, groupByMapNode);
 
             this.EnableSendingOldValues();
-            return null;
-            //return new KGroupedTableImpl<K1, V1>(
-            //    builder,
-            //    selectName,
-            //    sourceNodes,
-            //    groupedInternal,
-            //    groupByMapNode
-            //);
+            return new KGroupedTableImpl<K1, V1>(
+                this.Context,
+                selectName,
+                this.SourceNodes,
+                groupedInternal,
+                groupByMapNode);
         }
 
         public IKTableValueGetterSupplier<K, V> ValueGetterSupplier<VR>()
@@ -876,7 +876,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 if (this.processorSupplier is KTableSource<K, V>)
                 {
-                    var source = (KTableSource<K, object>)this.processorSupplier;
+                    var source = (KTableSource<K, V>)this.processorSupplier;
                     source.EnableSendingOldValues();
                 }
                 else if (this.processorSupplier is IKStreamAggProcessorSupplier)

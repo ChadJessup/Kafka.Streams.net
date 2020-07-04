@@ -14,15 +14,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class KStreamGlobalKTableLeftJoinTest
     {
-        private static KeyValueTimestamp<int, string>[] EMPTY = Array.Empty<KeyValueTimestamp<int, string>>();
+        private static readonly KeyValueTimestamp<int, string>[] EMPTY = Array.Empty<KeyValueTimestamp<int, string>>();
 
-        private string streamTopic = "streamTopic";
-        private string globalTableTopic = "globalTableTopic";
-        private int[] expectedKeys = { 0, 1, 2, 3 };
+        private readonly string streamTopic = "streamTopic";
+        private readonly string globalTableTopic = "globalTableTopic";
+        private readonly int[] expectedKeys = { 0, 1, 2, 3 };
 
-        private MockProcessor<int, string> processor;
-        private TopologyTestDriver driver;
-        private StreamsBuilder builder;
+        private readonly MockProcessor<int, string> processor;
+        private readonly TopologyTestDriver driver;
+        private readonly StreamsBuilder builder;
 
         public KStreamGlobalKTableLeftJoinTest()
         {
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             stream.LeftJoin(table, keyMapper, MockValueJoiner.TOSTRING_JOINER()).Process(supplier);
 
             StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
-            driver = new TopologyTestDriver(builder.Build(), props);
+            driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
 
             processor = supplier.TheCapturedProcessor();
         }

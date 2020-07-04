@@ -76,8 +76,7 @@ namespace Kafka.Streams.KStream.Internals
                 consumed.ValueSerde,
                 new HashSet<string> { Name },
                 false,
-                streamSourceNode,
-                this);
+                streamSourceNode);
         }
 
         public IKStream<K, V> Stream<K, V>(
@@ -96,8 +95,7 @@ namespace Kafka.Streams.KStream.Internals
                 consumed.ValueSerde,
                 new HashSet<string> { Name },
                 repartitionRequired: false,
-                streamPatternSourceNode,
-                this);
+                streamPatternSourceNode);
         }
 
         public IKTable<K, V> Table<K, V>(
@@ -138,8 +136,7 @@ namespace Kafka.Streams.KStream.Internals
                 new HashSet<string> { sourceName },
                 materialized.QueryableStoreName(),
                 tableSource,
-                tableSourceNode,
-                this);
+                tableSourceNode);
         }
 
         public IGlobalKTable<K, V> GlobalTable<K, V>(
@@ -344,8 +341,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private void MaybePerformOptimizations(StreamsConfig? config)
         {
-            if (config != null
-                && StreamsConfig.OPTIMIZEConfig.Equals(config.Get(config.Get(StreamsConfig.TOPOLOGY_OPTIMIZATIONConfig))))
+            if (config != null && config.TopologyOptimization == TopologyOptimization.All)
             {
                 this.logger.LogDebug("Optimizing the Kafka Streams graph for repartition nodes");
 

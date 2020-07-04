@@ -8,7 +8,7 @@ namespace Kafka.Streams.State.MergeSorted
 {
     public class MergedSortedCacheSessionStoreIterator : AbstractMergedSortedCacheStoreIterator<IWindowed<Bytes>, IWindowed<Bytes>, byte[], byte[]>
     {
-        private SegmentedCacheFunction cacheFunction;
+        private readonly SegmentedCacheFunction cacheFunction;
 
         public MergedSortedCacheSessionStoreIterator(
             KafkaStreamsContext context,

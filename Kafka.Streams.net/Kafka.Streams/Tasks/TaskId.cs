@@ -12,19 +12,19 @@ namespace Kafka.Streams.Tasks
     public class TaskId : IComparable<TaskId>
     {
         /** The ID of the topic group. */
-        public int topicGroupId;
+        public int TopicGroupId { get; }
         /** The ID of the partition. */
-        public int partition;
+        public int Partition { get; }
 
         public TaskId(int topicGroupId, int partition)
         {
-            this.topicGroupId = topicGroupId;
-            this.partition = partition;
+            this.TopicGroupId = topicGroupId;
+            this.Partition = partition;
         }
 
         public override string ToString()
         {
-            return this.topicGroupId + "_" + this.partition;
+            return this.TopicGroupId + "_" + this.Partition;
         }
 
         /**
@@ -32,6 +32,11 @@ namespace Kafka.Streams.Tasks
          */
         public static TaskId Parse(string taskIdStr)
         {
+            if (string.IsNullOrWhiteSpace(taskIdStr))
+            {
+                throw new ArgumentException("message", nameof(taskIdStr));
+            }
+
             var index = taskIdStr.IndexOf('_');
 
             if (index <= 0 || index + 1 >= taskIdStr.Length)
@@ -57,10 +62,10 @@ namespace Kafka.Streams.Tasks
          */
         public void WriteTo(Stream outputStream)
         {
-            var bw = new BinaryWriter(outputStream, Encoding.UTF8, leaveOpen: true);
+            using var bw = new BinaryWriter(outputStream, Encoding.UTF8, leaveOpen: true);
 
-            bw.Write(this.topicGroupId);
-            bw.Write(this.partition);
+            bw.Write(this.TopicGroupId);
+            bw.Write(this.Partition);
         }
 
         /**
@@ -68,33 +73,38 @@ namespace Kafka.Streams.Tasks
          */
         public static TaskId ReadFrom(Stream input)
         {
-            var bw = new BinaryReader(input, Encoding.UTF8, leaveOpen: true);
+            using var bw = new BinaryReader(input, Encoding.UTF8, leaveOpen: true);
 
             return new TaskId(bw.ReadInt32(), bw.ReadInt32());
         }
 
         public void WriteTo(ByteBuffer buf)
         {
-            buf.PutInt(this.topicGroupId);
-            buf.PutInt(this.partition);
+            buf.PutInt(this.TopicGroupId);
+            buf.PutInt(this.Partition);
         }
 
-        public static TaskId ReadFrom(ByteBuffer buf)
+        public static TaskId ReadFrom(ByteBuffer buffer)
         {
-            return new TaskId(buf.GetInt(), buf.GetInt());
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            return new TaskId(buffer.GetInt(), buffer.GetInt());
         }
 
-
-        public override bool Equals(object o)
+        public override bool Equals(object other)
         {
-            if (this == o)
+            if (this == other)
             {
                 return true;
             }
 
-            if (o is TaskId)
+            if (other is TaskId)
             {
-                return ((TaskId)o).topicGroupId == this.topicGroupId && ((TaskId)o).partition == this.partition;
+                return ((TaskId)other).TopicGroupId == this.TopicGroupId
+                    && ((TaskId)other).Partition == this.Partition;
             }
             else
             {
@@ -104,17 +114,17 @@ namespace Kafka.Streams.Tasks
 
         public override int GetHashCode()
         {
-            var n = ((long)this.topicGroupId << 32) | (long)this.partition;
+            var n = ((long)this.TopicGroupId << 32) | (long)this.Partition;
             return (int)(n % 0xFFFFFFFFL);
         }
 
         public int CompareTo(TaskId other)
         {
-            var compare = this.topicGroupId.CompareTo(other.topicGroupId);
+            var compare = this.TopicGroupId.CompareTo(other.TopicGroupId);
 
             return compare != 0
                 ? compare
-                : this.partition.CompareTo(other.partition);
+                : this.Partition.CompareTo(other.Partition);
         }
     }
 }

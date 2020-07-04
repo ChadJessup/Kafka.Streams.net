@@ -6,9 +6,10 @@ using System.Text.RegularExpressions;
 
 namespace Kafka.Streams.Tests.Integration
 {
-    internal class TopologyWrapper
+    internal class TopologyWrapper : Topology
     {
-        public TopologyWrapper()
+        public TopologyWrapper(KafkaStreamsContext context)
+            :base(context)
         {
         }
 
@@ -29,7 +30,7 @@ namespace Kafka.Streams.Tests.Integration
 
         internal static InternalTopologyBuilder getInternalTopologyBuilder(Topology topology)
         {
-            throw new NotImplementedException();
+            return topology.internalTopologyBuilder;
         }
     }
 }

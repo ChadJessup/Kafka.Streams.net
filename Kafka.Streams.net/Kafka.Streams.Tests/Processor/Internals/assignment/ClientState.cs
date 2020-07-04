@@ -4,78 +4,167 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Tests.Processor.Internals.Assignment
 {
-    internal class ClientState
+    public class ClientState
     {
-        private int v;
+        public HashSet<TaskId> ActiveTasks { get; }
+        public HashSet<TaskId> StandbyTasks { get; }
+        public HashSet<TaskId> AssignedTasks { get; }
+        public HashSet<TaskId> PrevActiveTasks { get; }
+        public HashSet<TaskId> PrevStandbyTasks { get; }
+        public HashSet<TaskId> PrevAssignedTasks { get; }
 
-        public ClientState(int v)
+        private int capacity;
+
+
+        public ClientState()
+            : this(0)
         {
-            this.v = v;
         }
 
-        internal void Assign(TaskId taskId, bool v)
+        public ClientState(int capacity)
+            : this(
+                  new HashSet<TaskId>(),
+                  new HashSet<TaskId>(),
+                  new HashSet<TaskId>(),
+                  new HashSet<TaskId>(),
+                  new HashSet<TaskId>(),
+                  new HashSet<TaskId>(),
+                  capacity)
         {
-            throw new NotImplementedException();
         }
 
-        internal bool ReachedCapacity()
+        private ClientState(
+            HashSet<TaskId> activeTasks,
+            HashSet<TaskId> standbyTasks,
+            HashSet<TaskId> assignedTasks,
+            HashSet<TaskId> prevActiveTasks,
+            HashSet<TaskId> prevStandbyTasks,
+            HashSet<TaskId> prevAssignedTasks,
+            int capacity)
         {
-            throw new NotImplementedException();
+            this.ActiveTasks = activeTasks;
+            this.StandbyTasks = standbyTasks;
+            this.AssignedTasks = assignedTasks;
+            this.PrevActiveTasks = prevActiveTasks;
+            this.PrevStandbyTasks = prevStandbyTasks;
+            this.PrevAssignedTasks = prevAssignedTasks;
+            this.capacity = capacity;
         }
 
-        internal bool HasMoreAvailableCapacityThan(ClientState client)
+        public ClientState Copy()
         {
-            throw new NotImplementedException();
+            return new ClientState(
+                new HashSet<TaskId>(ActiveTasks),
+                new HashSet<TaskId>(StandbyTasks),
+                new HashSet<TaskId>(AssignedTasks),
+                new HashSet<TaskId>(PrevActiveTasks),
+                new HashSet<TaskId>(PrevStandbyTasks),
+                new HashSet<TaskId>(PrevAssignedTasks),
+                capacity);
         }
 
-        internal bool HasUnfulfilledQuota(int v)
+        public void Assign(TaskId taskId, bool active)
         {
-            throw new NotImplementedException();
+            if (active)
+            {
+                ActiveTasks.Add(taskId);
+            }
+            else
+            {
+                StandbyTasks.Add(taskId);
+            }
+
+            AssignedTasks.Add(taskId);
         }
 
-        internal bool HasAssignedTask(TaskId taskId)
+        public int AssignedTaskCount()
         {
-            throw new NotImplementedException();
+            return AssignedTasks.Count;
         }
 
-        internal ICollection<object> PreviousActiveTasks()
+        public void IncrementCapacity()
         {
-            throw new NotImplementedException();
+            capacity++;
         }
 
-        internal IEnumerable<object> PreviousAssignedTasks()
+        public int ActiveTaskCount()
         {
-            throw new NotImplementedException();
+            return ActiveTasks.Count;
         }
 
-        internal void AddPreviousActiveTasks(object p)
+        public void AddPreviousActiveTasks(HashSet<TaskId> prevTasks)
         {
-            throw new NotImplementedException();
+            PrevActiveTasks.AddRange(prevTasks);
+            PrevAssignedTasks.AddRange(prevTasks);
         }
 
-        internal void AddPreviousStandbyTasks(object p)
+        public void AddPreviousStandbyTasks(HashSet<TaskId> standbyTasks)
         {
-            throw new NotImplementedException();
+            PrevStandbyTasks.AddRange(standbyTasks);
+            PrevAssignedTasks.AddRange(standbyTasks);
         }
 
-        internal ICollection<TaskId> AssignedTasks()
+        public override string ToString()
         {
-            throw new NotImplementedException();
+            return "[activeTasks: (" + ActiveTasks.ToJoinedString() +
+                    ") standbyTasks: (" + StandbyTasks.ToJoinedString() +
+                    ") assignedTasks: (" + AssignedTasks.ToJoinedString() +
+                    ") prevActiveTasks: (" + PrevActiveTasks.ToJoinedString() +
+                    ") prevStandbyTasks: (" + PrevStandbyTasks.ToJoinedString() +
+                    ") prevAssignedTasks: (" + PrevAssignedTasks.ToJoinedString() +
+                    ") capacity: " + capacity +
+                    "]";
         }
 
-        internal ICollection<TaskId> StandbyTasks()
+        public bool ReachedCapacity()
         {
-            throw new NotImplementedException();
+            return AssignedTasks.Count >= capacity;
         }
 
-        internal ICollection<TaskId> ActiveTasks()
+        public bool HasMoreAvailableCapacityThan(ClientState other)
         {
-            throw new NotImplementedException();
+            if (this.capacity <= 0)
+            {
+                throw new InvalidOperationException("Capacity of this ClientState must be greater than 0.");
+            }
+
+            if (other.capacity <= 0)
+            {
+                throw new InvalidOperationException("Capacity of other ClientState must be greater than 0");
+            }
+
+            double otherLoad = (double)other.AssignedTaskCount() / other.capacity;
+            double thisLoad = (double)AssignedTaskCount() / capacity;
+
+            if (thisLoad < otherLoad)
+            {
+                return true;
+            }
+            else if (thisLoad > otherLoad)
+            {
+                return false;
+            }
+            else
+            {
+                return capacity > other.capacity;
+            }
         }
 
-        internal int AssignedTaskCount()
+        public HashSet<TaskId> PreviousStandbyTasks()
         {
-            throw new NotImplementedException();
+            HashSet<TaskId> standby = new HashSet<TaskId>(PrevAssignedTasks);
+            standby.ExceptWith(PrevActiveTasks);
+            return standby;
+        }
+
+        public bool HasAssignedTask(TaskId taskId)
+        {
+            return AssignedTasks.Contains(taskId);
+        }
+
+        public bool HasUnfulfilledQuota(int tasksPerThread)
+        {
+            return ActiveTasks.Count < capacity * tasksPerThread;
         }
     }
 }

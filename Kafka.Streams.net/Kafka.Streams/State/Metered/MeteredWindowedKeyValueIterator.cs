@@ -8,10 +8,10 @@ namespace Kafka.Streams.State.Metered
 {
     public class MeteredWindowedKeyValueIterator<K, V> : IKeyValueIterator<IWindowed<K>, V>
     {
-        private IKeyValueIterator<IWindowed<Bytes>, byte[]> iter;
-        private IStateSerdes<K, V> serdes;
-        private long startNs;
-        private KafkaStreamsContext context;
+        private readonly IKeyValueIterator<IWindowed<Bytes>, byte[]> iter;
+        private readonly IStateSerdes<K, V> serdes;
+        private readonly long startNs;
+        private readonly KafkaStreamsContext context;
 
         public MeteredWindowedKeyValueIterator(
             KafkaStreamsContext context,

@@ -39,6 +39,11 @@ namespace Kafka.Common
         private readonly Dictionary<int, Node> nodesById;
         private readonly ClusterResource clusterResource;
 
+        public static void DeleteAllTopicsAndWait(long v)
+        {
+            throw new NotImplementedException();
+        }
+
         /**
          * Create a new cluster with the given id, nodes and partitions
          * @param nodes The nodes in the cluster
@@ -138,7 +143,7 @@ namespace Kafka.Common
             //this.controller = controller;
         }
 
-        public static void createTopics(string v1, string v2)
+        public static void CreateTopics(string v1, string v2)
         {
             throw new NotImplementedException();
         }

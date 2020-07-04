@@ -14,15 +14,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class KStreamGlobalKTableJoinTest
     {
-        private static KeyValueTimestamp<int, string>[] EMPTY = Array.Empty<KeyValueTimestamp<int, string>>();
+        private static readonly KeyValueTimestamp<int, string>[] EMPTY = Array.Empty<KeyValueTimestamp<int, string>>();
 
-        private string streamTopic = "streamTopic";
-        private string globalTableTopic = "globalTableTopic";
-        private int[] expectedKeys = { 0, 1, 2, 3 };
+        private readonly string streamTopic = "streamTopic";
+        private readonly string globalTableTopic = "globalTableTopic";
+        private readonly int[] expectedKeys = { 0, 1, 2, 3 };
 
-        private TopologyTestDriver driver;
-        private MockProcessor<int, string> processor;
-        private StreamsBuilder builder;
+        private readonly TopologyTestDriver driver;
+        private readonly MockProcessor<int, string> processor;
+        private readonly StreamsBuilder builder;
 
         public KStreamGlobalKTableJoinTest()
         {
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             stream.Join(table, keyMapper, MockValueJoiner.Instance("+")).Process(supplier);
 
             StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
-            driver = new TopologyTestDriver(builder.Build(), props);
+            driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
 
             processor = supplier.TheCapturedProcessor();
         }
@@ -102,7 +102,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 TopologyWrapper.getInternalTopologyBuilder(builder.Build()).CopartitionGroups();
 
             // KStream-GlobalKTable joins do not need to be co-partitioned
-            Assert.Equal(0, CopartitionGroups.Count);
+            Assert.Empty(CopartitionGroups);
         }
 
         [Fact]

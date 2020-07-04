@@ -1,10 +1,9 @@
-
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class ChangedSerializer<T> : ISerializer<IChange<T>>
+    public class ChangedSerializer<T> : ISerializer<IChange<T>>, ISerializer<T>
     {
         private const int NEWFLAG_SIZE = 1;
 
@@ -26,8 +25,6 @@ namespace Kafka.Streams.KStream.Internals
          */
         public byte[] Serialize(IChange<T> data, SerializationContext context)
         {
-            byte[] serializedKey;
-
             // only one of the old / new values would be not null
             if (data.NewValue != null)
             {
@@ -37,22 +34,26 @@ namespace Kafka.Streams.KStream.Internals
                         + " : " + data.NewValue + ") in ChangeSerializer, which is not allowed.");
                 }
 
-                serializedKey = this.inner.Serialize(data.NewValue, context);
+                return this.inner.Serialize(data.NewValue, context);
             }
             else
             {
-
                 if (data.OldValue == null)
                 {
                     throw new StreamsException("Both old and new values are null in ChangeSerializer, which is not allowed.");
                 }
 
-                serializedKey = this.inner.Serialize(data.OldValue, context);
+                return this.inner.Serialize(data.OldValue, context);
             }
+        }
+
+        public byte[] Serialize(T data, SerializationContext context)
+        {
+            byte[] serializedKey = this.inner.Serialize(data, context);
 
             ByteBuffer buf = new ByteBuffer().Allocate(serializedKey.Length + NEWFLAG_SIZE);
             buf.Add(serializedKey);
-            buf.Add((byte)(data.NewValue != null ? 1 : 0));
+            buf.Add((byte)(data != null ? 1 : 0));
 
             return buf.Array();
         }

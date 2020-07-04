@@ -113,16 +113,16 @@ namespace Kafka.Streams.KStream.Internals
             string name,
             ISerde<K>? keySerde,
             ISerde<V>? valueSerde,
-            HashSet<string> sourceNodes,
+            HashSet<string> subTopologySourceNodes,
             bool repartitionRequired,
-            StreamsGraphNode streamsGraphNode,
-            InternalStreamsBuilder builder)
-            : base(name,
+            StreamsGraphNode streamsGraphNode)
+            : base(
+                  context,
+                  name,
                   keySerde,
                   valueSerde,
-                  sourceNodes,
-                  streamsGraphNode,
-                  builder)
+                  subTopologySourceNodes,
+                  streamsGraphNode)
         {
             this.context = context;
             this.repartitionRequired = repartitionRequired;
@@ -151,8 +151,7 @@ namespace Kafka.Streams.KStream.Internals
                 this.ValueSerde,
                 this.SourceNodes,
                 this.repartitionRequired,
-                filterProcessorNode,
-                this.Builder);
+                filterProcessorNode);
         }
 
         public IKStream<K, V> FilterNot(FilterPredicate<K, V> predicate)
@@ -173,13 +172,12 @@ namespace Kafka.Streams.KStream.Internals
 
             return new KStream<K, V>(
                 this.context,
-                    Name,
-                    this.KeySerde,
-                    this.ValueSerde,
-                    this.SourceNodes,
-                    this.repartitionRequired,
-                    filterNotProcessorNode,
-                    this.Builder);
+                Name,
+                this.KeySerde,
+                this.ValueSerde,
+                this.SourceNodes,
+                this.repartitionRequired,
+                filterNotProcessorNode);
         }
 
         public IKStream<KR, V> SelectKey<KR>(KeyValueMapper<K, V, KR> mapper)
@@ -205,8 +203,7 @@ namespace Kafka.Streams.KStream.Internals
                 this.ValueSerde,
                 this.SourceNodes,
                 true,
-                selectKeyProcessorNode,
-                this.Builder);
+                selectKeyProcessorNode);
         }
 
         private ProcessorGraphNode<K, V> InternalSelectKey<KR>(
@@ -222,10 +219,10 @@ namespace Kafka.Streams.KStream.Internals
             return new ProcessorGraphNode<K, V>(Name, processorParameters);
         }
 
-        public IKStream<KR, VR> Map<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper)
+        public IKStream<KR, VR> Dictionary<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper)
             => this.Map(mapper, NamedInternal.Empty());
 
-        public IKStream<KR, VR> Map<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper, Named named)
+        public IKStream<KR, VR> Dictionary<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper, Named named)
         {
             mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             named = named ?? throw new ArgumentNullException(nameof(named));
@@ -243,13 +240,12 @@ namespace Kafka.Streams.KStream.Internals
             // key and value serde cannot be preserved
             return new KStream<KR, VR>(
                 this.context,
-                    Name,
-                    null,
-                    null,
-                    this.SourceNodes,
-                    true,
-                    mapProcessorNode,
-                    this.Builder);
+                Name,
+                null,
+                null,
+                this.SourceNodes,
+                true,
+                mapProcessorNode);
         }
 
         public IKStream<K, VR> MapValues<VR>(ValueMapper<V, VR> mapper)
@@ -285,8 +281,7 @@ namespace Kafka.Streams.KStream.Internals
                 valueSerde: null,
                 this.SourceNodes,
                 this.repartitionRequired,
-                mapValuesProcessorNode,
-                this.Builder);
+                mapValuesProcessorNode);
         }
 
         //public void print(Printed<K, V> printed)
@@ -328,8 +323,7 @@ namespace Kafka.Streams.KStream.Internals
                 null,
                 this.SourceNodes,
                 true,
-                flatMapNode,
-                this.Builder);
+                flatMapNode);
         }
 
         public IKStream<K, VR> FlatMapValues<VR>(ValueMapper<V, IEnumerable<VR>> mapper)
@@ -347,7 +341,6 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKStream<K, VR> FlatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
             => this.FlatMapValues(mapper);
-
 
         public IKStream<K, VR> FlatMapValues<VR>(
             ValueMapperWithKey<K, V, IEnumerable<VR>> mapper,
@@ -374,8 +367,7 @@ namespace Kafka.Streams.KStream.Internals
                 null,
                 this.SourceNodes,
                 this.repartitionRequired,
-                flatMapValuesNode,
-                this.Builder);
+                flatMapValuesNode);
         }
 
         public IKStream<K, V>[] Branch(Func<K, V, bool>[] predicates)
@@ -445,8 +437,7 @@ namespace Kafka.Streams.KStream.Internals
                     this.ValueSerde,
                     this.SourceNodes,
                     this.repartitionRequired,
-                    branchChildNode,
-                    this.Builder);
+                    branchChildNode);
             }
 
             return branchChildren;
@@ -495,8 +486,7 @@ namespace Kafka.Streams.KStream.Internals
                 null,
                 allSourceNodes,
                 requireRepartitioning,
-                mergeNode,
-                builder);
+                mergeNode);
         }
 
         public void ForEach(Action<K, V> action)
@@ -523,19 +513,26 @@ namespace Kafka.Streams.KStream.Internals
             action = action ?? throw new ArgumentNullException(nameof(action));
             named = named ?? throw new ArgumentNullException(nameof(named));
 
-            // string Name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.PEEK_NAME);
+            string name = new NamedInternal(named).OrElseGenerateWithPrefix(
+                this.Context.InternalStreamsBuilder,
+                KStream.PeekName);
 
-            // ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(
-            //        new KStreamPeek<K, V>(action, true),
-            //        Name
-            //);
+            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(
+                   new KStreamPeek<K, V>(action, true),
+                   name);
 
-            // ProcessorGraphNode<K, V> peekNode = new ProcessorGraphNode<>(Name, processorParameters);
+            ProcessorGraphNode<K, V> peekNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
-            // builder.AddGraphNode(this.streamsGraphNode, peekNode);
+            this.Context.InternalStreamsBuilder.AddGraphNode<K, V>(this.StreamsGraphNode, peekNode);
 
-            // return new KStream<>(Name, keySerde, valSerde, sourceNodes, repartitionRequired, peekNode, builder);
-            return null;
+            return new KStream<K, V>(
+                this.Context,
+                name,
+                this.KeySerde,
+                this.ValueSerde,
+                this.SourceNodes,
+                this.repartitionRequired,
+                peekNode);
         }
 
         public IKStream<K, V> Through(string topic)
@@ -620,7 +617,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         private void To
-            (TopicNameExtractor<K, V> topicExtractor, 
+            (TopicNameExtractor<K, V> topicExtractor,
             ProducedInternal<K, V> produced)
         {
             var Name = new NamedInternal(produced.Name).OrElseGenerateWithPrefix(this.Builder, KStream.SinkName);
@@ -671,11 +668,11 @@ namespace Kafka.Streams.KStream.Internals
             transformerSupplier = transformerSupplier ?? throw new ArgumentNullException(nameof(transformerSupplier));
             named = named ?? throw new ArgumentNullException(nameof(named));
 
-            var Name = new NamedInternal(named).Name;
+            var name = new NamedInternal(named).Name;
 
             var transformNode = new StatefulProcessorNode<K, V>(
-                   Name,
-                   new ProcessorParameters<K, V>(new KStreamFlatTransform<K, V, K1, V1>(transformerSupplier), Name),
+                   name,
+                   new ProcessorParameters<K, V>(new KStreamFlatTransform<K, V, K1, V1>(transformerSupplier), name),
                    stateStoreNames)
             {
                 IsKeyChangingOperation = true
@@ -686,25 +683,26 @@ namespace Kafka.Streams.KStream.Internals
             // cannot inherit key and value serde
             return new KStream<K1, V1>(
                 this.context,
-                Name,
+                name,
                 null,
                 null,
                 this.SourceNodes,
                 true,
-                transformNode,
-                this.Builder);
+                transformNode);
         }
 
-        public IKStream<K, VR> TransformValues<VR>(IValueTransformerSupplier<V, VR> valueTransformerSupplier,
-                                                    string[] stateStoreNames)
+        public IKStream<K, VR> TransformValues<VR>(
+            IValueTransformerSupplier<V, VR> valueTransformerSupplier,
+            string[] stateStoreNames)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
             return this.DoTransformValues(ToValueTransformerWithKeySupplier(valueTransformerSupplier), NamedInternal.Empty(), stateStoreNames);
         }
 
-        public IKStream<K, VR> TransformValues<VR>(IValueTransformerSupplier<V, VR> valueTransformerSupplier,
-                                                    Named named,
-                                                    string[] stateStoreNames)
+        public IKStream<K, VR> TransformValues<VR>(
+            IValueTransformerSupplier<V, VR> valueTransformerSupplier,
+            Named named,
+            string[] stateStoreNames)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
             named = named ?? throw new ArgumentNullException(nameof(named));
@@ -712,8 +710,9 @@ namespace Kafka.Streams.KStream.Internals
                     new NamedInternal(named), stateStoreNames);
         }
 
-        public IKStream<K, VR> TransformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
-                                                    string[] stateStoreNames)
+        public IKStream<K, VR> TransformValues<VR>(
+            IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+            string[] stateStoreNames)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
             return this.DoTransformValues(valueTransformerSupplier, NamedInternal.Empty(), stateStoreNames);
@@ -754,8 +753,7 @@ namespace Kafka.Streams.KStream.Internals
                 null,
                 this.SourceNodes,
                 this.repartitionRequired,
-                transformNode,
-                this.Builder);
+                transformNode);
         }
 
         public IKStream<K, VR> FlatTransformValues<VR>(
@@ -821,8 +819,7 @@ namespace Kafka.Streams.KStream.Internals
                 null,
                 this.SourceNodes,
                 this.repartitionRequired,
-                transformNode,
-                this.Builder);
+                transformNode);
         }
 
         public void Process(
@@ -836,9 +833,14 @@ namespace Kafka.Streams.KStream.Internals
             this.Process(IProcessorSupplier, Named.As(Name), stateStoreNames);
         }
 
-        public void Process(Func<IKeyValueProcessor<K, V>> processor)
+        public void Process(Func<IProcessorSupplier<K, V>> supplier)
         {
-            throw new NotImplementedException();
+            if (supplier is null)
+            {
+                throw new ArgumentNullException(nameof(supplier));
+            }
+
+            this.Process(supplier(), Array.Empty<string>());
         }
 
         public void Process(
@@ -991,8 +993,7 @@ namespace Kafka.Streams.KStream.Internals
                 repartitionValueSerde,
                 new HashSet<string> { repartitionedSourceName },
                 false,
-                optimizableRepartitionNode,
-                this.Builder);
+                optimizableRepartitionNode);
         }
 
         public IKStream<K, VR> LeftJoin<VO, VR>(
@@ -1183,8 +1184,7 @@ namespace Kafka.Streams.KStream.Internals
                 null,
                 this.SourceNodes,
                 this.repartitionRequired,
-                streamTableJoinNode,
-                this.Builder);
+                streamTableJoinNode);
         }
 
         public IKStream<K, VR> DoStreamTableJoin<VR, VO>(
@@ -1229,8 +1229,7 @@ namespace Kafka.Streams.KStream.Internals
                 null,
                 allSourceNodes,
                 repartitionRequired: false,
-                streamTableJoinNode,
-                this.Builder);
+                streamTableJoinNode);
         }
 
         public IKGroupedStream<KR, V> GroupBy<KR>(KeyValueMapper<K, V, KR> selector)
@@ -1255,8 +1254,7 @@ namespace Kafka.Streams.KStream.Internals
                 this.SourceNodes,
                 groupedInternal,
                 repartitionRequired: true,
-                selectKeyMapNode,
-                this.Builder);
+                selectKeyMapNode);
         }
 
         public IKGroupedStream<K, V> GroupByKey(ISerialized<K, V> serialized)
@@ -1280,11 +1278,52 @@ namespace Kafka.Streams.KStream.Internals
                 this.SourceNodes,
                 groupedInternal,
                 this.repartitionRequired,
-                this.StreamsGraphNode,
-                this.Builder);
+                this.StreamsGraphNode);
         }
 
-        public IKStream<K, VR> MapValues<VR>(Func<V, VR> mapper)
+        public IKStream<KR, VR> Map<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper)
+            => this.Map(mapper, NamedInternal.Empty());
+
+        public IKStream<KR, VR> Map<KR, VR>(
+            KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper,
+            Named named)
+        {
+            if (mapper is null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
+
+            if (named is null)
+            {
+                throw new ArgumentNullException(nameof(named));
+            }
+
+            string name = new NamedInternal(named)
+                .OrElseGenerateWithPrefix(this.Builder, KStream.MapName);
+
+            ProcessorParameters<K, V> processorParameters =
+                new ProcessorParameters<K, V>(new KStreamMap<K, V, KR, VR>(mapper), name);
+
+            ProcessorGraphNode<K, V> mapProcessorNode =
+                new ProcessorGraphNode<K, V>(name, processorParameters);
+            mapProcessorNode.IsKeyChangingOperation = true;
+
+            this.Builder.AddGraphNode<K, V>(this.StreamsGraphNode, mapProcessorNode);
+
+            // key and value serde cannot be preserved
+            return new KStream<KR, VR>(
+                this.context,
+                name,
+                null,
+                null,
+                this.SourceNodes,
+                repartitionRequired: true,
+                mapProcessorNode);
+        }
+
+        private IKStream<KR, VR> Map<KR, VR>(
+            KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper,
+            NamedInternal namedInternal)
         {
             throw new NotImplementedException();
         }

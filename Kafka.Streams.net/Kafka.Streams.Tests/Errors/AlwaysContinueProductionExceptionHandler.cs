@@ -21,7 +21,6 @@ namespace Kafka.Streams.Tests.Errors
             return ProductionExceptionHandlerResponse.CONTINUE;
         }
 
-
         public void Configure(Dictionary<string, string?> configs)
         {
             // ignore

@@ -146,6 +146,41 @@ namespace Kafka.Streams.Tests.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<DeliveryResult<K, V>> ProduceAsync(string topic, Message<K, V> message, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DeliveryResult<K, V>> ProduceAsync(TopicPartition topicPartition, Message<K, V> message, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InitTransactions(TimeSpan timeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BeginTransaction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CommitTransaction(TimeSpan timeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AbortTransaction(TimeSpan timeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendOffsetsToTransaction(IEnumerable<TopicPartitionOffset> offsets, IConsumerGroupMetadata groupMetadata, TimeSpan timeout)
+        {
+            throw new NotImplementedException();
+        }
+
         // {
         // 
         // ();

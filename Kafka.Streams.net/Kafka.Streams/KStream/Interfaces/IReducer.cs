@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream
 
     public delegate V Reducer<V>(V value1, V value2);
 
-    public interface IReducer<V>
+    public interface IReducer2<V>
     {
         /**
          * Aggregate the two given values into a single one.

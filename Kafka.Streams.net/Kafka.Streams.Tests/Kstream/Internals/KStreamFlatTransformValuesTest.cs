@@ -1,123 +1,127 @@
-using Kafka.Streams.KStream;
-using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals;
-using Moq;
-using System;
-using System.Collections.Generic;
-using Xunit;
+//using Kafka.Streams.KStream;
+//using Kafka.Streams.KStream.Internals;
+//using Kafka.Streams.Processors.Interfaces;
+//using Kafka.Streams.Processors.Internals;
+//using Kafka.Streams.State.Metered;
+//using Moq;
+//using System;
+//using System.Collections.Generic;
+//using Xunit;
 
-namespace Kafka.Streams.Tests.Kstream.Internals
-{
+//namespace Kafka.Streams.Tests.Kstream.Internals
+//{
+//    public class KStreamFlatTransformValuesTest
+//    {
 
-    public class KStreamFlatTransformValuesTest
-    {
+//        private int inputKey;
+//        private int inputValue;
 
-        private int inputKey;
-        private int inputValue;
+//        private IValueTransformerWithKey<int, int, IEnumerable<string>> valueTransformer;
+//        private IProcessorContext context;
 
-        private IValueTransformerWithKey<int, int, Iterable<string>> valueTransformer;
-        private IProcessorContext context;
+//        private KStreamFlatTransformValuesProcessor<int, int, string> processor;
 
-        private KStreamFlatTransformValuesProcessor<int, int, string> processor;
+//        public KStreamFlatTransformValuesTest()
+//        {
+//            inputKey = 1;
+//            inputValue = 10;
+//            valueTransformer = Mock.Of<IValueTransformerWithKey<int, int, IEnumerable<string>>>();
+//            context = Mock.Of<IProcessorContext>();
+//            processor = new KStreamFlatTransformValuesProcessor<int, int, string>(valueTransformer);
+//        }
 
+//        [Fact]
+//        public void shouldInitializeFlatTransformValuesProcessor()
+//        {
+//            valueTransformer.Init(Mock.Of<ForwardingDisabledProcessorContext<int, int>>());
+//            // replayAll();
 
-        public void setUp()
-        {
-            inputKey = 1;
-            inputValue = 10;
-            valueTransformer = Mock.Of<IValueTransformerWithKey>();
-            context = strictMock(typeof(IProcessorContext));
-            processor = new KStreamFlatTransformValuesProcessor<>(valueTransformer);
-        }
+//            processor.Init(context);
 
-        [Fact]
-        public void shouldInitializeFlatTransformValuesProcessor()
-        {
-            valueTransformer.Init(typeof(ForwardingDisabledProcessorContext));
-            replayAll();
+//            //verifyAll();
+//        }
 
-            processor.Init(context);
+//        [Fact]
+//        public void shouldTransformInputRecordToMultipleOutputValues()
+//        {
+//            var outputValues = Array.AsReadOnly(
+//                new[]
+//                {
+//                    "Hello",
+//                    "Blue",
+//                    "Planet"
+//                });
 
-            //verifyAll();
-        }
+//            processor.Init(context);
+//            //EasyMock.reset(valueTransformer);
 
-        [Fact]
-        public void shouldTransformInputRecordToMultipleOutputValues()
-        {
-            Iterable<string> outputValues = Array.AsReadOnly(
-                    "Hello",
-                    "Blue",
-                    "Planet");
-            processor.Init(context);
-            EasyMock.reset(valueTransformer);
+//            EasyMock.expect(valueTransformer.Transform(inputKey, inputValue)).andReturn(outputValues);
+//            foreach (string outputValue in outputValues)
+//            {
+//                context.Forward(inputKey, outputValue);
+//            }
+//            replayAll();
 
-            EasyMock.expect(valueTransformer.transform(inputKey, inputValue)).andReturn(outputValues);
-            foreach (string outputValue in outputValues)
-            {
-                context.Forward(inputKey, outputValue);
-            }
-            replayAll();
+//            processor.Process(inputKey, inputValue);
 
-            processor.Process(inputKey, inputValue);
+//            //verifyAll();
+//        }
 
-            //verifyAll();
-        }
+//        [Fact]
+//        public void shouldEmitNoRecordIfTransformReturnsEmptyList()
+//        {
+//            processor.Init(context);
+//            //EasyMock.reset(valueTransformer);
 
-        [Fact]
-        public void shouldEmitNoRecordIfTransformReturnsEmptyList()
-        {
-            processor.Init(context);
-            EasyMock.reset(valueTransformer);
+//            EasyMock.expect(valueTransformer.Transform(inputKey, inputValue)).andReturn(new List<string>());
+//            //replayAll();
 
-            EasyMock.expect(valueTransformer.transform(inputKey, inputValue)).andReturn(new List<string>());
-            replayAll();
+//            processor.Process(inputKey, inputValue);
 
-            processor.Process(inputKey, inputValue);
+//            //verifyAll();
+//        }
 
-            //verifyAll();
-        }
+//        [Fact]
+//        public void shouldEmitNoRecordIfTransformReturnsNull()
+//        {
+//            processor.Init(context);
+//            //EasyMock.reset(valueTransformer);
 
-        [Fact]
-        public void shouldEmitNoRecordIfTransformReturnsNull()
-        {
-            processor.Init(context);
-            EasyMock.reset(valueTransformer);
+//            EasyMock.expect(valueTransformer.Transform(inputKey, inputValue)).andReturn(null);
+//            //replayAll();
 
-            EasyMock.expect(valueTransformer.transform(inputKey, inputValue)).andReturn(null);
-            replayAll();
+//            processor.Process(inputKey, inputValue);
 
-            processor.Process(inputKey, inputValue);
+//            //verifyAll();
+//        }
 
-            //verifyAll();
-        }
+//        [Fact]
+//        public void shouldCloseFlatTransformValuesProcessor()
+//        {
+//            valueTransformer.Close();
+//            //replayAll();
 
-        [Fact]
-        public void shouldCloseFlatTransformValuesProcessor()
-        {
-            valueTransformer.Close();
-            replayAll();
+//            processor.Close();
 
-            processor.Close();
+//            //verifyAll();
+//        }
 
-            //verifyAll();
-        }
+//        [Fact]
+//        public void shouldGetFlatTransformValuesProcessor()
+//        {
+//            IValueTransformerWithKeySupplier<int, int, IEnumerable<string>> valueTransformerSupplier =
+//                Mock.Of<IValueTransformerWithKeySupplier<int, int, IEnumerable<string>>>();
 
-        [Fact]
-        public void shouldGetFlatTransformValuesProcessor()
-        {
-            IValueTransformerWithKeySupplier<int, int, Iterable<string>> valueTransformerSupplier =
-                Mock.Of<IValueTransformerWithKeySupplier));
-            KStreamFlatTransformValues<int, int, string> processorSupplier =
-                new KStreamFlatTransformValues<>(valueTransformerSupplier);
+//            KStreamFlatTransformValues<int, int, string> processorSupplier =
+//                new KStreamFlatTransformValues<int, int, string>(valueTransformerSupplier);
 
-            EasyMock.expect(valueTransformerSupplier.Get()).andReturn(valueTransformer);
-            replayAll();
+//            EasyMock.expect(valueTransformerSupplier.Get()).andReturn(valueTransformer);
+//            // replayAll();
 
-            Processor<int, int> processor = processorSupplier.Get();
+//            var processor = processorSupplier.Get();
 
-            //verifyAll();
-            Assert.True(processor is KStreamFlatTransformValuesProcessor);
-        }
-    }
-}
+//            //verifyAll();
+//            Assert.True(processor is KStreamFlatTransformValuesProcessor<int, int, string>);
+//        }
+//    }
+//}

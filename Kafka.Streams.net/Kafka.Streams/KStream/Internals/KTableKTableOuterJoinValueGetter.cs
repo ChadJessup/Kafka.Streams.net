@@ -7,8 +7,8 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableKTableOuterJoinValueGetter<K, R, V1, V2> : IKTableValueGetter<K, R>
     {
-        private IKTableValueGetter<K, V1> valueGetter1;
-        private IKTableValueGetter<K, V2> valueGetter2;
+        private readonly IKTableValueGetter<K, V1> valueGetter1;
+        private readonly IKTableValueGetter<K, V2> valueGetter2;
         private readonly ValueJoiner<V1, V2, R> joiner;
 
         public KTableKTableOuterJoinValueGetter(
@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
             this.joiner = joiner ?? throw new ArgumentNullException(nameof(joiner));
         }
 
-        public void Init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext context, string? storeName)
         {
             this.valueGetter1.Init(context, storeName);
             this.valueGetter2.Init(context, storeName);
@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             R newValue = default;
 
-            IValueAndTimestamp<V1>? valueAndTimestamp1 = valueGetter1.Get(key);
+            IValueAndTimestamp<V1>? valueAndTimestamp1 = this.valueGetter1.Get(key);
             V1 value1;
             DateTime timestamp1;
             if (valueAndTimestamp1 == null)
@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
                 timestamp1 = valueAndTimestamp1.Timestamp;
             }
 
-            IValueAndTimestamp<V2>? valueAndTimestamp2 = valueGetter2.Get(key);
+            IValueAndTimestamp<V2>? valueAndTimestamp2 = this.valueGetter2.Get(key);
             V2 value2;
             DateTime timestamp2;
             if (valueAndTimestamp2 == null)
@@ -62,7 +62,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (value1 != null || value2 != null)
             {
-                newValue = joiner(value1!, value2!);
+                newValue = this.joiner(value1!, value2!);
             }
 
             return ValueAndTimestamp.Make(newValue!, timestamp1.GetNewest(timestamp2));
@@ -70,8 +70,13 @@ namespace Kafka.Streams.KStream.Internals
 
         public void Close()
         {
-            valueGetter1.Close();
-            valueGetter2.Close();
+            this.valueGetter1.Close();
+            this.valueGetter2.Close();
+        }
+
+        public void Init(IProcessorContext processorContext)
+        {
+            throw new NotImplementedException();
         }
     }
 }

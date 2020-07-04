@@ -186,7 +186,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> Map<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
+        IKStream<KR, VR> Dictionary<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
 
         /**
          * Transform each record of the input stream into a new record in the output stream (both key and value type can be
@@ -226,7 +226,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> Map<KR, VR>(
+        IKStream<KR, VR> Dictionary<KR, VR>(
             KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper,
             Named named);
 
@@ -2069,8 +2069,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          */
 
-        void Process(IProcessorSupplier<K, V> IProcessorSupplier, params string[] stateStoreNames);
-        void Process(Func<IKeyValueProcessor<K, V>> processor);
+        void Process(IProcessorSupplier<K, V> processorSupplier, params string[] stateStoreNames);
+        void Process(Func<IProcessorSupplier<K, V>> processorSupplier);
 
         /**
          * Process All records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
@@ -3246,5 +3246,82 @@ namespace Kafka.Streams.KStream.Interfaces
             KeyValueMapper<K, V, GK> keyValueMapper,
             ValueJoiner<V, GV, RV> valueJoiner,
             Named named);
+
+        /**
+     * Transform each record of the input stream into a new record in the output stream (both key and value type can be
+     * altered arbitrarily).
+     * The provided {@link KeyValueMapper} is applied to each input record and computes a new output record.
+     * Thus, an input record {@code <K,V>} can be transformed into an output record {@code <K':V'>}.
+     * This is a stateless record-by-record operation (cf. {@link #transform(TransformerSupplier, String...)} for
+     * stateful record transformation).
+     * <p>
+     * The example below normalizes the String key to upper-case letters and counts the number of token of the value string.
+     * <pre>{@code
+     * KStream<String, String> inputStream = builder.stream("topic");
+     * KStream<String, Integer> outputStream = inputStream.map(new KeyValueMapper<String, String, KeyValue<String, Integer>> {
+     *     KeyValue<String, Integer> apply(String key, String value) {
+     *         return new KeyValue<>(key.toUpperCase(), value.split(" ").length);
+     *     }
+     * });
+     * }</pre>
+     * The provided {@link KeyValueMapper} must return a {@link KeyValue} type and must not return {@code null}.
+     * <p>
+     * Mapping records might result in an internal data redistribution if a key based operator (like an aggregation or
+     * join) is applied to the result {@code KStream}. (cf. {@link #mapValues(ValueMapper)})
+     *
+     * @param mapper a {@link KeyValueMapper} that computes a new output record
+     * @param <KR>   the key type of the result stream
+     * @param <VR>   the value type of the result stream
+     * @return a {@code KStream} that contains records with new key and value (possibly both of different type)
+     * @see #selectKey(KeyValueMapper)
+     * @see #flatMap(KeyValueMapper)
+     * @see #mapValues(ValueMapper)
+     * @see #mapValues(ValueMapperWithKey)
+     * @see #flatMapValues(ValueMapper)
+     * @see #flatMapValues(ValueMapperWithKey)
+     * @see #transform(TransformerSupplier, String...)
+     * @see #transformValues(ValueTransformerSupplier, String...)
+     * @see #transformValues(ValueTransformerWithKeySupplier, String...)
+     */
+        IKStream<KR, VR> Map<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
+
+        /**
+ * Transform each record of the input stream into a new record in the output stream (both key and value type can be
+ * altered arbitrarily).
+ * The provided {@link KeyValueMapper} is applied to each input record and computes a new output record.
+ * Thus, an input record {@code <K,V>} can be transformed into an output record {@code <K':V'>}.
+ * This is a stateless record-by-record operation (cf. {@link #transform(TransformerSupplier, String...)} for
+ * stateful record transformation).
+ * <p>
+ * The example below normalizes the String key to upper-case letters and counts the number of token of the value string.
+ * <pre>{@code
+ * KStream<String, String> inputStream = builder.stream("topic");
+ * KStream<String, Integer> outputStream = inputStream.map(new KeyValueMapper<String, String, KeyValue<String, Integer>> {
+ *     KeyValue<String, Integer> apply(String key, String value) {
+ *         return new KeyValue<>(key.toUpperCase(), value.split(" ").length);
+ *     }
+ * });
+ * }</pre>
+ * The provided {@link KeyValueMapper} must return a {@link KeyValue} type and must not return {@code null}.
+ * <p>
+ * Mapping records might result in an internal data redistribution if a key based operator (like an aggregation or
+ * join) is applied to the result {@code KStream}. (cf. {@link #mapValues(ValueMapper)})
+ *
+ * @param mapper a {@link KeyValueMapper} that computes a new output record
+ * @param named  a {@link Named} config used to name the processor in the topology
+ * @param <KR>   the key type of the result stream
+ * @param <VR>   the value type of the result stream
+ * @return a {@code KStream} that contains records with new key and value (possibly both of different type)
+ * @see #selectKey(KeyValueMapper)
+ * @see #flatMap(KeyValueMapper)
+ * @see #mapValues(ValueMapper)
+ * @see #mapValues(ValueMapperWithKey)
+ * @see #flatMapValues(ValueMapper)
+ * @see #flatMapValues(ValueMapperWithKey)
+ * @see #transform(TransformerSupplier, String...)
+ * @see #transformValues(ValueTransformerSupplier, String...)
+ * @see #transformValues(ValueTransformerWithKeySupplier, String...)
+ */
+        IKStream<KR, VR> Map<KR, VR>(KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper, Named named);
     }
 }

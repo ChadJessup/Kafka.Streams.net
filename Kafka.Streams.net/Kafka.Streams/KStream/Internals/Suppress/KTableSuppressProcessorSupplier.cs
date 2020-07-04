@@ -4,14 +4,14 @@ using System;
 
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    public class KTableSuppressProcessorSupplier<K, V, S> : IKTableProcessorSupplier<K, V, V>
+    public class KTableSuppressProcessorSupplier<K, V> : IKTableProcessorSupplier<K, V, V>
     {
-        private readonly SuppressedInternal<K> suppress;
+        private readonly ISuppressed<K> suppress;
         private readonly IKTable<K, V> parentKTable;
         private readonly string storeName;
 
         public KTableSuppressProcessorSupplier(
-            SuppressedInternal<K> suppress,
+            ISuppressed<K> suppress,
             string storeName,
             IKTable<K, V> parentKTable)
         {

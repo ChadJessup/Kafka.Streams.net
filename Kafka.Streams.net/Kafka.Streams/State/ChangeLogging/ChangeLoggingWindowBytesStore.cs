@@ -12,7 +12,7 @@ namespace Kafka.Streams.State.ChangeLogging
         : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>,
         IWindowStore<Bytes, byte[]>
     {
-        private bool retainDuplicates;
+        private readonly bool retainDuplicates;
         private IProcessorContext context;
         private int seqnum = 0;
 
@@ -82,14 +82,14 @@ namespace Kafka.Streams.State.ChangeLogging
         public void Put(Bytes key, byte[] value, DateTime windowStartTimestamp)
         {
             this.Wrapped.Put(key, value, windowStartTimestamp);
-            this.log(WindowKeySchema.ToStoreKeyBinary(
+            this.Log(WindowKeySchema.ToStoreKeyBinary(
                 key,
                 windowStartTimestamp,
                 this.MaybeUpdateSeqnumForDups()),
                 value);
         }
 
-        void log(Bytes key, byte[] value)
+        private void Log(Bytes key, byte[] value)
         {
             this.changeLogger.LogChange(key, value);
         }

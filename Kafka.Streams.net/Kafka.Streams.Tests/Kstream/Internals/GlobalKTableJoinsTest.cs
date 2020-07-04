@@ -13,15 +13,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class GlobalKTableJoinsTest
     {
-        private StreamsBuilder builder = new StreamsBuilder();
-        private string streamTopic = "stream";
-        private string globalTopic = "global";
-        private IGlobalKTable<string, string> global;
-        private IKStream<K, V> stream;
-        private KeyValueMapper<string, string, string> keyValueMapper;
+        private readonly StreamsBuilder builder = new StreamsBuilder();
+        private readonly string streamTopic = "stream";
+        private readonly string globalTopic = "global";
+        private readonly IGlobalKTable<string, string> global;
+        private readonly IKStream<string, string> stream;
+        private readonly KeyValueMapper<string, string, string> keyValueMapper;
 
 
-        public void setUp()
+        public GlobalKTableJoinsTest()
         {
             Consumed<string, string> consumed = Consumed.With(Serdes.String(), Serdes.String());
             global = builder.GlobalTable(globalTopic, consumed);
@@ -34,10 +34,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             MockProcessorSupplier<string, string> supplier = new MockProcessorSupplier<string, string>();
             stream
-                .LeftJoin(global, keyValueMapper, MockValueJoiner.TOSTRING_JOINER)
+                .LeftJoin(global, keyValueMapper, MockValueJoiner.TOSTRING_JOINER())
                 .Process(supplier);
 
-            Dictionary<string, IValueAndTimestamp<string>> expected = new Dictionary<string, IValueAndTimestamp<string>>();
+            Dictionary<string, IValueAndTimestamp<string>?> expected = new Dictionary<string, IValueAndTimestamp<string>?>();
             expected.Add("1", ValueAndTimestamp.Make("a+A", 2L));
             expected.Add("2", ValueAndTimestamp.Make("b+B", 10L));
             expected.Add("3", ValueAndTimestamp.Make("c+null", 3L));
@@ -50,10 +50,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             MockProcessorSupplier<string, string> supplier = new MockProcessorSupplier<string, string>();
             stream
-                .Join(global, keyValueMapper, MockValueJoiner.TOSTRING_JOINER)
+                .Join(global, keyValueMapper, MockValueJoiner.TOSTRING_JOINER())
                 .Process(supplier);
 
-            Dictionary<string, IValueAndTimestamp<string>> expected = new Dictionary<string, IValueAndTimestamp<string>>
+            Dictionary<string, IValueAndTimestamp<string>?> expected = new Dictionary<string, IValueAndTimestamp<string>?>
             {
                 { "1", ValueAndTimestamp.Make("a+A", 2L) },
                 { "2", ValueAndTimestamp.Make("b+B", 10L) }
@@ -62,13 +62,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             VerifyJoin(expected, supplier);
         }
 
-        private void VerifyJoin(Dictionary<string, IValueAndTimestamp<string>> expected,
-                                MockProcessorSupplier<string, string> supplier)
+        private void VerifyJoin(
+            Dictionary<string, IValueAndTimestamp<string>?> expected,
+            MockProcessorSupplier<string, string> supplier)
         {
             ConsumerRecordFactory<string, string> recordFactory = new ConsumerRecordFactory<string, string>(Serdes.String().Serializer, Serdes.String().Serializer);
             StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             // write some data to the global table
             driver.PipeInput(recordFactory.Create(globalTopic, "a", "A", 1L));
             driver.PipeInput(recordFactory.Create(globalTopic, "b", "B", 5L));

@@ -1,31 +1,30 @@
+using System;
+using System.Text;
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Errors;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors.Interfaces;
 
-using System;
-using System.Text;
-
 namespace Kafka.Streams.Nodes
 {
     public class SinkNode<K, V> : ProcessorNode<K, V>, ISinkNode<K, V>
     {
-        private readonly ISerializer<K> keySerializer;
-        private readonly ISerializer<V> valSerializer;
+        private readonly ISerializer<K>? keySerializer;
+        private readonly ISerializer<V>? valSerializer;
         private readonly ITopicNameExtractor topicExtractor;
-        private readonly IStreamPartitioner<K, V> partitioner;
+        private readonly IStreamPartitioner<K, V>? partitioner;
 
         private IInternalProcessorContext context;
 
         public SinkNode(
             IClock clock,
-            string Name,
+            string name,
             ITopicNameExtractor topicExtractor,
-            ISerializer<K> keySerializer,
-            ISerializer<V> valSerializer,
-            IStreamPartitioner<K, V> partitioner)
-            : base(clock, Name)
+            ISerializer<K>? keySerializer,
+            ISerializer<V>? valSerializer,
+            IStreamPartitioner<K, V>? partitioner)
+            : base(clock, name)
         {
             this.topicExtractor = topicExtractor;
             this.keySerializer = keySerializer;

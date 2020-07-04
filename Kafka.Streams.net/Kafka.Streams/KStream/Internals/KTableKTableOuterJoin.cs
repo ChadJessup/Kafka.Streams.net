@@ -7,7 +7,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableKTableOuterJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KTableKTableOuterJoin<K, R, V1, V2>>();
+        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KTableKTableOuterJoin<K, R, V1, V2>>();
 
         public KTableKTableOuterJoin(
             IKTable<K, V1> table1,

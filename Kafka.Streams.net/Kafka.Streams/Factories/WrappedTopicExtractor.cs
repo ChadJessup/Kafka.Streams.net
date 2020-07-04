@@ -5,7 +5,7 @@ namespace Kafka.Streams.Factories
 {
     internal class WrappedTopicExtractor<K, V> : ITopicNameExtractor<K, V>
     {
-        private TopicNameExtractor<K, V> topicExtractor;
+        private readonly TopicNameExtractor<K, V> topicExtractor;
 
         public WrappedTopicExtractor(TopicNameExtractor<K, V> topicExtractor)
         {

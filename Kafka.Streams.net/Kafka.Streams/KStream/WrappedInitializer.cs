@@ -3,7 +3,7 @@ using System;
 
 namespace Kafka.Streams.KStream
 {
-    public class WrappedInitializer<VA> : IInitializer<VA>
+    public class WrappedInitializer<VA> : IInitializer2<VA>
     {
         private readonly Initializer<VA> initializer;
 

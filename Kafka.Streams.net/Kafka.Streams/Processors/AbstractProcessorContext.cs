@@ -236,5 +236,10 @@ namespace Kafka.Streams.Processors
         {
             throw new NotImplementedException();
         }
+
+        public ICancellable Schedule(TimeSpan interval, PunctuationType? type, IPunctuator? callback)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

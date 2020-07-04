@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace Kafka.Streams.Tests
@@ -25,10 +26,10 @@ namespace Kafka.Streams.Tests
         private readonly MockTime mockTime = new MockTime();
         //private  Metrics metrics = new Metrics();
         private readonly MockClientSupplier clientSupplier = new MockClientSupplier();
-        private readonly InternalStreamsBuilder internalStreamsBuilder = null;
-        private readonly StreamsConfig config = null;
-        private readonly string stateDir = TestUtils.GetTempDirectory().FullName;
-        private readonly StateDirectory stateDirectory = null;
+        private readonly InternalStreamsBuilder? internalStreamsBuilder = null;
+        private readonly StreamsConfig config;
+        private readonly DirectoryInfo stateDir = TestUtils.GetTempDirectory();
+        private readonly StateDirectory? stateDirectory = null;
         private readonly ConsumedInternal<object, object> consumed = new ConsumedInternal<object, object>();
 
         private Guid processId = Guid.NewGuid();
@@ -41,7 +42,7 @@ namespace Kafka.Streams.Tests
             this.processId = Guid.NewGuid();
             this.config = StreamsTestConfigs.GetStandardConfig();
 
-            this.stateDirectory = new StateDirectory(TestUtils.GetMockLogger<StateDirectory>(), this.config, this.mockTime);
+            this.stateDirectory = new StateDirectory(null);//, false);
 
             // internalTopologyBuilder = this.streamsBuilder.InternalTopologyBuilder;
             // internalTopologyBuilder.SetApplicationId(applicationId);
@@ -99,7 +100,7 @@ namespace Kafka.Streams.Tests
             IConsumerRebalanceListener RebalanceListener = thread.RebalanceListener;
 
             List<TopicPartitionOffset> revokedPartitions;
-            List<TopicPartition>assignedPartitions;
+            List<TopicPartition> assignedPartitions;
 
             // revoke nothing
             thread.State.SetState(StreamThreadStates.STARTING);
@@ -108,14 +109,14 @@ namespace Kafka.Streams.Tests
 
             Assert.Equal(StreamThreadStates.PARTITIONS_REVOKED, thread.State.CurrentState);
 
-            //.Assign single partition
+            // assign single partition
             assignedPartitions = new List<TopicPartition> { this.t1p1 };
             thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), new Dictionary<TaskId, HashSet<TopicPartition>>());
 
             var mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
             mockConsumer.Assign(assignedPartitions);
             mockConsumer.UpdateBeginningOffsets(new Dictionary<TopicPartition, long> { { this.t1p1, 0L } });
-            RebalanceListener.OnPartitionsAssigned(null,assignedPartitions);
+            RebalanceListener.OnPartitionsAssigned(null, assignedPartitions);
             thread.RunOnce();
             Assert.Equal(StreamThreadStates.RUNNING, thread.State.CurrentState);
             Assert.Equal(4, stateListener.NumChanges);
@@ -241,8 +242,8 @@ namespace Kafka.Streams.Tests
             var commitInterval = 1000L;
             var props = StreamsTestConfigs.GetStandardConfig();
 
-            props.Set(StreamsConfig.STATE_DIR_CONFIG, this.stateDir);
-            props.Set(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, commitInterval.ToString());
+            props.StateStoreDirectory = this.stateDir;
+            props.CommitIntervalMs = commitInterval;
 
             var sc = new ServiceCollection().AddSingleton(props);
 
@@ -632,7 +633,7 @@ namespace Kafka.Streams.Tests
         //            super(offsetResetStrategy);
         //        }
 
-        //        
+        //
         //            public ConsumeResult<K, V> poll(TimeSpan timeout)
         //{
         //            Assert.NotNull(streamThread);
@@ -889,7 +890,7 @@ namespace Kafka.Streams.Tests
         //    ThreadStateTransitionValidator oldState = null;
         //    ThreadStateTransitionValidator newState = null;
 
-        //    
+        //
         //        public void onChange(Thread thread,
         //                              ThreadStateTransitionValidator newState,
         //                              ThreadStateTransitionValidator oldState)
@@ -1135,19 +1136,19 @@ namespace Kafka.Streams.Tests
         //    List<long> punctuatedStreamTime = new List<>();
         //    List<long> punctuatedWallClockTime = new List<>();
         //    ProcessorSupplier<object, object> punctuateProcessor = () => new Processor<object, object>() {
-        //            
+        //
         //            public void Init(IProcessorContext context)
         //    {
         //        context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, punctuatedStreamTime::add);
         //        context.schedule(TimeSpan.FromMilliseconds(100L), PunctuationType.WALL_CLOCK_TIME, punctuatedWallClockTime::add);
         //    }
 
-        //    
+        //
         //            public void process(object key,
         //                                 object value)
         //    { }
 
-        //    
+        //
         //            public void Close() { }
         //};
 
@@ -1348,7 +1349,7 @@ namespace Kafka.Streams.Tests
 
         //            mockRestoreConsumer.setException(new InvalidOffsetException("Try Again!")
         //{
-        //    
+        //
         //                public List<TopicPartition> partitions()
         //    {
         //        return changelogPartitionSet;

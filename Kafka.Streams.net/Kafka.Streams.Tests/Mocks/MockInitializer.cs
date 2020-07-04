@@ -8,7 +8,7 @@ namespace Kafka.Streams.Tests.Mocks
 {
     public static class MockInitializer
     {
-        private class StringInit : IInitializer<string>
+        private class StringInit : IInitializer2<string>
         {
             public string Apply()
             {

@@ -102,6 +102,7 @@ namespace Kafka.Streams.Configs
         public StreamsConfig()
             : base()
         {
+            this.SetDefaultConfiguration();
         }
 
         /// <summary>
@@ -111,8 +112,19 @@ namespace Kafka.Streams.Configs
         public StreamsConfig(Config config)
             : base(config)
         {
-            this.SetAll(config);
             this.SetDefaultConfiguration();
+            this.SetAll(config);
+        }
+
+        /**
+         * Create a new {@code StreamsConfig} using the given properties.
+         *
+         * @param props properties that specify Kafka Streams and internal consumer/producer configuration
+         */
+        public StreamsConfig(IDictionary<string, string?> config)
+            : this(new Config(config))
+        {
+            //   eosEnabled = StreamsConfig.ExactlyOnceConfig.Equals(getString(PROCESSING_GUARANTEE_CONFIG));
         }
 
         public void Put(string key, string value)
@@ -148,6 +160,12 @@ namespace Kafka.Streams.Configs
             set => this.SetObject(StreamsConfig.StateCleanupDelayMsConfig, value);
         }
 
+        public TimeSpan MaxTaskIdleDuration
+        {
+            get => TimeSpan.FromMilliseconds(this.GetLong(StreamsConfig.MAX_TASK_IDLE_MS_CONFIGConfig) ?? 0L);
+            set => this.SetObject(StreamsConfig.MAX_TASK_IDLE_MS_CONFIGConfig, value.TotalMilliseconds);
+        }
+
         public string ApplicationServer
         {
             get => this.Get(StreamsConfig.ApplicationServerConfig) ?? "";
@@ -169,25 +187,44 @@ namespace Kafka.Streams.Configs
         public Type DefaultKeySerdeType
         {
             get => Type.GetType(this.Get(StreamsConfig.DefaultKeySerdeClassConfig));
-            set => this.SetObject(StreamsConfig.DefaultKeySerdeClassConfig, value);
+            set => this.SetObject(StreamsConfig.DefaultKeySerdeClassConfig, value?.AssemblyQualifiedName);
         }
+
 
         public Type DefaultValueSerdeType
         {
             get => Type.GetType(this.Get(StreamsConfig.DefaultValueSerdeClassConfig));
-            set => this.SetObject(StreamsConfig.DefaultValueSerdeClassConfig, value);
+            set => this.SetObject(StreamsConfig.DefaultValueSerdeClassConfig, value?.AssemblyQualifiedName);
         }
 
         public Type DefaultTimestampExtractorType
         {
             get => Type.GetType(this.Get(StreamsConfig.DefaultTimestampExtractorClassConfig));
-            set => this.SetObject(StreamsConfig.DefaultTimestampExtractorClassConfig, value);
+            set => this.SetObject(StreamsConfig.DefaultTimestampExtractorClassConfig, value?.AssemblyQualifiedName);
+        }
+
+        public Type DefaultDeserializationExceptionHandler
+        {
+            get => Type.GetType(this.Get(StreamsConfig.DefaultDeserializationExceptionHandlerClassConfig));
+            set => this.SetObject(StreamsConfig.DefaultDeserializationExceptionHandlerClassConfig, value?.AssemblyQualifiedName);
+        }
+
+        public Type DefaultProductionExceptionHandler
+        {
+            get => Type.GetType(this.Get(StreamsConfig.DefaultProductionExceptionHandlerClassConfig));
+            set => this.Set(StreamsConfig.DefaultProductionExceptionHandlerClassConfig, value?.AssemblyQualifiedName);
         }
 
         public int NumberOfStreamThreads
         {
             get => this.GetInt(StreamsConfig.NumberOfStreamThreadsConfig) ?? 1;
             set => this.Set(StreamsConfig.NumberOfStreamThreadsConfig, value.ToString());
+        }
+
+        public int BufferedRecordsPerPartition
+        {
+            get => this.GetInt(StreamsConfig.BufferedRecordsPerPartitionConfig) ?? 1000;
+            set => this.Set(StreamsConfig.BufferedRecordsPerPartitionConfig, value.ToString());
         }
 
         public long CacheMaxBytesBuffering
@@ -216,8 +253,14 @@ namespace Kafka.Streams.Configs
 
         public DirectoryInfo StateStoreDirectory
         {
-            get => new DirectoryInfo(this.GetString(StreamsConfig.STATE_DIR_CONFIGConfig) ?? Path.Combine(Path.GetTempPath(), "kafka-streams"));
-            set => this.Set(StreamsConfig.STATE_DIR_CONFIGConfig, value.FullName);
+            get => new DirectoryInfo(this.GetString(StreamsConfig.StateDirPathConfig) ?? Path.Combine(Path.GetTempPath(), "kafka-streams"));
+            set => this.Set(StreamsConfig.StateDirPathConfig, value.FullName);
+        }
+
+        public bool StateStoreIsPersistent
+        {
+            get => this.GetBool(StreamsConfig.StateDirHasPersistentStoresConfig) ?? false;
+            set => this.Set(StreamsConfig.StateDirHasPersistentStoresConfig, value ? bool.TrueString : bool.FalseString);
         }
 
         /// <summary>
@@ -269,9 +312,8 @@ namespace Kafka.Streams.Configs
             this.EnableAutoCommit = false;
             this.DefaultTimestampExtractorType = typeof(FailOnInvalidTimestamp);
 
-            this.Set(StreamsConfig.DefaultDeserializationExceptionHandlerClassConfig, typeof(LogAndFailExceptionHandler).AssemblyQualifiedName);
-            this.Set(StreamsConfig.DefaultProductionExceptionHandlerClassConfig, typeof(DefaultProductionExceptionHandler).AssemblyQualifiedName);
-
+            this.DefaultDeserializationExceptionHandler = typeof(LogAndFailExceptionHandler);
+            this.DefaultProductionExceptionHandler = typeof(DefaultProductionExceptionHandler);
             this.DefaultKeySerdeType = typeof(ISerde<byte[]>);
             this.DefaultValueSerdeType = typeof(ISerde<byte[]>);
 
@@ -361,17 +403,6 @@ namespace Kafka.Streams.Configs
         public static string TopicPrefix(string topicProp)
         {
             return StreamsConfig.TopicPrefixConfig + topicProp;
-        }
-
-        /**
-         * Create a new {@code StreamsConfig} using the given properties.
-         *
-         * @param props properties that specify Kafka Streams and internal consumer/producer configuration
-         */
-        public StreamsConfig(IDictionary<string, string?> config)
-            : base(config)
-        {
-            //   eosEnabled = StreamsConfig.ExactlyOnceConfig.Equals(getString(PROCESSING_GUARANTEE_CONFIG));
         }
 
         protected Dictionary<string, object> PostProcessParsedConfig(Dictionary<string, object> parsedValues)
@@ -573,7 +604,7 @@ namespace Kafka.Streams.Configs
             // {
             //     int segmentSize = int.Parse(topicProps[topicPrefix(TopicConfig.SEGMENT)_CONFIG)].ToString();
             //     int batchSize = int.Parse(producerProps[ProducerConfig.BATCH_SIZE_CONFIG].ToString());
-            // 
+            //
             //     if (segmentSize < batchSize)
             //     {
             //         throw new ArgumentException(
@@ -796,6 +827,8 @@ namespace Kafka.Streams.Configs
                     "state.dir",
                     "application.id",
                     "default.timestamp.extractor",
+                    "default.deserialization.exception.handler",
+                    "default.production.exception.handler",
                     "default.key.serde",
                     "default.value.serde",
                     "num.stream.threads",
@@ -818,13 +851,12 @@ namespace Kafka.Streams.Configs
 
             try
             {
-                if (this.TryGetConfiguredInstance<ISerde>(services, StreamsConfig.DefaultKeySerdeClassConfig, out var serde))
+                if (this.TryGetConfiguredInstance(typeof(ISerde<>), services, StreamsConfig.DefaultKeySerdeClassConfig, out var serde))
                 {
-                    serde.Configure(this.properties, true);
+                    (serde as ISerde).Configure(this.properties, true);
                 }
 
-
-                return serde;
+                return serde as ISerde;
             }
             catch (Exception e)
             {
@@ -879,6 +911,15 @@ namespace Kafka.Streams.Configs
 
         public bool TryGetConfiguredInstance<T>(IServiceProvider services, string key, out T instance)
         {
+            var result = this.TryGetConfiguredInstance(typeof(T), services, key, out var innerInstance);
+
+            instance = (T)innerInstance;
+
+            return result;
+        }
+
+        public bool TryGetConfiguredInstance(Type instanceType, IServiceProvider services, string key, out object instance)
+        {
             instance = default;
 
             if (services is null || string.IsNullOrEmpty(key))
@@ -902,7 +943,7 @@ namespace Kafka.Streams.Configs
 
                 }
 
-                instance = (T)ActivatorUtilities.CreateInstance(services, type);
+                instance = ActivatorUtilities.GetServiceOrCreateInstance(services, type);
             }
             catch (TypeAccessException)
             {
@@ -912,7 +953,7 @@ namespace Kafka.Streams.Configs
             return true;
         }
 
-        public IProductionExceptionHandler DefaultProductionExceptionHandler(IServiceProvider services)
+        public IProductionExceptionHandler GetDefaultProductionExceptionHandler(IServiceProvider services)
         {
             this.TryGetConfiguredInstance<IProductionExceptionHandler>(
                 services,

@@ -10,28 +10,8 @@ using Kafka.Streams.State.Windowed;
 
 namespace Kafka.Streams.KStream
 {
-    public static class Materialized
+    public class Materialized
     {
-        /**
-        * Materialize a {@link IStateStore} with the provided key and value {@link Serde}s.
-        * An internal Name will be used for the store.
-        *
-        * @param keySerde      the key {@link Serde} to use. If the {@link Serde} is null, then the default key
-        *                      serde from configs will be used
-        * @param valueSerde    the value {@link Serde} to use. If the {@link Serde} is null, then the default value
-        *                      serde from configs will be used
-        * @param           key type
-        * @param           value type
-        * @param           store type
-        * @return a new {@link Materialized} instance with the given key and value serdes
-        */
-        public static Materialized<K, V> With<K, V>(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde)
-            => new Materialized<K, V>()
-                .WithKeySerde(keySerde)
-                .WithValueSerde(valueSerde);
-
         /**
          * Materialize a {@link IStateStore} with the given Name.
          *
@@ -42,11 +22,11 @@ namespace Kafka.Streams.KStream
          * @param       type of the {@link IStateStore}
          * @return a new {@link Materialized} instance with the given storeName
          */
-        public static Materialized<K,V> As<K, V>(string storeName)
+        public static Materialized<K, V, ISessionStore<Bytes, byte[]>> As<K, V>(string storeName)
         {
             Named.Validate(storeName);
 
-            return new Materialized<K, V>(storeName);
+            return new Materialized<K, V, ISessionStore<Bytes, byte[]>>(storeName);
         }
 
 
@@ -60,7 +40,7 @@ namespace Kafka.Streams.KStream
          * @param       type of the {@link IStateStore}
          * @return a new {@link Materialized} instance with the given storeName
          */
-        public static Materialized<K, V, S>  As<K, V, S>(string storeName)
+        public static Materialized<K, V, S> As<K, V, S>(string storeName)
             where S : IStateStore
         {
             Named.Validate(storeName);
@@ -89,6 +69,12 @@ namespace Kafka.Streams.KStream
                 .WithKeySerde(keySerde)
                 .WithValueSerde(valueSerde);
 
+        public static Materialized<K, V, IKeyValueStore<Bytes, byte[]>> With<K, V>(
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde)
+            => new Materialized<K, V, IKeyValueStore<Bytes, byte[]>>(storeName: null)
+                .WithKeySerde(keySerde)
+                .WithValueSerde(valueSerde);
 
         /**
          * Materialize a {@link WindowStore} using the provided {@link WindowBytesStoreSupplier}.
@@ -163,68 +149,27 @@ namespace Kafka.Streams.KStream
      *
      * @see org.apache.kafka.streams.state.Stores
      */
-    public class Materialized<K, V>
-    {
-        public Materialized()
-        {
-        }
-
-        public Materialized(string? storeName)
-            : this()
-            => this.StoreName = storeName;
-
-        public virtual string? StoreName { get; protected set; }
-        public ISerde<V>? ValueSerde { get; protected set; }
-        public ISerde<K>? KeySerde { get; protected set; }
-        public bool LoggingEnabled { get; protected set; } = true;
-        public bool CachingEnabled { get; protected set; } = true;
-        protected Dictionary<string, string> TopicConfig { get; set; } = new Dictionary<string, string>();
-        public TimeSpan Retention { get; protected set; }
-
-        /**
-         * Set the valueSerde the materialized {@link IStateStore} will use.
-         *
-         * @param valueSerde the value {@link Serde} to use. If the {@link Serde} is null, then the default value
-         *                   serde from configs will be used. If the serialized bytes is null for Put operations,
-         *                   it is treated as delete operation
-         * @return itself
-         */
-        public virtual Materialized<K, V> WithValueSerde(ISerde<V>? valueSerde)
-        {
-            this.ValueSerde = valueSerde;
-
-            return this;
-        }
-
-        /**
-         * Set the keySerde the materialize {@link IStateStore} will use.
-         * @param keySerde  the key {@link Serde} to use. If the {@link Serde} is null, then the default key
-         *                  serde from configs will be used
-         * @return itself
-         */
-        public virtual Materialized<K, V> WithKeySerde(ISerde<K> keySerde)
-        {
-            this.KeySerde = keySerde;
-
-            return this;
-        }
-    }
-
-    public class Materialized<K, V, S> : Materialized<K, V>
+    public class Materialized<K, V, S> : Materialized
         where S : IStateStore
     {
-        public IStoreSupplier<S> StoreSupplier { get; set; }
-
         public Materialized(IStoreSupplier<S> storeSupplier)
-            : base()
         {
             this.StoreSupplier = storeSupplier;
         }
 
         public Materialized(string? storeName)
-            : base(storeName)
         {
+            this.StoreName = storeName;
         }
+
+        public IStoreSupplier<S>? StoreSupplier { get; set; }
+        public virtual string? StoreName { get; protected set; }
+        public ISerde<V>? ValueSerde { get; protected set; }
+        public ISerde<K>? KeySerde { get; protected set; }
+        public bool LoggingEnabled { get; protected set; } = true;
+        public bool CachingEnabled { get; protected set; } = true;
+        protected Dictionary<string, string> TopicConfig { get; private set; } = new Dictionary<string, string>();
+        public TimeSpan Retention { get; protected set; }
 
         /**
          * Copy constructor.
@@ -237,14 +182,14 @@ namespace Kafka.Streams.KStream
                 throw new ArgumentNullException(nameof(materialized));
             }
 
-            this.StoreSupplier = materialized.StoreSupplier;
-            this.StoreName = materialized.StoreName;
-            this.KeySerde = materialized.KeySerde;
-            this.ValueSerde = materialized.ValueSerde;
             this.LoggingEnabled = materialized.LoggingEnabled;
             this.CachingEnabled = materialized.CachingEnabled;
+            this.StoreSupplier = materialized.StoreSupplier;
             this.TopicConfig = materialized.TopicConfig;
+            this.ValueSerde = materialized.ValueSerde;
+            this.StoreName = materialized.StoreName;
             this.Retention = materialized.Retention;
+            this.KeySerde = materialized.KeySerde;
         }
 
         /**
@@ -255,7 +200,7 @@ namespace Kafka.Streams.KStream
          *                   it is treated as delete operation
          * @return itself
          */
-        public new Materialized<K, V, S> WithValueSerde(ISerde<V>? valueSerde)
+        public Materialized<K, V, S> WithValueSerde(ISerde<V>? valueSerde)
         {
             this.ValueSerde = valueSerde;
 
@@ -268,7 +213,7 @@ namespace Kafka.Streams.KStream
          *                  serde from configs will be used
          * @return itself
          */
-        public new Materialized<K, V, S> WithKeySerde(ISerde<K>? keySerde)
+        public Materialized<K, V, S> WithKeySerde(ISerde<K>? keySerde)
         {
             this.KeySerde = keySerde;
 

@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals
             string storeName,
             IProcessorContext context,
             IStateSerdes<K, V> serialization)
-            : this(storeName, context, context.TaskId.partition, serialization)
+            : this(storeName, context, context.TaskId.Partition, serialization)
         {
         }
 

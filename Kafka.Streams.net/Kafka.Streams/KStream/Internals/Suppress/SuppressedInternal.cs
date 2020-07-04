@@ -1,4 +1,3 @@
-
 using Kafka.Streams.KStream.Interfaces;
 using System;
 
@@ -9,12 +8,12 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private readonly IStrictBufferConfig DEFAULT_BUFFER_CONFIG = IBufferConfig.Unbounded();
         private readonly TimeSpan? timeToWaitForMoreEvents;
 
-        internal readonly ITimeDefinition<K> timeDefinition;
-        internal readonly IBufferConfig bufferConfig;
-        internal readonly bool safeToDropTombstones;
+        public ITimeDefinition<K> timeDefinition { get; }
+        public IBufferConfig bufferConfig { get; }
+        public bool safeToDropTombstones { get; }
 
         public SuppressedInternal(
-            string Name,
+            string? Name,
             TimeSpan? suppressionTime,
             IBufferConfig bufferConfig,
             ITimeDefinition<K>? timeDefinition,
@@ -22,13 +21,14 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         {
             this.Name = Name;
 
-            this.timeToWaitForMoreEvents = suppressionTime ?? TimeSpan.FromMilliseconds(long.MaxValue); ;
-            this.timeDefinition = timeDefinition ?? RecordTimeDefintion<K>.Instance();
+            this.timeToWaitForMoreEvents = suppressionTime ?? TimeSpan.FromMilliseconds(long.MaxValue);
+            ;
+            this.timeDefinition = timeDefinition ?? RecordTimeDefintion.Instance<K>();
             this.bufferConfig = bufferConfig ?? this.DEFAULT_BUFFER_CONFIG;
             this.safeToDropTombstones = safeToDropTombstones;
         }
 
-        public string Name { get; }
+        public string? Name { get; }
 
         public ISuppressed<K> WithName(string Name)
         {
@@ -51,13 +51,14 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             {
                 return true;
             }
- 
+
             if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             SuppressedInternal<K> that = (SuppressedInternal<K>)o;
+
             return this.safeToDropTombstones == that.safeToDropTombstones &&
                 this.Name.Equals(that.Name) &&
                 this.bufferConfig.Equals(that.bufferConfig) &&

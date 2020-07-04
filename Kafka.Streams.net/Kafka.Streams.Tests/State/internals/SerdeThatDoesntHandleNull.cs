@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Tests.State.Internals
 {
-    class SerdeThatDoesntHandleNull : ISerde<string>
+    internal class SerdeThatDoesntHandleNull : ISerde<string>
     {
         public ISerializer<string> Serializer { get; } = Serdes.String().Serializer;
         public IDeserializer<string> Deserializer { get; } = Serdes.String().Deserializer;

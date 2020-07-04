@@ -110,8 +110,8 @@ namespace Kafka.Streams.Tests
 
             // assign single partition
             thread.TaskManager.SetAssignmentMetadata(
-                ActiveTasks: new Dictionary<TaskId, HashSet<TopicPartition>>(),
-                StandbyTasks: new Dictionary<TaskId, HashSet<TopicPartition>>());
+                activeTasks: new Dictionary<TaskId, HashSet<TopicPartition>>(),
+                standbyTasks: new Dictionary<TaskId, HashSet<TopicPartition>>());
 
             var consumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
             consumer.Assign(assignedPartitions);

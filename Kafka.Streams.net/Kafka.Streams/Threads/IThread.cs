@@ -16,6 +16,6 @@ namespace Kafka.Streams.Threads
         where States : Enum
     {
         string ThreadClientId { get; }
-        IStateMachine<States> State { get; }
+        IThreadStateMachine<States> State { get; }
     }
 }

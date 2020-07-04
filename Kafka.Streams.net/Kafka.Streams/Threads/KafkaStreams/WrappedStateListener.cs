@@ -7,8 +7,8 @@ namespace Kafka.Streams.Threads.KafkaStreams
     internal class WrappedStateListener<States> : IStateListener<States>
         where States : Enum
     {
-        private Action<IThread<States>, States, States>? onChangeWithThread;
-        private Action<States, States>? onChange;
+        private readonly Action<IThread<States>, States, States>? onChangeWithThread;
+        private readonly Action<States, States>? onChange;
 
         public WrappedStateListener(Action<IThread<States>, States, States> onChange)
             => this.onChangeWithThread = onChange;
@@ -26,6 +26,11 @@ namespace Kafka.Streams.Threads.KafkaStreams
             {
                 this.onChange?.Invoke(newState, oldState);
             }
+        }
+
+        public void OnChange(IThread thread, object newState, object oldState)
+        {
+            throw new NotImplementedException();
         }
 
         public void SetThreadStates(Dictionary<long, StreamThreadState> threadStates)

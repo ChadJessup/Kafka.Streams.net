@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
 using Confluent.Kafka;
 using Kafka.Common;
-using Kafka.Streams.Clients;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
@@ -12,241 +16,265 @@ using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.Threads;
 using Microsoft.Extensions.Logging;
-
-using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Kafka.Streams.Tasks
 {
     /**
-     * A StreamTask is associated with a {@link PartitionGroup}, and is assigned to a KafkaStreamThread for processing.
+     * A StreamTask is associated with a {@link PartitionGroup}, and is assigned to a StreamThread for processing.
      */
-    public class StreamTask : AbstractTask, IProcessorNodePunctuator<byte[], byte[]>
+    public class StreamTask : AbstractTask, IProcessorNodePunctuator<object, object>
     {
-        private static readonly ConsumeResult<object, object> DUMMY_RECORD = new ConsumeResult<object, object>();// ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
+        private static readonly ConsumeResult<object, object> DUMMY_RECORD = null; // new ConsumeResult<object, object>(ProcessorContext.NONEXIST_TOPIC, -1, -1L, null, null);
+                                                                                   // visible for testing
+
+        private const byte LATEST_MAGIC_BYTE = 1;
+
+        private readonly ILogger<StreamTask> log;
+        private readonly string logPrefix;
+        private readonly IConsumer<byte[], byte[]> mainConsumer;
+
+        // we want to abstract eos logic out of StreamTask, however
+        // there's still an optimization that requires this info to be
+        // leaked into this class, which is to checkpoint after committing if EOS is not enabled.
+        private readonly bool eosEnabled;
 
         private readonly TimeSpan maxTaskIdle;
         private readonly int maxBufferedSize;
         private readonly PartitionGroup partitionGroup;
-        private readonly IRecordCollector recordCollector;
+        private readonly RecordCollector recordCollector;
         private readonly RecordInfo recordInfo;
         private readonly Dictionary<TopicPartition, long> consumedOffsets;
         private readonly PunctuationQueue streamTimePunctuationQueue;
         private readonly PunctuationQueue systemTimePunctuationQueue;
-        private readonly IProducerSupplier producerSupplier;
+
+        private TimeSpan processTime = TimeSpan.Zero;
+
+        private readonly IInternalProcessorContext processorContext;
 
         private DateTime idleStartTime;
-        private IProducer<byte[], byte[]> producer;
-        public bool commitRequested { get; private set; } = false;
-        private bool transactionInFlight = false;
+        private bool commitNeeded = false;
+        private bool commitRequested = false;
+
+        public override long LatestOffset { get; set; }
+        public override TaskState CurrentState { get; }
 
         public StreamTask(
             KafkaStreamsContext context,
             TaskId id,
-            List<TopicPartition> partitions,
+            HashSet<TopicPartition> partitions,
             ProcessorTopology topology,
-            IConsumer<byte[], byte[]> consumer,
-            IChangelogReader changelogReader,
+            IConsumer<byte[], byte[]> mainConsumer,
             StreamsConfig config,
             StateDirectory stateDirectory,
             ThreadCache cache,
-            IProducerSupplier producerSupplier)
-            : this(
-                  context,
-                  id,
-                  partitions,
-                  topology,
-                  consumer,
-                  changelogReader,
-                  config,
-                  stateDirectory,
-                  cache,
-                  producerSupplier,
-                  null)
-        {
-        }
-
-        public StreamTask(
-            KafkaStreamsContext context,
-            TaskId id,
-            List<TopicPartition> partitions,
-            ProcessorTopology topology,
-            IConsumer<byte[], byte[]> consumer,
-            IChangelogReader changelogReader,
-            StreamsConfig config,
-            StateDirectory stateDirectory,
-            ThreadCache cache,
-            IProducerSupplier producerSupplier,
-            IRecordCollector recordCollector)
+            ProcessorStateManager stateMgr,
+            RecordCollector recordCollector)
             : base(
                   context,
                   id,
-                  partitions,
                   topology,
-                  consumer,
-                  changelogReader,
-                  isStandby: false,
                   stateDirectory,
-                  config)
+                  stateMgr,
+                  partitions)
         {
-            if (id is null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+            this.mainConsumer = mainConsumer;
 
-            if (partitions is null)
-            {
-                throw new ArgumentNullException(nameof(partitions));
-            }
+            string threadIdPrefix = $"stream-thread [{Thread.CurrentThread.Name}] ";
+            this.logPrefix = threadIdPrefix + $"{"task"} [{id}] ";
+            //LogContext logContext = new LogContext(logPrefix);
+            //log = logContext.logger(getClass());
 
-            if (topology is null)
-            {
-                throw new ArgumentNullException(nameof(topology));
-            }
+            this.recordCollector = recordCollector;
+            this.eosEnabled = false; // StreamThread.eosEnabled(config);
 
-            if (consumer is null)
-            {
-                throw new ArgumentNullException(nameof(consumer));
-            }
-
-            if (changelogReader is null)
-            {
-                throw new ArgumentNullException(nameof(changelogReader));
-            }
-
-            if (config is null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
-
-            if (stateDirectory is null)
-            {
-                throw new ArgumentNullException(nameof(stateDirectory));
-            }
-
-            if (cache is null)
-            {
-                throw new ArgumentNullException(nameof(cache));
-            }
-
-            this.producerSupplier = producerSupplier ?? throw new ArgumentNullException(nameof(producerSupplier));
-            this.producer = producerSupplier.Get();
-
-            IProductionExceptionHandler productionExceptionHandler = config.DefaultProductionExceptionHandler(this.Context);
-
-            if (recordCollector == null)
-            {
-                this.recordCollector = new RecordCollector(
-                    id.ToString(),
-                    productionExceptionHandler);
-            }
-            else
-            {
-                this.recordCollector = recordCollector;
-            }
-
-            this.recordCollector.Init(this.producer);
+            string threadId = Thread.CurrentThread.Name;
+            //closeTaskSensor = ThreadMetrics.closeTaskSensor(threadId, streamsMetrics);
+            string taskId = id.ToString();
+            // if (streamsMetrics.version() == Version.FROM_0100_TO_24)
+            // {
+            //     Sensor parent = ThreadMetrics.commitOverTasksSensor(threadId, streamsMetrics);
+            //     enforcedProcessingSensor = TaskMetrics.enforcedProcessingSensor(threadId, taskId, streamsMetrics, parent);
+            // }
+            // else
+            // {
+            //     enforcedProcessingSensor = TaskMetrics.enforcedProcessingSensor(threadId, taskId, streamsMetrics);
+            // }
+            // processRatioSensor = TaskMetrics.activeProcessRatioSensor(threadId, taskId, streamsMetrics);
+            // processLatencySensor = TaskMetrics.processLatencySensor(threadId, taskId, streamsMetrics);
+            // punctuateLatencySensor = TaskMetrics.punctuateSensor(threadId, taskId, streamsMetrics);
+            // bufferedRecordsSensor = TaskMetrics.activeBufferedRecordsSensor(threadId, taskId, streamsMetrics);
 
             this.streamTimePunctuationQueue = new PunctuationQueue();
             this.systemTimePunctuationQueue = new PunctuationQueue();
-            this.maxTaskIdle = TimeSpan.FromMilliseconds(config.GetLong(StreamsConfig.MAX_TASK_IDLE_MS_CONFIGConfig) ?? 0L);
-            this.maxBufferedSize = config.GetInt(StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIGConfig) ?? 1000;
+            this.maxTaskIdle = config.MaxTaskIdleDuration;
+            this.maxBufferedSize = config.GetInt(StreamsConfig.BufferedRecordsPerPartitionConfig).Value;
 
             // initialize the consumed and committed offset cache
             this.consumedOffsets = new Dictionary<TopicPartition, long>();
 
             // create queues for each assigned partition and associate them
             // to corresponding source nodes in the processor topology
-            var partitionQueues = new Dictionary<TopicPartition, RecordQueue>();
+            Dictionary<TopicPartition, RecordQueue> partitionQueues = new Dictionary<TopicPartition, RecordQueue>();
 
             // initialize the topology with its own context
-            var processorContextImpl = new ProcessorContext<byte[], byte[]>(
+            this.processorContext = new ProcessorContext<object, object>(
                 this.Context,
                 id,
                 this,
                 config,
                 this.recordCollector,
-                this.StateMgr,
+                stateMgr,
                 cache);
 
-            this.processorContext = processorContextImpl;
+            ITimestampExtractor defaultTimestampExtractor = config.GetDefaultTimestampExtractor(this.Context.Services);
+            IDeserializationExceptionHandler defaultDeserializationExceptionHandler = config.GetDefaultDeserializationExceptionHandler(this.Context.Services);
 
-            ITimestampExtractor defaultTimestampExtractor = config.GetDefaultTimestampExtractor(this.Context);
-            IDeserializationExceptionHandler defaultDeserializationExceptionHandler = config.GetDefaultDeserializationExceptionHandler(this.Context);
-
-            foreach (TopicPartition partition in partitions)
+            foreach (TopicPartition partition in partitions ?? Enumerable.Empty<TopicPartition>())
             {
                 var source = topology.Source(partition.Topic);
+                ITimestampExtractor? sourceTimestampExtractor = source.TimestampExtractor;
+                ITimestampExtractor timestampExtractor = sourceTimestampExtractor ?? defaultTimestampExtractor;
 
-                ITimestampExtractor sourceTimestampExtractor = source.TimestampExtractor ?? defaultTimestampExtractor;
-
-                var queue = new RecordQueue<byte[], byte[]>(
+                RecordQueue queue = new RecordQueue<object, object>(
                     partition,
                     source,
-                    sourceTimestampExtractor,
+                    timestampExtractor,
                     defaultDeserializationExceptionHandler,
                     this.processorContext);
 
-                partitionQueues.Add(partition, queue);
+                partitionQueues.Put(partition, queue);
             }
 
             this.recordInfo = new RecordInfo();
-            // partitionGroup = new PartitionGroup(partitionQueues, processorContextImpl);
+            this.partitionGroup = new PartitionGroup(partitionQueues);
 
-            this.StateMgr.RegisterGlobalStateStores(topology.globalStateStores);
+            stateMgr.RegisterGlobalStateStores(topology.globalStateStores);
+        }
 
-            // initialize transactions if eos is turned on, which will block if the previous transaction has not
-            // completed yet; do not start the first transaction until the topology has been initialized later
-            if (this.eosEnabled)
+
+        public override bool IsActive()
+        {
+            return true;
+        }
+
+        /**
+         * @throws LockException could happen when multi-threads within the single instance, could retry
+         * @throws TimeoutException if initializing record collector timed out
+         * @throws StreamsException fatal error, should close the thread
+         */
+
+        public override void InitializeIfNeeded()
+        {
+            if (this.CurrentState == TaskState.CREATED)
             {
-                this.InitializeTransactions();
+                this.recordCollector.Initialize();
+
+                StateManagerUtil.RegisterStateStores(this.log, this.logPrefix, this.topology, this.stateMgr, this.stateDirectory, this.processorContext);
+
+                this.TransitionTo(TaskState.RESTORING);
+
+                this.log.LogInformation("Initialized");
             }
         }
 
-        public override bool InitializeStateStores()
-        {
-            this.logger.LogTrace("Initializing state stores");
-            this.RegisterStateStores();
+        /**
+         * @throws TimeoutException if fetching committed offsets timed out
+         */
 
-            return !this.changelogPartitions.Any();
+        public override void CompleteRestoration()
+        {
+            if (this.CurrentState == TaskState.RESTORING)
+            {
+                this.InitializeMetadata();
+                this.InitializeTopology();
+                this.processorContext.Initialize();
+                this.idleStartTime = RecordQueue.UNKNOWN;
+
+                this.TransitionTo(TaskState.RUNNING);
+
+                this.log.LogInformation("Restored and ready to run");
+            }
+            else
+            {
+                throw new InvalidOperationException("Illegal state " + this.CurrentState + " while completing restoration for active task " + this.Id);
+            }
         }
 
         /**
          * <pre>
-         * - (re-)initialize the topology of the task
+         * the following order must be followed:
+         *  1. first close topology to make sure all cached records in the topology are processed
+         *  2. then flush the state, send any left changelog records
+         *  3. then flush the record collector
+         *  4. then commit the record collector -- for EOS this is the synchronization barrier
+         *  5. then checkpoint the state manager -- even if we crash before this step, EOS is still guaranteed
          * </pre>
          *
-         * @throws TaskMigratedException if the task producer got fenced (EOS only)
+         * @throws TaskMigratedException if committing offsets failed (non-EOS)
+         *                               or if the task producer got fenced (EOS)
          */
-        public override void InitializeTopology()
+
+        public override void PrepareSuspend()
         {
-            this.InitTopology();
-
-            if (this.IsEosEnabled())
+            if (this.CurrentState == TaskState.CREATED || this.CurrentState == TaskState.SUSPENDED)
             {
-                try
-                {
-                    //this.producer.beginTransaction();
-                }
-                catch (ProducerFencedException fatal)
-                {
-                    throw new KafkaException(new Confluent.Kafka.Error(ErrorCode.TransactionCoordinatorFenced, "", true), fatal);
-                }
-
-                this.transactionInFlight = true;
+                // do nothing
+                this.log.LogTrace("Skip prepare suspending since state is {}", this.CurrentState);
             }
+            else if (this.CurrentState == TaskState.RUNNING)
+            {
+                this.CloseTopology(true);
 
-            this.processorContext.Initialize();
+                this.stateMgr.Flush();
+                this.recordCollector.Flush();
 
-            this.TaskInitialized = true;
+                this.log.LogInformation("Prepare suspending running");
+            }
+            else if (this.CurrentState == TaskState.RESTORING)
+            {
+                this.stateMgr.Flush();
 
-            this.idleStartTime = RecordQueue.UNKNOWN;
+                this.log.LogInformation("Prepare suspending restoring");
+            }
+            else
+            {
+                throw new InvalidOperationException("Illegal state " + this.CurrentState + " while suspending active task " + this.Id);
+            }
+        }
 
-            this.StateMgr.EnsureStoresRegistered();
+        public override void Suspend()
+        {
+            if (this.CurrentState == TaskState.CREATED || this.CurrentState == TaskState.SUSPENDED)
+            {
+                // do nothing
+                this.log.LogTrace("Skip suspending since state is {}", this.CurrentState);
+            }
+            else if (this.CurrentState == TaskState.RUNNING)
+            {
+                this.stateMgr.Checkpoint(this.CheckpointableOffsets());
+                this.partitionGroup.Clear();
+
+                this.TransitionTo(TaskState.SUSPENDED);
+                this.log.LogInformation("Suspended running");
+            }
+            else if (this.CurrentState == TaskState.RESTORING)
+            {
+                // we just checkpoint the position that we've restored up to without
+                // going through the commit process
+                this.stateMgr.Checkpoint(new Dictionary<TopicPartition, long>());
+
+                // we should also clear any buffered records of a task when suspending it
+                this.partitionGroup.Clear();
+
+                this.TransitionTo(TaskState.SUSPENDED);
+                this.log.LogInformation("Suspended restoring");
+            }
+            else
+            {
+                throw new InvalidOperationException("Illegal state " + this.CurrentState + " while suspending active task " + this.Id);
+            }
         }
 
         /**
@@ -254,38 +282,297 @@ namespace Kafka.Streams.Tasks
          * - resume the task
          * </pre>
          */
+
         public override void Resume()
         {
-            this.logger.LogDebug("Resuming");
-            if (this.eosEnabled)
+            switch (this.CurrentState)
             {
-                if (this.producer != null)
-                {
-                    throw new InvalidOperationException("Task producer should be null.");
-                }
+                case TaskState.CREATED:
+                case TaskState.RUNNING:
+                case TaskState.RESTORING:
+                    // no need to do anything, just let them continue running / restoring / closing
+                    this.log.LogTrace("Skip resuming since state is {}", this.CurrentState);
+                    break;
 
-                this.producer = this.producerSupplier.Get();
-                this.InitializeTransactions();
-                this.recordCollector.Init(this.producer);
+                case TaskState.SUSPENDED:
+                    // just transit the state without any logical changes: suspended and restoring states
+                    // are not actually any different for inner modules
+                    this.TransitionTo(TaskState.RESTORING);
+                    this.log.LogInformation("Resumed to restoring state");
 
-                try
-                {
+                    break;
 
-                    this.StateMgr.ClearCheckpoints();
-                }
-                catch (IOException e)
-                {
-                    throw new ProcessorStateException(string.Format("%sError while deleting the checkpoint file", this.logPrefix), e);
-                }
+                default:
+                    throw new InvalidOperationException("Illegal state " + this.CurrentState + " while resuming active task " + this.Id);
             }
         }
 
+
+        public override void PrepareCommit()
+        {
+            switch (this.CurrentState)
+            {
+                case TaskState.RUNNING:
+                case TaskState.RESTORING:
+                    this.stateMgr.Flush();
+                    this.recordCollector.Flush();
+
+                    this.log.LogDebug("Prepared task for committing");
+
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Illegal state " + this.CurrentState + " while preparing active task " + this.Id + " for committing");
+            }
+        }
+
+
+        public override void PostCommit()
+        {
+            switch (this.CurrentState)
+            {
+                case TaskState.RUNNING:
+                    this.commitNeeded = false;
+                    this.commitRequested = false;
+
+                    if (!this.eosEnabled)
+                    {
+                        this.stateMgr.Checkpoint(this.CheckpointableOffsets());
+                    }
+
+                    this.log.LogDebug("Committed");
+
+                    break;
+
+                case TaskState.RESTORING:
+                    this.commitNeeded = false;
+                    this.commitRequested = false;
+
+                    this.stateMgr.Checkpoint(this.CheckpointableOffsets());
+
+                    this.log.LogDebug("Committed");
+
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Illegal state " + this.CurrentState + " while post committing active task " + this.Id);
+            }
+        }
+
+
+        public Dictionary<TopicPartition, OffsetAndMetadata> CommittableOffsetsAndMetadata()
+        {
+            if (this.CurrentState == TaskState.CLOSED)
+            {
+                throw new InvalidOperationException("Task " + this.Id + " is closed.");
+            }
+
+            if (this.CurrentState != TaskState.RUNNING)
+            {
+                return new Dictionary<TopicPartition, OffsetAndMetadata>();
+            }
+
+            Dictionary<TopicPartition, long> partitionTimes = this.ExtractPartitionTimes();
+
+            Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new Dictionary<TopicPartition, OffsetAndMetadata>(this.consumedOffsets.Count);
+            foreach (var entry in this.consumedOffsets)
+            {
+                TopicPartition partition = entry.Key;
+                long? offset = this.partitionGroup.HeadRecordOffset(partition);
+                if (offset == null)
+                {
+                    try
+                    {
+                        offset = this.mainConsumer.Position(partition);
+                    }
+                    catch (TimeoutException error)
+                    {
+                        // the `consumer.position()` call should never block, because we know that we did process data
+                        // for the requested partition and thus the consumer should have a valid local position
+                        // that it can return immediately
+
+                        // hence, a `TimeoutException` indicates a bug and thus we rethrow it as fatal `InvalidOperationException`
+                        throw new InvalidOperationException(error.Message);
+                    }
+                    catch (KafkaException fatal)
+                    {
+                        throw new StreamsException(fatal);
+                    }
+                }
+
+                long partitionTime = partitionTimes[partition];
+                consumedOffsetsAndMetadata.Put(partition, new OffsetAndMetadata(offset, EncodeTimestamp(partitionTime)));
+            }
+
+            return consumedOffsetsAndMetadata;
+        }
+
+        private Dictionary<TopicPartition, long> ExtractPartitionTimes()
+        {
+            Dictionary<TopicPartition, long> partitionTimes = new Dictionary<TopicPartition, long>();
+            foreach (TopicPartition partition in this.partitionGroup.Partitions())
+            {
+                partitionTimes.Put(partition, this.partitionGroup.PartitionTimestamp(partition));
+            }
+
+            return partitionTimes;
+        }
+
+        public override Dictionary<TopicPartition, long> PrepareCloseClean()
+        {
+            Dictionary<TopicPartition, long> checkpoint = this.PrepareClose(true);
+
+            this.log.LogInformation("Prepared clean close");
+
+            return checkpoint;
+        }
+
+
+        public override void CloseClean(Dictionary<TopicPartition, long> checkpoint)
+        {
+            this.Close(true, checkpoint);
+
+            this.log.LogInformation("Closed clean");
+        }
+
+
+        public override void PrepareCloseDirty()
+        {
+            this.PrepareClose(false);
+
+            this.log.LogInformation("Prepared dirty close");
+        }
+
+        public override void CloseDirty()
+        {
+            this.Close(false, null);
+
+            this.log.LogInformation("Closed dirty");
+        }
+
         /**
-         * An active task is processable if its buffer contains data for All of its input
+         * <pre>
+         * the following order must be followed:
+         *  1. first close topology to make sure all cached records in the topology are processed
+         *  2. then flush the state, send any left changelog records
+         *  3. then flush the record collector
+         * </pre>
+         *
+         * @param clean    shut down cleanly (ie, incl. flush) if {@code true} --
+         *                 otherwise, just close open resources
+         * @throws TaskMigratedException if the task producer got fenced (EOS)
+         */
+        private Dictionary<TopicPartition, long> PrepareClose(bool clean)
+        {
+            Dictionary<TopicPartition, long> checkpoint;
+
+            if (this.CurrentState == TaskState.CREATED)
+            {
+                // the task is created and not initialized, just re-write the checkpoint file
+                checkpoint = new Dictionary<TopicPartition, long>();
+            }
+            else if (this.CurrentState == TaskState.RUNNING)
+            {
+                this.CloseTopology(clean);
+
+                if (clean)
+                {
+                    this.stateMgr.Flush();
+                    this.recordCollector.Flush();
+                    checkpoint = this.CheckpointableOffsets();
+                }
+                else
+                {
+                    checkpoint = null; // `null` indicates to not write a checkpoint
+                    this.ExecuteAndMaybeSwallow(false, this.stateMgr.Flush, "state manager flush", this.log);
+                }
+            }
+            else if (this.CurrentState == TaskState.RESTORING)
+            {
+                this.ExecuteAndMaybeSwallow(clean, this.stateMgr.Flush, "state manager flush", this.log);
+                checkpoint = new Dictionary<TopicPartition, long>();
+            }
+            else if (this.CurrentState == TaskState.SUSPENDED)
+            {
+                // if `SUSPENDED` do not need to checkpoint, since when suspending we've already committed the state
+                checkpoint = null; // `null` indicates to not write a checkpoint
+            }
+            else
+            {
+                throw new InvalidOperationException("Illegal state " + this.CurrentState + " while prepare closing active task " + this.Id);
+            }
+
+            return checkpoint;
+        }
+
+        /**
+         * <pre>
+         * the following order must be followed:
+         *  1. checkpoint the state manager -- even if we crash before this step, EOS is still guaranteed
+         *  2. then if we are closing on EOS and dirty, wipe out the state store directory
+         *  3. finally release the state manager lock
+         * </pre>
+         */
+        private void Close(bool clean,
+                           Dictionary<TopicPartition, long> checkpoint)
+        {
+            if (clean && checkpoint != null)
+            {
+                this.ExecuteAndMaybeSwallow(clean, () => this.stateMgr.Checkpoint(checkpoint), "state manager checkpoint", this.log);
+            }
+
+            switch (this.CurrentState)
+            {
+                case TaskState.CREATED:
+                case TaskState.RUNNING:
+                case TaskState.RESTORING:
+                case TaskState.SUSPENDED:
+                    // first close state manager (which is idempotent) then close the record collector
+                    // if the latter throws and we re-close dirty which would close the state manager again.
+                    this.ExecuteAndMaybeSwallow(
+                        clean,
+                        () => StateManagerUtil.CloseStateManager(
+                            this.log,
+                            this.logPrefix,
+                            clean,
+                            this.eosEnabled,
+                            this.stateMgr,
+                            this.stateDirectory,
+                            TaskType.ACTIVE
+                        ),
+                        "state manager close",
+                        this.log);
+
+                    // executeAndMaybeSwallow(clean, RecordCollector.Close, "record collector close", log);
+
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Illegal state " + this.CurrentState + " while closing active task " + this.Id);
+            }
+
+            this.partitionGroup.Close();
+            // closeTaskSensor.record();
+
+            this.TransitionTo(TaskState.CLOSED);
+        }
+
+        /**
+         * An active task is processable if its buffer contains data for all of its input
          * source topic partitions, or if it is enforced to be processable
          */
-        public bool IsProcessable(DateTime now)
+        public bool IsProcessable(DateTime wallClockTime)
         {
+            if (this.CurrentState == TaskState.CLOSED)
+            {
+                // a task is only closing / closed when 1) task manager is closing, 2) a rebalance is undergoing;
+                // in either case we can just log it and move on without notifying the thread since the consumer
+                // would soon be updated to not return any records for this task anymore.
+                this.log.LogInformation("Stream task {} is already in {} state, skip processing it.", this.Id, this.CurrentState);
+
+                return false;
+            }
+
             if (this.partitionGroup.AllPartitionsBuffered())
             {
                 this.idleStartTime = RecordQueue.UNKNOWN;
@@ -295,12 +582,12 @@ namespace Kafka.Streams.Tasks
             {
                 if (this.idleStartTime == RecordQueue.UNKNOWN)
                 {
-                    this.idleStartTime = now;
+                    this.idleStartTime = wallClockTime;
                 }
 
-                if (now - this.idleStartTime >= this.maxTaskIdle)
+                if ((wallClockTime - this.idleStartTime).TotalMilliseconds >= this.maxTaskIdle.TotalMilliseconds)
                 {
-                    //taskMetrics.taskEnforcedProcessSensor.record();
+                    // enforcedProcessingSensor.record();
                     return true;
                 }
                 else
@@ -310,6 +597,9 @@ namespace Kafka.Streams.Tasks
             }
             else
             {
+                // there's no data in any of the topics; we should reset the enforced
+                // processing timer
+                this.idleStartTime = RecordQueue.UNKNOWN;
                 return false;
             }
         }
@@ -320,10 +610,15 @@ namespace Kafka.Streams.Tasks
          * @return true if this method processes a record, false if it does not process a record.
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool Process()
+        public bool Process(DateTime wallClockTime)
         {
+            if (!this.IsProcessable(wallClockTime))
+            {
+                return false;
+            }
+
             // get the next record to process
-            var record = this.partitionGroup.NextRecord<byte[], byte[]>(this.recordInfo);
+            StampedRecord record = null; //partitionGroup.NextRecord(recordInfo);
 
             // if there is no record to process, return immediately
             if (record == null)
@@ -334,42 +629,43 @@ namespace Kafka.Streams.Tasks
             try
             {
                 // process the record by passing to the source node of the topology
-                var currNode = (ProcessorNode<byte[], byte[]>)this.recordInfo.Node();
+                ProcessorNode<object, object> currNode = (ProcessorNode<object, object>)this.recordInfo.Node();
                 TopicPartition partition = this.recordInfo.Partition();
 
-                this.logger.LogTrace("Start processing one record [{}]", record);
+                this.log.LogTrace("Start processing one record [{}]", record);
 
-                //updateProcessorContext(record, currNode);
-                //((ProcessorNode<byte[], byte[]>)currNode).process(record.Key, record.Value);
+                this.UpdateProcessorContext(record, currNode);
+                //MaybeMeasureLatency(()=>currNode.process(record.Key, record.Value), time, processLatencySensor);
 
-                this.logger.LogTrace("Completed processing one record [{}]", record);
+                this.log.LogTrace("Completed processing one record [{}]", record);
 
                 // update the consumed offset map after processing is done
-                this.consumedOffsets.Add(partition, record.offset);
+                this.consumedOffsets.Put(partition, record.offset);
                 this.commitNeeded = true;
 
                 // after processing this record, if its partition queue's buffered size has been
                 // decreased to the threshold, we can then resume the consumption on this partition
                 if (this.recordInfo.queue.Size() == this.maxBufferedSize)
                 {
-                    this.consumer.Resume(new[] { partition });
+                    this.mainConsumer.Resume(new List<TopicPartition> { partition });
                 }
             }
-            catch (ProducerFencedException fatal)
+            catch (StreamsException e)
             {
-                throw;// new TaskMigratedException(this, fatal);
+                throw e;
             }
-            catch (KafkaException e)
+            catch (RuntimeException e)
             {
-                var stackTrace = this.GetStacktraceString(e);
+                string stackTrace = this.GetStacktraceString(e);
                 throw new StreamsException(string.Format("Exception caught in process. taskId=%s, " +
-                        "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
-                    this.id,
-                    this.processorContext.GetCurrentNode().Name,
-                    record.Topic,
-                    record.partition,
-                    record.offset,
-                    stackTrace), e);
+                                                      "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
+                                                  this.Id,
+                                                  this.processorContext.GetCurrentNode().Name,
+                                                  record.Topic,
+                                                  record.partition,
+                                                  record.offset,
+                                                  stackTrace
+                ), e);
             }
             finally
             {
@@ -379,21 +675,31 @@ namespace Kafka.Streams.Tasks
             return true;
         }
 
-        private string GetStacktraceString(KafkaException e)
-        {
-            var stacktrace = e.StackTrace;
-            using var stringWriter = new StringWriter();
-            var printWriter = new PrintWriter(stringWriter);
-            try
-            {
-                //e.printStackTrace(printWriter);
-                stacktrace = stringWriter.ToString();
-            }
-            catch (IOException ioe)
-            {
-                //log.LogError("Encountered error extracting stacktrace from this exception", ioe);
-            }
 
+        public void RecordProcessBatchTime(long processBatchTime)
+        {
+            this.processTime += TimeSpan.FromMilliseconds(processBatchTime);
+        }
+
+
+        public void RecordProcessTimeRatioAndBufferSize(long allTaskProcessMs)
+        {
+            // bufferedRecordsSensor.record(partitionGroup.numBuffered());
+            // processRatioSensor.record((double)processTimeMs / allTaskProcessMs);
+            this.processTime = TimeSpan.Zero;
+        }
+
+        private string GetStacktraceString(RuntimeException e)
+        {
+            string stacktrace = null;
+            //try (StringWriter stringWriter = new StringWriter();
+            //PrintWriter printWriter = new PrintWriter(stringWriter)) {
+            //    e.printStackTrace(printWriter);
+            //    stacktrace = stringWriter.toString();
+            //} catch (IOException ioe)
+            //{
+            //    log.error("Encountered error extracting stacktrace from this exception", ioe);
+            //}
             return stacktrace;
         }
 
@@ -401,28 +707,36 @@ namespace Kafka.Streams.Tasks
          * @throws InvalidOperationException if the current node is not null
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public void Punctuate(IProcessorNode<byte[], byte[]> node, DateTime timestamp, PunctuationType type, IPunctuator punctuator)
+
+        public void Punctuate(
+            IProcessorNode<object, object> node,
+            DateTime timestamp,
+            PunctuationType type,
+            IPunctuator punctuator)
         {
             if (this.processorContext.GetCurrentNode() != null)
             {
-                throw new InvalidOperationException($"{this.logPrefix}Current node is not null");
+                throw new InvalidOperationException(string.Format("%sCurrent node is not null", this.logPrefix));
             }
 
             this.UpdateProcessorContext(new StampedRecord(DUMMY_RECORD, timestamp), node);
 
-            this.logger.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.Name, timestamp, type);
+            if (this.log.IsEnabled(LogLevel.Trace))
+            {
+                this.log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.Name, timestamp, type);
+            }
 
             try
             {
-                node.Punctuate(timestamp, punctuator);
+                //maybeMeasureLatency(() => node.punctuate(timestamp, punctuator), time, punctuateLatencySensor);
             }
-            catch (ProducerFencedException fatal)
+            catch (StreamsException e)
             {
-                throw;// new TaskMigratedException(this, fatal);
+                throw e;
             }
-            catch (KafkaException e)
+            catch (RuntimeException e)
             {
-                throw new StreamsException($"Exception caught while punctuating processor", e);
+                throw new StreamsException(string.Format("%sException caught while punctuating processor '%s'", this.logPrefix, node.Name), e);
             }
             finally
             {
@@ -430,7 +744,7 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        private void UpdateProcessorContext(StampedRecord record, IProcessorNode<byte[], byte[]> currNode)
+        private void UpdateProcessorContext(StampedRecord record, IProcessorNode currNode)
         {
             this.processorContext.SetRecordContext(
                 new ProcessorRecordContext(
@@ -439,89 +753,16 @@ namespace Kafka.Streams.Tasks
                     record.partition,
                     record.Topic,
                     record.Headers));
-
             this.processorContext.SetCurrentNode(currNode);
         }
 
         /**
-         * <pre>
-         * - Flush state and producer
-         * - if(!eos) write checkpoint
-         * - commit offsets and start new transaction
-         * </pre>
-         *
-         * @throws TaskMigratedException if committing offsets failed (non-EOS)
-         *                               or if the task producer got fenced (EOS)
+         * Return all the checkpointable offsets(written + consumed) to the state manager.
+         * Currently only changelog topic offsets need to be checkpointed.
          */
-        public override void Commit()
+        private Dictionary<TopicPartition, long> CheckpointableOffsets()
         {
-            this.Commit(true);
-        }
-
-        /**
-         * @throws TaskMigratedException if committing offsets failed (non-EOS)
-         *                               or if the task producer got fenced (EOS)
-         */
-        // visible for testing
-        private void Commit(bool startNewTransaction)
-        {
-            var startNs = this.Context.Clock.NowAsEpochNanoseconds;
-            this.logger.LogDebug("Committing");
-
-            this.FlushState();
-
-            if (!this.eosEnabled)
-            {
-                this.StateMgr.Checkpoint(this.ActiveTaskCheckpointableOffsets());
-            }
-
-            var consumedOffsetsAndMetadata = new Dictionary<TopicPartition, OffsetAndMetadata>(this.consumedOffsets.Count);
-
-            foreach (var entry in this.consumedOffsets)
-            {
-                TopicPartition partition = entry.Key;
-                var offset = entry.Value + 1;
-                consumedOffsetsAndMetadata.Add(partition, new OffsetAndMetadata(offset));
-                this.StateMgr.PutOffsetLimit(partition, offset);
-            }
-
-            try
-            {
-
-                if (this.eosEnabled)
-                {
-                    //producer.sendOffsetsToTransaction(consumedOffsetsAndMetadata, applicationId);
-                    //producer.commitTransaction();
-                    this.transactionInFlight = false;
-                    if (startNewTransaction)
-                    {
-                        //  producer.beginTransaction();
-                        this.transactionInFlight = true;
-                    }
-                }
-                else
-                {
-                    this.consumer.Commit(consumedOffsetsAndMetadata.Select(tpo => new TopicPartitionOffset(new TopicPartition(tpo.Key.Topic, tpo.Key.Partition), tpo.Value.offset)));
-                }
-            }
-            catch (CommitFailedException cfe)
-            {
-                throw; // new TaskMigratedException(this, error);
-            }
-            catch (ProducerFencedException error)
-            {
-                throw; // new TaskMigratedException(this, error);
-            }
-
-            this.commitNeeded = false;
-            this.commitRequested = false;
-            //taskMetrics.taskCommitTimeSensor.record(this.Context.Clock.NowAsEpochNanoseconds; - startNs);
-        }
-
-        public override Dictionary<TopicPartition, long> ActiveTaskCheckpointableOffsets()
-        {
-            var checkpointableOffsets = this.recordCollector.offsets;
-
+            Dictionary<TopicPartition, long> checkpointableOffsets = new Dictionary<TopicPartition, long>(this.recordCollector.offsets);
             foreach (var entry in this.consumedOffsets)
             {
                 checkpointableOffsets.TryAdd(entry.Key, entry.Value);
@@ -530,46 +771,86 @@ namespace Kafka.Streams.Tasks
             return checkpointableOffsets;
         }
 
-        protected override void FlushState()
+        private void InitializeMetadata()
         {
-            this.logger.LogTrace("Flushing state and producer");
-            base.FlushState();
-
             try
             {
-                this.recordCollector.Flush();
+                Dictionary<TopicPartition, OffsetAndMetadata> offsetsAndMetadata = this.mainConsumer.Committed(this.Partitions, TimeSpan.MaxValue)
+                    //.Stream()
+                    .Where(e => e != null)
+                    .ToDictionary(kvp => kvp.TopicPartition, kvp => new OffsetAndMetadata(kvp.Offset));
+
+                this.InitializeTaskTime(offsetsAndMetadata);
             }
-            catch (ProducerFencedException fatal)
+            catch (TimeoutException e)
             {
-                throw; // new TaskMigratedException(this, fatal);
+                this.log.LogWarning("Encountered {} while trying to fetch committed offsets, will retry initializing the metadata in the next loop." +
+                    "\nConsider overwriting consumer config {} to a larger value to avoid timeout errors",
+                    e.ToString());
+                //ConsumerConfig.DEFAULT_API_TIMEOUT_MS_CONFIG);
+
+                throw;
+            }
+            catch (KafkaException e)
+            {
+                throw new StreamsException(string.Format("task [%s] Failed to initialize offsets for %s", this.Id, this.Partitions), e);
             }
         }
 
-        public Dictionary<TopicPartition, long> PurgableOffsets()
+        private void InitializeTaskTime(Dictionary<TopicPartition, OffsetAndMetadata> offsetsAndMetadata)
         {
-            var purgableConsumedOffsets = new Dictionary<TopicPartition, long>();
-            foreach (KeyValuePair<TopicPartition, long> entry in this.consumedOffsets)
+            foreach (var entry in offsetsAndMetadata)
+            {
+                TopicPartition partition = entry.Key;
+                OffsetAndMetadata metadata = entry.Value;
+
+                if (metadata != null)
+                {
+                    var committedTimestamp = this.DecodeTimestamp(metadata.ToString());
+                    this.partitionGroup.SetPartitionTime(partition, committedTimestamp);
+                    this.log.LogDebug("A committed timestamp was detected: setting the partition time of partition {}"
+                        + " to {} in stream task {}", partition, committedTimestamp, this.Id);
+                }
+                else
+                {
+                    this.log.LogDebug("No committed timestamp was found in metadata for partition {}", partition);
+                }
+            }
+
+            HashSet<TopicPartition> nonCommitted = new HashSet<TopicPartition>(this.Partitions);
+            nonCommitted.ExceptWith(offsetsAndMetadata.Keys);
+            foreach (TopicPartition partition in nonCommitted)
+            {
+                this.log.LogDebug("No committed offset for partition {}, therefore no timestamp can be found for this partition", partition);
+            }
+        }
+
+
+        public Dictionary<TopicPartition, long> PurgeableOffsets()
+        {
+            Dictionary<TopicPartition, long> purgeableConsumedOffsets = new Dictionary<TopicPartition, long>();
+            foreach (var entry in this.consumedOffsets)
             {
                 TopicPartition tp = entry.Key;
                 if (this.topology.IsRepartitionTopic(tp.Topic))
                 {
-                    purgableConsumedOffsets.Add(tp, entry.Value + 1);
+                    purgeableConsumedOffsets.Put(tp, entry.Value + 1);
                 }
             }
 
-            return purgableConsumedOffsets;
+            return purgeableConsumedOffsets;
         }
 
-        private void InitTopology()
+        private void InitializeTopology()
         {
-            // initialize the task by initializing All its processor nodes in the topology
-            this.logger.LogTrace("Initializing processor nodes of the topology");
-            foreach (ProcessorNode<byte[], byte[]> node in this.topology.Processors())
+            // initialize the task by initializing all its processor nodes in the topology
+            this.log.LogTrace("Initializing processor nodes of the topology");
+            foreach (var node in this.topology.Processors())
             {
                 this.processorContext.SetCurrentNode(node);
                 try
                 {
-                    node.Init(this.processorContext);
+                    // node.Init(processorContext);
                 }
                 finally
                 {
@@ -578,261 +859,58 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        /**
-         * <pre>
-         * - Close topology
-         * - {@link #commit()}
-         *   - Flush state and producer
-         *   - if (!eos) write checkpoint
-         *   - commit offsets
-         * </pre>
-         *
-         * @throws TaskMigratedException if committing offsets failed (non-EOS)
-         *                               or if the task producer got fenced (EOS)
-         */
-        public override void Suspend()
+        private void CloseTopology(bool clean)
         {
-            this.logger.LogDebug("Suspending");
-            this.Suspend(true, false);
-        }
+            this.log.LogTrace("Closing processor topology");
 
-        /**
-         * <pre>
-         * - Close topology
-         * - if (clean) {@link #commit()}
-         *   - Flush state and producer
-         *   - if (!eos) write checkpoint
-         *   - commit offsets
-         * </pre>
-         *
-         * @throws TaskMigratedException if committing offsets failed (non-EOS)
-         *                               or if the task producer got fenced (EOS)
-         */
-        // visible for testing
-        private void Suspend(bool clean, bool isZombie)
-        {
-            try
-            {
-                this.CloseTopology(); // should we call this only on clean suspend?
-            }
-            catch (RuntimeException fatal)
-            {
-                if (clean)
-                {
-                    throw;
-                }
-            }
-
-            if (clean)
-            {
-                TaskMigratedException? taskMigratedException = null;
-
-                try
-                {
-                    this.Commit(false);
-                }
-                finally
-                {
-                    if (this.eosEnabled)
-                    {
-                        this.StateMgr.Checkpoint(this.ActiveTaskCheckpointableOffsets());
-
-                        try
-                        {
-                            this.recordCollector.Close();
-                        }
-                        catch (ProducerFencedException e)
-                        {
-                            // taskMigratedException = new TaskMigratedException(this, e);
-                        }
-                        finally
-                        {
-                            this.producer = null;
-                        }
-                    }
-                }
-
-                if (taskMigratedException != null)
-                {
-                    throw taskMigratedException;
-                }
-            }
-            else
-            {
-                this.MaybeAbortTransactionAndCloseRecordCollector(isZombie);
-            }
-        }
-
-        private void MaybeAbortTransactionAndCloseRecordCollector(bool isZombie)
-        {
-            if (this.eosEnabled && !isZombie)
-            {
-                try
-                {
-                    if (this.transactionInFlight)
-                    {
-                        //producer.abortTransaction();
-                    }
-
-                    this.transactionInFlight = false;
-                }
-                catch (ProducerFencedException ignore)
-                {
-                    /* TODO
-                     * this should actually never happen atm as we guard the call to #abortTransaction
-                     * => the reason for the guard is a "bug" in the Producer -- it throws InvalidOperationException
-                     * instead of ProducerFencedException atm. We can Remove the isZombie flag after KAFKA-5604 got
-                     * fixed and fall-back to this catch-and-swallow code
-                     */
-
-                    // can be ignored: transaction got already aborted by brokers/transactional-coordinator if this happens
-                }
-            }
-
-            if (this.eosEnabled)
-            {
-                try
-                {
-                    this.recordCollector.Close();
-                }
-                catch (Exception e)
-                {
-                    this.logger.LogError("Failed to Close producer due to the following error:", e);
-                }
-                finally
-                {
-                    this.producer = null;
-                }
-            }
-        }
-
-        private void CloseTopology()
-        {
-            this.logger.LogTrace("Closing processor topology");
-
-            this.partitionGroup.Clear();
-
-            // Close the processors
-            // make sure Close() is called for each node even when there is a RuntimeException
+            // close the processors
+            // make sure close() is called for each node even when there is a RuntimeException
             RuntimeException exception = null;
-            if (this.TaskInitialized)
+            foreach (var node in this.topology.Processors())
             {
-                foreach (ProcessorNode<byte[], byte[]> node in this.topology.Processors())
+                this.processorContext.SetCurrentNode(node);
+                try
                 {
-                    this.processorContext.SetCurrentNode(node);
-
-                    try
-                    {
-                        node.Close();
-                    }
-                    catch (RuntimeException e)
-                    {
-                        exception = e;
-                    }
-                    finally
-                    {
-
-                        this.processorContext.SetCurrentNode(null);
-                    }
+                    // node.Close();
+                }
+                catch (RuntimeException e)
+                {
+                    exception = e;
+                }
+                finally
+                {
+                    this.processorContext.SetCurrentNode(null);
                 }
             }
 
-            if (exception != null)
+            if (exception != null && clean)
             {
                 throw exception;
             }
         }
 
-        // helper to avoid calling suspend() twice if a suspended task is not reassigned and closed
-
-        public override void CloseSuspended(
-            bool clean,
-            bool isZombie,
-            RuntimeException firstException)
-        {
-            try
-            {
-                this.CloseStateManager(clean);
-            }
-            catch (RuntimeException e)
-            {
-                if (firstException == null)
-                {
-                    firstException = e;
-                }
-                this.logger.LogError("Could not Close state manager due to the following error:", e);
-            }
-
-            this.partitionGroup.Close();
-            //taskMetrics.removeAllSensors();
-
-            //closeTaskSensor.record();
-
-            if (firstException != null)
-            {
-                throw firstException;
-            }
-        }
-
-        /**
-         * <pre>
-         * - {@link #suspend(bool, bool) suspend(clean)}
-         *   - Close topology
-         *   - if (clean) {@link #commit()}
-         *     - Flush state and producer
-         *     - commit offsets
-         * - Close state
-         *   - if (clean) write checkpoint
-         * - if (eos) Close producer
-         * </pre>
-         *
-         * @param clean    shut down cleanly (ie, incl. Flush and commit) if {@code true} --
-         *                 otherwise, just Close open resources
-         * @param isZombie {@code true} is this task is a zombie or not (this will repress {@link TaskMigratedException}
-         * @throws TaskMigratedException if committing offsets failed (non-EOS)
-         *                               or if the task producer got fenced (EOS)
-         */
-        public override void Close(
-            bool clean,
-            bool isZombie)
-        {
-            this.logger.LogDebug("Closing");
-
-            RuntimeException firstException = null;
-            try
-            {
-
-                this.Suspend(clean, isZombie);
-            }
-            catch (RuntimeException e)
-            {
-                clean = false;
-                firstException = e;
-                this.logger.LogError("Could not Close task due to the following error:", e);
-            }
-
-            this.CloseSuspended(clean, isZombie, firstException);
-
-            this.TaskClosed = true;
-        }
-
         /**
          * Adds records to queues. If a record has an invalid (i.e., negative) timestamp, the record is skipped
-         * and not.Added to the queue for processing
+         * and not added to the queue for processing
          *
          * @param partition the partition
          * @param records   the records
          */
-        public void AddRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> records)
-        {
-            var newQueueSize = this.partitionGroup.AddRawRecords(partition, records);
-            this.logger.LogTrace("Added records into the buffered queue of partition {}, new queue size is {}", partition, newQueueSize);
 
-            // if after.Adding these records, its partition queue's buffered size has been
+        public override void AddRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> records)
+        {
+            int newQueueSize = this.partitionGroup.AddRawRecords(partition, records);
+
+            if (this.log.IsEnabled(LogLevel.Trace))
+            {
+                this.log.LogTrace("Added records into the buffered queue of partition {}, new queue size is {}", partition, newQueueSize);
+            }
+
+            // if after adding these records, its partition queue's buffered size has been
             // increased beyond the threshold, we can then pause the consumption for this partition
             if (newQueueSize > this.maxBufferedSize)
             {
-                this.consumer.Pause(new[] { partition });
+                this.mainConsumer.Pause(new List<TopicPartition> { partition });
             }
         }
 
@@ -843,14 +921,19 @@ namespace Kafka.Streams.Tasks
          * @param type     the punctuation type
          * @throws InvalidOperationException if the current node is not null
          */
-        public ICancellable Schedule(TimeSpan interval, PunctuationType type, IPunctuator punctuator)
+        public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<DateTime> punctuator)
         {
-            return type switch
+            switch (type)
             {
-                PunctuationType.STREAM_TIME => this.Schedule(DateTime.MinValue, interval, type, punctuator),
-                PunctuationType.WALL_CLOCK_TIME => this.Schedule(this.Context.Clock.UtcNow + interval, interval, type, punctuator),
-                _ => throw new ArgumentException("Unrecognized PunctuationType: " + type),
-            };
+                case PunctuationType.STREAM_TIME:
+                    // align punctuation to 0L, punctuate as soon as we have data
+                    return this.Schedule(DateTime.MinValue, interval, type, punctuator);
+                case PunctuationType.WALL_CLOCK_TIME:
+                    // align punctuation to now, punctuate after interval has elapsed
+                    return this.Schedule(this.Context.Clock.UtcNow + interval, interval, type, punctuator);
+                default:
+                    throw new ArgumentException("Unrecognized PunctuationType: " + type);
+            }
         }
 
         /**
@@ -861,21 +944,27 @@ namespace Kafka.Streams.Tasks
          * @param type      the punctuation type
          * @throws InvalidOperationException if the current node is not null
          */
-        private ICancellable Schedule(DateTime startTime, TimeSpan interval, PunctuationType type, IPunctuator punctuator)
+        private ICancellable Schedule(DateTime startTime, TimeSpan interval, PunctuationType type, Action<DateTime> punctuator)
         {
             if (this.processorContext.GetCurrentNode() == null)
             {
-                throw new InvalidOperationException($"{this.logPrefix}Current node is null");
+                throw new InvalidOperationException(string.Format("%sCurrent node is null", this.logPrefix));
             }
 
-            var schedule = new PunctuationSchedule(this.processorContext.GetCurrentNode(), startTime, interval, punctuator);
+            PunctuationSchedule schedule = new PunctuationSchedule(this.processorContext.GetCurrentNode(), startTime, interval, punctuator);
 
-            return type switch
+            switch (type)
             {
-                PunctuationType.STREAM_TIME => this.streamTimePunctuationQueue.Schedule(schedule),
-                PunctuationType.WALL_CLOCK_TIME => this.systemTimePunctuationQueue.Schedule(schedule),
-                _ => throw new System.ArgumentException("Unrecognized PunctuationType: " + type),
-            };
+                case PunctuationType.STREAM_TIME:
+                    // STREAM_TIME punctuation is data driven, will first punctuate as soon as stream-time is known and >= time,
+                    // stream-time is known when we have received at least one record from each input topic
+                    return this.streamTimePunctuationQueue.Schedule(schedule);
+                case PunctuationType.WALL_CLOCK_TIME:
+                    // WALL_CLOCK_TIME is driven by the wall clock time, will first punctuate when now >= time
+                    return this.systemTimePunctuationQueue.Schedule(schedule);
+                default:
+                    throw new ArgumentException("Unrecognized PunctuationType: " + type);
+            }
         }
 
         /**
@@ -897,8 +986,10 @@ namespace Kafka.Streams.Tasks
             }
             else
             {
-
-                var punctuated = this.streamTimePunctuationQueue.MayPunctuate(streamTime, PunctuationType.STREAM_TIME, this);
+                bool punctuated = this.streamTimePunctuationQueue.MayPunctuate(
+                    streamTime,
+                    PunctuationType.STREAM_TIME,
+                    this);
 
                 if (punctuated)
                 {
@@ -918,7 +1009,12 @@ namespace Kafka.Streams.Tasks
          */
         public bool MaybePunctuateSystemTime()
         {
-            var punctuated = this.systemTimePunctuationQueue.MayPunctuate(this.Context.Clock.UtcNow, PunctuationType.WALL_CLOCK_TIME, this);
+            var systemTime = this.Context.Clock.UtcNow;
+
+            bool punctuated = this.systemTimePunctuationQueue.MayPunctuate(
+                systemTime,
+                PunctuationType.WALL_CLOCK_TIME,
+                this);
 
             if (punctuated)
             {
@@ -939,137 +1035,138 @@ namespace Kafka.Streams.Tasks
         /**
          * Whether or not a request has been made to commit the current state
          */
-        public IProducer<byte[], byte[]> GetProducer()
+
+        private static string EncodeTimestamp(long partitionTime)
         {
-            return this.producer;
-        }
-
-        private void InitializeTransactions()
-        {
-            try
-            {
-                //producer.initTransactions();
-            }
-            catch (TimeoutException retriable)
-            {
-                this.logger.LogError(
-                    "Timeout exception caught when initializing transactions for task {}. " +
-                        "This might happen if the broker is slow to respond, if the network connection to " +
-                        "the broker was interrupted, or if similar circumstances arise. " +
-                        "You can increase producer parameter `max.block.ms` to increase this timeout.",
-                    this.id,
-                    retriable);
-
-                throw new StreamsException(
-                    $"{this.logPrefix}Failed to initialize task {this.id} due to timeout.",
-                    retriable);
-            }
-        }
-
-        public override void InitializeIfNeeded()
-        {
-            if (false)//state() == State.CREATED)
-            {
-                //recordCollector.initialize();
-
-                //StateManagerUtil.registerStateStores(log, logPrefix, topology, stateMgr, stateDirectory, processorContext);
-
-                //transitionTo(State.RESTORING);
-
-                this.logger.LogInformation("Initialized");
-            }
-        }
-        private void InitializeMetadata()
-        {
-            try
-            {
-                var offsetsAndMetadata = this.consumer.Committed(this.partitions, TimeSpan.FromSeconds(10.0))
-                    .Where(e => e != null)
-                    .ToDictionary(k => k.TopicPartition, v => v);
-
-                this.InitializeTaskTime(offsetsAndMetadata);
-            }
-            catch (TimeoutException e)
-            {
-                this.logger.LogWarning("Encountered {} while trying to Fetch committed offsets, will retry initializing the metadata in the next loop." +
-                    "\nConsider overwriting consumer config {} to a larger value to avoid timeout errors",
-                    e.ToString(),
-                    "default.api.timeout.ms");
-
-                throw;
-            }
-            catch (KafkaException e)
-            {
-                throw new StreamsException($"task [{this.id}] Failed to initialize offsets for {this.partitions}", e);
-            }
-        }
-
-        public override void CompleteRestoration()
-        {
-            if (false)//state() == State.RESTORING)
-            {
-                this.InitializeMetadata();
-                this.InitializeTopology();
-                this.processorContext.Initialize();
-                this.idleStartTime = RecordQueue.UNKNOWN;
-                //transitionTo(State.RUNNING);
-
-                this.logger.LogInformation("Restored and ready to run");
-            }
-            else
-            {
-                throw new Exception("Illegal state " + "TESTstate()" + " while completing restoration for active task " + this.id);
-            }
+            ByteBuffer buffer = new ByteBuffer().Allocate(9);
+            buffer.PutInt(LATEST_MAGIC_BYTE);
+            buffer.PutLong(partitionTime);
+            return ""; // Base64.getEncoder().encodeToString(buffer.array());
         }
 
         private DateTime DecodeTimestamp(string encryptedString)
         {
-            if (!encryptedString.Any())
+            if (encryptedString.IsEmpty())
             {
                 return RecordQueue.UNKNOWN;
             }
 
-            ByteBuffer buffer = null;// new ByteBuffer().Wrap(Base64.DecodeFromUtf8InPlace(encryptedString));
-            byte? version = null;// buffer.GetLong;
+            ByteBuffer buffer = new ByteBuffer().Wrap(Array.Empty<byte>());// Base64.getDecoder().decode(encryptedString));
+            var bytes = new byte[1];
+            buffer.Get(bytes);
+
+            var version = bytes[0];
             switch (version)
             {
-                //case LATEST_MAGIC_BYTE:
-                //    return buffer.GetLong();
+                case LATEST_MAGIC_BYTE:
+                    return Timestamp.UnixTimestampMsToDateTime(buffer.GetLong());
                 default:
-                    //log.LogWarning("Unsupported offset metadata version found. Supported version {}. Found version {}.",
-                    //         LATEST_MAGIC_BYTE, version);
-
+                    this.log.LogWarning("Unsupported offset metadata version found. Supported version {}. Found version {}.",
+                             LATEST_MAGIC_BYTE, version);
                     return RecordQueue.UNKNOWN;
             }
         }
 
-        private void InitializeTaskTime(Dictionary<TopicPartition, TopicPartitionOffset> offsetsAndMetadata)
+        public IProcessorContext ProcessorContext()
         {
-            foreach (var entry in offsetsAndMetadata)
-            {
-                TopicPartition partition = entry.Key;
-                var metadata = entry.Value;
+            return this.processorContext;
+        }
 
-                if (metadata != null)
-                {
-                    //long committedTimestamp = DecodeTimestamp(metadata);
-                    //partitionGroup.SetPartitionTime(partition, committedTimestamp);
-                    this.logger.LogDebug($"A committed timestamp was detected: setting the partition time of partition {partition}");
-                    //+ $" to {committedTimestamp} in stream task {id}");
-                }
-                else
-                {
-                    this.logger.LogDebug("No committed timestamp was found in metadata for partition {}", partition);
-                }
+        /**
+         * Produces a string representation containing useful information about a Task.
+         * This is useful in debugging scenarios.
+         *
+         * @return A string representation of the StreamTask instance.
+         */
+
+        public override string ToString()
+        {
+            return this.ToString("");
+        }
+
+        /**
+         * Produces a string representation containing useful information about a Task starting with the given indent.
+         * This is useful in debugging scenarios.
+         *
+         * @return A string representation of the Task instance.
+         */
+        public override string ToString(string indent)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(indent);
+            sb.Append("TaskId: ");
+            sb.Append(this.Id);
+            sb.Append("\n");
+
+            // print topology
+            if (this.topology != null)
+            {
+                sb.Append(indent).Append(this.topology.ToString(indent + "\t"));
             }
 
-            var nonCommitted = new HashSet<TopicPartition>(this.partitions);
-            nonCommitted.RemoveWhere(tp => offsetsAndMetadata.Keys.Contains(tp));
-
-            foreach (var partition in nonCommitted)
+            // print assigned partitions
+            if (this.Partitions != null && !this.Partitions.IsEmpty())
             {
-                this.logger.LogDebug("No committed offset for partition {}, therefore no timestamp can be found for this partition", partition);
+                sb.Append(indent).Append("Partitions [");
+                foreach (TopicPartition topicPartition in this.Partitions)
+                {
+                    sb.Append(topicPartition).Append(", ");
+                }
+
+                sb.Length -= 2;
+                sb.Append("]\n");
             }
+            return sb.ToString();
+        }
+
+        public override Dictionary<TopicPartition, long> ChangelogOffsets()
+        {
+            if (this.CurrentState == TaskState.RUNNING)
+            {
+                // if we are in running state, just return the latest offset sentinel indicating
+                // we should be at the end of the changelog
+                return this.ChangelogPartitions()
+                    .ToDictionary(kvp => new TopicPartition(kvp.Topic, kvp.Partition), kvp => this.LatestOffset);
+            }
+            else
+            {
+                return this.stateMgr.ChangelogPartitions().ToDictionary(p => p, p => this.LatestOffset);
+            }
+        }
+
+        public bool HasRecordsQueued()
+        {
+            return this.NumBuffered() > 0;
+        }
+
+        private int NumBuffered()
+        {
+            return this.partitionGroup.NumBuffered();
+        }
+
+        private DateTime StreamTime()
+        {
+            return this.partitionGroup.streamTime;
+        }
+
+        public override bool CommitNeeded()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool SetState(TaskState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetTransitions(IEnumerable<StateTransition<TaskState>> validTransitions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool IsRunning()
+        {
+            throw new NotImplementedException();
         }
     }
 }

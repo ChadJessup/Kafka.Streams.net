@@ -49,7 +49,7 @@ namespace Kafka.Streams.RocksDbState
         // FlushOptions fOptions;
         private Cache cache;
 
-        private BloomFilterPolicy filter;
+        private readonly BloomFilterPolicy filter;
 
         private IRocksDbConfigSetter configSetter;
 
@@ -57,7 +57,7 @@ namespace Kafka.Streams.RocksDbState
         public IProcessorContext InternalProcessorContext { get; set; }
 
         // visible for testing
-        IBatchingStateRestoreCallback batchingStateRestoreCallback = null;
+        private IBatchingStateRestoreCallback batchingStateRestoreCallback = null;
         private readonly DbOptions dbOptions = new DbOptions();
         private readonly ColumnFamilyOptions columnFamilyOptions = new ColumnFamilyOptions();
         private readonly BlockBasedTableOptions tableConfig = new BlockBasedTableOptions();
@@ -144,7 +144,7 @@ namespace Kafka.Streams.RocksDbState
             return this;
         }
 
-        void OpenRocksDb(
+        private void OpenRocksDb(
             DbOptions dbOptions,
             ColumnFamilyOptions columnFamilyOptions)
         {

@@ -6,45 +6,48 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Tests.Helpers;
 using System;
 using System.Collections.Generic;
+using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class KStreamForeachTest
     {
 
-        private string topicName = "topic";
-        private ConsumerRecordFactory<int, string> recordFactory = new ConsumerRecordFactory<>(Serdes.Int(), Serdes.String());
-        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
+        private readonly string topicName = "topic";
+        private readonly ConsumerRecordFactory<int, string> recordFactory = new ConsumerRecordFactory<int, string>(Serdes.Int(), Serdes.String());
+        private readonly StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
 
         [Fact]
         public void testForeach()
         {
             // Given
-            List<KeyValuePair<int, string>> inputRecords = Array.AsReadOnly(
+            List<KeyValuePair<int, string>> inputRecords = new List<KeyValuePair<int, string>>
+            {
                 KeyValuePair.Create(0, "zero"),
                 KeyValuePair.Create(1, "one"),
                 KeyValuePair.Create(2, "two"),
-                KeyValuePair.Create(3, "three")
-            );
+                KeyValuePair.Create(3, "three"),
+            };
 
-            List<KeyValuePair<int, string>> expectedRecords = Array.AsReadOnly(
+            List<KeyValuePair<int, string>> expectedRecords = new List<KeyValuePair<int, string>>
+            {
                 KeyValuePair.Create(0, "TimeSpan.Zero"),
                 KeyValuePair.Create(2, "ONE"),
                 KeyValuePair.Create(4, "TWO"),
-                KeyValuePair.Create(6, "THREE")
-            );
+                KeyValuePair.Create(6, "THREE"),
+            };
 
             var actualRecords = new List<KeyValuePair<int, string>>();
-            ForeachAction<int, string> action =
-                (key, value) => actualRecords.Add(KeyValuePair.Create(key * 2, value.toUppercase(Locale.ROOT)));
+            Action<int, string> action =
+                (key, value) => actualRecords.Add(KeyValuePair.Create(key * 2, value.ToUpper()));
 
             // When
             var builder = new StreamsBuilder();
-            IKStream<K, V> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
+            IKStream<int, string> stream = builder.Stream(topicName, Consumed.With(Serdes.Int(), Serdes.String()));
             stream.ForEach(action);
 
             // Then
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             foreach (KeyValuePair<int, string> record in inputRecords)
             {
                 driver.PipeInput(recordFactory.Create(topicName, record.Key, record.Value));
@@ -62,7 +65,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void testTypeVariance()
         {
-            ForeachAction<int, object> consume = (key, value) => { };
+            Action<int, object> consume = (key, value) => { };
 
             new StreamsBuilder()
                 .Stream<int, string>("emptyTopic")

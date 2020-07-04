@@ -13,7 +13,7 @@ namespace Kafka.Streams.Tasks
         where T : ITask
     {
         public KafkaStreamsContext Context { get; }
-        protected ILogger<AbstractTaskCreator<T>> logger { get; }
+        protected ILogger<AbstractTaskCreator<T>> Logger { get; }
 
         public AbstractTaskCreator(
             KafkaStreamsContext context,
@@ -24,20 +24,20 @@ namespace Kafka.Streams.Tasks
             IChangelogReader storeChangelogReader)
         {
             this.Context = context;
-            this.logger = logger;
+            this.Logger = logger;
 
-            this.applicationId = config.ApplicationId;
-            this.builder = builder;
-            this.config = config;
-            this.stateDirectory = stateDirectory;
-            this.storeChangelogReader = storeChangelogReader;
+            this.ApplicationId = config.ApplicationId;
+            this.Builder = builder;
+            this.Config = config;
+            this.StateDirectory = stateDirectory;
+            this.StoreChangelogReader = storeChangelogReader;
         }
 
-        public string applicationId { get; }
-        public InternalTopologyBuilder builder { get; }
-        public StreamsConfig config { get; }
-        public StateDirectory stateDirectory { get; }
-        public IChangelogReader storeChangelogReader { get; }
+        public string ApplicationId { get; }
+        public InternalTopologyBuilder Builder { get; }
+        public StreamsConfig Config { get; }
+        public StateDirectory StateDirectory { get; }
+        public IChangelogReader StoreChangelogReader { get; }
 
         public List<T> CreateTasks(
             IConsumer<byte[], byte[]> consumer,
@@ -53,7 +53,7 @@ namespace Kafka.Streams.Tasks
 
                 if (task != null)
                 {
-                    this.logger.LogTrace($"Created task {{{taskId}}} with assigned partitions {{{partitions}}}");
+                    this.Logger.LogTrace($"Created task {{{taskId}}} with assigned partitions {{{partitions}}}");
 
                     createdTasks.Add(task);
                 }

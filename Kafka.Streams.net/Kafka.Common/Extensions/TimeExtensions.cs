@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kafka.Common.Extensions
+﻿namespace System
 {
     public static class TimeExtensions
     {

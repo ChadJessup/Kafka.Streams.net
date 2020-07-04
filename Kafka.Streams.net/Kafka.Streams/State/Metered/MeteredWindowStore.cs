@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Metered
         protected ISerde<V> ValueSerde { get; set; }
         protected IStateSerdes<K, V> serdes { get; set; }
         private IProcessorContext context;
-        private TimeSpan windowSize;
+        private readonly TimeSpan windowSize;
         private string taskName;
 
         public MeteredWindowStore(

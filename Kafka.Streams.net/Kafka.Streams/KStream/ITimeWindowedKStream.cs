@@ -242,7 +242,7 @@ namespace Kafka.Streams.KStream.Internals
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
          * latest (rolling) aggregate for each key
          */
-        IKTable<IWindowed<K>, V> Reduce(IReducer<V> reducer);
+        IKTable<IWindowed<K>, V> Reduce(Reducer<V> reducer);
 
         /**
          * Combine the values of records in this stream by the grouped key.
@@ -295,7 +295,7 @@ namespace Kafka.Streams.KStream.Internals
          * latest (rolling) aggregate for each key
          */
         IKTable<IWindowed<K>, V> Reduce(
-            IReducer<V> reducer,
+            Reducer<V> reducer,
             Materialized<K, V, IWindowStore<Bytes, byte[]>> materialized);
     }
 }

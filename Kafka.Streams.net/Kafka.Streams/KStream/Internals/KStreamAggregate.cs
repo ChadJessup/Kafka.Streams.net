@@ -8,17 +8,17 @@ namespace Kafka.Streams.KStream.Internals
     {
         private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KStreamAggregate<K, V, T>>();
         private readonly KafkaStreamsContext context;
-        private readonly string storeName;
-        private readonly IInitializer<T> initializer;
-        private readonly IAggregator<K, V, T> aggregator;
+        private readonly string? storeName;
+        private readonly Initializer<T> initializer;
+        private readonly Aggregator<K, V, T> aggregator;
 
         private bool sendOldValues = false;
 
         public KStreamAggregate(
             KafkaStreamsContext context,
             string storeName,
-            IInitializer<T> initializer,
-            IAggregator<K, V, T> aggregator)
+            Initializer<T> initializer,
+            Aggregator<K, V, T> aggregator)
         {
             this.context = context;
             this.storeName = storeName;

@@ -128,11 +128,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * deletion for the key, and future messages of the same key coming from upstream operators
          * will be handled as newly initialized value.
          */
-        IKTable<K, V> Reduce(IReducer<V> reducer);
-        IKTable<K, V> Reduce(Func<V, V, V> reducer)
-            => this.Reduce(new WrappedReducer<V>(reducer));
-        IKTable<K, V> Reduce(Reducer<V> reducer)
-            => this.Reduce(new WrappedReducer<V>(reducer));
+        IKTable<K, V> Reduce(Reducer<V> reducer);
 
         /**
          * Combine the value of records in this stream by the grouped key.
@@ -198,27 +194,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * will be handled as newly initialized value.
          */
         IKTable<K, V> Reduce(
-            IReducer<V> reducer,
-            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
-
-        IKTable<K, V> Reduce(
-            Func<V, V, V> reducer,
-            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            => this.Reduce(new WrappedReducer<V>(reducer), materialized);
-
-        IKTable<K, V> Reduce(
-            IReducer<V> reducer,
-            Materialized<K, V> materialized);
-
-        IKTable<K, V> Reduce(
             Reducer<V> reducer,
-            Materialized<K, V> materialized)
-            => this.Reduce(new WrappedReducer<V>(reducer), materialized);
-
-        IKTable<K, V> Reduce(
-            Func<V, V, V> reducer,
-            Materialized<K, V> materialized)
-            => this.Reduce(new WrappedReducer<V>(reducer), materialized);
+            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Aggregate the values of records in this stream by the grouped key.
@@ -326,11 +303,6 @@ namespace Kafka.Streams.KStream.Interfaces
             Initializer<VR> initializer,
             Aggregator<K, V, VR> aggregator,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
-
-        IKTable<K, VR> Aggregate<VR>(
-            Initializer<VR> initializer,
-            Aggregator<K, V, VR> aggregator,
-            Materialized<K, VR> materialized);
 
         /**
          * Create a new {@link TimeWindowedKStream} instance that can be used to perform windowed aggregations.

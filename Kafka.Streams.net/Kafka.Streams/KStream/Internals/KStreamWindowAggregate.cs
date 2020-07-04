@@ -13,8 +13,8 @@ namespace Kafka.Streams.KStream.Internals
         private readonly string storeName;
         private readonly KafkaStreamsContext context;
         private readonly Windows<W> windows;
-        private readonly IInitializer<Agg> initializer;
-        private readonly IAggregator<K, V, Agg> aggregator;
+        private readonly Initializer<Agg> initializer;
+        private readonly Aggregator<K, V, Agg> aggregator;
 
         private bool sendOldValues = false;
 
@@ -22,8 +22,8 @@ namespace Kafka.Streams.KStream.Internals
             KafkaStreamsContext context,
             Windows<W> windows,
             string storeName,
-            IInitializer<Agg> initializer,
-            IAggregator<K, V, Agg> aggregator)
+            Initializer<Agg> initializer,
+            Aggregator<K, V, Agg> aggregator)
         {
             this.context = context;
             this.windows = windows;

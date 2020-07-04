@@ -19,17 +19,16 @@ namespace Kafka.Streams.State
      * stored. Handles creation/locking/unlocking/cleaning of the Task Directories. This is not
      * thread-safe.
      */
-    public class StateDirectory
+    public class StateDirectoryOld
     {
         private static readonly Regex PATH_NAME = new Regex("\\d+_\\d+", RegexOptions.Compiled);
-        public const string LOCK_FILE_NAME = ".lock";
-
+        public const string LockFileName = ".lock";
+        private readonly KafkaStreamsContext context;
         private readonly ILogger logger;
         private readonly DirectoryInfo stateDir;
         private readonly bool createStateDirectory;
         private readonly Dictionary<TaskId, FileStream> channels = new Dictionary<TaskId, FileStream>();
         private readonly Dictionary<TaskId, LockAndOwner> locks = new Dictionary<TaskId, LockAndOwner>();
-        private readonly IClock clock;
 
         private FileStream globalStateChannel;
         private FileLock globalStateLock;
@@ -40,15 +39,12 @@ namespace Kafka.Streams.State
          * @throws ProcessorStateException if the base state directory or application state directory does not exist
          *                                 and could not be created when createStateDirectory is enabled.
          */
-        public StateDirectory(
-            ILogger<StateDirectory> logger,
-            StreamsConfig config,
-            IClock clock)
+        public StateDirectoryOld(KafkaStreamsContext context)
         {
-            this.logger = logger;// ?? throw new ArgumentNullException(nameof(logger));
-            config = config ?? throw new ArgumentNullException(nameof(config));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.logger = this.context.CreateLogger<StateDirectoryOld>();
+            var config = this.context.StreamsConfig;
 
-            this.clock = clock;
             this.createStateDirectory = true;
             var stateDirName = config.StateStoreDirectory;
             var baseDir = stateDirName;
@@ -143,7 +139,7 @@ namespace Kafka.Streams.State
                 return true;
             }
 
-            var lockFile = new FileInfo(Path.Combine(this.GlobalStateDir().FullName, LOCK_FILE_NAME));
+            var lockFile = new FileInfo(Path.Combine(this.GlobalStateDir().FullName, LockFileName));
             FileStream channel;
 
             try
@@ -285,12 +281,9 @@ namespace Kafka.Streams.State
                                 if (!manualUserCall)
                                 {
                                     this.logger.LogInformation(
-                                        "{} Deleting obsolete state directory {} for task {} as {}ms has elapsed (cleanup delay is {}ms).",
-                                        this.LogPrefix(),
-                                        dirName,
-                                        id,
-                                        now - lastModified,
-                                        cleanupDelayMs);
+                                        $"{this.LogPrefix()} Deleting obsolete state directory {dirName} " +
+                                        $"for task {id} as {now - lastModified}ms has elapsed " +
+                                        $"(cleanup delay is {cleanupDelayMs}ms).");
                                 }
                                 else
                                 {
@@ -360,18 +353,21 @@ namespace Kafka.Streams.State
         {
             if (!this.channels.ContainsKey(taskId))
             {
-                //                channels.Add(taskId, FileStream.open(lockPath, FileMode.Create, FileAccess.Write));
+                this.channels.Add(taskId, new FileStream(
+                    lockPath,
+                    FileMode.Create,
+                    FileAccess.Write));
             }
 
             return this.channels[taskId];
         }
 
         /**
- * Get the lock for the {@link TaskId}s directory if it is available
- * @param taskId
- * @return true if successful
- * @throws IOException
- */
+         * Get the lock for the {@link TaskId}s directory if it is available
+         * @param taskId
+         * @return true if successful
+         * @throws IOException
+         */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool Lock(TaskId taskId)
         {
@@ -396,7 +392,7 @@ namespace Kafka.Streams.State
 
             try
             {
-                lockFile = new FileInfo(Path.Combine(this.DirectoryForTask(taskId).FullName, LOCK_FILE_NAME));
+                lockFile = new FileInfo(Path.Combine(this.DirectoryForTask(taskId).FullName, LockFileName));
             }
             catch (ProcessorStateException e)
             {

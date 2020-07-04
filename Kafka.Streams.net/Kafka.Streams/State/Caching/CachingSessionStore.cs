@@ -12,8 +12,8 @@ namespace Kafka.Streams.State.Internals
         : WrappedStateStore<ISessionStore<Bytes, byte[]>, byte[], byte[]>
         , ISessionStore<Bytes, byte[]>, ICachedStateStore<byte[], byte[]>
     {
-        private SessionKeySchema keySchema;
-        private SegmentedCacheFunction cacheFunction;
+        private readonly SessionKeySchema keySchema;
+        private readonly SegmentedCacheFunction cacheFunction;
         private string cacheName;
         private ThreadCache cache;
         private IInternalProcessorContext context;

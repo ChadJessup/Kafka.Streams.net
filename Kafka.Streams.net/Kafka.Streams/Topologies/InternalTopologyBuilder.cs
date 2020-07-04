@@ -23,19 +23,17 @@ namespace Kafka.Streams.Topologies
     public class InternalTopologyBuilder
     {
         private readonly ILogger<InternalTopologyBuilder> logger;
+        internal KafkaStreamsContext context;
         private readonly IServiceProvider services;
         private StreamsConfig config;
         private static readonly Regex EMPTY_ZERO_LENGTH_PATTERN = new Regex("^$", RegexOptions.Compiled);
         private static readonly string[] NO_PREDECESSORS = Array.Empty<string>();
-        private readonly IClock clock;
 
         public InternalTopologyBuilder(
-            IClock clock,
             ILogger<InternalTopologyBuilder> logger,
             IServiceProvider services,
             StreamsConfig config)
         {
-            this.clock = clock ?? throw new ArgumentNullException(nameof(clock));
             this.services = services ?? throw new ArgumentNullException(nameof(services));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.config = config ?? throw new ArgumentNullException(nameof(config));
@@ -77,6 +75,11 @@ namespace Kafka.Streams.Topologies
         // even if it can be matched by multiple regex patterns
         private readonly Dictionary<string, Regex> topicToPatterns = new Dictionary<string, Regex>();
 
+        internal ProcessorTopology BuildSubtopology(int topicGroupId)
+        {
+            throw new NotImplementedException();
+        }
+
         // map from state store names to All the topics subscribed from source processors that
         // are connected to these state stores
         private readonly Dictionary<string, HashSet<string>> _stateStoreNameToSourceTopics = new Dictionary<string, HashSet<string>>();
@@ -103,7 +106,7 @@ namespace Kafka.Streams.Topologies
 
         public SubscriptionUpdates SubscriptionUpdates { get; internal set; } = new SubscriptionUpdates();
 
-        public IClock Clock => this.clock;
+        public IClock Clock => this.context.Clock;
 
         private string? applicationId = null;
 
@@ -150,6 +153,27 @@ namespace Kafka.Streams.Topologies
             }
 
             return this;
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void AddSubscribedTopicsFromAssignment(List<TopicPartition> partitions, string logPrefix)
+        {
+            if (this.UsesPatternSubscription())
+            {
+                HashSet<string> assignedTopics = new HashSet<string>();
+                foreach (TopicPartition topicPartition in partitions)
+                {
+                    assignedTopics.Add(topicPartition.Topic);
+                }
+
+                var existingTopics = this.SubscriptionUpdates.GetUpdates();
+
+                if (!existingTopics.Equals(assignedTopics))
+                {
+                    assignedTopics.AddRange(existingTopics);
+                    this.UpdateSubscribedTopics(assignedTopics, logPrefix);
+                }
+            }
         }
 
         public void AddSource<K, V>(
@@ -222,18 +246,18 @@ namespace Kafka.Streams.Topologies
 
         public void AddSource<K, V>(
             AutoOffsetReset offsetReset,
-            string Name,
-            ITimestampExtractor timestampExtractor,
-            IDeserializer<K> keyDeserializer,
-            IDeserializer<V> valDeserializer,
+            string name,
+            ITimestampExtractor? timestampExtractor,
+            IDeserializer<K>? keyDeserializer,
+            IDeserializer<V>? valDeserializer,
             Regex topicPattern)
         {
             topicPattern = topicPattern ?? throw new ArgumentNullException(nameof(topicPattern));
-            Name = Name ?? throw new ArgumentNullException(nameof(Name));
+            name = name ?? throw new ArgumentNullException(nameof(name));
 
-            if (this.nodeFactories.ContainsKey(Name))
+            if (this.nodeFactories.ContainsKey(name))
             {
-                throw new TopologyException("IProcessor " + Name + " is already.Added.");
+                throw new TopologyException("IProcessor " + name + " is already.Added.");
             }
 
             foreach (var sourceTopicName in this.sourceTopicNames)
@@ -262,9 +286,9 @@ namespace Kafka.Streams.Topologies
 
             this.MaybeAddToResetList(this.earliestResetPatterns, this.latestResetPatterns, offsetReset, topicPattern);
 
-            this.nodeFactories.Add(Name, new SourceNodeFactory<K, V>(
+            this.nodeFactories.Add(name, new SourceNodeFactory<K, V>(
                 this.Clock,
-                Name,
+                name,
                 null,
                 topicPattern,
                 timestampExtractor,
@@ -274,8 +298,8 @@ namespace Kafka.Streams.Topologies
                 keyDeserializer,
                 valDeserializer));
 
-            this.nodeToSourcePatterns.Add(Name, topicPattern);
-            this.nodeGrouper.Add(Name);
+            this.nodeToSourcePatterns.Add(name, topicPattern);
+            this.nodeGrouper.Add(name);
             this._nodeGroups = null;
         }
 
@@ -382,6 +406,11 @@ namespace Kafka.Streams.Topologies
             this.nodeGrouper.Add(Name);
             this.nodeGrouper.Unite(Name, predecessorNames);
             this._nodeGroups = null;
+        }
+
+        private bool UsesPatternSubscription()
+        {
+            return !this.nodeToSourcePatterns.IsEmpty();
         }
 
         public void AddProcessor<K, V>(
@@ -644,12 +673,12 @@ namespace Kafka.Streams.Topologies
                 throw new TopologyException("Global IStateStore " + stateStoreName +
                         " can be used by a IProcessor without being specified; it should not be explicitly passed.");
             }
-            
+
             if (!this.stateFactories.ContainsKey(stateStoreName))
             {
                 throw new TopologyException("IStateStore " + stateStoreName + " is not.Added yet.");
             }
-            
+
             if (!this.nodeFactories.ContainsKey(processorName))
             {
                 throw new TopologyException("IProcessor " + processorName + " is not.Added yet.");
@@ -1366,7 +1395,9 @@ namespace Kafka.Streams.Topologies
 
                 allSourceTopics.Sort();
 
-                this.topicPattern = BuildPatternForOffsetResetTopics(allSourceTopics, this.nodeToSourcePatterns.Values.ToList());
+                this.topicPattern = BuildPatternForOffsetResetTopics(
+                    allSourceTopics,
+                    this.nodeToSourcePatterns.Values.ToList());
             }
 
             return this.topicPattern;
@@ -1534,16 +1565,13 @@ namespace Kafka.Streams.Topologies
             return sb.ToString();
         }
 
-        public void UpdateSubscribedTopics(
-            HashSet<string> topics)//,
-                                   //string logPrefix)
+        public void UpdateSubscribedTopics(HashSet<string> topics, string logPrefix = "")
         {
             if (topics is null)
             {
                 throw new ArgumentNullException(nameof(topics));
             }
 
-            var logPrefix = "";
             var subscriptionUpdates = new SubscriptionUpdates();
             this.logger.LogDebug($"{logPrefix}found {topics.Count} topics possibly matching regex");
             // update the topic groups with the returned subscription set for regex pattern subscriptions

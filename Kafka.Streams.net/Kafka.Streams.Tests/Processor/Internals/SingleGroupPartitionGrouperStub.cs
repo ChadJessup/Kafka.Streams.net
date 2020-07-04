@@ -11,7 +11,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
      */
     public class SingleGroupPartitionGrouperStub : IPartitionGrouper
     {
-        private PartitionGrouper defaultPartitionGrouper = new DefaultPartitionGrouper();
+        //private PartitionGrouper defaultPartitionGrouper = new DefaultPartitionGrouper();
 
         public Dictionary<TaskId, HashSet<TopicPartition>> PartitionGroups(Dictionary<int, HashSet<string>> topicGroups, Cluster metadata)
         {
@@ -22,8 +22,9 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 includedTopicGroups.Add(entry.Key, entry.Value);
                 break; // arbitrarily use the first entry only
             }
-            Dictionary<TaskId, HashSet<TopicPartition>> result = defaultPartitionGrouper.partitionGroups(includedTopicGroups, metadata);
-            return result;
+
+            //Dictionary<TaskId, HashSet<TopicPartition>> result = defaultPartitionGrouper.partitionGroups(includedTopicGroups, metadata);
+            return null;// result;
         }
     }
 }

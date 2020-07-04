@@ -15,12 +15,11 @@ namespace Kafka.Streams.Threads
             States newState,
             States oldState);
 
-        void IStateListener.OnChange(
+        new void OnChange(
             IThread thread,
             object newState,
             object oldState)
-        {
-        }
+        { }
     }
 
     public interface IStateListener

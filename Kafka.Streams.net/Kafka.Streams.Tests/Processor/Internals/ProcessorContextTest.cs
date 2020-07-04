@@ -1,4 +1,5 @@
 using Kafka.Streams.Configs;
+using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
@@ -13,20 +14,35 @@ namespace Kafka.Streams.Tests.Processor.Internals
 {
     public class ProcessorContextTest
     {
-        private IProcessorContext context;
+        private readonly IProcessorContext context;
         private readonly StreamsConfig streamsConfig;
+        private readonly StreamsBuilder builder = new StreamsBuilder();
 
         public ProcessorContextTest()
         {
             this.streamsConfig = Mock.Of<StreamsConfig>(sc =>
                 sc.ApplicationId == "add-id"
                 && sc.DefaultKeySerdeType == Serdes.ByteArray().GetType()
-                && sc.DefaultValueSerdeType == Serdes.ByteArray().GetType()); ;
+                && sc.DefaultValueSerdeType == Serdes.ByteArray().GetType()
+                && sc.BufferedRecordsPerPartition == 1000
+                && sc.DefaultTimestampExtractorType == typeof(MockTimestampExtractor));
+
+            this.builder = new StreamsBuilder(this.streamsConfig);
 
             context = new ProcessorContext<byte[], byte[]>(
-                Mock.Of<KafkaStreamsContext>(),
-                Mock.Of<TaskId>(),
-                Mock.Of<StreamTask>(),
+                this.builder.Context,
+                new TaskId(0, 0),
+                new StreamTask(
+                    null,
+                    new TaskId(0, 0),
+                    null,
+                    null,
+                    null,
+                    streamsConfig,
+                    null,
+                    null,
+                    null,
+                    null),
                 streamsConfig,
                 Mock.Of<RecordCollector>(),
                 Mock.Of<ProcessorStateManager>(),
@@ -57,7 +73,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             }
             catch (ArgumentException expected)
             {
-                Assert.Equal(expected.Message, "The minimum supported scheduling interval is 1 millisecond.");
+                Assert.Equal("The minimum supported scheduling interval is 1 millisecond.", expected.Message);
             }
         }
     }

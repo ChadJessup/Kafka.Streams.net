@@ -1,11 +1,10 @@
-﻿using Confluent.Kafka;
+﻿using System.Linq;
+using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Topologies;
-
-using System.Linq;
 
 namespace Kafka.Streams.Factories
 {
@@ -16,18 +15,18 @@ namespace Kafka.Streams.Factories
 
         public ITopicNameExtractor TopicExtractor { get; }
 
-        private readonly ISerializer<K> keySerializer;
-        private readonly ISerializer<V> valueSerializer;
-        private readonly IStreamPartitioner<K, V> partitioner;
+        private readonly ISerializer<K>? keySerializer;
+        private readonly ISerializer<V>? valueSerializer;
+        private readonly IStreamPartitioner<K, V>? partitioner;
 
         public SinkNodeFactory(
             IClock clock,
             string Name,
             string[] predecessors,
             TopicNameExtractor<K, V> topicExtractor,
-            ISerializer<K> keySerializer,
-            ISerializer<V> valSerializer,
-            IStreamPartitioner<K, V> partitioner,
+            ISerializer<K>? keySerializer,
+            ISerializer<V>? valSerializer,
+            IStreamPartitioner<K, V>? partitioner,
             InternalTopologyBuilder internalTopologyBuilder)
             : base(clock, Name, predecessors.ToArray())
         {

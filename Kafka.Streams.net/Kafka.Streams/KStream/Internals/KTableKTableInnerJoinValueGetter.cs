@@ -62,5 +62,10 @@ namespace Kafka.Streams.KStream.Internals
             this.valueGetter1.Close();
             this.valueGetter2.Close();
         }
+
+        public void Init(IProcessorContext processorContext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

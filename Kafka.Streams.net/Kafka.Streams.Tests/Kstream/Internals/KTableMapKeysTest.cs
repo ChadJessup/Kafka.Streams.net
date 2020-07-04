@@ -5,6 +5,7 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals
@@ -12,10 +13,10 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 
     public class KTableMapKeysTest
     {
-        private ConsumerRecordFactory<int, string> recordFactory =
+        private readonly ConsumerRecordFactory<int, string> recordFactory =
             new ConsumerRecordFactory<int, string>(Serdes.Int(), Serdes.String(), 0L);
 
-        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
+        private readonly StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
 
         [Fact]
         public void testMapKeysConvertingToStream()
@@ -30,7 +31,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             keyMap.Put(2, "TWO");
             keyMap.Put(3, "THREE");
 
-            //IKStream<K, V> keyMap.Get(key));
+            IKStream<string, string> convertedStream = table1.ToStream((key, value) => keyMap[key]);
 
             var expected = new KeyValueTimestamp<string, string>[]
             {
@@ -45,7 +46,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             MockProcessorSupplier<string, string> supplier = new MockProcessorSupplier<string, string>();
             convertedStream.Process(supplier);
 
-            var driver = new TopologyTestDriver(builder.Build(), props);
+            var driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
             for (var i = 0; i < originalKeys.Length; i++)
             {
                 driver.PipeInput(recordFactory.Create(topic1, originalKeys[i], values[i], 5 + i * 5));
@@ -54,7 +55,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             Assert.Equal(3, supplier.TheCapturedProcessor().processed.Count);
             for (var i = 0; i < expected.Length; i++)
             {
-                Assert.Equal(expected[i], supplier.TheCapturedProcessor().processed.Get(i));
+                Assert.Equal(expected[i], supplier.TheCapturedProcessor().processed.ElementAt(i));
             }
         }
     }

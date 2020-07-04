@@ -1,10 +1,12 @@
-﻿namespace Kafka.Streams.Configs
+﻿using Kafka.Streams.KStream.Internals.Suppress;
+
+namespace Kafka.Streams.Configs
 {
     public partial class StreamsConfig
     {
         /// <summary>
         /// Prefix used to provide default topic configs to be applied when creating internal topics.
-        /// 
+        ///
         ///     default: topic.
         /// </summary>
         public static readonly string TopicPrefixConfig = "topic.";
@@ -152,11 +154,11 @@
         /// A host:port pair pointing to an embedded user defined endpoint that can be used for discovering the locations of state stores within a single KafkaStreams application.
         /// </summary>
         public static readonly string ApplicationServerConfig = "application.server";
-        
+
         /// <summary>
         /// {@code buffered.records.per.partition}
         /// </summary>
-        public static readonly string BUFFERED_RECORDS_PER_PARTITION_CONFIGConfig = "buffered.records.per.partition";
+        public static readonly string BufferedRecordsPerPartitionConfig = "buffered.records.per.partition";
         // private static string BUFFERED_RECORDS_PER_PARTITION_DOCConfig = "Maximum number of records to buffer per partition.";
 
         /// <summary>
@@ -333,11 +335,15 @@
         /// </summary>
         public static readonly string StateCleanupDelayMsConfig = "state.cleanup.delay.ms";
 
+        public static readonly string MAX_BLOCK_MS_CONFIG = "max.block.ms";
+
         /// <summary>
         /// {@code state.dir}
         /// </summary>
-        public static readonly string STATE_DIR_CONFIGConfig = "state.dir";
+        public static readonly string StateDirPathConfig = "state.dir";
         // private static string STATE_DIR_DOCConfig = "Directory location for state store.";
+
+        public static readonly string StateDirHasPersistentStoresConfig = "state.dir.persistent";
 
         /// <summary>
         /// {@code topology.optimization}
@@ -373,8 +379,8 @@
         /// Note that, by default, transactions require a cluster of at least three brokers which is the recommended setting for production; for development you can change this, by adjusting broker setting <code>transaction.state.log.replication.factor</code>.
         /// </summary>
         public static readonly string TRANSACTIONAL_ID_CONFIGConfig = "transactional.id";
-        
-        
+
+
         public static readonly string MAX_POLL_INTERVAL_MS_CONFIGConfig = "max.poll.interval.ms";
 
         /// <summary>
@@ -383,6 +389,8 @@
         /// message re-ordering due to retries (i.e., if retries are enabled).
         /// </summary>
         public const string MAX_IN_FLIGHT_REQUESTS_PER_CONNECTIONConfig = "max.in.flight.requests.per.connection";
+
+        public BufferFullStrategy BufferFullStrategy { get; internal set; }
         // private static string WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_DOCConfig = "Added to a windows maintainMs to ensure data is not deleted from the log prematurely. Allows for clock drift. Default is 1 day";
     }
 }

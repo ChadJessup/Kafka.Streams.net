@@ -1,10 +1,11 @@
+using Kafka.Streams.Configs;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Suppress;
 using System;
 
 namespace Kafka.Streams.KStream
 {
-    public interface ISuppressed<K> : INamedOperation<ISuppressed<K>>
+    public interface ISuppressed
     {
         /**
          * Configure the suppression to emit only the " results" from the window.
@@ -26,10 +27,11 @@ namespace Kafka.Streams.KStream
          *                     property to emit early and then issue an update later.
          * @return a " results" mode suppression configuration
          */
-        //static ISuppressed<IWindowed<K>> untilWindowCloses(IStrictBufferConfig bufferConfig)
-        //{
-        //    return new FinalResultsSuppressionBuilder<K>(null, bufferConfig);
-        //}
+        public static ISuppressed<IWindowed<K>> untilWindowCloses<K>(IStrictBufferConfig bufferConfig)
+            where K : IWindowed<K>
+        {
+            return (ISuppressed<IWindowed<K>>)new FinalResultsSuppressionBuilder<K>(null, bufferConfig);
+        }
 
         /**
          * Configure the suppression to wait {@code timeToWaitForMoreEvents} amount of time after receiving a record
@@ -41,25 +43,34 @@ namespace Kafka.Streams.KStream
          * @param The key type for the KTable to apply this suppression to.
          * @return a suppression configuration
          */
-        static ISuppressed<K> UntilTimeLimit(TimeSpan timeToWaitForMoreEvents, IBufferConfig bufferConfig)
+        public static ISuppressed<K> UntilTimeLimit<K>(TimeSpan timeToWaitForMoreEvents, IBufferConfig bufferConfig)
         {
             return new SuppressedInternal<K>(null, timeToWaitForMoreEvents, bufferConfig, null, false);
         }
+    }
+
+    public interface ISuppressed<K> : ISuppressed, INamedOperation<ISuppressed<K>>
+    {
+        ITimeDefinition<K> timeDefinition { get; }
+        IBufferConfig bufferConfig { get; }
+        bool safeToDropTombstones { get; }
+
+        TimeSpan TimeToWaitForMoreEvents();
 
         /**
-         * Use the specified Name for the suppression node in the topology.
-         * <p>
-         * This can be used to insert a suppression without changing the rest of the topology names
-         * (and therefore not requiring an application reset).
-         * <p>
-         * Note however, that once a suppression has buffered some records, removing it from the topology would cause
-         * the loss of those records.
-         * <p>
-         * A suppression can be "disabled" with the configuration {@code untilTimeLimit(TimeSpan.ZERO, ...}.
-         *
-         * @param Name The Name to be used for the suppression node and changelog topic
-         * @return The same configuration with the addition of the given {@code Name}.
-         */
+* Use the specified Name for the suppression node in the topology.
+* <p>
+* This can be used to insert a suppression without changing the rest of the topology names
+* (and therefore not requiring an application reset).
+* <p>
+* Note however, that once a suppression has buffered some records, removing it from the topology would cause
+* the loss of those records.
+* <p>
+* A suppression can be "disabled" with the configuration {@code untilTimeLimit(TimeSpan.ZERO, ...}.
+*
+* @param Name The Name to be used for the suppression node and changelog topic
+* @return The same configuration with the addition of the given {@code Name}.
+*/
         new ISuppressed<K> WithName(string Name);
     }
 }

@@ -9,9 +9,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
 {
     public class MaterializedInternalTest
     {
-        private IInternalNameProvider nameProvider;
-        private IKeyValueBytesStoreSupplier supplier;
-        private string prefix = "prefix";
+        private readonly IInternalNameProvider nameProvider;
+        private readonly IKeyValueBytesStoreSupplier supplier;
+        private readonly string prefix = "prefix";
 
         [Fact]
         public void shouldGenerateStoreNameWithPrefixIfProvidedNameIsNull()
@@ -22,7 +22,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             //EasyMock.replay(nameProvider);
 
             MaterializedInternal<object, object, IStateStore> materialized =
-                new MaterializedInternal<object, object, IStateStore>(Materialized.With(null, null), nameProvider, prefix);
+                new MaterializedInternal<object, object, IStateStore>(Materialized.With<object, object, IStateStore>(null, null), nameProvider, prefix);
 
             Assert.Equal(materialized.StoreName, generatedName);
             //EasyMock.verify(nameProvider);
@@ -33,7 +33,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             var storeName = "store-Name";
             MaterializedInternal<object, object, IStateStore> materialized =
-                new MaterializedInternal<object, object, IStateStore>(Materialized.As(storeName), nameProvider, prefix);
+                new MaterializedInternal<object, object, IStateStore>(Materialized.As<object, object, IStateStore>(storeName), nameProvider, prefix);
             Assert.Equal(materialized.StoreName, storeName);
         }
 
@@ -44,7 +44,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             //EasyMock.expect(supplier.Name()).andReturn(storeName).anyTimes();
             //EasyMock.replay(supplier);
             MaterializedInternal<object, object, IKeyValueStore<Bytes, byte[]>> materialized =
-                new MaterializedInternal<object, object, IKeyValueStore<Bytes, byte[]>>(Materialized.As(supplier), nameProvider, prefix);
+                new MaterializedInternal<object, object, IKeyValueStore<Bytes, byte[]>>(Materialized.As<object, object>(supplier), nameProvider, prefix);
+
             Assert.Equal(materialized.StoreName, storeName);
         }
     }

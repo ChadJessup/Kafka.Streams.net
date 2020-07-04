@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests
                 return TimeSpan.Zero;
             }
 
-            public override TimeSpan GracePeriod()
+            public TimeSpan GracePeriod()
             {
                 return TimeSpan.Zero;
             }

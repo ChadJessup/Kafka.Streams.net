@@ -6,16 +6,16 @@ namespace Kafka.Streams.KStream.Internals
     {
         private readonly KafkaStreamsContext context;
         private readonly string storeName;
-        private readonly IReducer<V> addReducer;
-        private readonly IReducer<V> removeReducer;
+        private readonly Reducer<V> addReducer;
+        private readonly Reducer<V> removeReducer;
 
         private bool sendOldValues = false;
 
         public KTableReduce(
             KafkaStreamsContext context,
             string storeName,
-            IReducer<V> addReducer,
-            IReducer<V> removeReducer)
+            Reducer<V> addReducer,
+            Reducer<V> removeReducer)
         {
             this.context = context;
             this.storeName = storeName;

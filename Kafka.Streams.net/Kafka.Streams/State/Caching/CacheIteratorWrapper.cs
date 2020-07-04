@@ -12,17 +12,17 @@ namespace Kafka.Streams.State.Internals
 {
     public class CacheIteratorWrapper : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
     {
-        private Bytes keyFrom;
-        private Bytes keyTo;
+        private readonly Bytes keyFrom;
+        private readonly Bytes keyTo;
 
-        private TimeSpan segmentInterval;
-        private DateTime latestSessionStartTime;
+        private readonly TimeSpan segmentInterval;
+        private readonly DateTime latestSessionStartTime;
 
-        private DateTime lastSegmentId;
-        private DateTime currentSegmentId;
+        private readonly DateTime lastSegmentId;
+        private readonly DateTime currentSegmentId;
         
-        private Bytes cacheKeyFrom;
-        private Bytes cacheKeyTo;
+        private readonly Bytes cacheKeyFrom;
+        private readonly Bytes cacheKeyTo;
 
         private MemoryLRUCacheBytesIterator current;
 

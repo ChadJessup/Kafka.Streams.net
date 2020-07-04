@@ -7,8 +7,8 @@ namespace Kafka.Streams.State.Metered
     public class MeteredKeyValueIterator<K, V> : IKeyValueIterator<K, V>
     {
 
-        private IKeyValueIterator<Bytes, byte[]> iter;
-        private long startNs;
+        private readonly IKeyValueIterator<Bytes, byte[]> iter;
+        private readonly long startNs;
 
         public KeyValuePair<K, V> Current
         {

@@ -10,19 +10,19 @@ namespace Kafka.Streams.State.Internals
 {
     public class InMemorySessionStoreIterator : IKeyValueIterator<IWindowed<Bytes>, byte[]>
     {
-        private IEnumerator<KeyValuePair<DateTime, Dictionary<Bytes, Dictionary<DateTime, byte[]>>>> endTimeIterator;
-        private IEnumerator<KeyValuePair<Bytes, Dictionary<DateTime, byte[]>>> keyIterator;
+        private readonly IEnumerator<KeyValuePair<DateTime, Dictionary<Bytes, Dictionary<DateTime, byte[]>>>> endTimeIterator;
+        private readonly IEnumerator<KeyValuePair<Bytes, Dictionary<DateTime, byte[]>>> keyIterator;
         private IEnumerator<KeyValuePair<DateTime, byte[]>>? recordIterator;
 
         private KeyValuePair<IWindowed<Bytes>, byte[]>? next;
         private Bytes currentKey;
         private DateTime currentEndTime;
 
-        private Bytes keyFrom;
-        private Bytes keyTo;
-        private DateTime latestSessionStartTime;
+        private readonly Bytes keyFrom;
+        private readonly Bytes keyTo;
+        private readonly DateTime latestSessionStartTime;
 
-        private IClosingCallback callback;
+        private readonly IClosingCallback callback;
 
         public KeyValuePair<IWindowed<Bytes>, byte[]> Current { get; }
         object IEnumerator.Current { get; }

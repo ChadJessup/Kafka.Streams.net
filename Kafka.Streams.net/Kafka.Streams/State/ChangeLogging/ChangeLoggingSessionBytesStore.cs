@@ -33,8 +33,8 @@ namespace Kafka.Streams.State.ChangeLogging
                     this.Name,
                     context,
                     new StateSerdes<Bytes, byte[]>(
-                        topic, 
-                        new BytesSerdes(), 
+                        topic,
+                        new BytesSerdes(),
                         Serdes.ByteArray()));
         }
 

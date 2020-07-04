@@ -30,6 +30,7 @@ namespace Kafka.Streams.Tests.Internals
                 Assert.Contains(nullDurationPrefix, e.ToString());
             }
         }
+
         [Fact]
         public void ShouldThrowNullPointerExceptionForNullInstant()
         {

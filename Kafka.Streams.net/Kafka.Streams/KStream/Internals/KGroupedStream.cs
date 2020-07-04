@@ -3,6 +3,7 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.State.TimeStamped;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +13,6 @@ namespace Kafka.Streams.KStream.Internals
     {
         private const string REDUCE_NAME = "KSTREAM-REDUCE-";
         private const string AGGREGATE_NAME = "KSTREAM-AGGREGATE-";
-        private readonly KafkaStreamsContext context;
         private readonly GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
 
         public KGroupedStream(
@@ -21,15 +21,16 @@ namespace Kafka.Streams.KStream.Internals
             HashSet<string> sourceNodes,
             GroupedInternal<K, V> groupedInternal,
             bool repartitionRequired,
-            StreamsGraphNode streamsGraphNode,
-            InternalStreamsBuilder builder)
-            : base(Name, groupedInternal.KeySerde, groupedInternal.ValueSerde, sourceNodes, streamsGraphNode, builder)
+            StreamsGraphNode streamsGraphNode)
+            : base(context,
+                  Name,
+                  groupedInternal.KeySerde,
+                  groupedInternal.ValueSerde,
+                  sourceNodes,
+                  streamsGraphNode)
         {
-            this.context = context;
-
             this.aggregateBuilder = new GroupedStreamAggregateBuilder<K, V>(
-                this.context,
-                builder,
+                this.Context,
                 groupedInternal,
                 repartitionRequired,
                 sourceNodes,
@@ -37,13 +38,15 @@ namespace Kafka.Streams.KStream.Internals
                 streamsGraphNode);
         }
 
-        public IKTable<K, V> Reduce(IReducer<V> reducer)
+        public IKTable<K, V> Reduce(Reducer<V> reducer)
         {
-            return this.Reduce(reducer, Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(this.KeySerde, this.ValueSerde));
+            return this.Reduce(
+                reducer,
+                Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(this.KeySerde, this.ValueSerde));
         }
 
         public IKTable<K, V> Reduce(
-            IReducer<V> reducer,
+            Reducer<V> reducer,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             reducer = reducer ?? throw new ArgumentNullException(nameof(reducer));
@@ -63,7 +66,9 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             return this.DoAggregate(
-            new KStreamReduce<K, V>(materializedInternal.StoreName, reducer),
+            new KStreamReduce<K, V>(
+                materializedInternal.StoreName,
+                reducer),
             REDUCE_NAME,
             materializedInternal);
         }
@@ -86,11 +91,14 @@ namespace Kafka.Streams.KStream.Internals
                 materializedInternal.WithKeySerde(this.KeySerde);
             }
 
-            return null;
-            //doAggregate(
-            //    new KStreamAggregate<>(materializedInternal.storeName, initializer, aggregator),
-            //    AGGREGATE_NAME,
-            //    materializedInternal);
+            return this.DoAggregate(
+                new KStreamAggregate<K, V, VR>(
+                    this.Context,
+                    materializedInternal.StoreName,
+                    initializer,
+                    aggregator),
+                AGGREGATE_NAME,
+                materializedInternal);
         }
 
         public IKTable<K, VR> Aggregate<VR>(
@@ -137,8 +145,8 @@ namespace Kafka.Streams.KStream.Internals
                 materializedInternal.WithValueSerde(Serdes.Long());
             }
 
-            var kstreamAggregate = new KStreamAggregate<K, long, V>(
-                this.context,
+            var kstreamAggregate = new KStreamAggregate<K, V, long>(
+                this.Context,
                 materializedInternal.StoreName,
                 this.aggregateBuilder.countInitializer,
                 this.aggregateBuilder.countAggregator);
@@ -177,30 +185,20 @@ namespace Kafka.Streams.KStream.Internals
         //}
 
         private IKTable<K, T> DoAggregate<T>(
-            IKStreamAggProcessorSupplier<K, K, T, V> aggregateSupplier,
+            IKStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
             string functionName,
             MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
         {
-            var tkvsm = new TimestampedKeyValueStoreMaterializer<K, T>(this.context, materializedInternal);
+            var tkvsm = new TimestampedKeyValueStoreMaterializer<K, T>(this.Context, materializedInternal);
             var materialized = tkvsm.Materialize();
-            
-            return this.aggregateBuilder.Build<K, T>(
+
+            return this.aggregateBuilder.Build<K, T, ITimestampedKeyValueStore<K,T>>(
                 functionName,
                 materialized,
                 aggregateSupplier,
                 materializedInternal.QueryableStoreName(),
                 materializedInternal.KeySerde,
                 materializedInternal.ValueSerde);
-        }
-
-        public IKTable<K, V> Reduce(IReducer<V> reducer, Materialized<K, V> materialized)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR> Aggregate<VR>(Initializer<VR> initializer, Aggregator<K, V, VR> aggregator, Materialized<K, VR> materialized)
-        {
-            throw new NotImplementedException();
         }
 
         public ITimeWindowedKStream<K, V> WindowedBy<W>(Windows<W> windows) where W : Window

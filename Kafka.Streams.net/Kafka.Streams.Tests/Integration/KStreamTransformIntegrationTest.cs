@@ -5,6 +5,8 @@ using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.Temporary;
+using Kafka.Streams.Tests.Helpers;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -13,22 +15,23 @@ namespace Kafka.Streams.Tests.Integration
 {
     public class KStreamTransformIntegrationTest
     {
-        private StreamsBuilder builder;
+        private readonly StreamsBuilder builder;
         private readonly string topic = "stream";
         private readonly string stateStoreName = "myTransformState";
-        private List<KeyValuePair<int, int>> results = new List<KeyValuePair<int, int>>();
-        private Action<int, int> action = (key, value) => results.Add(KeyValuePair.Create(key, value));
-        private IKStream<K, V> stream;
+        private readonly List<KeyValuePair<int, int>> results = new List<KeyValuePair<int, int>>();
+        private readonly Action<int, int> action;
+        private readonly IKStream<int, int> stream;
 
-        public void Before()
+        public KStreamTransformIntegrationTest()
         {
+            action = (key, value) => results.Add(KeyValuePair.Create(key, value));
             builder = new StreamsBuilder();
-            IStoreBuilder<IKeyValueStore<int, int>> KeyValueStoreBuilder =
-                    Stores.KeyValueStoreBuilder(
-                        Stores.PersistentKeyValueStore(stateStoreName),
-                        Serdes.Int(),
-                        Serdes.Int());
-            builder.AddStateStore(KeyValueStoreBuilder);
+            // IStoreBuilder<IKeyValueStore<int, int>> KeyValueStoreBuilder =
+            //         Stores.KeyValueStoreBuilder(
+            //             Stores.PersistentKeyValueStore(stateStoreName),
+            //             Serdes.Int(),
+            //             Serdes.Int());
+            // builder.AddStateStore(KeyValueStoreBuilder);
             stream = builder.Stream(topic, Consumed.With(Serdes.Int(), Serdes.Int()));
         }
 
@@ -36,14 +39,21 @@ namespace Kafka.Streams.Tests.Integration
         {
             ConsumerRecordFactory<int, int> recordFactory =
                 new ConsumerRecordFactory<int, int>(Serializers.Int32, Serializers.Int32);
-            StreamsConfig props = StreamsTestUtils.getStreamsConfig(Serdes.Int(), Serdes.Int());
-            TopologyTestDriver driver = new TopologyTestDriver(builder.Build(), props);
-            driver.PipeInput(recordFactory.Create(topic, Arrays.asList(KeyValuePair.Create(1, 1),
-                                                                      KeyValuePair.Create(2, 2),
-                                                                      KeyValuePair.Create(3, 3),
-                                                                      KeyValuePair.Create(2, 1),
-                                                                      KeyValuePair.Create(2, 3),
-                                                                      KeyValuePair.Create(1, 3))));
+
+            StreamsConfig props = StreamsTestConfigs.GetStandardConfig(
+                Serdes.Int(),
+                Serdes.Int());
+
+            TopologyTestDriver driver = new TopologyTestDriver(builder.Context, builder.Build(), props);
+            driver.PipeInput(recordFactory.Create(
+                topic,
+                Arrays.asList(
+                    KeyValuePair.Create(1, 1),
+                    KeyValuePair.Create(2, 2),
+                    KeyValuePair.Create(3, 3),
+                    KeyValuePair.Create(2, 1),
+                    KeyValuePair.Create(2, 3),
+                    KeyValuePair.Create(1, 3))));
             Assert.Equal(results, expected);
         }
 

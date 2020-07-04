@@ -58,6 +58,7 @@ namespace Kafka.Streams.Processors.Internals
                 else
                 {
                     this.log.LogDebug("Creating tasks based on assignment.");
+                    this.taskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), new Dictionary<TaskId, HashSet<TopicPartition>>());
                     this.taskManager.CreateTasks(assignedPartitions);
                 }
             }

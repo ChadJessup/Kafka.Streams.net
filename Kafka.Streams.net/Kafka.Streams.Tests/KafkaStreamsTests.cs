@@ -4,7 +4,7 @@ using Kafka.Streams.KStream;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Threads;
-using Kafka.Streams.Threads.KafkaStreamsThread;
+using Kafka.Streams.Threads.KafkaStreams;
 using Kafka.Streams.Threads.Stream;
 using System;
 using System.Collections.Concurrent;
@@ -887,14 +887,14 @@ namespace Kafka.Streams.Tests
         internal class KafkaStreamsTestsStateListenerStub : IStateListener
         {
             public int numChanges { get; private set; } = 0;
-            object? oldState;
-            object? newState;
+
+            private object? oldState;
+            private object? newState;
             public ConcurrentDictionary<object, long> mapStates = new ConcurrentDictionary<object, long>();
 
             public void OnChange<States>(IThread<States> thread, States newState, States oldState)
                 where States : Enum
             {
-
                 if (!this.mapStates.TryGetValue(newState, out var prevCount))
                 {
 
@@ -912,6 +912,10 @@ namespace Kafka.Streams.Tests
             }
 
             public void SetThreadStates(Dictionary<long, StreamThreadState> threadStates)
+            {
+            }
+
+            public void OnChange(IThread thread, object newState, object oldState)
             {
             }
         }

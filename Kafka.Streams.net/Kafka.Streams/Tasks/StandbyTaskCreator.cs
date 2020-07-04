@@ -5,7 +5,7 @@ using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,30 +30,37 @@ namespace Kafka.Streams.Tasks
         {
         }
 
+
+        public IEnumerable<ITask> CreateTasks(
+            Dictionary<TaskId, HashSet<TopicPartition>> standbyTasksToCreate)
+        {
+            throw new NotImplementedException();
+        }
+
         public override StandbyTask? CreateTask(
             IConsumer<byte[], byte[]> consumer,
             TaskId taskId,
             string threadClientId,
             HashSet<TopicPartition> partitions)
         {
-            ProcessorTopology topology = this.builder.Build(taskId.topicGroupId);
+            ProcessorTopology topology = this.Builder.Build(taskId.TopicGroupId);
 
             if (topology.StateStores.Any() && topology.StoreToChangelogTopic.Any())
             {
                 return new StandbyTask(
                     this.Context,
-                    this.Context.CreateLogger<StandbyTask>(),
                     taskId,
-                    partitions.ToList(),
+                    partitions,
                     topology,
-                    consumer,
-                    this.storeChangelogReader,
-                    this.config,
-                    this.stateDirectory);
+                    //consumer,
+                    this.Config,
+                    //this.storeChangelogReader,
+                    null,
+                    this.StateDirectory);
             }
             else
             {
-                this.logger.LogTrace(
+                this.Logger.LogTrace(
                     $"Skipped standby task {taskId} with assigned partitions {partitions} " +
                         "since it does not have any state stores to materialize");
 

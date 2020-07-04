@@ -7,7 +7,7 @@ namespace Kafka.Streams.Tests.Tests
 {
     public class SystemTestUtilTest
     {
-        private Dictionary<string, string> expectedParsedMap = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> expectedParsedMap = new Dictionary<string, string>();
 
         public SystemTestUtilTest()
         {

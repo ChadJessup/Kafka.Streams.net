@@ -7,7 +7,7 @@ namespace Kafka.Streams.State.KeyValues
 {
     public class KeyValueToTimestampedKeyValueIteratorAdapter<K> : IKeyValueIterator<K, byte[]>
     {
-        private IKeyValueIterator<K, byte[]> innerIterator;
+        private readonly IKeyValueIterator<K, byte[]> innerIterator;
 
         public KeyValueToTimestampedKeyValueIteratorAdapter(IKeyValueIterator<K, byte[]> innerIterator)
         {

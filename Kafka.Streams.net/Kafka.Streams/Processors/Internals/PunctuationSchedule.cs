@@ -16,8 +16,8 @@ namespace Kafka.Streams.Processors.Internals
             IProcessorNode node,
             DateTime time,
             TimeSpan interval,
-            IPunctuator punctuator)
-            : this(node, time, interval, punctuator, new RepointableCancellable())
+            Action<DateTime> punctuator)
+            : this(node, time, interval, new WrappedPunctuator(punctuator), new RepointableCancellable())
         {
             this.cancellable.SetSchedule(this);
         }

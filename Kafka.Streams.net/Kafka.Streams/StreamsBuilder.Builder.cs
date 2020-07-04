@@ -37,9 +37,18 @@ namespace Kafka.Streams
         {
             public KafkaStreamsContext Context { get; set; }
 
+            public StreamsBuilder(StreamsConfig streamsConfig)
+                : this(
+                      configuration: null,
+                      serviceCollection: null,
+                      streamsConfig: streamsConfig)
+            {
+            }
+
             public StreamsBuilder(
                 IConfiguration? configuration = null,
-                IServiceCollection? serviceCollection = null)
+                IServiceCollection? serviceCollection = null,
+                StreamsConfig? streamsConfig = null)
             {
                 configuration ??= new ConfigurationBuilder().Build();
                 serviceCollection ??= new ServiceCollection();
@@ -50,12 +59,14 @@ namespace Kafka.Streams
                 {
                     ApplicationId = "ApplicationId_NotSet",
                     BootstrapServers = "localhost:9092",
+                    GroupId = "GroupId_NotSet",
                 };
 
-                serviceCollection.TryAddSingleton<StreamsConfig>(config);
+                serviceCollection.TryAddSingleton<StreamsConfig>(streamsConfig ?? config);
 
                 var services = serviceCollection.BuildServiceProvider();
                 this.Context = services.GetRequiredService<KafkaStreamsContext>();
+                this.Context.Services = services;
                 this.Context = this.AddCircularDependencies(this.Context, services);
             }
 
@@ -63,8 +74,15 @@ namespace Kafka.Streams
             {
                 // Dependency Injection doesn't allow ctor injection with circular dependencies.
                 // We'll manually inject these dependencies here...
+                // TODO: clean up dependency chain
                 var internalStreamsBuilder = services.GetRequiredService<InternalStreamsBuilder>();
                 context.InternalStreamsBuilder = internalStreamsBuilder;
+
+                var topologyBuilder = services.GetRequiredService<InternalTopologyBuilder>();
+                topologyBuilder.context = context;
+
+                var topology = services.GetRequiredService<Topology>();
+                context.Topology = topology;
 
                 return context;
             }
@@ -115,7 +133,7 @@ namespace Kafka.Streams
 
                 // TaskManager stuff
                 serviceCollection.TryAddTransient<ThreadCache>();
-                serviceCollection.TryAddSingleton<ITaskManager, TaskManager>();
+                serviceCollection.TryAddSingleton<ITaskManager, TaskManagerOld>();
                 serviceCollection.TryAddSingleton<AbstractTaskCreator<StandbyTask>, StandbyTaskCreator>();
                 serviceCollection.TryAddSingleton<AbstractTaskCreator<StreamTask>, TaskCreator>();
                 serviceCollection.TryAddSingleton<AssignedStreamsTasks>();
@@ -123,6 +141,8 @@ namespace Kafka.Streams
 
                 serviceCollection.TryAddSingleton<Topology>();
                 serviceCollection.TryAddSingleton<KafkaStreamsContext>();
+
+                serviceCollection.TryAddScoped(typeof(ProcessorContext<,>));
 
                 return serviceCollection;
             }
@@ -212,13 +232,13 @@ namespace Kafka.Streams
             protected virtual IServiceCollection AddThreads(IServiceCollection serviceCollection)
             {
                 serviceCollection.TryAddSingleton<IGlobalStreamThread, GlobalStreamThread>();
-                serviceCollection.TryAddSingleton<IStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadState>();
+                serviceCollection.TryAddSingleton<IThreadStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadState>();
 
                 serviceCollection.TryAddTransient<IStreamThread, StreamThread>();
-                serviceCollection.TryAddTransient<IStateMachine<StreamThreadStates>, StreamThreadState>();
+                serviceCollection.TryAddTransient<IThreadStateMachine<StreamThreadStates>, StreamThreadState>();
 
                 serviceCollection.TryAddSingleton<IKafkaStreamsThread, KafkaStreamsThread>();
-                serviceCollection.TryAddSingleton<IStateMachine<KafkaStreamsThreadStates>, KafkaStreamsThreadState>();
+                serviceCollection.TryAddSingleton<IThreadStateMachine<KafkaStreamsThreadStates>, KafkaStreamsThreadState>();
 
                 return serviceCollection;
             }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Kafka.Streams.Threads.Stream
 {
-    public class StreamThreadState : IStateMachine<StreamThreadStates>
+    public class StreamThreadState : IThreadStateMachine<StreamThreadStates>
     {
         private readonly object stateLock = new object();
         private readonly ILogger<StreamThreadState> logger;
@@ -19,7 +19,7 @@ namespace Kafka.Streams.Threads.Stream
             this.SetTransitions(new List<StateTransition<StreamThreadStates>>
             {
                 new StateTransition<StreamThreadStates>(StreamThreadStates.CREATED, StreamThreadStates.STARTING, StreamThreadStates.PENDING_SHUTDOWN),
-                new StateTransition<StreamThreadStates>(StreamThreadStates.STARTING, StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.PENDING_SHUTDOWN),
+                new StateTransition<StreamThreadStates>(StreamThreadStates.STARTING, StreamThreadStates.PARTITIONS_ASSIGNED, StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.PENDING_SHUTDOWN),
                 new StateTransition<StreamThreadStates>(StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.PARTITIONS_ASSIGNED, StreamThreadStates.PENDING_SHUTDOWN),
                 new StateTransition<StreamThreadStates>(StreamThreadStates.PARTITIONS_ASSIGNED, StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.RUNNING, StreamThreadStates.PENDING_SHUTDOWN),
                 new StateTransition<StreamThreadStates>(StreamThreadStates.RUNNING, StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.PENDING_SHUTDOWN),

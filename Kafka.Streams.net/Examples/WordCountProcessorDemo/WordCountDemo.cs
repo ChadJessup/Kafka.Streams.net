@@ -1,9 +1,11 @@
 ﻿using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Common.Extensions;
 using Kafka.Streams;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.Threads.KafkaStreams;
 using Microsoft.Extensions.DependencyInjection;
@@ -169,7 +171,7 @@ namespace WordCountProcessorDemo
                 {
                     var json = JsonConvert.DeserializeObject<KafkaStatistics>(stat);
                 })
-                .SetPartitionAssignor(new TestPartitionAssignor())
+                //.SetPartitionAssignor(new TestPartitionAssignor())
                 .SetErrorHandler((prod, error) =>
                 {
                     Console.WriteLine($"Error: {error.Reason}");
@@ -207,8 +209,13 @@ namespace WordCountProcessorDemo
             }
         }
 
-        class TestPartitionAssignor : IConsumerPartitionAssignor
+        private class TestPartitionAssignor : IConsumerPartitionAssignor
         {
+            public GroupAssignment Assign(Cluster metadata, GroupSubscription groupSubscription)
+            {
+                throw new NotImplementedException();
+            }
+
             public void Dispose()
             {
             }

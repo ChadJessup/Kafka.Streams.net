@@ -52,6 +52,7 @@ namespace Kafka.Streams.Threads.Stream
             new Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>>();
 
         public ITaskManager TaskManager { get; }
+
         public IConsumerRebalanceListener RebalanceListener { get; }
         public IConsumer<byte[], byte[]> Consumer { get; }
 
@@ -65,7 +66,7 @@ namespace Kafka.Streams.Threads.Stream
         public Thread Thread { get; }
         public void Join() => this.Thread?.Join();
         public int ManagedThreadId => this.Thread.ManagedThreadId;
-        public IStateMachine<StreamThreadStates> State { get; }
+        public IThreadStateMachine<StreamThreadStates> State { get; }
 
         public StreamThread(
             IServiceProvider services,
@@ -73,7 +74,7 @@ namespace Kafka.Streams.Threads.Stream
             ILogger<StreamThread> logger,
             ILoggerFactory loggerFactory,
             StreamsConfig config,
-            IStateMachine<StreamThreadStates> states,
+            IThreadStateMachine<StreamThreadStates> states,
             IKafkaClientSupplier clientSupplier,
             IStateRestoreListener userStateRestoreListener,
             RestoreConsumer restoreConsumer,
@@ -175,6 +176,29 @@ namespace Kafka.Streams.Threads.Stream
             this.UpdateThreadMetadata(StreamsBuilder.GetSharedAdminClientId(clientId));
         }
 
+        public static bool EosEnabled(StreamsConfig config)
+        {
+            ProcessingMode processingMode = StreamThread.ProcessingMode(config);
+            return processingMode == Stream.ProcessingMode.EXACTLY_ONCE_ALPHA ||
+                processingMode == Stream.ProcessingMode.EXACTLY_ONCE_BETA;
+        }
+
+        public static ProcessingMode ProcessingMode(StreamsConfig config)
+        {
+            if (Stream.ProcessingMode.EXACTLY_ONCE_BETA.Equals(config.GetString(StreamsConfig.ProcessingGuaranteeConfig)))
+            {
+                return Stream.ProcessingMode.EXACTLY_ONCE_ALPHA;
+            }
+            else if (Stream.ProcessingMode.EXACTLY_ONCE_BETA.Equals(config.GetString(StreamsConfig.ProcessingGuaranteeConfig)))
+            {
+                return Stream.ProcessingMode.EXACTLY_ONCE_BETA;
+            }
+            else
+            {
+                return Stream.ProcessingMode.AT_LEAST_ONCE;
+            }
+        }
+
         private IProducer<byte[], byte[]>? CreateProducer(StreamsConfig config, IKafkaClientSupplier clientSupplier, string threadClientId)
         {
             IProducer<byte[], byte[]>? threadProducer = null;
@@ -227,7 +251,7 @@ namespace Kafka.Streams.Threads.Stream
 
             foreach (var task in activeTasks ?? Enumerable.Empty<KeyValuePair<TaskId, StreamTask>>())
             {
-                activeTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions));
+                activeTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.Partitions));
                 producerClientIds.Add(StreamsBuilder.GetTaskProducerClientId(this.Thread.Name, task.Key));
             }
 
@@ -235,7 +259,7 @@ namespace Kafka.Streams.Threads.Stream
 
             foreach (var task in standbyTasks ?? Enumerable.Empty<KeyValuePair<TaskId, StandbyTask>>())
             {
-                standbyTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions));
+                standbyTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.Partitions));
             }
 
             var adminClientId = this.ThreadMetadata.AdminClientId;
@@ -343,15 +367,18 @@ namespace Kafka.Streams.Threads.Stream
         /**
          * Main event loop for polling, and processing records through topologies.
          *
-         * @throws IllegalStateException If store gets registered after initialized is already finished
+         * @throws InvalidOperationException If store gets registered after initialized is already finished
          * @throws StreamsException      if the store's change log does not contain the partition
          */
         private void RunLoop()
         {
             var sourceTopicPattern = this.builder.SourceTopicPattern().ToString();
-            this.Consumer.Subscribe(sourceTopicPattern);//, rebalanceListener);
+            if(!sourceTopicPattern.StartsWith('^'))
+            {
+                sourceTopicPattern = '^' + sourceTopicPattern;
+            }
 
-            SpinWait.SpinUntil(() => this.Consumer.Assignment.Any(), TimeSpan.FromSeconds(1.0));
+            this.Consumer.Subscribe(sourceTopicPattern);//, rebalanceListener);
 
             while (this.IsRunning())
             {
@@ -366,7 +393,7 @@ namespace Kafka.Streams.Threads.Stream
                 }
                 catch (TaskMigratedException ignoreAndRejoinGroup)
                 {
-                    this.logger.LogWarning($"Detected task {ignoreAndRejoinGroup.MigratedTask.id} that got migrated to another thread. " +
+                    this.logger.LogWarning($"Detected task {ignoreAndRejoinGroup.MigratedTask.Id} that got migrated to another thread. " +
                             "This implies that this thread missed a rebalance and dropped out of the consumer group. " +
                             $"Will try to rejoin the consumer group. Below is the detailed description of the task:\n{ignoreAndRejoinGroup.MigratedTask.ToString(">")}");
 
@@ -381,7 +408,7 @@ namespace Kafka.Streams.Threads.Stream
             this.Consumer.Subscribe(this.builder.SourceTopicPattern().ToString());//, rebalanceListener);
         }
 
-        // @throws IllegalStateException If store gets registered after initialized is already finished
+        // @throws InvalidOperationException If store gets registered after initialized is already finished
         // @throws StreamsException      If the store's change log does not contain the partition
         // @throws TaskMigratedException If another thread wrote to the changelog topic that is currently restored
         //                               or if committing offsets failed (non-EOS)
@@ -647,7 +674,7 @@ namespace Kafka.Streams.Threads.Stream
                 }
                 else if (task.IsClosed())
                 {
-                    this.logger.LogInformation($"Stream task {task.id} is already closed, probably because it got unexpectedly migrated to another thread already. " +
+                    this.logger.LogInformation($"Stream task {task.Id} is already closed, probably because it got unexpectedly migrated to another thread already. " +
                                  "Notifying the thread to trigger a new rebalance immediately.");
 
                     throw new TaskMigratedException(task);
@@ -744,14 +771,14 @@ namespace Kafka.Streams.Threads.Stream
 
                                 if (task.IsClosed())
                                 {
-                                    this.logger.LogInformation($"Standby task {task.id} is already closed," +
+                                    this.logger.LogInformation($"Standby task {task.Id} is already closed," +
                                         $"probably because it got unexpectedly migrated to another thread already. " +
                                         "Notifying the thread to trigger a new rebalance immediately.");
 
                                     throw new TaskMigratedException(task);
                                 }
 
-                                remaining = task.Update(partition, remaining);
+                                //remaining = task.Update(partition, remaining);
                                 if (remaining.Any())
                                 {
                                     remainingStandbyRecords.Add(partition, remaining);
@@ -795,12 +822,12 @@ namespace Kafka.Streams.Threads.Stream
                             if (task.IsClosed())
                             {
                                 this.logger.LogInformation("Standby task {} is already closed, probably because it got unexpectedly migrated to another thread already. " +
-                                    "Notifying the thread to trigger a new rebalance immediately.", task.id);
+                                    "Notifying the thread to trigger a new rebalance immediately.", task.Id);
 
                                 throw new TaskMigratedException(task);
                             }
 
-                            List<ConsumeResult<byte[], byte[]>> remaining = task.Update(partition, records.GetRecords(partition));
+                            List<ConsumeResult<byte[], byte[]>> remaining = null; //task.Update(partition, records.GetRecords(partition));
                             if (remaining.Any())
                             {
                                 this.RestoreConsumer.Pause(new[] { partition });
@@ -820,7 +847,7 @@ namespace Kafka.Streams.Threads.Stream
 
                         if (task.IsClosed())
                         {
-                            this.logger.LogInformation($"Standby task {task.id} is already closed, probably because it got " +
+                            this.logger.LogInformation($"Standby task {task.Id} is already closed, probably because it got " +
                                 $"unexpectedly migrated to another thread already. " +
                                 "Notifying the thread to trigger a new rebalance immediately.");
 
@@ -830,7 +857,7 @@ namespace Kafka.Streams.Threads.Stream
                         this.logger.LogInformation($"Reinitializing StandbyTask {task} from changelogs " +
                             $"{recoverableException.Partitions().ToJoinedString()}");
 
-                        task.ReinitializeStateStoresForPartitions(recoverableException.Partitions().ToList());
+                        //task.ReinitializeStateStoresForPartitions(recoverableException.Partitions().ToList());
                     }
 
                     this.RestoreConsumer.SeekToBeginning(partitions);

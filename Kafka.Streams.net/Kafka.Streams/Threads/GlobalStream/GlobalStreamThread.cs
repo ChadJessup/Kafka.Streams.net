@@ -34,7 +34,7 @@ namespace Kafka.Streams.Threads.GlobalStream
 
         public Thread Thread { get; }
         public void Join() => this.Thread?.Join();
-        public IStateMachine<GlobalStreamThreadStates> State { get; }
+        public IThreadStateMachine<GlobalStreamThreadStates> State { get; }
         public IStateListener StateListener { get; private set; }
         public string ThreadClientId { get; }
 
@@ -44,7 +44,7 @@ namespace Kafka.Streams.Threads.GlobalStream
             ILogger<GlobalStreamThread> logger,
             ILoggerFactory loggerFactory,
             StreamsConfig config,
-            IStateMachine<GlobalStreamThreadStates> states,
+            IThreadStateMachine<GlobalStreamThreadStates> states,
             IKafkaClientSupplier clientSupplier,
             StateDirectory stateDirectory,
             Topology topology)

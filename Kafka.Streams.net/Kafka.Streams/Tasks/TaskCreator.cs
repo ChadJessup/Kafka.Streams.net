@@ -52,15 +52,17 @@ namespace Kafka.Streams.Tasks
             return new StreamTask(
                 this.Context,
                 taskId,
-                new List<TopicPartition>(partitions),
-                this.builder.Build(taskId.topicGroupId),
+                new HashSet<TopicPartition>(partitions),
+                this.Builder.Build(taskId.TopicGroupId),
                 consumer,
-                this.storeChangelogReader,
-                this.config,
-                this.stateDirectory,
+                this.Config,
+                this.StateDirectory,
                 this.cache,
-                new BasicProducerSupplier(
-                    this.CreateProducer(taskId, threadClientId)));
+                null,
+                //this.storeChangelogReader,
+                //new BasicProducerSupplier(
+                //    this.CreateProducer(taskId, threadClientId)),
+                null);
         }
 
         public IProducer<byte[], byte[]> CreateProducer(
@@ -70,10 +72,10 @@ namespace Kafka.Streams.Tasks
             // eos
             if (this.threadProducer == null)
             {
-                var producerConfigs = this.config.GetProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
+                var producerConfigs = this.Config.GetProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
 
-                this.logger.LogInformation($"Creating producer client for task {id}");
-                producerConfigs.Set(StreamsConfig.TRANSACTIONAL_ID_CONFIGConfig, $"{this.applicationId}-{id}");
+                this.Logger.LogInformation($"Creating producer client for task {id}");
+                producerConfigs.Set(StreamsConfig.TRANSACTIONAL_ID_CONFIGConfig, $"{this.ApplicationId}-{id}");
 
                 return this.clientSupplier.GetProducer(producerConfigs);
             }
@@ -94,7 +96,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (Exception e)
                 {
-                    this.logger.LogError("Failed to Close producer due to the following error:", e);
+                    this.Logger.LogError("Failed to Close producer due to the following error:", e);
                 }
             }
         }

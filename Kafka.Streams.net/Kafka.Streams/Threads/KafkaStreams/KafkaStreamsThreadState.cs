@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Kafka.Streams.Threads.KafkaStreams
 {
-    public class KafkaStreamsThreadState : IStateMachine<KafkaStreamsThreadStates>
+    public class KafkaStreamsThreadState : IThreadStateMachine<KafkaStreamsThreadStates>
     {
         private readonly ILogger<KafkaStreamsThreadState> logger;
         private Dictionary<KafkaStreamsThreadStates, StateTransition<KafkaStreamsThreadStates>> validTransitions = new Dictionary<KafkaStreamsThreadStates, StateTransition<KafkaStreamsThreadStates>>();
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
                 }
                 else if (!this.IsValidTransition(newState))
                 {
-                    // throw new IllegalStateException("Stream-client " + clientId + ": Unexpected state transition from " + oldState + " to " + newState);
+                    // throw new InvalidOperationException("Stream-client " + clientId + ": Unexpected state transition from " + oldState + " to " + newState);
                 }
                 else
                 {

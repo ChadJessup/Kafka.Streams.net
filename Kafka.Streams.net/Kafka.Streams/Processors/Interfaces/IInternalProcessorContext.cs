@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processors.Interfaces
         /**
          * Get the current {@link ProcessorNode}
          */
-        IProcessorNode GetCurrentNode();
+        IProcessorNode? GetCurrentNode();
         /**
          * Get the thread-global cache
          */

@@ -12,7 +12,7 @@ namespace Kafka.Streams.State.Sessions
 {
     public class SessionStoreBuilder<K, V> : AbstractStoreBuilder<K, V, ISessionStore<K, V>>
     {
-        private ISessionBytesStoreSupplier storeSupplier;
+        private readonly ISessionBytesStoreSupplier storeSupplier;
 
         public SessionStoreBuilder(
             KafkaStreamsContext context,
