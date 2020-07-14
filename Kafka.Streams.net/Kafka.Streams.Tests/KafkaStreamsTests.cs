@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Kafka.Streams.Tests
 {
-    public class KafkaStreamsTest
+    public class KafkaStreamsTest : IDisposable
     {
         private const int NUM_BROKERS = 1;
         private const int NUM_THREADS = 1;
@@ -30,7 +30,7 @@ namespace Kafka.Streams.Tests
             this.globalStreams = TestUtils.GetStreamsBuilder(this.props).BuildKafkaStreams();
         }
 
-        public void Cleanup()
+        public void Dispose()
         {
             if (this.globalStreams != null)
             {
@@ -75,8 +75,7 @@ namespace Kafka.Streams.Tests
         }
 
         [Fact]
-        public void StateShouldTransitToRunningIfNonDeadThreadsBackToRunning()//// throws InterruptedException
-
+        public void StateShouldTransitToRunningIfNonDeadThreadsBackToRunning()
         {
             var stateListener = new KafkaStreamsTestsStateListenerStub();
             this.globalStreams.SetStateListener(stateListener);
@@ -601,7 +600,7 @@ namespace Kafka.Streams.Tests
             foreach (var metadata in threadMetadata)
             {
                 Assert.True(new List<string> { "RUNNING", "STARTING", "PARTITIONS_REVOKED", "PARTITIONS_ASSIGNED", "CREATED" }.Contains(metadata.ThreadState),
-                    "#threadState() .As: " + metadata.ThreadState + "; expected either RUNNING, STARTING, PARTITIONS_REVOKED, PARTITIONS_ASSIGNED, or CREATED");
+                    "#threadState() as: " + metadata.ThreadState + "; expected either RUNNING, STARTING, PARTITIONS_REVOKED, PARTITIONS_ASSIGNED, or CREATED");
 
                 Assert.Empty(metadata.StandbyTasks);
                 Assert.Empty(metadata.ActiveTasks);

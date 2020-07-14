@@ -134,30 +134,31 @@ namespace Kafka.Streams.Tests
                         topology.processorConnectedStateStores("KTABLE-MAPVALUES-0000000003"),
                         Collections.singleton("store"));
                 }
+        */
+        [Fact]
+        public void shouldAllowJoinUnmaterializedJoinedKTable()
+        {
+            IKTable<Bytes, string> table1 = builder.Table<Bytes, string>("table-topic1");
+            IKTable<Bytes, string> table2 = builder.Table<Bytes, string>("table-topic2");
+            builder
+                .Stream<Bytes, string>(STREAM_TOPIC)
+                .Join(table1.Join(table2, MockValueJoiner.TOSTRING_JOINER()),
+                    MockValueJoiner.TOSTRING_JOINER());
 
-                [Fact]
-                public void shouldAllowJoinUnmaterializedJoinedKTable()
-                {
-                    IKTable<Bytes, string> table1 = builder.Table("table-topic1");
-                    IKTable<Bytes, string> table2 = builder.Table("table-topic2");
-                    builder
-                        .< Bytes, string > stream(STREAM_TOPIC)
-                         .Join(table1.Join(table2, MockValueJoiner.TOSTRING_JOINER), MockValueJoiner.TOSTRING_JOINER);
-                    builder.Build();
+            builder.Build();
 
-                    ProcessorTopology topology =
-                        builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
+            ProcessorTopology topology =
+                builder.Context.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
-                    Assert.Equal(
-                        topology.StateStores.Count,
-                        2);
-                    Assert.Equal(
-                        topology.processorConnectedStateStores("KSTREAM-JOIN-0000000010"),
-                        Utils.mkSet(topology.StateStores.Get(0).Name(), topology.StateStores.Get(1).Name()));
-                    Assert.True(
-                        topology.processorConnectedStateStores("KTABLE-MERGE-0000000007").IsEmpty());
-                }
+            Assert.Equal(2,
+                topology.StateStores.Count);
+            Assert.Equal(topology.ProcessorConnectedStateStores("KSTREAM-JOIN-0000000010"),
+                new HashSet<string>(new[] { topology.StateStores[0].Name, topology.StateStores[1].Name }));
 
+            Assert.True(topology.ProcessorConnectedStateStores("KTABLE-MERGE-0000000007").IsEmpty());
+        }
+
+        /*
                 [Fact]
                 public void shouldAllowJoinMaterializedJoinedKTable()
                 {
@@ -519,7 +520,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 }
 
                 [Fact]
-                // 
+                //
                 public void shouldUseSpecifiedNameForTransformValues()
                 {
                     builder.Stream(STREAM_TOPIC).transformValues(() => (ValueTransformer)null, Named.As(STREAM_OPERATION_NAME));
@@ -529,7 +530,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 }
 
                 [Fact]
-                // 
+                //
             public void shouldUseSpecifiedNameForTransformValuesWithKey()
                 {
                     builder.Stream(STREAM_TOPIC).transformValues(() => (ValueTransformerWithKey)null, Named.As(STREAM_OPERATION_NAME));
@@ -539,7 +540,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 }
 
                 [Fact]
-                // 
+                //
             public void shouldUseSpecifiedNameForBranchOperation()
                 {
                     builder.Stream(STREAM_TOPIC)
@@ -691,7 +692,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 }
 
                 [Fact]
-                // 
+                //
             public void shouldUseSpecifiedNameForFlatTransformValueOperation()
                 {
                     builder.Stream(STREAM_TOPIC).flatTransformValues(() => (ValueTransformer)null, Named.As(STREAM_OPERATION_NAME));
@@ -701,7 +702,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 }
 
                 [Fact]
-                // 
+                //
             public void shouldUseSpecifiedNameForFlatTransformValueWithKeyOperation()
                 {
                     builder.Stream(STREAM_TOPIC).flatTransformValues(() => (ValueTransformerWithKey)null, Named.As(STREAM_OPERATION_NAME));
@@ -711,7 +712,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 }
 
                 [Fact]
-                // 
+                //
                 public void shouldUseSpecifiedNameForToStream()
                 {
                     builder.Table(STREAM_TOPIC)
@@ -726,7 +727,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 }
 
                 [Fact]
-                // 
+                //
                 public void shouldUseSpecifiedNameForToStreamWithMapper()
                 {
                     builder.Table(STREAM_TOPIC)

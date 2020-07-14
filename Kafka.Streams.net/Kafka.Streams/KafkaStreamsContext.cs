@@ -25,14 +25,13 @@ namespace Kafka.Streams
             StreamsConfig config,
             InternalTopologyBuilder internalTopologyBuilder,
             IServiceCollection serviceCollection,
-            ILogger<KafkaStreamsContext> logger,
             IConfiguration configuration,
             IStoresFactory storesFactory,
             ILoggerFactory loggerFactory,
             IClock clock)
         {
             this.Clock = clock;
-            this.Logger = logger;
+            this.Logger = loggerFactory.CreateLogger<KafkaStreamsContext>();
             this.StreamsConfig = config;
             this.Configuration = configuration;
             this.StoresFactory = storesFactory;

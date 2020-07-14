@@ -56,7 +56,6 @@ namespace Kafka.Streams.Tests.Processor.Internals
                     null,
                     null,
                     null,
-                    null,
                     new LoggerFactory(),
                     this.time));
         }
@@ -315,22 +314,21 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             directory = new StateDirectory(
                 new KafkaStreamsContext(
-                        new StreamsConfig(
-                            new Dictionary<string, string?>
-                            {
-                                { StreamsConfig.ApplicationIdConfig, applicationId },
-                                { StreamsConfig.BootstrapServersConfig, "dummy:1234"},
-                                { StreamsConfig.StateDirPathConfig, stateDir.FullName },
-                                { StreamsConfig.StateDirHasPersistentStoresConfig, bool.TrueString },
-                            }
-                        ),
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        new LoggerFactory(),
-                        this.time));
+                    new StreamsConfig(
+                        new Dictionary<string, string?>
+                        {
+                            { StreamsConfig.ApplicationIdConfig, applicationId },
+                            { StreamsConfig.BootstrapServersConfig, "dummy:1234"},
+                            { StreamsConfig.StateDirPathConfig, stateDir.FullName },
+                            { StreamsConfig.StateDirHasPersistentStoresConfig, bool.TrueString },
+                        }
+                    ),
+                    null,
+                    null,
+                    null,
+                    null,
+                    new LoggerFactory(),
+                    this.time));
 
             appDir = new DirectoryInfo(Path.Combine(tempDir.FullName, applicationId));
 
@@ -341,7 +339,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         [Fact]
         public void ShouldLockGlobalStateDirectory()
-        {// throws Exception
+        {
             directory.LockGlobalState();
 
             try

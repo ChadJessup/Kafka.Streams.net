@@ -29,7 +29,7 @@ namespace Kafka.Streams.Tests
         private readonly InternalStreamsBuilder? internalStreamsBuilder = null;
         private readonly StreamsConfig config;
         private readonly DirectoryInfo stateDir = TestUtils.GetTempDirectory();
-        private readonly StateDirectory? stateDirectory = null;
+        private StateDirectory? stateDirectory = null;
         private readonly ConsumedInternal<object, object> consumed = new ConsumedInternal<object, object>();
 
         private Guid processId = Guid.NewGuid();
@@ -41,8 +41,6 @@ namespace Kafka.Streams.Tests
         {
             this.processId = Guid.NewGuid();
             this.config = StreamsTestConfigs.GetStandardConfig();
-
-            this.stateDirectory = new StateDirectory(null);//, false);
 
             // internalTopologyBuilder = this.streamsBuilder.InternalTopologyBuilder;
             // internalTopologyBuilder.SetApplicationId(applicationId);
@@ -61,70 +59,6 @@ namespace Kafka.Streams.Tests
         private readonly TaskId Task2 = new TaskId(0, 2);
         private readonly TaskId Task3 = new TaskId(1, 1);
 
-        [Fact]
-        public void TestPartitionAssignmentChangeForSingleGroup()
-        {
-            var sp = new ServiceCollection();
-            sp.AddSingleton(this.config);
-
-            var mockMockConsumer = new Mock<IConsumer<byte[], byte[]>>().SetupAllProperties();
-
-            var mockClientSupplier = new Mock<IKafkaClientSupplier>();
-            mockClientSupplier
-                .Setup(cs => cs.GetConsumer(It.IsAny<ConsumerConfig>(), It.IsAny<IConsumerRebalanceListener>()))
-                    .Returns(new MockConsumer<byte[], byte[]>(mockMockConsumer.Object));
-            mockClientSupplier
-                .Setup(cs => cs.GetRestoreConsumer(It.IsAny<RestoreConsumerConfig>()))
-                    .Returns(new MockRestoreConsumer(mockMockConsumer.Object));
-
-            mockClientSupplier.SetupAllProperties();
-
-            sp.AddSingleton(mockClientSupplier.Object);
-            var streamsBuilder = new StreamsBuilder(sp);
-
-            streamsBuilder.Context.InternalTopologyBuilder.AddSource<string, string>(
-                null,
-                "source1",
-                null,
-                null,
-                null,
-                topic1);
-
-            var ks = streamsBuilder.BuildKafkaStreams();
-            var thread = TestUtils.CreateStreamThread(streamsBuilder, this.clientId, eosEnabled: false);
-
-            var stateListener = new StateListenerStub();
-            thread.SetStateListener(stateListener);
-            Assert.Equal(StreamThreadStates.CREATED, thread.State.CurrentState);
-
-            IConsumerRebalanceListener RebalanceListener = thread.RebalanceListener;
-
-            List<TopicPartitionOffset> revokedPartitions;
-            List<TopicPartition> assignedPartitions;
-
-            // revoke nothing
-            thread.State.SetState(StreamThreadStates.STARTING);
-            revokedPartitions = new List<TopicPartitionOffset>();
-            RebalanceListener.OnPartitionsRevoked(null, revokedPartitions);
-
-            Assert.Equal(StreamThreadStates.PARTITIONS_REVOKED, thread.State.CurrentState);
-
-            // assign single partition
-            assignedPartitions = new List<TopicPartition> { this.t1p1 };
-            thread.TaskManager.SetAssignmentMetadata(new Dictionary<TaskId, HashSet<TopicPartition>>(), new Dictionary<TaskId, HashSet<TopicPartition>>());
-
-            var mockConsumer = (MockConsumer<byte[], byte[]>)thread.Consumer;
-            mockConsumer.Assign(assignedPartitions);
-            mockConsumer.UpdateBeginningOffsets(new Dictionary<TopicPartition, long> { { this.t1p1, 0L } });
-            RebalanceListener.OnPartitionsAssigned(null, assignedPartitions);
-            thread.RunOnce();
-            Assert.Equal(StreamThreadStates.RUNNING, thread.State.CurrentState);
-            Assert.Equal(4, stateListener.NumChanges);
-            Assert.Equal(StreamThreadStates.PARTITIONS_ASSIGNED, stateListener.OldState);
-
-            thread.Shutdown();
-            Assert.Equal(StreamThreadStates.PENDING_SHUTDOWN, thread.State.CurrentState);
-        }
 
         [Fact]
         public void TestStateChangeStartClose() //// throws Exception
@@ -242,14 +176,14 @@ namespace Kafka.Streams.Tests
             var commitInterval = 1000L;
             var props = StreamsTestConfigs.GetStandardConfig();
             var mockTaskManager = TestUtils.GetMockTaskManagerCommit(1);
-            var sc = new ServiceCollection();
-            sc
+            var sc = new ServiceCollection()
                 .AddSingleton(mockTaskManager.Object)
                 .AddSingleton(props);
 
             props.StateStoreDirectory = this.stateDir;
             props.CommitIntervalMs = commitInterval;
             var streamsBuilder = TestUtils.GetStreamsBuilder(sc);
+            this.stateDirectory = new StateDirectory(streamsBuilder.Context);
             var consumer = new Mock<IConsumer<byte[], byte[]>>();
 
             IStreamThread thread = TestUtils.CreateStreamThread(streamsBuilder);

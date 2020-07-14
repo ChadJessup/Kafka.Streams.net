@@ -18,6 +18,7 @@ using Kafka.Streams.State.Windowed;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Tests.Mocks;
+using Kafka.Streams.Threads.Stream;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -481,26 +482,27 @@ namespace Kafka.Streams.Tests
             byte[] value,
             Headers? headers)
         {
-            this.task.AddRecords(topicOrPatternPartition,
-            new[]
-            {
-                new ConsumeResult<byte[], byte[]>
+            this.task.AddRecords(
+                topicOrPatternPartition,
+                new[]
                 {
-                      Message = new Message<byte[], byte[]>
-                      {
-                           Key = key,
-                           Value = value,
-                           Timestamp = new Timestamp(timestamp, TimestampType.CreateTime),
-                           Headers = headers,
-                      },
-                      Offset = ++offsetsByTopicOrPatternPartition[topicOrPatternPartition] - 1,
-                      Partition = topicOrPatternPartition.Partition,
-                      TopicPartitionOffset = new TopicPartitionOffset(
-                      inputTopic,
-                      topicOrPatternPartition.Partition,
-                      ++offsetsByTopicOrPatternPartition[topicOrPatternPartition] - 1),
-                }
-            });
+                    new ConsumeResult<byte[], byte[]>
+                    {
+                          Message = new Message<byte[], byte[]>
+                          {
+                               Key = key,
+                               Value = value,
+                               Timestamp = new Timestamp(timestamp, TimestampType.CreateTime),
+                               Headers = headers,
+                          },
+                          Offset = ++offsetsByTopicOrPatternPartition[topicOrPatternPartition] - 1,
+                          Partition = topicOrPatternPartition.Partition,
+                          TopicPartitionOffset = new TopicPartitionOffset(
+                          inputTopic,
+                          topicOrPatternPartition.Partition,
+                          ++offsetsByTopicOrPatternPartition[topicOrPatternPartition] - 1),
+                    }
+                });
         }
 
         private void CompleteAllProcessableWork()
@@ -516,24 +518,37 @@ namespace Kafka.Streams.Tests
             // For this method, it just means there's nothing to do.
             if (this.task != null)
             {
-                //while (task.hasRecordsQueued() && task.isProcessable(mockWallClockTime.NowAsEpochMilliseconds))
+                while (task.HasRecordsQueued() && task.IsProcessable(mockWallClockTime.UtcNow))
                 {
                     // Process the record ...
-                    //  task.Process(mockWallClockTime.NowAsEpochMilliseconds);
+                    task.Process(mockWallClockTime.UtcNow);
                     this.task.MaybePunctuateStreamTime();
-                    //this.task.Commit();
+                    // this.Commit(task.PrepareCommit());
+                    task.PostCommit();
                     this.CaptureOutputsAndReEnqueueInternalResults();
                 }
 
-                //if (task.hasRecordsQueued())
-                //{
-                //    this.loggger.info("Due to the {} configuration, there are currently some records" +
-                //                 " that cannot be processed. Advancing wall-clock time or" +
-                //                 " enqueuing records on the empty topics will allow" +
-                //                 " Streams to process more.",
-                //             StreamsConfig.MAX_TASK_IDLE_MS_CONFIG);
-                //}
+                if (task.HasRecordsQueued())
+                {
+                    //this.logger.info("Due to the {} configuration, there are currently some records" +
+                    //             " that cannot be processed. Advancing wall-clock time or" +
+                    //             " enqueuing records on the empty topics will allow" +
+                    //             " Streams to process more.",
+                    //         StreamsConfig.MAX_TASK_IDLE_MS_CONFIG);
+                }
             }
+        }
+
+        private void Commit(Dictionary<TopicPartition, OffsetAndMetadata> offsets)
+        {
+            // if (processingMode == ProcessingMode.EXACTLY_ONCE_ALPHA || processingMode == ProcessingMode.EXACTLY_ONCE_BETA)
+            // {
+            //     testDriverProducer.commitTransaction(offsets, new ConsumerGroupMetadata("dummy-app-id"));
+            // }
+            // else
+            // {
+            //     consumer.commitSync(offsets);
+            // }
         }
 
         private void ProcessGlobalRecord(

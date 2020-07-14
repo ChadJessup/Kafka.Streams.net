@@ -75,7 +75,12 @@ namespace Kafka.Streams.Tests
                 mockConsumer: new MockConsumer<byte[], byte[]>(mockConsumer),
                 mockRestoreConsumer: new MockRestoreConsumer(mockConsumer));
 
-            sp.AddSingleton(mockClientSupplier.Object.GetType());
+            var mockAdminClient = Mock.Of<IAdminClient>();
+
+            mockClientSupplier.Setup(s => s.GetAdminClient(It.IsAny<StreamsConfig>()))
+                .Returns(mockAdminClient);
+
+            sp.AddSingleton(mockClientSupplier.Object);
             this.streamsBuilder = new StreamsBuilder(sp);
 
             this.internalTopologyBuilder.AddSource<string, string>(
