@@ -25,7 +25,7 @@ namespace Kafka.Streams.Tasks
         private Dictionary<TopicPartition, long> offsetSnapshotSinceLastCommit;
 
         public override long LatestOffset { get; set; }
-        public override TaskState CurrentState { get; }
+        public override TaskState CurrentState { get; protected set; }
         public Dictionary<TopicPartition, long> CheckpointedOffsets { get; internal set; }
 
         /**
@@ -301,6 +301,11 @@ namespace Kafka.Streams.Tasks
         }
 
         public override bool IsRunning()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool IsValidTransition(TaskState oldState, TaskState newState)
         {
             throw new NotImplementedException();
         }

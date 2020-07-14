@@ -1,3 +1,4 @@
+using System;
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Microsoft.Extensions.Logging;
@@ -43,10 +44,10 @@ namespace Kafka.Streams.Processors
          * @return nothing; always raises an exception
          * @throws StreamsException on every invocation
          */
-        public override long OnInvalidTimestamp<K, V>(
+        public override DateTime OnInvalidTimestamp<K, V>(
             ConsumeResult<K, V> record,
-            long recordTimestamp,
-            long partitionTime)
+            Timestamp recordTimestamp,
+            DateTime partitionTime)
         {
 
             var message = $"Input record {record} has invalid (negative) timestamp. " +

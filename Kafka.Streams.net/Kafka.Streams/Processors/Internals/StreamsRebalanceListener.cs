@@ -31,6 +31,8 @@ namespace Kafka.Streams.Processors.Internals
 
         public void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions)
         {
+            var metadata = consumer.ConsumerGroupMetadata;
+
             this.log.LogDebug(
                 $"at state {this.streamThread.State}: partitions {assignedPartitions.ToJoinedString()} assigned at the end of consumer rebalance.\n" +
                 $"\tcurrent suspended active tasks: {this.taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +

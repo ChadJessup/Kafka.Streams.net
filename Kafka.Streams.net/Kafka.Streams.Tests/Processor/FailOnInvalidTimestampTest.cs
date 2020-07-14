@@ -2,6 +2,8 @@ using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
+using Moq;
+using System;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Processor
@@ -28,7 +30,7 @@ namespace Kafka.Streams.Tests.Processor
                        Timestamp = new Timestamp(-1, TimestampType.NotAvailable),
                    },
                },
-           42));
+           Timestamp.UnixTimestampMsToDateTime(42)));
         }
     }
 }

@@ -1320,12 +1320,5 @@ namespace Kafka.Streams.KStream.Internals
                 repartitionRequired: true,
                 mapProcessorNode);
         }
-
-        private IKStream<KR, VR> Map<KR, VR>(
-            KeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper,
-            NamedInternal namedInternal)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

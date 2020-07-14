@@ -58,7 +58,7 @@ namespace Kafka.Streams.State
          * @throws ProcessorStateException if the base state directory or application state directory does not exist
          *                                 and could not be created when hasPersistentStores is enabled.
          */
-        public StateDirectory(KafkaStreamsContext? context)
+        public StateDirectory(KafkaStreamsContext context)
         {
             if (context is null)
             {

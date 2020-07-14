@@ -21,10 +21,10 @@ namespace Kafka.Streams.KStream.Internals
             string? queryableName)
         {
             this.storeName = storeName;
-            
+
             this.logger = logger;
             this.services = serviceProvider;
-            
+
             this.storeName = storeName;
             this.queryableName = queryableName;
             this.sendOldValues = false;
@@ -32,8 +32,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKeyValueProcessor<K, V> Get()
         {
-            return ActivatorUtilities.CreateInstance<KTableSourceProcessor<K, V>>(
-                this.services,
+            return new KTableSourceProcessor<K, V>(
+                this.services.GetRequiredService<KafkaStreamsContext>(),
                 this.queryableName,
                 this.sendOldValues);
         }

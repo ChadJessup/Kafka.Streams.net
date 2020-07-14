@@ -55,12 +55,9 @@ namespace Kafka.Streams.Tests.Helpers
             return new StreamsBuilder(services);
         }
 
-        public static StreamsBuilder GetStreamsBuilder(StreamsConfig config)
+        public static StreamsBuilder GetStreamsBuilder(StreamsConfig? config = null)
         {
-            if (config is null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
+            config ??= StreamsTestConfigs.GetStandardConfig(nameof(TestUtils));
 
             var services = new ServiceCollection().AddSingleton(config);
 

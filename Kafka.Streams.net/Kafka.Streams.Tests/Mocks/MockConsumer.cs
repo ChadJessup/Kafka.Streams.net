@@ -1,11 +1,14 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.Clients.Consumers;
+using Kafka.Streams.Processors.Internals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Kafka.Streams.Tests
 {
@@ -19,6 +22,21 @@ namespace Kafka.Streams.Tests
 
     public class MockConsumer<TKey, TValue> : BaseConsumer<TKey, TValue>
     {
+        private Dictionary<string, IEnumerable<TopicPartitionOffset>> partitions;
+        private List<TopicPartitionOffset> beginningOffsets;
+        private List<TopicPartitionOffset> endOffsets;
+        private Dictionary<TopicPartition, OffsetAndMetadata> committed;
+        private Queue<Task> pollTasks;
+        private HashSet<TopicPartition> paused;
+
+        private Dictionary<TopicPartition, List<ConsumeResult<TKey, TValue>>> records;
+        private KafkaException pollException;
+        private KafkaException offsetsException;
+        private bool wakeup;
+        private TimeSpan lastPollTimeout;
+        private bool closed;
+        private bool shouldRebalance;
+
         public MockConsumer(IConsumer<TKey, TValue> mockConsumer)
             : base(null, mockConsumer)
         {
@@ -55,9 +73,30 @@ namespace Kafka.Streams.Tests
             this.Assignment.Add(partition.TopicPartition);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void UpdatePartitions(string topic, IEnumerable<TopicPartitionOffset> partitions)
+        {
+            EnsureNotClosed();
+            this.partitions.Add(topic, partitions);
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void UpdateEndOffsets(IEnumerable<TopicPartitionOffset> newOffsets)
+        {
+            endOffsets.AddRange(newOffsets);
+        }
+
         public override ConsumeResult<TKey, TValue> Consume(CancellationToken cancellationToken = default)
         {
             return base.Consume(cancellationToken);
+        }
+
+        private void EnsureNotClosed()
+        {
+            if (this.closed)
+            {
+                throw new InvalidOperationException("This consumer has already been closed.");
+            }
         }
     }
 }

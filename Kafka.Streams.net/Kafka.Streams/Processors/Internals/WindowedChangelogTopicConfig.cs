@@ -17,13 +17,14 @@ namespace Kafka.Streams.Processors.Internals
 
         private readonly long? retentionMs;
 
-        public WindowedChangelogTopicConfig(string Name, Dictionary<string, string?> topicConfigs)
+        public WindowedChangelogTopicConfig(string name, Dictionary<string, string?> topicConfigs)
+            : base(name, topicConfigs)
         {
-            Name = Name ?? throw new ArgumentNullException(nameof(Name));
-            //            Topic.validate(Name);
+            name = name ?? throw new ArgumentNullException(nameof(name));
+            // Topic.validate(Name);
 
-            this.Name = Name;
-            this.topicConfigs = topicConfigs;
+            this.Name = name;
+            this.TopicConfigs = topicConfigs;
         }
 
         /**
@@ -83,21 +84,21 @@ namespace Kafka.Streams.Processors.Internals
             var that = (WindowedChangelogTopicConfig)o;
 
             return this.Name.Equals(that.Name) &&
-                    this.topicConfigs.Equals(that.topicConfigs) &&
+                    this.TopicConfigs.Equals(that.TopicConfigs) &&
                     this.retentionMs.Equals(that.retentionMs);
         }
 
 
         public override int GetHashCode()
         {
-            return (this.Name, this.topicConfigs, this.retentionMs).GetHashCode();
+            return (this.Name, this.TopicConfigs, this.retentionMs).GetHashCode();
         }
 
         public override string ToString()
         {
             return "WindowedChangelogTopicConfig(" +
                     "Name=" + this.Name +
-                    ", topicConfigs=" + this.topicConfigs +
+                    ", topicConfigs=" + this.TopicConfigs +
                     ", retentionMs=" + this.retentionMs +
                     ")";
         }

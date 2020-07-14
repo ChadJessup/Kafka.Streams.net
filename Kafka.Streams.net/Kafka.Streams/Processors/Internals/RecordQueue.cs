@@ -91,7 +91,8 @@ namespace Kafka.Streams.Processors.Internals
          */
         public bool IsEmpty()
         {
-            return !this.fifoQueue.Any() && this.headRecord == null;
+            return !this.fifoQueue.Any()
+                && this.headRecord == null;
         }
 
         /**
@@ -104,26 +105,27 @@ namespace Kafka.Streams.Processors.Internals
             this.partitionTime = RecordQueue.UNKNOWN;
         }
 
-        // protected abstract RecordDeserializer<K, V> GetRecordDeserializer<K, V>();
+        protected abstract RecordDeserializer GetRecordDeserializer();
+
         private void UpdateHead()
         {
             while (this.headRecord == null && this.fifoQueue.Any())
             {
                 ConsumeResult<byte[], byte[]> raw = this.fifoQueue.Peek();
-                //var recordDeserializer = GetRecordDeserializer<K, V>();
+                var recordDeserializer = GetRecordDeserializer();
 
-                //ConsumeResult<K, V> deserialized = recordDeserializer.deserialize(processorContext, raw);
+                ConsumeResult<object, object> deserialized = recordDeserializer.Deserialize<object, object>(processorContext, raw);
 
-                if (true)//deserialized == null)
+                if (deserialized == null)
                 {
                     // this only happens if the deserializer decides to skip. It has already logged the reason.
                     continue;
                 }
 
-                DateTime timestamp;
+                DateTime? timestamp = null;
                 try
                 {
-                    //timestamp = timestampExtractor.Extract(deserialized, partitionTime);
+                    timestamp = timestampExtractor.Extract(deserialized, partitionTime);
                 }
                 catch (StreamsException internalFatalExtractorException)
                 {
@@ -139,7 +141,7 @@ namespace Kafka.Streams.Processors.Internals
                 // log.LogTrace($"Source node {source.Name} extracted timestamp {timestamp} for record {deserialized}");
 
                 // drop message if TS is invalid, i.e., negative
-                if (timestamp.Ticks < 0)
+                if (timestamp.Value.Ticks < 0)
                 {
                     //log.LogWarning(
                     //        "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
@@ -148,9 +150,9 @@ namespace Kafka.Streams.Processors.Internals
                     continue;
                 }
 
-                //headRecord = new StampedRecord(deserialized, timestamp);
+                headRecord = new StampedRecord(deserialized, timestamp.Value);
 
-                this.partitionTime = this.partitionTime.GetNewest(timestamp);
+                this.partitionTime = this.partitionTime.GetNewest(timestamp.Value);
             }
         }
     }
@@ -178,7 +180,7 @@ namespace Kafka.Streams.Processors.Internals
                 deserializationExceptionHandler);
         }
 
-        //protected override RecordDeserializer<K, V> GetRecordDeserializer<K, V>()
-        //    => (RecordDeserializer<K, V>)this.recordDeserializer;
+        protected override RecordDeserializer GetRecordDeserializer()
+            => this.recordDeserializer;
     }
 }

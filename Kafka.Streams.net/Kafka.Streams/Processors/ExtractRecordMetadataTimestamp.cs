@@ -1,3 +1,4 @@
+using System;
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 
@@ -36,16 +37,16 @@ namespace Kafka.Streams.Processors
          * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
          * @return the embedded metadata timestamp of the given {@link ConsumeResult}
          */
-        public long Extract<K, V>(ConsumeResult<K, V> record, long partitionTime)
+        public DateTime Extract<K, V>(ConsumeResult<K, V> record, DateTime partitionTime)
         {
-            var timestamp = record.Timestamp.UnixTimestampMs;
+            var timestamp = record.Message.Timestamp;
 
-            if (timestamp < 0)
+            if (timestamp.UnixTimestampMs < 0)
             {
                 return this.OnInvalidTimestamp(record, timestamp, partitionTime);
             }
 
-            return timestamp;
+            return timestamp.UtcDateTime;
         }
 
         /**
@@ -56,9 +57,9 @@ namespace Kafka.Streams.Processors
          * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
          * @return a new timestamp for the record (if negative, record will not be processed but dropped silently)
          */
-        public abstract long OnInvalidTimestamp<K, V>(
+        public abstract DateTime OnInvalidTimestamp<K, V>(
             ConsumeResult<K, V> record,
-            long recordTimestamp,
-            long partitionTime);
+            Timestamp recordTimestamp,
+            DateTime partitionTime);
     }
 }

@@ -88,8 +88,8 @@ namespace Kafka.Streams.Tasks
 
             // TODO: can't pause here, due to handler not actually being called after assingment.
             // Pause All the partitions until the underlying state store is ready for All the active tasks.
-            this.logger.LogTrace($"Pausing partitions: {assignment.ToJoinedString()}");
-            this.consumer.Pause(assignment);//.Select(a => a.TopicPartition));
+            //this.logger.LogTrace($"Pausing partitions: {assignment.ToJoinedString()}");
+            //this.consumer.Pause(assignment);//.Select(a => a.TopicPartition));
         }
 
         private void AddStreamTasks(List<TopicPartition> assignment)
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Tasks
 
             var tasks = new HashSet<TaskId>();
 
-            IEnumerable<DirectoryInfo> stateDirs = null;//this.taskCreator.stateDirectory.ListTaskDirectories();
+            IEnumerable<DirectoryInfo> stateDirs = this.taskCreator.StateDirectory.listAllTaskDirectories();
             if (stateDirs != null)
             {
                 foreach (var dir in stateDirs)
@@ -305,7 +305,7 @@ namespace Kafka.Streams.Tasks
             this.taskCreator.Close();
             this.standbyTaskCreator.Close();
 
-            RuntimeException fatalException = firstException;
+            RuntimeException? fatalException = firstException;
             if (fatalException != null)
             {
                 throw fatalException;

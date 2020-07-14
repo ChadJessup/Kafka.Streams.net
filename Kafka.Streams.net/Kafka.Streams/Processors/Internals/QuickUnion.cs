@@ -5,6 +5,11 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class QuickUnion<T>
     {
+        public QuickUnion()
+        {
+
+        }
+
         private readonly Dictionary<T, T> ids = new Dictionary<T, T>();
 
         public void Add(T id)

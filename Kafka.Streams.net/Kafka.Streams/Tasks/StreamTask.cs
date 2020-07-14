@@ -58,7 +58,7 @@ namespace Kafka.Streams.Tasks
         private bool commitRequested = false;
 
         public override long LatestOffset { get; set; }
-        public override TaskState CurrentState { get; }
+        public override TaskState CurrentState { get; protected set; }
 
         public StreamTask(
             KafkaStreamsContext context,
@@ -79,12 +79,12 @@ namespace Kafka.Streams.Tasks
                   stateMgr,
                   partitions)
         {
-            this.mainConsumer = mainConsumer;
+            this.mainConsumer = mainConsumer ?? throw new ArgumentNullException(nameof(mainConsumer));
 
             string threadIdPrefix = $"stream-thread [{Thread.CurrentThread.Name}] ";
             this.logPrefix = threadIdPrefix + $"{"task"} [{id}] ";
             //LogContext logContext = new LogContext(logPrefix);
-            //log = logContext.logger(getClass());
+            this.log = context.CreateLogger<StreamTask>();
 
             this.recordCollector = recordCollector;
             this.eosEnabled = false; // StreamThread.eosEnabled(config);
@@ -282,7 +282,6 @@ namespace Kafka.Streams.Tasks
          * - resume the task
          * </pre>
          */
-
         public override void Resume()
         {
             switch (this.CurrentState)
@@ -307,7 +306,6 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-
         public override void PrepareCommit()
         {
             switch (this.CurrentState)
@@ -325,7 +323,6 @@ namespace Kafka.Streams.Tasks
                     throw new InvalidOperationException("Illegal state " + this.CurrentState + " while preparing active task " + this.Id + " for committing");
             }
         }
-
 
         public override void PostCommit()
         {
@@ -358,7 +355,6 @@ namespace Kafka.Streams.Tasks
                     throw new InvalidOperationException("Illegal state " + this.CurrentState + " while post committing active task " + this.Id);
             }
         }
-
 
         public Dictionary<TopicPartition, OffsetAndMetadata> CommittableOffsetsAndMetadata()
         {
@@ -1167,6 +1163,11 @@ namespace Kafka.Streams.Tasks
         public override bool IsRunning()
         {
             throw new NotImplementedException();
+        }
+
+        protected override bool IsValidTransition(TaskState oldState, TaskState newState)
+        {
+            return true;
         }
     }
 }

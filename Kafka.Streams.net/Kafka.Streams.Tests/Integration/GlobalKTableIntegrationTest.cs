@@ -115,7 +115,7 @@ namespace Kafka.Streams.Tests.Integration
                     result.AddRange(supplier.CapturedProcessors(2)[1].LastValueAndTimestampPerKey);
                     return result.Equals(expected);
                 },
-                30000L,
+                3000L,
                 "waiting for initial values");
 
 
@@ -127,7 +127,7 @@ namespace Kafka.Streams.Tests.Integration
 
             TestUtils.WaitForCondition(
                 () => "J".Equals(replicatedStore.Get(5L)),
-                30000,
+                3000,
                 "waiting for data in replicated store");
 
             IReadOnlyKeyValueStore<long, IValueAndTimestamp<string>> replicatedStoreWithTimestamp =
@@ -157,7 +157,7 @@ namespace Kafka.Streams.Tests.Integration
                     result.AddRange(supplier.CapturedProcessors(2)[1].LastValueAndTimestampPerKey);
                     return result.Equals(expected);
                 },
-                30000L,
+                3000L,
                 "waiting for values");
         }
 
@@ -193,7 +193,7 @@ namespace Kafka.Streams.Tests.Integration
 
                     return result.Equals(expected);
                 },
-                30000L,
+                3000L,
                 "waiting for initial values");
 
 
@@ -205,7 +205,7 @@ namespace Kafka.Streams.Tests.Integration
 
             TestUtils.WaitForCondition(
                 () => "J".Equals(replicatedStore.Get(5L)),
-                30000,
+                3000,
                 "waiting for data in replicated store");
 
             IReadOnlyKeyValueStore<long, IValueAndTimestamp<string>> replicatedStoreWithTimestamp =
@@ -235,7 +235,7 @@ namespace Kafka.Streams.Tests.Integration
 
                     return result.Equals(expected);
                 },
-                30000L,
+                3000L,
                 "waiting for values");
         }
 
@@ -247,18 +247,18 @@ namespace Kafka.Streams.Tests.Integration
         //         globalTableTopic,
         //         Consumed.With(Serdes.Long(), Serdes.String()),
         //         Materialized.As(Stores.InMemoryKeyValueStore(globalStore)));
-        // 
+        //
         //     ProduceInitialGlobalTableValues();
-        // 
+        //
         //     StartStreams();
         //     IReadOnlyKeyValueStore<long, string> store = kafkaStreams.Store(globalStore, QueryableStoreTypes.KeyValueStore<long, string>());
         //     Assert.Equal(4L, store.approximateNumEntries);
         //     IReadOnlyKeyValueStore<long, IValueAndTimestamp<string>> timestampedStore =
         //         kafkaStreams.Store(globalStore, QueryableStoreTypes.TimestampedKeyValueStore<long, string>());
-        // 
+        //
         //     Assert.Equal(4L, timestampedStore.approximateNumEntries);
         //     kafkaStreams.Close();
-        // 
+        //
         //     StartStreams();
         //     store = kafkaStreams.Store(globalStore, QueryableStoreTypes.KeyValueStore<long, string>());
         //     Assert.Equal(4L, store.approximateNumEntries);

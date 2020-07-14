@@ -8,10 +8,26 @@ namespace Kafka.Streams.Processors.Internals
      * InternalTopicConfig captures the properties required for configuring
      * the internal topics we create for change-logs and repartitioning etc.
      */
-    public abstract class InternalTopicConfig
+    public class InternalTopicConfig
     {
+        string name;
+        bool enforceNumberOfPartitions;
+
+        public InternalTopicConfig(string name, Dictionary<string, string?> topicConfigs)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("message", nameof(name));
+            }
+
+            this.name = name;
+            // Topic.validate(name);
+            this.TopicConfigs = topicConfigs ?? throw new ArgumentNullException(nameof(topicConfigs));
+            this.enforceNumberOfPartitions = false;
+        }
+
         public string Name { get; protected set; }
-        public Dictionary<string, string?> topicConfigs { get; protected set; } = new Dictionary<string, string?>();
+        public Dictionary<string, string?> TopicConfigs { get; protected set; } = new Dictionary<string, string?>();
 
         public int numberOfPartitions { get; private set; } = StreamsPartitionAssignor.UNKNOWN;
 
@@ -22,7 +38,10 @@ namespace Kafka.Streams.Processors.Internals
          * @param.AdditionalRetentionMs -.Added to retention to allow for clock drift etc
          * @return Properties to be used when creating the topic
          */
-        public abstract Dictionary<string, string?> GetProperties(Dictionary<string, string?> defaultProperties, long? additionalRetentionMs);
+        public virtual Dictionary<string, string?> GetProperties(Dictionary<string, string?> defaultProperties, long? additionalRetentionMs)
+        {
+            return defaultProperties;
+        }
 
         public void SetNumberOfPartitions(int numberOfPartitions)
         {
@@ -38,7 +57,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             return "InternalTopicConfig(" +
                     "Name=" + this.Name +
-                    ", topicConfigs=" + this.topicConfigs +
+                    ", topicConfigs=" + this.TopicConfigs +
                     ")";
         }
     }

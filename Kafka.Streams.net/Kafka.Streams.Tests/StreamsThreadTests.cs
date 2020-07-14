@@ -241,20 +241,18 @@ namespace Kafka.Streams.Tests
         {
             var commitInterval = 1000L;
             var props = StreamsTestConfigs.GetStandardConfig();
+            var mockTaskManager = TestUtils.GetMockTaskManagerCommit(1);
+            var sc = new ServiceCollection();
+            sc
+                .AddSingleton(mockTaskManager.Object)
+                .AddSingleton(props);
 
             props.StateStoreDirectory = this.stateDir;
             props.CommitIntervalMs = commitInterval;
-
-            var sc = new ServiceCollection().AddSingleton(props);
-
+            var streamsBuilder = TestUtils.GetStreamsBuilder(sc);
             var consumer = new Mock<IConsumer<byte[], byte[]>>();
-            var mockTaskManager = TestUtils.GetMockTaskManagerCommit(1);
 
-            sc.AddSingleton(mockTaskManager.Object);
-
-            var sb = TestUtils.GetStreamsBuilder(sc);
-
-            IStreamThread thread = TestUtils.CreateStreamThread(sb);
+            IStreamThread thread = TestUtils.CreateStreamThread(streamsBuilder);
 
             thread.SetNow(this.mockTime.UtcNow);
             thread.MaybeCommit();

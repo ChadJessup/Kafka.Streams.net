@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public StreamsProducer(
             StreamsConfig config,
-            String threadId,
+            string threadId,
             IKafkaClientSupplier clientSupplier,
             TaskId? taskId,
             Guid? processId)

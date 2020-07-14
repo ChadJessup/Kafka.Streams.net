@@ -15,7 +15,7 @@ namespace Kafka.Streams.Tasks
 
         public TaskId Id { get; }
         public abstract long LatestOffset { get; set; }
-        public abstract TaskState CurrentState { get; }
+        public abstract TaskState CurrentState { get; protected set; }
 
         protected ProcessorTopology topology;
         protected StateDirectory stateDirectory;
@@ -83,6 +83,7 @@ namespace Kafka.Streams.Tasks
             if (this.IsValidTransition(oldState, newState))
             {
                 this.state = newState;
+                this.CurrentState = this.state;
             }
             else
             {
@@ -90,10 +91,7 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        private bool IsValidTransition(TaskState oldState, TaskState newState)
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract bool IsValidTransition(TaskState oldState, TaskState newState);
 
         protected void ExecuteAndMaybeSwallow(
             bool clean,

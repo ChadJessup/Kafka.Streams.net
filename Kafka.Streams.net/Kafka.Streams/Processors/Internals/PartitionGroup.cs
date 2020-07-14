@@ -30,7 +30,8 @@ namespace Kafka.Streams.Processors.Internals
     public class PartitionGroup
     {
         private readonly Dictionary<TopicPartition, RecordQueue> partitionQueues;
-        private readonly SimplePriorityQueue<RecordQueue> nonEmptyQueuesByTime;
+        private readonly SimplePriorityQueue<RecordQueue> nonEmptyQueuesByTime
+            = new SimplePriorityQueue<RecordQueue>();
 
         public DateTime streamTime { get; set; }
         private int totalBuffered;
@@ -55,7 +56,7 @@ namespace Kafka.Streams.Processors.Internals
          */
         public StampedRecord NextRecord<K, V>(RecordInfo LogInformation)
         {
-            StampedRecord record = null;
+            StampedRecord? record = null;
 
             if (this.nonEmptyQueuesByTime.TryDequeue(out var queue))
             {
@@ -66,7 +67,7 @@ namespace Kafka.Streams.Processors.Internals
             if (queue != null)
             {
                 // get the first record from this queue.
-                record = null;// queue.Peek();
+                record = queue.Poll();
 
                 if (record != null)
                 {

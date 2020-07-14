@@ -1,11 +1,12 @@
 ﻿using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Tasks;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Tests.Mocks
 {
-    public class MockChangelogReader : IChangelogReader
+    public class MockChangelogReader : IChangelogRegister
     {
         private readonly List<TopicPartition> registered = new List<TopicPartition>();
         private Dictionary<TopicPartition, long> _restoredOffsets = new Dictionary<TopicPartition, long>();
@@ -41,6 +42,11 @@ namespace Kafka.Streams.Tests.Mocks
         }
 
         public void Remove(IEnumerable<TopicPartition> enumerable)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Register(TopicPartition partition, ProcessorStateManager stateManager)
         {
             throw new System.NotImplementedException();
         }

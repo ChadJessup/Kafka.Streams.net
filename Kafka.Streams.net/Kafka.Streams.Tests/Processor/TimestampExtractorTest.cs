@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 using Xunit;
+using System;
 
 namespace Kafka.Streams.Tests.Processor
 {
@@ -10,7 +11,7 @@ namespace Kafka.Streams.Tests.Processor
         {
             long metadataTimestamp = 42;
 
-            long timestamp = extractor.Extract(
+            var timestamp = extractor.Extract(
                 new ConsumeResult<long, long>
                 {
                     Topic = "anyTopic",
@@ -23,9 +24,9 @@ namespace Kafka.Streams.Tests.Processor
                         Value = 0,
                     }
                 },
-                0);
+                Timestamp.UnixTimestampMsToDateTime(0));
 
-            Assert.Equal(timestamp, metadataTimestamp);
+            Assert.Equal(timestamp.ToEpochMilliseconds(), metadataTimestamp);
         }
     }
 }

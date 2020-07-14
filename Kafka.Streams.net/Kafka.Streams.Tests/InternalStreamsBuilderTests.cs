@@ -82,7 +82,7 @@ namespace Kafka.Streams.Tests
 
             merged
                 .GroupByKey()
-                .Count(KStream.Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("my-table"));
+                .Count(Materialized.As<string, long, IKeyValueStore<Bytes, byte[]>>("my-table"));
 
             this.Builder.BuildAndOptimizeTopology();
 
@@ -94,14 +94,19 @@ namespace Kafka.Streams.Tests
         public void ShouldNotMaterializeSourceKTableIfNotRequired()
         {
             var materializedInternal = new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
-                KStream.Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(null, null), this.Builder, this.storePrefix);
+                Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(null, null),
+                this.Builder,
+                this.storePrefix);
 
-            IKTable<string, string> table1 = this.Builder.Table("topic2", this.consumed, materializedInternal);
+            IKTable<string, string> table1 = this.Builder.Table(
+                "topic2",
+                this.consumed,
+                materializedInternal);
 
             this.Builder.BuildAndOptimizeTopology();
             ProcessorTopology topology = this.Builder.InternalTopologyBuilder
                 .RewriteTopology(StreamsTestConfigs.GetStandardConfig(APP_ID))
-                .Build(null);
+                .Build();
 
             Assert.Empty(topology.StateStores);
             Assert.Empty(topology.StoreToChangelogTopic);
@@ -111,8 +116,10 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void ShouldBuildGlobalTableWithNonQueryableStoreName()
         {
-            var materializedInternal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(null, null), this.Builder, this.storePrefix);
+            var materializedInternal = new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
+                Materialized.With<string, string, IKeyValueStore<Bytes, byte[]>>(null, null),
+                this.Builder,
+                this.storePrefix);
 
             IGlobalKTable<string, string> table1 = this.Builder.GlobalTable("topic2", this.consumed, materializedInternal);
 
@@ -123,7 +130,7 @@ namespace Kafka.Streams.Tests
         public void ShouldBuildGlobalTableWithQueryaIbleStoreName()
         {
             var materializedInternal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("globalTable"), this.Builder, this.storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("globalTable"), this.Builder, this.storePrefix);
             IGlobalKTable<string, string> table1 = this.Builder.GlobalTable("topic2", this.consumed, materializedInternal);
 
             Assert.Equal("globalTable", table1.QueryableStoreName);
@@ -133,7 +140,7 @@ namespace Kafka.Streams.Tests
         public void ShouldBuildSimpleGlobalTableTopology()
         {
             var materializedInternal = new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
-                KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("globalTable"),
+                Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("globalTable"),
                 this.Builder,
                 this.storePrefix);
 
@@ -167,11 +174,19 @@ namespace Kafka.Streams.Tests
         public void ShouldBuildGlobalTopologyWithAllGlobalTables()
         {
             var materializedInternal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("global1"), this.Builder, this.storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
+                     Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("global1"),
+                     this.Builder,
+                     this.storePrefix);
+
             this.Builder.GlobalTable("table", this.consumed, materializedInternal);
 
             var materializedInternal2 =
-                     new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("global2"), this.Builder, this.storePrefix);
+                new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
+                    Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("global2"),
+                    this.Builder,
+                    this.storePrefix);
+
             this.Builder.GlobalTable("table2", this.consumed, materializedInternal2);
 
             this.Builder.BuildAndOptimizeTopology();
@@ -185,15 +200,15 @@ namespace Kafka.Streams.Tests
             var two = "globalTable2";
 
             var materializedInternal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(one), this.Builder, this.storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(one), this.Builder, this.storePrefix);
             IGlobalKTable<string, string> globalTable = this.Builder.GlobalTable("table", this.consumed, materializedInternal);
 
             var materializedInternal2 =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(two), this.Builder, this.storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>(two), this.Builder, this.storePrefix);
             IGlobalKTable<string, string> globalTable2 = this.Builder.GlobalTable("table2", this.consumed, materializedInternal2);
 
             var materializedInternalNotGlobal =
-                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(KStream.Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("not-global"), this.Builder, this.storePrefix);
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized.As<string, string, IKeyValueStore<Bytes, byte[]>>("not-global"), this.Builder, this.storePrefix);
             this.Builder.Table("not-global", this.consumed, materializedInternalNotGlobal);
 
             static string kvMapper(string key, string value) => value;

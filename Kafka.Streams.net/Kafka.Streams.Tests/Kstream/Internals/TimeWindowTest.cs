@@ -109,7 +109,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void cannotCompareTimeWindowWithDifferentWindowType()
         {
-            window.Overlap(sessionWindow);
+            Assert.Throws<ArgumentException>(() => window.Overlap(sessionWindow));
         }
 
         [Fact]

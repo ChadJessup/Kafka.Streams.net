@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <!--<ProjectReference Include="..\..\..\confluent-kafka-dotnet\src\Confluent.Kafka\Confluent.Kafka.csproj" />-->
+    <ProjectReference Include="..\Kafka.Common\Kafka.Common.csproj" />
     <ProjectReference Include="..\Kafka.Streams\Kafka.Streams.csproj" />
   </ItemGroup>
 

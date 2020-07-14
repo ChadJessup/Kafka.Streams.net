@@ -294,9 +294,9 @@ namespace Kafka.Streams.Tests
                     this.globalPartitionsByInputTopic.Add(topicName, partition);
                     this.offsetsByTopicOrPatternPartition.Add(partition, 0);
 
-                    //globalConsumer.UpdatePartitions(topicName, new List<TopicPartitionOffset> { new TopicPartitionOffset(partition, 0) });
+                    globalConsumer.UpdatePartitions(topicName, new List<TopicPartitionOffset> { new TopicPartitionOffset(partition, 0) });
                     globalConsumer.UpdateBeginningOffsets(new Dictionary<TopicPartition, long> { { partition, 0L } });
-                    //globalConsumer.UpdateEndOffsets(new List<TopicPartitionOffset> { new TopicPartitionOffset(partition, 0L) });
+                    globalConsumer.UpdateEndOffsets(new List<TopicPartitionOffset> { new TopicPartitionOffset(partition, 0L) });
                 }
 
                 this.globalStateManager = new GlobalStateManager(
@@ -342,7 +342,9 @@ namespace Kafka.Streams.Tests
         {
             if (this.partitionsByInputTopic.Any())
             {
-                var consumer = new MockConsumer<byte[], byte[]>(null);
+                var consumer = new MockConsumer<byte[], byte[]>(Mock.Of<IConsumer<byte[], byte[]>>(c =>
+                    c.Committed(It.IsAny<IEnumerable<TopicPartition>>(), It.IsAny<TimeSpan>()) == new List<TopicPartitionOffset>()));
+
                 consumer.Assign(this.partitionsByInputTopic.Values);
                 var startOffsets = new Dictionary<TopicPartition, long>();
                 foreach (TopicPartition topicPartition in this.partitionsByInputTopic.Values)
@@ -368,16 +370,23 @@ namespace Kafka.Streams.Tests
                     TaskType.ACTIVE,
                     false,
                     this.stateDirectory,
-                    null,//storeChangelogReader,
+                    new MockChangelogReader(),
                     this.processorTopology.StoreToChangelogTopic,
                     this.partitionsByInputTopic.Values.ToList());
-                    //StreamsConfig.ExactlyOnceConfig.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuaranteeConfig)));
+                //StreamsConfig.ExactlyOnceConfig.Equals(streamsConfig.GetString(StreamsConfig.ProcessingGuaranteeConfig)));
+
+                var streamsProducer = new StreamsProducer(
+                    streamsConfig,
+                    "threadId",
+                    Mock.Of<IKafkaClientSupplier>(),
+                    TASK_ID,
+                    Guid.NewGuid());
 
                 var recordCollector = new RecordCollector(
-                    TASK_ID.ToString(),
+                    TASK_ID,
                     //consumer,
-                    //new StreamsProducer(producer, eosEnabled, logContext, streamsConfig.getString(StreamsConfig.ApplicationIdConfig)),
-                    streamsConfig.GetDefaultProductionExceptionHandler(this.context.Services));
+                    streamsProducer,
+                    streamsConfig.GetDefaultProductionExceptionHandler(this.context.Services).GetType());
                 //eosEnabled);
 
                 this.task = new StreamTask(
@@ -445,9 +454,9 @@ namespace Kafka.Streams.Tests
             Headers? headers)
         {
             TopicPartition inputTopicOrPatternPartition = this.GetInputTopicOrPatternPartition(topicName);
-            TopicPartition globalInputTopicPartition = this.globalPartitionsByInputTopic[topicName];
 
-            if (inputTopicOrPatternPartition == null && globalInputTopicPartition == null)
+            if (this.globalPartitionsByInputTopic.TryGetValue(topicName, out var globalInputTopicPartition)
+                && inputTopicOrPatternPartition == null)
             {
                 throw new ArgumentException("Unknown topic: " + topicName);
             }
@@ -472,25 +481,26 @@ namespace Kafka.Streams.Tests
             byte[] value,
             Headers? headers)
         {
-            this.task.AddRecords(
-                topicOrPatternPartition,
-                null);
-            //new[]
+            this.task.AddRecords(topicOrPatternPartition,
+            new[]
             {
-                //new ConsumeResult<byte[], byte[]>(
-                //    inputTopic,
-                //    topicOrPatternPartition.Partition,
-                //    ++offsetsByTopicOrPatternPartition[topicOrPatternPartition] - 1,
-                //    timestamp,
-                //    TimestampType.CreateTime,
-                //    (long)ConsumeResult.NULL_CHECKSUM,
-                //    key == null ? ConsumeResult.NULL_SIZE : key.Length,
-                //    value == null ? ConsumeResult.NULL_SIZE : value.Length,
-                //    key,
-                //    value,
-                //    headers)
-            }
-            //);
+                new ConsumeResult<byte[], byte[]>
+                {
+                      Message = new Message<byte[], byte[]>
+                      {
+                           Key = key,
+                           Value = value,
+                           Timestamp = new Timestamp(timestamp, TimestampType.CreateTime),
+                           Headers = headers,
+                      },
+                      Offset = ++offsetsByTopicOrPatternPartition[topicOrPatternPartition] - 1,
+                      Partition = topicOrPatternPartition.Partition,
+                      TopicPartitionOffset = new TopicPartitionOffset(
+                      inputTopic,
+                      topicOrPatternPartition.Partition,
+                      ++offsetsByTopicOrPatternPartition[topicOrPatternPartition] - 1),
+                }
+            });
         }
 
         private void CompleteAllProcessableWork()
@@ -586,7 +596,7 @@ namespace Kafka.Streams.Tests
         private void CaptureOutputsAndReEnqueueInternalResults()
         {
             // Capture All the records sent to the producer ...
-            // List<Message<byte[], byte[]>> output = producer.history();
+            List<Message<byte[], byte[]>> output = producer.History();
             // producer.Clear();
             //
             // foreach (Message<byte[], byte[]> record in output)
@@ -824,7 +834,7 @@ namespace Kafka.Streams.Tests
         //     return new TestRecord<>(key, value, record.Headers, record.Timestamp);
         // }
 
-        private void PipeRecord<K, V>(
+        public void PipeRecord<K, V>(
             string topic,
             TestRecord<K, V> record,
             ISerializer<K> keySerializer,
@@ -890,9 +900,9 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public Dictionary<string, IStateStore> GetAllStateStores()
+        public Dictionary<string, IStateStore?> GetAllStateStores()
         {
-            var allStores = new Dictionary<string, IStateStore>();
+            var allStores = new Dictionary<string, IStateStore?>();
 
             foreach (var storeName in this.context.InternalTopologyBuilder.AllStateStoreName())
             {
@@ -924,12 +934,12 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public IStateStore GetStateStore(string Name)// throws ArgumentException
+        public IStateStore? GetStateStore(string Name)
         {
             return this.GetStateStore(Name, true);
         }
 
-        private IStateStore GetStateStore(string Name, bool throwForBuiltInStores)
+        private IStateStore? GetStateStore(string Name, bool throwForBuiltInStores)
         {
             if (this.task != null)
             {
@@ -954,6 +964,7 @@ namespace Kafka.Streams.Tests
                     {
                         this.ThrowIfBuiltInStore(stateStore);
                     }
+
                     return stateStore;
                 }
 

@@ -1,4 +1,5 @@
-﻿using Confluent.Kafka;
+﻿using System;
+using Confluent.Kafka;
 
 namespace Kafka.Streams.Interfaces
 {
@@ -30,6 +31,6 @@ namespace Kafka.Streams.Interfaces
          * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
          * @return the timestamp of the record
          */
-        long Extract<K, V>(ConsumeResult<K, V> record, long partitionTime);
+        DateTime Extract<K, V>(ConsumeResult<K, V> record, DateTime partitionTime);
     }
 }

@@ -114,6 +114,7 @@ namespace Kafka.Streams.Threads.Stream
             //this.maxPollTimeMs = new InternalConsumerConfig(config.GetMainConsumerConfigs("dummyGroupId", "dummyClientId", dummyThreadIdx))
             // .GetInt(configPropertyNames.MAX_POLL_INTERVAL_MS_CONFIG);
 
+            this.RestoreConsumer = restoreConsumer;
             //this.RestoreConsumer = this.CreateRestoreConsumer(
             //    config,
             //    clientSupplier,

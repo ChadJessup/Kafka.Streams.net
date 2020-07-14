@@ -53,11 +53,8 @@ namespace Kafka.Streams.Tests
         public KafkaStreamThreadTests()
         {
             this.processId = Guid.NewGuid();
+            this.streamsBuilder = TestUtils.GetStreamsBuilder();
 
-            this.config = StreamsTestConfigs.GetStandardConfig(nameof(KafkaStreamThreadTests));
-            var sc = new ServiceCollection().AddSingleton(this.config);
-
-            this.streamsBuilder = new StreamsBuilder(sc);
             var services = this.streamsBuilder.Context.Services;
             this.stateDirectory = services.GetRequiredService<StateDirectory>();
 
@@ -71,7 +68,6 @@ namespace Kafka.Streams.Tests
         public void TestPartitionAssignmentChangeForSingleGroup()
         {
             var sp = new ServiceCollection();
-            sp.AddSingleton(this.config);
 
             var mockConsumer = new Mock<IConsumer<byte[], byte[]>>().SetupAllProperties().Object;
 
@@ -79,7 +75,7 @@ namespace Kafka.Streams.Tests
                 mockConsumer: new MockConsumer<byte[], byte[]>(mockConsumer),
                 mockRestoreConsumer: new MockRestoreConsumer(mockConsumer));
 
-            sp.AddSingleton(mockClientSupplier.GetType());
+            sp.AddSingleton(mockClientSupplier.Object.GetType());
             this.streamsBuilder = new StreamsBuilder(sp);
 
             this.internalTopologyBuilder.AddSource<string, string>(
@@ -173,7 +169,7 @@ namespace Kafka.Streams.Tests
         // string defaultGroupName = "stream-metrics";
         // var defaultTags = Collections.singletonMap("client-id", thread.getName());
         // string descriptionIsNotVerified = "";
-        // 
+        //
         // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-latency-avg", defaultGroupName, descriptionIsNotVerified, defaultTags)));
         // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
@@ -218,7 +214,7 @@ namespace Kafka.Streams.Tests
         //     "skipped-records-rate", defaultGroupName, descriptionIsNotVerified, defaultTags)));
         // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "skipped-records-total", defaultGroupName, descriptionIsNotVerified, defaultTags)));
-        // 
+        //
         // string TaskGroupName = "stream-Task-metrics";
         // var TaskTags =
         //     mkMap(mkEntry("Task-id", "All"), mkEntry("client-id", thread.getName()));
@@ -228,7 +224,7 @@ namespace Kafka.Streams.Tests
         //     "commit-latency-max", TaskGroupName, descriptionIsNotVerified, TaskTags)));
         // Assert.NotNull(metrics.metrics().Get(metrics.metricName(
         //     "commit-rate", TaskGroupName, descriptionIsNotVerified, TaskTags)));
-        // 
+        //
         // JmxReporter reporter = new JmxReporter("kafka.streams");
         // metrics.addReporter(reporter);
         // Assert.Equal(clientId + "-KafkaStreamThread-1", thread.getName());

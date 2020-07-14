@@ -64,5 +64,10 @@ namespace Kafka.Streams.KStream.Internals
         {
             throw new NotImplementedException();
         }
+
+        internal void Rewind()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

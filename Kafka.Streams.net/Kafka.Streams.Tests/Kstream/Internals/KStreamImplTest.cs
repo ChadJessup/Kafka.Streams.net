@@ -216,7 +216,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         //     string input = "topic";
         //     IKStream<string, string> stream = builder.Stream(input, stringConsumed);
         //     stream.Through("through-topic", Produced.With(Serdes.String(), Serdes.String()).Process(processorSupplier));
-        // 
+        //
         //     var driver = new TopologyTestDriver(builder.Build(), props);
         //     driver.PipeInput(recordFactory.Create(input, "a", "b"));
         //     Assert.Equal(processorSupplier.TheCapturedProcessor().processed, Collections.singletonList(new KeyValueTimestamp<string, string>("a", "b", 0)));
@@ -276,11 +276,11 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         //                             Serdes.String(),
         //                             Serdes.String()))
         //           .To("output-topic", Produced.With(Serdes.String(), Serdes.String()));
-        // 
+        //
         //     ProcessorTopology topology = TopologyWrapper.getInternalTopologyBuilder(builder.Build()).SetApplicationId("X").Build();
-        // 
+        //
         //     ISourceNode originalSourceNode = topology.Source("topic-1");
-        // 
+        //
         //     foreach (SourceNode sourceNode in topology.Sources())
         //     {
         //         if (sourceNode.Name.Equals(originalSourceNode.Name))
@@ -385,22 +385,22 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             Assert.Throws<ArgumentNullException>(() => testStream.Map<string, string>(null));
         }
 
-        [Fact] // (typeof(expected = NullReferenceException))
+        [Fact]
         public void ShouldNotAllowNullMapperOnMapValues()
         {
             Assert.Throws<ArgumentNullException>(() => testStream.MapValues((ValueMapper<string, string>)null));
         }
 
-        [Fact] // (typeof(expected = NullReferenceException))
+        [Fact]
         public void ShouldNotAllowNullMapperOnMapValuesWithKey()
         {
-            testStream.MapValues((ValueMapperWithKey<string, string, string>)null);
+            Assert.Throws<ArgumentNullException>(() => testStream.MapValues((ValueMapperWithKey<string, string, string>)null));
         }
 
-        [Fact] // (typeof(expected = NullReferenceException))
+        [Fact]
         public void ShouldNotAllowNullMapperOnFlatMap()
         {
-            testStream.FlatMap<string, string>(null);
+            Assert.Throws<ArgumentNullException>(() => testStream.FlatMap<string, string>(null));
         }
 
         [Fact]

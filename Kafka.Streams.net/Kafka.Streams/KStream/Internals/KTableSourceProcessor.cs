@@ -1,4 +1,5 @@
-﻿using Kafka.Streams.Processors;
+﻿using System;
+using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.TimeStamped;
@@ -12,17 +13,16 @@ namespace Kafka.Streams.KStream.Internals
         private readonly KafkaStreamsContext context;
         private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
-        private readonly string queryableName;
+        private readonly string? queryableName;
         private readonly bool sendOldValues;
 
         public KTableSourceProcessor(
             KafkaStreamsContext context,
-            ILogger<KTableSourceProcessor<K, V>> logger,
-            string queryableName,
+            string? queryableName,
             bool sendOldValues)
         {
-            this.logger = logger;
-            this.context = context;
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.logger = this.context.CreateLogger<KTableSourceProcessor<K, V>>();
             this.queryableName = queryableName;
             this.sendOldValues = sendOldValues;
         }
@@ -62,7 +62,7 @@ namespace Kafka.Streams.KStream.Internals
                 if (oldValueAndTimestamp != null)
                 {
                     oldValue = oldValueAndTimestamp.Value;
-                    
+
                     if (this.Context.Timestamp < oldValueAndTimestamp.Timestamp)
                     {
                         this.logger.LogWarning("Detected out-of-order KTable update for {} at offset {}, partition {}.",

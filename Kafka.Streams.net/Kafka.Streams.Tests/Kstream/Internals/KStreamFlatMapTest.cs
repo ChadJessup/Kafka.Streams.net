@@ -1,5 +1,4 @@
 using Confluent.Kafka;
-using Kafka.Streams;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
@@ -16,6 +15,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         private readonly ConsumerRecordFactory<int, string> recordFactory =
             new ConsumerRecordFactory<int, string>(Serializers.Int32, Serializers.Utf8, 0L);
+
         private readonly StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
 
         [Fact]
@@ -44,9 +44,11 @@ namespace Kafka.Streams.KStream.Internals
             stream.FlatMap(mapper).Process(supplier);
 
             var driver = new TopologyTestDriver(builder.Context, builder.Build(), this.props);
+
             foreach (var expectedKey in expectedKeys)
             {
-                driver.PipeInput(this.recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
+                var cr = this.recordFactory.Create(topicName, expectedKey, "V" + expectedKey);
+                driver.PipeInput(new List<ConsumeResult<byte[], byte[]>> { cr });
             }
 
             Assert.Equal(6, supplier.TheCapturedProcessor().processed.Count);

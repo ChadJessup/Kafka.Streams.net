@@ -1,10 +1,11 @@
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals.Assignmentss;
+using Kafka.Streams.Processors.Internals.Assignments;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Kstream.Internals
@@ -12,12 +13,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
     public class KStreamPrintTest
     {
 
-        private readonly ByteArrayOutputStream byteOutStream;
+        private readonly Stream byteOutStream;
         private readonly IKeyValueProcessor<int, string> printProcessor;
 
         public KStreamPrintTest()
         {
-            byteOutStream = new ByteArrayOutputStream();
+            byteOutStream = new MemoryStream();
 
             KStreamPrint<int, string> kStreamPrint = new KStreamPrint<int, string>(
                 //byteOutStream,

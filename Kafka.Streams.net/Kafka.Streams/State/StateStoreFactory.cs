@@ -4,13 +4,13 @@ namespace Kafka.Streams.State
 {
     public interface IStateStoreFactory
     {
+        IStateStore Build();
     }
 
     public interface IStateStoreFactory<out T> : IStateStoreFactory
         where T :IStateStore
     {
         IStoreBuilder<T> Builder { get; }
-        IStateStore Build();
         HashSet<string> Users { get; }
         string Name { get; }
     }
@@ -19,7 +19,7 @@ namespace Kafka.Streams.State
         where T : IStateStore
     {
         public HashSet<string> Users { get; } = new HashSet<string>();
-        
+
         public IStoreBuilder<T> Builder { get; }
 
         public StateStoreFactory(IStoreBuilder<T> builder)

@@ -1,373 +1,541 @@
-//using Confluent.Kafka;
-//using Kafka.Streams.Errors;
-//using Kafka.Streams.KStream.Internals;
-//using Kafka.Streams.State;
-//using Microsoft.Extensions.Logging;
-//using System;
-//using System.Collections.Generic;
-//using System.IO;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Confluent.Kafka;
+using Kafka.Streams.Errors;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.State;
+using Kafka.Streams.Tasks;
+using Microsoft.Extensions.Logging;
 
-//namespace Kafka.Streams.Processors.Internals.Assignments
-//{
-//    public class AssignmentInfo
-//    {
-//        private static ILogger log = new LoggerFactory().CreateLogger<AssignmentInfo>();
+namespace Kafka.Streams.Processors.Internals.Assignments
+{
+    public class StreamsAssignmentProtocolVersions
+    {
+        public static int UNKNOWN = -1;
+        public static int EARLIEST_PROBEABLE_VERSION = 3;
+        public static int LATEST_SUPPORTED_VERSION = 7;
+    }
 
-//        public static int LATEST_SUPPORTED_VERSION = 4;
-//        static int UNKNOWN = -1;
+    public class AssignmentInfo
+    {
+        private static ILogger<AssignmentInfo> log = null;
 
-//        private int usedVersion;
-//        public int latestSupportedVersion { get; }
-//        public int errCode { get; }
-//        public List<TaskId> activeTasks { get; }
-//        public Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks { get; set; }
-//        public Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost { get; set; }
+        private int usedVersion;
+        private int commonlySupportedVersion;
+        private List<TaskId> activeTasks;
+        private Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks;
+        private Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost;
+        private Dictionary<HostInfo, HashSet<TopicPartition>> standbyPartitionsByHost;
+        private int errCode;
+        private long nextRebalanceMs = long.MaxValue;
 
-//        // used for decoding; don't apply version checks
-//        private AssignmentInfo(int version,
-//                               int latestSupportedVersion)
-//        {
-//            this.usedVersion = version;
-//            this.latestSupportedVersion = latestSupportedVersion;
-//            this.errCode = 0;
-//        }
+        // used for decoding and "future consumer" assignments during version probing
+        public AssignmentInfo(int version, int commonlySupportedVersion)
+            : this(
+                  version,
+                  commonlySupportedVersion,
+                  new List<TaskId>(),
+                  new Dictionary<TaskId, HashSet<TopicPartition>>(),
+                  new Dictionary<HostInfo, HashSet<TopicPartition>>(),
+                  new Dictionary<HostInfo, HashSet<TopicPartition>>(),
+                  0)
+        {
+        }
 
-//        public AssignmentInfo(List<TaskId> activeTasks,
-//                              Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks,
-//                              Dictionary<HostInfo, HashSet<TopicPartition>> hostState)
-//            : this(LATEST_SUPPORTED_VERSION, activeTasks, standbyTasks, hostState, 0)
-//        {
-//        }
+        public AssignmentInfo(
+            int version,
+            List<TaskId> activeTasks,
+            Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks,
+            Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost,
+            Dictionary<HostInfo, HashSet<TopicPartition>> standbyPartitionsByHost,
+            int errCode)
+            : this(
+                  version,
+                  StreamsAssignmentProtocolVersions.LATEST_SUPPORTED_VERSION,
+                  activeTasks,
+                  standbyTasks,
+                  partitionsByHost,
+                  standbyPartitionsByHost,
+                  errCode)
+        {
+        }
 
-//        public AssignmentInfo()
-//            : this(LATEST_SUPPORTED_VERSION,
-//                Collections.emptyList(),
-//                Collections.emptyMap(),
-//                Collections.emptyMap(),
-//                0)
-//        {
-//        }
+        public AssignmentInfo(
+            int version,
+            int commonlySupportedVersion,
+            List<TaskId> activeTasks,
+            Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks,
+            Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost,
+            Dictionary<HostInfo, HashSet<TopicPartition>> standbyPartitionsByHost,
+            int errCode)
+        {
+            this.usedVersion = version;
+            this.commonlySupportedVersion = commonlySupportedVersion;
+            this.activeTasks = activeTasks;
+            this.standbyTasks = standbyTasks;
+            this.partitionsByHost = partitionsByHost;
+            this.standbyPartitionsByHost = standbyPartitionsByHost;
+            this.errCode = errCode;
 
-//        public AssignmentInfo(int version,
-//                              List<TaskId> activeTasks,
-//                              Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks,
-//                              Dictionary<HostInfo, HashSet<TopicPartition>> hostState,
-//                              int errCode)
-//            : this(version, LATEST_SUPPORTED_VERSION, activeTasks, standbyTasks, hostState, errCode)
-//        {
-//            if (version < 1 || version > LATEST_SUPPORTED_VERSION)
-//            {
-//                throw new System.ArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
-//                    + "; was: " + version);
-//            }
-//        }
+            if (version < 1 || version > StreamsAssignmentProtocolVersions.LATEST_SUPPORTED_VERSION)
+            {
+                throw new ArgumentException("version must be between 1 and " + StreamsAssignmentProtocolVersions.LATEST_SUPPORTED_VERSION
+                    + "; was: " + version);
+            }
+        }
 
-//        // for testing only; don't apply version checks
-//        public AssignmentInfo(int version,
-//                       int latestSupportedVersion,
-//                       List<TaskId> activeTasks,
-//                       Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks,
-//                       Dictionary<HostInfo, HashSet<TopicPartition>> hostState,
-//                       int errCode)
-//        {
-//            this.usedVersion = version;
-//            this.latestSupportedVersion = latestSupportedVersion;
-//            this.activeTasks = activeTasks;
-//            this.standbyTasks = standbyTasks;
-//            this.partitionsByHost = hostState;
-//            this.errCode = errCode;
-//        }
+        public void setNextRebalanceTime(long nextRebalanceTimeMs)
+        {
+            this.nextRebalanceMs = nextRebalanceTimeMs;
+        }
 
-//        public int version()
-//        {
-//            return usedVersion;
-//        }
+        public int version()
+        {
+            return this.usedVersion;
+        }
 
-//        /**
-//         * @throws TaskAssignmentException if method fails to encode the data, e.g., if there is an
-//         * IO exception during encoding
-//         */
-//        public ByteBuffer encode()
-//        {
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            try
-//            {
-//                using (DataOutputStream @out = new DataOutputStream(baos))
-//                {
-//                    switch (usedVersion)
-//                    {
-//                        case 1:
-//                            encodeVersionOne(@out);
-//                            break;
-//                        case 2:
-//                            encodeVersionTwo(@out);
-//                            break;
-//                        case 3:
-//                            encodeVersionThree(@out);
-//                            break;
-//                        case 4:
-//                            encodeVersionFour(@out);
-//                            break;
-//                        default:
-//                            throw new InvalidOperationException("Unknown metadata version: " + usedVersion
-//                                + "; latest supported version: " + LATEST_SUPPORTED_VERSION);
-//                    }
+        /**
+         * @throws TaskAssignmentException if method fails to encode the data, e.g., if there is an
+         * IO exception during encoding
+         */
+        public ByteBuffer Encode()
+        {
+            using var baos = new MemoryStream();
 
-//                    @out.Flush();
-//                    @out.Close();
+            try
+            {
+                using var bw = new BinaryWriter(baos);
 
-//                    return new ByteBuffer().Wrap(baos.toByteArray());
-//                }
-//            }
-//            catch (IOException ex)
-//            {
-//                throw new TaskAssignmentException("Failed to encode AssignmentInfo", ex);
-//            }
-//        }
+                switch (this.usedVersion)
+                {
+                    case 1:
+                        bw.Write(this.usedVersion); // version
+                        this.encodeActiveAndStandbyTaskAssignment(baos);
+                        break;
+                    case 2:
+                        bw.Write(this.usedVersion); // version
+                        this.encodeActiveAndStandbyTaskAssignment(baos);
+                        this.EncodePartitionsByHost(baos);
+                        break;
+                    case 3:
+                        bw.Write(this.usedVersion);
+                        bw.Write(this.commonlySupportedVersion);
+                        this.encodeActiveAndStandbyTaskAssignment(baos);
+                        this.EncodePartitionsByHost(baos);
+                        break;
+                    case 4:
+                        bw.Write(this.usedVersion);
+                        bw.Write(this.commonlySupportedVersion);
+                        this.encodeActiveAndStandbyTaskAssignment(baos);
+                        this.EncodePartitionsByHost(baos);
+                        bw.Write(this.errCode);
+                        break;
+                    case 5:
+                        bw.Write(this.usedVersion);
+                        bw.Write(this.commonlySupportedVersion);
+                        this.encodeActiveAndStandbyTaskAssignment(baos);
+                        this.encodePartitionsByHostAsDictionary(baos);
+                        bw.Write(this.errCode);
+                        break;
+                    case 6:
+                        bw.Write(this.usedVersion);
+                        bw.Write(this.commonlySupportedVersion);
+                        this.encodeActiveAndStandbyTaskAssignment(baos);
+                        this.encodeActiveAndStandbyHostPartitions(baos);
+                        bw.Write(this.errCode);
+                        break;
+                    case 7:
+                        bw.Write(this.usedVersion);
+                        bw.Write(this.commonlySupportedVersion);
+                        this.encodeActiveAndStandbyTaskAssignment(baos);
+                        this.encodeActiveAndStandbyHostPartitions(baos);
+                        bw.Write(this.errCode);
+                        bw.Write(this.nextRebalanceMs);
+                        break;
+                    default:
+                        throw new InvalidProgramException("Unknown metadata version: " + this.usedVersion
+                                + "; latest commonly supported version: " + this.commonlySupportedVersion);
+                }
 
-//        private void encodeVersionOne(DataOutputStream @out)
-//        {
-//            @out.writeInt(1); // version
-//            encodeActiveAndStandbyTaskAssignment(@out);
-//        }
+                baos.Flush();
+                baos.Close();
 
-//        private void encodeActiveAndStandbyTaskAssignment(DataOutputStream @out)
-//        {
-//            // encode active tasks
-//            @out.writeInt(activeTasks.size());
-//            foreach (TaskId id in activeTasks)
-//            {
-//                id.writeTo(@out);
-//            }
+                return new ByteBuffer().Wrap(baos.ToArray());
+            }
+            catch (IOException ex)
+            {
+                throw new TaskAssignmentException("Failed to encode AssignmentInfo", ex);
+            }
+        }
 
-//            // encode standby tasks
-//            @out.writeInt(standbyTasks.size());
-//            foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in standbyTasks)
-//            {
-//                TaskId id = entry.Key;
-//                id.writeTo(@out);
+        private void encodeActiveAndStandbyTaskAssignment(Stream output)
+        {
+            using var bw = new BinaryWriter(output);
 
-//                HashSet<TopicPartition> partitions = entry.Value;
-//                writeTopicPartitions(@out, partitions);
-//            }
-//        }
+            // encode active tasks
+            bw.Write(this.activeTasks.Count);
+            foreach (TaskId id in this.activeTasks)
+            {
+                id.WriteTo(output);
+            }
 
-//        private void encodeVersionTwo(DataOutputStream @out)
-//        {
-//            @out.writeInt(2); // version
-//            encodeActiveAndStandbyTaskAssignment(@out);
-//            encodePartitionsByHost(@out);
-//        }
+            // encode standby tasks
+            bw.Write(this.standbyTasks.Count);
+            foreach (var entry in this.standbyTasks)
+            {
+                TaskId id = entry.Key;
+                id.WriteTo(output);
 
-//        private void encodePartitionsByHost(DataOutputStream @out)
-//        {
-//            // encode partitions by host
-//            @out.writeInt(partitionsByHost.Count);
-//            foreach (KeyValuePair<HostInfo, HashSet<TopicPartition>> entry in partitionsByHost)
-//            {
-//                HostInfo hostInfo = entry.Key;
-//                @out.writeUTF(hostInfo.host);
-//                @out.writeInt(hostInfo.port);
-//                writeTopicPartitions(@out, entry.Value);
-//            }
-//        }
+                HashSet<TopicPartition> partitions = entry.Value;
+                this.writeTopicPartitions(output, partitions);
+            }
+        }
 
-//        private void writeTopicPartitions(DataOutputStream @out,
-//                                          HashSet<TopicPartition> partitions)
-//        {
-//            @out.writeInt(partitions.size());
-//            foreach (TopicPartition partition in partitions)
-//            {
-//                @out.writeUTF(partition.Topic);
-//                @out.writeInt(partition.Partition);
-//            }
-//        }
+        private void EncodePartitionsByHost(Stream output)
+        {
+            using var bw = new BinaryWriter(output);
 
-//        private void encodeVersionThree(DataOutputStream output)
-//        {
-//            output.writeInt(3);
-//            output.writeInt(LATEST_SUPPORTED_VERSION);
-//            encodeActiveAndStandbyTaskAssignment(output);
-//            encodePartitionsByHost(output);
-//        }
+            // encode partitions by host
+            bw.Write(this.partitionsByHost.Count);
+            foreach (var entry in this.partitionsByHost)
+            {
+                this.writeHostInfo(output, entry.Key);
+                this.writeTopicPartitions(output, entry.Value);
+            }
+        }
 
-//        private void encodeVersionFour(DataOutputStream output)
-//        {
-//            output.writeInt(4);
-//            output.writeInt(LATEST_SUPPORTED_VERSION);
-//            encodeActiveAndStandbyTaskAssignment(output);
-//            encodePartitionsByHost(output);
-//            output.writeInt(errCode);
-//        }
+        private void encodeHostPartitionMapUsingDictionary(
+            Stream output,
+            Dictionary<string, int> topicNameDict,
+            Dictionary<HostInfo, HashSet<TopicPartition>> hostPartitionMap)
+        {
+            using var bw = new BinaryWriter(output);
 
-//        /**
-//         * @throws TaskAssignmentException if method fails to decode the data or if the data version is unknown
-//         */
-//        public static AssignmentInfo decode(ByteBuffer data)
-//        {
-//            // ensure we are at the beginning of the ByteBuffer
-//            data.rewind();
+            // encode partitions by host
+            bw.Write(hostPartitionMap.Count);
 
-//            try
-//            {
-//                using (DataInputStream input = new DataInputStream(new ByteBufferInputStream(data)))
-//                {
-//                    AssignmentInfo assignmentInfo;
+            // Write the topic index, partition
+            foreach (var entry in hostPartitionMap)
+            {
+                this.writeHostInfo(output, entry.Key);
+                bw.Write(entry.Value.Count);
+                foreach (TopicPartition partition in entry.Value)
+                {
+                    bw.Write(topicNameDict[partition.Topic]);
+                    bw.Write(partition.Partition);
+                }
+            }
+        }
 
-//                    int usedVersion = input.readInt();
-//                    int latestSupportedVersion;
-//                    switch (usedVersion)
-//                    {
-//                        case 1:
-//                            assignmentInfo = new AssignmentInfo(usedVersion, UNKNOWN);
-//                            decodeVersionOneData(assignmentInfo, input);
-//                            break;
-//                        case 2:
-//                            assignmentInfo = new AssignmentInfo(usedVersion, UNKNOWN);
-//                            decodeVersionTwoData(assignmentInfo, input);
-//                            break;
-//                        case 3:
-//                            latestSupportedVersion = input.readInt();
-//                            assignmentInfo = new AssignmentInfo(usedVersion, latestSupportedVersion);
-//                            decodeVersionThreeData(assignmentInfo, input);
-//                            break;
-//                        case 4:
-//                            latestSupportedVersion = input.readInt();
-//                            assignmentInfo = new AssignmentInfo(usedVersion, latestSupportedVersion);
-//                            decodeVersionFourData(assignmentInfo, input);
-//                            break;
-//                        default:
-//                            TaskAssignmentException fatalException = new TaskAssignmentException("Unable to decode assignment data: " +
-//                                "used version: " + usedVersion + "; latest supported version: " + LATEST_SUPPORTED_VERSION);
-//                            log.LogError(fatalException.Message, fatalException);
-//                            throw fatalException;
-//                    }
+        private Dictionary<string, int> encodeTopicDictionaryAndGet(
+            Stream output,
+            HashSet<TopicPartition> topicPartitions)
+        {
+            using var bw = new BinaryWriter(output);
 
-//                    return assignmentInfo;
-//                }
-//            }
-//            catch (IOException ex)
-//            {
-//                throw new TaskAssignmentException("Failed to decode AssignmentInfo", ex);
-//            }
-//        }
+            // Build a dictionary to encode topicNames
+            int topicIndex = 0;
+            Dictionary<string, int> topicNameDict = new Dictionary<string, int>();
+            foreach (TopicPartition topicPartition in topicPartitions)
+            {
+                if (!topicNameDict.ContainsKey(topicPartition.Topic))
+                {
+                    topicNameDict.Add(topicPartition.Topic, topicIndex++);
+                }
+            }
 
-//        private static void decodeVersionOneData(AssignmentInfo assignmentInfo,
-//                                                 DataInputStream input)
-//        {
-//            decodeActiveTasks(assignmentInfo, input);
-//            decodeStandbyTasks(assignmentInfo, input);
-//            assignmentInfo.partitionsByHost = new Dictionary<>();
-//        }
+            // write the topic name dictionary output
+            bw.Write(topicNameDict.Count);
+            foreach (var entry in topicNameDict)
+            {
+                bw.Write(entry.Value);
+                bw.Write(entry.Key);
+            }
 
-//        private static void decodeActiveTasks(
-//            AssignmentInfo assignmentInfo,
-//            DataInputStream input)
-//        {
-//            int count = input.readInt();
-//            assignmentInfo.activeTasks = new List<TaskId>(count);
-//            for (int i = 0; i < count; i++)
-//            {
-//                //assignmentInfo.activeTasks.Add(TaskId.readFrom());
-//            }
-//        }
+            return topicNameDict;
+        }
 
-//        private static void decodeStandbyTasks(AssignmentInfo assignmentInfo,
-//                                               DataInputStream input)
-//        {
-//            int count = input.readInt();
-//            assignmentInfo.standbyTasks = new Dictionary<>(count);
-//            for (int i = 0; i < count; i++)
-//            {
-//                // TaskId id = TaskId.readFrom(in);
-//                assignmentInfo.standbyTasks.Add(id, readTopicPartitions(input));
-//            }
-//        }
+        private void encodePartitionsByHostAsDictionary(Stream output)
+        {
+            HashSet<TopicPartition> allTopicPartitions = this.partitionsByHost.Values
+                .SelectMany(t => t)
+                .ToHashSet();
 
-//        private static void decodeVersionTwoData(
-//            AssignmentInfo assignmentInfo,
-//            DataInputStream input)
-//        {
-//            decodeActiveTasks(assignmentInfo, input);
-//            decodeStandbyTasks(assignmentInfo, input);
-//            decodeGlobalAssignmentData(assignmentInfo, input);
-//        }
+            Dictionary<string, int> topicNameDict = this.encodeTopicDictionaryAndGet(output, allTopicPartitions);
+            this.encodeHostPartitionMapUsingDictionary(output, topicNameDict, this.partitionsByHost);
+        }
 
-//        private static void decodeGlobalAssignmentData(
-//            AssignmentInfo assignmentInfo,
-//            DataInputStream input)
-//        {
-//            assignmentInfo.partitionsByHost = new Dictionary<HostInfo, HashSet<TopicPartition>>();
-//            int numEntries = input.readInt();
-//            for (int i = 0; i < numEntries; i++)
-//            {
-//                HostInfo hostInfo = new HostInfo(input.readUTF(), input.readInt());
-//                assignmentInfo.partitionsByHost.Add(hostInfo, readTopicPartitions(input));
-//            }
-//        }
+        private void encodeActiveAndStandbyHostPartitions(Stream output)
+        {
+            HashSet<TopicPartition> allTopicPartitions =
+                this.partitionsByHost.Values.Concat(this.standbyPartitionsByHost.Values)
+                .SelectMany(t => t)
+                .ToHashSet();
 
-//        private static HashSet<TopicPartition> readTopicPartitions(DataInputStream input)
-//        {
-//            int numPartitions = input.readInt();
-//            HashSet<TopicPartition> partitions = new HashSet<TopicPartition>(numPartitions);
-//            for (int j = 0; j < numPartitions; j++)
-//            {
-//                partitions.Add(new TopicPartition(input.readUTF(), input.readInt()));
-//            }
-//            return partitions;
-//        }
+            Dictionary<string, int> topicNameDict = this.encodeTopicDictionaryAndGet(output, allTopicPartitions);
+            this.encodeHostPartitionMapUsingDictionary(output, topicNameDict, this.partitionsByHost);
+            this.encodeHostPartitionMapUsingDictionary(output, topicNameDict, this.standbyPartitionsByHost);
+        }
 
-//        private static void decodeVersionThreeData(AssignmentInfo assignmentInfo,
-//                                                   DataInputStream input)
-//        {
-//            decodeActiveTasks(assignmentInfo, input);
-//            decodeStandbyTasks(assignmentInfo, input);
-//            decodeGlobalAssignmentData(assignmentInfo, input);
-//        }
+        private void writeHostInfo(Stream output, HostInfo hostInfo)
+        {
+            using var bw = new BinaryWriter(output);
 
-//        private static void decodeVersionFourData(AssignmentInfo assignmentInfo,
-//                                                  DataInputStream input)
-//        {
-//            decodeVersionThreeData(assignmentInfo, input);
-//            assignmentInfo.errCode = input.readInt();
-//        }
+            bw.Write(hostInfo.host);
+            bw.Write(hostInfo.port);
+        }
 
+        private void writeTopicPartitions(Stream output, HashSet<TopicPartition> partitions)
+        {
+            using var bw = new BinaryWriter(output);
 
-//        public int GetHashCode()
-//        {
-//            return usedVersion ^ latestSupportedVersion ^ activeTasks.GetHashCode() ^ standbyTasks.GetHashCode()
-//                ^ partitionsByHost.GetHashCode() ^ errCode;
-//        }
+            bw.Write(partitions.Count);
+            foreach (TopicPartition partition in partitions)
+            {
+                bw.Write(partition.Topic);
+                bw.Write(partition.Partition);
+            }
+        }
 
+        /**
+         * @throws TaskAssignmentException if method fails to decode the data or if the data version is unknown
+         */
+        public static AssignmentInfo decode(ByteBuffer data)
+        {
+            // ensure we are at the beginning of the ByteBuffer
+            data.Rewind();
 
-//        public bool Equals(object o)
-//        {
-//            if (o is AssignmentInfo)
-//            {
-//                AssignmentInfo other = (AssignmentInfo)o;
-//                return usedVersion == other.usedVersion &&
-//                        latestSupportedVersion == other.latestSupportedVersion &&
-//                        errCode == other.errCode &&
-//                        activeTasks.Equals(other.activeTasks) &&
-//                        standbyTasks.Equals(other.standbyTasks) &&
-//                        partitionsByHost.Equals(other.partitionsByHost);
-//            }
-//            else
-//            {
+            try
+            {
+                Stream stream = new MemoryStream(data.Array());
+                using var br = new BinaryReader(stream);
+                AssignmentInfo assignmentInfo;
 
-//                return false;
-//            }
-//        }
+                int usedVersion = br.ReadInt32();
+                int commonlySupportedVersion;
+                switch (usedVersion)
+                {
+                    case 1:
+                        assignmentInfo = new AssignmentInfo(usedVersion, StreamsAssignmentProtocolVersions.UNKNOWN);
+                        decodeActiveTasks(assignmentInfo, stream);
+                        decodeStandbyTasks(assignmentInfo, stream);
+                        assignmentInfo.partitionsByHost = new Dictionary<HostInfo, HashSet<TopicPartition>>();
+                        break;
+                    case 2:
+                        assignmentInfo = new AssignmentInfo(usedVersion, StreamsAssignmentProtocolVersions.UNKNOWN);
+                        decodeActiveTasks(assignmentInfo, stream);
+                        decodeStandbyTasks(assignmentInfo, stream);
+                        decodePartitionsByHost(assignmentInfo, stream);
+                        break;
+                    case 3:
+                        commonlySupportedVersion = br.ReadInt32();
+                        assignmentInfo = new AssignmentInfo(usedVersion, commonlySupportedVersion);
+                        decodeActiveTasks(assignmentInfo, stream);
+                        decodeStandbyTasks(assignmentInfo, stream);
+                        decodePartitionsByHost(assignmentInfo, stream);
+                        break;
+                    case 4:
+                        commonlySupportedVersion = br.ReadInt32();
+                        assignmentInfo = new AssignmentInfo(usedVersion, commonlySupportedVersion);
+                        decodeActiveTasks(assignmentInfo, stream);
+                        decodeStandbyTasks(assignmentInfo, stream);
+                        decodePartitionsByHost(assignmentInfo, stream);
+                        assignmentInfo.errCode = br.ReadInt32();
+                        break;
+                    case 5:
+                        commonlySupportedVersion = br.ReadInt32();
+                        assignmentInfo = new AssignmentInfo(usedVersion, commonlySupportedVersion);
+                        decodeActiveTasks(assignmentInfo, stream);
+                        decodeStandbyTasks(assignmentInfo, stream);
+                        decodePartitionsByHostUsingDictionary(assignmentInfo, stream);
+                        assignmentInfo.errCode = br.ReadInt32();
+                        break;
+                    case 6:
+                        commonlySupportedVersion = br.ReadInt32();
+                        assignmentInfo = new AssignmentInfo(usedVersion, commonlySupportedVersion);
+                        decodeActiveTasks(assignmentInfo, stream);
+                        decodeStandbyTasks(assignmentInfo, stream);
+                        decodeActiveAndStandbyHostPartitions(assignmentInfo, stream);
+                        assignmentInfo.errCode = br.ReadInt32();
+                        break;
+                    case 7:
+                        commonlySupportedVersion = br.ReadInt32();
+                        assignmentInfo = new AssignmentInfo(usedVersion, commonlySupportedVersion);
+                        decodeActiveTasks(assignmentInfo, stream);
+                        decodeStandbyTasks(assignmentInfo, stream);
+                        decodeActiveAndStandbyHostPartitions(assignmentInfo, stream);
+                        assignmentInfo.errCode = br.ReadInt32();
+                        assignmentInfo.nextRebalanceMs = br.ReadInt64();
+                        break;
+                    default:
+                        TaskAssignmentException fatalException = new TaskAssignmentException("Unable to decode assignment data: " +
+                            "used version: " + usedVersion + "; latest supported version: " + StreamsAssignmentProtocolVersions.LATEST_SUPPORTED_VERSION);
+                        log.LogError(fatalException.Message, fatalException);
+                        throw fatalException;
+                }
 
+                return assignmentInfo;
+            }
+            catch (IOException ex)
+            {
+                throw new TaskAssignmentException("Failed to decode AssignmentInfo", ex);
+            }
+        }
 
-//        public string ToString()
-//        {
-//            return "[version=" + usedVersion
-//                + ", supported version=" + latestSupportedVersion
-//                + ", active tasks=" + activeTasks
-//                + ", standby tasks=" + standbyTasks
-//                + ", global assignment=" + partitionsByHost + "]";
-//        }
+        private static void decodeActiveTasks(
+            AssignmentInfo assignmentInfo,
+            Stream stream)
+        {
+            using var br = new BinaryReader(stream);
+            int count = br.ReadInt32();
+            assignmentInfo.activeTasks = new List<TaskId>(count);
+            for (int i = 0; i < count; i++)
+            {
+                assignmentInfo.activeTasks.Add(TaskId.ReadFrom(stream));
+            }
+        }
 
-//    }
-//}
+        private static void decodeStandbyTasks(AssignmentInfo assignmentInfo, Stream stream)
+        {
+            using var br = new BinaryReader(stream);
+            int count = br.ReadInt32();
+
+            assignmentInfo.standbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>(count);
+            for (int i = 0; i < count; i++)
+            {
+                TaskId id = TaskId.ReadFrom(stream);
+                assignmentInfo.standbyTasks.Add(id, readTopicPartitions(stream));
+            }
+        }
+
+        private static void decodePartitionsByHost(AssignmentInfo assignmentInfo, Stream stream)
+        {
+            using var br = new BinaryReader(stream);
+
+            assignmentInfo.partitionsByHost = new Dictionary<HostInfo, HashSet<TopicPartition>>();
+            int numEntries = br.ReadInt32();
+            for (int i = 0; i < numEntries; i++)
+            {
+                HostInfo hostInfo = new HostInfo(br.ReadString(), br.ReadInt32());
+                assignmentInfo.partitionsByHost.Add(hostInfo, readTopicPartitions(stream));
+            }
+        }
+
+        private static HashSet<TopicPartition> readTopicPartitions(Stream stream)
+        {
+            using var br = new BinaryReader(stream);
+            int numPartitions = br.ReadInt32();
+            HashSet<TopicPartition> partitions = new HashSet<TopicPartition>(numPartitions);
+            for (int j = 0; j < numPartitions; j++)
+            {
+                partitions.Add(new TopicPartition(br.ReadString(), br.ReadInt32()));
+            }
+            return partitions;
+        }
+
+        private static Dictionary<int, string> decodeTopicIndexAndGet(Stream stream)
+        {
+            using var br = new BinaryReader(stream);
+
+            int dictSize = br.ReadInt32();
+            Dictionary<int, string> topicIndexDict = new Dictionary<int, string>(dictSize);
+            for (int i = 0; i < dictSize; i++)
+            {
+                topicIndexDict.Add(br.ReadInt32(), br.ReadString());
+            }
+            return topicIndexDict;
+        }
+
+        private static Dictionary<HostInfo, HashSet<TopicPartition>> decodeHostPartitionMapUsingDictionary(
+            Stream stream,
+            Dictionary<int, string> topicIndexDict)
+        {
+            using var br = new BinaryReader(stream);
+
+            Dictionary<HostInfo, HashSet<TopicPartition>> hostPartitionMap = new Dictionary<HostInfo, HashSet<TopicPartition>>();
+            int numEntries = br.ReadInt32();
+            for (int i = 0; i < numEntries; i++)
+            {
+                HostInfo hostInfo = new HostInfo(br.ReadString(), br.ReadInt32());
+                hostPartitionMap.Add(hostInfo, ReadTopicPartitions(stream, topicIndexDict));
+            }
+
+            return hostPartitionMap;
+        }
+
+        private static void decodePartitionsByHostUsingDictionary(
+            AssignmentInfo assignmentInfo,
+            Stream stream)
+        {
+            Dictionary<int, string> topicIndexDict = decodeTopicIndexAndGet(stream);
+            assignmentInfo.partitionsByHost = decodeHostPartitionMapUsingDictionary(stream, topicIndexDict);
+        }
+
+        private static void decodeActiveAndStandbyHostPartitions(
+            AssignmentInfo assignmentInfo,
+            Stream stream)
+        {
+            Dictionary<int, string> topicIndexDict = decodeTopicIndexAndGet(stream);
+            assignmentInfo.partitionsByHost = decodeHostPartitionMapUsingDictionary(stream, topicIndexDict);
+            assignmentInfo.standbyPartitionsByHost = decodeHostPartitionMapUsingDictionary(stream, topicIndexDict);
+        }
+
+        private static HashSet<TopicPartition> ReadTopicPartitions(
+            Stream stream,
+            Dictionary<int, string> topicIndexDict)
+        {
+            using var br = new BinaryReader(stream);
+
+            int numPartitions = br.ReadInt32();
+            HashSet<TopicPartition> partitions = new HashSet<TopicPartition>(numPartitions);
+            for (int j = 0; j < numPartitions; j++)
+            {
+                partitions.Add(new TopicPartition(topicIndexDict[br.ReadInt32()], br.ReadInt32()));
+            }
+
+            return partitions;
+        }
+
+        public override int GetHashCode()
+        {
+            int hostMapHashCode = this.partitionsByHost.GetHashCode() ^ this.standbyPartitionsByHost.GetHashCode();
+            return this.usedVersion
+                ^ this.commonlySupportedVersion
+                ^ this.activeTasks.GetHashCode()
+                ^ this.standbyTasks.GetHashCode()
+                ^ hostMapHashCode
+                ^ this.errCode;
+        }
+
+        public override bool Equals(object o)
+        {
+            if (o is AssignmentInfo other)
+            {
+                return this.usedVersion == other.usedVersion
+                    && this.commonlySupportedVersion == other.commonlySupportedVersion
+                    && this.errCode == other.errCode
+                    && this.activeTasks.Equals(other.activeTasks)
+                    && this.standbyTasks.Equals(other.standbyTasks)
+                    && this.partitionsByHost.Equals(other.partitionsByHost)
+                    && this.standbyPartitionsByHost.Equals(other.standbyPartitionsByHost);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override string ToString()
+        {
+            return "[version=" + this.usedVersion
+                + ", supported version=" + this.commonlySupportedVersion
+                + ", active tasks=" + this.activeTasks
+                + ", standby tasks=" + this.standbyTasks
+                + ", partitions by host=" + this.partitionsByHost
+                + ", standbyPartitions by host=" + this.standbyPartitionsByHost
+                + "]";
+        }
+    }
+}

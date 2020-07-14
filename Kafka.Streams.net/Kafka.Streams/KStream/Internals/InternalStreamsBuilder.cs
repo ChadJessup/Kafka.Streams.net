@@ -146,6 +146,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
+
             // explicitly disable logging for global stores
             materialized.WithLoggingDisabled();
             var sourceName = this.NewProcessorName(KTable.SourceName);
@@ -236,7 +237,7 @@ namespace Kafka.Streams.KStream.Internals
             var sourceName = this.NewProcessorName(KStream.SourceName);
             var processorName = this.NewProcessorName(KTable.SourceName);
 
-            this.AddGlobalStore<K, V, T>(
+            this.AddGlobalStore(
                 storeBuilder,
                 sourceName,
                 topic,

@@ -63,11 +63,24 @@ namespace Kafka.Streams.Processors.Internals
 
             var source = (Source)o;
             // omit successor to avoid infinite loops
-            return this.Name.Equals(source.Name)
-                && (this.topics?.Equals(source.topics) ?? false)
-                && (this.topicPattern == null
-                    ? source.topicPattern == null
-                    : this.topicPattern.ToString().Equals(source.topicPattern?.ToString()));
+            if (!this.Name.Equals(source.Name))
+            {
+                return false;
+            }
+
+            if (this.topics == null && source.topics != null)
+            {
+                return false;
+            }
+
+            if (source.topics == null && this.topics != null)
+            {
+                return false;
+            }
+
+            return this.topicPattern == null
+                ? source.topicPattern == null
+                : this.topicPattern.ToString().Equals(source.topicPattern?.ToString());
         }
 
         public override int GetHashCode()

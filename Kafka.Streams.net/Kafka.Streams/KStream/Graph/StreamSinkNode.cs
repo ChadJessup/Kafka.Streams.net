@@ -42,11 +42,23 @@ namespace Kafka.Streams.KStream.Internals.Graph
             if (partitioner == null && keySerializer is IWindowedSerializer<K>)
             {
                 var windowedPartitioner = (IStreamPartitioner<K, V>)new WindowedStreamPartitioner<K, V>((IWindowedSerializer<K>)keySerializer);
-                topologyBuilder.AddSink(this.NodeName, this.topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
+                topologyBuilder.AddSink(
+                    this.NodeName,
+                    this.topicNameExtractor,
+                    keySerializer,
+                    valSerializer,
+                    windowedPartitioner,
+                    parentNames);
             }
             else
             {
-                topologyBuilder.AddSink(this.NodeName, this.topicNameExtractor, keySerializer, valSerializer, partitioner, parentNames);
+                topologyBuilder.AddSink(
+                    this.NodeName,
+                    this.topicNameExtractor,
+                    keySerializer,
+                    valSerializer,
+                    partitioner,
+                    parentNames);
             }
         }
     }
