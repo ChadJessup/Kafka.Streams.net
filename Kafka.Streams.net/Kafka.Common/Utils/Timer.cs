@@ -42,8 +42,8 @@ namespace Kafka.Common.Utils
         public Timer(IClock clock, long timeoutMs)
         {
             this.clock = clock;
-            this.update();
-            this.reset(timeoutMs);
+            this.Update();
+            this.Reset(timeoutMs);
         }
 
         /**
@@ -53,18 +53,18 @@ namespace Kafka.Common.Utils
          *
          * @return true if the timer has expired, false otherwise
          */
-        public bool isExpired()
+        public bool IsExpired()
         {
-            return this.currentTimeMs >= this.deadlineMs;
+            return this.CurrentTimeMs >= this.deadlineMs;
         }
 
         /**
          * Check whether the timer has not yet expired.
          * @return true if there is still time remaining before expiration
          */
-        public bool notExpired()
+        public bool NotExpired()
         {
-            return !this.isExpired();
+            return !this.IsExpired();
         }
 
         /**
@@ -74,10 +74,10 @@ namespace Kafka.Common.Utils
          *
          * @param timeoutMs The new timeout in milliseconds
          */
-        public void updateAndReset(long timeoutMs)
+        public void UpdateAndReset(long timeoutMs)
         {
-            this.update();
-            this.reset(timeoutMs);
+            this.Update();
+            this.Reset(timeoutMs);
         }
 
         /**
@@ -87,22 +87,22 @@ namespace Kafka.Common.Utils
          *
          * @param timeoutMs The new timeout in milliseconds
          */
-        public void reset(long timeoutMs)
+        public void Reset(long timeoutMs)
         {
             if (timeoutMs < 0)
             {
                 throw new ArgumentException("Invalid negative timeout " + timeoutMs);
             }
 
-            this.startMs = this.currentTimeMs;
+            this.startMs = this.CurrentTimeMs;
 
-            if (this.currentTimeMs > long.MaxValue - timeoutMs)
+            if (this.CurrentTimeMs > long.MaxValue - timeoutMs)
             {
                 this.deadlineMs = long.MaxValue;
             }
             else
             {
-                this.deadlineMs = this.currentTimeMs + timeoutMs;
+                this.deadlineMs = this.CurrentTimeMs + timeoutMs;
             }
         }
 
@@ -111,9 +111,9 @@ namespace Kafka.Common.Utils
          * the underlying time returns a value which is smaller than the current cached time,
          * the update will be ignored.
          */
-        public void update()
+        public void Update()
         {
-            this.update(this.clock.NowAsEpochMilliseconds);
+            this.Update(this.clock.NowAsEpochMilliseconds);
         }
 
         /**
@@ -125,9 +125,9 @@ namespace Kafka.Common.Utils
          *
          * @param currentTimeMs The current time in milliseconds to cache
          */
-        public void update(long currentTimeMs)
+        public void Update(long currentTimeMs)
         {
-            this.currentTimeMs = Math.Max(currentTimeMs, this.currentTimeMs);
+            this.CurrentTimeMs = Math.Max(currentTimeMs, this.CurrentTimeMs);
         }
 
         /**
@@ -137,9 +137,9 @@ namespace Kafka.Common.Utils
          *
          * @return The cached remaining time in milliseconds until timer expiration
          */
-        public long remainingMs()
+        public long RemainingMs()
         {
-            return Math.Max(0, this.deadlineMs - this.currentTimeMs);
+            return Math.Max(0, this.deadlineMs - this.CurrentTimeMs);
         }
 
         /**
@@ -152,7 +152,7 @@ namespace Kafka.Common.Utils
          *
          * @return The current cached time in milliseconds
          */
-        public long currentTimeMs { get; private set; }
+        public long CurrentTimeMs { get; private set; }
 
         /**
          * Get the amount of time that has elapsed since the timer began. If the timer was reset, this

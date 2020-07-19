@@ -39,9 +39,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
             IStreamPartitioner<K, V> partitioner = this.producedInternal.StreamPartitioner();
             var parentNames = this.ParentNodeNames();
 
-            if (partitioner == null && keySerializer is IWindowedSerializer<K>)
+            if (partitioner == null && keySerializer is IWindowedSerializer<K> serializer)
             {
-                var windowedPartitioner = (IStreamPartitioner<K, V>)new WindowedStreamPartitioner<K, V>((IWindowedSerializer<K>)keySerializer);
+                var windowedPartitioner = (IStreamPartitioner<K, V>)new WindowedStreamPartitioner<K, V>(serializer);
                 topologyBuilder.AddSink(
                     this.NodeName,
                     this.topicNameExtractor,

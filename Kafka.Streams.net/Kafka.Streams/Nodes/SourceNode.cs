@@ -20,7 +20,7 @@ namespace Kafka.Streams.Nodes
         private readonly List<string> topics;
         private readonly SourceNode sourceNode;
 
-        private IProcessorContext context;
+        private IProcessorContext processorContext;
         private readonly IDeserializer<K> keyDeserializer;
         private readonly IDeserializer<V> valDeserializer;
 
@@ -66,10 +66,10 @@ namespace Kafka.Streams.Nodes
             return this.valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
         }
 
-        public override void Init(IInternalProcessorContext context)
+        public override void Init(IInternalProcessorContext processorContext)
         {
-            base.Init(context);
-            this.context = context;
+            base.Init(processorContext);
+            this.processorContext = processorContext;
 
             // if deserializers are null, get the default ones from the context
             if (this.keyDeserializer == null)
@@ -92,7 +92,7 @@ namespace Kafka.Streams.Nodes
 
         public override void Process(K key, V value)
         {
-            this.context.Forward(key, value);
+            this.processorContext.Forward(key, value);
             //sourceNodeForwardSensor.record();
         }
 

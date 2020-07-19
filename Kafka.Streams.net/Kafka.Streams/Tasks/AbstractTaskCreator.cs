@@ -1,36 +1,34 @@
-﻿using Confluent.Kafka;
-using Kafka.Common;
+﻿using System;
+using System.Collections.Generic;
+using Confluent.Kafka;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 
 namespace Kafka.Streams.Tasks
 {
     public abstract class AbstractTaskCreator<T>
-        where T : ITask
+        where T : class, ITask
     {
         public KafkaStreamsContext Context { get; }
         protected ILogger<AbstractTaskCreator<T>> Logger { get; }
 
         public AbstractTaskCreator(
             KafkaStreamsContext context,
-            ILogger<AbstractTaskCreator<T>> logger,
             InternalTopologyBuilder builder,
-            StreamsConfig config,
-            StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader)
         {
-            this.Context = context;
-            this.Logger = logger;
+            this.Context = context ?? throw new ArgumentNullException(nameof(context));
+            this.Builder = builder ?? throw new ArgumentNullException(nameof(builder));
+            this.StoreChangelogReader = storeChangelogReader ?? throw new ArgumentNullException(nameof(storeChangelogReader));
 
-            this.ApplicationId = config.ApplicationId;
-            this.Builder = builder;
-            this.Config = config;
-            this.StateDirectory = stateDirectory;
-            this.StoreChangelogReader = storeChangelogReader;
+            this.Logger = this.Context.CreateLogger<AbstractTaskCreator<T>>();
+
+            this.ApplicationId = this.Context.StreamsConfig.ApplicationId;
+            this.StateDirectory = this.Context.StateDirectory;
+            this.Config = this.Context.StreamsConfig;
         }
 
         public string ApplicationId { get; }
@@ -44,12 +42,17 @@ namespace Kafka.Streams.Tasks
             string threadTaskId,
             Dictionary<TaskId, HashSet<TopicPartition>> tasksToBeCreated)
         {
+            if (tasksToBeCreated is null)
+            {
+                throw new ArgumentNullException(nameof(tasksToBeCreated));
+            }
+
             var createdTasks = new List<T>();
             foreach (var newTaskAndPartitions in tasksToBeCreated)
             {
                 TaskId taskId = newTaskAndPartitions.Key;
                 HashSet<TopicPartition> partitions = newTaskAndPartitions.Value;
-                T task = this.CreateTask(consumer, taskId, threadTaskId, partitions);
+                var task = this.CreateTask(consumer, taskId, threadTaskId, partitions);
 
                 if (task != null)
                 {
@@ -62,7 +65,7 @@ namespace Kafka.Streams.Tasks
             return createdTasks;
         }
 
-        public abstract T CreateTask(
+        public abstract T? CreateTask(
             IConsumer<byte[], byte[]> consumer,
             TaskId id,
             string threadClientId,

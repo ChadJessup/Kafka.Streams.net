@@ -70,10 +70,7 @@ namespace Kafka.Streams.KStream
             return this.maintainRetentionDuration;
         }
 
-        internal DateTime GracePeriod()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract TimeSpan GracePeriod();
 
         /**
          * Set the number of segments to be used for rolling the window store.

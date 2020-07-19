@@ -111,11 +111,11 @@ namespace Kafka.Streams.Tests.Mocks
             throw new NotImplementedException();
         }
 
-        public void Produce(string topic, Message<K, V> message, Action<DeliveryReport<K, V>> deliveryHandler = null)
+        public void Produce(string topic, Message<K, V> message, Action<DeliveryReport<K, V>>? deliveryHandler = null)
         {
         }
 
-        public void Produce(TopicPartition topicPartition, Message<K, V> message, Action<DeliveryReport<K, V>> deliveryHandler = null)
+        public void Produce(TopicPartition topicPartition, Message<K, V> message, Action<DeliveryReport<K, V>>? deliveryHandler = null)
         {
         }
 

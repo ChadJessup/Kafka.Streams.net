@@ -56,6 +56,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                     null,
                     null,
                     null,
+                    null,
                     new LoggerFactory(),
                     this.time));
         }
@@ -321,8 +322,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
                             { StreamsConfig.BootstrapServersConfig, "dummy:1234"},
                             { StreamsConfig.StateDirPathConfig, stateDir.FullName },
                             { StreamsConfig.StateDirHasPersistentStoresConfig, bool.TrueString },
-                        }
-                    ),
+                        }),
+                    null,
                     null,
                     null,
                     null,

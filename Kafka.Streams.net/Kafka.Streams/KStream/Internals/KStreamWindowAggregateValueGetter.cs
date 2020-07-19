@@ -15,14 +15,14 @@ namespace Kafka.Streams.KStream.Internals
             this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public void Init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext processorContext, string? storeName)
         {
-            if (context is null)
+            if (processorContext is null)
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(processorContext));
             }
 
-            this.windowStore = (ITimestampedWindowStore<K, Agg>)context.GetStateStore(storeName);
+            this.windowStore = (ITimestampedWindowStore<K, Agg>)processorContext.GetStateStore(storeName);
         }
 
         public IValueAndTimestamp<Agg> Get(IWindowed<K> windowedKey)

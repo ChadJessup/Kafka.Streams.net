@@ -33,7 +33,6 @@ namespace Kafka.Streams.Factories
             IDeserializer<V>? valueDeserializer)
             : base(context, Name, Array.Empty<string>())
         {
-            this.context = context;
             this.Topics = topics != null
                 ? topics.ToList()
                 : new List<string>();
@@ -46,8 +45,6 @@ namespace Kafka.Streams.Factories
             this.topicToPatterns = topicToPatterns;
             this.Pattern = pattern;
         }
-
-        private readonly KafkaStreamsContext context;
 
         public List<string> Topics { get; private set; }
 
@@ -102,7 +99,7 @@ namespace Kafka.Streams.Factories
             if (sourceTopics == null)
             {
                 return new SourceNode<K, V>(
-                    this.context,
+                    this.Context,
                     this.Name,
                     new List<string>(),
                     this.timestampExtractor,
@@ -112,7 +109,7 @@ namespace Kafka.Streams.Factories
             else
             {
                 return new SourceNode<K, V>(
-                    this.context,
+                    this.Context,
                     this.Name,
                     this.internalTopologyBuilder.MaybeDecorateInternalSourceTopics(sourceTopics),
                     this.timestampExtractor,

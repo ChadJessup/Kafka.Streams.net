@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
             this.joiner = joiner;
         }
 
-        public void Init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext context, string? storeName)
         {
             this.valueGetter1.Init(context, storeName);
             this.valueGetter2.Init(context, storeName);

@@ -15,17 +15,11 @@ namespace Kafka.Streams.Tasks
     {
         public StandbyTaskCreator(
             KafkaStreamsContext context,
-            ILogger<StandbyTaskCreator> logger,
             InternalTopologyBuilder builder,
-            StreamsConfig config,
-            StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader)
             : base(
                 context,
-                logger,
                 builder,
-                config,
-                stateDirectory,
                 storeChangelogReader)
         {
         }

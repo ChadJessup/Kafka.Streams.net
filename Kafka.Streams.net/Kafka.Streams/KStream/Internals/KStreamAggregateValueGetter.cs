@@ -14,7 +14,7 @@ namespace Kafka.Streams.KStream.Internals
             this.context = context;
         }
 
-        public void Init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext context, string? storeName)
         {
             this.store = (ITimestampedKeyValueStore<K, V>)context.GetStateStore(storeName);
         }

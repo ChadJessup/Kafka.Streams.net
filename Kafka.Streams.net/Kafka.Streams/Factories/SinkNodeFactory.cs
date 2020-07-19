@@ -11,7 +11,6 @@ namespace Kafka.Streams.Factories
     public class SinkNodeFactory<K, V> : NodeFactory<K, V>, ISinkNodeFactory<K, V>
     {
         private readonly InternalTopologyBuilder internalTopologyBuilder;
-        private readonly KafkaStreamsContext context;
 
         public ITopicNameExtractor TopicExtractor { get; }
 
@@ -30,7 +29,6 @@ namespace Kafka.Streams.Factories
             InternalTopologyBuilder internalTopologyBuilder)
             : base(context, Name, predecessors.ToArray())
         {
-            this.context = context;
             this.partitioner = partitioner;
             this.keySerializer = keySerializer;
             this.valueSerializer = valSerializer;
@@ -40,14 +38,14 @@ namespace Kafka.Streams.Factories
 
         public override IProcessorNode Build()
         {
-            if (this.TopicExtractor is StaticTopicNameExtractor)
+            if (this.TopicExtractor is StaticTopicNameExtractor extractor)
             {
-                var topic = ((StaticTopicNameExtractor)this.TopicExtractor).TopicName;
+                var topic = extractor.TopicName;
                 if (this.internalTopologyBuilder.internalTopicNames.Contains(topic))
                 {
                     // prefix the internal topic Name with the application id
                     return new SinkNode<K, V>(
-                        this.context,
+                        this.Context,
                         this.Name,
                         new StaticTopicNameExtractor(this.internalTopologyBuilder.DecorateTopic(topic)),
                         this.keySerializer,
@@ -57,7 +55,7 @@ namespace Kafka.Streams.Factories
                 else
                 {
                     return new SinkNode<K, V>(
-                        this.context,
+                        this.Context,
                         this.Name,
                         this.TopicExtractor,
                         this.keySerializer,
@@ -68,7 +66,7 @@ namespace Kafka.Streams.Factories
             else
             {
                 return new SinkNode<K, V>(
-                    this.context,
+                    this.Context,
                     this.Name,
                     this.TopicExtractor,
                     this.keySerializer,

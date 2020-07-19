@@ -1,4 +1,3 @@
-using Kafka.Common;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;

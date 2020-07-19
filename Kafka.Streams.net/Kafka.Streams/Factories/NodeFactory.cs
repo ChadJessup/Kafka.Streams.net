@@ -9,14 +9,14 @@ namespace Kafka.Streams.Factories
     {
         public string Name { get; }
         public IEnumerable<string> Predecessors { get; }
-        protected KafkaStreamsContext context { get; }
+        protected KafkaStreamsContext Context { get; }
 
         protected NodeFactory(
             KafkaStreamsContext context,
             string Name,
             string[] predecessors)
         {
-            this.context = context;
+            this.Context = context;
             this.Name = Name;
             this.Predecessors = predecessors;
         }

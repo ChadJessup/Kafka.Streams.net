@@ -16,7 +16,7 @@ namespace Kafka.Streams.KStream.Internals
             this.parentGetter = parentGetter;
         }
 
-        public void Init(IProcessorContext context, string storeName)
+        public void Init(IProcessorContext context, string? storeName)
         {
             this.context = context;
             this.parentGetter.Init(context, storeName);

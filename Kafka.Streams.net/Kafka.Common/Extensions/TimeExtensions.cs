@@ -10,7 +10,7 @@
             return (long)delta.TotalMilliseconds;
         }
 
-        public static DateTime ofEpochMilli(this DateTime dateTime, long milliseconds)
+        public static DateTime OfEpochMilli(this DateTime dateTime, long milliseconds)
         {
             return DateTimeOffset.FromUnixTimeMilliseconds(milliseconds).DateTime;
         }

@@ -79,7 +79,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 var windowStart = entry.Key;
                 var windowEnd = entry.Value.EndTime;
-                if (windowEnd.ToEpochMilliseconds() > closeTime.TotalMilliseconds)
+                if (windowEnd.ToEpochMilliseconds() > closeTime.ToEpochMilliseconds())
                 {
                     IValueAndTimestamp<Agg> oldAggAndTimestamp = this.windowStore.Fetch(key, windowStart);
                     Agg oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);

@@ -68,7 +68,7 @@ namespace Kafka.Streams.Tasks
             IConsumer<byte[], byte[]> mainConsumer,
             StreamsConfig config,
             StateDirectory stateDirectory,
-            ThreadCache cache,
+            ThreadCache? cache,
             ProcessorStateManager stateMgr,
             RecordCollector recordCollector)
             : base(

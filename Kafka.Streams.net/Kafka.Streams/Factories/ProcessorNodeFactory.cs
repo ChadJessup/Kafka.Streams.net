@@ -29,7 +29,7 @@ namespace Kafka.Streams.Factories
 
         public override IProcessorNode Build()
         {
-            return new ProcessorNode<K, V>(this.context, this.Name, this.supplier.Get(), this.stateStoreNames);
+            return new ProcessorNode<K, V>(this.Context, this.Name, this.supplier.Get(), this.stateStoreNames);
         }
 
         public override INode Describe()

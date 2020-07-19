@@ -5,6 +5,7 @@ using Kafka.Common;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,20 +25,23 @@ namespace Kafka.Streams
         public KafkaStreamsContext(
             StreamsConfig config,
             InternalTopologyBuilder internalTopologyBuilder,
+            StateDirectory stateDirectory,
             IServiceCollection serviceCollection,
             IConfiguration configuration,
             IStoresFactory storesFactory,
             ILoggerFactory loggerFactory,
             IClock clock)
         {
-            this.Clock = clock;
-            this.Logger = loggerFactory.CreateLogger<KafkaStreamsContext>();
-            this.StreamsConfig = config;
-            this.Configuration = configuration;
-            this.StoresFactory = storesFactory;
-            this.LoggerFactory = loggerFactory;
-            this.ServiceCollection = serviceCollection;
-            this.InternalTopologyBuilder = internalTopologyBuilder;
+            this.Clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            this.StreamsConfig = config ?? throw new ArgumentNullException(nameof(config));
+            this.LoggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+            this.Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.StoresFactory = storesFactory ?? throw new ArgumentNullException(nameof(storesFactory));
+            this.StateDirectory = stateDirectory ?? throw new ArgumentNullException(nameof(stateDirectory));
+            this.ServiceCollection = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+            this.InternalTopologyBuilder = internalTopologyBuilder ?? throw new ArgumentNullException(nameof(internalTopologyBuilder));
+
+            this.Logger = this.LoggerFactory.CreateLogger<KafkaStreamsContext>();
         }
 
         public InternalStreamsBuilder InternalStreamsBuilder { get; internal set; }
@@ -50,6 +54,7 @@ namespace Kafka.Streams
         public IStoresFactory StoresFactory { get; }
         public IServiceCollection ServiceCollection { get; }
         public StreamsConfig StreamsConfig { get; }
+        public StateDirectory StateDirectory { get; }
         public IClock Clock { get; }
 
         public ILogger<TCategory> CreateLogger<TCategory>()

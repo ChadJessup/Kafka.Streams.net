@@ -12,8 +12,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private readonly ProcessorParameters<K, V2> joinOtherProcessorParameters;
         private readonly ProcessorParameters<K, VR> joinMergeProcessorParameters;
         private readonly ValueJoiner<V1, V2, VR> valueJoiner;
-        public string thisJoinSideNodeName { get; }
-        public string otherJoinSideNodeName { get; }
+        public string ThisJoinSideNodeName { get; }
+        public string OtherJoinSideNodeName { get; }
 
         public BaseJoinProcessorNode(
             string nodeName,
@@ -29,8 +29,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.joinThisProcessorParameters = joinThisProcessorParameters;
             this.joinOtherProcessorParameters = joinOtherProcessorParameters;
             this.joinMergeProcessorParameters = joinMergeProcessorParameters;
-            this.thisJoinSideNodeName = thisJoinSideNodeName;
-            this.otherJoinSideNodeName = otherJoinSideNodeName;
+            this.ThisJoinSideNodeName = thisJoinSideNodeName;
+            this.OtherJoinSideNodeName = otherJoinSideNodeName;
         }
 
         protected ProcessorParameters<K, V1> ThisProcessorParameters()
@@ -55,8 +55,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
                    ", joinOtherProcessorParameters=" + this.joinOtherProcessorParameters +
                    ", joinMergeProcessorParameters=" + this.joinMergeProcessorParameters +
                    ", valueJoiner=" + this.valueJoiner +
-                   ", thisJoinSideNodeName='" + this.thisJoinSideNodeName + '\'' +
-                   ", otherJoinSideNodeName='" + this.otherJoinSideNodeName + '\'' +
+                   ", thisJoinSideNodeName='" + this.ThisJoinSideNodeName + '\'' +
+                   ", otherJoinSideNodeName='" + this.OtherJoinSideNodeName + '\'' +
                    "} " + base.ToString();
         }
     }

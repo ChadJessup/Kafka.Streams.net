@@ -22,20 +22,14 @@ namespace Kafka.Streams.Tasks
 
         public TaskCreator(
             KafkaStreamsContext context,
-            ILogger<TaskCreator> logger,
             InternalTopologyBuilder builder,
-            StreamsConfig config,
-            StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader,
             ThreadCache? cache,
             IKafkaClientSupplier clientSupplier,
             BaseProducer<byte[], byte[]> threadProducer)
         : base(
             context,
-            logger,
             builder,
-            config,
-            stateDirectory,
             storeChangelogReader)
         {
             this.cache = cache;
@@ -49,6 +43,11 @@ namespace Kafka.Streams.Tasks
             string threadClientId,
             HashSet<TopicPartition> partitions)
         {
+            if (taskId is null)
+            {
+                throw new ArgumentNullException(nameof(taskId));
+            }
+
             return new StreamTask(
                 this.Context,
                 taskId,

@@ -15,7 +15,7 @@ namespace Kafka.Streams.Nodes
         private readonly ITopicNameExtractor topicExtractor;
         private readonly IStreamPartitioner<K, V>? partitioner;
 
-        private IInternalProcessorContext context;
+        private IInternalProcessorContext processorContext;
 
         public SinkNode(
             KafkaStreamsContext context,
@@ -33,7 +33,7 @@ namespace Kafka.Streams.Nodes
         }
 
         /**
-         * @throws InvalidOperationException if this method.Adds a child to a sink node
+         * @throws InvalidOperationException if this method adds a child to a sink node
          */
         public void AddChild(ProcessorNode<object, object> child)
         {
@@ -43,7 +43,7 @@ namespace Kafka.Streams.Nodes
         public override void Init(IInternalProcessorContext context)
         {
             base.Init(context);
-            this.context = context;
+            this.processorContext = context;
 
             // if serializers are null, get the default ones from the context
             // this.keySerializer ??= context.keySerde.Serializer;
@@ -59,19 +59,19 @@ namespace Kafka.Streams.Nodes
 
         public override void Process(K key, V value)
         {
-            IRecordCollector collector = ((ISupplier)this.context).RecordCollector();
+            IRecordCollector collector = ((ISupplier)this.processorContext).RecordCollector();
 
-            var timestamp = this.context.Timestamp;
+            var timestamp = this.processorContext.Timestamp;
             if (timestamp < DateTime.MinValue)
             {
                 throw new StreamsException("Invalid (negative) timestamp of " + timestamp + " for output record <" + key + ":" + value + ">.");
             }
 
-            var topic = this.topicExtractor.Extract(key, value, this.context.RecordContext);
+            var topic = this.topicExtractor.Extract(key, value, this.processorContext.RecordContext);
 
             try
             {
-                collector.Send(topic, key, value, this.context.Headers, timestamp, this.keySerializer, this.valSerializer, this.partitioner);
+                collector.Send(topic, key, value, this.processorContext.Headers, timestamp, this.keySerializer, this.valSerializer, this.partitioner);
             }
             catch (Exception e)
             {
