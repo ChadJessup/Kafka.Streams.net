@@ -19,8 +19,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
     {
 
         private readonly MockTime time = new MockTime();
+        private readonly KafkaStreamsContext context;
         private DirectoryInfo stateDir;
         private readonly string applicationId = "applicationId";
+        private readonly StreamsConfig config;
         private StateDirectory directory;
         private DirectoryInfo appDir;
 
@@ -40,29 +42,34 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
         private StateDirectory CreateStateDirectory(bool withPersistentStore)
         {
-            var config = new StreamsConfig(
+            var config = this.config;
+            config.StateStoreIsPersistent = withPersistentStore;
+
+            return new StateDirectory(
+                new LoggerFactory().CreateLogger<StateDirectory>(),
+                config);
+        }
+
+        public StateDirectoryTest()
+        {
+            this.config = new StreamsConfig(
                 new Dictionary<string, string?>
                 {
                     { StreamsConfig.ApplicationIdConfig, applicationId },
                     { StreamsConfig.BootstrapServersConfig, "dummy:1234"},
                     { StreamsConfig.StateDirPathConfig, stateDir.FullName },
-                    { StreamsConfig.StateDirHasPersistentStoresConfig, withPersistentStore.ToString() },
                 });
 
-            return new StateDirectory(
-                new KafkaStreamsContext(
-                    config,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new LoggerFactory(),
-                    this.time));
-        }
 
-        public StateDirectoryTest()
-        {
+            this.context = new KafkaStreamsContext(
+                this.config,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new LoggerFactory(),
+                new MockTime());
             InitializeStateDirectory(true);
 
             if (string.IsNullOrWhiteSpace(Thread.CurrentThread.Name))
@@ -261,7 +268,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 Assert.Equal(new[] { dir0, dir1, dir2 }, files);
 
                 time.Sleep(5000);
-                directory.CleanRemovedTasks(TimeSpan.Zero);
+                directory.CleanRemovedTasks(this.context, TimeSpan.Zero);
 
                 files = directory.ListAllTaskDirectories().Select(d => d.FullName);
                 Assert.Equal(new[] { dir0, dir1, dir2 }, files);
@@ -284,7 +291,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.True(new DirectoryInfo(Path.Combine(dir.FullName, "store")).Exists);
 
             TimeSpan cleanupDelayMs = TimeSpan.FromMilliseconds(60000);
-            directory.CleanRemovedTasks(cleanupDelayMs);
+            directory.CleanRemovedTasks(this.context, cleanupDelayMs);
             Assert.True(dir.Exists);
             Assert.Single(directory.ListAllTaskDirectories());
             Assert.Single(directory.ListNonEmptyTaskDirectories());
@@ -293,7 +300,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             time.Sleep((long)cleanupDelayMs.TotalMilliseconds + 1000);
             var future = time.UtcNow;
 
-            directory.CleanRemovedTasks(cleanupDelayMs);
+            directory.CleanRemovedTasks(this.context, cleanupDelayMs);
             Assert.True(dir.Exists);
             Assert.Single(directory.ListAllTaskDirectories());
             Assert.Empty(directory.ListNonEmptyTaskDirectories());
@@ -303,7 +310,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         public void ShouldNotRemoveNonTaskDirectoriesAndFiles()
         {
             var otherDir = TestUtils.GetTempDirectory();// stateDir.FullName, "foo");
-            directory.CleanRemovedTasks(TimeSpan.Zero);
+            directory.CleanRemovedTasks(this.context, TimeSpan.Zero);
             Assert.True(otherDir.Exists);
         }
 
@@ -314,22 +321,15 @@ namespace Kafka.Streams.Tests.Processor.Internals
             stateDir = new DirectoryInfo(Path.Combine(tempDir.FullName, "foo", "state-dir"));
 
             directory = new StateDirectory(
-                new KafkaStreamsContext(
-                    new StreamsConfig(
-                        new Dictionary<string, string?>
-                        {
-                            { StreamsConfig.ApplicationIdConfig, applicationId },
-                            { StreamsConfig.BootstrapServersConfig, "dummy:1234"},
-                            { StreamsConfig.StateDirPathConfig, stateDir.FullName },
-                            { StreamsConfig.StateDirHasPersistentStoresConfig, bool.TrueString },
-                        }),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new LoggerFactory(),
-                    this.time));
+                new LoggerFactory().CreateLogger<StateDirectory>(),
+                new StreamsConfig(
+                    new Dictionary<string, string?>
+                    {
+                        { StreamsConfig.ApplicationIdConfig, applicationId },
+                        { StreamsConfig.BootstrapServersConfig, "dummy:1234"},
+                        { StreamsConfig.StateDirPathConfig, stateDir.FullName },
+                        { StreamsConfig.StateDirHasPersistentStoresConfig, bool.TrueString },
+                    }));
 
             appDir = new DirectoryInfo(Path.Combine(tempDir.FullName, applicationId));
 
@@ -490,7 +490,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             Assert.Equal(new[] { dir0, globalDir }, appDirFiles);
 
-            directory.Clean();
+            directory.Clean(this.context);
 
             Assert.Empty(appDir.listFiles());
         }

@@ -279,7 +279,7 @@ namespace Kafka.Streams.Tests
             var createStateDirectory = this.processorTopology.HasPersistentLocalStore() ||
                 (this.globalTopology != null && this.globalTopology.HasPersistentGlobalStore());
 
-            this.stateDirectory = new StateDirectory(this.context);//, createStateDirectory);
+            this.stateDirectory = new StateDirectory(this.context.CreateLogger<StateDirectory>(), this.context.StreamsConfig);//, createStateDirectory);
         }
 
         private void SetupGlobalTask(
@@ -1192,7 +1192,7 @@ namespace Kafka.Streams.Tests
                 //  producer.Close();
             }
 
-            this.stateDirectory.Clean();
+            this.stateDirectory.Clean(this.context);
         }
 
         // private MockConsumer<byte[], byte[]> createRestoreConsumer(Dictionary<string, string> storeToChangelogTopic)

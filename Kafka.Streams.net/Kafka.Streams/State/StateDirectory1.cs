@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Kafka.Common;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Tasks;
@@ -26,7 +27,6 @@ namespace Kafka.Streams.State
 
         private readonly string appId;
         private readonly DirectoryInfo stateDir;
-        private readonly KafkaStreamsContext context;
         private bool hasPersistentStores;
         private readonly Dictionary<TaskId, FileStream> channels = new Dictionary<TaskId, FileStream>();
         private readonly Dictionary<TaskId, LockAndOwner> locks = new Dictionary<TaskId, LockAndOwner>();
@@ -58,19 +58,13 @@ namespace Kafka.Streams.State
          * @throws ProcessorStateException if the base state directory or application state directory does not exist
          *                                 and could not be created when hasPersistentStores is enabled.
          */
-        public StateDirectory(KafkaStreamsContext context)
+        public StateDirectory(ILogger<StateDirectory> logger, StreamsConfig config)
         {
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            this.logger = logger;
 
-            this.context = context;
-            this.logger = this.context.CreateLogger<StateDirectory>();
-
-            this.appId = context.StreamsConfig.ApplicationId;
-            var stateDirName = context.StreamsConfig.StateStoreDirectory;
-            this.hasPersistentStores = context.StreamsConfig.StateStoreIsPersistent;
+            this.appId = config.ApplicationId;
+            var stateDirName = config.StateStoreDirectory;
+            this.hasPersistentStores = config.StateStoreIsPersistent;
 
             DirectoryInfo baseDir = new DirectoryInfo(stateDirName.FullName);
 
@@ -367,12 +361,17 @@ namespace Kafka.Streams.State
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void Clean()
+        public void Clean(KafkaStreamsContext context)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             // remove task dirs
             try
             {
-                this.CleanRemovedTasks(TimeSpan.Zero, true);
+                this.CleanRemovedTasks(context, TimeSpan.Zero, true);
             }
             catch (Exception e)
             {
@@ -404,11 +403,16 @@ namespace Kafka.Streams.State
          *                       this amount of time (milliseconds)
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void CleanRemovedTasks(TimeSpan cleanupDelay)
+        public void CleanRemovedTasks(KafkaStreamsContext context, TimeSpan cleanupDelay)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             try
             {
-                this.CleanRemovedTasks(cleanupDelay, false);
+                this.CleanRemovedTasks(context, cleanupDelay, manualUserCall: false);
             }
             catch (Exception cannotHappen)
             {
@@ -417,7 +421,7 @@ namespace Kafka.Streams.State
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private void CleanRemovedTasks(TimeSpan cleanupDelayMs, bool manualUserCall)
+        private void CleanRemovedTasks(KafkaStreamsContext context, TimeSpan cleanupDelayMs, bool manualUserCall)
         {
             var taskDirs = this.ListAllTaskDirectories();
             if (taskDirs == null || !taskDirs.Any())
@@ -436,7 +440,7 @@ namespace Kafka.Streams.State
                     {
                         if (this.Lock(id))
                         {
-                            var now = this.context.Clock.UtcNow;
+                            var now = context.Clock.UtcNow;
                             DateTime lastModified = taskDir.LastWriteTimeUtc;
                             if (now > lastModified + cleanupDelayMs)
                             {

@@ -183,7 +183,7 @@ namespace Kafka.Streams.Tests
             props.StateStoreDirectory = this.stateDir;
             props.CommitIntervalMs = commitInterval;
             var streamsBuilder = TestUtils.GetStreamsBuilder(sc);
-            this.stateDirectory = new StateDirectory(streamsBuilder.Context);
+            this.stateDirectory = new StateDirectory(streamsBuilder.Context.CreateLogger<StateDirectory>(), streamsBuilder.Context.StreamsConfig);
             var consumer = new Mock<IConsumer<byte[], byte[]>>();
 
             IStreamThread thread = TestUtils.CreateStreamThread(streamsBuilder);
