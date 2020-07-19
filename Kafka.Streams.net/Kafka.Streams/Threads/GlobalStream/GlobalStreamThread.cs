@@ -23,10 +23,9 @@ namespace Kafka.Streams.Threads.GlobalStream
         private readonly IDisposable logPrefix;
         private readonly StreamsConfig config;
         private readonly IKafkaClientSupplier clientSupplier;
-        private readonly ILoggerFactory loggerFactory;
         private readonly IStateRestoreListener stateRestoreListener;
         private readonly GlobalConsumer globalConsumer;
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         private readonly StateDirectory stateDirectory;
         // private ThreadCache cache;
         private readonly ProcessorTopology topology;
@@ -41,25 +40,24 @@ namespace Kafka.Streams.Threads.GlobalStream
         public int ManagedThreadId => this.Thread.ManagedThreadId;
 
         public GlobalStreamThread(
-            ILogger<GlobalStreamThread> logger,
-            ILoggerFactory loggerFactory,
-            StreamsConfig config,
+            KafkaStreamsContext context,
             IThreadStateMachine<GlobalStreamThreadStates> states,
             IKafkaClientSupplier clientSupplier,
             StateDirectory stateDirectory,
             Topology topology)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.logger = this.context.CreateLogger<GlobalStreamThread>();
+            this.config = this.context.StreamsConfig;
+
             this.State = states ?? throw new ArgumentNullException(nameof(states));
-            this.config = config ?? throw new ArgumentNullException(nameof(config));
             this.clientSupplier = clientSupplier ?? throw new ArgumentNullException(nameof(clientSupplier));
-            this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             this.stateDirectory = stateDirectory ?? throw new ArgumentNullException(nameof(stateDirectory));
 
-            var topologyBuilder = topology?.internalTopologyBuilder?.SetApplicationId(config.ApplicationId) ?? throw new ArgumentNullException(nameof(topology));
+            var topologyBuilder = topology?.internalTopologyBuilder?.SetApplicationId(this.config.ApplicationId) ?? throw new ArgumentNullException(nameof(topology));
             this.topology = topologyBuilder.BuildGlobalStateTopology();
 
-            this.ThreadClientId = $"{config.ClientId}-GlobalStreamThread";
+            this.ThreadClientId = $"{this.config.ClientId}-GlobalStreamThread";
             this.logPrefix = this.logger.BeginScope($"global-stream-thread [{this.ThreadClientId}] ");
             this.globalConsumer = this.clientSupplier.GetGlobalConsumer();
 
@@ -126,7 +124,7 @@ namespace Kafka.Streams.Threads.GlobalStream
             try
             {
                 IGlobalStateManager stateMgr = new GlobalStateManager(
-                    this.loggerFactory.CreateLogger<GlobalStateManager>(),
+                    this.context.CreateLogger<GlobalStateManager>(),
                     this.topology,
                     this.clientSupplier,
                     this.globalConsumer,
@@ -153,7 +151,7 @@ namespace Kafka.Streams.Threads.GlobalStream
                     //    config.defaultDeserializationExceptionHandler(),
                     //    logContext
                     //),
-                    this.clock,
+                    this.context,
                     TimeSpan.FromMilliseconds((double)this.config.PollMs),
                     this.config.CommitIntervalMs);
 
@@ -225,27 +223,14 @@ namespace Kafka.Streams.Threads.GlobalStream
                     // TODO: dispose managed state (managed objects).
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
                 this.disposedValue = true;
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~GlobalStreamThread()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             this.Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
     }
 }

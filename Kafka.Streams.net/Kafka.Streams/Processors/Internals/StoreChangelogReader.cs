@@ -13,6 +13,7 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class StoreChangelogReader : IChangelogReader
     {
+        private readonly KafkaStreamsContext context;
         private readonly ILogger<StoreChangelogReader> logger;
         private readonly IConsumer<byte[], byte[]> restoreConsumer;
         private readonly IStateRestoreListener userStateRestoreListener;
@@ -25,14 +26,15 @@ namespace Kafka.Streams.Processors.Internals
         private readonly TimeSpan pollTime;
 
         public StoreChangelogReader(
-            ILogger<StoreChangelogReader> logger,
-            StreamsConfig config,
+            KafkaStreamsContext context,
             RestoreConsumer restoreConsumer,
             IStateRestoreListener userStateRestoreListener)
         {
-            this.logger = logger;
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.logger = this.context.CreateLogger<StoreChangelogReader>();
+
             this.restoreConsumer = restoreConsumer;
-            this.pollTime = TimeSpan.FromMilliseconds(config.PollMs);
+            this.pollTime = TimeSpan.FromMilliseconds(this.context.StreamsConfig.PollMs);
             this.userStateRestoreListener = userStateRestoreListener;
         }
 

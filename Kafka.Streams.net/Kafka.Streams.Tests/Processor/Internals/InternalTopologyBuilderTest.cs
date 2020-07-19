@@ -506,7 +506,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         [Fact]
         public void ShouldNotAllowNullStateStoreNameWhenConnectingProcessorAndStateStores()
         {
-            Assert.Throws<ArgumentNullException>(() => Builder.ConnectProcessorAndStateStores("processor", new string[] { null }));
+            Assert.Throws<ArgumentNullException>(() => Builder.ConnectProcessorAndStateStores("processor", null));
         }
 
         [Fact]
@@ -854,8 +854,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Source differentPattern = new Source("Name", null, new Regex("topic2", RegexOptions.Compiled));
             Source overlappingPattern = new Source("Name", null, new Regex("top*", RegexOptions.Compiled));
 
-            Assert.Equal(@base, differentPattern);
-            Assert.Equal(@base, overlappingPattern);
+            Assert.NotEqual(@base, differentPattern);
+            Assert.NotEqual(@base, overlappingPattern);
         }
     }
 }

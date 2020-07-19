@@ -21,7 +21,7 @@ namespace Kafka.Streams.Factories
         private readonly IDeserializer<K>? keyDeserializer;
 
         public SourceNodeFactory(
-            IClock clock,
+            KafkaStreamsContext context,
             string Name,
             string[]? topics,
             Regex? pattern,
@@ -31,9 +31,9 @@ namespace Kafka.Streams.Factories
             InternalTopologyBuilder internalTopologyBuilder,
             IDeserializer<K>? keyDeserializer,
             IDeserializer<V>? valueDeserializer)
-            : base(clock, Name, Array.Empty<string>())
+            : base(context, Name, Array.Empty<string>())
         {
-            this.clock = clock;
+            this.context = context;
             this.Topics = topics != null
                 ? topics.ToList()
                 : new List<string>();
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Factories
             this.Pattern = pattern;
         }
 
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
 
         public List<string> Topics { get; private set; }
 
@@ -102,7 +102,7 @@ namespace Kafka.Streams.Factories
             if (sourceTopics == null)
             {
                 return new SourceNode<K, V>(
-                    this.clock,
+                    this.context,
                     this.Name,
                     new List<string>(),
                     this.timestampExtractor,
@@ -112,7 +112,7 @@ namespace Kafka.Streams.Factories
             else
             {
                 return new SourceNode<K, V>(
-                    this.clock,
+                    this.context,
                     this.Name,
                     this.internalTopologyBuilder.MaybeDecorateInternalSourceTopics(sourceTopics),
                     this.timestampExtractor,

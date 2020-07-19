@@ -33,7 +33,7 @@ namespace Kafka.Streams.Threads.Stream
 
         private readonly object stateLock = new object();
         private readonly IServiceProvider services;
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         private readonly TimeSpan pollTime;
         private readonly TimeSpan commitTime;
         private readonly TimeSpan maxPollTime;
@@ -69,11 +69,7 @@ namespace Kafka.Streams.Threads.Stream
         public IThreadStateMachine<StreamThreadStates> State { get; }
 
         public StreamThread(
-            IServiceProvider services,
-            IClock clock,
-            ILogger<StreamThread> logger,
-            ILoggerFactory loggerFactory,
-            StreamsConfig config,
+            KafkaStreamsContext context,
             IThreadStateMachine<StreamThreadStates> states,
             IKafkaClientSupplier clientSupplier,
             IStateRestoreListener userStateRestoreListener,
@@ -82,15 +78,14 @@ namespace Kafka.Streams.Threads.Stream
             StreamsMetadataState streamsMetadataState,
             Topology topology)
         {
-            this.services = services ?? throw new ArgumentNullException(nameof(services));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.config = config ?? throw new ArgumentNullException(nameof(config));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
             this.State = states ?? throw new ArgumentNullException(nameof(states));
             this.builder = topology?.internalTopologyBuilder ?? throw new ArgumentNullException(nameof(topology));
+            this.config = this.context.StreamsConfig;
+            this.logger = this.context.CreateLogger<StreamThread>();
+            this.services = this.context.Services;
 
-            this.clock = clock;
-
-            var clientId = config.ClientId;
+            var clientId = this.config.ClientId;
             var threadClientId = $"{clientId}-KafkaStreamThread-{threadId++}";
 
             this.Thread = new Thread(this.Run)
@@ -122,12 +117,11 @@ namespace Kafka.Streams.Threads.Stream
             //    threadClientId);
 
             var changelogReader = new StoreChangelogReader(
-                loggerFactory.CreateLogger<StoreChangelogReader>(),
-                config,
+                this.context,
                 this.RestoreConsumer,
                 userStateRestoreListener);
 
-            this.producer = this.CreateProducer(config, clientSupplier, threadClientId);
+            this.producer = this.CreateProducer(this.config, clientSupplier, threadClientId);
 
             ThreadCache? cache = null; // new ThreadCache(logger, cacheSizeBytes);
 
@@ -168,8 +162,13 @@ namespace Kafka.Streams.Threads.Stream
             //    new AssignedStreamsTasks(loggerFactory.CreateLogger<AssignedStreamsTasks>()),
             //    new AssignedStandbyTasks(loggerFactory.CreateLogger<AssignedStandbyTasks>()));
 
-            this.RebalanceListener = new StreamsRebalanceListener(clock, this.TaskManager, this, this.logger);
-            this.Consumer = this.CreateConsumerClient(config, clientSupplier, threadClientId, this.TaskManager, this.RebalanceListener);
+            this.RebalanceListener = new StreamsRebalanceListener(this.context, this.TaskManager, this);
+            this.Consumer = this.CreateConsumerClient(
+                this.config,
+                clientSupplier,
+                threadClientId,
+                this.TaskManager,
+                this.RebalanceListener);
 
             (this.State as StreamThreadState)?.SetTaskManager(this.TaskManager);
             (this.State as StreamThreadState)?.SetThread(this);
@@ -186,6 +185,11 @@ namespace Kafka.Streams.Threads.Stream
 
         public static ProcessingMode ProcessingMode(StreamsConfig config)
         {
+            if (config is null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             if (Stream.ProcessingMode.EXACTLY_ONCE_BETA.Equals(config.GetString(StreamsConfig.ProcessingGuaranteeConfig)))
             {
                 return Stream.ProcessingMode.EXACTLY_ONCE_ALPHA;
@@ -374,7 +378,7 @@ namespace Kafka.Streams.Threads.Stream
         private void RunLoop()
         {
             var sourceTopicPattern = this.builder.SourceTopicPattern().ToString();
-            if(!sourceTopicPattern.StartsWith('^'))
+            if (!sourceTopicPattern.StartsWith('^'))
             {
                 sourceTopicPattern = '^' + sourceTopicPattern;
             }
@@ -427,9 +431,9 @@ namespace Kafka.Streams.Threads.Stream
             }
             else if (this.State.CurrentState == StreamThreadStates.PARTITIONS_REVOKED)
             {
-                // try to Fetch some records with normal poll time
-                // in order to wait long enough to get the join response
-                records = this.PollRequests(this.pollTime);
+                // try to fetch som records with zero poll millis to unblock
+                // other useful work while waiting for the join response
+                records = this.PollRequests(TimeSpan.Zero);
             }
             else if (this.State.CurrentState == StreamThreadStates.RUNNING
                 || this.State.CurrentState == StreamThreadStates.STARTING)
@@ -442,6 +446,12 @@ namespace Kafka.Streams.Threads.Stream
                 {
 
                 }
+            }
+            else if (this.State.CurrentState == StreamThreadStates.PENDING_SHUTDOWN)
+            {
+                // we are only here because there's rebalance in progress,
+                // just poll with zero to complete it
+                records = this.PollRequests(TimeSpan.Zero);
             }
             else
             {
@@ -472,7 +482,9 @@ namespace Kafka.Streams.Threads.Stream
 
             // only try to initialize the assigned tasks
             // if the state is still in PARTITION_ASSIGNED after the poll call
-            if (this.State.CurrentState == StreamThreadStates.PARTITIONS_ASSIGNED)
+            if (this.State.CurrentState == StreamThreadStates.PARTITIONS_ASSIGNED
+                || (this.State.CurrentState == StreamThreadStates.RUNNING
+                    && this.TaskManager.NeedsInitializationOrRestoration()))
             {
                 if (this.TaskManager.UpdateNewAndRestoringTasks())
                 {
@@ -576,9 +588,9 @@ namespace Kafka.Streams.Threads.Stream
 
             if (this.rebalanceException != null)
             {
-                if (this.rebalanceException is TaskMigratedException)
+                if (this.rebalanceException is TaskMigratedException exception)
                 {
-                    throw (TaskMigratedException)this.rebalanceException;
+                    throw exception;
                 }
                 else
                 {
@@ -671,6 +683,7 @@ namespace Kafka.Streams.Threads.Stream
                 {
                     this.logger.LogError(
                         $"Unable to locate active task for received-record partition {partition}. Current tasks: {this.TaskManager.ToString(">")}");
+
                     throw new NullReferenceException("Task was unexpectedly missing for partition " + partition);
                 }
                 else if (task.IsClosed())
@@ -795,9 +808,10 @@ namespace Kafka.Streams.Threads.Stream
 
                         if (this.logger.IsEnabled(LogLevel.Debug))
                         {
-                            this.logger.LogDebug($"Updated standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} in {(this.clock.UtcNow - this.now).TotalMilliseconds} ms");
+                            this.logger.LogDebug($"Updated standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} in {(this.context.Clock.UtcNow - this.now).TotalMilliseconds} ms");
                         }
                     }
+
                     this.processStandbyRecords = false;
                 }
 
@@ -993,31 +1007,17 @@ namespace Kafka.Streams.Threads.Stream
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects).
                     this.producer?.Dispose();
                 }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
 
                 this.disposedValue = true;
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~KafkaStreamThread()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             this.Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
     }
 }

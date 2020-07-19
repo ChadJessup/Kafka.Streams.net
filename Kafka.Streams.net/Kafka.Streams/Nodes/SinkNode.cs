@@ -18,13 +18,13 @@ namespace Kafka.Streams.Nodes
         private IInternalProcessorContext context;
 
         public SinkNode(
-            IClock clock,
+            KafkaStreamsContext context,
             string name,
             ITopicNameExtractor topicExtractor,
             ISerializer<K>? keySerializer,
             ISerializer<V>? valSerializer,
             IStreamPartitioner<K, V>? partitioner)
-            : base(clock, name)
+            : base(context, name)
         {
             this.topicExtractor = topicExtractor;
             this.keySerializer = keySerializer;
@@ -50,10 +50,10 @@ namespace Kafka.Streams.Nodes
             // this.valSerializer ??= context.valueSerde.Serializer;
 
             // if value serializers are for {@code Change} values, set the inner serializer when necessary
-            if (this.valSerializer is ChangedSerializer<V>
-                && ((ChangedSerializer<V>)this.valSerializer).inner == null)
+            if (this.valSerializer is ChangedSerializer<V> serializer
+                && serializer.inner == null)
             {
-                // ((ChangedSerializer<V>)valSerializer).setInner(context.valueSerde.Serializer);
+                //((ChangedSerializer<V>)valSerializer).SetInner(context.ValueSerde);
             }
         }
 

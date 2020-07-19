@@ -360,10 +360,9 @@ namespace Kafka.Streams.Tests
                     streamsConfig.GetRestoreConsumerConfigs());
 
                 var storeChangelogReader = new StoreChangelogReader(
-                    Mock.Of<ILogger<StoreChangelogReader>>(),
-                        streamsConfig,
-                        restoreConsumerMock,//processorTopology.StoreToChangelogTopic),
-                        this.stateRestoreListener);
+                    this.context,
+                    restoreConsumerMock,//processorTopology.StoreToChangelogTopic),
+                    this.stateRestoreListener);
 
                 var stateManager = new ProcessorStateManager(
                     this.context,

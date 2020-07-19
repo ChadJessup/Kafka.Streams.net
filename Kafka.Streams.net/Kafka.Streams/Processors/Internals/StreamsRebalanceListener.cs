@@ -1,37 +1,37 @@
-﻿using Confluent.Kafka;
-using Kafka.Common;
+﻿using System;
+using System.Collections.Generic;
+using Confluent.Kafka;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads.Stream;
 using Microsoft.Extensions.Logging;
 
-using System;
-using System.Collections.Generic;
-
 namespace Kafka.Streams.Processors.Internals
 {
     public class StreamsRebalanceListener : IConsumerRebalanceListener
     {
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         private readonly ITaskManager taskManager;
         private readonly StreamThread streamThread;
-        private readonly ILogger log;
+        private readonly ILogger<StreamsRebalanceListener> log;
 
         public StreamsRebalanceListener(
-            IClock clock,
+            KafkaStreamsContext context,
             ITaskManager taskManager,
-            StreamThread streamThread,
-            ILogger log)
+            StreamThread streamThread)
         {
-            this.clock = clock;
-            this.taskManager = taskManager;
-            this.streamThread = streamThread;
-            this.log = log;
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.taskManager = taskManager ?? throw new ArgumentNullException(nameof(taskManager));
+            this.streamThread = streamThread ?? throw new ArgumentNullException(nameof(streamThread));
+            this.log = this.context.CreateLogger<StreamsRebalanceListener>();
         }
 
-        public void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions)
+        public void OnPartitionsAssigned(IConsumer<byte[], byte[]>? consumer, List<TopicPartition> assignedPartitions)
         {
-            var metadata = consumer.ConsumerGroupMetadata;
+            if (consumer == null)
+            {
+                return;
+            }
 
             this.log.LogDebug(
                 $"at state {this.streamThread.State}: partitions {assignedPartitions.ToJoinedString()} assigned at the end of consumer rebalance.\n" +
@@ -46,7 +46,7 @@ namespace Kafka.Streams.Processors.Internals
                 return;
             }
 
-            var start = this.clock.NowAsEpochMilliseconds;
+            var start = this.context.Clock.NowAsEpochMilliseconds;
             try
             {
                 if (!this.streamThread.State.SetState(StreamThreadStates.PARTITIONS_ASSIGNED))
@@ -74,15 +74,20 @@ namespace Kafka.Streams.Processors.Internals
             finally
             {
                 this.log.LogInformation(
-                    $"partition assignment took {this.clock.NowAsEpochMilliseconds - start} ms.\n" +
+                    $"partition assignment took {this.context.Clock.NowAsEpochMilliseconds - start} ms.\n" +
                     $"\tcurrent active tasks: {this.taskManager.ActiveTaskIds().ToJoinedString()}\n" +
                     $"\tcurrent standby tasks: {this.taskManager.StandbyTaskIds().ToJoinedString()}\n" +
                     $"\tprevious active tasks: {this.taskManager.PrevActiveTaskIds().ToJoinedString()}\n");
             }
         }
 
-        public void OnPartitionsRevoked(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> revokedPartitions)
+        public void OnPartitionsRevoked(IConsumer<byte[], byte[]>? consumer, List<TopicPartitionOffset> revokedPartitions)
         {
+            if (consumer == null)
+            {
+                return;
+            }
+
             var assignment = consumer?.Assignment ?? new List<TopicPartition>();
 
             this.log.LogDebug(
@@ -92,7 +97,7 @@ namespace Kafka.Streams.Processors.Internals
 
             if (this.streamThread.State.SetState(StreamThreadStates.PARTITIONS_REVOKED))
             {
-                var start = this.clock.NowAsEpochMilliseconds;
+                var start = this.context.Clock.NowAsEpochMilliseconds;
                 try
                 {
                     // suspend active tasks
@@ -118,7 +123,7 @@ namespace Kafka.Streams.Processors.Internals
                     this.streamThread.ClearStandbyRecords();
 
                     this.log.LogInformation(
-                        $"partition revocation took {this.clock.NowAsEpochMilliseconds - start} ms.\n" +
+                        $"partition revocation took {this.context.Clock.NowAsEpochMilliseconds - start} ms.\n" +
                         $"\tsuspended active tasks: {this.taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
                         $"\tsuspended standby tasks: {this.taskManager.SuspendedStandbyTaskIds().ToJoinedString()}");
                 }

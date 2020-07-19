@@ -1,13 +1,13 @@
 ﻿namespace Kafka.Streams.Processors.Internals
 {
-    public class ConsumerGroupMetadata
+    public class ConsumerGroupMetadata2
     {
         private readonly string groupId;
         private readonly int generationId;
         private readonly string memberId;
         private readonly string? groupInstanceId;
 
-        public ConsumerGroupMetadata(
+        public ConsumerGroupMetadata2(
             string groupId,
             int generationId,
             string memberId,

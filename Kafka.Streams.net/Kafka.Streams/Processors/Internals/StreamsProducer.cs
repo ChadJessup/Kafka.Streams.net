@@ -239,7 +239,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws TaskMigratedException
          */
         public void CommitTransaction(Dictionary<TopicPartition, OffsetAndMetadata> offsets,
-               ConsumerGroupMetadata consumerGroupMetadata)
+               IConsumerGroupMetadata consumerGroupMetadata)
         {
             if (!this.EosEnabled())
             {

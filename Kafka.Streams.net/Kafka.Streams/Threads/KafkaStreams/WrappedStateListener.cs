@@ -30,7 +30,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         public void OnChange(IThread thread, object newState, object oldState)
         {
-            throw new NotImplementedException();
         }
 
         public void SetThreadStates(Dictionary<long, StreamThreadState> threadStates)

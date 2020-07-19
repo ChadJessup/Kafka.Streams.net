@@ -47,7 +47,10 @@ namespace Kafka.Streams
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.Key, this.Value, this.Timestamp);
+            return HashCode.Combine(
+                this.Key,
+                this.Value,
+                this.Timestamp);
         }
     }
 }

@@ -15,11 +15,18 @@ namespace Kafka.Streams.Tests
         {
         }
 
-        internal static void ProduceKeyValuesSynchronously(string globalTableTopic, object p1, object p2, IClock mockTime)
+        internal static void ProduceKeyValuesSynchronously(
+            string globalTableTopic,
+            object p1,
+            object p2, KafkaStreamsContext context)
         {
         }
 
-        internal static void ProduceKeyValuesSynchronouslyWithTimestamp(string iNPUT_TOPIC, object p, StreamsConfig producerConfig, long nowAsEpochMilliseconds)
+        internal static void ProduceKeyValuesSynchronouslyWithTimestamp(
+            string iNPUT_TOPIC,
+            object p,
+            StreamsConfig producerConfig,
+            long nowAsEpochMilliseconds)
         {
         }
 

@@ -9,8 +9,8 @@ namespace Kafka.Streams.Nodes
 {
     public class SourceNode : ProcessorNode, ISourceNode
     {
-        public SourceNode(IClock clock, string Name, HashSet<string>? stateStores)
-            : base(clock, Name, stateStores, null)
+        public SourceNode(KafkaStreamsContext context, string Name, HashSet<string>? stateStores)
+            : base(context, Name, stateStores, null)
         {
         }
     }
@@ -25,15 +25,15 @@ namespace Kafka.Streams.Nodes
         private readonly IDeserializer<V> valDeserializer;
 
         public SourceNode(
-            IClock clock,
-            string Name,
+            KafkaStreamsContext context,
+            string name,
             List<string> topics,
             ITimestampExtractor? timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer)
-            : base(clock, Name)
+            : base(context, name)
         {
-            this.sourceNode = new SourceNode(clock, Name, null);
+            this.sourceNode = new SourceNode(context, name, null);
 
             this.topics = topics;
             this.TimestampExtractor = timestampExtractor;
@@ -42,12 +42,12 @@ namespace Kafka.Streams.Nodes
         }
 
         public SourceNode(
-            IClock clock,
+            KafkaStreamsContext context,
             string Name,
             List<string> topics,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer)
-            : this(clock, Name, topics, null, keyDeserializer, valDeserializer)
+            : this(context, Name, topics, null, keyDeserializer, valDeserializer)
         {
         }
 

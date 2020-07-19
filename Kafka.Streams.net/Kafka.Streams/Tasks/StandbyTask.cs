@@ -134,7 +134,7 @@ namespace Kafka.Streams.Tasks
                 // since there's no written offsets we can checkpoint with empty map,
                 // and the state current offset would be used to checkpoint
                 this.stateMgr.Checkpoint(new Dictionary<TopicPartition, long>());
-                this.offsetSnapshotSinceLastCommit = new Dictionary<TopicPartition, long>();// stateMgr.ChangelogOffsets);
+                this.offsetSnapshotSinceLastCommit = this.stateMgr.ChangelogOffsets();
                 this.logger.LogInformation("Finalized commit");
             }
             else

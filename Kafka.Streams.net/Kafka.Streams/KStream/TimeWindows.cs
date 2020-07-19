@@ -192,10 +192,12 @@ namespace Kafka.Streams.KStream
             {
                 return true;
             }
+
             if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
+
             TimeWindows that = (TimeWindows)o;
             return this.maintainDuration == that.maintainDuration &&
                 this.segments == that.segments &&

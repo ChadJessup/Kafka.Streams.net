@@ -10,7 +10,8 @@ namespace Kafka.Streams.Threads.Stream
     {
         private readonly object stateLock = new object();
         private readonly ILogger<StreamThreadState> logger;
-        private Dictionary<StreamThreadStates, StateTransition<StreamThreadStates>> validTransitions = new Dictionary<StreamThreadStates, StateTransition<StreamThreadStates>>();
+        private Dictionary<StreamThreadStates, StateTransition<StreamThreadStates>> validTransitions =
+            new Dictionary<StreamThreadStates, StateTransition<StreamThreadStates>>();
 
         public StreamThreadState(ILogger<StreamThreadState> logger)
         {
@@ -56,8 +57,7 @@ namespace Kafka.Streams.Threads.Stream
 
         public bool IsValidTransition(StreamThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
-                ? this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState)
-                : false;
+            && this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState);
 
         public void SetTaskManager(ITaskManager taskManager)
             => this.TaskManager = taskManager;

@@ -12,7 +12,7 @@ namespace Kafka.Streams.Clients.Consumers
         private readonly ILogger<StateConsumer> logger;
         private readonly GlobalConsumer globalConsumer;
         private readonly IGlobalStateMaintainer stateMaintainer;
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
         private readonly TimeSpan pollTime;
         private readonly long flushInterval;
 
@@ -22,7 +22,7 @@ namespace Kafka.Streams.Clients.Consumers
             ILogger<StateConsumer> logger,
             GlobalConsumer globalConsumer,
             IGlobalStateMaintainer stateMaintainer,
-            IClock clock,
+            KafkaStreamsContext context,
             TimeSpan pollTime,
             long flushInterval)
             : base(logger, null, null)
@@ -30,7 +30,7 @@ namespace Kafka.Streams.Clients.Consumers
             this.logger = logger;
             this.globalConsumer = globalConsumer;
             this.stateMaintainer = stateMaintainer;
-            this.clock = clock;
+            this.context = context;
             this.pollTime = pollTime;
             this.flushInterval = flushInterval;
         }
@@ -49,7 +49,7 @@ namespace Kafka.Streams.Clients.Consumers
                 this.globalConsumer.Seek(new TopicPartitionOffset(entry.Key, entry.Value ?? 0));
             }
 
-            this.lastFlush = this.clock.NowAsEpochMilliseconds;
+            this.lastFlush = this.context.Clock.NowAsEpochMilliseconds;
         }
 
         public void PollAndUpdate()
@@ -63,7 +63,7 @@ namespace Kafka.Streams.Clients.Consumers
                     this.stateMaintainer.Update(record);
                 }
 
-                var now = this.clock.NowAsEpochMilliseconds;
+                var now = this.context.Clock.NowAsEpochMilliseconds;
                 if (now >= this.lastFlush + this.flushInterval)
                 {
                     this.stateMaintainer.FlushState();

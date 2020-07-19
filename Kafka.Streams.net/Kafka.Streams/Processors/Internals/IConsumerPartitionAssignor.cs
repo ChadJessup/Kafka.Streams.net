@@ -1,4 +1,5 @@
-﻿using Kafka.Common;
+﻿using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.KStream.Internals;
 using System.Collections.Generic;
 
@@ -47,7 +48,7 @@ namespace Kafka.Streams.Processors.Internals
          * @param assignment The local member's assignment as provided by the leader in {@link #assign(Cluster, GroupSubscription)}
          * @param metadata Additional metadata on the consumer (optional)
          */
-        public void OnAssignment(Assignment assignment, ConsumerGroupMetadata metadata)
+        public void OnAssignment(Assignment assignment, IConsumerGroupMetadata metadata)
         {
         }
 

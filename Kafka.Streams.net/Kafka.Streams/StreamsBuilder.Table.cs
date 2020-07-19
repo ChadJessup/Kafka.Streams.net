@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using Kafka.Common;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
@@ -148,10 +146,15 @@ namespace Kafka.Streams
 
                 var materializedInternal =
                      new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-                             Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(consumedInternal.KeySerde, consumedInternal.ValueSerde),
+                             Materialized.With<K, V, IKeyValueStore<Bytes, byte[]>>(
+                                 consumedInternal.KeySerde,
+                                 consumedInternal.ValueSerde),
                              this.Context.InternalStreamsBuilder, topic + "-");
 
-                return this.Context.InternalStreamsBuilder.Table(topic, consumedInternal, materializedInternal);
+                return this.Context.InternalStreamsBuilder.Table(
+                    topic,
+                    consumedInternal,
+                    materializedInternal);
             }
 
             /**
@@ -187,13 +190,20 @@ namespace Kafka.Streams
                     throw new ArgumentNullException(nameof(materialized));
                 }
 
-                var materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.Context.InternalStreamsBuilder, topic + "-");
+                var materializedInternal = new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
+                    materialized,
+                    this.Context.InternalStreamsBuilder,
+                    topic + "-");
 
-                var consumedInternal =
-                        new ConsumedInternal<K, V>(Consumed.With<K, V>(materializedInternal.KeySerde, materializedInternal.ValueSerde));
+                var consumedInternal = new ConsumedInternal<K, V>(
+                    Consumed.With<K, V>(
+                        materializedInternal.KeySerde,
+                        materializedInternal.ValueSerde));
 
-                return this.Context.InternalStreamsBuilder.Table(topic, consumedInternal, materializedInternal);
+                return this.Context.InternalStreamsBuilder.Table(
+                    topic,
+                    consumedInternal,
+                    materializedInternal);
             }
 
             /**
@@ -323,10 +333,16 @@ namespace Kafka.Streams
                     .WithKeySerde(consumedInternal.KeySerde)
                     .WithValueSerde(consumedInternal.ValueSerde);
 
-                MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.Context.InternalStreamsBuilder, topic + "-");
+                var materializedInternal =
+                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
+                         materialized,
+                         this.Context.InternalStreamsBuilder,
+                         topic + "-");
 
-                return this.Context.InternalStreamsBuilder.GlobalTable(topic, consumedInternal, materializedInternal);
+                return this.Context.InternalStreamsBuilder.GlobalTable(
+                    topic,
+                    consumedInternal,
+                    materializedInternal);
             }
 
             /**
@@ -359,11 +375,21 @@ namespace Kafka.Streams
                 string topic,
                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
             {
-                Objects.requireNonNull(topic, "topic can't be null");
-                Objects.requireNonNull(materialized, "materialized can't be null");
-                MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+                if (string.IsNullOrWhiteSpace(topic))
+                {
+                    throw new ArgumentException("message", nameof(topic));
+                }
+
+                if (materialized is null)
+                {
+                    throw new ArgumentNullException(nameof(materialized));
+                }
+
+                var materializedInternal =
                      new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-                         materialized, this.Context.InternalStreamsBuilder, topic + "-");
+                         materialized,
+                         this.Context.InternalStreamsBuilder,
+                         topic + "-");
 
                 return this.Context.InternalStreamsBuilder.GlobalTable(
                     topic,

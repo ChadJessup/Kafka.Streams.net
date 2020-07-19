@@ -972,11 +972,11 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        private int Process(int maxNumRecords, IClock time)
+        private int Process(int maxNumRecords, KafkaStreamsContext context)
         {
             int totalProcessed = 0;
 
-            long now = time.NowAsEpochMilliseconds;
+            long now = context.Clock.NowAsEpochMilliseconds;
             foreach (ITask task in this.ActiveTaskIterable())
             {
                 try
@@ -988,7 +988,7 @@ namespace Kafka.Streams.Tasks
                         processed++;
                     }
 
-                    now = time.NowAsEpochMilliseconds;
+                    now = context.Clock.NowAsEpochMilliseconds;
                     totalProcessed += processed;
                     task.RecordProcessBatchTime(now - then);
                 }
@@ -1264,6 +1264,11 @@ namespace Kafka.Streams.Tasks
         }
 
         public void UpdateSubscriptionsFromMetadata(HashSet<string> topics)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool NeedsInitializationOrRestoration()
         {
             throw new NotImplementedException();
         }

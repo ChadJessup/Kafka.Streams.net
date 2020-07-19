@@ -1,11 +1,9 @@
-﻿using Kafka.Common;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Topologies;
-
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kafka.Streams.Factories
 {
@@ -15,11 +13,11 @@ namespace Kafka.Streams.Factories
         private readonly IProcessorSupplier supplier;
 
         public ProcessorNodeFactory(
-            IClock clock,
+            KafkaStreamsContext context,
             string Name,
             string[] predecessors,
             IProcessorSupplier supplier)
-            : base(clock, Name, predecessors.Select(p => p).ToArray())
+            : base(context, Name, predecessors.Select(p => p).ToArray())
         {
             this.supplier = supplier;
         }
@@ -31,7 +29,7 @@ namespace Kafka.Streams.Factories
 
         public override IProcessorNode Build()
         {
-            return new ProcessorNode<K, V>(this.Clock, this.Name, this.supplier.Get(), this.stateStoreNames);
+            return new ProcessorNode<K, V>(this.context, this.Name, this.supplier.Get(), this.stateStoreNames);
         }
 
         public override INode Describe()

@@ -48,7 +48,7 @@ namespace Kafka.Streams
             // Note that the specified input topic must be partitioned by key.
             // If this is not the case it is the user's responsibility to repartition the data before any key based operation
             // (like aggregation or join) is applied to the returned {@link KStream}.
-            // 
+            //
             // @param topic the topic Name; cannot be {@code null}
             // @return a {@link KStream} for the specified topic
             [MethodImpl(MethodImplOptions.Synchronized)]
@@ -123,7 +123,9 @@ namespace Kafka.Streams
                 topics = topics ?? throw new ArgumentNullException(nameof(topics));
                 consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
 
-                return this.Context.InternalStreamsBuilder.Stream(topics, new ConsumedInternal<K, V>(consumed));
+                return this.Context.InternalStreamsBuilder.Stream(
+                    topics,
+                    new ConsumedInternal<K, V>(consumed));
             }
 
             /**
@@ -171,7 +173,9 @@ namespace Kafka.Streams
                 topicPattern = topicPattern ?? throw new ArgumentNullException(nameof(topicPattern));
                 consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
 
-                return this.Context.InternalStreamsBuilder.Stream(topicPattern, new ConsumedInternal<K, V>(consumed));
+                return this.Context.InternalStreamsBuilder.Stream(
+                    topicPattern,
+                    new ConsumedInternal<K, V>(consumed));
             }
         }
     }

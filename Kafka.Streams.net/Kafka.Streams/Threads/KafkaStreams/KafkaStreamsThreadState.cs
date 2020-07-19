@@ -59,8 +59,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         public bool IsValidTransition(KafkaStreamsThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
-                ? this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState)
-                : false;
+            && this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState);
 
         public bool SetState(KafkaStreamsThreadStates newState)
         {
@@ -103,11 +102,11 @@ namespace Kafka.Streams.Threads.KafkaStreams
                 }
                 else
                 {
-                    this.logger.LogInformation("State transition from {} to {}", oldState, newState);
+                    this.logger.LogInformation($"State transition from {oldState} to {newState}");
                 }
 
                 this.CurrentState = newState;
-                // stateLock.notifyAll();
+                //stateLock.notifyAll();
             }
 
             // we need to call the user customized state listener outside the state lock to avoid potential deadlocks

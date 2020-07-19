@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests.Integration
         public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
 
         private static volatile int testNo = 0;
-        private readonly IClock mockClock;
+        private readonly KafkaStreamsContext context;
         private readonly KeyValueMapper<string, long, long> keyMapper = new KeyValueMapper<string, long, long>((key, value) => value);
         private readonly ValueJoiner<long, string, string> joiner = (value1, value2) => value1 + "+" + value2;
         private readonly string globalStore = "globalStore";
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tests.Integration
             sc.TryAddSingleton<IClock, MockTime>();
 
             builder = new StreamsBuilder(sc);
-            this.mockClock = builder.Context.Clock;
+            this.context = builder.Context;
 
             CreateTopics();
             string applicationId = "globalTableTopic-table-test-" + ++testNo;
@@ -90,7 +90,7 @@ namespace Kafka.Streams.Tests.Integration
             streamTableJoin.Process(supplier);
             ProduceInitialGlobalTableValues();
             StartStreams();
-            long firstTimestamp = mockClock.NowAsEpochMilliseconds;
+            long firstTimestamp = this.context.Clock.NowAsEpochMilliseconds;
             ProduceTopicValues(streamTopic);
 
             var expected = new Dictionary<string, IValueAndTimestamp<string>?>
@@ -119,7 +119,7 @@ namespace Kafka.Streams.Tests.Integration
                 "waiting for initial values");
 
 
-            firstTimestamp = mockClock.NowAsEpochMilliseconds;
+            firstTimestamp = this.context.Clock.NowAsEpochMilliseconds;
             ProduceGlobalTableValues();
 
             IReadOnlyKeyValueStore<long, string> replicatedStore =
@@ -135,7 +135,7 @@ namespace Kafka.Streams.Tests.Integration
 
             Assert.Equal(replicatedStoreWithTimestamp.Get(5L), ValueAndTimestamp.Make("J", firstTimestamp + 4L));
 
-            firstTimestamp = mockClock.NowAsEpochMilliseconds;
+            firstTimestamp = this.context.Clock.NowAsEpochMilliseconds;
             ProduceTopicValues(streamTopic);
 
             expected.Add("a", ValueAndTimestamp.Make("1+F", firstTimestamp));
@@ -168,7 +168,7 @@ namespace Kafka.Streams.Tests.Integration
             streamTableJoin.Process(supplier);
             ProduceInitialGlobalTableValues();
             StartStreams();
-            long firstTimestamp = mockClock.NowAsEpochMilliseconds;
+            long firstTimestamp = this.context.Clock.NowAsEpochMilliseconds;
             ProduceTopicValues(streamTopic);
 
             var expected = new Dictionary<string, IValueAndTimestamp<string>?>
@@ -197,7 +197,7 @@ namespace Kafka.Streams.Tests.Integration
                 "waiting for initial values");
 
 
-            firstTimestamp = mockClock.NowAsEpochMilliseconds;
+            firstTimestamp = this.context.Clock.NowAsEpochMilliseconds;
             ProduceGlobalTableValues();
 
             IReadOnlyKeyValueStore<long, string> replicatedStore =
@@ -212,7 +212,7 @@ namespace Kafka.Streams.Tests.Integration
                 kafkaStreams.Store(globalStore, QueryableStoreTypes.TimestampedKeyValueStore<long, string>());
             Assert.Equal(replicatedStoreWithTimestamp.Get(5L), ValueAndTimestamp.Make("J", firstTimestamp + 4L));
 
-            firstTimestamp = mockClock.NowAsEpochMilliseconds;
+            firstTimestamp = this.context.Clock.NowAsEpochMilliseconds;
             ProduceTopicValues(streamTopic);
 
             expected.Add("a", ValueAndTimestamp.Make("1+F", firstTimestamp));
@@ -296,7 +296,7 @@ namespace Kafka.Streams.Tests.Integration
                             Serdes.String().Serializer,
                             Serdes.Long().Serializer,
                             new StreamsConfig()),
-                    mockClock);
+                    this.context);
         }
 
         private void ProduceInitialGlobalTableValues()
@@ -312,7 +312,7 @@ namespace Kafka.Streams.Tests.Integration
                             CLUSTER.bootstrapServers(),
                             Serdes.Long().Serializer,
                             Serdes.String().Serializer),
-                    mockClock);
+                    this.context);
         }
 
         private void ProduceGlobalTableValues()
@@ -330,7 +330,7 @@ namespace Kafka.Streams.Tests.Integration
                             Serdes.Long().Serializer,
                             Serdes.String().Serializer,
                             new StreamsConfig()),
-                    mockClock);
+                    this.context);
         }
     }
 }

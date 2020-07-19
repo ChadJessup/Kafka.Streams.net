@@ -213,7 +213,7 @@ namespace Kafka.Streams.Topologies
             this.nodeFactories.Add(
                 name,
                 new SourceNodeFactory<K, V>(
-                    this.Clock,
+                    this.context,
                     name,
                     topics,
                     null,
@@ -271,7 +271,7 @@ namespace Kafka.Streams.Topologies
             this.MaybeAddToResetList(this.earliestResetPatterns, this.latestResetPatterns, offsetReset, topicPattern);
 
             this.nodeFactories.Add(name, new SourceNodeFactory<K, V>(
-                this.Clock,
+                this.context,
                 name,
                 null,
                 topicPattern,
@@ -361,7 +361,7 @@ namespace Kafka.Streams.Topologies
             this.nodeFactories.Add(
                 Name,
                 new SinkNodeFactory<K, V>(
-                    this.Clock,
+                    this.context,
                     Name,
                     predecessorNames,
                     topicExtractor,
@@ -417,7 +417,7 @@ namespace Kafka.Streams.Topologies
                 }
             }
 
-            this.nodeFactories.Add(name, new ProcessorNodeFactory<K, V>(this.Clock, name, predecessorNames, supplier));
+            this.nodeFactories.Add(name, new ProcessorNodeFactory<K, V>(this.context, name, predecessorNames, supplier));
             this.nodeGrouper.Add(name);
 
             this.nodeGrouper.Unite(name, predecessorNames);
@@ -491,7 +491,7 @@ namespace Kafka.Streams.Topologies
             string[] predecessors = { sourceName };
 
             var nodeFactory = new ProcessorNodeFactory<K, V>(
-                this.Clock,
+                this.context,
                 processorName,
                 predecessors,
                 stateUpdateSupplier);
@@ -501,7 +501,7 @@ namespace Kafka.Streams.Topologies
             this.nodeFactories.Add(
                 sourceName,
                 new SourceNodeFactory<K, V>(
-                    this.Clock,
+                    this.context,
                     sourceName,
                     topics,
                     null,
@@ -549,7 +549,7 @@ namespace Kafka.Streams.Topologies
             stateStoreNames = stateStoreNames ?? throw new ArgumentNullException(nameof(stateStoreNames));
             if (stateStoreNames.Length == 0)
             {
-                throw new TopologyException("Must provide at least one state store Name.");
+                throw new TopologyException("Must provide at least one state store name.");
             }
 
             foreach (var stateStoreName in stateStoreNames.Where(storeName => storeName != null))
@@ -897,28 +897,30 @@ namespace Kafka.Streams.Topologies
                     var node = factory.Build();
                     processorMap.Add(node.Name, node);
 
-                    if (factory is IProcessorNodeFactory)
+                    if (factory is IProcessorNodeFactory processorNodeFactory)
                     {
                         this.BuildProcessorNode(
                             processorMap,
                             stateStoreMap,
-                            (IProcessorNodeFactory)factory,
+                            processorNodeFactory,
                             node);
                     }
-                    else if (factory is ISourceNodeFactory)
+                    else if (factory is ISourceNodeFactory sourceNodeFactory)
                     {
-                        this.BuildSourceNode(topicSourceMap,
-                                        repartitionTopics,
-                                        (ISourceNodeFactory)factory,
-                                        (ISourceNode)node);
+                        this.BuildSourceNode(
+                            topicSourceMap,
+                            repartitionTopics,
+                            sourceNodeFactory,
+                            (ISourceNode)node);
                     }
-                    else if (factory is ISinkNodeFactory)
+                    else if (factory is ISinkNodeFactory sinkNodeFactory)
                     {
-                        this.BuildSinkNode(processorMap,
-                                      topicSinkMap,
-                                      repartitionTopics,
-                                      (ISinkNodeFactory)factory,
-                                      (ISinkNode)node);
+                        this.BuildSinkNode(
+                            processorMap,
+                            topicSinkMap,
+                            repartitionTopics,
+                            sinkNodeFactory,
+                            (ISinkNode)node);
                     }
                     else
                     {
@@ -948,9 +950,9 @@ namespace Kafka.Streams.Topologies
             foreach (string predecessor in sinkNodeFactory.Predecessors)
             {
                 processorMap[predecessor].AddChild(node);
-                if (sinkNodeFactory.TopicExtractor is StaticTopicNameExtractor)
+                if (sinkNodeFactory.TopicExtractor is StaticTopicNameExtractor extractor)
                 {
-                    string topic = ((StaticTopicNameExtractor)sinkNodeFactory.TopicExtractor).TopicName;
+                    string topic = extractor.TopicName;
 
                     if (this.internalTopicNames.Contains(topic))
                     {
@@ -1014,10 +1016,10 @@ namespace Kafka.Streams.Topologies
                         IStateStoreFactory stateStoreFactory = this.stateFactories[stateStoreName];
 
                         // remember the changelog topic if this state store is change-logging enabled
-                        if (false && /*stateStoreFactory.loggingEnabled &&*/ !storeToChangelogTopic.ContainsKey(stateStoreName))
+                        if (false && /*stateStoreFactory.loggingEnabled &&*/ !this.storeToChangelogTopic.ContainsKey(stateStoreName))
                         {
-                            string changelogTopic = ProcessorStateManager.StoreChangelogTopic(applicationId, stateStoreName);
-                            storeToChangelogTopic.Add(stateStoreName, changelogTopic);
+                            string changelogTopic = ProcessorStateManager.StoreChangelogTopic(this.applicationId, stateStoreName);
+                            this.storeToChangelogTopic.Add(stateStoreName, changelogTopic);
                         }
 
                         stateStoreMap.Add(stateStoreName, stateStoreFactory.Build());
@@ -1206,7 +1208,7 @@ namespace Kafka.Streams.Topologies
 
         private InternalTopicConfig CreateChangelogTopicConfig(
             IStateStoreFactory<IStateStore> factory,
-            string Name)
+            string name)
         {
             return null;
             //if (factory.isWindowStore())

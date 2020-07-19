@@ -15,6 +15,7 @@ namespace Kafka.Streams.Threads.Stream
         IStateListener<StreamThreadStates>,
         IStateListener<GlobalStreamThreadStates>
     {
+        private readonly KafkaStreamsContext context;
         private readonly ILogger<StreamStateListener> logger;
 
         private Dictionary<long, StreamThreadState> threadStates = new Dictionary<long, StreamThreadState>();
@@ -25,11 +26,12 @@ namespace Kafka.Streams.Threads.Stream
         private readonly object threadStatesLock;
 
         public StreamStateListener(
-            ILogger<StreamStateListener> logger,
+            KafkaStreamsContext context,
             IGlobalStreamThread? globalThread,
             IKafkaStreamsThread kafkaStreams)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.logger = this.context.CreateLogger<StreamStateListener>();
             this.kafkaStreams = kafkaStreams ?? throw new ArgumentNullException(nameof(kafkaStreams));
             this.globalThread = globalThread;
 

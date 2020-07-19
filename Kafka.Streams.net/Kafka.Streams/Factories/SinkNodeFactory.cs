@@ -11,7 +11,7 @@ namespace Kafka.Streams.Factories
     public class SinkNodeFactory<K, V> : NodeFactory<K, V>, ISinkNodeFactory<K, V>
     {
         private readonly InternalTopologyBuilder internalTopologyBuilder;
-        private readonly IClock clock;
+        private readonly KafkaStreamsContext context;
 
         public ITopicNameExtractor TopicExtractor { get; }
 
@@ -20,7 +20,7 @@ namespace Kafka.Streams.Factories
         private readonly IStreamPartitioner<K, V>? partitioner;
 
         public SinkNodeFactory(
-            IClock clock,
+            KafkaStreamsContext context,
             string Name,
             string[] predecessors,
             TopicNameExtractor<K, V> topicExtractor,
@@ -28,9 +28,9 @@ namespace Kafka.Streams.Factories
             ISerializer<V>? valSerializer,
             IStreamPartitioner<K, V>? partitioner,
             InternalTopologyBuilder internalTopologyBuilder)
-            : base(clock, Name, predecessors.ToArray())
+            : base(context, Name, predecessors.ToArray())
         {
-            this.clock = clock;
+            this.context = context;
             this.partitioner = partitioner;
             this.keySerializer = keySerializer;
             this.valueSerializer = valSerializer;
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Factories
                 {
                     // prefix the internal topic Name with the application id
                     return new SinkNode<K, V>(
-                        this.clock,
+                        this.context,
                         this.Name,
                         new StaticTopicNameExtractor(this.internalTopologyBuilder.DecorateTopic(topic)),
                         this.keySerializer,
@@ -57,7 +57,7 @@ namespace Kafka.Streams.Factories
                 else
                 {
                     return new SinkNode<K, V>(
-                        this.clock,
+                        this.context,
                         this.Name,
                         this.TopicExtractor,
                         this.keySerializer,
@@ -68,7 +68,7 @@ namespace Kafka.Streams.Factories
             else
             {
                 return new SinkNode<K, V>(
-                    this.clock,
+                    this.context,
                     this.Name,
                     this.TopicExtractor,
                     this.keySerializer,

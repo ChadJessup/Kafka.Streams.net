@@ -112,9 +112,9 @@ namespace Kafka.Streams.Processors.Internals
             while (this.headRecord == null && this.fifoQueue.Any())
             {
                 ConsumeResult<byte[], byte[]> raw = this.fifoQueue.Peek();
-                var recordDeserializer = GetRecordDeserializer();
+                var recordDeserializer = this.GetRecordDeserializer();
 
-                ConsumeResult<object, object> deserialized = recordDeserializer.Deserialize<object, object>(processorContext, raw);
+                ConsumeResult<object, object> deserialized = recordDeserializer.Deserialize<object, object>(this.processorContext, raw);
 
                 if (deserialized == null)
                 {
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Processors.Internals
                 DateTime? timestamp = null;
                 try
                 {
-                    timestamp = timestampExtractor.Extract(deserialized, partitionTime);
+                    timestamp = this.timestampExtractor.Extract(deserialized, this.partitionTime);
                 }
                 catch (StreamsException internalFatalExtractorException)
                 {
@@ -150,7 +150,7 @@ namespace Kafka.Streams.Processors.Internals
                     continue;
                 }
 
-                headRecord = new StampedRecord(deserialized, timestamp.Value);
+                this.headRecord = new StampedRecord(deserialized, timestamp.Value);
 
                 this.partitionTime = this.partitionTime.GetNewest(timestamp.Value);
             }

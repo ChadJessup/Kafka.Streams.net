@@ -35,13 +35,13 @@ namespace Kafka.Streams.Processors.Internals
 
             // corresponding changelog partition of the store, this and the following two fields
             // will only be not-null if the state store is logged (i.e. changelog partition and restorer provided)
-            public TopicPartition ChangelogPartition { get; }
+            public TopicPartition? ChangelogPartition { get; }
 
             // could be used for both active restoration and standby
-            public IStateRestoreCallback RestoreCallback { get; }
+            public IStateRestoreCallback? RestoreCallback { get; }
 
             // record converters used for restoration and standby
-            public IRecordConverter RecordConverter { get; }
+            public IRecordConverter? RecordConverter { get; }
 
             // indicating the current snapshot of the store as the offset of last changelog record that has been
             // applied to the store used for both restoration (active and standby tasks restored offset) and
@@ -136,7 +136,12 @@ namespace Kafka.Streams.Processors.Internals
             Dictionary<string, string> storeToChangelogTopic,
             IEnumerable<TopicPartition> sourcePartitions)
         {
-            this.context = context;
+            if (stateDirectory is null)
+            {
+                throw new ArgumentNullException(nameof(stateDirectory));
+            }
+
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
             this.log = this.context.CreateLogger<ProcessorStateManager>();
             this.TaskId = taskId;
             this.taskType = taskType;
@@ -154,7 +159,7 @@ namespace Kafka.Streams.Processors.Internals
         public void RegisterGlobalStateStores(List<IStateStore> stateStores)
         {
             this.log.LogDebug("Register global stores {}", stateStores);
-            foreach (IStateStore stateStore in stateStores)
+            foreach (IStateStore stateStore in stateStores ?? Enumerable.Empty<IStateStore>())
             {
                 this.globalStores.Add(stateStore.Name, stateStore);
             }
@@ -221,9 +226,9 @@ namespace Kafka.Streams.Processors.Internals
 
                 this.checkpointFile.Delete();
             }
-            catch (TaskCorruptedException e)
+            catch (TaskCorruptedException)
             {
-                throw e;
+                throw;
             }
             catch (IOException e)
             {
@@ -234,6 +239,11 @@ namespace Kafka.Streams.Processors.Internals
 
         public void RegisterStore(IStateStore store, IStateRestoreCallback stateRestoreCallback)
         {
+            if (store is null)
+            {
+                throw new ArgumentNullException(nameof(store));
+            }
+
             string storeName = store.Name;
 
             if (StateManagerUtil.CHECKPOINT_FILE_NAME.Equals(storeName))
@@ -244,7 +254,7 @@ namespace Kafka.Streams.Processors.Internals
 
             if (this.stores.ContainsKey(storeName))
             {
-                throw new ArgumentException(string.Format("%sStore %s has already been registered.", this.logPrefix, storeName));
+                throw new ArgumentException($"{this.logPrefix}Store {storeName} has already been registered.");
             }
 
             string topic = this.storeToChangelogTopic[storeName];
@@ -376,9 +386,7 @@ namespace Kafka.Streams.Processors.Internals
                 catch (RuntimeException e)
                 {
                     throw new ProcessorStateException(
-                        string.Format("%sException caught while trying to restore state from %s",
-                        this.logPrefix,
-                        storeMetadata.ChangelogPartition),
+                        $"{this.logPrefix}Exception caught while trying to restore state from {storeMetadata.ChangelogPartition}",
                         e);
                 }
 
@@ -421,7 +429,7 @@ namespace Kafka.Streams.Processors.Internals
                         else
                         {
                             firstException = new ProcessorStateException(
-                                string.Format("%sFailed to flush state store %s", this.logPrefix, store.Name), exception);
+                                $"{this.logPrefix}Failed to flush state store {store.Name}", exception);
                         }
                     }
 
@@ -490,7 +498,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             // first update each state store's current offset, then checkpoint
             // those stores that are only logged and persistent to the checkpoint file
-            foreach (var entry in writtenOffsets)
+            foreach (var entry in writtenOffsets ?? Enumerable.Empty<KeyValuePair<TopicPartition, long>>())
             {
                 StateStoreMetadata? store = this.FindStore(entry.Key);
 

@@ -25,7 +25,6 @@ namespace Kafka.Streams.Processors.Internals
         private readonly StateDirectory stateDirectory;
         private readonly IChangelogReader storeChangelogReader;
         private readonly ThreadCache cache;
-        private readonly IClock time;
         private readonly IKafkaClientSupplier clientSupplier;
         private readonly string threadId;
         private readonly ILogger<ActiveTaskCreator> log;

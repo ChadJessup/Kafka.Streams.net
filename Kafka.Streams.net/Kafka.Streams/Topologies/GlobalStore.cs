@@ -1,4 +1,5 @@
 ﻿using Kafka.Streams.Processors.Internals;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Topologies
@@ -51,7 +52,9 @@ namespace Kafka.Streams.Topologies
 
         public override int GetHashCode()
         {
-            return (this.source, this.processor).GetHashCode();
+            return HashCode.Combine(
+                this.source,
+                this.processor);
         }
     }
 }

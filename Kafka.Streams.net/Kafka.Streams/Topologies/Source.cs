@@ -42,7 +42,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             var topicsString = this.topics == null
                 ? this.topicPattern?.ToString()
-                : this.topics.ToString();
+                : this.topics.ToJoinedString();
 
             return $"Source: {this.Name} (topics: {topicsString })\n      -=> " +
                 $"{InternalTopologyBuilder.GetNodeNames(this.Successors)}";

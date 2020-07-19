@@ -16,17 +16,14 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         public void OnBatchRestored(TopicPartition topicPartition, string storeName, long batchEndOffset, long numRestored)
         {
-            throw new NotImplementedException();
         }
 
         public void OnRestoreEnd(TopicPartition topicPartition, string storeName, long totalRestored)
         {
-            throw new NotImplementedException();
         }
 
         public void OnRestoreStart(TopicPartition topicPartition, string storeName, long startingOffset, long endingOffset)
         {
-            throw new NotImplementedException();
         }
     }
 }

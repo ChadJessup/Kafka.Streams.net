@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processors.Internals
         }
 
         public GroupAssignment Assign(
-            Cluster metadata, 
+            Cluster metadata,
             GroupSubscription groupSubscription)
         {
             throw new System.NotImplementedException();

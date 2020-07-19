@@ -21,7 +21,6 @@ namespace Kafka.Streams.Tasks
         // activeTasks needs to be concurrent as it can be accessed
         // by QueryableState
         private readonly ILogger<TaskManagerOld> logger;
-        private readonly ILoggerFactory loggerFactory;
 
         //public Guid processId { get; }
         private readonly AssignedStreamsTasks active;
@@ -86,7 +85,7 @@ namespace Kafka.Streams.Tasks
             this.AddStreamTasks(assignment);
             this.AddStandbyTasks();
 
-            // TODO: can't pause here, due to handler not actually being called after assingment.
+            // TODO: can't pause here, due to handler not actually being called after assignment.
             // Pause All the partitions until the underlying state store is ready for All the active tasks.
             //this.logger.LogTrace($"Pausing partitions: {assignment.ToJoinedString()}");
             //this.consumer.Pause(assignment);//.Select(a => a.TopicPartition));
@@ -548,6 +547,11 @@ namespace Kafka.Streams.Tasks
             builder.Append(this.standby.ToString(indent + "\t\t"));
 
             return builder.ToString();
+        }
+
+        public bool NeedsInitializationOrRestoration()
+        {
+            return true;
         }
     }
 }

@@ -83,9 +83,10 @@ namespace Kafka.Streams
 
         public async ValueTask DisposeAsync()
         {
-            this.Services?.DisposeAsync();
-
-            await Task.CompletedTask;
+            if (this.Services != null)
+            {
+                await this.Services.DisposeAsync();
+            }
         }
     }
 }

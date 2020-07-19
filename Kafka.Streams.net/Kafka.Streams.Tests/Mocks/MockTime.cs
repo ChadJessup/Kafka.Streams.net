@@ -1,5 +1,4 @@
-﻿using Confluent.Kafka;
-using Kafka.Common;
+﻿using Kafka.Common;
 using System;
 
 namespace Kafka.Streams.Tests

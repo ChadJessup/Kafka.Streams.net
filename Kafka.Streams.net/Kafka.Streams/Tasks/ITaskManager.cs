@@ -43,5 +43,6 @@ namespace Kafka.Streams.Tasks
         bool UpdateNewAndRestoringTasks();
         void UpdateSubscriptionsFromAssignment(List<TopicPartition> partitions);
         void UpdateSubscriptionsFromMetadata(HashSet<string> topics);
+        bool NeedsInitializationOrRestoration();
     }
 }
