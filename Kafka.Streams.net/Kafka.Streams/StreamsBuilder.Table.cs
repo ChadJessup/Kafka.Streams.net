@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using Kafka.Common;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
@@ -79,9 +78,15 @@ namespace Kafka.Streams
                     .WithValueSerde(consumedInternal.ValueSerde);
 
                 var materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.Context.InternalStreamsBuilder, topic + "-");
+                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
+                         materialized,
+                         this.Context.InternalStreamsBuilder,
+                         topic + "-");
 
-                return this.Context.InternalStreamsBuilder.Table(topic, consumedInternal, materializedInternal);
+                return this.Context.InternalStreamsBuilder.Table(
+                    topic,
+                    consumedInternal,
+                    materializedInternal);
             }
 
             /**
