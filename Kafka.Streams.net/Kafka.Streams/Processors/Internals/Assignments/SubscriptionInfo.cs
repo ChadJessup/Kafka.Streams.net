@@ -21,12 +21,12 @@ namespace Kafka.Streams.Processors.Internals.Assignments
         private HashSet<TaskId>? prevTasksCache = null;
         private HashSet<TaskId>? standbyTasksCache = null;
         private Dictionary<TaskId, long>? taskOffsetSumsCache = null;
-        private static readonly long LATEST_OFFSET = -2L;
+        private const long LATEST_OFFSET = -2L;
 
         public SubscriptionInfo()
         {
             // Just statically check to make sure that the generated code always stays in sync with the overall protocol
-            int subscriptionInfoLatestVersion = SubscriptionInfoData.SCHEMAS.Length - 1;
+            int subscriptionInfoLatestVersion = 0; //SubscriptionInfoData.SCHEMAS.Length - 1;
             if (subscriptionInfoLatestVersion != StreamsAssignmentProtocolVersions.LATEST_SUPPORTED_VERSION)
             {
                 throw new InvalidProgramException(

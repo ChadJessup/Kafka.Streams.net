@@ -162,7 +162,7 @@ namespace Kafka.Streams.Processors.Internals
             this.nextScheduledRebalanceMs = assignorConfiguration.nextScheduledRebalanceMs();
             this.time = assignorConfiguration.time();
             this.assignmentConfigs = assignorConfiguration.assignmentConfigs();
-            partitionGrouper = assignorConfiguration.partitionGrouper();
+            //partitionGrouper = assignorConfiguration.partitionGrouper();
             this.userEndPoint = assignorConfiguration.userEndPoint();
             this.adminClient = assignorConfiguration.adminClient();
             this.internalTopicManager = assignorConfiguration.internalTopicManager();
@@ -325,9 +325,9 @@ namespace Kafka.Streams.Processors.Internals
             catch (TaskAssignmentException e)
             {
                 return new GroupAssignment(
-                    errorAssignment(clientMetadataMap,
-                        AssignorError.INCOMPLETE_SOURCE_TOPIC_METADATA.code())
-                );
+                    errorAssignment(clientMetadataMap, 0));
+//                        AssignorError.INCOMPLETE_SOURCE_TOPIC_METADATA.code());
+//                );
             }
 
             Cluster fullMetadata = metadata.withPartitions(allRepartitionTopicPartitions);
@@ -347,13 +347,13 @@ namespace Kafka.Streams.Processors.Internals
             }
 
             // get the tasks as partition groups from the partition grouper
-            Dictionary<TaskId, HashSet<TopicPartition>> partitionsForTask =
-                partitionGrouper.partitionGroups(sourceTopicsByGroup, fullMetadata);
+            //Dictionary<TaskId, HashSet<TopicPartition>> partitionsForTask =
+            //    partitionGrouper.partitionGroups(sourceTopicsByGroup, fullMetadata);
 
             HashSet<TaskId> statefulTasks = new HashSet<TaskId>();
 
-            bool probingRebalanceNeeded =
-                this.assignTasksToClients(fullMetadata, allSourceTopics, topicGroups, clientMetadataMap, partitionsForTask, statefulTasks);
+            bool probingRebalanceNeeded = false;
+                // this.assignTasksToClients(fullMetadata, allSourceTopics, topicGroups, clientMetadataMap, partitionsForTask, statefulTasks);
 
             // ---------------- Step Three ---------------- //
 
@@ -363,7 +363,7 @@ namespace Kafka.Streams.Processors.Internals
             Dictionary<HostInfo, HashSet<TopicPartition>> standbyPartitionsByHost = new Dictionary<HostInfo, HashSet<TopicPartition>>();
             if (minReceivedMetadataVersion >= 2)
             {
-                this.populatePartitionsByHostMaps(partitionsByHost, standbyPartitionsByHost, partitionsForTask, clientMetadataMap);
+                // this.populatePartitionsByHostMaps(partitionsByHost, standbyPartitionsByHost, partitionsForTask, clientMetadataMap);
             }
 
             this.streamsMetadataState.OnChange(partitionsByHost, standbyPartitionsByHost, fullMetadata);
@@ -375,7 +375,8 @@ namespace Kafka.Streams.Processors.Internals
             Dictionary<string, Assignment> assignment = this.computeNewAssignment(
                 statefulTasks,
                 clientMetadataMap,
-                partitionsForTask,
+                null,
+                //partitionsForTask,
                 partitionsByHost,
                 standbyPartitionsByHost,
                 allOwnedPartitions,
@@ -454,7 +455,7 @@ namespace Kafka.Streams.Processors.Internals
                     {
                         this.log.LogError("Source topic {} is missing/unknown during rebalance, please make sure all source topics " +
                                       "have been pre-created before starting the Streams application. Returning error {}",
-                                      topic, AssignorError.INCOMPLETE_SOURCE_TOPIC_METADATA.Name);
+                                      topic, 0);// AssignorError.INCOMPLETE_SOURCE_TOPIC_METADATA.Name);
                         throw new TaskAssignmentException("Missing source topic during assignment.");
                     }
                 }
@@ -810,6 +811,7 @@ namespace Kafka.Streams.Processors.Internals
             {
                 this.log.LogInformation("Failed to fetch end offsets for changelogs, will return previous assignment to clients and "
                              + "trigger another rebalance to retry.");
+
                 return new FallbackPriorTaskAssignor();
             }
         }
@@ -867,16 +869,16 @@ namespace Kafka.Streams.Processors.Internals
                 Dictionary<TopicPartition, TopicPartitionOffset> endOffsetsFuture =
                      ClientUtils.fetchEndOffsetsFuture(preexistingChangelogPartitions, this.adminClient);
 
-                Dictionary<TopicPartition, long> sourceChangelogEndOffsets =
-                    fetchCommittedOffsets(preexistingSourceChangelogPartitions, this.taskManager.mainConsumer);
+                // Dictionary<TopicPartition, long> sourceChangelogEndOffsets =
+                //     ClientUtils.fetchCommittedOffsets(preexistingSourceChangelogPartitions, this.taskManager.mainConsumer);
 
                 Dictionary<TopicPartition, TopicPartitionOffset> endOffsets = ClientUtils.getEndOffsets(endOffsetsFuture);
 
-                allTaskEndOffsetSums = this.computeEndOffsetSumsByTask(
-                    changelogsByStatefulTask,
-                    endOffsets,
-                    sourceChangelogEndOffsets,
-                    newlyCreatedChangelogPartitions);
+                //allTaskEndOffsetSums = this.computeEndOffsetSumsByTask(
+                //    changelogsByStatefulTask,
+                //    endOffsets,
+                //    sourceChangelogEndOffsets,
+                //    newlyCreatedChangelogPartitions);
                 fetchEndOffsetsSuccessful = true;
             }
             catch (StreamsException e)
@@ -893,9 +895,10 @@ namespace Kafka.Streams.Processors.Internals
                 ClientState state = entry.Value.state;
                 state.initializePrevTasks(taskForPartition);
 
-                state.computeTaskLags(uuid, allTaskEndOffsetSums);
+                // state.computeTaskLags(uuid, allTaskEndOffsetSums);
                 clientStates.Put(uuid, state);
             }
+
             return fetchEndOffsetsSuccessful;
         }
 
@@ -1148,7 +1151,7 @@ namespace Kafka.Streams.Processors.Internals
                     standbyTaskMap,
                     partitionsByHostState,
                     standbyPartitionsByHost,
-                    AssignorError.NONE.code()
+                    0//AssignorError.NONE.code()
                 );
 
                 if (!activeTasksRemovedPendingRevokation.IsEmpty())
@@ -1443,7 +1446,7 @@ namespace Kafka.Streams.Processors.Internals
 
         private static SortedSet<TaskId> getPreviousTasksByLag(ClientState state, string consumer)
         {
-            SortedSet<TaskId> prevTasksByLag = new SortedSet<TaskId>(comparingLong(state.lagFor).thenComparing(TaskId.CompareTo));
+            SortedSet<TaskId> prevTasksByLag = new SortedSet<TaskId>();// comparingLong(state.lagFor).thenComparing(TaskId.CompareTo));
             prevTasksByLag.AddRange(state.prevOwnedStatefulTasksByConsumer(consumer));
             return prevTasksByLag;
         }
@@ -1533,12 +1536,12 @@ namespace Kafka.Streams.Processors.Internals
             partitions.Sort(PARTITION_COMPARATOR);
 
             AssignmentInfo info = AssignmentInfo.decode(assignment.userData);
-            if (info.errCode != AssignorError.NONE.code())
-            {
-                // set flag to shutdown streams app
-                Interlocked.Exchange(ref this.assignmentErrorCode, info.errCode);
-                return;
-            }
+            //if (info.errCode != AssignorError.NONE.code())
+            //{
+            //    // set flag to shutdown streams app
+            //    Interlocked.Exchange(ref this.assignmentErrorCode, info.errCode);
+            //    return;
+            //}
             /*
              * latestCommonlySupportedVersion belongs to [usedSubscriptionMetadataVersion, LATEST_SUPPORTED_VERSION]
              * receivedAssignmentMetadataVersion belongs to [EARLIEST_PROBEABLE_VERSION, usedSubscriptionMetadataVersion]

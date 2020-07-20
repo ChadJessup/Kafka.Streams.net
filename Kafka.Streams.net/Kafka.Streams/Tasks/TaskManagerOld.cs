@@ -564,7 +564,7 @@ namespace Kafka.Streams.Tasks
             // so we consider all tasks that are either owned or on disk. This includes stateless tasks, which should
             // just have an empty changelogOffsets map.
             HashSet<TaskId> taskIds = new HashSet<TaskId>()
-                .Union(tasks.Keys, lockedTaskDirectories)
+                .Union(tasks.Keys)//, lockedTaskDirectories)
                 .ToHashSet();
 
             foreach (TaskId id in taskIds)

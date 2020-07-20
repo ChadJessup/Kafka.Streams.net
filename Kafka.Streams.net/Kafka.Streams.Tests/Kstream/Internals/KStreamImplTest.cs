@@ -1,3 +1,5 @@
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+
 using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Kafka.Streams;
@@ -806,3 +808,4 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         }
     }
 }
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.

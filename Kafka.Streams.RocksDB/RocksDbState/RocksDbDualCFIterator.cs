@@ -24,7 +24,7 @@ namespace Kafka.Streams.RocksDbState
         private volatile bool open = true;
 
         private byte[]? nextWithTimestamp;
-        private byte[] nextNoTimestamp;
+        private byte[]? nextNoTimestamp;
         private KeyValuePair<Bytes, byte[]> next;
 
         public RocksDbDualCFIterator(

@@ -28,6 +28,6 @@ public class SubscriptionUpdates
 
     public override string ToString()
     {
-        return string.Format("SubscriptionUpdates{updatedTopicSubscriptions=%s}", this.updatedTopicSubscriptions);
+        return $"SubscriptionUpdates{{updatedTopicSubscriptions={this.updatedTopicSubscriptions}}}";
     }
 }

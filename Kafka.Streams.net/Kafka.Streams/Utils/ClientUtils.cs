@@ -32,5 +32,15 @@ namespace Kafka.Streams.Utils
 
             return results;
         }
+
+        internal static Dictionary<TopicPartition, TopicPartitionOffset> getEndOffsets(Dictionary<TopicPartition, TopicPartitionOffset> endOffsetsFuture)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static Dictionary<TopicPartition, long> fetchCommittedOffsets(HashSet<TopicPartition> preexistingSourceChangelogPartitions, object mainConsumer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
