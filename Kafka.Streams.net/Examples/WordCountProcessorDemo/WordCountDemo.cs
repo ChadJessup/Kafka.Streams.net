@@ -157,11 +157,11 @@ namespace WordCountProcessorDemo
             using var consumer = new ConsumerBuilder<int, int>(consumerConfig)
                 .SetPartitionsAssignedHandler((consumer, topics) =>
                 {
-                    topics.ForEach(t => Console.WriteLine($"Partition Assigned: {t.ToString()}"));
+                    topics.ForEach(t => Console.WriteLine($"Partition Assigned: {t}"));
                 })
                 .SetPartitionsRevokedHandler((consumer, tpo) =>
                 {
-                    tpo.ForEach(t => Console.WriteLine($"Partition Revoked: {t.ToString()}"));
+                    tpo.ForEach(t => Console.WriteLine($"Partition Revoked: {t}"));
                 })
                 .SetOffsetsCommittedHandler((consumer, co) =>
                 {

@@ -44,5 +44,9 @@ namespace Kafka.Streams.Tasks
         void UpdateSubscriptionsFromAssignment(List<TopicPartition> partitions);
         void UpdateSubscriptionsFromMetadata(HashSet<string> topics);
         bool NeedsInitializationOrRestoration();
+        Dictionary<TaskId, long> GetTaskOffsetSums();
+        void handleAssignment(Dictionary<TaskId, HashSet<TopicPartition>> activeTasks, object v);
+        Guid processId();
+        void handleRebalanceStart(HashSet<string> topics);
     }
 }

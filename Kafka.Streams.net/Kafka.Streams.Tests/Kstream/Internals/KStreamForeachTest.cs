@@ -38,8 +38,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
             };
 
             var actualRecords = new List<KeyValuePair<int, string>>();
-            Action<int, string> action =
-                (key, value) => actualRecords.Add(KeyValuePair.Create(key * 2, value.ToUpper()));
+            void action(int key, string value) => actualRecords.Add(KeyValuePair.Create(key * 2, value.ToUpper()));
 
             // When
             var builder = new StreamsBuilder();
@@ -65,7 +64,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void testTypeVariance()
         {
-            Action<int, object> consume = (key, value) => { };
+            static void consume(int key, object value) { }
 
             new StreamsBuilder()
                 .Stream<int, string>("emptyTopic")

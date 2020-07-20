@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -9,6 +10,11 @@ namespace Kafka.Streams.Processors.Internals
         public GroupSubscription(Dictionary<string, Subscription> subscriptions)
         {
             this.subscriptions = subscriptions;
+        }
+
+        internal Dictionary<string, Subscription> groupSubscription()
+        {
+            throw new NotImplementedException();
         }
     }
 }

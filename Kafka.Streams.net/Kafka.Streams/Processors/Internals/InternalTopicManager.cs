@@ -52,13 +52,14 @@ namespace Kafka.Streams.Processors.Internals
          * If a topic with the correct number of partitions exists ignores it.
          * If a topic exists already but has different number of partitions we fail and throw exception requesting user to reset the app before restarting again.
          */
-        public void MakeReady(Dictionary<string, InternalTopicConfig> topics)
+        public HashSet<string> MakeReady(Dictionary<string, InternalTopicConfig> topics)
         {
             // we will do the validation / topic-creation in a loop, until we have confirmed All topics
             // have existed with the expected number of partitions, or some create topic returns fatal errors.
 
             var remainingRetries = this.retries;
             var topicsNotReady = new HashSet<string>(topics.Keys);
+            HashSet<string> newTopics = new HashSet<string>();
 
             while (topicsNotReady.Any() && remainingRetries >= 0)
             {
@@ -66,7 +67,6 @@ namespace Kafka.Streams.Processors.Internals
 
                 //if (topicsNotReady.Count > 0)
                 //{
-                //    HashSet<NewTopic> newTopics = new HashSet<>();
 
                 //    foreach (string topicName in topicsNotReady)
                 //    {
@@ -144,6 +144,8 @@ namespace Kafka.Streams.Processors.Internals
                 this.log.LogError(timeoutAndRetryError);
                 throw new StreamsException(timeoutAndRetryError);
             }
+
+            return newTopics;
         }
 
         /**

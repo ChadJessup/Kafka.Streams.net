@@ -28,8 +28,8 @@ namespace Kafka.Streams.Topologies
         public override string ToString()
         {
             return $"Sub-topology: {this.id} for global store (will not generate tasks)\n"
-                    + $"    {this.source.ToString()}\n"
-                    + $"    {this.processor.ToString()}\n";
+                    + $"    {this.source}\n"
+                    + $"    {this.processor}\n";
         }
 
         public override bool Equals(object o)

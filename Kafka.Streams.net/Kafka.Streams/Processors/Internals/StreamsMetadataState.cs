@@ -381,5 +381,10 @@ namespace Kafka.Streams.Processors.Internals
                 ? int.Parse(matcher.Groups[2].Value)
                 : 0;
         }
+
+        internal void OnChange(Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost, Dictionary<HostInfo, HashSet<TopicPartition>> standbyPartitionsByHost, Cluster fakeCluster)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -372,7 +372,7 @@ namespace Kafka.Streams.Processors.Internals
             if (!restoreRecords.IsEmpty())
             {
                 // restore states from changelog records and update the snapshot offset as the batch end record's offset
-                long batchEndOffset = restoreRecords[restoreRecords.Count - 1].Offset;
+                long batchEndOffset = restoreRecords[^1].Offset;
                 IRecordBatchingStateRestoreCallback restoreCallback = (IRecordBatchingStateRestoreCallback)storeMetadata.RestoreCallback;
                 List<ConsumeResult<byte[], byte[]>> convertedRecords = restoreRecords;
 

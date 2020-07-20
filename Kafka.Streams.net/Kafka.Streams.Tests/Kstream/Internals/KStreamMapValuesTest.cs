@@ -49,8 +49,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             var builder = new StreamsBuilder();
 
-            ValueMapperWithKey<int, string, int> mapper =
-                (readOnlyKey, value) => value.Length + readOnlyKey;
+            static int mapper(int readOnlyKey, string value) => value.Length + readOnlyKey;
 
             int[] expectedKeys = { 1, 10, 100, 1000 };
 

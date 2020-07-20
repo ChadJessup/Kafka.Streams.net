@@ -24,34 +24,33 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             queue.Schedule(sched);
 
-            ProcessorNodePunctuator<string, string> processorNodePunctuator =
-                (node, now, type, punctuator) =>
-                {
-                    punctuator(now);
-                };
+            static void processorNodePunctuator(Nodes.IProcessorNode<string, string> node, DateTime now, PunctuationType type, Action<DateTime> punctuator)
+            {
+                punctuator(now);
+            }
 
-            queue.MayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now, PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Empty(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(99L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(99L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Empty(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Single(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(199L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(199L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Single(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(200L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(200L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Equal(2, node.mockProcessor.punctuatedStreamTime.Count);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1001L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1001L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Equal(3, node.mockProcessor.punctuatedStreamTime.Count);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1002L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1002L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Equal(3, node.mockProcessor.punctuatedStreamTime.Count);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1100L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1100L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Equal(4, node.mockProcessor.punctuatedStreamTime.Count);
         }
 
@@ -63,31 +62,30 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             queue.Schedule(sched);
 
-            ProcessorNodePunctuator<string, string> processorNodePunctuator =
-                (node, now, type, punctuator) => punctuator(now);
+            static void processorNodePunctuator(Nodes.IProcessorNode<string, string> node, DateTime now, PunctuationType type, Action<DateTime> punctuator) => punctuator(now);
 
-            queue.MayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now, PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Empty(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(49L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(49L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Empty(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(50L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(50L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Single(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(149L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(149L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Single(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(150L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(150L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Equal(2, node.mockProcessor.punctuatedStreamTime.Count);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1051L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1051L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Equal(3, node.mockProcessor.punctuatedStreamTime.Count);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1052L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1052L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Equal(3, node.mockProcessor.punctuatedStreamTime.Count);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1150L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(1150L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Equal(4, node.mockProcessor.punctuatedStreamTime.Count);
         }
 
@@ -99,21 +97,20 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
             ICancellable cancellable = queue.Schedule(sched);
 
-            ProcessorNodePunctuator<string, string> processorNodePunctuator =
-                (node, now, type, punctuator) =>
-                {
-                    punctuator(now);
-                    // simulate scheduler cancelled from within punctuator
-                    cancellable.Cancel();
-                };
+            void processorNodePunctuator(Nodes.IProcessorNode<string, string> node, DateTime now, PunctuationType type, Action<DateTime> punctuator)
+            {
+                punctuator(now);
+                // simulate scheduler cancelled from within punctuator
+                cancellable.Cancel();
+            }
 
-            queue.MayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now, PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Empty(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(100L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Single(node.mockProcessor.punctuatedStreamTime);
 
-            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(200L), PunctuationType.STREAM_TIME, processorNodePunctuator);
+            queue.MayPunctuate(now + TimeSpan.FromMilliseconds(200L), PunctuationType.STREAM_TIME, (ProcessorNodePunctuator<string, string>)processorNodePunctuator);
             Assert.Single(node.mockProcessor.punctuatedStreamTime);
         }
 

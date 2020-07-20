@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.KStream.Internals;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors.Internals
@@ -7,8 +8,8 @@ namespace Kafka.Streams.Processors.Internals
     public class Subscription
     {
         private readonly List<string> topics;
-        private readonly ByteBuffer userData;
-        private readonly List<TopicPartition> ownedPartitions;
+        public ByteBuffer userData { get; private set; }
+        public List<TopicPartition> ownedPartitions { get; private set; }
         private string? groupInstanceId;
 
         public Subscription(List<string> topics, ByteBuffer userData, List<TopicPartition> ownedPartitions)

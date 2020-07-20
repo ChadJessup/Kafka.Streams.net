@@ -98,18 +98,19 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         [Fact]
         public void ShouldPreserveSerdesForOperators()
         {
+            static string selector(string key, string value) => key;
+            static string mapper(string value) => value;
+
             StreamsBuilder builder = new StreamsBuilder();
             IKStream<string, string> stream1 = builder.Stream(Collections.singleton("topic-1"), stringConsumed);
             IKTable<string, string> table1 = builder.Table("topic-2", stringConsumed);
             IGlobalKTable<string, string> table2 = builder.GlobalTable("topic-2", stringConsumed);
             ConsumedInternal<string, string> consumedInternal = new ConsumedInternal<string, string>(stringConsumed);
 
-            KeyValueMapper<string, string, string> selector = (key, value) => key;
-            KeyValueMapper<string, string, IEnumerable<KeyValuePair<string, string>>> flatSelector = (key, value) => Collections.singleton(KeyValuePair.Create(key, value));
-            ValueMapper<string, string> mapper = value => value;
+            static IEnumerable<KeyValuePair<string, string>> flatSelector(string key, string value) => Collections.singleton(KeyValuePair.Create(key, value));
             ValueMapper<string, IEnumerable<string>> flatMapper = Collections.singleton;
 
-            ValueJoiner<string, string, string> joiner = (value1, value2) => value1;
+            static string joiner(string value1, string value2) => value1;
             ITransformerSupplier<string, string, KeyValuePair<string, string>> transformerSupplier = new TransformerSupplier<string, string>();
             IValueTransformerSupplier<string, string> valueTransformerSupplier = new ValueTransformerSupplier<string, string>();
 
@@ -334,8 +335,8 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             StreamsBuilder builder = new StreamsBuilder();
             IGlobalKTable<string, string> globalKTable = builder.GlobalTable<string, string>("globalTopic");
-            KeyValueMapper<string, string, string> kvMappper = (k, v) => k + v;
-            ValueJoiner<string, string, string> valueJoiner = (v1, v2) => v1 + v2;
+            static string kvMappper(string k, string v) => k + v;
+            static string valueJoiner(string v1, string v2) => v1 + v2;
             builder.Stream<string, string>("topic").SelectKey((k, v) => v)
                  .Join(globalKTable, kvMappper, valueJoiner)
                  .GroupByKey()
@@ -379,7 +380,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         }
 
         [Fact] // (typeof(expected = NullReferenceException))
-        public void shouldNotAllowNullMapperOnMap()
+        public void ShouldNotAllowNullMapperOnMap()
         {
             Assert.Throws<ArgumentNullException>(() => testStream.Map<string, string>(null));
         }
@@ -464,7 +465,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         }
 
         [Fact]
-        public void shouldNotAllowNullValueTransformerWithKeySupplierOnFlatTransformValues()
+        public void ShouldNotAllowNullValueTransformerWithKeySupplierOnFlatTransformValues()
         {
             Assert.Throws<ArgumentNullException>(() => testStream.FlatTransformValues<string>((IValueTransformerWithKeySupplier<string, string, IEnumerable<string>>)null));
         }
@@ -520,7 +521,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         }
 
         [Fact] // (typeof(expected = NullReferenceException))
-        public void shouldNotAllowNullActionOnForEach()
+        public void ShouldNotAllowNullActionOnForEach()
         {
             Assert.Throws<ArgumentNullException>(() => testStream.ForEach(null));
         }
@@ -535,7 +536,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         }
 
         [Fact] // (typeof(expected = NullReferenceException))
-        public void shouldNotAllowNullMapperOnJoinWithGlobalTable()
+        public void ShouldNotAllowNullMapperOnJoinWithGlobalTable()
         {
             Assert.Throws<ArgumentNullException>(() => testStream.Join<string, string, string>(
                 builder.GlobalTable("global", stringConsumed),
@@ -544,7 +545,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         }
 
         [Fact] // (typeof(expected = NullReferenceException))
-        public void shouldNotAllowNullJoinerOnJoinWithGlobalTable()
+        public void ShouldNotAllowNullJoinerOnJoinWithGlobalTable()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 testStream.Join<string, string, string>(
@@ -563,7 +564,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         }
 
         [Fact] // (typeof(expected = NullReferenceException))
-        public void shouldNotAllowNullMapperOnLeftJoinWithGlobalTable()
+        public void ShouldNotAllowNullMapperOnLeftJoinWithGlobalTable()
         {
             Assert.Throws<ArgumentNullException>(() => testStream.LeftJoin<string, string, string>(
                 builder.GlobalTable("global", stringConsumed),
@@ -638,7 +639,7 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         }
 
         [Fact]
-        public void shouldMergeTwoStreams()
+        public void ShouldMergeTwoStreams()
         {
             string topic1 = "topic-1";
             string topic2 = "topic-2";

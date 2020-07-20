@@ -22,20 +22,20 @@ namespace Kafka.Streams.Tests
 
     public class MockConsumer<TKey, TValue> : BaseConsumer<TKey, TValue>
     {
-        private Dictionary<string, IEnumerable<TopicPartitionOffset>> partitions;
-        private List<TopicPartitionOffset> beginningOffsets;
-        private List<TopicPartitionOffset> endOffsets;
-        private Dictionary<TopicPartition, OffsetAndMetadata> committed;
-        private Queue<Task> pollTasks;
-        private HashSet<TopicPartition> paused;
+        private readonly Dictionary<string, IEnumerable<TopicPartitionOffset>> partitions;
+        private readonly List<TopicPartitionOffset> beginningOffsets;
+        private readonly List<TopicPartitionOffset> endOffsets;
+        private readonly Dictionary<TopicPartition, OffsetAndMetadata> committed;
+        private readonly Queue<Task> pollTasks;
+        private readonly HashSet<TopicPartition> paused;
 
-        private Dictionary<TopicPartition, List<ConsumeResult<TKey, TValue>>> records;
-        private KafkaException pollException;
-        private KafkaException offsetsException;
-        private bool wakeup;
-        private TimeSpan lastPollTimeout;
-        private bool closed;
-        private bool shouldRebalance;
+        private readonly Dictionary<TopicPartition, List<ConsumeResult<TKey, TValue>>> records;
+        private readonly KafkaException pollException;
+        private readonly KafkaException offsetsException;
+        private readonly bool wakeup;
+        private readonly TimeSpan lastPollTimeout;
+        private readonly bool closed;
+        private readonly bool shouldRebalance;
 
         public MockConsumer(IConsumer<TKey, TValue> mockConsumer)
             : base(null, mockConsumer)

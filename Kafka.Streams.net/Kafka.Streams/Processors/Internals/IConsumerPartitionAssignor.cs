@@ -10,7 +10,7 @@ namespace Kafka.Streams.Processors.Internals
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer}. Members of the consumer group subscribe
      * to the topics they are interested in and forward their subscriptions to a Kafka broker serving
      * as the group coordinator. The coordinator selects one member to perform the group assignment and
-     * propagates the subscriptions of All members to it. Then {@link #assign(Cluster, GroupSubscription)} is called
+     * propagates the subscriptions of all members to it. Then {@link #assign(Cluster, GroupSubscription)} is called
      * to perform the assignment and the results are forwarded back to each respective members
      *
      * In some cases, it is useful to forward additional metadata to the assignor in order to make
@@ -20,7 +20,6 @@ namespace Kafka.Streams.Processors.Internals
      */
     public interface IConsumerPartitionAssignor
     {
-
         /**
          * Return serialized data that will be included in the {@link Subscription} sent to the leader
          * and can be leveraged in {@link #assign(Cluster, GroupSubscription)} ((e.g. local host/rack information)

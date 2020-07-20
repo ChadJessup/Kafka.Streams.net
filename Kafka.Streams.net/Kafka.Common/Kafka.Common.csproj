@@ -9,10 +9,12 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!--<ProjectReference Include="..\..\..\confluent-kafka-dotnet\src\Confluent.Kafka\Confluent.Kafka.csproj" />
+  <ItemGroup><!--<ProjectReference Include="..\..\..\confluent-kafka-dotnet\src\Confluent.Kafka\Confluent.Kafka.csproj" />
     <ProjectReference Include="..\..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes\Confluent.SchemaRegistry.Serdes.csproj" />-->
     <!--<ProjectReference Include="..\..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry\Confluent.SchemaRegistry.csproj" />-->
+  
+    <Folder Include="Extensions\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
 
 </Project>

@@ -1,15 +1,16 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.KStream.Internals;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors.Internals
 {
     public class Assignment
     {
-        private readonly List<TopicPartition> partitions;
-        private readonly ByteBuffer userData;
+        public List<TopicPartition> partitions { get; }
+        public ByteBuffer? userData { get; }
 
-        public Assignment(List<TopicPartition> partitions, ByteBuffer userData)
+        public Assignment(List<TopicPartition> partitions, ByteBuffer? userData)
         {
             this.partitions = partitions;
             this.userData = userData;

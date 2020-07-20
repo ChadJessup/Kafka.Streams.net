@@ -22,6 +22,10 @@ namespace Kafka.Streams.Tasks
             this.Partition = partition;
         }
 
+        public TaskId()
+        {
+        }
+
         public override string ToString()
         {
             return this.TopicGroupId + "_" + this.Partition;
@@ -125,6 +129,16 @@ namespace Kafka.Streams.Tasks
             return compare != 0
                 ? compare
                 : this.Partition.CompareTo(other.Partition);
+        }
+
+        internal void SetTopicGroupId(int topicGroupId)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void SetPartition(int partition)
+        {
+            throw new NotImplementedException();
         }
     }
 }

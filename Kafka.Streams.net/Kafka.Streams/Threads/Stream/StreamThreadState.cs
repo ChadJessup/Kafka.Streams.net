@@ -23,7 +23,7 @@ namespace Kafka.Streams.Threads.Stream
                 new StateTransition<StreamThreadStates>(StreamThreadStates.STARTING, StreamThreadStates.PARTITIONS_ASSIGNED, StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.PENDING_SHUTDOWN),
                 new StateTransition<StreamThreadStates>(StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.PARTITIONS_ASSIGNED, StreamThreadStates.PENDING_SHUTDOWN),
                 new StateTransition<StreamThreadStates>(StreamThreadStates.PARTITIONS_ASSIGNED, StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.RUNNING, StreamThreadStates.PENDING_SHUTDOWN),
-                new StateTransition<StreamThreadStates>(StreamThreadStates.RUNNING, StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.PENDING_SHUTDOWN),
+                new StateTransition<StreamThreadStates>(StreamThreadStates.RUNNING, StreamThreadStates.RUNNING, StreamThreadStates.PARTITIONS_REVOKED, StreamThreadStates.PENDING_SHUTDOWN),
                 new StateTransition<StreamThreadStates>(StreamThreadStates.PENDING_SHUTDOWN, StreamThreadStates.DEAD),
                 new StateTransition<StreamThreadStates>(StreamThreadStates.DEAD),
             });

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Confluent.Kafka;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Tasks;
@@ -14,7 +15,7 @@ namespace Kafka.Streams.Processors.Internals
         private readonly ITaskManager taskManager;
         private readonly StreamThread streamThread;
         private readonly ILogger<StreamsRebalanceListener> log;
-
+        private readonly IConsumerPartitionAssignor partitionAssignor;
         public StreamsRebalanceListener(
             KafkaStreamsContext context,
             ITaskManager taskManager,
@@ -24,14 +25,13 @@ namespace Kafka.Streams.Processors.Internals
             this.taskManager = taskManager ?? throw new ArgumentNullException(nameof(taskManager));
             this.streamThread = streamThread ?? throw new ArgumentNullException(nameof(streamThread));
             this.log = this.context.CreateLogger<StreamsRebalanceListener>();
+
+            this.partitionAssignor = new StreamsPartitionAssignor();
         }
 
-        public void OnPartitionsAssigned(IConsumer<byte[], byte[]>? consumer, List<TopicPartition> assignedPartitions)
+        public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(IConsumer<byte[], byte[]>? consumer, List<TopicPartition> assignedPartitions)
         {
-            if (consumer == null)
-            {
-                return;
-            }
+            this.partitionAssignor.OnAssignment(new Assignment(assignedPartitions), consumer.ConsumerGroupMetadata);
 
             this.log.LogDebug(
                 $"at state {this.streamThread.State}: partitions {assignedPartitions.ToJoinedString()} assigned at the end of consumer rebalance.\n" +
@@ -43,7 +43,7 @@ namespace Kafka.Streams.Processors.Internals
                 this.log.LogError($"Received error code {this.streamThread.AssignmentErrorCode} - shutdown");
                 this.streamThread.Shutdown();
 
-                return;
+                return Enumerable.Empty<TopicPartitionOffset>();
             }
 
             var start = this.context.Clock.NowAsEpochMilliseconds;
@@ -79,15 +79,12 @@ namespace Kafka.Streams.Processors.Internals
                     $"\tcurrent standby tasks: {this.taskManager.StandbyTaskIds().ToJoinedString()}\n" +
                     $"\tprevious active tasks: {this.taskManager.PrevActiveTaskIds().ToJoinedString()}\n");
             }
+
+            return assignedPartitions.Select(tp => new TopicPartitionOffset(tp, Offset.Unset));
         }
 
-        public void OnPartitionsRevoked(IConsumer<byte[], byte[]>? consumer, List<TopicPartitionOffset> revokedPartitions)
+        public IEnumerable<TopicPartitionOffset> OnPartitionsRevoked(IConsumer<byte[], byte[]>? consumer, List<TopicPartitionOffset> revokedPartitions)
         {
-            if (consumer == null)
-            {
-                return;
-            }
-
             var assignment = consumer?.Assignment ?? new List<TopicPartition>();
 
             this.log.LogDebug(
@@ -126,8 +123,11 @@ namespace Kafka.Streams.Processors.Internals
                         $"partition revocation took {this.context.Clock.NowAsEpochMilliseconds - start} ms.\n" +
                         $"\tsuspended active tasks: {this.taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
                         $"\tsuspended standby tasks: {this.taskManager.SuspendedStandbyTaskIds().ToJoinedString()}");
+
                 }
             }
+
+            return Enumerable.Empty<TopicPartitionOffset>();
         }
     }
 }

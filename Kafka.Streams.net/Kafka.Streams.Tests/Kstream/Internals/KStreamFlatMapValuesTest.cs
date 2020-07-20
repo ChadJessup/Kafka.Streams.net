@@ -24,16 +24,15 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             var builder = new StreamsBuilder();
 
-            ValueMapper<int, IEnumerable<string>> mapper =
-                value =>
-                {
-                    List<string> result = new List<string>
+            static IEnumerable<string> mapper(int value)
+            {
+                List<string> result = new List<string>
                     {
                         "v" + value,
                         "V" + value
                     };
-                    return result;
-                };
+                return result;
+            }
 
             int[] expectedKeys = { 0, 1, 2, 3 };
 
@@ -65,15 +64,14 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             var builder = new StreamsBuilder();
 
-            ValueMapperWithKey<int, int, IEnumerable<string>> mapper =
-                (readOnlyKey, value) =>
-                {
-                    return new List<string>
+            static IEnumerable<string> mapper(int readOnlyKey, int value)
+            {
+                return new List<string>
                     {
                         "v" + value,
                         "k" + readOnlyKey
                     };
-                };
+            }
 
             int[] expectedKeys = { 0, 1, 2, 3 };
 

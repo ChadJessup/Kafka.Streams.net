@@ -919,17 +919,12 @@ namespace Kafka.Streams.Tasks
          */
         public ICancellable Schedule(TimeSpan interval, PunctuationType type, Action<DateTime> punctuator)
         {
-            switch (type)
+            return type switch
             {
-                case PunctuationType.STREAM_TIME:
-                    // align punctuation to 0L, punctuate as soon as we have data
-                    return this.Schedule(DateTime.MinValue, interval, type, punctuator);
-                case PunctuationType.WALL_CLOCK_TIME:
-                    // align punctuation to now, punctuate after interval has elapsed
-                    return this.Schedule(this.Context.Clock.UtcNow + interval, interval, type, punctuator);
-                default:
-                    throw new ArgumentException("Unrecognized PunctuationType: " + type);
-            }
+                PunctuationType.STREAM_TIME => this.Schedule(DateTime.MinValue, interval, type, punctuator),// align punctuation to 0L, punctuate as soon as we have data
+                PunctuationType.WALL_CLOCK_TIME => this.Schedule(this.Context.Clock.UtcNow + interval, interval, type, punctuator),// align punctuation to now, punctuate after interval has elapsed
+                _ => throw new ArgumentException("Unrecognized PunctuationType: " + type),
+            };
         }
 
         /**
@@ -949,18 +944,13 @@ namespace Kafka.Streams.Tasks
 
             PunctuationSchedule schedule = new PunctuationSchedule(this.processorContext.GetCurrentNode(), startTime, interval, punctuator);
 
-            switch (type)
+            return type switch
             {
-                case PunctuationType.STREAM_TIME:
-                    // STREAM_TIME punctuation is data driven, will first punctuate as soon as stream-time is known and >= time,
-                    // stream-time is known when we have received at least one record from each input topic
-                    return this.streamTimePunctuationQueue.Schedule(schedule);
-                case PunctuationType.WALL_CLOCK_TIME:
-                    // WALL_CLOCK_TIME is driven by the wall clock time, will first punctuate when now >= time
-                    return this.systemTimePunctuationQueue.Schedule(schedule);
-                default:
-                    throw new ArgumentException("Unrecognized PunctuationType: " + type);
-            }
+                PunctuationType.STREAM_TIME => this.streamTimePunctuationQueue.Schedule(schedule),// STREAM_TIME punctuation is data driven, will first punctuate as soon as stream-time is known and >= time,
+                                                                                                  // stream-time is known when we have received at least one record from each input topic
+                PunctuationType.WALL_CLOCK_TIME => this.systemTimePunctuationQueue.Schedule(schedule),// WALL_CLOCK_TIME is driven by the wall clock time, will first punctuate when now >= time
+                _ => throw new ArgumentException("Unrecognized PunctuationType: " + type),
+            };
         }
 
         /**

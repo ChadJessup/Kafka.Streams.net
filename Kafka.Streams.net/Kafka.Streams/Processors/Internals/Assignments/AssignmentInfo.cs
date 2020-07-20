@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.Processors.Internals.Assignments
 {
-    public class StreamsAssignmentProtocolVersions
+    public static class StreamsAssignmentProtocolVersions
     {
         public static int UNKNOWN = -1;
         public static int EARLIEST_PROBEABLE_VERSION = 3;
@@ -20,16 +20,19 @@ namespace Kafka.Streams.Processors.Internals.Assignments
 
     public class AssignmentInfo
     {
-        private static ILogger<AssignmentInfo> log = null;
+        private static readonly ILogger<AssignmentInfo>? log = null;
 
-        private int usedVersion;
-        private int commonlySupportedVersion;
-        private List<TaskId> activeTasks;
-        private Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks;
-        private Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost;
-        private Dictionary<HostInfo, HashSet<TopicPartition>> standbyPartitionsByHost;
-        private int errCode;
-        private long nextRebalanceMs = long.MaxValue;
+        private readonly int usedVersion;
+        public int commonlySupportedVersion { get; }
+        public Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks { get; private set; }
+        public Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost { get; private set; }
+        public Dictionary<HostInfo, HashSet<TopicPartition>> standbyPartitionsByHost { get; private set; }
+        public int errCode { get; private set; }
+
+        public long nextRebalanceMs { get; private set; } = long.MaxValue;
+
+        public List<TaskId> activeTasks { get; private set; }
+        public Dictionary<HostInfo, HashSet<TopicPartition>> standbyPartitionByHost { get; internal set; }
 
         // used for decoding and "future consumer" assignments during version probing
         public AssignmentInfo(int version, int commonlySupportedVersion)

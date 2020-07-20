@@ -1,4 +1,6 @@
 
+using System;
+
 namespace Kafka.Streams.State
 {
     /**
@@ -56,6 +58,11 @@ namespace Kafka.Streams.State
                     "host=\'" + this.host + '\'' +
                     ", port=" + this.port +
                     '}';
+        }
+
+        internal static HostInfo BuildFromEndpoint(string endPoint)
+        {
+            throw new NotImplementedException();
         }
     }
 }

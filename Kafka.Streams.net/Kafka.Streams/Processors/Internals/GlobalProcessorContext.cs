@@ -75,25 +75,25 @@ namespace Kafka.Streams.Processors.Internals
         {
             var store = this.StateManager.GetGlobalStore(Name);
 
-            if (store is ITimestampedKeyValueStore<K, V>)
+            if (store is ITimestampedKeyValueStore<K, V> store2)
             {
-                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>(this.Context, (ITimestampedKeyValueStore<K, V>)store);
+                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>(this.Context, store2);
             }
-            else if (store is IKeyValueStore<K, V>)
+            else if (store is IKeyValueStore<K, V> store3)
             {
-                return new KeyValueStoreReadWriteDecorator<K, V>(this.Context, (IKeyValueStore<K, V>)store);
+                return new KeyValueStoreReadWriteDecorator<K, V>(this.Context, store3);
             }
-            else if (store is ITimestampedWindowStore<K, V>)
+            else if (store is ITimestampedWindowStore<K, V> store4)
             {
-                return new TimestampedWindowStoreReadWriteDecorator<K, V>(this.Context, (ITimestampedWindowStore<K, V>)store);
+                return new TimestampedWindowStoreReadWriteDecorator<K, V>(this.Context, store4);
             }
-            else if (store is IWindowStore<K, V>)
+            else if (store is IWindowStore<K, V> windowStore)
             {
-                return new WindowStoreReadWriteDecorator<K, V>(this.Context, (IWindowStore<K, V>)store);
+                return new WindowStoreReadWriteDecorator<K, V>(this.Context, windowStore);
             }
-            else if (store is ISessionStore<K, V>)
+            else if (store is ISessionStore<K, V> store1)
             {
-                return new SessionStoreReadWriteDecorator<K, V>(this.Context, (ISessionStore<K, V>)store);
+                return new SessionStoreReadWriteDecorator<K, V>(this.Context, store1);
             }
 
             return store;

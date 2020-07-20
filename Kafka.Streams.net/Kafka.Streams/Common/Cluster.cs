@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
+using Kafka.Streams.Processors.Internals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -265,7 +266,7 @@ namespace Kafka.Common
          * @param topic The topic to get the number of partitions for
          * @return The number of partitions or null if there is no corresponding metadata
          */
-        public int partitionCountForTopic(string topic)
+        public int? partitionCountForTopic(string topic)
         {
             List<PartitionMetadata> partitions = this.partitionsByTopic[topic];
             return partitions == null
@@ -302,6 +303,10 @@ namespace Kafka.Common
             return new HashSet<string>(this.partitionsByTopic.Keys);
         }
 
+        public Cluster withPartitions(Dictionary<TopicPartition, PartitionInfo> allRepartitionTopicPartitions)
+        {
+            throw new NotImplementedException();
+        }
 
         public override string ToString()
         {
@@ -330,6 +335,11 @@ namespace Kafka.Common
         {
             return (this.isBootstrapConfigured, this.nodes, this.unauthorizedTopics, this.invalidTopics, this.internalTopics, this.controller,
                     this.partitionsByTopicPartition, this.clusterResource).GetHashCode();
+        }
+
+        public List<Kafka.Streams.Processors.Internals.PartitionInfo> partitionsForTopic(string topic)
+        {
+            throw new NotImplementedException();
         }
     }
 }

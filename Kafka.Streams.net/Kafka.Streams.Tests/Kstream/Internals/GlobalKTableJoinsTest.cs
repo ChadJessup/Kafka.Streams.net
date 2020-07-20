@@ -37,10 +37,12 @@ namespace Kafka.Streams.Tests.Kstream.Internals
                 .LeftJoin(global, keyValueMapper, MockValueJoiner.TOSTRING_JOINER())
                 .Process(supplier);
 
-            Dictionary<string, IValueAndTimestamp<string>?> expected = new Dictionary<string, IValueAndTimestamp<string>?>();
-            expected.Add("1", ValueAndTimestamp.Make("a+A", 2L));
-            expected.Add("2", ValueAndTimestamp.Make("b+B", 10L));
-            expected.Add("3", ValueAndTimestamp.Make("c+null", 3L));
+            Dictionary<string, IValueAndTimestamp<string>?> expected = new Dictionary<string, IValueAndTimestamp<string>?>
+            {
+                { "1", ValueAndTimestamp.Make("a+A", 2L) },
+                { "2", ValueAndTimestamp.Make("b+B", 10L) },
+                { "3", ValueAndTimestamp.Make("c+null", 3L) }
+            };
 
             VerifyJoin(expected, supplier);
         }

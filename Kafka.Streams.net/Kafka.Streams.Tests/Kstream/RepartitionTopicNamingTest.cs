@@ -81,7 +81,7 @@ namespace Kafka.Streams.Tests.Kstream
         }
 
         [Fact]
-        public void shouldNotFailWithSameRepartitionTopicNameUsingSameKGroupedStream()
+        public void ShouldNotFailWithSameRepartitionTopicNameUsingSameKGroupedStream()
         {
             var builder = new StreamsBuilder();
             IKGroupedStream<string, string> kGroupedStream = builder
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tests.Kstream
         }
 
         [Fact]
-        public void shouldNotFailWithSameRepartitionTopicNameUsingSameSessionWindowStream()
+        public void ShouldNotFailWithSameRepartitionTopicNameUsingSameSessionWindowStream()
         {
             var builder = new StreamsBuilder();
             IKGroupedStream<string, string> kGroupedStream = builder
@@ -138,7 +138,7 @@ namespace Kafka.Streams.Tests.Kstream
         }
 
         [Fact]
-        public void shouldNotFailWithSameRepartitionTopicNameUsingSameKGroupedTable()
+        public void ShouldNotFailWithSameRepartitionTopicNameUsingSameKGroupedTable()
         {
             var builder = new StreamsBuilder();
             IKGroupedTable<string, string> kGroupedTable = builder.Table<string, string>("topic")
@@ -179,7 +179,7 @@ namespace Kafka.Streams.Tests.Kstream
         }
 
         [Fact]
-        public void shouldNotFailWithSameRepartitionTopicNameUsingSameKGroupedStreamOptimizationsOn()
+        public void ShouldNotFailWithSameRepartitionTopicNameUsingSameKGroupedStreamOptimizationsOn()
         {
             var builder = new StreamsBuilder();
             var kGroupedStream = builder.Stream<string, string>("topic")
@@ -516,9 +516,9 @@ namespace Kafka.Streams.Tests.Kstream
 
         private Topology buildTopology(string optimizationConfig)
         {
-            Initializer<int> initializer = () => 0;
-            Aggregator<string, string, int> aggregator = (k, v, agg) => agg + v.Length;
-            Reducer<string> reducer = (v1, v2) => v1 + ":" + v2;
+            int initializer() => 0;
+            int aggregator(string k, string v, int agg) => agg + v.Length;
+            string reducer(string v1, string v2) => v1 + ":" + v2;
             List<string> processorValueCollector = new List<string>();
 
             StreamsBuilder builder = new StreamsBuilder();

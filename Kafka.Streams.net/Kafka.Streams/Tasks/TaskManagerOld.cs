@@ -4,6 +4,7 @@ using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Internals;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
 using System;
@@ -39,6 +40,7 @@ namespace Kafka.Streams.Tasks
         private Cluster cluster;
         public Dictionary<TaskId, HashSet<TopicPartition>> assignedActiveTasks { get; private set; }
         public Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks { get; private set; }
+        private readonly Dictionary<TaskId, ITask> tasks = new Dictionary<TaskId, ITask>();
 
         private string threadClientId;
         private IConsumer<byte[], byte[]> consumer;
@@ -552,6 +554,85 @@ namespace Kafka.Streams.Tasks
         public bool NeedsInitializationOrRestoration()
         {
             return true;
+        }
+
+        public Dictionary<TaskId, long> GetTaskOffsetSums()
+        {
+            Dictionary<TaskId, long> taskOffsetSums = new Dictionary<TaskId, long>();
+
+            // Not all tasks will create directories, and there may be directories for tasks we don't currently own,
+            // so we consider all tasks that are either owned or on disk. This includes stateless tasks, which should
+            // just have an empty changelogOffsets map.
+            HashSet<TaskId> taskIds = new HashSet<TaskId>()
+                .Union(tasks.Keys, lockedTaskDirectories)
+                .ToHashSet();
+
+            foreach (TaskId id in taskIds)
+            {
+                ITask task = tasks[id];
+                if (task != null)
+                {
+                    Dictionary<TopicPartition, long> changelogOffsets = task.ChangelogOffsets();
+                    if (changelogOffsets.IsEmpty())
+                    {
+                        this.logger.LogDebug("Skipping to encode apparently stateless (or non-logged) offset sum for task {}", id);
+                    }
+                    else
+                    {
+                        taskOffsetSums.Put(id, SumOfChangelogOffsets(id, changelogOffsets));
+                    }
+                }
+                else
+                {
+                    FileInfo checkpointFile = this.context.StateDirectory.CheckpointFileFor(id);
+                    try
+                    {
+                        if (checkpointFile.Exists)
+                        {
+                            taskOffsetSums.Put(id, SumOfChangelogOffsets(id, new OffsetCheckpoint(checkpointFile).Read()));
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        this.logger.LogWarning($"Exception caught while trying to read checkpoint for task {id}:", e);
+                    }
+                }
+            }
+
+            return taskOffsetSums;
+        }
+
+        private long SumOfChangelogOffsets(TaskId id, Dictionary<TopicPartition, long> changelogOffsets)
+        {
+            long offsetSum = 0L;
+            foreach (var changelogEntry in changelogOffsets)
+            {
+                long offset = changelogEntry.Value;
+
+                offsetSum += offset;
+                if (offsetSum < 0)
+                {
+                    this.logger.LogWarning("Sum of changelog offsets for task {} overflowed, pinning to long.MAX_VALUE", id);
+                    return long.MaxValue;
+                }
+            }
+
+            return offsetSum;
+        }
+
+        public void handleAssignment(Dictionary<TaskId, HashSet<TopicPartition>> activeTasks, object v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Guid processId()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void handleRebalanceStart(HashSet<string> topics)
+        {
+            throw new NotImplementedException();
         }
     }
 }

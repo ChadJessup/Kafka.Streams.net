@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using Kafka.Streams.Processors.Internals.Assignments;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -10,8 +11,8 @@ namespace Kafka.Streams.Processors.Internals
      */
     public class InternalTopicConfig
     {
-        string name;
-        bool enforceNumberOfPartitions;
+        private readonly string name;
+        private readonly bool enforceNumberOfPartitions;
 
         public InternalTopicConfig(string name, Dictionary<string, string?> topicConfigs)
         {
@@ -29,7 +30,7 @@ namespace Kafka.Streams.Processors.Internals
         public string Name { get; protected set; }
         public Dictionary<string, string?> TopicConfigs { get; protected set; } = new Dictionary<string, string?>();
 
-        public int numberOfPartitions { get; private set; } = StreamsPartitionAssignor.UNKNOWN;
+        public int? numberOfPartitions { get; private set; } = StreamsAssignmentProtocolVersions.UNKNOWN;
 
         /**
          * Get the configured properties for this topic. If retentionMs is set then
@@ -43,7 +44,7 @@ namespace Kafka.Streams.Processors.Internals
             return defaultProperties;
         }
 
-        public void SetNumberOfPartitions(int numberOfPartitions)
+        public void SetNumberOfPartitions(int? numberOfPartitions)
         {
             if (numberOfPartitions < 1)
             {

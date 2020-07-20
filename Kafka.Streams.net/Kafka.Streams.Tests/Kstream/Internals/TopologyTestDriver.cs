@@ -1128,8 +1128,8 @@ namespace Kafka.Streams.Tests
         public IWindowStore<K, IValueAndTimestamp<V>>? GetTimestampedWindowStore<K, V>(string Name)
         {
             var store = this.GetStateStore(Name, false);
-            return store is ITimestampedWindowStore<K, V>
-                ? (ITimestampedWindowStore<K, V>)store
+            return store is ITimestampedWindowStore<K, V> store1
+                ? store1
                 : null;
         }
 
@@ -1152,9 +1152,9 @@ namespace Kafka.Streams.Tests
         public ISessionStore<K, V>? GetSessionStore<K, V>(string Name)
             where V : class
         {
-            IStateStore store = this.GetStateStore(Name, false);
-            return store is ISessionStore<K, V>
-                ? (ISessionStore<K, V>)store
+            var store = this.GetStateStore(Name, false);
+            return store is ISessionStore<K, V> sessionStore
+                ? sessionStore
                 : null;
         }
 

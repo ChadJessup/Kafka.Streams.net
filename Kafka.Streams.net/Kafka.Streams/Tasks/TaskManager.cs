@@ -1272,5 +1272,25 @@ namespace Kafka.Streams.Tasks
         {
             throw new NotImplementedException();
         }
+
+        Dictionary<TaskId, long> ITaskManager.GetTaskOffsetSums()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void handleAssignment(Dictionary<TaskId, HashSet<TopicPartition>> activeTasks, object v)
+        {
+            throw new NotImplementedException();
+        }
+
+        Guid ITaskManager.processId()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void handleRebalanceStart(HashSet<string> topics)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors.Internals
@@ -24,9 +25,9 @@ namespace Kafka.Streams.Processors.Internals
 
         public override bool Equals(object o)
         {
-            if (o is TopicsInfo)
+            if (o is TopicsInfo info)
             {
-                return ((TopicsInfo)o).sourceTopics.Equals(this.sourceTopics) && ((TopicsInfo)o).stateChangelogTopics.Equals(this.stateChangelogTopics);
+                return info.sourceTopics.Equals(this.sourceTopics) && info.stateChangelogTopics.Equals(this.stateChangelogTopics);
             }
             else
             {
@@ -49,6 +50,16 @@ namespace Kafka.Streams.Processors.Internals
                 ", repartitionSourceTopics=" + this.repartitionSourceTopics +
                 ", stateChangelogTopics=" + this.stateChangelogTopics +
                 '}';
+        }
+
+        internal IEnumerable<InternalTopicConfig> nonSourceChangelogTopics()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal IEnumerable<string> sourceTopicChangelogs()
+        {
+            throw new NotImplementedException();
         }
     }
 }

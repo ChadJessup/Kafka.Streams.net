@@ -27,9 +27,9 @@ namespace Kafka.Streams.Tests.Kstream.Internals
         {
             var builder = new StreamsBuilder();
 
-            Func<int, string, bool> isEven = (key, value) => (key % 2) == 0;
-            Func<int, string, bool> isMultipleOfThree = (key, value) => (key % 3) == 0;
-            Func<int, string, bool> isOdd = (key, value) => (key % 2) != 0;
+            static bool isEven(int key, string value) => (key % 2) == 0;
+            static bool isMultipleOfThree(int key, string value) => (key % 3) == 0;
+            static bool isOdd(int key, string value) => (key % 2) != 0;
 
             var expectedKeys = new int[] { 1, 2, 3, 4, 5, 6 };
 

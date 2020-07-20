@@ -18,7 +18,7 @@ namespace Kafka.Streams.Tests.Mocks
         private readonly Partitioner? partitioner;
         private readonly List<Message<K, V>> sent;
         private readonly List<Message<K, V>> uncommittedSends;
-        private Queue<Completion> completions;
+        private readonly Queue<Completion> completions;
         private readonly Dictionary<TopicPartition, long> offsets;
         private readonly List<Dictionary<string, Dictionary<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsets;
         private Dictionary<string, Dictionary<TopicPartition, OffsetAndMetadata>> uncommittedConsumerGroupOffsets;
@@ -482,9 +482,9 @@ namespace Kafka.Streams.Tests.Mocks
 
         private class Completion
         {
-            private long offset;
+            private readonly long offset;
             //private RecordMetadata metadata;
-            private DeliveryReport<byte[], byte[]> result;
+            private readonly DeliveryReport<byte[], byte[]> result;
             //private TaskCompletionSource callback;
 
             public Completion(

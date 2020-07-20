@@ -27,7 +27,7 @@ namespace Kafka.Streams.State
 
         private readonly string appId;
         private readonly DirectoryInfo stateDir;
-        private bool hasPersistentStores;
+        private readonly bool hasPersistentStores;
         private readonly Dictionary<TaskId, FileStream> channels = new Dictionary<TaskId, FileStream>();
         private readonly Dictionary<TaskId, LockAndOwner> locks = new Dictionary<TaskId, LockAndOwner>();
 

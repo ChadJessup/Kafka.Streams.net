@@ -1376,9 +1376,9 @@ namespace Kafka.Streams.Topologies
         {
             var nodeFactory = this.nodeFactories[nodeName];
 
-            if (nodeFactory is ISourceNodeFactory)
+            if (nodeFactory is ISourceNodeFactory sourceNodeFactory)
             {
-                List<string> topics = ((ISourceNodeFactory)nodeFactory).Topics;
+                List<string> topics = sourceNodeFactory.Topics;
 
                 return topics != null && topics.Count == 1 && this.globalTopics.Contains(topics[0]);
             }
