@@ -1,3 +1,11 @@
 [submodule "KafkaHelpers"]
 	path = KafkaHelpers
 	url = https://github.com/ChadJessup/KafkaHelpers.git
+
+[submodule "confluent-kafka-dotnet"]
+	path = confluent-kafka-dotnet
+	url = https://github.com/ChadJessup/confluent-kafka-dotnet.git
+
+[submodule "librdkafka"]
+	path = librdkafka
+	url = https://github.com/ChadJessup/librdkafka.git
