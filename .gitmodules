@@ -1,0 +1,3 @@
+[submodule "KafkaHelpers"]
+	path = KafkaHelpers
+	url = https://github.com/ChadJessup/KafkaHelpers.git
