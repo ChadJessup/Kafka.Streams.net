@@ -17,7 +17,7 @@ namespace Kafka.Streams.RocksDbState
 
         private volatile bool open = true;
 
-        private KeyValuePair<Bytes, byte[]> next;
+        private KeyValuePair<Bytes, byte[]> _next;
 
         public RocksDbIterator(
             string storeName,
@@ -47,9 +47,9 @@ namespace Kafka.Streams.RocksDbState
             }
             else
             {
-                this.next = this.GetKeyValue();
+                this._next = this.GetKeyValue();
                 this.iter.Next();
-                return this.next;
+                return this._next;
             }
         }
 
@@ -73,7 +73,7 @@ namespace Kafka.Streams.RocksDbState
                 throw new IndexOutOfRangeException();
             }
 
-            return this.next.Key;
+            return this._next.Key;
         }
     }
 }

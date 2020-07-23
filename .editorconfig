@@ -1,5 +1,5 @@
 ﻿# Remove the line below if you want to inherit .editorconfig settings from higher directories
-root = false
+root = true
 
 [*.{csproj,targets,props,sln,json}]
 indent_style = space

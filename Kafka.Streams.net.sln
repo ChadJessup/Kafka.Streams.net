@@ -3,30 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.Tests", "Kafka.Streams.Tests\Kafka.Streams.Tests.csproj", "{0CF3C8DD-EFC4-4865-94E4-CB3D54AE8E85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.Tests", "Kafka.Streams.net\Kafka.Streams.Tests\Kafka.Streams.Tests.csproj", "{0CF3C8DD-EFC4-4865-94E4-CB3D54AE8E85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams", "Kafka.Streams\Kafka.Streams.csproj", "{4F1A0506-FCFB-4B89-B51C-279397522ED9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams", "Kafka.Streams.net\Kafka.Streams\Kafka.Streams.csproj", "{4F1A0506-FCFB-4B89-B51C-279397522ED9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0CB1569E-C8FB-495A-A06A-872731217F6C}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.App", "Kafka.Streams.App\Kafka.Streams.App.csproj", "{2602C9E0-68FF-47BC-9A44-BE1AD04FEFCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.App", "Kafka.Streams.net\Kafka.Streams.App\Kafka.Streams.App.csproj", "{2602C9E0-68FF-47BC-9A44-BE1AD04FEFCD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCountProcessorDemo", "Examples\WordCountProcessorDemo\WordCountProcessorDemo.csproj", "{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCountProcessorDemo", "Kafka.Streams.net\Examples\WordCountProcessorDemo\WordCountProcessorDemo.csproj", "{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.Kafka", "..\..\confluent-kafka-dotnet\src\Confluent.Kafka\Confluent.Kafka.csproj", "{A962794C-0F68-4E21-8DBA-C31720493239}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.Kafka", "confluent-kafka-dotnet\src\Confluent.Kafka\Confluent.Kafka.csproj", "{A962794C-0F68-4E21-8DBA-C31720493239}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry", "..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry\Confluent.SchemaRegistry.csproj", "{F1F07FCC-3059-4018-AB7D-E0156BD5751C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry", "confluent-kafka-dotnet\src\Confluent.SchemaRegistry\Confluent.SchemaRegistry.csproj", "{F1F07FCC-3059-4018-AB7D-E0156BD5751C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Confluent", "Confluent", "{E661C830-A872-4EBD-B109-10C59A33B33B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigGen", "..\..\confluent-kafka-dotnet\src\ConfigGen\ConfigGen.csproj", "{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigGen", "confluent-kafka-dotnet\src\ConfigGen\ConfigGen.csproj", "{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.Kafka.UnitTests", "..\..\confluent-kafka-dotnet\test\Confluent.Kafka.UnitTests\Confluent.Kafka.UnitTests.csproj", "{E84B6E85-BB61-4C12-8A1E-AF5D52ADE145}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "..\..\librdkafka\win32\common.vcxproj", "{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.Kafka.UnitTests", "confluent-kafka-dotnet\test\Confluent.Kafka.UnitTests\Confluent.Kafka.UnitTests.csproj", "{E84B6E85-BB61-4C12-8A1E-AF5D52ADE145}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{F0F9E962-70D0-4D27-AB0A-5B1FF2600DD2}"
 EndProject
@@ -36,15 +37,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaToCsharpAnalyzers.Test"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaToCsharpAnalyzers.Vsix", "..\..\JavaToCsharpAnalyzers\JavaToCsharpAnalyzers.Vsix\JavaToCsharpAnalyzers.Vsix.csproj", "{8E3192F5-D4E8-4D58-AC24-5FF092FDEF73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.RocksDB", "..\Kafka.Streams.RocksDB\Kafka.Streams.RocksDB.csproj", "{1E31C55F-0C77-463B-810B-CF99979B620C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.RocksDB", "Kafka.Streams.RocksDB\Kafka.Streams.RocksDB.csproj", "{1E31C55F-0C77-463B-810B-CF99979B620C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.RocksDB.Tests", "..\Kafka.Streams.RocksDB.Tests\Kafka.Streams.RocksDB.Tests.csproj", "{DA7F7714-6E08-47D8-AF31-5BED63993E08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.RocksDB.Tests", "Kafka.Streams.RocksDB.Tests\Kafka.Streams.RocksDB.Tests.csproj", "{DA7F7714-6E08-47D8-AF31-5BED63993E08}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry.Serdes.Avro", "..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes.Avro\Confluent.SchemaRegistry.Serdes.Avro.csproj", "{2BA9A2BA-3AFB-4E4C-9842-F9C4DB9675EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry.Serdes.Avro", "confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes.Avro\Confluent.SchemaRegistry.Serdes.Avro.csproj", "{2BA9A2BA-3AFB-4E4C-9842-F9C4DB9675EE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry.Serdes.Json", "..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes.Json\Confluent.SchemaRegistry.Serdes.Json.csproj", "{AD2FECB6-9146-40B5-8CED-6B462D67DC43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry.Serdes.Json", "confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes.Json\Confluent.SchemaRegistry.Serdes.Json.csproj", "{AD2FECB6-9146-40B5-8CED-6B462D67DC43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry.Serdes.Protobuf", "..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes.Protobuf\Confluent.SchemaRegistry.Serdes.Protobuf.csproj", "{104E14D2-74C2-4686-BCDC-F8097AABDB9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry.Serdes.Protobuf", "confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes.Protobuf\Confluent.SchemaRegistry.Serdes.Protobuf.csproj", "{104E14D2-74C2-4686-BCDC-F8097AABDB9D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "librdkafka", "librdkafka\win32\librdkafka.vcxproj", "{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -152,16 +155,6 @@ Global
 		{E84B6E85-BB61-4C12-8A1E-AF5D52ADE145}.Release|x64.Build.0 = Release|Any CPU
 		{E84B6E85-BB61-4C12-8A1E-AF5D52ADE145}.Release|x86.ActiveCfg = Release|Any CPU
 		{E84B6E85-BB61-4C12-8A1E-AF5D52ADE145}.Release|x86.Build.0 = Release|Any CPU
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|x64.ActiveCfg = Debug|x64
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|x64.Build.0 = Debug|x64
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|x86.ActiveCfg = Debug|Win32
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|x86.Build.0 = Debug|Win32
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|Any CPU.ActiveCfg = Release|Win32
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|x64.ActiveCfg = Release|x64
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|x64.Build.0 = Release|x64
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|x86.ActiveCfg = Release|Win32
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|x86.Build.0 = Release|Win32
 		{65267FE3-22EB-4A45-A2F9-364C8AF2225D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{65267FE3-22EB-4A45-A2F9-364C8AF2225D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65267FE3-22EB-4A45-A2F9-364C8AF2225D}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -258,6 +251,17 @@ Global
 		{104E14D2-74C2-4686-BCDC-F8097AABDB9D}.Release|x64.Build.0 = Release|Any CPU
 		{104E14D2-74C2-4686-BCDC-F8097AABDB9D}.Release|x86.ActiveCfg = Release|Any CPU
 		{104E14D2-74C2-4686-BCDC-F8097AABDB9D}.Release|x86.Build.0 = Release|Any CPU
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|Any CPU.Build.0 = Debug|x64
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|x64.ActiveCfg = Debug|x64
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|x64.Build.0 = Debug|x64
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|x86.ActiveCfg = Debug|Win32
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Debug|x86.Build.0 = Debug|Win32
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|Any CPU.ActiveCfg = Release|Win32
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|x64.ActiveCfg = Release|x64
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|x64.Build.0 = Release|x64
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|x86.ActiveCfg = Release|Win32
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -267,13 +271,13 @@ Global
 		{F1F07FCC-3059-4018-AB7D-E0156BD5751C} = {E661C830-A872-4EBD-B109-10C59A33B33B}
 		{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD} = {E661C830-A872-4EBD-B109-10C59A33B33B}
 		{E84B6E85-BB61-4C12-8A1E-AF5D52ADE145} = {E661C830-A872-4EBD-B109-10C59A33B33B}
-		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC} = {E661C830-A872-4EBD-B109-10C59A33B33B}
 		{65267FE3-22EB-4A45-A2F9-364C8AF2225D} = {F0F9E962-70D0-4D27-AB0A-5B1FF2600DD2}
 		{EF326D12-1065-42BA-994D-64031ABB6277} = {F0F9E962-70D0-4D27-AB0A-5B1FF2600DD2}
 		{8E3192F5-D4E8-4D58-AC24-5FF092FDEF73} = {F0F9E962-70D0-4D27-AB0A-5B1FF2600DD2}
 		{2BA9A2BA-3AFB-4E4C-9842-F9C4DB9675EE} = {E661C830-A872-4EBD-B109-10C59A33B33B}
 		{AD2FECB6-9146-40B5-8CED-6B462D67DC43} = {E661C830-A872-4EBD-B109-10C59A33B33B}
 		{104E14D2-74C2-4686-BCDC-F8097AABDB9D} = {E661C830-A872-4EBD-B109-10C59A33B33B}
+		{0FC30A29-EE10-46C0-8122-C5FAE5A142BC} = {E661C830-A872-4EBD-B109-10C59A33B33B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD854F55-D416-43FB-8924-1130FB7035C1}

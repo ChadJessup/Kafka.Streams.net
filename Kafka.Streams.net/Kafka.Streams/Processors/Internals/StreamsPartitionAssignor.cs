@@ -1530,12 +1530,12 @@ namespace Kafka.Streams.Processors.Internals
          * @throws TaskAssignmentException if there is no task id for one of the partitions specified
          */
 
-        public void onAssignment(Assignment assignment, IConsumerGroupMetadata metadata)
+        public void OnAssignment(Assignment assignment, IConsumerGroupMetadata metadata)
         {
             List<TopicPartition> partitions = new List<TopicPartition>(assignment.partitions);
             partitions.Sort(PARTITION_COMPARATOR);
 
-            AssignmentInfo info = AssignmentInfo.decode(assignment.userData);
+            AssignmentInfo info = AssignmentInfo.Decode(assignment.userData);
             //if (info.errCode != AssignorError.NONE.code())
             //{
             //    // set flag to shutdown streams app

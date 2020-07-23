@@ -309,5 +309,15 @@ namespace Kafka.Streams.Tasks
         {
             throw new NotImplementedException();
         }
+
+        internal List<ConsumeResult<byte[], byte[]>> Update(TopicPartition partition, List<ConsumeResult<byte[], byte[]>> remaining)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void ReinitializeStateStoresForPartitions(List<TopicPartition> lists)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

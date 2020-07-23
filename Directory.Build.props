@@ -1,0 +1,35 @@
+﻿<Project>
+  <PropertyGroup>
+    <Authors>Chad Jessup</Authors>
+    <Company>Good Enough Industries</Company>
+    <Product>Kafka.Streams.net</Product>
+    <Version>0.0.1</Version>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>8.0</LangVersion>
+    <Deterministic>true</Deterministic>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Build all paths from location of this file. -->
+    <BaseDir>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)))</BaseDir>
+    <BuildOutputPath>$(BaseDir)\build</BuildOutputPath>
+    <!-- All build-time artifacts in the .\build folder -->
+
+    <!-- Files with pattern: {project}.csproj.FileListAbsolute.txt, *.AssemblyInfo.cs -->
+    <BaseIntermediateOutputPath>$(BuildOutputPath)\obj\$(Platform)\$(RuntimeIdentifier)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <!-- nuget.g.targets, project.assets.json, project.nuget.cache -->
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+
+    <OutputPath>$(BuildOutputPath)\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+
+    <NuspecOutputPath>$(BuildOutputPath)</NuspecOutputPath>
+    <NugetPackageOutputLocation>$(BuildOutputPath)\NugetPackages</NugetPackageOutputLocation>
+    <RestorePackagesPath>$(NugetPackageOutputLocation)</RestorePackagesPath>
+    <DocumentationFile>$(OutputPath)\$(MSBuildProjectName).XML</DocumentationFile>
+  </PropertyGroup>
+</Project>

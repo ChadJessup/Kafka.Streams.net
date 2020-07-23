@@ -25,7 +25,7 @@ namespace Kafka.Streams.RocksDbState
 
         private byte[]? nextWithTimestamp;
         private byte[]? nextNoTimestamp;
-        private KeyValuePair<Bytes, byte[]> next;
+        private KeyValuePair<Bytes, byte[]> _next;
 
         public RocksDbDualCFIterator(
             string storeName,
@@ -68,7 +68,7 @@ namespace Kafka.Streams.RocksDbState
                 }
                 else
                 {
-                    this.next = KeyValuePair.Create(new Bytes(this.nextWithTimestamp), this.iterWithTimestamp.Value());
+                    this._next = KeyValuePair.Create(new Bytes(this.nextWithTimestamp), this.iterWithTimestamp.Value());
                     this.nextWithTimestamp = null;
                     this.iterWithTimestamp.Next();
                 }
@@ -77,7 +77,7 @@ namespace Kafka.Streams.RocksDbState
             {
                 if (this.nextWithTimestamp == null)
                 {
-                    this.next = KeyValuePair.Create(new Bytes(this.nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(this.iterNoTimestamp.Value()));
+                    this._next = KeyValuePair.Create(new Bytes(this.nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(this.iterNoTimestamp.Value()));
                     this.nextNoTimestamp = null;
                     this.iterNoTimestamp.Next();
                 }
@@ -85,20 +85,20 @@ namespace Kafka.Streams.RocksDbState
                 {
                     if (this.comparator.Compare(this.nextNoTimestamp, this.nextWithTimestamp) <= 0)
                     {
-                        this.next = KeyValuePair.Create(new Bytes(this.nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(this.iterNoTimestamp.Value()));
+                        this._next = KeyValuePair.Create(new Bytes(this.nextNoTimestamp), ApiUtils.ConvertToTimestampedFormat(this.iterNoTimestamp.Value()));
                         this.nextNoTimestamp = null;
                         this.iterNoTimestamp.Next();
                     }
                     else
                     {
-                        this.next = KeyValuePair.Create(new Bytes(this.nextWithTimestamp), this.iterWithTimestamp.Value());
+                        this._next = KeyValuePair.Create(new Bytes(this.nextWithTimestamp), this.iterWithTimestamp.Value());
                         this.nextWithTimestamp = null;
                         this.iterWithTimestamp.Next();
                     }
                 }
             }
 
-            return this.next;
+            return this._next;
         }
 
         public void Remove()
@@ -122,7 +122,7 @@ namespace Kafka.Streams.RocksDbState
                 throw new IndexOutOfRangeException();
             }
 
-            return this.next.Key;
+            return this._next.Key;
         }
     }
 }

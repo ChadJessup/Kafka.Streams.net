@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(IConsumer<byte[], byte[]>? consumer, List<TopicPartition> assignedPartitions)
         {
-            this.partitionAssignor.OnAssignment(new Assignment(assignedPartitions), consumer.ConsumerGroupMetadata);
+            this.partitionAssignor.OnAssignment(new Assignment(assignedPartitions, null), consumer.ConsumerGroupMetadata);
 
             this.log.LogDebug(
                 $"at state {this.streamThread.State}: partitions {assignedPartitions.ToJoinedString()} assigned at the end of consumer rebalance.\n" +

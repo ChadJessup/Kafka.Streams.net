@@ -103,7 +103,7 @@ namespace Kafka.Streams.Processors.Internals.Assignments
          * @throws TaskAssignmentException if method fails to encode the data, e.g., if there is an
          * IO exception during encoding
          */
-        public ByteBuffer Encode()
+        public byte[] Encode()
         {
             using var baos = new MemoryStream();
 
@@ -165,7 +165,7 @@ namespace Kafka.Streams.Processors.Internals.Assignments
                 baos.Flush();
                 baos.Close();
 
-                return new ByteBuffer().Wrap(baos.ToArray());
+                return baos.ToArray();
             }
             catch (IOException ex)
             {
@@ -305,14 +305,17 @@ namespace Kafka.Streams.Processors.Internals.Assignments
         /**
          * @throws TaskAssignmentException if method fails to decode the data or if the data version is unknown
          */
-        public static AssignmentInfo decode(ByteBuffer data)
+        public static AssignmentInfo Decode(byte[] data)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
             // ensure we are at the beginning of the ByteBuffer
-            data.Rewind();
 
             try
             {
-                Stream stream = new MemoryStream(data.Array());
+                Stream stream = new MemoryStream(data);
                 using var br = new BinaryReader(stream);
                 AssignmentInfo assignmentInfo;
 
@@ -376,6 +379,7 @@ namespace Kafka.Streams.Processors.Internals.Assignments
                         TaskAssignmentException fatalException = new TaskAssignmentException("Unable to decode assignment data: " +
                             "used version: " + usedVersion + "; latest supported version: " + StreamsAssignmentProtocolVersions.LATEST_SUPPORTED_VERSION);
                         log.LogError(fatalException.Message, fatalException);
+
                         throw fatalException;
                 }
 

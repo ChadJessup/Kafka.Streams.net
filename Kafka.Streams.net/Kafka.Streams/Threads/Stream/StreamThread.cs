@@ -682,14 +682,16 @@ namespace Kafka.Streams.Threads.Stream
                 if (task == null)
                 {
                     this.logger.LogError(
-                        $"Unable to locate active task for received-record partition {partition}. Current tasks: {this.TaskManager.ToString(">")}");
+                        $"Unable to locate active task for received-record partition {partition}. " +
+                        $"Current tasks: {this.TaskManager.ToString(">")}");
 
                     throw new NullReferenceException("Task was unexpectedly missing for partition " + partition);
                 }
                 else if (task.IsClosed())
                 {
-                    this.logger.LogInformation($"Stream task {task.Id} is already closed, probably because it got unexpectedly migrated to another thread already. " +
-                                 "Notifying the thread to trigger a new rebalance immediately.");
+                    this.logger.LogInformation($"Stream task {task.Id} is already closed, probably because it " +
+                        $"got unexpectedly migrated to another thread already. " +
+                          "Notifying the thread to trigger a new rebalance immediately.");
 
                     throw new TaskMigratedException(task);
                 }
@@ -792,7 +794,7 @@ namespace Kafka.Streams.Threads.Stream
                                     throw new TaskMigratedException(task);
                                 }
 
-                                //remaining = task.Update(partition, remaining);
+                                remaining = task.Update(partition, remaining);
                                 if (remaining.Any())
                                 {
                                     remainingStandbyRecords.Add(partition, remaining);
@@ -842,7 +844,10 @@ namespace Kafka.Streams.Threads.Stream
                                 throw new TaskMigratedException(task);
                             }
 
-                            List<ConsumeResult<byte[], byte[]>> remaining = null; //task.Update(partition, records.GetRecords(partition));
+                            List<ConsumeResult<byte[], byte[]>> remaining = task.Update(
+                                partition,
+                                records.GetRecords(partition));
+
                             if (remaining.Any())
                             {
                                 this.RestoreConsumer.Pause(new[] { partition });
@@ -872,7 +877,7 @@ namespace Kafka.Streams.Threads.Stream
                         this.logger.LogInformation($"Reinitializing StandbyTask {task} from changelogs " +
                             $"{recoverableException.Partitions().ToJoinedString()}");
 
-                        //task.ReinitializeStateStoresForPartitions(recoverableException.Partitions().ToList());
+                        task.ReinitializeStateStoresForPartitions(recoverableException.Partitions().ToList());
                     }
 
                     this.RestoreConsumer.SeekToBeginning(partitions);

@@ -47,9 +47,7 @@ namespace Kafka.Streams.Processors.Internals
          * @param assignment The local member's assignment as provided by the leader in {@link #assign(Cluster, GroupSubscription)}
          * @param metadata Additional metadata on the consumer (optional)
          */
-        public void OnAssignment(Assignment assignment, IConsumerGroupMetadata metadata)
-        {
-        }
+        void OnAssignment(Assignment assignment, IConsumerGroupMetadata metadata);
 
         /**
          * Indicate which rebalance protocol this assignor works with;

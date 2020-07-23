@@ -229,6 +229,10 @@ namespace WordCountProcessorDemo
             {
             }
 
+            public void OnAssignment(Assignment assignment, IConsumerGroupMetadata metadata)
+            {
+            }
+
             public byte[] SubscriptionUserData(HashSet<string> topics)
             {
                 return Array.Empty<byte>();
