@@ -369,11 +369,13 @@ namespace Kafka.Streams.Tasks
             if (this.active.AllTasksRunning())
             {
                 var assignment = new HashSet<TopicPartition>(this.consumer.Assignment);
-                this.logger.LogTrace("Resuming partitions {}", assignment);
+                this.logger.LogTrace($"Resuming partitions {assignment}");
                 this.consumer.Resume(assignment);
                 this.AssignStandbyPartitions();
+
                 return this.standby.AllTasksRunning();
             }
+
             return false;
         }
 
@@ -520,7 +522,7 @@ namespace Kafka.Streams.Tasks
 
                 //deleteRecordsResult = adminClient.deleteRecords(recordsToDelete);
 
-                this.logger.LogTrace("Sent delete-records request: {}", recordsToDelete);
+                this.logger.LogTrace($"Sent delete-records request: {recordsToDelete}");
             }
         }
 

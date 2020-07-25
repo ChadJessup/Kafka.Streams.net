@@ -904,7 +904,7 @@ namespace Kafka.Streams.Threads.Stream
 
         /**
          * Shutdown this stream thread.
-         * <p>
+         *
          * Note that there is nothing to prevent this function from being called multiple times
          * (e.g., in testing), hence the state is set only the first time
          */

@@ -69,6 +69,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KafkaHelpers.Console.App", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KafkaHelpers.Web.App", "KafkaHelpers\TestApps\KafkaHelpers.Web.App\KafkaHelpers.Web.App.csproj", "{610BD44B-FEDD-4DE3-A5AE-0AD2E1642BE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -378,6 +380,18 @@ Global
 		{610BD44B-FEDD-4DE3-A5AE-0AD2E1642BE5}.Release|x64.Build.0 = Release|Any CPU
 		{610BD44B-FEDD-4DE3-A5AE-0AD2E1642BE5}.Release|x86.ActiveCfg = Release|Any CPU
 		{610BD44B-FEDD-4DE3-A5AE-0AD2E1642BE5}.Release|x86.Build.0 = Release|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Debug|x64.Build.0 = Debug|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Release|x64.ActiveCfg = Release|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Release|x64.Build.0 = Release|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA7D2FD2-A4E1-497F-8C8E-092B7741F13D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
